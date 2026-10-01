@@ -1,0 +1,69 @@
+Test 0004-210_544_020
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000211
+  0001: 00004001544
+  0002: 00000004164
+  0003: 00000000020
+  3000: 00000000100
+  3001: 00000000045
+  #DOK-0004 Test Ladebefehl und X-Wiederholung-Speicherbefehl und Linksverschiebung
+  #DOK-0004 So ein Befehl bringt eigentlich nichts, besser alle 32 Zellen durchlaufen, und dann logisch begrenzen
+  #DOK-0004 da hat man für jeden logische Speichernummer einen korrekt verschobenen Wert.
+  #SPEI-0004 4000-4037
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T := 0; BR := 0000 000 (AR:=0000, OR:=000); K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 211  (vor Knoten 002)  BZ=0001 AC=00000000100 FÜ=0 V1=0 V2=0 V3=0
+  BR=4001 544  (vor Knoten 002)  BZ=0002 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0004 Test Ladebefehl und X-Wiederholung-Speicherbefehl und Linksverschiebung
+#DOK-0004 So ein Befehl bringt eigentlich nichts, besser alle 32 Zellen durchlaufen, und dann logisch begrenzen
+#DOK-0004 da hat man für jeden logische Speichernummer einen korrekt verschobenen Wert.
+BZ=0003 AC=00000000000 FE=0 FÜ=0 BS=0 US=0 E=0 A=0
+#SPEI-0004 4000-4037
+4000: 00000000000
+4001: 00000000100
+4002: 00000004000
+4003: 00000200000
+4004: 00010000000
+4005: 00400000000
+4006: 20000000000
+4007: 00000000000
+4010: 00000001000
+4011: 00000040000
+4012: 00002000000
+4013: 00100000000
+4014: 04000000000
+4015: 00000000000
+4016: 00000000200
+4017: 00000010000
+4020: 00000400000
+4021: 00020000000
+4022: 01000000000
+4023: 40000000000
+4024: 00000000000
+4025: 00000002000
+4026: 00000100000
+4027: 00004000000
+4030: 00200000000
+4031: 10000000000
+4032: 00000000000
+4033: 00000000400
+4034: 00000020000
+4035: 00001000000
+4036: 00040000000
+4037: 02000000000
+--- Ende Diagnose ---
+  BR=0004 164  (vor Knoten 002)  BZ=0003 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0004 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

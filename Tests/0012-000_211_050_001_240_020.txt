@@ -1,0 +1,16 @@
+Trommeldatei:
+#DOK-0012 Test Unbedingter Sprung, Ladebefehl und Addition Positiv-Sprung und Speicherbefehl
+#PROT STUFE=2
+0000: 00005000000
+5000: 00005006211
+5001: 00005003050
+5002: 00005003001
+5003: 00005007240
+5004: 00000012164
+5005: 00000000020
+# Beginn Datenbereich
+5006: 00000000100
+5007: 00000000200
+
+Tastenfolge:
+H G R

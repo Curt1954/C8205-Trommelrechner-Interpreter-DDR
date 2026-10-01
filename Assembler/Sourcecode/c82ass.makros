@@ -1,0 +1,176 @@
+WRZL:    MACRO
+         dz $wrzl  ; Zeilenschaltung
+         ANWAHL  4700
+         MEND
+
+KB:      MACRO
+         dz $inkb  ; Umschaltung in Kleinbuchstabe
+         MEND
+
+GB:      MACRO
+         dz $ingb  ; Umschaltung in Großbuchstabe
+         MEND
+
+TEST:    MACRO 1
+$PR1:    $TYPADR
+;$PR1:    1111A  2222B 3333C
+         dz $ingb  ; TESTanweisung
+         MEND
+
+WDHL:  MACRO 5
+; WDHL: Durchführen der `Operation` bezüglich `Speicher` und `Resultatsbehandlung`
+;       im AC. Mit Wiederholung `anzahl` mal.
+; Löschen  Resultatsbehandlung  Operation  Anzahl  Adresse
+# Löschen = { JA | NE }
+# Resultatsbehandlung = { LI | RE | ZL | OHNE }
+# Operation = { KON | ADD | SUB | BADD }
+$PR1 JA NE
+$PR2 LI RE ZL OHNE
+$PR3 KON ADD SUB BADD 
+$PR4 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
+$PR5 $ADRESSE
+             !$wdhl   $5     ; `$4` mal `Operation $3` ausführen und Resultatsbehandlung 
+         MEND
+
+
+TANWAHL:  MACRO 1
+# Anwahl Zusatztrommel
+      $PR1 5100 5200 5300 5400 ZTR1 ZTR2 ZTR3 ZTR4
+      $IF    $1  =  5100 | $1 = ZTR1
+         030 05100  ; 5100 oder ZTR1
+      $ELIF  $1  =  5200 | $1 = ZTR2
+         030 05200  ; 5200 oder ZTR2
+      $ELIF  $1  =  5300 | $1 = ZTR3
+         030 05300  ; 5300 oder ZTR3
+      $ELIF  $1  =  5400 | $1 = ZTR4
+         030 05400  ; 5400 oder ZTR4
+         MEND
+
+ANWAHL:  MACRO 1
+      $PR1 4000 4100 4200 4300 4400 4500 4600 4700 K0 K1 K2 K3 LSL1 LSL2 LKL1 LKS1 LSS1 SW1I SW1O SW2O KONI
+  # Anwahl Einzelzeichen EA
+      $IF    $1  =  4000 | $1 = K7
+         030 04000  ; 4000 oder K7
+      $ELIF  $1  =  4100 | $1 = K6
+         030 04100  ; 4100 oder K6
+      $ELIF  $1  =  4200 | $1 = K5
+         030 04200  ; 4200 oder K5
+      $ELIF  $1  =  4300 | $1 = K4 | $1 = LKS1
+         030 04300  ; 4300 oder K4 oder LKS1
+      $ELIF  $1  =  4400 | $1 = K3 | $1 = LKL1 | $1 = SW2O
+         030 04400  ; 4400 oder K3 oder LKL1 oder SW2 Output
+      $ELIF  $1  =  4500 | $1 = K2 | $1 = LSL2 | $1 = SW1O
+         030 04500   ; 4500 oder K2 oder LSL2 oder SW1 Output
+      $ELIF  $1  =  4600 | $1 = K1 | $1 = LSL1 | $1 = LSS1
+         030 04600  ; 4600 oder K1 oder LSL1 oder LSS1
+      $ELIF  $1  =  4700 | $1 = K0 | $1 = SW1I | $1 = KONI
+         030 04700  ; 4700 oder K0 oder SW1 Input oder KON Input
+      $ENDIF
+         MEND
+
+TROUT:   MACRO 2
+# Ausgabe von Haupttrommel auf Zusatztrommel
+# TROUT  <haupttrommeladresse> <zusatztrommeladresse>
+         032   $2
+         401   $1
+         MEND
+ 
+TRIN:   MACRO 2
+# Eingabe von Zusatztrommel auf Haupttrommel
+# TRIN  <zusatztrommeladresse> <haupttrommeladresse>
+         032   $1
+         461   $2
+         MEND
+
+
+ARRAY_LOAD: MACRO 3
+; ARRAY_LOAD; Ladebefehl für Arrayzugriff über Indexvariable bilden
+; Arrayadresse Indexvar1 AdrSpeicherbef1 
+             211 $2          ; Lade `$2` 
+             210 $1          ; Addiere Anfangsadresse des Arrays 
+             210 #0211       ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
+             240 $3          ; Speichere den Ladebefehl für `$1[$2]` nach $3
+         MEND
+
+
+ARRAY_STORE: MACRO 3
+; ARRAY_STORE; Speicherbefehl für Arrayzugriff über Indexvariable bilden
+; Arrayadresse Indexvar1 AdrSpeicherbef1 
+             211 $2          ; Lade `$2` 
+             210 $1          ; Addiere Anfangsadresse des Arrays 
+             210 #0240       ; Füge den Speicherbefehls-Operationscode zur Adresse hinzu
+             240 $3          ; Speichere den Speicherbefehl für `$1[$2]` nach $3
+         MEND
+
+
+ARRAY_VGL: MACRO 3
+; ARRAY_VGL; Vergleicherbefehl für Arrayzugriff über Indexvariable bilden
+; Arrayadresse Indexvar1 AdrSpeicherbef1 
+             211 $2          ; Lade `$2` in den Akkumulator
+             210 $1          ; Addiere Anfangsadresse des Arrays
+             210 #0330       ; Füge den Vergleicher-Befehls-Operationscode zur Adresse hinzu
+             240 $3          ; Speichere den Vergleichsbefehl für `$1[$2]`
+           MEND
+
+
+ARRAY_SWAP: MACRO 4
+; ARRAY_SWAP;  Indiziertes Arrayelement umspeichern (swap)
+; Arrayadresse Indexvar1 Indexvar2 Arbeitsspeicher
+             211 $2            ; Lade `$2`
+             210 $1            ; Addiere Anfangsadresse des Arrays
+             210 #0211         ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
+             240 ML0004%       ; Speichere den vollständigen Ladebefehl für `$1[$2]`
+
+             200 #077777777000 ; Operationscoede 211 ausblenden
+             210 #0240         ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu                                                           
+             240 ML0002%       ; Speichere Speicherbefehl für `$1[$3]` zum Umladen temporäres Element
+
+             211 $3            ; Lade `$3`
+             210 $1            ; Addiere Anfangsadresse des Arrays 
+             210 #0240         ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu
+             240 ML0001%       ; Speichere Speicherbefehl für `$1[$2]` zum Umladen temporäres Element
+
+             200 #077777777000 ; Operationscoede 240 ausblenden
+             210 #0211         ; Füge den Ladebefehls-Operationscode zur Adresse hinzu
+             240 ML0003%       ; Speichere den Ladebefehl für `$1[$3]`
+
+ML0004%:     dw  0             ; Hier steht der Ladebefehl für       211 $1[$2]
+             240 $4            ; Speichere auf Hilfsspeicherplatz:   240 $4
+
+ML0003%:     dw  0             ; Hier steht der Ladebefehl für       211 $1[$3]
+ML0002%:     dw  0             ; Hier steht der Speicherbefehl       240`$1[$2]
+
+             211 $4            ; Lade von Hilfsspeicherplatz:        211 $4
+ML0001%:     dw  0             ; Hier steht der Speicherbefehl für   240 $1[$3]
+
+         MEND
+
+
+
+MACHE_ADRESSEINHEIT:  MACRO 2
+; MACHE_ADRESSEINHEIT: Wert Laden und in Adreßeinheiten umrechnen (9 mal Linksverschiebung); Speichern
+; Werteadresse Adreß-Adresse
+             215 $1            ; Lade $1 in AC und 1x Linksverschiebung
+             004 *+1           ; Verschiebe AC 1x links (2)
+             004 *+1           ; Verschiebe AC 1x links (3)
+             004 *+1           ; Verschiebe AC 1x links (4)
+             004 *+1           ; Verschiebe AC 1x links (5)
+             004 *+1           ; Verschiebe AC 1x links (6)
+             004 *+1           ; Verschiebe AC 1x links (7) 
+             004 *+1           ; Verschiebe AC 1x links (8)
+             004 *+1           ; Verschiebe AC 1x links (9)
+             240 $2
+             WDHL JA LI KON 9   004000
+         MEND
+
+MACHE_ADRESSEINHEIT2:  MACRO 3
+; MACHE_ADRESSEINHEIT2: Wert Laden und in Adreßeinheiten umrechnen (`anzahl` mal Linksverschiebung); Speichern
+;                       Benutzung Wiederholungsbefehl
+# Werteadresse Adreß-Adresse Anzahl
+             211 $1            ; Lade $1 in AC und 1x Linksverschiebung
+             !$wdhl_adr_e $3   ; `anzahl` mal Linksverschiebung
+             240 $2
+         MEND
+
+
+

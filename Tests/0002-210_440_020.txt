@@ -1,0 +1,14 @@
+Trommeldatei:
+#DOK-0002 Test Ladebefehl und Wiederholungs-Speicherbefehl 
+#SPEI-0002 4000-4037
+#PROT STUFE=2
+0000: 00003000211
+0001: 00004001440
+0002: 00000002164
+0003: 00000000020
+# Beginn Datenbereich
+3000: 00000000100
+3001: 00000000045
+
+Tastenfolge:
+H G R

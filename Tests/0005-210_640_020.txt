@@ -1,0 +1,14 @@
+Trommeldatei:
+#DOK-0005 Test Ladebefehl und Gruppen-Speicherbefehl 
+#SPEI-0005 4000-4037
+#PROT STUFE=2
+0000: 00003000211
+0001: 00004001640
+0002: 00000005164
+0003: 00000000020
+# Beginn Datenbereich
+3000: 00000000100
+3001: 00000000045
+
+Tastenfolge:
+H G R

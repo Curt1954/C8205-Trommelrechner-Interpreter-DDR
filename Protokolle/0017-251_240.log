@@ -1,0 +1,39 @@
+Test 0017-251_240
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003710000
+  3710: 00003717251
+  3711: 00007774240
+  3712: 00000017164
+  3713: 00000000020
+  3716: 00003717211
+  3717: 00110011001
+  #DOK-0017 Test R-fehl und Speichern
+  #SPEI-0017 3716-3717
+  #SPEI-0017 7774-7774
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T := 0; BR := 0000 000 (AR:=0000, OR:=000); K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3710 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3717 211  (vor Knoten 002)  BZ=3711 AC=00110011001 FÜ=0 V1=0 V2=0 V3=0
+  BR=7774 240  (vor Knoten 002)  BZ=3712 AC=00110011001 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0017 Test R-fehl und Speichern
+#SPEI-0017 3716-3717
+3716: 00003717211
+3717: 00110011001
+#SPEI-0017 7774-7774
+7774: 00110011001
+--- Ende Diagnose ---
+  BR=0017 164  (vor Knoten 002)  BZ=3713 AC=00110011001 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3714 AC=00110011001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

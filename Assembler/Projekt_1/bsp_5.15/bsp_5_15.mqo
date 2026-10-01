@@ -1,0 +1,30 @@
+start:         dt       \0123456789 \
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+               000      eingabe
+         030 04500   ; 4500 oder K2 oder LSL2 oder SW1 Output
+eingabe:       011      start ;Ab start liegen die Druckbefehle
+               240      druckbefehl
+               000      druckbefehl
+               dz       +
+druckbefehl:   dw       0
+               000      eingabe
+               equ      032
+         dz $wrzl  ; Zeilenschaltung
+               000      eingabe
+               equ      040
+               dz       -
+               000      eingabe
+               equ      073
+               dz       ,
+               000      eingabe
+               dz       $tab
+               000      eingabe
