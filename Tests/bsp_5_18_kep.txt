@@ -1,0 +1,43 @@
+Trommeldatei:
+#DOK-0001 Kleines Eingabeprogramm KEP (Programmieranleitung 5.18, Abb. 27), Eingabe im R 300-Code ueber K0
+--k0 datei=virtuelle_Geraete/T-SW-Eingabe/kep_eingabe.txt
+#SPEI-0001 3000-3004
+#SPEI-0001 7723-7724
+#PROT STUFE=2
+
+0000: 00000002000 # 000 0002 ; Sprung zum Programmanfang des KEP
+0002: 00000022000 # 000 0022 ; Programmanfang
+# Erhoehung des Leitbefehls (Abschnitt "Leitbefehl erhoehen")
+0014: 00007723211 # 211 7723 ; <AC>:=<7723>
+0015: 00000025210 # 210 0025 ; <AC>:=<AC>+1°
+0016: 00007723240 # 240 7723 ; <7723>:=<AC> = Leitbefehl
+0017: 00000030001 # 001 0030 ; <AC>:=0, Sprung zur Eingabe
+0020: 00000000000 # "0" Konstante im R 300-Code
+0021: 40000000000 # "1" Konstante im R 300-Code
+0022: 00000037211 # 211 0037 ; <AC>:=0014 000
+0023: 00007724240 # 240 7724 ; <7724>:=0014 000
+0024: 00000030001 # 001 0030 ; "ZWR" im FS-Code, <AC>:=0
+0025: 00000001000 # Konstante (Adresseneinheit 1°)
+0026: 00000000000 # "0" Konstante im FS-Code
+0027: 40000000000 # "1" Konstante im FS-Code (Zeile im Listing verdruckt, ergaenzt)
+0030: 00000020010 # 010 0020 ; E (0|1|:|.|ZWR), Eingabe-Halt
+0031: 00000030006 # 006 0030 ; <AC>:=Vzl(<AC>), Sprung zur Eingabe
+0032: 00000030001 # 001 0030 ; "ZWR" im R 300-Code, <AC>:=0
+0033: 00007723000 # 000 7723 ; "." im R 300-Code, Sprung zur Ausfuehrung des Leitbefehls
+0034: 00007723000 # 000 7723 ; "." im FS-Code
+0035: 00000016000 # 000 0016 ; ":" im R 300-Code, Leitbefehl speichern
+0036: 00000016000 # 000 0016 ; ":" im FS-Code
+0037: 00000014000 # Konstante 0014 000
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3002 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000001164
+3001: 00000000020
+3002: 00000000005
+3003: 00000000010
+3004: 52525252525
+7723: 00003000000
+7724: 00000014000

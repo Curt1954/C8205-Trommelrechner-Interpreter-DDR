@@ -1,0 +1,7 @@
+        000     go      
+        equ     02000   
+go:     030     04600   ; Anwahl Kanal 1 (Leser 1)
+        010     0       ; Eingabe-Halt 1. Art
+        020     0       ; unbedingter Stopp
+        equ     00001      
+        dw      01      ; Konstante 1: Inhalt der Zelle (Adreßteil 0000 v Eingabeadresse 01), den die Eingabe der

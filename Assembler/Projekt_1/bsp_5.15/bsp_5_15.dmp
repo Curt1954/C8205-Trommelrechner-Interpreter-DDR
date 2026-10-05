@@ -1,30 +1,20 @@
-3000 00 0200030                 start:       dt    \0123456789  
-3001 00 0010030                              ;                  ; 
-3002 00 0020030                              ;                  ; 
-3003 00 0230030                              ;                  ; 
-3004 00 0040030                              ;                  ; 
-3005 00 0250030                              ;                  ; 
-3006 00 0260030                              ;                  ; 
-3007 00 0070030                              ;                  ; 
-3010 00 0100030                              ;                  ; 
-3011 00 0310030                              ;                  ; 
-3012 00 0320030                              ;                  ; 
-3013 01             3015  000                000   eingabe      
-3014 00 4500030                              030   04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
-3015 01             3000  011   eingabe:     011   start        ;Ab start liegen die Druckbefehle
-3016 01             3021  240                240   druckbefehl  
-3017 01             3021  000                000   druckbefehl  
-3020 00 0400030                              dz    +            
-3021 00 00000000000             druckbefehl: dw    0            
-3022 01             3015  000                000   eingabe      
-     20 0032
-3032 00 2720030                              dz    $wrzl        ; Zeilenschaltung
-3033 01             3015  000                000   eingabe      
-     20 0040
-3040 00 1000030                              dz    -            
-3041 01             3015  000                000   eingabe      
-     20 0073
-3073 00 1530030                              dz    ,            
-3074 01             3015  000                000   eingabe      
-3075 00 1550030                              dz    $tab         
-3076 01             3015  000                000   eingabe      
+0000: 01 0015 000                 000 eingabe     
+0001: 00 4500 030                 030 04500       ; 4500 oder K2 oder LSL2 oder SW1 Output
+0002: 01 0000 011    eingabe:     011 start       ;Ab start liegen die Druckbefehle
+0003: 01 0021 240                 240 druckbefehl 
+0004: 01 0021 000                 000 druckbefehl 
+      00 0400 030                 dz  +           
+0006: 0              druckbefehl: dw  0           
+0007: 01 0015 000                 000 eingabe     
+      20 0000 0032                equ 00032       
+      00 2720 030                 dz  $wrzl       ; Zeilenschaltung
+0033: 00 4700 030                 030 04700       ; 4700 oder K0 oder SW1 Input oder KON Input
+0034: 01 0015 000                 000 eingabe     
+      20 0000 0040                equ 00040       
+      00 1000 030                 dz  -           
+0041: 01 0015 000                 000 eingabe     
+      20 0000 0073                equ 00073       
+      00 1530 030                 dz  ,           
+0074: 01 0015 000                 000 eingabe     
+      00 1550 030                 dz  $tab        
+0076: 01 0015 000                 000 eingabe     

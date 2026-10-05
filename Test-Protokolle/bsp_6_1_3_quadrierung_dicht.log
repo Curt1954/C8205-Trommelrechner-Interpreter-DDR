@@ -1,0 +1,85 @@
+Test bsp_6_1_3_quadrierung_dicht
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00003006211
+  3001: 00007700440
+  3002: 00007700472
+  3003: 00003007211
+  3004: 00007700412
+  3005: 00003000020
+  3006: 35762104535
+  3007: 20000000000
+  #DOK-0001 Zahlwort Festkomma vorn: Quadrierung einer positiven Zahl (Programmieranleitung 6.1.3), x mit voller Stellenzahl; das Ergebnis weicht durch die Rundung um weniger als eine Einheit der letzten Stelle vom exakten Quadrat ab
+  #DOK-0001 Programm nach 6.1.1 ab Zelle 3000; x=<3006>, Konstante 2^-1 in <3007>, Arbeitsspur 7700; 7700 440 Transport von x auf alle Zellen, 7700 472 Teilprodukte, 7700 412 Summierung
+  #DOK-0001 Das Buch nennt im Programm die Adressen 3005/3006 (Laden von x und der Konstanten) und die Summierung 7700 212; das sind Satzfehler. Gemeint sind 3006 211, 3007 211 und 7700 412 (wie in 6.1.1).
+  #DOK-0001 erwartet <AC> = x*x = 34046006623 (oktal)
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 211  (vor Knoten 002)  BZ=3001 AC=35762104535 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 440  (vor Knoten 002)  BZ=3002 AC=35762104535 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 472  (vor Knoten 002)  BZ=3003 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3007 211  (vor Knoten 002)  BZ=3004 AC=20000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 412  (vor Knoten 002)  BZ=3005 AC=34046006623 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3006 AC=34046006623 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3006 ist=3006 OK
+  AC: soll=34046006623 ist=34046006623 OK
+  AR: soll=3000 ist=3000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3006: soll=35762104535 ist=35762104535 OK
+  3007: soll=20000000000 ist=20000000000 OK
+  7700: soll=35762104535 ist=35762104535 OK
+  7701: soll=00000000000 ist=00000000000 OK
+  7702: soll=00000000000 ist=00000000000 OK
+  7703: soll=35762104535 ist=35762104535 OK
+  7704: soll=00000000000 ist=00000000000 OK
+  7705: soll=35762104535 ist=35762104535 OK
+  7706: soll=35762104535 ist=35762104535 OK
+  7707: soll=35762104535 ist=35762104535 OK
+  7710: soll=35762104535 ist=35762104535 OK
+  7711: soll=00000000000 ist=00000000000 OK
+  7712: soll=00000000000 ist=00000000000 OK
+  7713: soll=35762104535 ist=35762104535 OK
+  7714: soll=00000000000 ist=00000000000 OK
+  7715: soll=00000000000 ist=00000000000 OK
+  7716: soll=35762104535 ist=35762104535 OK
+  7717: soll=35762104535 ist=35762104535 OK
+  7720: soll=00000000000 ist=00000000000 OK
+  7721: soll=00000000000 ist=00000000000 OK
+  7722: soll=35762104535 ist=35762104535 OK
+  7723: soll=35762104535 ist=35762104535 OK
+  7724: soll=35762104535 ist=35762104535 OK
+  7725: soll=00000000000 ist=00000000000 OK
+  7726: soll=00000000000 ist=00000000000 OK
+  7727: soll=35762104535 ist=35762104535 OK
+  7730: soll=35762104535 ist=35762104535 OK
+  7731: soll=35762104535 ist=35762104535 OK
+  7732: soll=35762104535 ist=35762104535 OK
+  7733: soll=00000000000 ist=00000000000 OK
+  7734: soll=00000000000 ist=00000000000 OK
+  7735: soll=00000000000 ist=00000000000 OK
+  7736: soll=35762104535 ist=35762104535 OK
+  7737: soll=35762104535 ist=35762104535 OK
+Test wahr

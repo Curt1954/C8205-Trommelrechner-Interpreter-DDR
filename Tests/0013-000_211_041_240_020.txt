@@ -1,6 +1,6 @@
 Trommeldatei:
 #DOK-0014 Test Unbedingter Sprung, Ladebefehl und Addition Positiv-Sprung mit Löschen und Speicherbefehl
-#PROT STUFE=1
+#PROT STUFE=2
 0000: 00005000000
 5000: 00005006211
 5001: 00005007240
@@ -13,3 +13,7 @@ Trommeldatei:
 
 Tastenfolge:
 H G R
+
+Prüfungen:
+BZ=5005 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+

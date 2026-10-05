@@ -1,0 +1,84 @@
+Test bsp_6_2_1_ganze_zahlen_multiplikation
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00003006211
+  3001: 00007700444
+  3002: 00003007211
+  3003: 00007700472
+  3004: 00007700410
+  3005: 00003000020
+  3006: 00000000013
+  3007: 00000000005
+  #DOK-0001 Ganze Festkommazahlen: Multiplikation positiver ganzer Zahlen (Programmieranleitung 6.2.1), Zahlenbeispiel des Buches b=101, a=1011 (dual), a*b=110111 (dual; das Buch nennt im Text 10 111, die Tabelle zeigt richtig 0110111)
+  #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3006>, b=<3007>, Arbeitsspur 7700; 7700 444 Transport von a, je Zelle um ein Bit nach links verschoben (a(i)=a*2^i); 7700 472 Teilprodukte b(i)*a(i); 7700 410 Summierung
+  #DOK-0001 erwartet <AC> = a*b = 11*5 = 55 (dezimal) = 00000000067 (oktal), das Produkt liegt im Zahlenbereich
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 211  (vor Knoten 002)  BZ=3001 AC=00000000013 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 444  (vor Knoten 002)  BZ=3002 AC=40000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3007 211  (vor Knoten 002)  BZ=3003 AC=00000000005 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 472  (vor Knoten 002)  BZ=3004 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 410  (vor Knoten 002)  BZ=3005 AC=00000000067 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3006 AC=00000000067 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3006 ist=3006 OK
+  AC: soll=00000000067 ist=00000000067 OK
+  AR: soll=3000 ist=3000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3006: soll=00000000013 ist=00000000013 OK
+  3007: soll=00000000005 ist=00000000005 OK
+  7700: soll=00000000013 ist=00000000013 OK
+  7701: soll=00000000000 ist=00000000000 OK
+  7702: soll=00000000000 ist=00000000000 OK
+  7703: soll=00000000000 ist=00000000000 OK
+  7704: soll=00000000000 ist=00000000000 OK
+  7705: soll=00000000000 ist=00000000000 OK
+  7706: soll=00000000000 ist=00000000000 OK
+  7707: soll=00000000000 ist=00000000000 OK
+  7710: soll=00000000000 ist=00000000000 OK
+  7711: soll=00000000000 ist=00000000000 OK
+  7712: soll=00000000000 ist=00000000000 OK
+  7713: soll=00000000000 ist=00000000000 OK
+  7714: soll=00000000000 ist=00000000000 OK
+  7715: soll=00000000000 ist=00000000000 OK
+  7716: soll=00000000000 ist=00000000000 OK
+  7717: soll=00000000000 ist=00000000000 OK
+  7720: soll=00000000000 ist=00000000000 OK
+  7721: soll=00000000000 ist=00000000000 OK
+  7722: soll=00000000000 ist=00000000000 OK
+  7723: soll=00000000000 ist=00000000000 OK
+  7724: soll=00000000000 ist=00000000000 OK
+  7725: soll=00000000000 ist=00000000000 OK
+  7726: soll=00000000000 ist=00000000000 OK
+  7727: soll=00000000000 ist=00000000000 OK
+  7730: soll=00000000000 ist=00000000000 OK
+  7731: soll=00000000000 ist=00000000000 OK
+  7732: soll=00000000054 ist=00000000054 OK
+  7733: soll=00000000000 ist=00000000000 OK
+  7734: soll=00000000000 ist=00000000000 OK
+  7735: soll=00000000000 ist=00000000000 OK
+  7736: soll=00000000000 ist=00000000000 OK
+  7737: soll=00000000000 ist=00000000000 OK
+Test wahr

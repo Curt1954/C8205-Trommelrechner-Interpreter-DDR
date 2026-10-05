@@ -1,0 +1,125 @@
+; bsp_5_15_lochband_druck_alle_zeichen.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_15_lochband_druck_alle_zeichen.txt
+; #DOK-0002 Abdruck aller Zeichen des R 300-Codes (Streifen r300_alle_zeichen.txt, "/" am Ende) mit dem Eingabeprogramm 5.15, Leser 2 ->
+;   Schreibwerk
+; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+; --leser2 virtuelle_Geraete/Leser2/r300_alle_zeichen.txt
+; #PROT STUFE=2
+; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
+;   ohne Zelle im Programm sind am Ende per abs definiert.
+
+                start
+
+; Aufbau: Wie im Buchprogramm 5.15 liest die Eingabe (3102) ein Zeichen und wählt die Zelle 3000 v Eingabeadresse (Zellen 3000-3077).
+; Zeichen mit Umstellung in Addition: <AC> := Zelleninhalt (Druckbefehl), speichern nach 3105, dort ausführen.
+; Zeichen mit Sprung-Umstellung: die Zelle enthält einen Sprung zu einer eigenen Druckroutine ab 3200, die zur Eingabe zurückspringt.
+; Anders als im Buch sind alle Zeichen der Tabelle 1 belegt (das Buch behandelt nur Ziffern, Zwischenraum, + - , Tabulator, Wagenrücklauf).
+; Das Zeichen "/" (Eingabeadresse 61) beendet jeden Lochstreifen und steht nur am Streifenende; seine Zelle 3061 enthält den unbedingten
+;   Stopp (wie im Buchprogramm).
+; "Transport" (Relikt, Zeile 52) lässt der Interpreter als Eingabe nicht zu und fehlt im Streifen.
+; "Irrung Zeichen" (gerade Parität) wird vom Leser übersprungen. Die Schreibwerk-Lage (KB/GB) wird durch Um. KB / Um. GB im Streifen
+;   mitgeführt.
+
+; Startstück
+m0000:          000     m3100                    ; Sprung zum Startstück
+                equ     03100
+m3100:          030     04500                    ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+                030     01170                    ; Umschaltung auf KB, danach weiter mit 3102
+
+; Eingabeschleife
+m3102:          011     m3000                    ; Eingabe eines Zeichens, <AC> := Druckbefehl, falls Umstellung in Addition
+                240     m3105                    ; <3105> := Druckbefehl
+                000     m3105                    ; Sprung zum Druckbefehl
+m3105:          000     m0000                    ; Druckbefehl (wird zur Laufzeit gesetzt)
+                000     m3102                    ; Sprung zur Eingabe
+
+; Zeichenzellen (Eingabeadresse, Druckbefehle) und Druckroutinen
+                equ     03000
+m3000:          030     00200                    ; Druckbefehl "0 / #" (Eingabe 00)
+                030     00010                    ; Druckbefehl "1 / <" (Eingabe 01)
+                030     00020                    ; Druckbefehl "2 / "" (Eingabe 02)
+                030     00230                    ; Druckbefehl "3 / ≈" (Eingabe 03)
+                030     00040                    ; Druckbefehl "4 / [" (Eingabe 04)
+                030     00250                    ; Druckbefehl "5 / >" (Eingabe 05)
+                030     00260                    ; Druckbefehl "6 / '" (Eingabe 06)
+                030     00070                    ; Druckbefehl "7 / ≋" (Eingabe 07)
+                030     00100                    ; Druckbefehl "8 / ~" (Eingabe 10)
+                030     00310                    ; Druckbefehl "9 / ]" (Eingabe 11)
+                000     m3222                    ; Sprung zur Druckroutine "Leertaste / ZR" (Eingabe 12)
+                equ     03015
+                000     m3202                    ; Sprung zur Druckroutine ": / (" (Eingabe 15)
+                000     m3224                    ; Sprung zur Druckroutine "Irrung Satz" (Eingabe 16)
+                equ     03020
+                000     m3204                    ; Sprung zur Druckroutine "+ / =" (Eingabe 20)
+                030     00610                    ; Druckbefehl "a / A" (Eingabe 21)
+                030     00620                    ; Druckbefehl "b / B" (Eingabe 22)
+                030     00430                    ; Druckbefehl "c / C" (Eingabe 23)
+                030     00640                    ; Druckbefehl "d / D" (Eingabe 24)
+                030     00450                    ; Druckbefehl "e / E" (Eingabe 25)
+                030     00460                    ; Druckbefehl "f / F" (Eingabe 26)
+                030     00670                    ; Druckbefehl "g / G" (Eingabe 27)
+                030     00700                    ; Druckbefehl "h / H" (Eingabe 30)
+                030     00510                    ; Druckbefehl "i † / I" (Eingabe 31)
+                000     m3212                    ; Sprung zur Druckroutine "SatzMarke / WRZL" (Eingabe 32)
+                000     m3216                    ; Sprung zur Druckroutine ". / !" (Eingabe 33)
+                equ     03037
+                000     m3210                    ; Sprung zur Druckroutine "Um. GB" (Eingabe 37)
+                000     m3220                    ; Sprung zur Druckroutine "- / △" (Eingabe 40)
+                030     01210                    ; Druckbefehl "j / J" (Eingabe 41)
+                030     01220                    ; Druckbefehl "k / K" (Eingabe 42)
+                030     01030                    ; Druckbefehl "l / L" (Eingabe 43)
+                030     01240                    ; Druckbefehl "m / M" (Eingabe 44)
+                030     01050                    ; Druckbefehl "n / N" (Eingabe 45)
+                030     01060                    ; Druckbefehl "o / O" (Eingabe 46)
+                030     01270                    ; Druckbefehl "p / P" (Eingabe 47)
+                030     01300                    ; Druckbefehl "q / Q" (Eingabe 50)
+                030     01110                    ; Druckbefehl "r / R" (Eingabe 51)
+                equ     03057
+                000     m3206                    ; Sprung zur Druckroutine "Um. KB" (Eingabe 57)
+                030     01600                    ; Druckbefehl "` / ;" (Eingabe 60)
+                020     0                        ; "/" (Eingabe 61, letztes Zeichen des Streifens): unbedingter Stopp = Testende
+                030     01420                    ; Druckbefehl "s / S" (Eingabe 62)
+                030     01630                    ; Druckbefehl "t / T" (Eingabe 63)
+                030     01440                    ; Druckbefehl "u / U" (Eingabe 64)
+                030     01650                    ; Druckbefehl "v / V" (Eingabe 65)
+                030     01660                    ; Druckbefehl "w / W" (Eingabe 66)
+                030     01470                    ; Druckbefehl "x / X" (Eingabe 67)
+                030     01500                    ; Druckbefehl "y / Y" (Eingabe 70)
+                030     01710                    ; Druckbefehl "z / Z" (Eingabe 71)
+                equ     03073
+                000     m3214                    ; Sprung zur Druckroutine ", / ?" (Eingabe 73)
+                030     01740                    ; Druckbefehl "% / *" (Eingabe 74)
+                000     m3200                    ; Sprung zur Druckroutine "Tabulator" (Eingabe 75)
+                equ     03200
+m3200:          030     01550                    ; Druck "Tabulator"
+                000     m3102                    ; Sprung zur Eingabe
+m3202:          030     00150                    ; Druck ": / ("
+                000     m3102                    ; Sprung zur Eingabe
+m3204:          030     00400                    ; Druck "+ / ="
+                000     m3102                    ; Sprung zur Eingabe
+m3206:          030     01170                    ; Druck "Um. KB"
+                000     m3102                    ; Sprung zur Eingabe
+m3210:          030     00570                    ; Druck "Um. GB"
+                000     m3102                    ; Sprung zur Eingabe
+m3212:          030     02720                    ; Druck "SatzMarke / WRZL"
+                000     m3102                    ; Sprung zur Eingabe
+m3214:          030     01530                    ; Druck ", / ?"
+                000     m3102                    ; Sprung zur Eingabe
+m3216:          030     00730                    ; Druck ". / !"
+                000     m3102                    ; Sprung zur Eingabe
+m3220:          030     01000                    ; Druck "- / △"
+                000     m3102                    ; Sprung zur Eingabe
+m3222:          030     00320                    ; Druck "Leertaste / ZR"
+                000     m3102                    ; Sprung zur Eingabe
+m3224:          030     00160                    ; Druck "Irrung Satz"
+                000     m3102                    ; Sprung zur Eingabe
+
+                end
+
+; Tastenfolge:
+; H G R
+;
+; Prüfungen:
+; BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+; 3061: 00000000020
+; --pruefe-sw-ausgabe bsp_5_15_lochband_druck_alle_zeichen-sw-ausgabe.txt
+;

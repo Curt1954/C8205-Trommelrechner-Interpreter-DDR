@@ -1,0 +1,107 @@
+Trommeldatei:
+#DOK-0002 Abdruck aller Zeichen des R 300-Codes (Streifen r300_alle_zeichen.txt, "/" am Ende) mit dem Eingabeprogramm 5.15, Leser 2 -> Schreibwerk
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--leser2 virtuelle_Geraete/Leser2/r300_alle_zeichen.txt
+#PROT STUFE=2
+
+# Aufbau: Wie im Buchprogramm 5.15 liest die Eingabe (3102) ein Zeichen und wählt die Zelle 3000 v Eingabeadresse (Zellen 3000-3077).
+# Zeichen mit Umstellung in Addition: <AC> := Zelleninhalt (Druckbefehl), speichern nach 3105, dort ausführen.
+# Zeichen mit Sprung-Umstellung: die Zelle enthält einen Sprung zu einer eigenen Druckroutine ab 3200, die zur Eingabe zurückspringt.
+# Anders als im Buch sind alle Zeichen der Tabelle 1 belegt (das Buch behandelt nur Ziffern, Zwischenraum, + - , Tabulator, Wagenrücklauf).
+# Das Zeichen "/" (Eingabeadresse 61) beendet jeden Lochstreifen und steht nur am Streifenende; seine Zelle 3061 enthält den unbedingten Stopp (wie im Buchprogramm).
+# "Transport" (Relikt, Zeile 52) lässt der Interpreter als Eingabe nicht zu und fehlt im Streifen.
+# "Irrung Zeichen" (gerade Parität) wird vom Leser übersprungen. Die Schreibwerk-Lage (KB/GB) wird durch Um. KB / Um. GB im Streifen mitgeführt.
+
+# Startstück
+0000: 00003100000 # 000 3100 ; Sprung zum Startstück
+3100: 00004500030 # 030 4500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+3101: 00001170030 # 030 1170 ; Umschaltung auf KB, danach weiter mit 3102
+
+# Eingabeschleife
+3102: 00003000011 # 011 3000 ; Eingabe eines Zeichens, <AC> := Druckbefehl, falls Umstellung in Addition
+3103: 00003105240 # 240 3105 ; <3105> := Druckbefehl
+3104: 00003105000 # 000 3105 ; Sprung zum Druckbefehl
+3105: 00000000000 # Druckbefehl (wird zur Laufzeit gesetzt)
+3106: 00003102000 # 000 3102 ; Sprung zur Eingabe
+
+# Zeichenzellen (Eingabeadresse, Druckbefehle) und Druckroutinen
+3000: 00000200030 # 030 0200 ; Druckbefehl "0 / #" (Eingabe 00)
+3001: 00000010030 # 030 0010 ; Druckbefehl "1 / <" (Eingabe 01)
+3002: 00000020030 # 030 0020 ; Druckbefehl "2 / "" (Eingabe 02)
+3003: 00000230030 # 030 0230 ; Druckbefehl "3 / ≈" (Eingabe 03)
+3004: 00000040030 # 030 0040 ; Druckbefehl "4 / [" (Eingabe 04)
+3005: 00000250030 # 030 0250 ; Druckbefehl "5 / >" (Eingabe 05)
+3006: 00000260030 # 030 0260 ; Druckbefehl "6 / '" (Eingabe 06)
+3007: 00000070030 # 030 0070 ; Druckbefehl "7 / ≋" (Eingabe 07)
+3010: 00000100030 # 030 0100 ; Druckbefehl "8 / ~" (Eingabe 10)
+3011: 00000310030 # 030 0310 ; Druckbefehl "9 / ]" (Eingabe 11)
+3012: 00003222000 # 000 3222 ; Sprung zur Druckroutine "Leertaste / ZR" (Eingabe 12)
+3015: 00003202000 # 000 3202 ; Sprung zur Druckroutine ": / (" (Eingabe 15)
+3016: 00003224000 # 000 3224 ; Sprung zur Druckroutine "Irrung Satz" (Eingabe 16)
+3020: 00003204000 # 000 3204 ; Sprung zur Druckroutine "+ / =" (Eingabe 20)
+3021: 00000610030 # 030 0610 ; Druckbefehl "a / A" (Eingabe 21)
+3022: 00000620030 # 030 0620 ; Druckbefehl "b / B" (Eingabe 22)
+3023: 00000430030 # 030 0430 ; Druckbefehl "c / C" (Eingabe 23)
+3024: 00000640030 # 030 0640 ; Druckbefehl "d / D" (Eingabe 24)
+3025: 00000450030 # 030 0450 ; Druckbefehl "e / E" (Eingabe 25)
+3026: 00000460030 # 030 0460 ; Druckbefehl "f / F" (Eingabe 26)
+3027: 00000670030 # 030 0670 ; Druckbefehl "g / G" (Eingabe 27)
+3030: 00000700030 # 030 0700 ; Druckbefehl "h / H" (Eingabe 30)
+3031: 00000510030 # 030 0510 ; Druckbefehl "i † / I" (Eingabe 31)
+3032: 00003212000 # 000 3212 ; Sprung zur Druckroutine "SatzMarke / WRZL" (Eingabe 32)
+3033: 00003216000 # 000 3216 ; Sprung zur Druckroutine ". / !" (Eingabe 33)
+3037: 00003210000 # 000 3210 ; Sprung zur Druckroutine "Um. GB" (Eingabe 37)
+3040: 00003220000 # 000 3220 ; Sprung zur Druckroutine "- / △" (Eingabe 40)
+3041: 00001210030 # 030 1210 ; Druckbefehl "j / J" (Eingabe 41)
+3042: 00001220030 # 030 1220 ; Druckbefehl "k / K" (Eingabe 42)
+3043: 00001030030 # 030 1030 ; Druckbefehl "l / L" (Eingabe 43)
+3044: 00001240030 # 030 1240 ; Druckbefehl "m / M" (Eingabe 44)
+3045: 00001050030 # 030 1050 ; Druckbefehl "n / N" (Eingabe 45)
+3046: 00001060030 # 030 1060 ; Druckbefehl "o / O" (Eingabe 46)
+3047: 00001270030 # 030 1270 ; Druckbefehl "p / P" (Eingabe 47)
+3050: 00001300030 # 030 1300 ; Druckbefehl "q / Q" (Eingabe 50)
+3051: 00001110030 # 030 1110 ; Druckbefehl "r / R" (Eingabe 51)
+3057: 00003206000 # 000 3206 ; Sprung zur Druckroutine "Um. KB" (Eingabe 57)
+3060: 00001600030 # 030 1600 ; Druckbefehl "` / ;" (Eingabe 60)
+3061: 00000000020 # 020 0 ; "/" (Eingabe 61, letztes Zeichen des Streifens): unbedingter Stopp = Testende
+3062: 00001420030 # 030 1420 ; Druckbefehl "s / S" (Eingabe 62)
+3063: 00001630030 # 030 1630 ; Druckbefehl "t / T" (Eingabe 63)
+3064: 00001440030 # 030 1440 ; Druckbefehl "u / U" (Eingabe 64)
+3065: 00001650030 # 030 1650 ; Druckbefehl "v / V" (Eingabe 65)
+3066: 00001660030 # 030 1660 ; Druckbefehl "w / W" (Eingabe 66)
+3067: 00001470030 # 030 1470 ; Druckbefehl "x / X" (Eingabe 67)
+3070: 00001500030 # 030 1500 ; Druckbefehl "y / Y" (Eingabe 70)
+3071: 00001710030 # 030 1710 ; Druckbefehl "z / Z" (Eingabe 71)
+3073: 00003214000 # 000 3214 ; Sprung zur Druckroutine ", / ?" (Eingabe 73)
+3074: 00001740030 # 030 1740 ; Druckbefehl "% / *" (Eingabe 74)
+3075: 00003200000 # 000 3200 ; Sprung zur Druckroutine "Tabulator" (Eingabe 75)
+3200: 00001550030 # 030 1550 ; Druck "Tabulator"
+3201: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3202: 00000150030 # 030 0150 ; Druck ": / ("
+3203: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3204: 00000400030 # 030 0400 ; Druck "+ / ="
+3205: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3206: 00001170030 # 030 1170 ; Druck "Um. KB"
+3207: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3210: 00000570030 # 030 0570 ; Druck "Um. GB"
+3211: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3212: 00002720030 # 030 2720 ; Druck "SatzMarke / WRZL"
+3213: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3214: 00001530030 # 030 1530 ; Druck ", / ?"
+3215: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3216: 00000730030 # 030 0730 ; Druck ". / !"
+3217: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3220: 00001000030 # 030 1000 ; Druck "- / △"
+3221: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3222: 00000320030 # 030 0320 ; Druck "Leertaste / ZR"
+3223: 00003102000 # 000 3102 ; Sprung zur Eingabe
+3224: 00000160030 # 030 0160 ; Druck "Irrung Satz"
+3225: 00003102000 # 000 3102 ; Sprung zur Eingabe
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3061: 00000000020
+--pruefe-sw-ausgabe bsp_5_15_lochband_druck_alle_zeichen-sw-ausgabe.txt

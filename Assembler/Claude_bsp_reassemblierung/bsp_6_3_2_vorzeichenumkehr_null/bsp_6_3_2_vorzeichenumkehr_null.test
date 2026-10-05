@@ -1,0 +1,15 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003000000 # m0000: 000 m3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+3000: 00007777211 # m3000: 211 m7777 ; 7777 211 ; <AC>:=x
+3001: 00007777340 # 340 m7777 ; 7777 340 ; Vergleicher 3, falls x=0 (Vgl 1: x<0, Vgl 2: x>0)
+3002: 00003005170 # 170 m3005 ; 3005 170 ; Vergleichersprung 3: Pruefen, ob x=0
+3003: 00003006210 # 210 d3006 ; 3006 210 ; <AC>:=x+4000 0000 000 (Vorzeichen z0 umgekehrt; Ueberlauf bei x<0)
+3004: 00003005070 # 070 m3005 ; 3005 070 ; Ueberlaufsprung (loescht den Ueberlauf, verhindert den Halt)
+3005: 00003000020 # m3005: 020 03000 ; 3000 020 ; unbedingter Stopp
+3006: 40000000000 # d3006: dw 040000000000 ; Konstante 4000 0000 000 (nur z0)
+7777: 00000000000 # m7777: 000 m0000 ; x = 0
+Tastenfolge:
+H G R

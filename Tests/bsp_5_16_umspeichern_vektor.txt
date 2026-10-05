@@ -1,0 +1,64 @@
+Trommeldatei:
+#DOK-0001 Umspeichern eines Vektors (Programmieranleitung 5.16), Programm wie im Buch ab Zelle 3000, Parameter a°=4034, n°=6 Komponenten, b°=4106
+#DOK-0001 Quellvektor 4034-4041 (Spurgrenze 4037/4040 wird überschritten), Zielvektor 4106-4113; erwartet: alle sechs Komponenten ab 4106 kopiert, <3006>=n°, <3016>=(b+5) 240
+#SPEI-0001 3000-3026
+#SPEI-0001 4034-4041
+#SPEI-0001 4106-4113
+#PROT STUFE=2
+
+# Programm 5.16 (Programmanfang in Zelle 3000, wie im Buch; Start über 0000)
+0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang
+3000: 00003007000 # 3007 000 ; Programmanfang
+# Parameter
+3001: 00004034000 # a° = Adresse der ersten Komponente des gespeicherten Vektors
+3002: 00000006000 # n° = Dimension des Vektors (6 Adresseneinheiten)
+3003: 00004106000 # b° = Adresse der ersten Komponente des umgespeicherten Vektors
+# Konstanten
+3004: 00000001000 # 0001 000 ; Adresseneinheit
+3005: 00000000240 # 0000 240 ; Speicherbefehl
+# Arbeitszelle
+3006: 00000000000 # i (wird zur Laufzeit gesetzt)
+3007: 00003006241 # 3006 241 ; i:=0
+3010: 00003003210 # 3003 210 ; <AC>:=(b+i)°
+3011: 00003005210 # 3005 210 ; <AC>:=(b+i) 240
+3012: 00003016240 # 3016 240 ; <3016>:=(b+i) 240
+3013: 00003006211 # 3006 211 ; <AC>:=i°
+3014: 00003001210 # 3001 210 ; <AC>:=(a+i)°
+3015: 00000000251 # 0000 251 ; <AC>:=a(i+1)
+3016: 00000000000 # (b+i) 240 ; <b+i>:=a(i+1) (wird zur Laufzeit gesetzt)
+3017: 00003006211 # 3006 211 ; <AC>:=i°
+3020: 00003004210 # 3004 210 ; <AC>:=(i+1)°
+3021: 00003006240 # 3006 240 ; i:=i+1
+3022: 00003002330 # 3002 330 ; Vergleicher 3, falls i=n
+3023: 00003025170 # 3025 170 ; Prüfen, ob i=n
+3024: 00003010000 # 3010 000 ; Schleife
+# Programmende (im Buch 0000 020; hier mit Debug-Befehl davor)
+3025: 00000001164 # 164 0001 ; DEBUG Nr. 0001
+3026: 00000000020 # 020 0 ; Programmende, unbedingter Stopp
+# Quellvektor
+4034: 70000000101 # a1
+4035: 12345670202 # a2
+4036: 00000000303 # a3
+4037: 77777777777 # a4
+4040: 00000000505 # a5 (hinter der Spurgrenze)
+4041: 50505050606 # a6
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3027 AC=00000006000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+3006: 00000006000
+3016: 00004113240
+4034: 70000000101
+4035: 12345670202
+4036: 00000000303
+4037: 77777777777
+4040: 00000000505
+4041: 50505050606
+4106: 70000000101
+4107: 12345670202
+4110: 00000000303
+4111: 77777777777
+4112: 00000000505
+4113: 50505050606

@@ -1,0 +1,63 @@
+Test bsp_6_3_3_ordnen_ohne_tausch
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003002000
+  3002: 00003000215
+  3003: 00003006642
+  3004: 00003001215
+  3005: 00003007002
+  3007: 00003023330
+  3010: 00003017140
+  3011: 00003000211
+  3012: 00003006240
+  3013: 00003001211
+  3014: 00003000240
+  3015: 00003006211
+  3016: 00003001240
+  3017: 00003002020
+  3000: 62310000000
+  3001: 21320000000
+  #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Ordnen eines Zahlenpaares nach dem Betrag (6.3.3), |b|<|a|, kein Tausch
+  #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+  #DOK-0001 Programm wie im Buch ab Zelle 3002; a=<3000>, b=<3001>; der Betragsvergleich |b|<=|a| ist als Ganzzahlvergleich der Betraege moeglich (Exponent steht vor der Mantisse, z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und 3023 (Sektor 06 und 23 liegen physisch nebeneinander)
+  #DOK-0001 erwartet: kein Tausch (|b|<=|a|); <3000> = 62310000000, <3001> = 21320000000, V1=1 V2=0, <AC> = 21320000000
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 215  (vor Knoten 002)  BZ=3003 AC=44620000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 642  (vor Knoten 002)  BZ=3004 AC=11144000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 215  (vor Knoten 002)  BZ=3005 AC=42640000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3007 002  (vor Knoten 007)  BZ=3006 AC=21320000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3023 330  (vor Knoten 002)  BZ=3010 AC=21320000000 FÜ=0 V1=1 V2=0 V3=0
+  BR=3017 100  (vor Knoten 007)  BZ=3011 AC=21320000000 FÜ=0 V1=1 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3020 AC=21320000000 AR=3002 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3020 ist=3020 OK
+  AC: soll=21320000000 ist=21320000000 OK
+  AR: soll=3002 ist=3002 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=1 ist=1 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=62310000000 ist=62310000000 OK
+  3001: soll=21320000000 ist=21320000000 OK
+  3006: soll=44620000000 ist=44620000000 OK
+  3023: soll=22310000000 ist=22310000000 OK
+Test wahr

@@ -2,11 +2,11 @@
 
 Symboltabelle
 
-Symbol                             | RelAddr | Adresse
------------------------------------| ------- | --------
+Symbol                             | RelAddr |    Adresse      | original Operation
+-----------------------------------| ------- | --------------- | ----------------
 
 
 Adresstabelle
 
-Symbol                             | RelAddr | Adresse
------------------------------------| ------- | --------
+Symbol                             | RelAddr |    Adresse
+-----------------------------------| ------- | ---------------

@@ -1,0 +1,11 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003000000 # 000 m3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+3000: 00007777215 # m3000: 215 d7777 ; 7777 215 ; <AC>:=Vl(x), Linksverschiebung (Vorzeichen z0 faellt heraus)
+3001: 00003002002 # 002 m3002 ; 3002 002 ; <AC>:=|x|, Rechtsverschiebung (Sprung zur naechsten Zelle)
+3002: 00003000020 # m3002: 020 03000 ; 3000 020 ; unbedingter Stopp
+7777: 62600000000 # d7777: dw 062600000000 ; x = -0.5*2^5
+Tastenfolge:
+H G R

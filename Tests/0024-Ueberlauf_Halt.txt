@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0002 Test Halt wegen Ueberlauf: nach einem Ueberlauf folgt kein Ueberlaufsprung, nur FUE ist gesetzt (weder US noch BS)
+#PROT STUFE=2
+0000: 00003000211
+0001: 00003001210
+0002: 00003001210
+0003: 00000000020
+# Beginn Datenbereich
+3000: 37777777777
+3001: 00000000001
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=0003 AC=40000000000 AR=3001 FE=0 FUE=1 BS=0 US=0 E=0 A=0 V1=0 V2=0
+3000: 37777777777
+3001: 00000000001
+

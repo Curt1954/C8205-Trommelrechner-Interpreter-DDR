@@ -28,6 +28,13 @@
 #include <termios.h>
 #endif
 
+// Portabilitäts-Shim: mingw-w64/MSVCRT kennt nur mkdir(pfad) ohne Modus
+#ifdef _WIN32
+#define MKDIR(pfad, modus) mkdir(pfad)
+#else
+#define MKDIR(pfad, modus) mkdir(pfad, modus)
+#endif
+
 
 #define PFs(label, param) printf(" %s %s :%s:", label, #param, (param))
 #define PFi(label, param) printf(" %s %s :%i:", label, #param, (param))
@@ -102,6 +109,10 @@ do { \
 #define _hellblau "\033[1;34m"
 #define _hellrot "\033[1;31m"
 
+
+// Rueckgabecodes des Assemblers: 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch)
+#define RC_OK      0
+#define RC_FEHLER 16
 
 // Konstanten
 

@@ -1,0 +1,16 @@
+
+Trommeldatei:
+#DOK-0001 Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp
+--leser1 virtuelle_Geraete/Leser1/lb-003_paritaetsfehler.txt
+#PROT STUFE=2
+
+0000: 00002000000 # 000 go
+2000: 00004600030 # 030 4600 ; Anwahl Kanal 1 (Leser 1)
+2001: 00000000010 # 010 0 ; Eingabe-Halt 1. Art
+2002: 00000000020 # 020 0 ; unbedingter Stopp
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=2002 AC=00000000000 AR=0000 FE=1 FUE=0 BS=0 US=0 E=1 A=0 V1=0 V2=0

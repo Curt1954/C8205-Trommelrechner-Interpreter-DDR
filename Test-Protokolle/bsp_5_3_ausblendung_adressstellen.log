@@ -1,0 +1,67 @@
+Test bsp_5_3_ausblendung_adressstellen
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003003000
+  3000: 52525103523
+  3001: 00007777000
+  3002: 00000000000
+  3003: 00003000211
+  3004: 00003001200
+  3005: 00003002240
+  3006: 00000001164
+  3007: 00000000020
+  #DOK-0001 Ausblendung der Adressstellen (Programmieranleitung 5.3): Adressteil a des Befehls in Zelle 3000 nach Zelle 3002
+  #DOK-0001 Befehl in 3000: beliebige Bits 5252, a=5103, BAZ=523; Konstante in 3001: 0000 7777 000; erwartet <3002> = 0000 5103 000
+  #SPEI-0001 3000-3002
+  #SPEI-0001 3003-3007
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3003 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 211  (vor Knoten 002)  BZ=3004 AC=52525103523 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 200  (vor Knoten 002)  BZ=3005 AC=00005103000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 240  (vor Knoten 002)  BZ=3006 AC=00005103000 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Ausblendung der Adressstellen (Programmieranleitung 5.3): Adressteil a des Befehls in Zelle 3000 nach Zelle 3002
+#DOK-0001 Befehl in 3000: beliebige Bits 5252, a=5103, BAZ=523; Konstante in 3001: 0000 7777 000; erwartet <3002> = 0000 5103 000
+#SPEI-0001 3000-3002
+3000: 52525103523
+3001: 00007777000
+3002: 00005103000
+#SPEI-0001 3003-3007
+3003: 00003000211
+3004: 00003001200
+3005: 00003002240
+3006: 00000001164
+3007: 00000000020
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=3007 AC=00005103000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3010 AC=00005103000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3010 ist=3010 OK
+  AC: soll=00005103000 ist=00005103000 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=52525103523 ist=52525103523 OK
+  3001: soll=00007777000 ist=00007777000 OK
+  3002: soll=00005103000 ist=00005103000 OK
+Test wahr

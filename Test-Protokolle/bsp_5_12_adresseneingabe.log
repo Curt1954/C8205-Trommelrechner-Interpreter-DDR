@@ -1,0 +1,104 @@
+Test bsp_5_12_adresseneingabe
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002000000
+  2000: 00004600030
+  2001: 00003052000
+  3000: 00003040014
+  3001: 00003002004
+  3002: 00003000004
+  3003: 00000001164
+  3004: 00000000020
+  3040: 00000000000
+  3041: 00000000100
+  3042: 00000000200
+  3043: 00000000300
+  3044: 00000000400
+  3045: 00000000500
+  3046: 00000000600
+  3047: 00000000700
+  3052: 00003000001
+  3073: 00003003002
+  #DOK-0001 Adresseneingabe (Programmieranleitung 5.12), Eingabe der Adresse 1234 mit Schlusszeichen Punkt
+  #DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); 3000 3040 014 liest ein Zeichen, Ziffern werden mit 3 Linksverschiebungen aufgebaut, ZWR (3052) loescht den AC, Punkt (3073) beendet die Eingabe mit einer Rechtsverschiebung
+  #DOK-0001 erwartet <AC> = 00001234000
+  #SPEI-0001 3000-3003
+  #SPEI-0001 3040-3047
+  #SPEI-0001 3052-3052
+  #SPEI-0001 3073-3073
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=4600 030  (vor Knoten 002)  BZ=2001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3052 000  (vor Knoten 007)  BZ=2002 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 001  (vor Knoten 007)  BZ=3053 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3040 214  (vor Knoten 002)  BZ=3001 AC=00000000200 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 004  (vor Knoten 007)  BZ=3002 AC=00000000400 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 004  (vor Knoten 007)  BZ=3003 AC=00000001000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3040 214  (vor Knoten 002)  BZ=3001 AC=00000002400 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 004  (vor Knoten 007)  BZ=3002 AC=00000005000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 004  (vor Knoten 007)  BZ=3003 AC=00000012000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3040 214  (vor Knoten 002)  BZ=3001 AC=00000024600 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 004  (vor Knoten 007)  BZ=3002 AC=00000051400 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 004  (vor Knoten 007)  BZ=3003 AC=00000123000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3040 214  (vor Knoten 002)  BZ=3001 AC=00000247000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 004  (vor Knoten 007)  BZ=3002 AC=00000516000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 004  (vor Knoten 007)  BZ=3003 AC=00001234000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3040 004  (vor Knoten 007)  BZ=3001 AC=00002470000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3003 002  (vor Knoten 007)  BZ=3074 AC=00001234000 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Adresseneingabe (Programmieranleitung 5.12), Eingabe der Adresse 1234 mit Schlusszeichen Punkt
+#DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); 3000 3040 014 liest ein Zeichen, Ziffern werden mit 3 Linksverschiebungen aufgebaut, ZWR (3052) loescht den AC, Punkt (3073) beendet die Eingabe mit einer Rechtsverschiebung
+#DOK-0001 erwartet <AC> = 00001234000
+#SPEI-0001 3000-3003
+3000: 00003040014
+3001: 00003002004
+3002: 00003000004
+3003: 00000001164
+#SPEI-0001 3040-3047
+3040: 00000000000
+3041: 00000000100
+3042: 00000000200
+3043: 00000000300
+3044: 00000000400
+3045: 00000000500
+3046: 00000000600
+3047: 00000000700
+#SPEI-0001 3052-3052
+3052: 00003000001
+#SPEI-0001 3073-3073
+3073: 00003003002
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=3004 AC=00001234000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3005 AC=00001234000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3005 ist=3005 OK
+  AC: soll=00001234000 ist=00001234000 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=00003040014 ist=00003040014 OK
+  3040: soll=00000000000 ist=00000000000 OK
+  3047: soll=00000000700 ist=00000000700 OK
+  3052: soll=00003000001 ist=00003000001 OK
+  3073: soll=00003003002 ist=00003003002 OK
+Test wahr

@@ -1,0 +1,98 @@
+Test bsp_5_19_2_teilwoerter
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003005000
+  3000: 52526317434
+  3004: 77760000000
+  3005: 00003006000
+  3006: 00003000211
+  3007: 00003001240
+  3010: 00007702646
+  3011: 00003003240
+  3012: 00003032000
+  3032: 00007702646
+  3033: 00003002240
+  3034: 00003035000
+  3035: 00003004211
+  3036: 00003047000
+  3047: 00003001250
+  3050: 00003002250
+  3051: 00003003250
+  3052: 00000001164
+  3053: 00000000020
+  #DOK-0001 Zeitoptimale Programmierung, Trennung des Maschinenwortes in Teilwoerter (Programmieranleitung 5.19.2, Aufgabe wie 5.7)
+  #DOK-0001 (A;B;C) mit A=2525 B=1463 C=3434 (je 11 Bit, oktal) in 3000; zwei 22malige zyklische Linksverschiebungen (W-Befehl 7702 646, Sektor 02 bis 23); erwartet <3001>=(A;0;0), <3002>=(B;0;0), <3003>=(C;0;0)
+  #SPEI-0001 3000-3004
+  #SPEI-0001 3047-3051
+  #SPEI-0001 7702-7702
+  #SPEI-0001 7723-7723
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3005 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 000  (vor Knoten 007)  BZ=3006 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 211  (vor Knoten 002)  BZ=3007 AC=52526317434 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 240  (vor Knoten 002)  BZ=3010 AC=52526317434 FÜ=0 V1=0 V2=0 V3=0
+  BR=7702 646  (vor Knoten 002)  BZ=3011 AC=70712525463 FÜ=0 V1=0 V2=0 V3=0
+  BR=3003 240  (vor Knoten 002)  BZ=3012 AC=70712525463 FÜ=0 V1=0 V2=0 V3=0
+  BR=3032 000  (vor Knoten 007)  BZ=3013 AC=70712525463 FÜ=0 V1=0 V2=0 V3=0
+  BR=7702 646  (vor Knoten 002)  BZ=3033 AC=31476162525 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 240  (vor Knoten 002)  BZ=3034 AC=31476162525 FÜ=0 V1=0 V2=0 V3=0
+  BR=3035 000  (vor Knoten 007)  BZ=3035 AC=31476162525 FÜ=0 V1=0 V2=0 V3=0
+  BR=3004 211  (vor Knoten 002)  BZ=3036 AC=77760000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3047 000  (vor Knoten 007)  BZ=3037 AC=77760000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 250  (vor Knoten 002)  BZ=3050 AC=77760000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 250  (vor Knoten 002)  BZ=3051 AC=77760000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3003 250  (vor Knoten 002)  BZ=3052 AC=77760000000 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Zeitoptimale Programmierung, Trennung des Maschinenwortes in Teilwoerter (Programmieranleitung 5.19.2, Aufgabe wie 5.7)
+#DOK-0001 (A;B;C) mit A=2525 B=1463 C=3434 (je 11 Bit, oktal) in 3000; zwei 22malige zyklische Linksverschiebungen (W-Befehl 7702 646, Sektor 02 bis 23); erwartet <3001>=(A;0;0), <3002>=(B;0;0), <3003>=(C;0;0)
+#SPEI-0001 3000-3004
+3000: 52526317434
+3001: 52520000000
+3002: 31460000000
+3003: 70700000000
+3004: 77760000000
+#SPEI-0001 3047-3051
+3047: 00003001250
+3050: 00003002250
+3051: 00003003250
+#SPEI-0001 7702-7702
+7702: 70712525463
+#SPEI-0001 7723-7723
+7723: 54637071252
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=3053 AC=77760000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3054 AC=77760000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3054 ist=3054 OK
+  AC: soll=77760000000 ist=77760000000 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=52526317434 ist=52526317434 OK
+  3001: soll=52520000000 ist=52520000000 OK
+  3002: soll=31460000000 ist=31460000000 OK
+  3003: soll=70700000000 ist=70700000000 OK
+  3004: soll=77760000000 ist=77760000000 OK
+  7702: soll=70712525463 ist=70712525463 OK
+  7723: soll=54637071252 ist=54637071252 OK
+Test wahr

@@ -1,0 +1,68 @@
+Test bsp_5_4_multiplikation_mit_10
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003010211
+  0001: 00003000000
+  3000: 00003006644
+  3001: 00003006214
+  3002: 00000001164
+  3003: 00000000020
+  3010: 00000000007
+  #DOK-0001 Multiplikation mit 10 (Programmieranleitung 5.4), a=7 (dezimal), erwartet AC=70 dezimal = 106 oktal
+  #DOK-0001 3006 644: <AC>:=2^2*a=4a, <3006>:=a, <3023>:=2a (W-Befehl endet bei Sektor 23); 3006 214: <AC>:=2(4a+a)=10a
+  #SPEI-0001 3000-3003
+  #SPEI-0001 3006-3006
+  #SPEI-0001 3010-3010
+  #SPEI-0001 3023-3023
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3010 211  (vor Knoten 002)  BZ=0001 AC=00000000007 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0002 AC=00000000007 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 644  (vor Knoten 002)  BZ=3001 AC=00000000034 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 214  (vor Knoten 002)  BZ=3002 AC=00000000106 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Multiplikation mit 10 (Programmieranleitung 5.4), a=7 (dezimal), erwartet AC=70 dezimal = 106 oktal
+#DOK-0001 3006 644: <AC>:=2^2*a=4a, <3006>:=a, <3023>:=2a (W-Befehl endet bei Sektor 23); 3006 214: <AC>:=2(4a+a)=10a
+#SPEI-0001 3000-3003
+3000: 00003006644
+3001: 00003006214
+3002: 00000001164
+3003: 00000000020
+#SPEI-0001 3006-3006
+3006: 00000000007
+#SPEI-0001 3010-3010
+3010: 00000000007
+#SPEI-0001 3023-3023
+3023: 00000000016
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=3003 AC=00000000106 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3004 AC=00000000106 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3004 ist=3004 OK
+  AC: soll=00000000106 ist=00000000106 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3006: soll=00000000007 ist=00000000007 OK
+  3010: soll=00000000007 ist=00000000007 OK
+  3023: soll=00000000016 ist=00000000016 OK
+Test wahr

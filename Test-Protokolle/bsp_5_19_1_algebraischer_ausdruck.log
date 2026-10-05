@@ -1,0 +1,78 @@
+Test bsp_5_19_1_algebraischer_ausdruck
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003003000
+  3000: 00000000005
+  3001: 00000000003
+  3002: 00000000002
+  3003: 00003006000
+  3006: 00003000215
+  3007: 00003001220
+  3010: 00003002224
+  3011: 00003031000
+  3031: 00003000214
+  3032: 00003001220
+  3033: 00000001164
+  3034: 00000000020
+  #DOK-0001 Zeitoptimale Programmierung, algebraischer Ausdruck (Programmieranleitung 5.19.1, Aufgabe wie 5.5): a=5, b=3, c=2, positives Ergebnis
+  #DOK-0001 Programm 5.19.1 wie im Buch (Zellen 3003, 3006-3011, 3031-3032); Operanden a=<3000>, b=<3001>, c=<3002>; Befehlsfolge: 2a, 2a-b, 2(2a-b-c), 2(2(2a-b-c)+a), -b
+  #DOK-0001 erwartet <AC> = 00000000033 (oktal), x = 10a - 5b - 4c
+  #SPEI-0001 3000-3002
+  #SPEI-0001 3031-3034
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3003 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3006 000  (vor Knoten 007)  BZ=3004 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 215  (vor Knoten 002)  BZ=3007 AC=00000000012 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 220  (vor Knoten 002)  BZ=3010 AC=00000000007 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 224  (vor Knoten 002)  BZ=3011 AC=00000000012 FÜ=0 V1=0 V2=0 V3=0
+  BR=3031 000  (vor Knoten 007)  BZ=3012 AC=00000000012 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 214  (vor Knoten 002)  BZ=3032 AC=00000000036 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 220  (vor Knoten 002)  BZ=3033 AC=00000000033 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Zeitoptimale Programmierung, algebraischer Ausdruck (Programmieranleitung 5.19.1, Aufgabe wie 5.5): a=5, b=3, c=2, positives Ergebnis
+#DOK-0001 Programm 5.19.1 wie im Buch (Zellen 3003, 3006-3011, 3031-3032); Operanden a=<3000>, b=<3001>, c=<3002>; Befehlsfolge: 2a, 2a-b, 2(2a-b-c), 2(2(2a-b-c)+a), -b
+#DOK-0001 erwartet <AC> = 00000000033 (oktal), x = 10a - 5b - 4c
+#SPEI-0001 3000-3002
+3000: 00000000005
+3001: 00000000003
+3002: 00000000002
+#SPEI-0001 3031-3034
+3031: 00003000214
+3032: 00003001220
+3033: 00000001164
+3034: 00000000020
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=3034 AC=00000000033 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3035 AC=00000000033 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3035 ist=3035 OK
+  AC: soll=00000000033 ist=00000000033 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=00000000005 ist=00000000005 OK
+  3001: soll=00000000003 ist=00000000003 OK
+  3002: soll=00000000002 ist=00000000002 OK
+  3031: soll=00003000214 ist=00003000214 OK
+  3032: soll=00003001220 ist=00003001220 OK
+Test wahr

@@ -1,0 +1,43 @@
+Test 0024-Ueberlauf_Halt
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000211
+  0001: 00003001210
+  0002: 00003001210
+  0003: 00000000020
+  3000: 37777777777
+  3001: 00000000001
+  #DOK-0002 Test Halt wegen Ueberlauf: nach einem Ueberlauf folgt kein Ueberlaufsprung, nur FUE ist gesetzt (weder US noch BS)
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 211  (vor Knoten 002)  BZ=0001 AC=37777777777 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 210  (vor Knoten 002)  BZ=0002 AC=40000000000 FÜ=1 V1=0 V2=0 V3=0
+
+== Ende ==
+Halt wegen Ueberlauf (FUE bereits 1)
+BZ=0003 AC=40000000000 AR=3001 FE=0 FUE=1 BS=0 US=0 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0003 ist=0003 OK
+  AC: soll=40000000000 ist=40000000000 OK
+  AR: soll=3001 ist=3001 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=1 ist=1 OK
+  BS: soll=0 ist=0 OK
+  US: soll=0 ist=0 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=37777777777 ist=37777777777 OK
+  3001: soll=00000000001 ist=00000000001 OK
+Test wahr

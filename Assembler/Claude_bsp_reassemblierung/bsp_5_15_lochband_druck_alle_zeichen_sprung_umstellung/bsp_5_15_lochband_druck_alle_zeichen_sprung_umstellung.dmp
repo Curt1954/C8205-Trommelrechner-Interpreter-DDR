@@ -1,0 +1,144 @@
+0000: 01 3100 000    m0000: 000 m3100        ; Sprung zum Startstück
+      20 0000 3100          equ 03100        
+3100: 00 4500 030    m3100: 030 04500        ; Anwahl Kanal K2 (Leser 2)
+3101: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3102: 01 3000 011    m3102: 011 m3000        ; Eingabe eines Zeichens, <AC> := Zelleninhalt, falls Umstellung in Addition
+3103: 01 3105 240           240 m3105        ; <3105> := <AC>
+3104: 01 3105 000           000 m3105        ; Sprung zu 3105
+3105: 01 0000 000    m3105: 000 m0000        ; (wird zur Laufzeit gesetzt)
+3106: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+      20 0000 3000          equ 03000        
+3000: 01 3400 240    m3000: 240 d3400        ; "0 / #" (Eingabe 00, Sprung-Umstellung nein): <3400> := <AC> (erwartet: dieser Befehl
+3001: 01 3401 240           240 d3401        ; "1 / <" (Eingabe 01, Sprung-Umstellung nein): <3401> := <AC> (erwartet: dieser Befehl
+3002: 01 3402 240           240 d3402        ; "2 / "" (Eingabe 02, Sprung-Umstellung nein): <3402> := <AC> (erwartet: dieser Befehl
+3003: 01 3403 240           240 d3403        ; "3 / ≈" (Eingabe 03, Sprung-Umstellung nein): <3403> := <AC> (erwartet: dieser Befehl
+3004: 01 3404 240           240 d3404        ; "4 / [" (Eingabe 04, Sprung-Umstellung nein): <3404> := <AC> (erwartet: dieser Befehl
+3005: 01 3405 240           240 d3405        ; "5 / >" (Eingabe 05, Sprung-Umstellung nein): <3405> := <AC> (erwartet: dieser Befehl
+3006: 01 3406 240           240 d3406        ; "6 / '" (Eingabe 06, Sprung-Umstellung nein): <3406> := <AC> (erwartet: dieser Befehl
+3007: 01 3407 240           240 d3407        ; "7 / ≋" (Eingabe 07, Sprung-Umstellung nein): <3407> := <AC> (erwartet: dieser Befehl
+3010: 01 3410 240           240 d3410        ; "8 / ~" (Eingabe 10, Sprung-Umstellung nein): <3410> := <AC> (erwartet: dieser Befehl
+3011: 01 3411 240           240 d3411        ; "9 / ]" (Eingabe 11, Sprung-Umstellung nein): <3411> := <AC> (erwartet: dieser Befehl
+3012: 01 3222 000           000 m3222        ; "Leertaste / ZR" (Eingabe 12, Sprung-Umstellung ja): Sprung zur Routine
+      20 0000 3015          equ 03015        
+3015: 01 3202 000           000 m3202        ; ": / (" (Eingabe 15, Sprung-Umstellung ja): Sprung zur Routine
+3016: 01 3224 000           000 m3224        ; "Irrung Satz" (Eingabe 16, Sprung-Umstellung ja): Sprung zur Routine
+      20 0000 3020          equ 03020        
+3020: 01 3204 000           000 m3204        ; "+ / =" (Eingabe 20, Sprung-Umstellung ja): Sprung zur Routine
+3021: 01 3421 240           240 d3421        ; "a / A" (Eingabe 21, Sprung-Umstellung nein): <3421> := <AC> (erwartet: dieser Befehl
+3022: 01 3422 240           240 d3422        ; "b / B" (Eingabe 22, Sprung-Umstellung nein): <3422> := <AC> (erwartet: dieser Befehl
+3023: 01 3423 240           240 d3423        ; "c / C" (Eingabe 23, Sprung-Umstellung nein): <3423> := <AC> (erwartet: dieser Befehl
+3024: 01 3424 240           240 d3424        ; "d / D" (Eingabe 24, Sprung-Umstellung nein): <3424> := <AC> (erwartet: dieser Befehl
+3025: 01 3425 240           240 d3425        ; "e / E" (Eingabe 25, Sprung-Umstellung nein): <3425> := <AC> (erwartet: dieser Befehl
+3026: 01 3426 240           240 d3426        ; "f / F" (Eingabe 26, Sprung-Umstellung nein): <3426> := <AC> (erwartet: dieser Befehl
+3027: 01 3427 240           240 d3427        ; "g / G" (Eingabe 27, Sprung-Umstellung nein): <3427> := <AC> (erwartet: dieser Befehl
+3030: 01 3430 240           240 d3430        ; "h / H" (Eingabe 30, Sprung-Umstellung nein): <3430> := <AC> (erwartet: dieser Befehl
+3031: 01 3431 240           240 d3431        ; "i † / I" (Eingabe 31, Sprung-Umstellung nein): <3431> := <AC> (erwartet: dieser Befehl
+3032: 01 3212 000           000 m3212        ; "SatzMarke / WRZL" (Eingabe 32, Sprung-Umstellung ja): Sprung zur Routine
+3033: 01 3216 000           000 m3216        ; ". / !" (Eingabe 33, Sprung-Umstellung ja): Sprung zur Routine
+      20 0000 3037          equ 03037        
+3037: 01 3210 000           000 m3210        ; "Um. GB" (Eingabe 37, Sprung-Umstellung ja): Sprung zur Routine
+3040: 01 3220 000           000 m3220        ; "- / △" (Eingabe 40, Sprung-Umstellung ja): Sprung zur Routine
+3041: 01 3441 240           240 d3441        ; "j / J" (Eingabe 41, Sprung-Umstellung nein): <3441> := <AC> (erwartet: dieser Befehl
+3042: 01 3442 240           240 d3442        ; "k / K" (Eingabe 42, Sprung-Umstellung nein): <3442> := <AC> (erwartet: dieser Befehl
+3043: 01 3443 240           240 d3443        ; "l / L" (Eingabe 43, Sprung-Umstellung nein): <3443> := <AC> (erwartet: dieser Befehl
+3044: 01 3444 240           240 d3444        ; "m / M" (Eingabe 44, Sprung-Umstellung nein): <3444> := <AC> (erwartet: dieser Befehl
+3045: 01 3445 240           240 d3445        ; "n / N" (Eingabe 45, Sprung-Umstellung nein): <3445> := <AC> (erwartet: dieser Befehl
+3046: 01 3446 240           240 d3446        ; "o / O" (Eingabe 46, Sprung-Umstellung nein): <3446> := <AC> (erwartet: dieser Befehl
+3047: 01 3447 240           240 d3447        ; "p / P" (Eingabe 47, Sprung-Umstellung nein): <3447> := <AC> (erwartet: dieser Befehl
+3050: 01 3450 240           240 d3450        ; "q / Q" (Eingabe 50, Sprung-Umstellung nein): <3450> := <AC> (erwartet: dieser Befehl
+3051: 01 3451 240           240 d3451        ; "r / R" (Eingabe 51, Sprung-Umstellung nein): <3451> := <AC> (erwartet: dieser Befehl
+      20 0000 3057          equ 03057        
+3057: 01 3206 000           000 m3206        ; "Um. KB" (Eingabe 57, Sprung-Umstellung ja): Sprung zur Routine
+3060: 01 3460 240           240 d3460        ; "` / ;" (Eingabe 60, Sprung-Umstellung nein): <3460> := <AC> (erwartet: dieser Befehl
+3061: 01 0000 020           020 0            ; "/" (Eingabe 61, Streifenende): unbedingter Stopp, Sprung-Umstellung ja
+3062: 01 3462 240           240 d3462        ; "s / S" (Eingabe 62, Sprung-Umstellung nein): <3462> := <AC> (erwartet: dieser Befehl
+3063: 01 3463 240           240 d3463        ; "t / T" (Eingabe 63, Sprung-Umstellung nein): <3463> := <AC> (erwartet: dieser Befehl
+3064: 01 3464 240           240 d3464        ; "u / U" (Eingabe 64, Sprung-Umstellung nein): <3464> := <AC> (erwartet: dieser Befehl
+3065: 01 3465 240           240 d3465        ; "v / V" (Eingabe 65, Sprung-Umstellung nein): <3465> := <AC> (erwartet: dieser Befehl
+3066: 01 3466 240           240 d3466        ; "w / W" (Eingabe 66, Sprung-Umstellung nein): <3466> := <AC> (erwartet: dieser Befehl
+3067: 01 3467 240           240 d3467        ; "x / X" (Eingabe 67, Sprung-Umstellung nein): <3467> := <AC> (erwartet: dieser Befehl
+3070: 01 3470 240           240 d3470        ; "y / Y" (Eingabe 70, Sprung-Umstellung nein): <3470> := <AC> (erwartet: dieser Befehl
+3071: 01 3471 240           240 d3471        ; "z / Z" (Eingabe 71, Sprung-Umstellung nein): <3471> := <AC> (erwartet: dieser Befehl
+      20 0000 3073          equ 03073        
+3073: 01 3214 000           000 m3214        ; ", / ?" (Eingabe 73, Sprung-Umstellung ja): Sprung zur Routine
+3074: 01 3474 240           240 d3474        ; "% / *" (Eingabe 74, Sprung-Umstellung nein): <3474> := <AC> (erwartet: dieser Befehl
+3075: 01 3200 000           000 m3200        ; "Tabulator" (Eingabe 75, Sprung-Umstellung ja): Sprung zur Routine
+      20 0000 3200          equ 03200        
+3200: 01 3475 240    m3200: 240 d3475        ; <3475> := <AC>  (erwartet 0)
+3201: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3202: 01 3415 240    m3202: 240 d3415        ; <3415> := <AC>  (erwartet 0)
+3203: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3204: 01 3420 240    m3204: 240 d3420        ; <3420> := <AC>  (erwartet 0)
+3205: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3206: 01 3457 240    m3206: 240 d3457        ; <3457> := <AC>  (erwartet 0)
+3207: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3210: 01 3437 240    m3210: 240 d3437        ; <3437> := <AC>  (erwartet 0)
+3211: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3212: 01 3432 240    m3212: 240 d3432        ; <3432> := <AC>  (erwartet 0)
+3213: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3214: 01 3473 240    m3214: 240 d3473        ; <3473> := <AC>  (erwartet 0)
+3215: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3216: 01 3433 240    m3216: 240 d3433        ; <3433> := <AC>  (erwartet 0)
+3217: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3220: 01 3440 240    m3220: 240 d3440        ; <3440> := <AC>  (erwartet 0)
+3221: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3222: 01 3412 240    m3222: 240 d3412        ; <3412> := <AC>  (erwartet 0)
+3223: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+3224: 01 3416 240    m3224: 240 d3416        ; <3416> := <AC>  (erwartet 0)
+3225: 01 3102 000           000 m3102        ; Sprung zur Eingabe
+      20 0000 3400          equ 03400        
+3400: 00 77777777777 d3400: dw  077777777777 ; Marke für "0 / #" (Eingabe 00): Vorbelegung, wird bei Lauf überschrieben
+3401: 00 77777777777 d3401: dw  077777777777 ; Marke für "1 / <" (Eingabe 01): Vorbelegung, wird bei Lauf überschrieben
+3402: 00 77777777777 d3402: dw  077777777777 ; Marke für "2 / "" (Eingabe 02): Vorbelegung, wird bei Lauf überschrieben
+3403: 00 77777777777 d3403: dw  077777777777 ; Marke für "3 / ≈" (Eingabe 03): Vorbelegung, wird bei Lauf überschrieben
+3404: 00 77777777777 d3404: dw  077777777777 ; Marke für "4 / [" (Eingabe 04): Vorbelegung, wird bei Lauf überschrieben
+3405: 00 77777777777 d3405: dw  077777777777 ; Marke für "5 / >" (Eingabe 05): Vorbelegung, wird bei Lauf überschrieben
+3406: 00 77777777777 d3406: dw  077777777777 ; Marke für "6 / '" (Eingabe 06): Vorbelegung, wird bei Lauf überschrieben
+3407: 00 77777777777 d3407: dw  077777777777 ; Marke für "7 / ≋" (Eingabe 07): Vorbelegung, wird bei Lauf überschrieben
+3410: 00 77777777777 d3410: dw  077777777777 ; Marke für "8 / ~" (Eingabe 10): Vorbelegung, wird bei Lauf überschrieben
+3411: 00 77777777777 d3411: dw  077777777777 ; Marke für "9 / ]" (Eingabe 11): Vorbelegung, wird bei Lauf überschrieben
+3412: 00 77777777777 d3412: dw  077777777777 ; Marke für "Leertaste / ZR" (Eingabe 12): Vorbelegung, wird bei Lauf überschrieben
+      20 0000 3415          equ 03415        
+3415: 00 77777777777 d3415: dw  077777777777 ; Marke für ": / (" (Eingabe 15): Vorbelegung, wird bei Lauf überschrieben
+3416: 00 77777777777 d3416: dw  077777777777 ; Marke für "Irrung Satz" (Eingabe 16): Vorbelegung, wird bei Lauf überschrieben
+      20 0000 3420          equ 03420        
+3420: 00 77777777777 d3420: dw  077777777777 ; Marke für "+ / =" (Eingabe 20): Vorbelegung, wird bei Lauf überschrieben
+3421: 00 77777777777 d3421: dw  077777777777 ; Marke für "a / A" (Eingabe 21): Vorbelegung, wird bei Lauf überschrieben
+3422: 00 77777777777 d3422: dw  077777777777 ; Marke für "b / B" (Eingabe 22): Vorbelegung, wird bei Lauf überschrieben
+3423: 00 77777777777 d3423: dw  077777777777 ; Marke für "c / C" (Eingabe 23): Vorbelegung, wird bei Lauf überschrieben
+3424: 00 77777777777 d3424: dw  077777777777 ; Marke für "d / D" (Eingabe 24): Vorbelegung, wird bei Lauf überschrieben
+3425: 00 77777777777 d3425: dw  077777777777 ; Marke für "e / E" (Eingabe 25): Vorbelegung, wird bei Lauf überschrieben
+3426: 00 77777777777 d3426: dw  077777777777 ; Marke für "f / F" (Eingabe 26): Vorbelegung, wird bei Lauf überschrieben
+3427: 00 77777777777 d3427: dw  077777777777 ; Marke für "g / G" (Eingabe 27): Vorbelegung, wird bei Lauf überschrieben
+3430: 00 77777777777 d3430: dw  077777777777 ; Marke für "h / H" (Eingabe 30): Vorbelegung, wird bei Lauf überschrieben
+3431: 00 77777777777 d3431: dw  077777777777 ; Marke für "i † / I" (Eingabe 31): Vorbelegung, wird bei Lauf überschrieben
+3432: 00 77777777777 d3432: dw  077777777777 ; Marke für "SatzMarke / WRZL" (Eingabe 32): Vorbelegung, wird bei Lauf überschrieben
+3433: 00 77777777777 d3433: dw  077777777777 ; Marke für ". / !" (Eingabe 33): Vorbelegung, wird bei Lauf überschrieben
+      20 0000 3437          equ 03437        
+3437: 00 77777777777 d3437: dw  077777777777 ; Marke für "Um. GB" (Eingabe 37): Vorbelegung, wird bei Lauf überschrieben
+3440: 00 77777777777 d3440: dw  077777777777 ; Marke für "- / △" (Eingabe 40): Vorbelegung, wird bei Lauf überschrieben
+3441: 00 77777777777 d3441: dw  077777777777 ; Marke für "j / J" (Eingabe 41): Vorbelegung, wird bei Lauf überschrieben
+3442: 00 77777777777 d3442: dw  077777777777 ; Marke für "k / K" (Eingabe 42): Vorbelegung, wird bei Lauf überschrieben
+3443: 00 77777777777 d3443: dw  077777777777 ; Marke für "l / L" (Eingabe 43): Vorbelegung, wird bei Lauf überschrieben
+3444: 00 77777777777 d3444: dw  077777777777 ; Marke für "m / M" (Eingabe 44): Vorbelegung, wird bei Lauf überschrieben
+3445: 00 77777777777 d3445: dw  077777777777 ; Marke für "n / N" (Eingabe 45): Vorbelegung, wird bei Lauf überschrieben
+3446: 00 77777777777 d3446: dw  077777777777 ; Marke für "o / O" (Eingabe 46): Vorbelegung, wird bei Lauf überschrieben
+3447: 00 77777777777 d3447: dw  077777777777 ; Marke für "p / P" (Eingabe 47): Vorbelegung, wird bei Lauf überschrieben
+3450: 00 77777777777 d3450: dw  077777777777 ; Marke für "q / Q" (Eingabe 50): Vorbelegung, wird bei Lauf überschrieben
+3451: 00 77777777777 d3451: dw  077777777777 ; Marke für "r / R" (Eingabe 51): Vorbelegung, wird bei Lauf überschrieben
+      20 0000 3457          equ 03457        
+3457: 00 77777777777 d3457: dw  077777777777 ; Marke für "Um. KB" (Eingabe 57): Vorbelegung, wird bei Lauf überschrieben
+3460: 00 77777777777 d3460: dw  077777777777 ; Marke für "` / ;" (Eingabe 60): Vorbelegung, wird bei Lauf überschrieben
+      20 0000 3462          equ 03462        
+3462: 00 77777777777 d3462: dw  077777777777 ; Marke für "s / S" (Eingabe 62): Vorbelegung, wird bei Lauf überschrieben
+3463: 00 77777777777 d3463: dw  077777777777 ; Marke für "t / T" (Eingabe 63): Vorbelegung, wird bei Lauf überschrieben
+3464: 00 77777777777 d3464: dw  077777777777 ; Marke für "u / U" (Eingabe 64): Vorbelegung, wird bei Lauf überschrieben
+3465: 00 77777777777 d3465: dw  077777777777 ; Marke für "v / V" (Eingabe 65): Vorbelegung, wird bei Lauf überschrieben
+3466: 00 77777777777 d3466: dw  077777777777 ; Marke für "w / W" (Eingabe 66): Vorbelegung, wird bei Lauf überschrieben
+3467: 00 77777777777 d3467: dw  077777777777 ; Marke für "x / X" (Eingabe 67): Vorbelegung, wird bei Lauf überschrieben
+3470: 00 77777777777 d3470: dw  077777777777 ; Marke für "y / Y" (Eingabe 70): Vorbelegung, wird bei Lauf überschrieben
+3471: 00 77777777777 d3471: dw  077777777777 ; Marke für "z / Z" (Eingabe 71): Vorbelegung, wird bei Lauf überschrieben
+      20 0000 3473          equ 03473        
+3473: 00 77777777777 d3473: dw  077777777777 ; Marke für ", / ?" (Eingabe 73): Vorbelegung, wird bei Lauf überschrieben
+3474: 00 77777777777 d3474: dw  077777777777 ; Marke für "% / *" (Eingabe 74): Vorbelegung, wird bei Lauf überschrieben
+3475: 00 77777777777 d3475: dw  077777777777 ; Marke für "Tabulator" (Eingabe 75): Vorbelegung, wird bei Lauf überschrieben

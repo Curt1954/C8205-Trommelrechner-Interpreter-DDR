@@ -32,6 +32,7 @@ gekürzt), Ausgabe von `ls -1R`:
 ```
 ./Assembler:
 c82ass                         # Batch-Datei zum Erzeugen des Assemblers
+c82ass.bat                     # Batch-Datei zum Erzeugen des Assemblers unter Windows (Pendant zu c82ass)
 c82ass.sh                      # Ausführen des Assemblers
 Dokumentation                  # diese Dokumentation
 _Linux                         # Linux-Binary des Assemblers
@@ -43,7 +44,7 @@ Sourcecode                     # C-Quellcode des Assemblers selbst
 _Windows                       # Windows-Binary des Assemblers
 
 ./Assembler/Dokumentation:
-'C8205_Assembler Dokumentation.odt'
+C8205_Assembler_Dokumentation.md   C8205_Assembler_Dokumentation.odt   C8205_Assembler_Dokumentation.pdf
 
 ./Assembler/_Linux:
 c82ass
@@ -71,8 +72,11 @@ Quelltext, die erzeugte Objektdatei (die K1K2-ladefähige Textdatei) und weitere
 Programme `c82ass`, `c82load`, `c82dump`, `c82simi` erwarten ihre Dateien immer in einem
 Projektunterverzeichnis, das im gleichen Pfad wie sie selbst liegen muss.
 
-In der vorliegenden Projektstruktur ist nur `c82ass` enthalten; die Programme `c82load`, `c82dump` und
-`c82simi` (sowie der `C8205Simulator`) liegen nicht bei.
+In der vorliegenden Projektstruktur ist nur `c82ass` enthalten. Die Programme `c82load`, `c82dump`, `c82simi`
+und der `C8205Simulator` sind nicht Teil dieses Projekts und liegen nicht bei; sie werden in dieser Dokumentation
+nur erwähnt, weil `c82ass` Dateien für sie erzeugt (`.mqo` und `.obj` für `c82load`, `.mqo` für `c82simi`, `.sym`
+für `c82dump`). Für die Prüfung von Assemblerergebnissen im Interpreter dient stattdessen die Datei `.test`
+(s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a).
 
 `c82ass` ist ein Shell-Script zum Erzeugen des Assemblers. Die `.bat`-Datei leistet das Gleiche für den
 MinGW-w64-Crosscompiler unter Windows. Der Pfad `_Linux` enthält alle Linux-Binaries und Libraries, der
@@ -81,7 +85,7 @@ Pfad `_Windows` die Pendants für Windows 10. `Sourcecode` enthält ausschließl
 
 ## 2. Überblick
 
-Sowohl das Programm `c82ass.sh` als auch das `c82ass.bat`-Pendant werden über Aufrufparameter versorgt.
+Sowohl das Programm `c82ass.sh` (Linux) als auch das Windows-Binary `_Windows\c82ass.exe` (die Datei `c82ass.bat` erzeugt es nur) werden über Aufrufparameter versorgt.
 Bei jedem Start eines der Programme werden die jeweils letztbenutzten Parameter automatisch in der Datei
 `projekdetails` abgelegt, sodass ein Folgestart ohne Angabe von Parametern gelingt. Zur Änderung müssen
 die Parameter einfach mit veränderten Werten wieder angegeben werden.
@@ -101,11 +105,13 @@ Version: 0.2
 
 Der Assembler `c82ass` erwartet eine Eingabedatei mit `<quelltext>` unter einem Dateinamen `.asm`.
 
+- **Pass 0:** liest die Makrodatei `c82ass.makros` (fester Name; gesucht zuerst im Arbeitsverzeichnis des Aufrufs, sonst in `Sourcecode/`),
+  prüft die Makrodefinitionen und löst die Makroaufrufe im Quelltext auf (Abschnitt 4).
 - **Pass 1:** ermittelt die Literaltabelle, ausgegeben im Logfile `.log`.
-- **Pass 2:** ermittelt die Symboltabelle, ebenfalls im Logfile `.log` ausgegeben.
-- **Pass 3:** erzeugt eine Datei mit modifiziertem (unformatiertem) Quelltext, ausgegeben in der `.mqt`-
-  Datei; hier sind die Literale aufgelöst. Daraus erzeugt er ebenfalls im Pass 3 die Kennzeichenbefehle
-  für das „Kleine Eingabeprogramm", ausgegeben im Objektfile `.obj`.
+- **Pass 2:** ermittelt die Symboltabelle, ausgegeben im Logfile `.log`, und schreibt die Symboldatei `.sym`.
+- **Pass 3:** erzeugt aus dem aufgelösten Quelltext (Literale und Symbole eingesetzt) die Kennzeichenbefehle
+  für das „Kleine Eingabeprogramm", ausgegeben im Objektfile `.obj`. Im selben Pass entstehen die Hilfsdatei
+  `.mqo`, die formatierte Speicherbelegung `.dmp` und die Trommeldatei `.test` für den Interpreter.
 
 Auf STDOUT gibt der Assembler den formatierten Quelltext (einschließlich der aufgelösten Literale) aus.
 Fehlermeldungen erfolgen innerhalb dieser Ausgabe.
@@ -125,18 +131,18 @@ Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`
 | Endung | Inhalt |
 |---|---|
 | `.asm` | Quelltext (Eingabe) |
-| `.dmp` | (Zweck in dieser Quelle nicht beschrieben; s. a. offene Punkte in `C8205-Projektstruktur.md`, Abschnitt 4) |
+| `.dmp` | formatierte Speicherbelegung (Listing): je Zeile Adresse mit Maschinenwort (`<adresse>: <K1> [<K2>] [<Wert>]`), Label, Mnemonic, Operand und Kommentar in Spalten. Es ist dasselbe Listing, das der Assembler auf STDOUT ausgibt (Meldung „Ausgabe der formatierten Speicherbelegung nach: …“) |
 | `.log` | Literaltabelle, Symboltabelle, Tabelle der absoluten Symbole |
 | `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet |
-| `.mqt` | modifizierter Quelltext, Literale eingearbeitet |
 | `.obj` | mit `c82load` ladefähiger Objektcode K1K2 |
 | `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen |
-| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`); Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
-| `.l82` | mit `C8205Simulator` ladefähiger Objektcode K1K2 über das Pseudo-Gerät Lochstreifenleser |
+| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Platzhalter-Definitionen für Testmarken und Tastenfolge sowie ggf. dem Leerbefehl 164, die für den jeweiligen Fall ergänzt bzw. erweitert werden müssen; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
 
-(`.mqt` und `.l82` werden in `C8205-Projektstruktur.md`, Abschnitt 4, als "offener Punkt" geführt: In den
-vorhandenen Projektverzeichnissen entstehen diese Endungen laut dortiger Beobachtung nicht, obwohl sie
-hier in der Assemblerdokumentation beschrieben sind.)
+Vor jedem Lauf löscht der Assembler die Dateien `.log`, `.obj`, `.mqo`, `.sym`, `.test` und `.dmp` des
+Projekts und erzeugt sie neu. Die früher in dieser Dokumentation genannten Endungen `.mqt` (modifizierter
+Quelltext) und `.l82` (Objektcode für den `C8205Simulator`) erzeugt der aktuelle Assembler nicht mehr; sie sind
+hier gestrichen. Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an (im Kommentar zu Pass 1 steht
+nur ein Rest davon).
 
 ### 3.2 Sprachdefinition
 
@@ -413,7 +419,9 @@ nicht ergänzt.)
 ## 4. Der Makro-Präprozessor des Assemblers
 
 Der Präprozessor ist sehr einfach gehalten und hat eine starre Syntax. Er prüft, ob eine Operation ein
-Makroname ist. Die Prüfung erfolgt in der Textdatei `ca82ass.makros`, die erweitert werden darf.
+Makroname ist. Die Prüfung erfolgt in der Textdatei `c82ass.makros`, die erweitert werden darf. Der Assembler sucht sie unter
+diesem festen Namen zuerst im Arbeitsverzeichnis des Aufrufs, sonst unter `Sourcecode/c82ass.makros`; fehlt sie
+an beiden Orten, bricht er mit einer Fehlermeldung ab.
 
 - Jedes dort definierte Makro beginnt mit dem Makronamen, unmittelbar gefolgt von einem Doppelpunkt und
   nach einem Tab dem Schlüsselwort `MACRO`.
@@ -540,19 +548,23 @@ C8205 Assembler C82aas Version 0.2
 Projektverzeichnis: Projekt_1
 Benutze für -s die Datei: bsp_5_16.asm
 Eingabedatei: Projekt_1/bsp_5.16/bsp_5_16.asm
-Modifizierte Datei: Projekt_1/bsp_5.16/bsp_5_16.mqt
 Log-Datei: Projekt_1/bsp_5.16/bsp_5_16.log
 Maschinencode-Datei: Projekt_1/bsp_5.16/bsp_5_16.obj
 Hilfsdatei: Projekt_1/bsp_5.16/bsp_5_16.mqo
 Symboltabelle-Datei: Projekt_1/bsp_5.16/bsp_5_16.sym
 Verarbeite Quellcode: Projekt_1/bsp_5.16/bsp_5_16.asm
 
+Pass 0
+Verarbeite 'c82ass.makros', Erzeuge Macroersetzungen
+
 Pass 1
-Verarbeite Projekt_1/bsp_5.16/bsp_5_16.asm, Ermittle Literale
+Löse Literale auf
+
 Pass 2
-Verarbeite Projekt_1/bsp_5.16/bsp_5_16.mqt, Löse Symbole auf
+Löse Symbole auf nach Projekt_1/bsp_5.16/bsp_5_16.log und Projekt_1/bsp_5.16/bsp_5_16.sym
+
 Pass 3
-Verarbeite Projekt_1/bsp_5.16/bsp_5_16.mqt, Erzeuge Kennzeichen-Befehle.
+Erzeuge Kennzeichen-Befehle in Objektdatei Projekt_1/bsp_5.16/bsp_5_16.obj
 ```
 
 Quelltext (`; C8205 Heft 2 Programmierung in Maschinensprache; Beispiel: 5.16 Umspeichern eines

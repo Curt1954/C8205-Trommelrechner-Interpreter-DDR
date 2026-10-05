@@ -1,0 +1,20 @@
+Trommeldatei:
+#DOK-0001 Test 065 (bedingter Sprung mit Rückkehrabsicht), SP nicht gesetzt: kein Sprung, AC=0, erg=0
+#PROT STUFE=2
+0000: 00000004000 # 000 haupt
+0001: 00000000000 # erg: dw 0
+0002: 00000000001 # eins: dw 1
+0004: 00000006065 # haupt: 065 up ; Aufruf nur, wenn SP gesetzt
+0005: 00000000020 # 020 0 ; Halt
+0006: 00000003240 # up: 240 rueck ; Rücksprungwort sichern
+0007: 00000002211 # 211 eins
+0010: 00000001240 # 240 erg ; erg := 1
+0011: 00000003000 # 000 rueck
+
+Tastenfolge:
+H G SP=0 R
+
+Prüfungen:
+BZ=0006 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+0001: 00000000000
+0003: 00000000000

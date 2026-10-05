@@ -1,0 +1,37 @@
+; bsp_5_4_multiplikation_mit_10.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_4_multiplikation_mit_10.txt
+; #DOK-0001 Multiplikation mit 10 (Programmieranleitung 5.4), a=7 (dezimal), erwartet AC=70 dezimal = 106 oktal
+; #DOK-0001 3006 644: <AC>:=2^2*a=4a, <3006>:=a, <3023>:=2a (W-Befehl endet bei Sektor 23); 3006 214: <AC>:=2(4a+a)=10a
+; #SPEI-0001 3000-3003
+; #SPEI-0001 3006-3006
+; #SPEI-0001 3010-3010
+; #SPEI-0001 3023-3023
+; #PROT STUFE=2
+; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
+;   ohne Zelle im Programm sind am Ende per abs definiert.
+
+                start
+
+                211     d3010                    ; <AC>:=a (Vorbereitung: AC muss laut Aufgabe schon a enthalten)
+                000     m3000                    ; Sprung zum Programmbeginn der Aufgabe in Zelle 3000
+; Programm nach Programmieranleitung 5.4
+                equ     03000
+m3000:          644     d3006                    ; <AC>:=4a, <3006>:=a, <3023>:=2a
+                214     d3006                    ; <AC>:=2(4a+a)=10a
+                164     00001                    ; DEBUG Nr. 0001
+                020     0                        ; unbedingter Stop
+; Beginn Datenbereich
+                equ     03010
+d3010:          dw      07                       ; a = 7
+
+                end
+d3006:          abs     03006
+
+; Tastenfolge:
+; H G R
+;
+; Prüfungen:
+; BZ=3004 AC=00000000106 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+; 3006: 00000000007
+; 3010: 00000000007
+; 3023: 00000000016
+;

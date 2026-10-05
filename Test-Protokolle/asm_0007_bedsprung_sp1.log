@@ -1,0 +1,52 @@
+Test asm_0007_bedsprung_sp1
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00000004000
+  0001: 00000000000
+  0002: 00000000001
+  0004: 00000006065
+  0005: 00000000020
+  0006: 00000003240
+  0007: 00000002211
+  0010: 00000001240
+  0011: 00000003000
+  #DOK-0001 Test 065 (bedingter Sprung mit Rückkehrabsicht), SP gesetzt: Unterprogramm läuft, erg=1
+  #PROT STUFE=2
+Tastenfolge: H G SP=1 R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  SP : Schalter SP gedrueckt (eingerastet) -> Flag SP := 1
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0004 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0006 005  (vor Knoten 007)  BZ=0005 AC=00000005000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0003 240  (vor Knoten 002)  BZ=0007 AC=00000005000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0002 211  (vor Knoten 002)  BZ=0010 AC=00000000001 FÜ=0 V1=0 V2=0 V3=0
+  BR=0001 240  (vor Knoten 002)  BZ=0011 AC=00000000001 FÜ=0 V1=0 V2=0 V3=0
+  BR=0003 000  (vor Knoten 007)  BZ=0012 AC=00000000001 FÜ=0 V1=0 V2=0 V3=0
+  BR=0005 000  (vor Knoten 007)  BZ=0004 AC=00000000001 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0006 AC=00000000001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0006 ist=0006 OK
+  AC: soll=00000000001 ist=00000000001 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  0001: soll=00000000001 ist=00000000001 OK
+  0003: soll=00000005000 ist=00000005000 OK
+Test wahr

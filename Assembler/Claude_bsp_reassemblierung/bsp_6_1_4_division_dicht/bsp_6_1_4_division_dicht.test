@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003000000 # 000 m3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+3000: 00003011212 # m3000: 212 d3011 ; 3011 212 ; <AC>:=2^-1*b
+3001: 00007700440 # 440 d7700 ; 7700 440 ; Transport von 2^-1*b auf alle Zellen der Arbeitsspur
+3002: 00003012211 # 211 d3012 ; 3012 211 ; <AC>:=7777 7777 777
+3003: 00007700454 # 454 d7700 ; 7700 454 ; niedrige Bits von b in den Zellen der Arbeitsspur loeschen
+3004: 00003010221 # 221 d3010 ; 3010 221 ; <AC>:=-a
+3005: 00003011210 # 210 d3011 ; 3011 210 ; <AC>:=b-a
+3006: 00007700436 # 436 d7700 ; 7700 436 ; <AC>:=+-q (Divisionsvorgang)
+3007: 00003000020 # 020 03000 ; 3000 020 ; unbedingter Stopp
+3010: 27351646213 # d3010: dw 027351646213 ; a
+3011: 35762104535 # d3011: dw 035762104535 ; b
+3012: 37777777777 # d3012: dw 037777777777 ; Maske zum Abschneiden der niedrigsten Bits von b
+Tastenfolge:
+H G R

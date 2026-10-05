@@ -1,0 +1,94 @@
+      21 0000 3720                start  2000         
+0000: 01 0213 241                 241    i            ; i löschen, damit Programm mehrfach gestartet werden kann.
+0001: 01 0200 215                 215    len0         ; Lade len0 in AC und 1x Linksverschiebung
+0002: 01 0003 004                 004    *+1          ; Verschiebe AC 1x links (2)
+0003: 01 0004 004                 004    *+1          ; Verschiebe AC 1x links (3)
+0004: 01 0005 004                 004    *+1          ; Verschiebe AC 1x links (4)
+0005: 01 0006 004                 004    *+1          ; Verschiebe AC 1x links (5)
+0006: 01 0007 004                 004    *+1          ; Verschiebe AC 1x links (6)
+0007: 01 0010 004                 004    *+1          ; Verschiebe AC 1x links (7)
+0010: 01 0011 004                 004    *+1          ; Verschiebe AC 1x links (8)
+0011: 01 0012 004                 004    *+1          ; Verschiebe AC 1x links (9)
+0012: 01 0201 240                 240    len          
+0013: 01 4021 605                 605    04021        ; 9 mal Linksverschiebung
+0014: 01 0020 000                 000    firstEntry   
+0015: 01 0213 211    loop1:       211    i            ; Lade i
+0016: 01 0217 210                 210    l0001        ; Addiere 1 Adreßeinheit zu `i`
+0017: 01 0213 240                 240    i            ; Speichere nach i
+0020: 01 0213 211    firstEntry:  211    i            ; Lade i
+0021: 01 0201 330                 330    len          ; Vergleiche mit aktuellem `AC=i`  mir len
+0022: 01 0202 150                 150    ausgabe      ; Falls `i > len`, springe zur Ausgabe des sortieren Array
+0023: 01 0215 240                 240    min_index    ; Setze `min_index = (AC=i)`
+0024: 01 0213 211                 211    i            
+0025: 01 0214 240                 240    j            ; j := i
+0026: 01 0214 211    loop2:       211    j            
+0027: 01 0217 210                 210    l0001        ; j := j +1  Adreßliteral @1 geht nicht, das k1k2=01
+0030: 01 0214 240                 240    j            ; Speichere `i + 1` in `j`
+0031: 01 0214 211                 211    j            ; Lade `j`
+0032: 01 0212 210                 210    afeld_base   ; Addiere Anfangsadresse des Arrays
+0033: 01 0220 210                 210    l0002        ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
+0034: 01 0044 240                 240    iladebefehl  ; Speichere den Ladebefehl für `afeld_base[j]` nach iladebefehl
+0035: 01 0215 211                 211    min_index    ; Lade `min_index` in den Akkumulator
+0036: 01 0212 210                 210    afeld_base   ; Addiere Anfangsadresse des Arrays
+0037: 01 0221 210                 210    l0003        ; Füge den Vergleicher-Befehls-Operationscode zur Adresse hinzu
+0040: 01 0045 240                 240    jvglbefehl   ; Speichere den Vergleichsbefehl für `afeld_base[min_index]`
+0041: 01 0214 211                 211    j            ; Lade j
+0042: 01 0201 330                 330    len          ; Vergleiche min_index mit len
+0043: 01 0054 150                 150    m1           ; Falls `min_index > len`, springe zu `m1` beende zweite Schleife
+0044: 20 0045        iladebefehl: db     1            ; von ARRAY_LOAD: Hier steht der Ladebefehl für `AC := array[j]`
+0045: 20 0046        jvglbefehl:  db     1            ; von ARRAY_VGL:  Hier steht der Vergleichsbefehl mit `AC ? array[min_index]`
+0046: 01 0050 170                 170    *+2          ; wenn AC=array[j] <iladebefehl> = array[min_index] <jvglbefehl>, weiter
+0047: 01 0026 150                 150    loop2        ; wenn AC=array[j] <iladebefehl> > array[min_index] <jvglbefehl>, nächster Durchlauf
+0050: 01 0215 240                 240    min_index    ; Speichere j nach min-Index
+0051: 01 0214 211                 211    j            ; Lade j in AC bei array[j] < array[min_index]
+0052: 01 0215 240                 240    min_index    ; Speichere j nach min-Index
+0053: 01 0026 000                 000    loop2        ; nächster Durchlauf Schleife 2
+0054: 01 0215 211    m1:          211    min_index    ; Lade min_index in AC
+0055: 01 0213 330                 330    i            ; Vergleiche mit i
+0056: 01 0015 170                 170    loop1        ; Springe wenn  AC=min_index == i
+      20 0000 0057                equ    00057        ; automatisch generiert
+      20 0000 0057   swap:        equ    00057        ; automatisch generiert
+0057: 01 0213 211                 211    i            ; Lade `i`
+0060: 01 0212 210                 210    afeld_base   ; Addiere Anfangsadresse des Arrays
+0061: 01 0220 210                 210    l0002        ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
+0062: 01 0075 240                 240    ML0004MTA    ; Speichere den vollständigen Ladebefehl für `afeld_base[i]`
+0063: 01 0222 200                 200    l0004        ; Operationscoede 211 ausblenden
+0064: 01 0223 210                 210    l0005        ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu
+0065: 01 0100 240                 240    ML0002MTA    ; Speichere Speicherbefehl für `afeld_base[min_index]` zum Umladen temporäres Element
+0066: 01 0215 211                 211    min_index    ; Lade `min_index`
+0067: 01 0212 210                 210    afeld_base   ; Addiere Anfangsadresse des Arrays
+0070: 01 0223 210                 210    l0005        ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu
+0071: 01 0102 240                 240    ML0001MTA    ; Speichere Speicherbefehl für `afeld_base[i]` zum Umladen temporäres Element
+0072: 01 0222 200                 200    l0004        ; Operationscoede 240 ausblenden
+0073: 01 0220 210                 210    l0002        ; Füge den Ladebefehls-Operationscode zur Adresse hinzu
+0074: 01 0077 240                 240    ML0003MTA    ; Speichere den Ladebefehl für `afeld_base[min_index]`
+0075: 0              ML0004MTA:   dw     0            ; Hier steht der Ladebefehl für       211 afeld_base[i]
+0076: 01 0216 240                 240    tmp_element  ; Speichere auf Hilfsspeicherplatz:   240 tmp_element
+0077: 0              ML0003MTA:   dw     0            ; Hier steht der Ladebefehl für       211 afeld_base[min_index]
+0100: 0              ML0002MTA:   dw     0            ; Hier steht der Speicherbefehl       240`afeld_base[i]
+0101: 01 0216 211                 211    tmp_element  ; Lade von Hilfsspeicherplatz:        211 tmp_element
+0102: 0              ML0001MTA:   dw     0            ; Hier steht der Speicherbefehl für   240 afeld_base[min_index]
+0103: 01 0015 000                 000    loop1        ; nächster Durchlauf Schleife 1
+      20 0000 0200                equ100 00200        
+0200: 00 00000000006 len0:        dw     000000000006 ; Anzahl der Elemente im Array
+0201: 20 0202        len:         db     1            ; Länge des Array in Adreßeinheiten umgerechnet
+      20 0000 0202   ausgabe:     equ    00202        ; automatisch generiert
+0202: 00 4500 030                 030    04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0040 030    feld_base:   dto    4172k0       ; Startelement des Arrays, alles Kleinbuchstaben-Ausgabebefehle
+      00 0010 030    ;    
+      00 0070 030    ;    
+      00 0020 030    ;    
+      00 1220 030    ;    
+      00 0200 030    ;    
+      20 0000 0211   feld_ende:   equ    00211        
+0211: 01 0000 020                 020                 ; Programm-Ende, Halt-Befehl
+0212: 01 203000      afeld_base:  da     feld_base    ; Speichert die echte Adresse des Arrays
+0213: 20 0214        i:           db     1            ; Laufvariable für äußere Schleife, Anfangswert
+0214: 20 0215        j:           db     1            ; Laufvariable für innere Schleife, wird immer berechnet
+0215: 20 0216        min_index:   db     1            ; Temporärer Speicher für das Minimum, wird immer berechnet
+0216: 20 0217        tmp_element: db     1            ; Hilfsspeicherplatz für ein Arrayelement beim swap
+0217: 00 00000001000 l0001        dw     000000001000 
+0220: 00 00000000211 l0002        dw     000000000211 
+0221: 00 00000000330 l0003        dw     000000000330 
+0222: 00 77777777000 l0004        dw     077777777000 
+0223: 00 00000000240 l0005        dw     000000000240 

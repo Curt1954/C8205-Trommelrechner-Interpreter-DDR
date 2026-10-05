@@ -1,0 +1,49 @@
+Trommeldatei:
+#DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9 und die Null
+#DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214, Arbeitsspur 7700); ZWR loescht den AC; Punkt liefert <AC>:=<7706>
+#DOK-0001 erwartet <AC> = 00000017641 (oktal)
+#SPEI-0001 3000-3016
+#SPEI-0001 3033-3035
+#SPEI-0001 7706-7706
+#SPEI-0001 7723-7723
+--leser1 virtuelle_Geraete/Leser1/bsp_5_13_lochstreifen_korrektur.txt
+#PROT STUFE=2
+
+# Startstück (nicht Teil des Buchprogramms): Anwahl K1 (Leser 1), dann Sprung zum Programmanfang 3012
+0000: 00002000000 # 000 2000 ; Sprung zum Startstück
+2000: 00004600030 # 030 4600 ; Anwahl Kanal K1 (Leser 1)
+2001: 00003012000 # 000 3012 ; Sprung zum Programmanfang (Löschen des Akkumulators)
+
+# Programm 5.13
+# Konstanten für die einzelnen Dezimalziffern
+3000: 00000000000 # 0000 0000 000
+3001: 00000000001 # 0000 0000 001
+3002: 00000000002 # 0000 0000 002
+3003: 00000000003 # 0000 0000 003
+3004: 00000000004 # 0000 0000 004
+3005: 00000000005 # 0000 0000 005
+3006: 00000000006 # 0000 0000 006
+3007: 00000000007 # 0000 0000 007
+3010: 00000000010 # 0000 0000 010
+3011: 00000000011 # 0000 0000 011
+3012: 00003013001 # 3013 001 ; Fortsetzung nach Eingabe von ZWR, <AC>:=0
+3013: 00003000010 # 3000 010 ; E (0|1|2|3|4|5|6|7|8|9|ZWR|.)
+3014: 00007706644 # 7706 644 ; zweimalige Linksverschiebung, <AC>:=4*<AC>, <7706>:=<AC>
+3015: 00007706214 # 7706 214 ; <AC>:=10*<AC>
+3016: 00003013000 # 3013 000 ; Sprung zur Eingabe
+3033: 00007706211 # 7706 211 ; Fortsetzung nach Eingabe von ".", <AC>:=eingegebene Dezimalzahl
+# Programmfortsetzung (im Buch 3034 ohne Inhalt), hier mit Debug und Stopp
+3034: 00000001164 # 164 0001 ; DEBUG Nr. 0001
+3035: 00000000020 # 020 0 ; unbedingter Stopp
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3036 AC=00000017641 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000000000
+3011: 00000000011
+3012: 00003013001
+3033: 00007706211
+7706: 00000017641
+7723: 00000037502

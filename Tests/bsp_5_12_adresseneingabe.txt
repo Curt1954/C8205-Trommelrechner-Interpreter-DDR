@@ -1,0 +1,47 @@
+Trommeldatei:
+#DOK-0001 Adresseneingabe (Programmieranleitung 5.12), Eingabe der Adresse 1234 mit Schlusszeichen Punkt
+#DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); 3000 3040 014 liest ein Zeichen, Ziffern werden mit 3 Linksverschiebungen aufgebaut, ZWR (3052) loescht den AC, Punkt (3073) beendet die Eingabe mit einer Rechtsverschiebung
+#DOK-0001 erwartet <AC> = 00001234000
+#SPEI-0001 3000-3003
+#SPEI-0001 3040-3047
+#SPEI-0001 3052-3052
+#SPEI-0001 3073-3073
+--leser1 virtuelle_Geraete/Leser1/bsp_5_12_lochstreifen.txt
+#PROT STUFE=2
+
+# Startstück (nicht Teil des Buchprogramms): Anwahl K1 (Leser 1), dann Sprung zum Programmanfang 3052
+0000: 00002000000 # 000 2000 ; Sprung zum Startstück
+2000: 00004600030 # 030 4600 ; Anwahl Kanal K1 (Leser 1)
+2001: 00003052000 # 000 3052 ; Sprung zum Programmanfang (Löschen des Akkumulators)
+
+# Programm 5.12
+3000: 00003040014 # 3040 014 ; Eingabe eines Zeichens, Linksverschiebung
+3001: 00003002004 # 3002 004 ; Linksverschiebung
+3002: 00003000004 # 3000 004 ; Linksverschiebung
+# Fortsetzung nach der Adresseneingabe (Programmende des Buchprogramms), hier mit Debug und Stopp
+3003: 00000001164 # 164 0001 ; DEBUG Nr. 0001
+3004: 00000000020 # 020 0 ; unbedingter Stopp
+# Konstanten zur Eingabe der acht verschiedenen Oktalziffern
+3040: 00000000000 # 0000 0000 000
+3041: 00000000100 # 0000 0000 100
+3042: 00000000200 # 0000 0000 200
+3043: 00000000300 # 0000 0000 300
+3044: 00000000400 # 0000 0000 400
+3045: 00000000500 # 0000 0000 500
+3046: 00000000600 # 0000 0000 600
+3047: 00000000700 # 0000 0000 700
+# Fortsetzung nach Eingabe von ZWR
+3052: 00003000001 # 3000 001 ; Löschen des Akkumulators, Programmanfang
+# Fortsetzung nach Eingabe von "."
+3073: 00003003002 # 3003 002 ; Übergang zum Programmende, Rechtsverschiebung
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3005 AC=00001234000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00003040014
+3040: 00000000000
+3047: 00000000700
+3052: 00003000001
+3073: 00003003002

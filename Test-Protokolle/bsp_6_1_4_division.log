@@ -1,0 +1,91 @@
+Test bsp_6_1_4_division
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00003011212
+  3001: 00007700440
+  3002: 00003012211
+  3003: 00007700454
+  3004: 00003010221
+  3005: 00003011210
+  3006: 00007700436
+  3007: 00003000020
+  3010: 10000000000
+  3011: 20000000000
+  3012: 37777777777
+  #DOK-0001 Zahlwort Festkomma vorn: Division positiver Zahlen (Programmieranleitung 6.1.4), Zahlenbeispiel des Buches a=0,010000 b=0,100000 (dual, auf 33 Bit erweitert), exakter Quotient 0,1
+  #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3010>, b=<3011>, Maske <3012>=7777 7777 777, Arbeitsspur 7700; 7700 440 Transport von b/2 auf alle Zellen, 7700 454 Abschneiden der niedrigsten Bits von b, 7700 436 Divisionsvorgang (bedingte Addition/Subtraktion mit zyklischer Linksverschiebung)
+  #DOK-0001 Voraussetzung 0 <= a < b < 1; <AC> = 0 beim Start (3000 212 rechnet <AC>:=<AC>+b mit Rechtsverschiebung). Die Quotientenziffern z1...z32 stehen nach 32 Schritten in z1...z32 des AC; z0 ist das zuletzt zyklisch verschobene Vorzeichen des Rests.
+  #DOK-0001 erwartet <AC> = 57777777777 (oktal), Fehler gegenueber a/b kleiner als 2^-26
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3011 212  (vor Knoten 002)  BZ=3001 AC=10000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 440  (vor Knoten 002)  BZ=3002 AC=10000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3012 211  (vor Knoten 002)  BZ=3003 AC=37777777777 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 454  (vor Knoten 002)  BZ=3004 AC=40000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3010 221  (vor Knoten 002)  BZ=3005 AC=70000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3011 210  (vor Knoten 002)  BZ=3006 AC=10000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7700 436  (vor Knoten 002)  BZ=3007 AC=57777777777 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3010 AC=57777777777 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3010 ist=3010 OK
+  AC: soll=57777777777 ist=57777777777 OK
+  AR: soll=3000 ist=3000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3010: soll=10000000000 ist=10000000000 OK
+  3011: soll=20000000000 ist=20000000000 OK
+  3012: soll=37777777777 ist=37777777777 OK
+  7700: soll=10000000000 ist=10000000000 OK
+  7701: soll=10000000000 ist=10000000000 OK
+  7702: soll=10000000000 ist=10000000000 OK
+  7703: soll=10000000000 ist=10000000000 OK
+  7704: soll=10000000000 ist=10000000000 OK
+  7705: soll=10000000000 ist=10000000000 OK
+  7706: soll=10000000000 ist=10000000000 OK
+  7707: soll=10000000000 ist=10000000000 OK
+  7710: soll=10000000000 ist=10000000000 OK
+  7711: soll=10000000000 ist=10000000000 OK
+  7712: soll=10000000000 ist=10000000000 OK
+  7713: soll=10000000000 ist=10000000000 OK
+  7714: soll=10000000000 ist=10000000000 OK
+  7715: soll=10000000000 ist=10000000000 OK
+  7716: soll=10000000000 ist=10000000000 OK
+  7717: soll=10000000000 ist=10000000000 OK
+  7720: soll=10000000000 ist=10000000000 OK
+  7721: soll=10000000000 ist=10000000000 OK
+  7722: soll=10000000000 ist=10000000000 OK
+  7723: soll=00000000000 ist=00000000000 OK
+  7724: soll=10000000000 ist=10000000000 OK
+  7725: soll=10000000000 ist=10000000000 OK
+  7726: soll=10000000000 ist=10000000000 OK
+  7727: soll=10000000000 ist=10000000000 OK
+  7730: soll=10000000000 ist=10000000000 OK
+  7731: soll=10000000000 ist=10000000000 OK
+  7732: soll=10000000000 ist=10000000000 OK
+  7733: soll=10000000000 ist=10000000000 OK
+  7734: soll=10000000000 ist=10000000000 OK
+  7735: soll=10000000000 ist=10000000000 OK
+  7736: soll=10000000000 ist=10000000000 OK
+  7737: soll=10000000000 ist=10000000000 OK
+Test wahr

@@ -1,0 +1,54 @@
+Trommeldatei:
+#DOK-0001 Abdruck numerischer Texte vom Lochband im R 300-Code (Programmieranleitung 5.15), Leser 2 -> Schreibwerk
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--leser2 virtuelle_Geraete/Leser2/bsp_5_15_lochstreifen.txt
+#PROT STUFE=2
+
+# Startstück (nicht Teil des Buchprogramms): Das Schreibwerk muss nach der Aufgabe auf Kleinbuchstaben (KB) stehen;
+# sein Zustand nach dem Einschalten ist zufällig. Daher Anwahl K2, Umschaltung auf KB, dann Sprung zum Programmanfang 3014.
+0000: 00003100000 # 000 3100 ; Sprung zum Startstück
+3100: 00004500030 # 030 4500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+3101: 00001170030 # 030 1170 ; Umschaltung auf KB
+3102: 00003014000 # 000 3014 ; Sprung zum Programmanfang
+
+# Programm 5.15, erste Fassung (Zellen oberhalb 2777)
+3000: 00000200030 # 030 0200 ; Druck "0"
+3001: 00000010030 # 030 0010 ; Druck "1"
+3002: 00000020030 # 030 0020 ; Druck "2"
+3003: 00000230030 # 030 0230 ; Druck "3"
+3004: 00000040030 # 030 0040 ; Druck "4"
+3005: 00000250030 # 030 0250 ; Druck "5"
+3006: 00000260030 # 030 0260 ; Druck "6"
+3007: 00000070030 # 030 0070 ; Druck "7"
+3010: 00000100030 # 030 0100 ; Druck "8"
+3011: 00000310030 # 030 0310 ; Druck "9"
+3012: 00000320030 # 030 0320 ; Zwischenraum
+3013: 00003015000 # 000 3015 ; Sprung zur Eingabe
+3014: 00004500030 # 030 4500 ; Anwahl 2, Programmanfang
+3015: 00003000011 # 011 3000 ; Eingabe eines Zeichens, <AC> := Druckbefehl, falls Umstellung in Addition
+3016: 00003021240 # 240 3021 ; <3021> := Druckbefehl
+3017: 00003021000 # 000 3021 ; Sprung zum Druckbefehl
+3020: 00000400030 # 030 0400 ; Druck "+"
+3021: 00000000000 # Druckbefehl (wird zur Laufzeit gesetzt)
+3022: 00003015000 # 000 3015 ; Sprung zur Eingabe
+# Im Buch steht hier "2730 030"; maßgeblich ist die Ausgabe-Adresse 272x (Tabelle 1, Wagenrücklauf mit Zeilenschaltung), wie in der zweiten Fassung des Buches ("2720 030")
+3032: 00002720030 # 030 2720 ; Wagenrücklauf mit Zeilenschaltung
+3033: 00003015000 # 000 3015 ; Sprung zur Eingabe
+3040: 00001000030 # 030 1000 ; Druck "-"
+3041: 00003015000 # 000 3015 ; Sprung zur Eingabe
+3073: 00001530030 # 030 1530 ; Druck ","
+3074: 00003015000 # 000 3015 ; Sprung zur Eingabe
+3075: 00001550030 # 030 1550 ; Tabulator
+3076: 00003015000 # 000 3015 ; Sprung zur Eingabe
+
+# Testende (nicht Teil des Buchprogramms): Das Zeichen "/" (Eingabeadresse 61) führt nach 3061, dort steht ein unbedingter Stopp.
+3061: 00000000020 # 020 0 ; unbedingter Stopp
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3021: 00000200030
+3061: 00000000020
+--pruefe-sw-ausgabe bsp_5_15_lochband_druck-sw-ausgabe.txt

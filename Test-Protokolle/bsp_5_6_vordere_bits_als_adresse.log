@@ -1,0 +1,104 @@
+Test bsp_5_6_vordere_bits_als_adresse
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002001000
+  2001: 00003000211
+  2002: 00003004642
+  2003: 00000000251
+  2004: 00000001164
+  2005: 00000000020
+  3000: 40002461357
+  4000: 01234567012
+  #DOK-0001 Vordere Bits als Adresse (Programmieranleitung 5.6): <3000> = a1a2a3a4 xxxx xxx, a1a2a3a4 = 4000 als Adresse interpretiert
+  #DOK-0001 2001 3000 211: <AC>:=a1a2a3a4 xxxx xxx; 2002 3004 642: W-Befehl, 12 Zellen der Spur 3000 (Sektor 04 bis 23), je Zelle Transport und Rechtsverschiebung, AC:=0000 a1a2a3a4 xxx
+  #DOK-0001 2003 0000 251: R-Lesebefehl, <AC>:=<a1a2a3a4>, also <4000>; erwartet AC = 01234567012
+  #SPEI-0001 3000-3037
+  #SPEI-0001 4000-4000
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2001 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 211  (vor Knoten 002)  BZ=2002 AC=40002461357 FÜ=0 V1=0 V2=0 V3=0
+  BR=3004 642  (vor Knoten 002)  BZ=2003 AC=00004000246 FÜ=0 V1=0 V2=0 V3=0
+  BR=0000 211  (vor Knoten 002)  BZ=2004 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Vordere Bits als Adresse (Programmieranleitung 5.6): <3000> = a1a2a3a4 xxxx xxx, a1a2a3a4 = 4000 als Adresse interpretiert
+#DOK-0001 2001 3000 211: <AC>:=a1a2a3a4 xxxx xxx; 2002 3004 642: W-Befehl, 12 Zellen der Spur 3000 (Sektor 04 bis 23), je Zelle Transport und Rechtsverschiebung, AC:=0000 a1a2a3a4 xxx
+#DOK-0001 2003 0000 251: R-Lesebefehl, <AC>:=<a1a2a3a4>, also <4000>; erwartet AC = 01234567012
+#SPEI-0001 3000-3037
+3000: 40002461357
+3001: 00000000000
+3002: 00000000000
+3003: 00000000000
+3004: 40002461357
+3005: 01000051427
+3006: 00020001230
+3007: 00000000000
+3010: 00000000000
+3011: 00000000000
+3012: 00000000000
+3013: 04000246135
+3014: 00100005142
+3015: 00000000000
+3016: 00000000000
+3017: 00000000000
+3020: 00000000000
+3021: 20001230567
+3022: 00400024613
+3023: 00010000514
+3024: 00000000000
+3025: 00000000000
+3026: 00000000000
+3027: 00000000000
+3030: 02000123056
+3031: 00040002461
+3032: 00000000000
+3033: 00000000000
+3034: 00000000000
+3035: 00000000000
+3036: 10000514273
+3037: 00200012305
+#SPEI-0001 4000-4000
+4000: 01234567012
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=2005 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=2006 AC=01234567012 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=2006 ist=2006 OK
+  AC: soll=01234567012 ist=01234567012 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=40002461357 ist=40002461357 OK
+  3004: soll=40002461357 ist=40002461357 OK
+  3005: soll=01000051427 ist=01000051427 OK
+  3006: soll=00020001230 ist=00020001230 OK
+  3013: soll=04000246135 ist=04000246135 OK
+  3014: soll=00100005142 ist=00100005142 OK
+  3021: soll=20001230567 ist=20001230567 OK
+  3022: soll=00400024613 ist=00400024613 OK
+  3023: soll=00010000514 ist=00010000514 OK
+  3030: soll=02000123056 ist=02000123056 OK
+  3031: soll=00040002461 ist=00040002461 OK
+  3036: soll=10000514273 ist=10000514273 OK
+  3037: soll=00200012305 ist=00200012305 OK
+  4000: soll=01234567012 ist=01234567012 OK
+Test wahr

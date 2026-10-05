@@ -1,27 +1,18 @@
 
 
-EQU-Definitionen
-
-Symbol                             |   Wert  
------------------------------------| --------
-032                                |  032
-040                                |  040
-073                                |  073
-
-
 Symboltabelle
 
-Symbol                             | RelAddr | Adresse
------------------------------------| ------- | --------
-druckbefehl                        |   0000  | 0021
-eingabe                            |   0000  | 0015
-start                              |   0000  | 0000
+Symbol                             | RelAddr |    Adresse      | original Operation
+-----------------------------------| ------- | --------------- | ----------------
+druckbefehl                        |   0000  |  000000000021   | 0
+eingabe                            |   0000  |  000000000015   | start
+start                              |   0000  |  000000000000   | 
 
 
 Adresstabelle
 
-Symbol                             | RelAddr | Adresse
------------------------------------| ------- | --------
-start                              |   0000  | 0000
-eingabe                            |   0000  | 0015
-druckbefehl                        |   0000  | 0021
+Symbol                             | RelAddr |    Adresse
+-----------------------------------| ------- | ---------------
+start                              |   0000  | 000000000000
+eingabe                            |   0000  | 000000000015
+druckbefehl                        |   0000  | 000000000021

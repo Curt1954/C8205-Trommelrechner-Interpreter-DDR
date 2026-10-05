@@ -289,7 +289,7 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
             return 1;
         } else { 
             PRINT_FEHLER("Die Datei %s für Parameter %s existiert nicht im Projektverzeichnis\n", fullPath, kennzeichen);
-            exit(1);
+            exit(RC_FEHLER);
             return -1; //dummy-return
         }
     }
@@ -306,8 +306,10 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
         if (file && tempFile) {
             char line[512];
         
+#ifndef _WIN32
             int fd = fileno(tempFile);
             flock(fd, LOCK_EX);
+#endif
         
             while (fgets(line, sizeof(line), file)) {
                 if (strncmp(line, kennzeichen, strlen(kennzeichen)) == 0) {
@@ -322,12 +324,16 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
                 fprintf(tempFile, "%s %s\n", kennzeichen, tempdn);
             }
         
+#ifndef _WIN32
             fsync(fd);
+#endif
         
             fclose(file);
             fclose(tempFile);
         
+#ifndef _WIN32
             flock(fd, LOCK_UN);
+#endif
             rename("temp_projekdetails", projektdetailsDatei);
         }
         return 0;
@@ -337,7 +343,7 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
             return 1;
         } else { 
             PRINT_FEHLER("Die Datei für Parameter %s existiert nicht im Projektverzeichnis\n", kennzeichen);   
-            exit(1);
+            exit(RC_FEHLER);
             return -1; //dummy-return
         }
     }
@@ -395,7 +401,7 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
                 PRINT_FEHLER("Projektverzeichnis '%s' existiert nicht.", projektVerzeichnis);
                 projektVerzeichnis[0] = '\0';
                 printUsage(argv[0]);
-                exit(1);
+                exit(RC_FEHLER);
             } else {
                 PRINT_MSG("%sProjektverzeichnis: %s%s", _normal, _gruen, projektVerzeichnis);
             }
@@ -493,7 +499,7 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
                         projektVerzeichnis[0] = '\0';
                         fclose(file);
                         printUsage();
-                        exit(1);
+                        exit(RC_FEHLER);
                     }
                 }
             }
@@ -502,7 +508,7 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
         PRINT_FEHLER("%s","Es wurde kein Projektverzeichnis angegeben.");
         projektVerzeichnis[0] = '\0';
         printUsage(argv[0]);
-        exit(1);
+        exit(RC_FEHLER);
     } else {
         PRINT_MSG("%sProjektverzeichnis: %s%s", _normal, _gruen, projektVerzeichnis);
     }
@@ -520,7 +526,7 @@ void ensureFullStructure(const char *verz) {
 
 
     if (stat(verz, &st) != 0) {
-        if (mkdir(verz, 0777) != 0) {
+        if (MKDIR(verz, 0777) != 0) {
             PRINT_FEHLER("beim Erstellen des Geräteverzeichnisses: %s", verz);
             return;
         }
@@ -534,7 +540,7 @@ void ensureFullStructure(const char *verz) {
     snprintf(geraetePath, sizeof(geraetePath), "%s/%s", verz, geraeteDir);
 
     if (stat(geraetePath, &st) != 0) {
-        if (mkdir(geraetePath, 0777) != 0) {
+        if (MKDIR(geraetePath, 0777) != 0) {
             PRINT_FEHLER("beim Erstellen des Verzeichnisses: %s", geraetePath);
             return;
         }
@@ -555,7 +561,7 @@ void ensureFullStructure(const char *verz) {
         snprintf(fullPath, sizeof(fullPath), "%s/%s", geraetePath, subdirectories[i]);
 
         if (stat(fullPath, &st) != 0) {
-            if (mkdir(fullPath, 0777) != 0) {
+            if (MKDIR(fullPath, 0777) != 0) {
                 PRINT_FEHLER("beim Erstellen des Unterverzeichnisses: %s", fullPath);
                 continue;
             }

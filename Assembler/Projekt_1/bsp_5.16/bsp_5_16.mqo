@@ -21,7 +21,7 @@ genbef:        db             1              ; hier steht der Befehl 240 (qzv+i)
                330            dqv            ; vergleicher 3, falls i == <dqv>
                170            halt           ; sprung bei gleich
                000            schleife       
-halt:          164            0023           ;DEBUG Nr. 0023 aktivieren
+halt:          164            0001           ;DEBUG Nr. 0023 aktivieren
                020            0              ;halt
 qvektor:       dw             1              
                dw             2              

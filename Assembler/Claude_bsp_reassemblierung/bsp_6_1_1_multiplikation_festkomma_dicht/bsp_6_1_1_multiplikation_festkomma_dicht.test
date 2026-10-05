@@ -1,0 +1,17 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003000000 # 000 m3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+3000: 00003007211 # m3000: 211 d3007 ; 3007 211 ; <AC>:=a
+3001: 00007700440 # 440 d7700 ; 7700 440 ; Transport von a auf alle Zellen einer Spur
+3002: 00003010211 # 211 d3010 ; 3010 211 ; <AC>:=b
+3003: 00007700472 # 472 d7700 ; 7700 472 ; Bildung der Teilprodukte P(i)=b(i)*a für i=32,...,1
+3004: 00003011211 # 211 d3011 ; 3011 211 ; <AC>:=2^-1 (Rundung des Resultats)
+3005: 00007700412 # 412 d7700 ; 7700 412 ; <AC>:=a*b, Summierung der Teilprodukte
+3006: 00003000020 # 020 03000 ; 3000 020 ; unbedingter Stopp
+3007: 27351646213 # d3007: dw 027351646213 ; a
+3010: 35762104535 # d3010: dw 035762104535 ; b
+3011: 20000000000 # d3011: dw 020000000000 ; Konstante 2000 0000 000 (= 2^-1)
+Tastenfolge:
+H G R

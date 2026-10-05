@@ -1,0 +1,15 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000004000 # 000 haupt
+0001: 00000000000 # erg: dw 0
+0002: 00000000001 # eins: dw 01
+0004: 00000006065 # haupt: 065 up ; Aufruf nur, wenn SP gesetzt
+0005: 00000000020 # 020 0 ; Halt
+0006: 00000003240 # up: 240 rueck ; Rücksprungwort sichern
+0007: 00000002211 # 211 eins
+0010: 00000001240 # 240 erg ; erg := 1
+0011: 00000003000 # 000 rueck
+Tastenfolge:
+H G R

@@ -1,0 +1,34 @@
+Trommeldatei:
+#DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Ordnen eines Zahlenpaares nach dem Betrag (6.3.3), |a|=|b|, Vergleicher 3, kein Tausch
+#DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+#DOK-0001 Programm wie im Buch ab Zelle 3002; a=<3000>, b=<3001>; der Betragsvergleich |b|<=|a| ist als Ganzzahlvergleich der Betraege moeglich (Exponent steht vor der Mantisse, z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und 3023 (Sektor 06 und 23 liegen physisch nebeneinander)
+#DOK-0001 erwartet: kein Tausch (|b|<=|a|); <3000> = 21640000000, <3001> = 61640000000, V1=1 V2=1, <AC> = 21640000000
+#PROT STUFE=2
+
+0000: 00003002000 # 000 3002 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3002, 3000/3001 enthalten a und b)
+# Programm 6.3.3; Arbeitszelle 3006, Betrag von a in 3023
+3002: 00003000215 # 3000 215 ; <AC>:=Vl(a)
+3003: 00003006642 # 3006 642 ; W-Befehl (Zellen 3006 und 3023): <3006>:=Vl(a), <3023>:=|a|
+3004: 00003001215 # 3001 215 ; <AC>:=Vl(b)
+3005: 00003007002 # 3007 002 ; <AC>:=|b| (Sprung ueber die Arbeitszelle 3006)
+3007: 00003023330 # 3023 330 ; Vergleicher 1, falls |b|<=|a|
+3010: 00003017140 # 3017 140 ; Pruefen, ob |b|<=|a| (Vergleichersprung 1)
+3011: 00003000211 # 3000 211 ; <AC>:=a
+3012: 00003006240 # 3006 240 ; <3006>:=a
+3013: 00003001211 # 3001 211 ; <AC>:=b
+3014: 00003000240 # 3000 240 ; <3000>:=b
+3015: 00003006211 # 3006 211 ; <AC>:=a
+3016: 00003001240 # 3001 240 ; <3001>:=a
+3017: 00003002020 # 3002 020 ; unbedingter Stopp
+3000: 21640000000 # a = +0.625*2^3
+3001: 61640000000 # b = -0.625*2^3
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3020 AC=21640000000 AR=3002 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+3000: 21640000000
+3001: 61640000000
+3006: 43500000000
+3023: 21640000000

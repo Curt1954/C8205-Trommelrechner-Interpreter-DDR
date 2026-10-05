@@ -1,0 +1,53 @@
+Test bsp_6_3_2_vorzeichenumkehr
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00007777211
+  3001: 00007777340
+  3002: 00003005170
+  3003: 00003006210
+  3004: 00003005070
+  3005: 00003000020
+  3006: 40000000000
+  7777: 62600000000
+  #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Vorzeichenumkehr (6.3.2), x=-16 (Ueberlauf bei der Addition wird durch den Ueberlaufsprung geloescht)
+  #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+  #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; Addition der Konstante 4000 0000 000 kehrt z0 um; bei x<0 entsteht dabei Ueberlauf, der durch den Ueberlaufsprung 3004 geloescht wird; bei x=0 springt 3002 (Vergleicher 3) direkt zum Stopp
+  #DOK-0001 erwartet <AC> = -x = 22600000000 (oktal) = +0.5*2^5; Vergleicher V1=1 V2=0, FUE=0
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7777 211  (vor Knoten 002)  BZ=3001 AC=62600000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7777 340  (vor Knoten 002)  BZ=3002 AC=62600000000 FÜ=0 V1=1 V2=0 V3=0
+  BR=3005 170  (vor Knoten 002)  BZ=3003 AC=62600000000 FÜ=0 V1=1 V2=0 V3=0
+  BR=3006 210  (vor Knoten 002)  BZ=3004 AC=22600000000 FÜ=1 V1=1 V2=0 V3=0
+  BR=3005 000  (vor Knoten 007)  BZ=3005 AC=22600000000 FÜ=0 V1=1 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3006 AC=22600000000 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3006 ist=3006 OK
+  AC: soll=22600000000 ist=22600000000 OK
+  AR: soll=3000 ist=3000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=1 ist=1 OK
+  V2: soll=0 ist=0 OK
+  3006: soll=40000000000 ist=40000000000 OK
+  7777: soll=62600000000 ist=62600000000 OK
+Test wahr

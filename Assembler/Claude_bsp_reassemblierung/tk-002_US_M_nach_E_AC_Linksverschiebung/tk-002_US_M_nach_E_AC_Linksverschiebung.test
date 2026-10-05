@@ -1,0 +1,7 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0001: 00000010020 # 020 00010 ; Stopp 020 mit Adreßteil 0010
+Tastenfolge:
+H G R

@@ -14,3 +14,6 @@ Trommeldatei:
 
 Tastenfolge:
 H G R
+
+Prüfungen:
+BZ=5006 AC=00000000100 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

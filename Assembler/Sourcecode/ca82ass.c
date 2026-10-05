@@ -7,6 +7,9 @@
 
 char fehlertext[4096];
 
+// Maximale Laenge einer Quelltextzeile in Bytes (interne Puffer: MACRO_PARAMETER_LAENGE = 256 inkl. Endezeichen)
+#define MAX_QUELLZEILE 255
+
 #define MACRO_PARAMETER_ANZAHL 32
 #define MACRO_PARAMETER_LAENGE 256
 
@@ -68,6 +71,8 @@ typedef struct {
     elementType sp2;
     elementType sp3;
     elementType sp4;
+    int adr;        // Trommeladresse der Zeile (nur gueltig, wenn adrValid == 1)
+    int adrValid;   // 1 = Zeile traegt eine Adresse, die sp0 nicht enthaelt (dt/dto/dtm)
 } lineElementsX;
 
 lineElementsX lineAsmAufgeloestX[PROGRAMMZEILEN];
@@ -100,7 +105,7 @@ void copyLineElements(lineElements *output, lineElements *ergebnis, int i) {
         lineElements *temp = (lineElements *)realloc(result, (*lineCount + 1) * sizeof(lineElements)); \
         if (!temp) { \
             fprintf(stderr, "Speicherfehler bei Realloc!\n"); \
-            exit(EXIT_FAILURE); \
+            exit(RC_FEHLER); \
         } \
         result = temp; \
     } while (0)
@@ -110,7 +115,7 @@ void copyLineElements(lineElements *output, lineElements *ergebnis, int i) {
     if (!temp) { \
         free(*ergebnis); \
         fprintf(stderr, "Speicherfehler!\n"); \
-        exit(EXIT_FAILURE); \
+        exit(RC_FEHLER); \
     } \
     *ergebnis = temp;
 
@@ -618,16 +623,42 @@ void ladeAssemblerZeilen(const char *inputFileName) {
     FILE *inputFile = fopen(inputFileName, "r");
     if (!inputFile) {
         fprintf(stderr, "Fehler: Datei '%s' konnte nicht geöffnet werden!\n", inputFileName);
-        exit(1); // Programm beenden, falls Datei nicht geöffnet werden konnte
+        exit(RC_FEHLER); // Programm beenden, falls Datei nicht geöffnet werden konnte
     }
 
     char line[1024];
+    int zeilennr = 0;
+    int vorigeZeileOffen = 0;   // 1 = vorige fgets-Teilzeile hatte kein Zeilenende (Zeile laenger als Puffer)
     while (fgets(line, sizeof(line), inputFile)) {
+        int hatZeilenende = (strchr(line, '\n') != NULL);
+
+        if (vorigeZeileOffen) {            // Rest einer bereits gemeldeten, zu langen Zeile ueberspringen
+            vorigeZeileOffen = !hatZeilenende;
+            continue;
+        }
+        zeilennr++;
+
         if (*line == '\0' || strcmp(line, "\n") == 0) {
             continue;
         }
 
         removeNewlines(line);
+
+        // Die internen Zeilenpuffer (elementType) fassen nur MAX_QUELLZEILE Zeichen (Bytes).
+        // Laengere Zeilen wuerden einen Pufferueberlauf (Absturz) ausloesen -> sauber melden.
+        size_t laenge = strlen(line);
+        if (laenge > 0 && line[laenge - 1] == '\r') {
+            line[--laenge] = '\0';
+        }
+        if (!hatZeilenende && !feof(inputFile)) {
+            vorigeZeileOffen = 1;
+            laenge = MAX_QUELLZEILE + 1;   // laenger als der Lesepuffer, also sicher zu lang
+        }
+        if (laenge > MAX_QUELLZEILE) {
+            PRINT_FEHLER("Zeile %d der Quelldatei ist zu lang (mehr als %d Zeichen); bitte kuerzen oder umbrechen.", zeilennr, MAX_QUELLZEILE);
+            is_error = 1;
+            continue;
+        }
         processLine(line, linesAsm, &lineCountAsm);
     }
     fclose(inputFile); 
@@ -1165,7 +1196,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
     result = (lineElements *)malloc(sizeof(lineElements));
     if (!result) {
         fprintf(stderr, "Speicherzuweisung result fehlgeschlagen!\n");
-        exit(1);
+        exit(RC_FEHLER);
     }
 
     size_t len = strlen(aktuellerOpCode);
@@ -1421,7 +1452,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
                 if (strcmp(zuPruefenderMacro, macros[i].macroParsedLines[j].sp2) == 0) {
                     is_error0 = 1;
                     PRINT_FEHLER("Rekursiver Macro-Aufruf von: %s\n", zuPruefenderMacro);
-                    exit(1);
+                    exit(RC_FEHLER);
                 }
 
                 if (found) {
@@ -1494,7 +1525,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
             if (!tmp_result) {
                 fprintf(stderr, "Speicherzuweisung tmp_result fehlgeschlagen!\n");
                 free(result);
-                exit(1);
+                exit(RC_FEHLER);
             }
 
             memcpy(tmp_result, result, *lineCount *sizeof(lineElements));
@@ -1584,7 +1615,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
                 lineElements *ttemp = (lineElements *)realloc(result, (*lineCount + 1) * sizeof(lineElements));
                 if (!ttemp) {
                     fprintf(stderr, "Speicherfehler bei Realloc!\n");
-                    exit(EXIT_FAILURE);
+                    exit(RC_FEHLER);
                 }
                 result = ttemp; 
 
@@ -1754,7 +1785,7 @@ void macroSprung1Aufloesen(lineElements **ergebnis, int *lineCount, char *mna) {
     lineElements *tempErgebnis = (lineElements *)malloc(*lineCount * sizeof(lineElements));
     if (!output || !tempErgebnis) {
         fprintf(stderr, "Speicherzuweisung für `output` oder `tempErgebnis` fehlgeschlagen!\n");
-        exit(1);
+        exit(RC_FEHLER);
     }
 
     // **Erster Durchlauf: Makro-Labels sammeln**
@@ -1844,7 +1875,7 @@ void erzeugeMacroArray(const char *macroFileName) {
 
     if (!macroFile) {
         fprintf(stderr, "Fehler: Datei '%s' konnte weder im aktuellen Verzeichnis noch unter 'Sourcecode/%s' geöffnet werden!\n", macroFileName, macroFileName);
-        exit(1);
+        exit(RC_FEHLER);
     }
 
     char lineBuffer[1024];
@@ -1861,7 +1892,7 @@ void erzeugeMacroArray(const char *macroFileName) {
             macroDefinitionen *temp = (macroDefinitionen *)realloc(macros, macroCapacity * sizeof(macroDefinitionen));
             if (!temp) {
                 fprintf(stderr, "Speichererweiterung fehlgeschlagen!\n");
-                exit(1);
+                exit(RC_FEHLER);
             }
             macros = temp;
         }
@@ -1893,7 +1924,7 @@ void erzeugeMacroArray(const char *macroFileName) {
             macros[macroIndex].macroParsedLines = (lineElements *)malloc(MACRODEFINITIONEN * sizeof(lineElements));
             if (!macros[macroIndex].macroParsedLines) {
                 fprintf(stderr, "Speicherzuweisung für Makrozeilen fehlgeschlagen!\n");
-                exit(1);
+                exit(RC_FEHLER);
             }
 
             strcpy(macros[macroIndex].macroName, name); 
@@ -2156,7 +2187,7 @@ void pass0() {
         is_error = 1;
         PRINT_FEHLER("%d Makros in der Definitionsdatei sind fehlerhaft.\n", macro_errors);
         printAllMacros();
-        exit(1);
+        exit(RC_FEHLER);
     }
 
 
@@ -2202,7 +2233,7 @@ void pass0() {
                 seed_value++;  //Anzahl der aufgelösten Macros
                 if ( seed_value > seed_max ) {
                     PRINT_FEHLER("Mehr als %i Macros können nicht verarbeitet werden.",seed_value);
-                    exit(1);
+                    exit(RC_FEHLER);
                 }
                 // Statt Macroaufruf den aufgelösten Macro übernehmen
                 char macroAufrufLine[1024];
@@ -2289,7 +2320,7 @@ void pass0() {
        printFormattedAsmListing(lineAsmAufgeloest, lineCountAsmAufgeloest);
        PFend();
        PRINT_WARNUNG("%s","Compilierung endete mit FEHLERn.\n");
-       exit(1);
+       exit(RC_FEHLER);
     }
 }
 
@@ -3059,7 +3090,10 @@ void pass2(char *symbolLogFile, char *symFileName) {
         }
         line_ausgegeben=0;
 
-        if ( programCounter + startAdresse > 07777 ) { 
+        // Der Programmzaehler zeigt auf die NAECHSTE freie Zelle. Nach einem Wort auf Zelle 7777
+        // steht er daher auf 010000 (= 8 * 1024); das ist noch zulaessig. Ein Fehler liegt erst vor,
+        // wenn ein Wort auf Zelle 010000 oder darueber abgelegt werden muesste.
+        if ( programCounter + startAdresse > 010000 ) { 
             is_error2 = 1;
             MELDE_FEHLER_P2(i, "Programmzählerüberlauf über 7777.");
         }
@@ -3573,7 +3607,7 @@ char* getOperationCode(char *operation) {
 void formatLabel(char **label) {
     if (*label == NULL) {
         fprintf(stderr, "\033[35mFehler: Ungültiger Label-Zeiger\033[0m\n");
-        exit(EXIT_FAILURE);
+        exit(RC_FEHLER);
     }
 
     char temp[35] = {0};
@@ -3592,7 +3626,7 @@ void formatLabel(char **label) {
 
     free(*label);
     *label = malloc(35 * sizeof(char));
-    if (*label == NULL) exit(EXIT_FAILURE);
+    if (*label == NULL) exit(RC_FEHLER);
     strcpy(*label, temp);
 }
 
@@ -3703,6 +3737,7 @@ int isValueInTable(const char *operand, TableRow outUmschluesselungsTable[], int
 
 
 void copyAndIncrementLineElementsX(int i, char *buffer) {
+    lineAsmAufgeloestX[lineCountAsmAufgeloestX].adrValid = 0;
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, buffer);
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, lineAsmAufgeloest[i].sp1);
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, lineAsmAufgeloest[i].sp2);
@@ -3713,6 +3748,7 @@ void copyAndIncrementLineElementsX(int i, char *buffer) {
 }
 
 void copyAndIncrementLineElementsSpOnly(int i, char *buffer) {
+    lineAsmAufgeloestX[lineCountAsmAufgeloestX].adrValid = 0;
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, buffer);
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, "; ");
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, "");
@@ -3725,6 +3761,7 @@ void copyAndIncrementLineElementsSpOnly(int i, char *buffer) {
 
 // Auflösen des dt Befehls
 int zFlagErz = 0; // Zustandsflag
+int textPC = 0;   // Trommeladresse des naechsten von erzeugenText ausgegebenen Wortes
 void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int no_kbgb ,int iii) {
     int ersteAusgabe = 1; // Flag, um die erste Ausgabe zu erkennen
     char *zeichenfolge = operand;
@@ -3742,128 +3779,61 @@ void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
         return;
     }
 
+    // Jedes Wort (auch ein Umschalt-Praefix 0570/1170) belegt genau eine
+    // Trommeladresse, beginnend bei textPC. Die Adresse wird pro Zeile in
+    // .adr/.adrValid gemerkt, damit erzeugeTestDatei sie verwenden kann.
+    void ausgabeWort(const char *wort) {
+        fprintf(machineCodeFile, "%s.\n", wort);
+        lineElementsX *z = &lineAsmAufgeloestX[lineCountAsmAufgeloestX];
+        if (ersteAusgabe == 1) {
+            fprintf(hilfsFile, "%s\n", line);
+            strcpy(z->sp0, wort);
+            strcpy(z->sp1, lineAsmAufgeloest[iii].sp1);
+            strcpy(z->sp2, lineAsmAufgeloest[iii].sp2);
+            strcpy(z->sp3, lineAsmAufgeloest[iii].sp3);
+            strcpy(z->sp4, lineAsmAufgeloest[iii].sp4);
+            ersteAusgabe = 0;
+        } else {
+            fprintf(hilfsFile, "%s\n", "; ");
+            strcpy(z->sp0, wort);
+            strcpy(z->sp1, "; ");
+            strcpy(z->sp2, "");
+            strcpy(z->sp3, "");
+            strcpy(z->sp4, "");
+        }
+        z->adr = textPC++;
+        z->adrValid = 1;
+        lineCountAsmAufgeloestX++;
+    }
+
     // Zeichenweise Verarbeitung
     for (size_t i = 0; i < strlen(zeichenfolge); i++) {
-        char zeichen = zeichenfolge[i];
-        int asciiWert = (int) zeichen;
-
-        // Suche in der zweiten Spalte der Tabelle
-        int gefunden = 0;
+        int asciiWert = (int) zeichenfolge[i];
+        int spalte = 0;       // 2 oder 3: in welcher Tabellenspalte gefunden
+        int code = 0;         // Oktalcode aus Spalte 1
         for (size_t j = 0; j < OUT_SIZE; j++) {
-            int zwzw=0;
-            if (outUmschluesselungsTable[j].spalte2 == asciiWert) {
-                // Treffer in der zweiten Spalte
-                if (  ( 
-                        ((asciiWert == 32) || (asciiWert == 9) || (asciiWert == 10)) 
-                        )
-                        || 
-                        ((
-                        (zFlagErz == 1) || (no_kbgb == 1) 
-                        ) 
-                        && 
-                        ! ( (no_kbgb == 2) && (i == 0 ) )
-                        )  
-                    ) {
-
-                    sprintf(buffer, "      00 %04o 030", outUmschluesselungsTable[j].spalte1);
-                    fprintf(machineCodeFile, "%s.\n", buffer);
-
-                } else {
-                    if ( no_kbgb != 1) {
-                        sprintf(buffer, "      00 0570 030");
-                        fprintf(machineCodeFile, "%s.\n", buffer);
-                    }
-                    sprintf(buffer, "      00 %04o 030", outUmschluesselungsTable[j].spalte1);
-                    fprintf(machineCodeFile, "%s.\n", buffer);
-                    zFlagErz = 1; // Zustandsflag zurücksetzen
-                    zwzw=1;
-                }
-
-                if (ersteAusgabe == 1) {
-                    fprintf(hilfsFile, "%s\n", line); // Besondere Ausgabe nach der ersten
-
-                    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, buffer);
-                    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, lineAsmAufgeloest[iii].sp1);
-                    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, lineAsmAufgeloest[iii].sp2);
-                    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp3, lineAsmAufgeloest[iii].sp3);
-                    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp4, lineAsmAufgeloest[iii].sp4);    
-                    lineCountAsmAufgeloestX++; 
-
-                    ersteAusgabe = 0; 
-                    if ( zwzw == 1 ) {
-                        fprintf(hilfsFile, "%s\n", "; "); 
-                        copyAndIncrementLineElementsSpOnly(iii, buffer);
-                    }
-                } else { 
-                    fprintf(hilfsFile, "%s\n", "; "); 
-                    copyAndIncrementLineElementsSpOnly(iii, buffer);
-                    if ( zwzw == 1 ) {
-                        fprintf(hilfsFile, "%s\n", "; "); 
-                        copyAndIncrementLineElementsSpOnly(iii, buffer);
-                    }
-                }
-                gefunden = 1;
-                break;
+            if (outUmschluesselungsTable[j].spalte2 == asciiWert) { spalte = 2; code = outUmschluesselungsTable[j].spalte1; break; }
+        }
+        if (!spalte) {
+            for (size_t j = 0; j < OUT_SIZE; j++) {
+                if (outUmschluesselungsTable[j].spalte3 == asciiWert) { spalte = 3; code = outUmschluesselungsTable[j].spalte1; break; }
             }
         }
+        if (!spalte) continue;
 
-        if (!gefunden) {
-            // Suche in der dritten Spalte der Tabelle  OUT_SIZE
-            for (size_t j = 0; j < OUT_SIZE; j++) {
-                int zwzw=0;
-                if (outUmschluesselungsTable[j].spalte3 == asciiWert) {
-                    // Treffer in der dritten Spalte
-                    if (  ( 
-                        (asciiWert == 32) || (asciiWert == 9) || (asciiWert == 10) 
-                        )
-                        || 
-                        ((
-                        (zFlagErz == 0) || (no_kbgb == 1) 
-                        ) 
-                        && 
-                        ! ( (no_kbgb == 2) && (i == 0 ) ) 
-                        ) 
-                    ) {
-                        sprintf(buffer, "      00 %04o 030", outUmschluesselungsTable[j].spalte1);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
-                    } else {
-                        if ( no_kbgb != 1) {
-                            sprintf(buffer, "      00 1170 030");
-                            fprintf(machineCodeFile, "%s.\n", buffer);
-                        }
-                        sprintf(buffer, "      00 %04o 030", outUmschluesselungsTable[j].spalte1);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
-                        zFlagErz = 0; 
-                        zwzw=1;
-                    }
-                    if (ersteAusgabe == 1) {
-                        fprintf(hilfsFile, "%s\n", line); // Besondere Ausgabe nach der ersten
+        int steuer = (asciiWert == 32) || (asciiWert == 9) || (asciiWert == 10);
+        int zustandPasst = (spalte == 2) ? (zFlagErz == 1) : (zFlagErz == 0);
+        int direkt = steuer || ((zustandPasst || (no_kbgb == 1)) && !((no_kbgb == 2) && (i == 0)));
 
-                        strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, buffer);
-                        strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, lineAsmAufgeloest[iii].sp1);
-                        strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, lineAsmAufgeloest[iii].sp2);
-                        strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp3, lineAsmAufgeloest[iii].sp3);
-                        strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp4, lineAsmAufgeloest[iii].sp4);    
-                        lineCountAsmAufgeloestX++; 
-
-                        ersteAusgabe = 0; 
-                        if ( zwzw == 1 ) {
-                            fprintf(hilfsFile, "%s\n", "; "); 
-                            copyAndIncrementLineElementsSpOnly(iii, buffer);
-                        }    
-                    } else { 
-                        fprintf(hilfsFile, "%s\n", "; "); 
-                        copyAndIncrementLineElementsSpOnly(iii, buffer);
-                        if ( zwzw == 1 ) {
-                            fprintf(hilfsFile, "%s\n", "; "); 
-                            copyAndIncrementLineElementsSpOnly(iii, buffer);
-                        }    
-                    }
-                    gefunden = 1;
-                    break;
-                }
+        if (!direkt) {
+            if (no_kbgb != 1) {
+                sprintf(buffer, "      00 %04o 030", (spalte == 2) ? 0570 : 01170);
+                ausgabeWort(buffer);
             }
-        }  
+            zFlagErz = (spalte == 2) ? 1 : 0;
+        }
+        sprintf(buffer, "      00 %04o 030", code);
+        ausgabeWort(buffer);
     }
 }
 
@@ -3989,6 +3959,10 @@ void dzAuswertung(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
 
             fprintf(hilfsFile, "%s\n", line);
             copyAndIncrementLineElementsX(iii, buffer);
+            // Adresse fuer die .test-Datei merken (wie bei dt/dto/dtm): die
+            // dz-Zeile traegt in sp0 keine Adresse. textPC wird vom Aufrufer gesetzt.
+            lineAsmAufgeloestX[lineCountAsmAufgeloestX - 1].adr = textPC;
+            lineAsmAufgeloestX[lineCountAsmAufgeloestX - 1].adrValid = 1;
             return; // Funktion beenden, da der Eintrag gefunden wurde
         }
     }
@@ -4026,6 +4000,7 @@ void outAdressError(const char *label, char *typ, char *text) {
     char xline[1024];
     sprintf(line1, "bei Operand: %s %s %s", label, typ, text);
     sprintf(xline, "%s%s%s",_weiss, line1,_normal);
+    lineAsmAufgeloestX[lineCountAsmAufgeloestX].adrValid = 0;
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, "");
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, xline);
     strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, "");
@@ -4064,13 +4039,24 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgelo
         char adresse[64] = "";
         char k1[16] = "";
         int pos = 0;
+        int adrZeile = lineAsmAufgeloest[i].adrValid;
 
-        if (sscanf(sp0, "%63[^:]:%15s%n", adresse, k1, &pos) != 2) {
+        if (adrZeile) {
+            // dt/dto/dtm-Zeile: Adresse steht nicht in sp0, sondern in .adr
+            snprintf(adresse, sizeof(adresse), "%04o", lineAsmAufgeloest[i].adr);
+            if (sscanf(sp0, "%15s%n", k1, &pos) != 1) {
+                continue;
+            }
+        } else if (sscanf(sp0, "%63[^:]:%15s%n", adresse, k1, &pos) != 2) {
             continue; // keine "<adresse>: <K1> ..."-Zeile (z.B. equ-Zeile, Fehlerzeile ohne Adresse)
         }
 
-        if (strcmp(k1, "00") != 0 && strcmp(k1, "01") != 0) {
-            continue; // nur Spalte 2 == 00 oder 01 verwenden
+        // Nullwort: pass3 schreibt "dw 0" als "<adr>: 0" (nur "0", ohne K1/K2/Wert, s. .dmp/.obj).
+        // Diese Zeile gehoert ebenfalls in die .test-Datei (als Wort 00000000000).
+        int nullwort = (strcmp(k1, "0") == 0);
+
+        if (!nullwort && strcmp(k1, "00") != 0 && strcmp(k1, "01") != 0) {
+            continue; // nur Spalte 2 == 00 oder 01 (oder Nullwort "0") verwenden
         }
 
         // Verbleibende Ziffern aus sp0 (Spalten 3/4) einsammeln - sp0 enthält
@@ -4086,6 +4072,12 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgelo
             }
         }
         ziffern[zIdx] = '\0';
+
+        if (nullwort && zIdx == 0) {
+            ziffern[0] = '0';
+            ziffern[1] = '\0';
+            zIdx = 1;
+        }
 
         if (zIdx == 0 || zIdx > 11) {
             continue; // keine verwertbaren Ziffern bzw. unerwartet lang -> überspringen
@@ -4111,7 +4103,7 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgelo
             if (kommentar[0] != '\0') strncat(kommentar, " ", sizeof(kommentar) - strlen(kommentar) - 1);
             strncat(kommentar, s, (len < sizeof(kommentar) - strlen(kommentar) - 1) ? len : sizeof(kommentar) - strlen(kommentar) - 1);
         }
-        if (kommentar[0] != '\0') {
+        if (kommentar[0] != '\0' && strcmp(kommentar, ";") != 0) {
             fprintf(testFile, " # %s", kommentar);
         }
         fprintf(testFile, "\n");
@@ -4422,11 +4414,13 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 }
             } else if ( (strcmp(operation, "dt") == 0) ) {
                 if ( zaehleBackslaShes != 2 ) { 
+                   textPC = programCounter;
                    erzeugenText(operand, machineCodeFile,hilfsFile, line, 0, i);
                    if (operand) {
                        programCounter += zaehleText(operand,0);
                    }
                 } else { 
+                   textPC = programCounter;
                    erzeugenText(textkonst, machineCodeFile,hilfsFile, line, 0, i);
                    if (textkonst[0] != '\0') {
                        programCounter += zaehleText(textkonst,0);
@@ -4434,11 +4428,13 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 }
             } else if ( (strcmp(operation, "dto") == 0) ) {
                 if ( zaehleBackslaShes != 2 ) { 
+                   textPC = programCounter;
                    erzeugenText(operand, machineCodeFile,hilfsFile, line, 1, i);
                    if (operand) {
                        programCounter += zaehleText(operand,1);
                    }
                 } else { 
+                   textPC = programCounter;
                    erzeugenText(textkonst, machineCodeFile,hilfsFile, line, 1, i);
                    if (textkonst[0] != '\0') {
                        programCounter += zaehleText(textkonst,1);
@@ -4446,17 +4442,20 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 }
             } else if ( (strcmp(operation, "dtm") == 0) ) {
                 if ( zaehleBackslaShes != 2 ) { 
+                   textPC = programCounter;
                    erzeugenText(operand, machineCodeFile,hilfsFile, line, 2, i);
                    if (operand) {
                        programCounter += zaehleText(operand,2);
                    }
                 } else { 
+                   textPC = programCounter;
                    erzeugenText(textkonst, machineCodeFile,hilfsFile, line, 2, i);
                    if (textkonst[0] != '\0') {
                        programCounter += zaehleText(textkonst,2);
                    }
                 }
             } else if (strcmp(operation, "dz") == 0) {
+                textPC = programCounter;
                 dzAuswertung(operand, machineCodeFile,hilfsFile,line, i);
                 programCounter++;
             } else if (strcmp(operation, "end") == 0) {
@@ -4567,7 +4566,7 @@ void ensureFileExtension(char *fileName, const char *defaultExtension, size_t ma
         if (currentLength + strlen(defaultExtension) >= maxSize) {
             PRINT_FEHLER("Puffer für Dateiname ist zu klein, um die Erweiterung hinzuzufügen: %s", fileName);
             PRINT_FEHLER("%s", "Abbruch.");
-            exit(1); // Abbruch bei Pufferoverflow
+            exit(RC_FEHLER); // Abbruch bei Pufferoverflow
         }
         strcat(fileName, defaultExtension); // .asm anhängen
     }
@@ -4589,7 +4588,7 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0) { 
             printUsage(argv[0]);
-            return 1;
+            return RC_OK;
         }
     }
 
@@ -4611,7 +4610,7 @@ int main(int argc, char *argv[]) {
     if (!doesPathExist(inputFileName)) {
         PRINT_FEHLER("Die Quellcode-Datei existiert nicht: %s", inputFileName);
         PRINT_FEHLER("%s", "Abbruch.");
-        exit(1); 
+        exit(RC_FEHLER); 
     }
 
     remove(logFileName);
@@ -4625,7 +4624,7 @@ int main(int argc, char *argv[]) {
     macros = (macroDefinitionen *)malloc(macroCapacity * sizeof(macroDefinitionen));
     if (!macros) {
         fprintf(stderr, "Speicherzuweisung für Makros fehlgeschlagen!\n");
-        exit(1);
+        exit(RC_FEHLER);
     }
 
     resetParsedLinesArrays(lineAsmAufgeloest, lineCountAsmAufgeloest);
@@ -4641,7 +4640,7 @@ int main(int argc, char *argv[]) {
         }
         free(macros); 
         macros = NULL; 
-        return 1;
+        return RC_FEHLER;
     }
     printf("\n");
 
@@ -4657,7 +4656,7 @@ int main(int argc, char *argv[]) {
         }
         free(macros); 
         macros = NULL; 
-        return 1;
+        return RC_FEHLER;
     }
     for (int i = 0; i < macroCount; i++) {
         free(macros[i].macroParsedLines);  
@@ -4671,7 +4670,7 @@ int main(int argc, char *argv[]) {
     if ((is_error != 0)) {
         printf("\n");
         PRINT_FEHLER("%s", "Abbruch wegen Syntaxfehler.");
-        return 1;
+        return RC_FEHLER;
     }
     printf("\n");
 
@@ -4681,7 +4680,7 @@ int main(int argc, char *argv[]) {
         if (is_error2 != 0) {
             printf("\n");
             PRINT_FEHLER("%s", "Abbruch wegen Syntaxfehler.");
-            return 2;
+            return RC_FEHLER;
         }
     }
     printf("\n");
@@ -4692,22 +4691,22 @@ int main(int argc, char *argv[]) {
         if (is_error3 != 0) {
             printf("\n");
             PRINT_FEHLER("%s", "Abbruch.");
-            return 3;
+            return RC_FEHLER;
         }
         if (is_error == 0) {
             printf("\n");
             printf("Ausgabe als Minimalprogramm-Objektdatei nach: %s\n", machineCodeFileName);
             printf("Ausgabe der formatierten Speicherbelegung nach: %s\n", dmpFileName);
             printf("Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: %s\n", testFileName);
-            return 0;
+            return RC_OK;
         }
     }
 
     if (is_error != 0) {
         printf("\n");
         PRINT_FEHLER("%s", "Abbruch.");
-        return 16;
+        return RC_FEHLER;
     } 
-    return 0;
+    return RC_OK;
 }
 

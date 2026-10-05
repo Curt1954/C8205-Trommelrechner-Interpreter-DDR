@@ -1,0 +1,24 @@
+0000: 01 0002 000    m0000: 000 m0002        ; Sprung zum Programmanfang des KEP
+      20 0000 0002          equ 00002        
+0002: 01 0022 000    m0002: 000 m0022        ; Programmanfang
+      20 0000 0014          equ 00014        
+0014: 00 7723 211    m0014: 211 m7723        ; <AC>:=<7723>
+0015: 01 0025 210           210 m0025        ; <AC>:=<AC>+1°
+0016: 00 7723 240    m0016: 240 m7723        ; <7723>:=<AC> = Leitbefehl
+0017: 01 0030 001           001 m0030        ; <AC>:=0, Sprung zur Eingabe
+0020: 01 0000 000           000 m0000        ; "0" Konstante im R 300-Code
+0021: 00 40000000000        dw  040000000000 ; "1" Konstante im R 300-Code
+0022: 01 0037 211    m0022: 211 m0037        ; <AC>:=0014 000
+0023: 00 7724 240           240 d7724        ; <7724>:=0014 000
+0024: 01 0030 001           001 m0030        ; "ZWR" im FS-Code, <AC>:=0
+0025: 00 0001 000    m0025: 000 m0001        ; Konstante (Adresseneinheit 1°)
+0026: 01 0000 000           000 m0000        ; "0" Konstante im FS-Code
+0027: 00 40000000000        dw  040000000000 ; "1" Konstante im FS-Code (Zeile im Listing verdruckt, ergaenzt)
+0030: 01 0020 010    m0030: 010 00020        ; E (0|1|:|.|ZWR), Eingabe-Halt
+0031: 01 0030 006           006 m0030        ; <AC>:=Vzl(<AC>), Sprung zur Eingabe
+0032: 01 0030 001           001 m0030        ; "ZWR" im R 300-Code, <AC>:=0
+0033: 00 7723 000           000 m7723        ; "." im R 300-Code, Sprung zur Ausfuehrung des Leitbefehls
+0034: 00 7723 000           000 m7723        ; "." im FS-Code
+0035: 01 0016 000           000 m0016        ; ":" im R 300-Code, Leitbefehl speichern
+0036: 01 0016 000           000 m0016        ; ":" im FS-Code
+0037: 01 0014 000    m0037: 000 m0014        ; Konstante 0014 000

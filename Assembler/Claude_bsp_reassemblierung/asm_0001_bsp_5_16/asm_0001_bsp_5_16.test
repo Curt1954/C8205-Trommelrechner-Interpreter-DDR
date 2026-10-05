@@ -1,0 +1,33 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002000000 # 000 go
+2000: 00002007000 # go: 000 beginn
+2001: 00002027000 # aqv: da 000000002027 ; Adrese der ersten Komponente Quellvektor
+2002: 00000005000 # dqv: dw 05000 ; Dimension von qvektor gezählz in Adreßeinheiten
+2003: 00002100000 # azv: da 000000002100 ; Adresse der ersten Komponente Zielvektor
+2004: 00000001000 # adreinheit: dw 01000 ; Adresseinheit
+2005: 00000000240 # spbef: dw 0240 ; Speicherbefehl
+2007: 00002006241 # beginn: 241 i ; I:=0
+2010: 00002003210 # schleife: 210 azv ; ac:=(azv+i)
+2011: 00002005210 # 210 spbef ; ac:=(azv+i)240
+2012: 00002016240 # 240 genbef ; Arbeitszelle genbef:= (qzv+i) 240
+2013: 00002006211 # 211 i ; ac:=<i>
+2014: 00002001210 # 210 aqv ; ac:=qvektor+i
+2015: 00000000251 # 251 0 ; ac:=<qvektor+i>
+2017: 00002006211 # 211 i ; ac:=<i>
+2020: 00002004210 # 210 adreinheit ; ac:=i+1
+2021: 00002006240 # 240 i ; i:=ac
+2022: 00002002330 # 330 dqv ; vergleicher 3, falls i == <dqv>
+2023: 00002025170 # 170 halt ; sprung bei gleich
+2024: 00002010000 # 000 schleife
+2025: 00000001164 # halt: 164 00001 ; DEBUG Nr. 0023 aktivieren
+2026: 00000000020 # 020 0 ; halt
+2027: 00000000001 # qvektor: dw 01
+2030: 00000000002 # dw 02
+2031: 00000000003 # dw 03
+2032: 00000000004 # dw 04
+2033: 00000000005 # dw 05
+Tastenfolge:
+H G R

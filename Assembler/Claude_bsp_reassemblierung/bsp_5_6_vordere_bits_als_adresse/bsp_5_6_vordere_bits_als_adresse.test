@@ -1,0 +1,14 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002001000 # 000 m2001 ; Sprung zum Programmbeginn der Aufgabe in Zelle 2001
+2001: 00003000211 # m2001: 211 d3000 ; <AC>:=a1a2a3a4 xxxx xxx
+2002: 00003004642 # 642 d3004 ; <AC>:=0000 a1a2a3a4 xxx (W-Befehl bis Sektor 23)
+2003: 00000000251 # 251 0 ; <AC>:=<a1a2a3a4>
+2004: 00000001164 # 164 00001 ; DEBUG Nr. 0001
+2005: 00000000020 # 020 0 ; unbedingter Stop
+3000: 40002461357 # d3000: dw 040002461357 ; a1a2a3a4 = 4000, xxxx xxx = 2461357
+4000: 01234567012 # dw 01234567012 ; Zelle, auf die a1a2a3a4 zeigt
+Tastenfolge:
+H G R

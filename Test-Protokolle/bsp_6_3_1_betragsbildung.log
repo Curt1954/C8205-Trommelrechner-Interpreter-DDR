@@ -1,0 +1,45 @@
+Test bsp_6_3_1_betragsbildung
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00007777215
+  3001: 00003002002
+  3002: 00003000020
+  7777: 62600000000
+  #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Betragsbildung (6.3.1), Beispiel des Buches z=-16 = -0,5*2^5 (1 100101 100...0)
+  #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+  #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; 7777 215 bildet Vl(x), 3002 002 schiebt zurueck: |x| mit z0=0
+  #DOK-0001 erwartet <AC> = |x| = 22600000000 (oktal) = +0.5*2^5
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7777 215  (vor Knoten 002)  BZ=3001 AC=45400000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3002 002  (vor Knoten 007)  BZ=3002 AC=22600000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3003 AC=22600000000 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3003 ist=3003 OK
+  AC: soll=22600000000 ist=22600000000 OK
+  AR: soll=3000 ist=3000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  7777: soll=62600000000 ist=62600000000 OK
+Test wahr

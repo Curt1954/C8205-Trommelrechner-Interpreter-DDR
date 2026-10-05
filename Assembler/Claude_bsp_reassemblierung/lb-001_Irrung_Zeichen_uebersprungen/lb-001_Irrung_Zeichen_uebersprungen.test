@@ -1,0 +1,11 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002000000 # 000 go
+2000: 00004600030 # go: 030 04600 ; Anwahl Kanal 1 (Leser 1)
+2001: 00000000010 # 010 0 ; Eingabe-Halt 1. Art
+2002: 00000000020 # 020 0 ; unbedingter Stopp
+0001: 00000000001 # dw 01 ; Konstante 1: Inhalt der Zelle (Adreßteil 0000 v Eingabeadresse 01), den die Eingabe der
+Tastenfolge:
+H G R

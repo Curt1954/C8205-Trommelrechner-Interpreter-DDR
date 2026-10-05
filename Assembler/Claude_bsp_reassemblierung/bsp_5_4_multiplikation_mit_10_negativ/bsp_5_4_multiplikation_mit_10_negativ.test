@@ -1,0 +1,13 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003010211 # 211 d3010 ; <AC>:=a (Vorbereitung: AC muss laut Aufgabe schon a enthalten)
+0001: 00003000000 # 000 m3000 ; Sprung zum Programmbeginn der Aufgabe in Zelle 3000
+3000: 00003006644 # m3000: 644 d3006 ; <AC>:=4a, <3006>:=a, <3023>:=2a
+3001: 00003006214 # 214 d3006 ; <AC>:=2(4a+a)=10a
+3002: 00000001164 # 164 00001 ; DEBUG Nr. 0001
+3003: 00000000020 # 020 0 ; unbedingter Stop
+3010: 77777777775 # d3010: dw 077777777775 ; a = -3 (Zweierkomplement, 33 Bit)
+Tastenfolge:
+H G R

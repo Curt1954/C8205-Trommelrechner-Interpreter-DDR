@@ -1,0 +1,3 @@
+0000: 01 0005 020     020 00005 ; Stopp 020 mit Adreßteil 0005
+      20 0000 7777    equ 07777 
+7777: 00 00000000555  dw  0555  ; wird durch den Transport mit AC=0 überschrieben

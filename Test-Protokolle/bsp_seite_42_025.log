@@ -1,0 +1,101 @@
+Test bsp_seite_42_025
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002000000
+  2000: 00004500030
+  2001: 00002014211
+  2002: 00002020240
+  2003: 00002017025
+  2004: 00002015211
+  2005: 00002020240
+  2006: 00002017025
+  2007: 00002016211
+  2010: 00002020240
+  2011: 00002017025
+  2012: 00000001164
+  2013: 00000000020
+  2014: 00000610030
+  2015: 00000620030
+  2016: 00000430030
+  2017: 00002021240
+  2022: 00000000777
+  #DOK-0001 Unterprogrammtechnik,  Sprung mit Rückkehrabsicht, 025
+  #SPEI-0001 2012-2027
+  #SPEI-0002 2012-2016
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=4500 030  (vor Knoten 002)  BZ=2001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2014 211  (vor Knoten 002)  BZ=2002 AC=00000610030 FÜ=0 V1=0 V2=0 V3=0
+  BR=2020 240  (vor Knoten 002)  BZ=2003 AC=00000610030 FÜ=0 V1=0 V2=0 V3=0
+  BR=2017 005  (vor Knoten 007)  BZ=2004 AC=00002004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2021 240  (vor Knoten 002)  BZ=2020 AC=00002004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0610 030  (vor Knoten 002)  BZ=2021 AC=00002004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2004 000  (vor Knoten 007)  BZ=2022 AC=00002004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2015 211  (vor Knoten 002)  BZ=2005 AC=00000620030 FÜ=0 V1=0 V2=0 V3=0
+  BR=2020 240  (vor Knoten 002)  BZ=2006 AC=00000620030 FÜ=0 V1=0 V2=0 V3=0
+  BR=2017 005  (vor Knoten 007)  BZ=2007 AC=00002007000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2021 240  (vor Knoten 002)  BZ=2020 AC=00002007000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0620 030  (vor Knoten 002)  BZ=2021 AC=00002007000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2007 000  (vor Knoten 007)  BZ=2022 AC=00002007000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2016 211  (vor Knoten 002)  BZ=2010 AC=00000430030 FÜ=0 V1=0 V2=0 V3=0
+  BR=2020 240  (vor Knoten 002)  BZ=2011 AC=00000430030 FÜ=0 V1=0 V2=0 V3=0
+  BR=2017 005  (vor Knoten 007)  BZ=2012 AC=00002012000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2021 240  (vor Knoten 002)  BZ=2020 AC=00002012000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0430 030  (vor Knoten 002)  BZ=2021 AC=00002012000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2012 000  (vor Knoten 007)  BZ=2022 AC=00002012000 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Unterprogrammtechnik,  Sprung mit Rückkehrabsicht, 025
+#SPEI-0001 2012-2027
+2012: 00000001164
+2013: 00000000020
+2014: 00000610030
+2015: 00000620030
+2016: 00000430030
+2017: 00002021240
+2020: 00000430030
+2021: 00002012000
+2022: 00000000777
+2023: 00000000000
+2024: 00000000000
+2025: 00000000000
+2026: 00000000000
+2027: 00000000000
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=2013 AC=00002012000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=2014 AC=00002012000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=2014 ist=2014 OK
+  AC: soll=00002012000 ist=00002012000 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  2012: soll=00000001164 ist=00000001164 OK
+  2013: soll=00000000020 ist=00000000020 OK
+  2014: soll=00000610030 ist=00000610030 OK
+  2015: soll=00000620030 ist=00000620030 OK
+  2016: soll=00000430030 ist=00000430030 OK
+  2017: soll=00002021240 ist=00002021240 OK
+  2020: soll=00000430030 ist=00000430030 OK
+  2021: soll=00002012000 ist=00002012000 OK
+  2022: soll=00000000777 ist=00000000777 OK
+Test wahr

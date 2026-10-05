@@ -1,0 +1,25 @@
+Trommeldatei:
+#DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Vorzeichenumkehr (6.3.2), x=0: Vergleicher 3, Sprung zum Stopp, Null bleibt eindeutig +0
+#DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+#DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; Addition der Konstante 4000 0000 000 kehrt z0 um; bei x<0 entsteht dabei Ueberlauf, der durch den Ueberlaufsprung 3004 geloescht wird; bei x=0 springt 3002 (Vergleicher 3) direkt zum Stopp
+#DOK-0001 erwartet <AC> = -x = 00000000000 (oktal) = 0; Vergleicher V1=1 V2=1, FUE=0
+#PROT STUFE=2
+
+0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+# Programm 6.3.2
+3000: 00007777211 # 7777 211 ; <AC>:=x
+3001: 00007777340 # 7777 340 ; Vergleicher 3, falls x=0 (Vgl 1: x<0, Vgl 2: x>0)
+3002: 00003005170 # 3005 170 ; Vergleichersprung 3: Pruefen, ob x=0
+3003: 00003006210 # 3006 210 ; <AC>:=x+4000 0000 000 (Vorzeichen z0 umgekehrt; Ueberlauf bei x<0)
+3004: 00003005070 # 3005 070 ; Ueberlaufsprung (loescht den Ueberlauf, verhindert den Halt)
+3005: 00003000020 # 3000 020 ; unbedingter Stopp
+3006: 40000000000 # Konstante 4000 0000 000 (nur z0)
+7777: 00000000000 # x = 0
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3006 AC=00000000000 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+3006: 40000000000
+7777: 00000000000

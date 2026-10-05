@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000015000 # 000 eingabe
+0001: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0002: 00000000011 # eingabe: 011 start ;Ab start liegen die Druckbefehle
+0003: 00000021240 # 240 druckbefehl
+0004: 00000021000 # 000 druckbefehl
+0005: 00000400030 # dz +
+0006: 00000000000 # druckbefehl: dw 0
+0007: 00000015000 # 000 eingabe
+0032: 00002720030 # dz $wrzl ; Zeilenschaltung
+0033: 00004700030 # 030 04700 ; 4700 oder K0 oder SW1 Input oder KON Input
+0034: 00000015000 # 000 eingabe
+0040: 00001000030 # dz -
+0041: 00000015000 # 000 eingabe
+0073: 00001530030 # dz ,
+0074: 00000015000 # 000 eingabe
+0075: 00001550030 # dz $tab
+0076: 00000015000 # 000 eingabe
+Tastenfolge:
+H G R

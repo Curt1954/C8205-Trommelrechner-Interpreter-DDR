@@ -1,0 +1,24 @@
+Trommeldatei:
+#DOK-0001 Angabe des Vorzeichens einer Zahl (Programmieranleitung 5.11), x = +5
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+#SPEI-0001 3000-3000
+#PROT STUFE=2
+
+0000: 00003001000 # 000 3001 ; Sprung zum Programmanfang
+3000: 00000000005 # x
+3001: 00004500030 # 030 4500 ; Anwahl der Schreibmaschine
+3002: 00001170030 # 030 1170 ; Umschaltung auf KB
+3003: 00003000211 # 211 3000 ; <AC>:=x
+3004: 00003007040 # 040 3007 ; Negativsprung nach 3007, falls x<0
+3005: 00001270030 # 030 1270 ; Druck "p"
+3006: 00003010000 # 000 3010 ; Sprung zum Stop
+3007: 00001050030 # 030 1050 ; Druck "n"
+3010: 00000000020 # 020 0 ; unbedingter Stop
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3011 AC=00000000005 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000000005
+--pruefe-sw-ausgabe bsp_5_11_pos-sw-ausgabe.txt

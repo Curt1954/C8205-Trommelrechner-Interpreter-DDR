@@ -1,0 +1,22 @@
+Trommeldatei:
+#DOK-0002 Test Ueberlaufsprung 070 bei vorhandenem Ueberlauf: Sprung nach 0010 und Ueberlauf wird geloescht
+#PROT STUFE=2
+0000: 00003000211
+0001: 00003001210
+0002: 00000010070
+0003: 00000000020
+# Sprungziel
+0010: 00000000020
+# Beginn Datenbereich
+3000: 37777777777
+3001: 00000000001
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=0011 AC=40000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+0010: 00000000020
+3000: 37777777777
+3001: 00000000001
+

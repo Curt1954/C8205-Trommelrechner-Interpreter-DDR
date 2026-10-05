@@ -1,0 +1,124 @@
+Test bsp_5_13_dezimaleingabe_korrektur
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002000000
+  2000: 00004600030
+  2001: 00003012000
+  3000: 00000000000
+  3001: 00000000001
+  3002: 00000000002
+  3003: 00000000003
+  3004: 00000000004
+  3005: 00000000005
+  3006: 00000000006
+  3007: 00000000007
+  3010: 00000000010
+  3011: 00000000011
+  3012: 00003013001
+  3013: 00003000010
+  3014: 00007706644
+  3015: 00007706214
+  3016: 00003013000
+  3033: 00007706211
+  3034: 00000001164
+  3035: 00000000020
+  #DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9 und die Null
+  #DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214, Arbeitsspur 7700); ZWR loescht den AC; Punkt liefert <AC>:=<7706>
+  #DOK-0001 erwartet <AC> = 00000017641 (oktal)
+  #SPEI-0001 3000-3016
+  #SPEI-0001 3033-3035
+  #SPEI-0001 7706-7706
+  #SPEI-0001 7723-7723
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=4600 030  (vor Knoten 002)  BZ=2001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3012 000  (vor Knoten 007)  BZ=2002 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 001  (vor Knoten 007)  BZ=3013 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 210  (vor Knoten 002)  BZ=3014 AC=00000000003 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 644  (vor Knoten 002)  BZ=3015 AC=00000000014 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 214  (vor Knoten 002)  BZ=3016 AC=00000000036 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 000  (vor Knoten 007)  BZ=3017 AC=00000000036 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=3014 AC=00000000036 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 001  (vor Knoten 007)  BZ=3013 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 210  (vor Knoten 002)  BZ=3014 AC=00000000010 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 644  (vor Knoten 002)  BZ=3015 AC=00000000040 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 214  (vor Knoten 002)  BZ=3016 AC=00000000120 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 000  (vor Knoten 007)  BZ=3017 AC=00000000120 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 210  (vor Knoten 002)  BZ=3014 AC=00000000120 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 644  (vor Knoten 002)  BZ=3015 AC=00000000500 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 214  (vor Knoten 002)  BZ=3016 AC=00000001440 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 000  (vor Knoten 007)  BZ=3017 AC=00000001440 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 210  (vor Knoten 002)  BZ=3014 AC=00000001451 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 644  (vor Knoten 002)  BZ=3015 AC=00000006244 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 214  (vor Knoten 002)  BZ=3016 AC=00000017632 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 000  (vor Knoten 007)  BZ=3017 AC=00000017632 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 210  (vor Knoten 002)  BZ=3014 AC=00000017641 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 644  (vor Knoten 002)  BZ=3015 AC=00000077204 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 214  (vor Knoten 002)  BZ=3016 AC=00000236112 FÜ=0 V1=0 V2=0 V3=0
+  BR=3013 000  (vor Knoten 007)  BZ=3017 AC=00000236112 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=3014 AC=00000236112 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 211  (vor Knoten 002)  BZ=3034 AC=00000017641 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9 und die Null
+#DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214, Arbeitsspur 7700); ZWR loescht den AC; Punkt liefert <AC>:=<7706>
+#DOK-0001 erwartet <AC> = 00000017641 (oktal)
+#SPEI-0001 3000-3016
+3000: 00000000000
+3001: 00000000001
+3002: 00000000002
+3003: 00000000003
+3004: 00000000004
+3005: 00000000005
+3006: 00000000006
+3007: 00000000007
+3010: 00000000010
+3011: 00000000011
+3012: 00003013001
+3013: 00003000010
+3014: 00007706644
+3015: 00007706214
+3016: 00003013000
+#SPEI-0001 3033-3035
+3033: 00007706211
+3034: 00000001164
+3035: 00000000020
+#SPEI-0001 7706-7706
+7706: 00000017641
+#SPEI-0001 7723-7723
+7723: 00000037502
+--- Ende Diagnose ---
+  BR=0001 164  (vor Knoten 002)  BZ=3035 AC=00000017641 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3036 AC=00000017641 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3036 ist=3036 OK
+  AC: soll=00000017641 ist=00000017641 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  3000: soll=00000000000 ist=00000000000 OK
+  3011: soll=00000000011 ist=00000000011 OK
+  3012: soll=00003013001 ist=00003013001 OK
+  3033: soll=00007706211 ist=00007706211 OK
+  7706: soll=00000017641 ist=00000017641 OK
+  7723: soll=00000037502 ist=00000037502 OK
+Test wahr

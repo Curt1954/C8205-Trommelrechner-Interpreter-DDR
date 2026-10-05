@@ -1,0 +1,61 @@
+Test 0011-000_210_211_220_240_241_020
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00003014211
+  3001: 00003015220
+  3002: 00003015220
+  3003: 00003016210
+  3004: 00003017220
+  3005: 00003020240
+  3006: 00003021241
+  3007: 00000011164
+  3010: 00000000020
+  3014: 00000000100
+  3015: 00000000200
+  3016: 00000000300
+  3017: 00000000010
+  3020: 00000000020
+  3021: 00000000030
+  #DOK-0011 Test Unbedingter Sprung, Ladebefehl und Addition Subtraktion und Speicherbefehl
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3014 211  (vor Knoten 002)  BZ=3001 AC=00000000100 FÜ=0 V1=0 V2=0 V3=0
+  BR=3015 220  (vor Knoten 002)  BZ=3002 AC=77777777700 FÜ=0 V1=0 V2=0 V3=0
+  BR=3015 220  (vor Knoten 002)  BZ=3003 AC=77777777500 FÜ=0 V1=0 V2=0 V3=0
+  BR=3016 210  (vor Knoten 002)  BZ=3004 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3017 220  (vor Knoten 002)  BZ=3005 AC=77777777770 FÜ=0 V1=0 V2=0 V3=0
+  BR=3020 240  (vor Knoten 002)  BZ=3006 AC=77777777770 FÜ=0 V1=0 V2=0 V3=0
+  BR=3021 241  (vor Knoten 002)  BZ=3007 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+--- Diagnose (Befehl 164) ---
+#DOK-0011 Test Unbedingter Sprung, Ladebefehl und Addition Subtraktion und Speicherbefehl
+--- Ende Diagnose ---
+  BR=0011 164  (vor Knoten 002)  BZ=3010 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3011 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3011 ist=3011 OK
+  AC: soll=00000000000 ist=00000000000 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+Test wahr
