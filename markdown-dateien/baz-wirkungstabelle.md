@@ -1,5 +1,7 @@
 # BAZ-Wirkungstabelle (Cache für den Claude-Interpreter)
 
+Version: 0.03-002
+
 Zweck: Für jeden bereits in einem Test aufgetretenen BAZ-Wert (Operationsteil, oktal,
 B-A-Z) wird hier einmalig der Knotenpfad Knoten 10 bis 34 sowie die Wirkungsformel
 festgehalten. Da dieser Teil des Knotenautomaten eine reine Funktion von B/A/Z ist
@@ -9,12 +11,19 @@ Quelldateien ist der betroffene Eintrag hier neu herzuleiten.
 
 Neue BAZ-Werte werden bei Auftreten ergänzt, nichts wird im Voraus vorbefüllt.
 
+Versionierung: Jede Ergänzung oder Korrektur in dieser Datei ist eine Änderung; sie erhöht den Build in der Zeile
+`Version:` um 1. Hauptversion und Unterversion werden nur auf ausdrückliche Aufforderung des Projektinhabers erhöht
+(`C8205-Versionierung.md`).
+
 Korrektur 04.10.2026: Knoten 77 (zweiter Test der normalen Abbruchbedingung auf der
 X-Zusatzzelle) ist aus dem Knotengraphen entfernt worden (entsprach nicht Abb. 10 der
 Originaldokumentation, Befehlsliste.md 4.1.6 — Bildabgleich). Knoten 76 führt jetzt
 unbedingt zu Knoten 78 (Merker setzen). Betroffene Einträge unten (BAZ 544, BAZ 744)
 sind entsprechend angepasst; die Zellenzahlen (15) ändern sich dadurch nicht, nur der
 beschriebene Pfad.
+
+Hinweis 08.10.2026: Die Trommel des Python-Interpreters ist seit 07.10.2026 persistent (Python_Interpreter.md, Abschnitt 8.5). Angaben über nicht beschriebene Zellen
+(„Vorbelegung 0“) gelten daher für eine leere Trommel. Knotenpfade und Formeln sind davon nicht berührt.
 
 ## Feststehender Rahmen (für JEDEN Befehl gleich, unabhängig vom BAZ - NICHT cachebar)
 
@@ -209,7 +218,7 @@ nicht 14 wie vor der Graphänderung vom 28.09.2026 (die frühere Angabe „Abbru
 genau 14 bearbeiteten Zellen“ galt für den alten Graphen). Bestätigt durch Test 0006
 (BAZ 744, gleicher Ablauf, Sollwerte vom Autor als korrekt bestätigt: 15 Zellen, die 15. mit
 dem negativen AC 40000000000); Test #DOK-0007 (BAZ 544) ist entsprechend zu prüfen. Die übrigen 17 Zellen der Spur bleiben unverändert
-(Vorbelegung `00000000000`, falls in der Trommeldatei nicht anders definiert). Die Korrektur
+(Inhalt wie vor dem Befehl: `00000000000` auf leerer Trommel, falls der Test sie nicht anders belegt). Die Korrektur
 vom 04.10.2026 (Entfernen des ehem. Knotens 77) ändert diese Zellenzahl nicht, nur den
 beschriebenen Pfad nach der 15. Zelle.
 
@@ -432,6 +441,6 @@ bei B=6 nicht existiert. Hier läuft die Wiederholung daher ungehindert bis
 Runde 27 durch: 27 von 32 Zellen der Spur (4000–4037) werden mit dem
 unveränderten AC-Wert beschrieben, 5 Zellen (4000, 4007, 4015, 4024, 4032 —
 die in Runde 28–32 fälligen, nicht mehr erreichten Sektoren 00, 07, 13, 20,
-26 oktal) bleiben bei ihrer Vorbelegung `00000000000`. AC selbst bleibt über den gesamten Befehl hinweg gleich dem vor der
+26 oktal) bleiben unverändert (`00000000000` auf leerer Trommel, falls der Test sie nicht anders belegt). AC selbst bleibt über den gesamten Befehl hinweg gleich dem vor der
 Wiederholung im Akkumulator stehenden Wert (keine Linksverschiebung, anders
 als bei 544/744).

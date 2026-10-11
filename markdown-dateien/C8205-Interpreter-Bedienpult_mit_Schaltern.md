@@ -1,5 +1,7 @@
 ** Bedienpult mit Schaltern **
 
+Version: 0.03-001
+
 Im physischen Bedienpult des Rechners C8205 sind sowohl Schalter, Eingabetasten und Lampen,
 die die Flag-Zustände anzeigen, lokalisiert.
 Im Rechner werden die Schalterzustände in gleichnamigen Flags gespeichert als 0/1-Werte.
@@ -169,7 +171,7 @@ Zeilenende. Groß-/Kleinschreibung ist gleichgültig. Die Wirkungen sind die der
 |---|---|
 | `H` | Schalter H-R auf "H": Flag H := 1 |
 | `R` | Schalter H-R auf "R": Flag H := 0; zusätzlich US := 0. Der Befehlsablauf beginnt (Startpunkte: s. unten) |
-| `G` | Generallöschen (nur bei H): alle Flags außer H, T, BS und SP := 0 (BS und SP sind eingerastete Schalter, G kann sie mechanisch nicht lösen); AR := 0000, OR := 000 (BR = "0000 000"); K0 wird angewählt (T := 1, bei gedrücktem Schalter SW: SW := 1); BZ und AC bleiben unverändert; danach US := 1 (wird durch ST oder R wieder gelöscht) |
+| `G` | Generallöschen (nur bei H): alle Flags außer H, T, BS und SP := 0 (BS und SP sind eingerastete Schalter, G kann sie mechanisch nicht lösen); AR := 0000, OR := 000 (BR = "0000 000"); K0 wird angewählt (T := 1, bei gedrücktem Schalter SW: SW := 1); BZ und AC bleiben unverändert (G setzt BZ nicht; durch den aufgestellten BR 0000 000 kommt es zum Sprung nach 0000 und damit zu BZ := 0000, sobald `R` oder `E` ohne `M` ihn ausführt; folgt `M+ E … E M-`, entfällt der Sprung. Anfangswerte von AC und BZ kann ein Test über die Testmarken `#AC=` und `#BZ=` vorgeben, `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2); danach US := 1 (wird durch ST oder R wieder gelöscht) |
 | `M+` (auch `M-drücken`, `M-gedrückt-halten`) | M gedrückt halten (nur bei H): OR := OR ∨ 025 |
 | `M-` (auch `M-loslassen`) | M loslassen. Wurde unter gehaltenem M kein E betätigt, bleibt BR = ⟨AR⟩ 025 aufgestellt. Wurde mindestens ein E betätigt, entfällt der Beitrag 025 im OR (übrige Anteile, z. B. von Ü, bleiben) |
 | `M` | Antippen, gleichbedeutend mit `M+` und sofort danach `M-` |
@@ -195,6 +197,11 @@ Hinweise:
   (B=0 oder 1, A=2, Z≥4: 025, 027, 125, 127), gilt Phase III als abgelaufen. Der Ablauf beginnt dann bei Konnektor 4
   (Knoten 54) und führt nur die Resultatbehandlung aus (Abschnitt "Fortsetzung nach einem Stopp").
   Endet die Tastenfolge ohne `R`, bleibt der Rechner im Halt; das Ergebnis ist der Zustand nach dem letzten Schritt.
+- **Makro `#STARTE n` (Ergänzung 09.10.2026):** steht in einer Testdatei für die Tastenfolge `H G M+ E … E M- R` mit n Anschlägen von `E`, also den
+  Ansprung des Speicherplatzes n (Abschnitt 4.4, Punkt 2; `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2e).
+- **Tastenfolge als Argument von `#INTERRUPT` (Ergänzung 08.10.2026):** Dieselben Token dürfen auch hinter `#INTERRUPT H` stehen und
+  unterbrechen dann den Programmlauf zwischen zwei Befehlen (`C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2d). Endet
+  eine solche Folge mit `R` oder `ST`, läuft das Programm weiter, sonst endet der Test im Halt.
 
 ## Fortsetzung nach einem Stopp (Originaldokumentation 4.3.2.3, Abb. 19; Ergänzung 04.10.2026)
 
@@ -247,12 +254,25 @@ Zustand "Überlauf" (FÜ) wird beseitigt durch:
 Zustand "Fehler bei Eingabe" (FE) kann nur durch Generallöschen ("G") aufgehoben werden.
 
 ### 4.2 Transport des Akkumulatorinhaltes nach Speicherplatz 7777 (oktal)
-a) Schalter "H-R" → "H"; b) Taste "G"; c) Taste "Ü"; d) Taste "E" — der aufgestellte Befehl "7777 240"
-wird durch d) ausgeführt, der Akkumulatorinhalt wird nach 7777 (oktal) transportiert.
+a) Schalter "H-R" in Stellung "H"
+b) Taste "G" anschlagen
+c) Taste "Ü" anschlagen
+d) Taste "E" anschlagen
+
+Der Inhalt des Akkumulators wird nach dem Speicherplatz 7777 (oktal) transportiert. Der in den Schritten b) und c)
+aufgestellte Befehl "7777 240" wird durch d) ausgeführt.
 
 ### 4.3 Transport des Befehlszählerinhaltes nach dem Akkumulator
-a) Schalter "H-R" → "H"; b) Taste "G"; c) Taste "M" gedrückt halten; d) Taste "E"; e) Taste "M"
-loslassen; f) Schalter "H-R" → "R".
+a) Schalter "H-R" in Stellung "H"
+b) Taste "G" anschlagen
+c) Taste "M" gedrückt lassen
+d) Taste "E" anschlagen
+e) Taste "M" loslassen
+f) Taste "E" anschlagen
+
+(Wortlaut nach der Originaldokumentation, Seitenabbild, Ergänzung 08.10.2026: Schritt f) ist "Taste E anschlagen", nicht "Schalter H-R → R".
+Der Ansprung eines Druckprogramms nach einer Programmunterbrechung endet dagegen mit "SP lösen" und R, siehe Dokument BIS.)
+
 Danach steht im Akkumulator die um 2 Einheiten erhöhte Adresse des nächsten abzuarbeitenden Befehls
 (meist ein Sprung in ein Druckprogramm). Wird in Schritt d) "E" zweimal angeschlagen, steht die um 3
 Einheiten erhöhte Adresse im Akkumulator, Speicherplatz "0002" wird als nächster Befehl aufgestellt.

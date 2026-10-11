@@ -1,5 +1,7 @@
 ### Befehlslisten ###
 
+Version: 0.03-001
+
 Maschinenbefehle, kurz auch nur Befehle genannt, werden bezüglich des Operationsteiles
 BAZ bitweise dekodiert. Das ist die Grundlage der folgenden generischen Befehlsbeschreibung.
 

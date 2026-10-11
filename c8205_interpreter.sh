@@ -9,7 +9,7 @@
 # Schalter des Interpreters, die ein eigenes Wertargument mitnehmen:
 ist_wertschalter() {
     case "$1" in
-        --mdverz|--leser1|--lochbandleser1|--leser2|--lochbandleser2|--stanzer1|--lochbandstanzer1|--sw-ausgabe|--k0|--out|--pruefe-stanzer1|--pruefe-sw-ausgabe)
+        --mdverz|--leser1|--lochbandleser1|--leser2|--lochbandleser2|--stanzer1|--lochbandstanzer1|--sw-ausgabe|--k0|--out|--pruefe-stanzer1|--pruefe-sw-ausgabe|--zwischenablage)
             return 0 ;;
         *)
             return 1 ;;

@@ -9,7 +9,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #PROT STUFE=2
 Tastenfolge: H G Ü E
   H  : Schalter H-R -> "H", Flag H := 1
-  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
   Ue : AR := 7777; OR := OR ODER 240 -> BR = 7777 240 (Transport, aufgestellt, nicht ausgefuehrt)
   E  : Einzelschritt (Phase IV, I, II, III), Halt vor Knoten 019; BR=0005 020 BZ=0001 AR=0005 AC=00000000000
   Ende der Tastenfolge ohne R: Rechner bleibt im Halt (H)

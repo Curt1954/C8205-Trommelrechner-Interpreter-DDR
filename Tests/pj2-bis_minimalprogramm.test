@@ -1,0 +1,146 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000040000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000150000 # 000 druck ; Zelle 0001: Sprung zum Druck von BZ und AC
+0040: 00000320025 # haupt: 025 kzeingabe ; Aufruf Unterprogramm Kennzeicheneingabe
+0041: 00000000020 # 020 0 ; STUB Fortsetzung nach der Rueckkehr
+0053: 00007556240 # befehlsdruck: 240 bd_rs ; Rueckkehrbefehl sichern (Register 7556)
+0054: 00001170030 # dz $inkb ; Umschaltung in Kleinbuchstabenlage (Ziffern)
+0055: 00007773211 # 211 r1 ; AC := Befehl
+0056: 00000314616 # 616 bd_nz ; 4 Linksverschiebungen (W-Addition ueber die Nullzellen 0314 bis 0323)
+0057: 00000314616 # 616 bd_nz ; 8
+0060: 00000314616 # 616 bd_nz ; 12
+0061: 00007773240 # 240 r1 ; R1 := um 12 Bit gedrehter Befehl
+0062: 00000126211 # 211 bd_za ; Zaehler fuer 4 Ziffern (3 Einsen)
+0063: 00007554240 # 240 okt_z
+0064: 00000103025 # 025 okt_ein ; Adresse drucken
+0065: 00000320030 # dz $zr ; Zwischenraum
+0066: 00000127211 # 211 bd_zb ; Zaehler fuer 3 Ziffern (2 Einsen)
+0067: 00007554240 # 240 okt_z
+0070: 00000103025 # 025 okt_ein ; Operationsteil drucken
+0071: 00007556000 # 000 bd_rs ; Rueckkehr (Zelle bd_rs wird als Befehl ausgefuehrt)
+0100: 00000240000 # adressendruck: 000 ad_anf ; Adressendruck (Ansprungzelle 100): Sprung zum Code ab ad_anf (Spur 0240)
+0101: 00007773217 # okt_loop: 217 r1 ; AC := Vzl(R1): 1. von 3 Verschiebungen
+0102: 00000110006 # 006 okt_v3 ; 2. Verschiebung (Sprung auf die uebernaechste benutzte Zelle)
+0103: 00007555240 # okt_ein: 240 okt_rs ; Rueckkehrbefehl sichern (Register 7555)
+0104: 00000101000 # 000 okt_loop
+0105: 00000010030 # dto 1 ; Position 31 (Ziffer 1)
+0106: 00000260030 # dto 6 ; Position 36 (Ziffer 6), Sektor 06
+0110: 00000111006 # okt_v3: 006 okt_sp ; 3. Verschiebung
+0111: 00007773240 # okt_sp: 240 r1 ; R1 := Vzl3(R1) (AC bleibt)
+0112: 00000124200 # 200 okt_mask ; AC := Ziffer d (letzte Triade)
+0113: 00000221520 # okt_gx: 520 okt_e1 ; GX-Subtraktion auf der Einsen-Spur: waehlt den Ausgabebefehl
+0114: 00000040030 # dto 4 ; Position 34 (Ziffer 4); beim GX-Befehl die uebersprungene Zelle b+1
+0115: 00007554311 # 311 okt_z ; AC := z; Vergleicher 3, falls z = 0
+0116: 00007555170 # 170 okt_rs ; z = 0: Rueckkehr (Zelle okt_rs wird als Befehl ausgefuehrt)
+0117: 00000120004 # 004 okt_zn ; AC := z um 1 Bit nach links (Verschiebung im Sprungbefehl)
+0120: 00007554240 # okt_zn: 240 okt_z ; z := Vl(z)
+0121: 00000101000 # 000 okt_loop ; naechste Ziffer
+0122: 00000020030 # dto 2 ; Position 32 (Ziffer 2), Sektor 22
+0123: 00000070030 # dto 7 ; Position 37 (Ziffer 7), Sektor 23
+0124: 00000000007 # okt_mask: dw 07 ; Maske fuer die letzte Triade
+0125: 77740000000 # okt_z0: dw 077740000000 ; Anfangswert des Zaehlers: 10 Einsen
+0126: 70000000000 # bd_za: dw 070000000000 ; Befehlsdruck: Zaehler fuer 4 Ziffern (3 Einsen)
+0127: 60000000000 # bd_zb: dw 060000000000 ; Befehlsdruck: Zaehler fuer 3 Ziffern (2 Einsen)
+0130: 00000200030 # dto 0 ; Position 30 (Ziffer 0), Sektor 30
+0131: 00000250030 # dto 5 ; Position 35 (Ziffer 5), Sektor 31
+0132: 00007555240 # okt_anf: 240 okt_rs ; Rueckkehrbefehl sichern
+0133: 00001170030 # dz $inkb ; Umschaltung in Kleinbuchstabenlage (Ziffern)
+0134: 00000125211 # 211 okt_z0 ; Zaehler := 10 Einsen
+0135: 00007554240 # 240 okt_z
+0136: 00000101000 # 000 okt_loop ; Sektor 36; der Sektor 37 danach ist der Ausgabebefehl der Ziffer 3
+0137: 00000230030 # dto 3 ; Position 33 (Ziffer 3), Sektor 37
+0150: 00000176220 # druck: 220 dr_drei ; AC := AC - 3 Adresseinheiten = Befehl 0000 bbbb 000
+0151: 00007600240 # 240 dr_rs ; als Fortsetzungsbefehl merken (Zelle dr_rs wird am Ende ausgefuehrt)
+0152: 00007773240 # 240 r1 ; R1 := BZ-Wort
+0153: 00004500030 # 030 04500 ; Anwahl Kanal K2 (Schreibwerk)
+0154: 00002720030 # dz $wrzl ; neue Zeile
+0155: 00000570030 # dtm \BZ \
+0156: 00000620030
+0157: 00001710030
+0160: 00000320030
+0161: 00000276025 # 025 triadendruck ; BZ-Wort drucken
+0162: 00000320030 # dz $zr ; Zwischenraum
+0163: 00000570030 # dtm \AC \
+0164: 00000610030
+0165: 00000430030
+0166: 00000320030
+0167: 00007777211 # 211 ac7777 ; AC := gerettete AC-Inhalt (Zelle 7777)
+0170: 00007773240 # 240 r1
+0171: 00000276025 # 025 triadendruck ; AC drucken
+0172: 00002720030 # dz $wrzl ; Zeilenende
+0173: 00007777211 # 211 ac7777 ; AC := gerettete AC-Inhalt: das Programm setzt mit seinem AC fort
+0174: 00000000060 # 060 0 ; bedingter Stopp (bei eingerastetem BS)
+0175: 00007600000 # 000 dr_rs ; Fortsetzung: Zelle dr_rs (Arbeitsbereich) wird als Befehl 000 b ausgefuehrt
+0176: 00000003000 # dr_drei: dw 03000 ; 3 Adresseinheiten
+0205: 00000000001 # dw 01 ; Sektor 05 (Position 32)
+0213: 00000000001 # dw 01 ; Sektor 13 (Position 27)
+0214: 00000000001 # dw 01 ; Sektor 14 (Position 34)
+0221: 00000000001 # okt_e1: dw 01 ; Sektor 21 (Position 25): Start des GX-Befehls
+0222: 00000000001 # dw 01 ; Sektor 22 (Position 32)
+0230: 00000000001 # dw 01 ; Sektor 30 (Position 30)
+0231: 00000000001 # dw 01 ; Sektor 31 (Position 35)
+0236: 00000000001 # dw 01 ; Sektor 36 (Position 26)
+0237: 00000000001 # dw 01 ; Sektor 37 (Position 33)
+0240: 00007557240 # ad_anf: 240 ad_rs ; Rueckkehrbefehl sichern (Register 7557)
+0241: 00001170030 # dz $inkb ; Umschaltung in Kleinbuchstabenlage (Ziffern)
+0242: 00007773211 # 211 r1 ; AC := Wert
+0243: 00007560240 # 240 ad_sv ; R1 sichern (Register 7560)
+0244: 00000314616 # 616 bd_nz ; 4 Linksverschiebungen (W-Addition ueber die Nullzellen 0314 bis 0323)
+0245: 00000314616 # 616 bd_nz ; 8
+0246: 00000314616 # 616 bd_nz ; 12
+0247: 00007773240 # 240 r1 ; R1 := um 12 Bit gedrehtes Wort, die Adressziffern stehen oben
+0250: 00000126211 # 211 bd_za ; Zaehler fuer 4 Ziffern (3 Einsen)
+0251: 00007554240 # 240 okt_z
+0252: 00000103025 # 025 okt_ein ; Adresse drucken (4 Ziffern)
+0253: 00007560211 # 211 ad_sv ; R1 zurueckholen
+0254: 00007773240 # 240 r1
+0255: 00007557000 # 000 ad_rs ; Rueckkehr (Zelle ad_rs wird als Befehl ausgefuehrt)
+0262: 00000000020 # eingabewortkz: 020 0 ; STUB Eingabe eines Wortes mit Kennzeichen (262)
+0263: 00000000020 # eingabeprogst: 020 0 ; STUB Eingabe eines Programmstueckes (263)
+0264: 00007561240 # ae_anf: 240 ae_rs ; Rueckkehrbefehl sichern (Register 7561)
+0265: 00000256211 # 211 ae_z0 ; Zaehleranfang: 7 Einsen
+0266: 00007563240 # 240 ae_z ; Zaehler setzen (Register 7563)
+0267: 00000400211 # 211 ae_tab ; AC := 0 (Zelle ae_tab, Ziffer 0, enthaelt 0)
+0270: 00007562240 # 240 ae_sv ; Konstante := 0 (Register 7562)
+0271: 00000400010 # ae_loop: 010 ae_tab ; Eingabe-Halt: Ziffer lesen, AC := AC + d * 0100; ZR oder Punkt: Sprung in die Tabelle
+0272: 00000410330 # 330 ae_pois ; Vergleich AC mit 2 hoch 30: ab dort Ziffer 8 oder 9
+0273: 00000257150 # 150 ae_halt ; AC >= 2 hoch 30: Ziffer 8 oder 9, HALT
+0274: 00000275006 # 006 ae_v2 ; Linksverschiebung (zyklisch) 1 von 3
+0275: 00000277006 # ae_v2: 006 ae_v3 ; 2 von 3
+0277: 00000300006 # ae_v3: 006 ae_zt ; 3 von 3
+0276: 00000132000 # triadendruck: 000 okt_anf ; Triadendruck (Ansprungzelle 276): Sprung zum Code ab okt_anf
+0306: 00000000000 # dw 0 ; Sektor 06 (Position 36)
+0314: 00000000000 # bd_nz: dw 0 ; Sektor 14 (Position 34): Start der W-Addition
+0316: 00000264000 # adresseneingabe: 000 ae_anf ; Adresseneingabe (Ansprungzelle 316): Sprung zum Code ab ae_anf (Spur 0260)
+0320: 00000000020 # kzeingabe: 020 0 ; STUB Unterprogramm Kennzeicheneingabe
+0256: 77400000000 # ae_z0: dw 077400000000 ; Zaehleranfang der Adresseneingabe: 7 Einsen (8 Ziffern)
+0257: 00000000020 # ae_halt: 020 0 ; HALT: Ziffer 8 oder 9 (keine Oktalziffer)
+0260: 00000400011 # ae_ign: 011 ae_tab ; ab der 9. Ziffer: Zeichen lesen, AC loeschen (Ziffer wird verworfen); ZR/Punkt wie oben
+0261: 00000260000 # 000 ae_ign ; naechstes Zeichen
+0300: 00007562240 # ae_zt: 240 ae_sv ; Konstante sichern (Register 7562)
+0301: 00007563311 # 311 ae_z ; AC := Zaehler; Vergleicher 3, falls Zaehler = 0
+0302: 00000260170 # 170 ae_ign ; Zaehler = 0: 8 Ziffern gelesen, weitere Ziffern verwerfen
+0303: 00000307004 # 004 ae_zn ; AC := Zaehler um 1 Bit nach links
+0307: 00007563240 # ae_zn: 240 ae_z ; Zaehler := Vl(Zaehler)
+0310: 00007562211 # 211 ae_sv ; AC := Konstante zurueck
+0311: 00000271000 # 000 ae_loop ; naechstes Zeichen
+0323: 00000000000 # dw 0 ; Sektor 23 (Position 37)
+0331: 00000000000 # dw 0 ; Sektor 31 (Position 35)
+0400: 00000000000 # ae_tab: dw 0 ; Ziffer 0
+0401: 00000000100 # dw 0100 ; Ziffer 1 (1 * 0100)
+0402: 00000000200 # dw 0200 ; Ziffer 2
+0403: 00000000300 # dw 0300 ; Ziffer 3
+0404: 00000000400 # dw 0400 ; Ziffer 4
+0405: 00000000500 # dw 0500 ; Ziffer 5
+0406: 00000000600 # dw 0600 ; Ziffer 6
+0407: 00000000700 # dw 0700 ; Ziffer 7
+0410: 10000000000 # ae_pois: dw 010000000000 ; Ziffer 8: 2 hoch 30, Haltmarke (keine Oktalziffer)
+0411: 10000000000 # dw 010000000000 ; Ziffer 9: 2 hoch 30, Haltmarke
+0412: 00000320000 # 000 kzeingabe ; ZR (Offset 012): Sprung zur Kennzeicheneingabe
+0433: 00007562211 # 211 ae_sv ; Punkt (Offset 033): AC := Konstante
+0434: 00007561000 # 000 ae_rs ; Rueckkehr zum Aufrufer, AC = Konstante
+Tastenfolge:
+H G R

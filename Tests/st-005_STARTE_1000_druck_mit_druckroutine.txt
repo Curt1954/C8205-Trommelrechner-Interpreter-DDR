@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-1000 Programm ab 1000: Schreibwerk-Ausgabe "XY", dann INTERRUPT mit Druck von BZ und AC durch die Druckroutine (Zelle 0001), dann "xy" und Stopp
+#DOK-1010 Voraussetzung: Minimalprogramm mit Druckroutine ist auf der Trommel (vorher Tests/asm_druck_tastenfolge.txt ausfuehren). Zelle 0001 wird hier NICHT belegt.
+#DOK-1011 Erwartet am Terminal: XY, eine Zeile "BZ 00001004000 AC 00001001000", dann xy. Stopp in 1010, BZ=1011; V1=V2=1 stammen aus der Druckroutine
+#STARTE 1000        # = H G M+ 512 mal E M- R (512 = 1000 oktal): Ansprung des Speicherplatzes 1000
+#PROT STUFE=2
+# Keine Zeile --sw-ausgabe: die Schreibwerk-Ausgabe geht aufs Terminal.
+
+# Beginn Programm bei 1000
+1000: 00004500030 # 030 4500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+1001: 00000570030 # 030 0570 ; Um. GB: Grossbuchstabenlage
+1002: 00001470030 # 030 1470 ; Ausgabe X
+1003: 00001500030 # 030 1500 ; Ausgabe Y
+#INTERRUPT H G Ü E H G M+ E M- R # Ü E rettet den AC nach 7777, dann Sprung nach Zelle 0001 (Druck BZ und AC); Rueckkehr nach 1004
+1004: 00004500030 # 030 4500 ; Anwahl Kanal K2 (die Druckroutine kehrt hierher zurueck)
+1005: 00001170030 # 030 1170 ; Um. KB: Kleinbuchstabenlage
+1006: 00001470030 # 030 1470 ; Ausgabe x
+1007: 00001500030 # 030 1500 ; Ausgabe y
+1010: 00000000020 # 020 0    ; Stopp
+
+Prüfungen:
+BZ=1011 AC=00001001000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+7777: 00001001000

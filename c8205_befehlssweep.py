@@ -40,7 +40,9 @@ Aufruf:
   python3 c8205_befehlssweep.py                  # alle 512 Codes, Kurzbericht
   python3 c8205_befehlssweep.py --verbose         # jeden Code einzeln auflisten
   python3 c8205_befehlssweep.py --code 251        # nur einen Code (oktal) im Detail
+  python3 c8205_befehlssweep.py --mdverz VERZ     # anderer Ordner mit den Knoten-.md-Dateien
   python3 c8205_befehlssweep.py --graph PFAD --t2 PFAD --interp PFAD
+Ohne Angaben liest das Skript die Knoten-.md-Dateien aus markdown-dateien/ neben c8205_interp.py.
 """
 import argparse
 import importlib.util
@@ -221,10 +223,13 @@ def main():
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--interp', default=os.path.join(here, 'c8205_interp.py'),
                      help='Pfad zu c8205_interp.py (Standard: gleiches Verzeichnis)')
+    ap.add_argument('--mdverz', default=None, metavar='VERZ',
+                     help='Ordner mit den Knoten-.md-Dateien '
+                          '(Standard: markdown-dateien/ neben c8205_interp.py, wie bei c8205_interp.py)')
     ap.add_argument('--graph', default=None,
-                     help='Pfad zur Knoten-Datei (Standard: wie c8205_interp.py)')
+                     help='Pfad zur Knoten-Datei (Standard: Datei im Ordner --mdverz)')
     ap.add_argument('--t2', default=None,
-                     help='Pfad zur Variablentabelle T2 (Standard: wie c8205_interp.py)')
+                     help='Pfad zur Variablentabelle T2 (Standard: Datei im Ordner --mdverz)')
     ap.add_argument('--max-knoten', type=int, default=5000,
                      help='Sicherheitslimit an Knotenschritten je Code (Standard: 5000)')
     ap.add_argument('--verbose', action='store_true',
@@ -238,8 +243,9 @@ def main():
     ci = lade_ci(args.interp)
 
     interp_dir = os.path.dirname(os.path.abspath(args.interp))
-    graph_pfad = args.graph or os.path.join(interp_dir, 'C8205-Interpreter-Eingänge_der_Knoten.md')
-    t2_pfad = args.t2 or os.path.join(interp_dir, 'C8205-Interpreter-Beschreibung_der_Knoten.md')
+    md_dir = args.mdverz or os.path.join(interp_dir, 'markdown-dateien')
+    graph_pfad = args.graph or os.path.join(md_dir, 'C8205-Interpreter-Eingänge_der_Knoten.md')
+    t2_pfad = args.t2 or os.path.join(md_dir, 'C8205-Interpreter-Beschreibung_der_Knoten.md')
     if not os.path.isfile(graph_pfad):
         ap.error(f'Knoten-Datei nicht gefunden: {graph_pfad} (--graph angeben)')
     if not os.path.isfile(t2_pfad):

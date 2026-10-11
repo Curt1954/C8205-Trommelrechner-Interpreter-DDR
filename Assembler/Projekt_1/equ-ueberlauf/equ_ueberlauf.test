@@ -1,0 +1,22 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003000000 # 000 euklid ; Sprung zum Programmanfang (Zelle 0000)
+3000: 00003012211 # euklid: 211 a ; ac:=a
+3001: 00003013330 # 330 b ; a = b ?
+3002: 00003013170 # 170 ende ; Sprung bei gleich
+3003: 00003005140 # 140 vcspei ; a < b ? -> c:=a
+3004: 00003013220 # 220 b ; ac:=a-b
+3005: 00003015240 # vcspei: 240 c ; c:=a / c:=a-b
+3006: 00003013211 # 211 b ; ac:=b
+3007: 00003012240 # 240 a ; a:=b
+3010: 00003015211 # 211 c ; ac:=c
+3011: 00003013240 # 240 b ; b:=c
+3012: 00003000000 # 000 euklid ; Schleife
+3013: 00007774240 # ende: 240 t ; t:=a
+3014: 00001111021 # 021 stoppnr ; Stopp
+3012: 00000000060 # a: dw 060
+3013: 00000000044 # b: dw 044
+Tastenfolge:
+H G R

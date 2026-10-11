@@ -367,13 +367,13 @@ unsigned int getSW2_Geraetefehler() { return austausch.SW2_Geraetefehler; }
 void setSW2_Geraetefehler(unsigned int value) { austausch.SW2_Geraetefehler = value; }
 
 unsigned int getSW2_bereit() { return austausch.SW2_bereit; }
-void setSW3_bereit(unsigned int value) { austausch.SW2_bereit = value; }
+void setSW2_bereit(unsigned int value) { austausch.SW2_bereit = value; }
 
 unsigned int getSW2_Paritaetsfehler() { return austausch.SW2_Paritaetsfehler; }
-void setSW4_Paritaetsfehler(unsigned int value) { austausch.SW2_Paritaetsfehler = value; }
+void setSW2_Paritaetsfehler(unsigned int value) { austausch.SW2_Paritaetsfehler = value; }
 
 unsigned int getSW2_working() { return austausch.SW2_working; }
-void setSW5_working(unsigned int value) { austausch.SW2_working = value; }
+void setSW2_working(unsigned int value) { austausch.SW2_working = value; }
 
 // Globale Variablen für die Steuerung
 bool running = true;

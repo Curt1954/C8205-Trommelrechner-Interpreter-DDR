@@ -1,0 +1,19 @@
+0000: 01 3000 000            000 euklid  ; Sprung zum Programmanfang (Zelle 0000)
+      20 0000 3000           equ 03000   
+3000: 01 3020 211    euklid: 211 a       ; ac:=a
+3001: 01 3021 330            330 b       ; a = b ?
+3002: 01 3013 170            170 ende    ; Sprung bei gleich (Vergleicher 3)
+3003: 01 3005 140            140 vcspei  ; a < b ?  (gleich ist schon erledigt) -> c:=a
+3004: 01 3021 220            220 b       ; ac:=a-b
+3005: 01 3015 240    vcspei: 240 c       ; c:=a / c:=a-b
+3006: 01 3021 211            211 b       ; ac:=b
+3007: 01 3020 240            240 a       ; a:=b
+3010: 01 3015 211            211 c       ; ac:=c
+3011: 01 3021 240            240 b       ; b:=c
+3012: 01 3000 000            000 euklid  ; Schleife
+3013: 00 7774 240    ende:   240 t       ; t:=a
+3014: 00 1111 021            021 stoppnr ; Stopp
+3015: 20 3016        c:      db  1       ; Hilfszelle c (in der Vorlage nicht belegt, wird vor dem Lesen beschrieben)
+      20 0000 3020           equ 03020   
+3020: 00 00000000060 a:      dw  060     
+3021: 00 00000000044 b:      dw  044     

@@ -1,6 +1,7 @@
 #include "ca82_standards.h"
 #include "c8205_op_codes.c"
 #include <stdarg.h>
+#include <errno.h>
 
 #define BITMASK 010000000000  
 #define EQU_ELEMENTS 4096
@@ -39,6 +40,7 @@ typedef struct {
     char macroParameters[MACRO_PARAMETER_ANZAHL][MACRO_PARAMETER_LAENGE]; 
     int macroLineCount;
     lineElements *macroParsedLines;  
+    int ausQuelltext;                // 1 = im Quelltext definiert, 0 = aus der Makrodatei
 } macroDefinitionen;
 
 #define INITIAL_SIZE 10   // Starte mit 10 Makros
@@ -242,6 +244,11 @@ bool isValidLabel(const char *label) {
     // Wenn das letzte Zeichen ':' ist, ignorieren
     if (label[len - 1] == ':') {
         len--; // Länge reduzieren, um das ':' zu ignorieren
+    }
+
+    // Doku 2, <adresssymbol>: Das erste Zeichen ist ein Buchstabe (auch '_' wird akzeptiert), keine Ziffer.
+    if (len > 0 && isdigit((unsigned char)label[0])) {
+        return false;
     }
 
     // Überprüfung jedes Zeichens
@@ -521,6 +528,33 @@ void printAssemblerzeilenArray() {
 }
 
 
+// Text-Anweisungen: Der Operand ist ein Text (Zeichenfolge, ggf. in \...\), kein Zahlen- oder
+// Adressausdruck. Dort sind ';' und '#' (Doku 2, <sonderzeichen>) einfache Textzeichen, und ein
+// fuehrendes '#' leitet kein Literal ein.
+static int istTextAnweisung(const char *operation) {
+    return strcmp(operation, "dt") == 0 || strcmp(operation, "dto") == 0 || strcmp(operation, "dtm") == 0;
+}
+
+// Liefert die Position, an der der Operand endet: das erste ';' (Kommentarbeginn) bzw. das
+// Zeilenende ab "rest". Bei dt, dto und dtm gilt (Doku 2, <kommentar>): "Innerhalb der \-Zeichen
+// von dt wird ; nicht als Kommentar betrachtet." Steht vor dem ersten ';' ein '\' und gibt es
+// dahinter ein schliessendes '\', so wird ein ';' dazwischen zum Text gerechnet, z. B.
+//     dt  \ab;cd\   ; Kommentar      -> Text "ab;cd", Kommentar "; Kommentar"
+// Ohne schliessendes '\' (oder bei einem ';' vor dem ersten '\') bleibt es beim ersten ';'.
+// Die Auswahl der \...\-Grenzen entspricht extractBackslashContent(): erster bis zweiter '\'.
+static char *findeOperandEnde(const char *operation, char *rest) {
+    char *suchStart = rest;
+    if (istTextAnweisung(operation)) {
+        char *erstesEnde = strpbrk(rest, ";\n");
+        char *b1 = strchr(rest, '\\');
+        if (b1 && (!erstesEnde || b1 < erstesEnde)) {
+            char *b2 = strchr(b1 + 1, '\\');
+            if (b2) suchStart = b2 + 1;   // Kommentar frühestens hinter dem schliessenden '\'
+        }
+    }
+    return strpbrk(suchStart, ";\n");
+}
+
 // löst eine Stringzeile in die .SPx-Struktur auf und gibt diese zurück.
 void processLine(char *line, lineElements linesAsm[], int *lineCount) {
     int posIndex = 0;
@@ -578,7 +612,7 @@ void processLine(char *line, lineElements linesAsm[], int *lineCount) {
 
             while (*line && isspace((unsigned char)*line)) { line++; posIndex++; }
 
-            char *restEnd = strpbrk(line, ";\n");
+            char *restEnd = findeOperandEnde(linesAsm[*lineCount].sp2, line);
             int restLength = restEnd ? (restEnd - line) : strlen(line);
             strncpy(linesAsm[*lineCount].sp3, line, restLength);
             linesAsm[*lineCount].sp3[restLength] = '\0';
@@ -704,6 +738,24 @@ typedef struct {
 AbsEntry abs_tabelle[EQU_ELEMENTS];  
 int abs_fuellstand = 0;
 
+// Zahl einer abs-Definition: fuehrende 0 = oktal, sonst dezimal (Doku 2, <oktalzahl>/<dezimalzahl>).
+// Liefert 1 und den Wert, wenn der ganze String eine solche Zahl ist, sonst 0.
+static int absZahlWert(const char *text, long *wert) {
+    char *ende;
+    if (text == NULL || *text == '\0') return 0;
+    int basis = (text[0] == '0' && text[1] != '\0') ? 8 : 10;
+    *wert = strtol(text, &ende, basis);
+    return *ende == '\0';
+}
+
+// Gleicher Wert: numerisch, damit abs 010 und abs 8 als gleich gelten; Texte, die keine reine Zahl
+// sind, werden wie bisher als Zeichenfolge verglichen.
+static int absWerteGleich(const char *a, const char *b) {
+    long wa, wb;
+    if (absZahlWert(a, &wa) && absZahlWert(b, &wb)) return wa == wb;
+    return strcmp(a, b) == 0;
+}
+
 int appendToAbsTable(const char *key, const char *value) {
     char key_copy[256];  
     strncpy(key_copy, key, sizeof(key_copy) - 1);
@@ -718,7 +770,7 @@ int appendToAbsTable(const char *key, const char *value) {
     // Überprüfe, ob der modifizierte Schlüssel existiert
     for (int i = 0; i < abs_fuellstand; i++) {
         if (strcmp(abs_tabelle[i].key, key_copy) == 0) {
-            if (strcmp(abs_tabelle[i].value, value) == 0) {
+            if (absWerteGleich(abs_tabelle[i].value, value)) {
                 return 0;  // Kein Update notwendig
             } else {
                 return -1;  // Beenden ohne Änderung
@@ -897,18 +949,6 @@ int verarbeiteZeile_wdhl(char *tempLine, char *loe, char *resu, char *opcode, ch
     return 0;
 }
 
-int pruefeAdresse(char *token) {
-    if (!token || *token == '\0') return -1;  // Leerer String → ungültig
-    
-    for (int i = 0; token[i] != '\0'; i++) {
-        if (!isdigit((unsigned char)token[i])) {
-            return -1;  // Enthält Nicht-Ziffern → ungültig
-        }
-    }
-
-    return (token[0] == '0') ? 0 : 1;  // Prüfe erste Ziffer
-}
-
 int isNumeric(const char *str) {
     while (*str) {
         if (!isdigit(*str)) return 0; // Wenn ein Zeichen kein Digit ist, ist es nicht numerisch
@@ -961,78 +1001,71 @@ int countWords(const char *str) {
 }
 
 
-int pruefeParameterX( int macroParameterAnzahl, char *pruefliste, char *zuPruefenderAktParam, lineElements **result, int *lineCount) { 
-   // lineElements **result, int *lineCount   werden in REALLOC_RESULT2 benötigt
-   int prNumber=0;
-  
-    char prueflisteKopie[256];  // Kopie erstellen
-    strncpy(prueflisteKopie, pruefliste, sizeof(prueflisteKopie) - 1);
-    prueflisteKopie[sizeof(prueflisteKopie) - 1] = '\0';  // Sicherstellen, dass es terminiert
-
-    // Prüfung Parameternummer möglich
-    char *token = strtok(prueflisteKopie, " \t");  // Zerlegt die Kopie, nicht das Original!
-    while (token != NULL) {
-        prNumber++;  // Erhöhe Zähler für jedes gefundene Wort
-        token = strtok(NULL, " \t");
+// Typpruefung fuer Makro-Parameter ($PRx: $TYPADR | $TYPKON | $TYPABS).
+// Geprueft wird der beim Makroaufruf uebergebene Wert `arg`. Rueckgabe 0 = in Ordnung, sonst
+// 1 = Fehler; `meldung` enthaelt dann den Text. Die Pruefung laeuft in Pass 0, also bevor die
+// Symboltabelle existiert: Sie ist deshalb rein syntaktisch, bei $TYPABS wird zusaetzlich im
+// Quelltext nach der Zeile `<arg>: abs ...` gesucht.
+static int istSymbolName(const char *t) {
+    size_t n = strlen(t);
+    if (n == 0 || n > MAX_LABEL_LENGTH) return 0;
+    if (!(isalpha((unsigned char)t[0]) || t[0] == '_')) return 0;
+    for (size_t k = 1; k < n; k++) {
+        if (!(isalnum((unsigned char)t[k]) || t[k] == '_')) return 0;
     }
-    if (prNumber  < 0 || prNumber > macroParameterAnzahl) {
-        return 3; // Ungültige Parameternummer    
+    return 1;
+}
+
+static int pruefeMakroTyp(const char *typ, const char *arg, char *meldung, size_t meldungGroesse) {
+    if (strcmp(typ, "$TYPADR") == 0) {
+        int ok = 0;
+        if (arg[0] == '*') {            // Sternadresse: `*` oder `*+3`, `*-1`
+            ok = 1;
+            for (const char *q = arg + 1; *q; q++) {
+                if (!strchr("+-*/0123456789", *q)) { ok = 0; break; }
+            }
+        } else {
+            ok = istSymbolName(arg);
+        }
+        if (!ok) {
+            snprintf(meldung, meldungGroesse, "Wert \"%s\" ist keine symbolische Adresse (Label oder *)", arg);
+            return 1;
+        }
+        return 0;
     }
-
-
-printf("!!!!!!!!!!!!!!!!!!!!  pruefliste %s   zuPruefenderAktParam  %s prNumber %i\n",pruefliste, zuPruefenderAktParam,prNumber);
-
-
-    // Prüfung $TYP??? - Parameter
-    int found = 0;
-    trimWhitespace(zuPruefenderAktParam);
-    while (true) {
-        if (strcmp(zuPruefenderAktParam, "$TYPADR") == 0) {
-printf("  prueflisten-Element %s  %i\n",zuPruefenderAktParam, isSymbol(zuPruefenderAktParam));
-           found = 1;  // gefunden
-           if ( !( !isSymbol(zuPruefenderAktParam) || (strcmp(zuPruefenderAktParam, "*") == 0 ) ) ){
-                REALLOC_RESULT2;
-                MELDE_WARNUNG2("Parameter %s %s: %s", zuPruefenderAktParam, pruefliste, "Parameter ist keine symbolische Adresse");
-                found = -1;
-                break;
-           }
+    if (strcmp(typ, "$TYPKON") == 0) {
+        size_t n = strlen(arg);
+        int nurZiffern = (n > 0);
+        for (size_t k = 0; k < n; k++) {
+            if (!isdigit((unsigned char)arg[k])) { nurZiffern = 0; break; }
         }
-
-        if (strcmp(zuPruefenderAktParam, "$TYPABS") == 0) {
-           found = 1;  // gefunden
-           if (  sucheInAbsTabelle(zuPruefenderAktParam) != 1 ) {
-                REALLOC_RESULT2;  
-                MELDE_FEHLER2("Parameter %s %s: %s", zuPruefenderAktParam, pruefliste, "Parameter ist nicht als ABSOLUT definiert");
-                found = -2;
-                break;
-           }
+        if (!nurZiffern) {
+            snprintf(meldung, meldungGroesse, "Wert \"%s\" ist keine Konstante", arg);
+            return 1;
         }
-
-        if (strcmp(zuPruefenderAktParam, "$TYPKON") == 0) {
-            found = 1;  // gefunden
-            int rc = pruefeAdresse(zuPruefenderAktParam); // Passenden Parameter prüfen
-
-            if (rc == 1) {
-                REALLOC_RESULT2;
-                MELDE_WARNUNG2("Parameter %s %s: %s", zuPruefenderAktParam, pruefliste, "Parameter ist keine Oktalkonstante");
-                found = -3;
-            }
-            if (rc == -1) {
-                REALLOC_RESULT2;
-                is_error0 = 1;
-                MELDE_FEHLER2("Parameter %s %s: %s", zuPruefenderAktParam, pruefliste, "Parameter ist keine Konstante");
-                found = -4;
-            }
-            break;
-        } else { 
-            if ((strcmp(zuPruefenderAktParam, "*") == 0) || (strcmp(zuPruefenderAktParam, zuPruefenderAktParam) == 0)) {  
-                found = 1; // gefunden
-                break;
-            }
+        int oktal = (arg[0] == '0');
+        for (size_t k = 0; k < n; k++) {
+            if (arg[k] > '7') oktal = 0;
         }
-        break;
+        if (!oktal) {
+            snprintf(meldung, meldungGroesse, "Wert \"%s\" ist keine Oktalkonstante (Oktalzahlen beginnen mit 0 und enthalten nur 0-7)", arg);
+            return 1;
+        }
+        return 0;
     }
-    return found;
+    if (strcmp(typ, "$TYPABS") == 0) {
+        for (int z = 0; z < lineCountAsm; z++) {
+            char marke[256];
+            strncpy(marke, linesAsm[z].sp1, sizeof(marke) - 1);
+            marke[sizeof(marke) - 1] = '\0';
+            size_t ml = strlen(marke);
+            if (ml > 0 && marke[ml - 1] == ':') marke[ml - 1] = '\0';
+            if (strcmp(marke, arg) == 0 && strcmp(linesAsm[z].sp2, "abs") == 0) return 0;
+        }
+        snprintf(meldung, meldungGroesse, "Wert \"%s\" ist nicht als ABSOLUT (abs) definiert", arg);
+        return 1;
+    }
+    return 0;
 }
 
 char *getSubstringUntilSpace(const char *str, int offset) {
@@ -1241,15 +1274,17 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
             // Im makro
             if (AsmParamCount != macros[i].macroParameterAnzahl) {
                 REALLOC_RESULT;              
-                MELDE_FEHLER("erwartet %d Parameter, aber %d wurden übergeben!", macros[i].macroParameterAnzahl, *lineCount);
+                MELDE_FEHLER("erwartet %d Parameter, aber %d wurden übergeben!", macros[i].macroParameterAnzahl, AsmParamCount);
                 is_error0 = 1;
                 return result;
             }
 
             int found = 1;  // gefunden
+            int equIndex = -1;  // Position der automatisch erzeugten equ-Zeile (-1 = keine)
             if ( strlen(label) > 0 ) { 
                 // Label für Macroaufruf
                 REALLOC_RESULT;  
+                equIndex = *lineCount;
                 strcpy(result[*lineCount].sp1, label);
                 strcpy(result[*lineCount].sp2, "equ");
                 strcpy(result[*lineCount].sp3, "*");
@@ -1378,9 +1413,37 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
                                 if (nextWord22 != NULL) {
                                     logMacroError("Ungültige Zeichen nach %s %s%s", SP1, nextWord22,"");
                                 } else {
-                                  int rc=0;
-                                  rc = pruefeParameterX( macros[i].macroParameterAnzahl, pruefliste, nextWord, &result, lineCount);
-    printf("!!@3333   %s  rc= %i\n",pruefliste, rc );
+                                    // Typpruefung ($TYPADR, $TYPKON, $TYPABS) des beim Aufruf uebergebenen Wertes
+                                    int parameterNummer = SP1[3] - '0';
+                                    if (parameterNummer >= 1 && parameterNummer <= AsmParamCount) {
+                                        char typMeldung[256];
+                                        if (pruefeMakroTyp(nextWord, AsmParamArray[parameterNummer - 1], typMeldung, sizeof(typMeldung)) != 0) {
+                                            char paramBez[16];
+                                            snprintf(paramBez, sizeof(paramBez), "$%d", parameterNummer);
+                                            logMacroError("Parameter %s: %s", paramBez, typMeldung, "");
+                                        }
+                                    }
+                                }
+                            } else if (isdigit((unsigned char)SP1[3]) && nextWord[0] != '$') {   // $...-Eintrag (z. B. $ADRESSE) = Typangabe, keine Wertliste
+                                // Wertliste (Doku 4): Der beim Aufruf uebergebene Parameter $x darf nur
+                                // einen der in der Liste $PRx genannten Werte annehmen.
+                                int parameterNummer = SP1[3] - '0';
+                                if (parameterNummer >= 1 && parameterNummer <= AsmParamCount) {
+                                    char listeKopie[256];
+                                    strncpy(listeKopie, pruefliste, sizeof(listeKopie) - 1);
+                                    listeKopie[sizeof(listeKopie) - 1] = '\0';
+                                    char *kommentar = strchr(listeKopie, ';');   // ; leitet einen Kommentar ein
+                                    if (kommentar) *kommentar = '\0';
+                                    int inListe = 0;
+                                    char *lsave;
+                                    for (char *w = strtok_r(listeKopie, " \t", &lsave); w != NULL; w = strtok_r(NULL, " \t", &lsave)) {
+                                        if (strcmp(w, AsmParamArray[parameterNummer - 1]) == 0) { inListe = 1; break; }
+                                    }
+                                    if (!inListe) {
+                                        char paramBez[16];
+                                        snprintf(paramBez, sizeof(paramBez), "$%d", parameterNummer);
+                                        logMacroError("Parameter %s: Wert \"%s\" steht nicht in der Pruefliste", paramBez, AsmParamArray[parameterNummer - 1], "");
+                                    }
                                 }
                             }
                         }
@@ -1417,8 +1480,8 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
                 logMacroError("Fehlendes $ENDIF für ein $IF %s%s%s", "", "", "");
             }
 
-            // prüfe Verwendung von $1..$9 auf < parameteranzahl
-            for (int jj = 0; jj < *macroCount; jj++) {
+            // prüfe Verwendung von $1..$9 auf < parameteranzahl (über alle Zeilen dieses Makros)
+            for (int jj = 0; jj < macros[i].macroLineCount; jj++) {
                 SET_SP_VALUES(i, jj);
                 trimWhitespace(SP1);
                 trimWhitespace(SP2);
@@ -1633,7 +1696,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
             char tempLine[256] = "";
             int ober_i = 0;
 
-            for (int i = 0; result[i].sp1[0] != '\0' || result[i].sp2[0] != '\0' || result[i].sp3[0] != '\0'; i++) {
+            for (int i = 0; i < *lineCount && (result[i].sp1[0] != '\0' || result[i].sp2[0] != '\0' || result[i].sp3[0] != '\0'); i++) {   // Obergrenze: kein Lesen hinter dem Array
                 if (result[i].sp2[0] != '\0' && strstr(result[i].sp2, "!$wdhl_adr_e") != NULL) { 
                     strcpy(tempLine, result[i].sp2);
                     strcat(tempLine, " ");
@@ -1660,6 +1723,29 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
                         int muell=ober_i;
                         processLine(tempLine, result, &muell);  
                     }
+                }
+            }
+
+            // Label des Makroaufrufs: Hat die erste erzeugte Anweisung kein eigenes Label, entfaellt die
+            // equ-Zeile und die erste Anweisung erhaelt das Label des Aufrufs. (Nicht bei equ/abs/start/end,
+            // dort wuerde das Label sonst einen anderen Wert als die Adresse bekommen.)
+            if (equIndex >= 0) {
+                int erste = -1;
+                for (int q = equIndex + 1; q < *lineCount; q++) {
+                    if (result[q].sp1[0] == ';') continue;   // Kommentarzeilen ueberspringen
+                    erste = q;
+                    break;
+                }
+                if (erste >= 0 && result[erste].sp1[0] == '\0' && result[erste].sp2[0] != '\0' &&
+                    strncmp(result[erste].sp2, "equ", 3) != 0 &&
+                    strcmp(result[erste].sp2, "abs") != 0 &&
+                    strcmp(result[erste].sp2, "start") != 0 &&
+                    strcmp(result[erste].sp2, "end") != 0) {
+                    strcpy(result[erste].sp1, label);
+                    for (int q = equIndex; q < *lineCount - 1; q++) {
+                        result[q] = result[q + 1];
+                    }
+                    (*lineCount)--;
                 }
             }
             return result;
@@ -1781,60 +1867,74 @@ void macroSprung1Aufloesen(lineElements **ergebnis, int *lineCount, char *mna) {
     }
 
 
-    lineElements *output = (lineElements *)malloc(*lineCount * sizeof(lineElements));
-    lineElements *tempErgebnis = (lineElements *)malloc(*lineCount * sizeof(lineElements));
+    // Pro Eingabezeile kann hoechstens eine Fehlerzeile hinzukommen, daher doppelte Kapazitaet.
+    int origCount = *lineCount;
+    int kapazitaet = 2 * origCount + 1;
+    lineElements *output = (lineElements *)malloc(kapazitaet * sizeof(lineElements));
+    lineElements *tempErgebnis = (lineElements *)malloc(kapazitaet * sizeof(lineElements));
     if (!output || !tempErgebnis) {
         fprintf(stderr, "Speicherzuweisung für `output` oder `tempErgebnis` fehlgeschlagen!\n");
         exit(RC_FEHLER);
     }
 
     // **Erster Durchlauf: Makro-Labels sammeln**
-    int kk=0;
-    for (int i = 0; i < *lineCount; i++) {
+    // outCount zaehlt die Zeilen in `output`; bei einem ungueltigen Makro-Label wird hinter der
+    // Zeile eine Fehlerzeile eingefuegt (die Folgezeilen bleiben unveraendert).
+    int outCount = 0;
+    for (int kk = 0; kk < origCount; kk++) {
+        lineElements *zeile = &(*ergebnis)[kk];
 
-        if ((*ergebnis)[kk].sp1[0] == ';') { 
-            copyLineElements(output, *ergebnis, kk);
-        } 
-        else if (strchr((*ergebnis)[kk].sp1, ':') && strchr((*ergebnis)[kk].sp1, '%') &&
-                (strncmp((*ergebnis)[kk].sp1, "ML", 2) != 0 ||
-                !isdigit((*ergebnis)[kk].sp1[2]) ||
-                !isdigit((*ergebnis)[kk].sp1[3]) ||
-                !isdigit((*ergebnis)[kk].sp1[4]) ||
-                !isdigit((*ergebnis)[kk].sp1[5]) ||
-                (*ergebnis)[kk].sp1[6] != '%' ||
-                (*ergebnis)[kk].sp1[7] != ':')) {
-                    is_error0 = 1;
-                    copyLineElements(output, *ergebnis, kk);
-                    REALLOC_ERGEBNIS;
-                    (*lineCount)++;
-                    kk++;
-                    macroFehlerausgabe(*ergebnis, kk, "Macrolabel muß mit `ML` beginnen und exakt 8 Zeichen und einen Doppelpunkt (z.B.: ML01234%:) haben.", mna);
-                    copyLineElements(output, *ergebnis, kk); 
-        }    
-        else if (strncmp((*ergebnis)[kk].sp1, "ML", 2) == 0 &&
-            isdigit((*ergebnis)[kk].sp1[2]) && isdigit((*ergebnis)[kk].sp1[3]) &&
-            isdigit((*ergebnis)[kk].sp1[4]) && isdigit((*ergebnis)[kk].sp1[5]) &&
-            (*ergebnis)[kk].sp1[6] == '%' && (*ergebnis)[kk].sp1[7] == ':') 
-        {           
+        if (zeile->sp1[0] == ';') {
+            output[outCount++] = *zeile;
+        }
+        else if (strchr(zeile->sp1, ':') && strchr(zeile->sp1, '%') &&
+                (strncmp(zeile->sp1, "ML", 2) != 0 ||
+                !isdigit((unsigned char)zeile->sp1[2]) ||
+                !isdigit((unsigned char)zeile->sp1[3]) ||
+                !isdigit((unsigned char)zeile->sp1[4]) ||
+                !isdigit((unsigned char)zeile->sp1[5]) ||
+                zeile->sp1[6] != '%' ||
+                zeile->sp1[7] != ':')) {
+            is_error0 = 1;
+            output[outCount++] = *zeile;
+            lineElements fehler = *zeile;
+            macroFehlerausgabe(&fehler, 0, "Macrolabel muß mit `ML`, vier Ziffern und `%` beginnen und einen Doppelpunkt haben (z.B.: ML0004%:):", mna);
+            output[outCount++] = fehler;
+        }
+        else if (strncmp(zeile->sp1, "ML", 2) == 0 &&
+            isdigit((unsigned char)zeile->sp1[2]) && isdigit((unsigned char)zeile->sp1[3]) &&
+            isdigit((unsigned char)zeile->sp1[4]) && isdigit((unsigned char)zeile->sp1[5]) &&
+            zeile->sp1[6] == '%' && zeile->sp1[7] == ':')
+        {
             // original-label mit doppelpunkt
-            char label[LABEL_SIZE];
-            strcpy(labelTable[labelCount].label, (*ergebnis)[kk].sp1 );
+            strcpy(labelTable[labelCount].label, zeile->sp1);
             labelCount++;
             // modifiziertes Label MIT Doppelpunkt.
-            modify_text((*ergebnis)[kk].sp1, uuid);
-            copyLineElements(output, *ergebnis, kk);
+            lineElements geaendert = *zeile;
+            modify_text(geaendert.sp1, uuid);
+            output[outCount++] = geaendert;
         } else {
-            copyLineElements(output, *ergebnis, kk);
+            output[outCount++] = *zeile;
         }
-        kk++;
     }
 
     // **Zweiter Durchlauf: Makro-Labels in Zeilen ersetzen**
-    for (int i = 0; i < *lineCount; i++) {
+    for (int i = 0; i < outCount; i++) {
         copyLineElements(tempErgebnis, output, i);
     }
 
-    int currentLine = 0;
+    // Ergebnisfeld bei Bedarf fuer die eingefuegten Fehlerzeilen vergroessern
+    if (outCount > origCount) {
+        lineElements *temp = (lineElements *)realloc(*ergebnis, (outCount + 1) * sizeof(lineElements));
+        if (!temp) {
+            free(*ergebnis);
+            fprintf(stderr, "Speicherfehler!\n");
+            exit(RC_FEHLER);
+        }
+        *ergebnis = temp;
+    }
+    *lineCount = outCount;
+
     for (int i = 0; i < *lineCount; i++) {
         if ( (strlen(tempErgebnis[i].sp3) > 0) && (strstr(tempErgebnis[i].sp3, "%") != NULL) ) { 
            for (int k = 0; k < labelCount; k++) {
@@ -1848,15 +1948,100 @@ void macroSprung1Aufloesen(lineElements **ergebnis, int *lineCount, char *mna) {
            }
         }
         copyLineElements(*ergebnis, tempErgebnis, i);
-        if (tempErgebnis[i].sp1[0] != ';') currentLine++;  // Zeilenzähler nur für echte Zeilen erhöhen
     }
-
 
     free(output);
     free(tempErgebnis);
 }
 
 // -------------------
+
+// Makroname ohne abschließenden Doppelpunkt (für Vergleiche und Meldungen)
+static void macroNameOhneDoppelpunkt(const char *name, char *out, size_t groesse) {
+    strncpy(out, name, groesse - 1);
+    out[groesse - 1] = '\0';
+    size_t len = strlen(out);
+    if (len > 0 && out[len - 1] == ':') {
+        out[len - 1] = '\0';
+    }
+}
+
+// Index des Makros mit diesem Namen (Doppelpunkt am Namensende wird ignoriert) oder -1
+static int macroSuche(const char *name) {
+    char a[MACRO_PARAMETER_LAENGE], b[MACRO_PARAMETER_LAENGE];
+    macroNameOhneDoppelpunkt(name, a, sizeof(a));
+    for (int i = 0; i < macroCount; i++) {
+        macroNameOhneDoppelpunkt(macros[i].macroName, b, sizeof(b));
+        if (strcmp(a, b) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Legt ein Makro im Array `macros` an (gemeinsam genutzt von Makrodatei und Quelltext).
+//   name:              Makroname wie in der Definition
+//   paramsIn:          Rest hinter MACRO (Anzahl oder Wortliste), ggf. leer
+//   zeilenKapazitaet:  Platz für die geparsten Makrozeilen
+//   ausQuelltext:      Herkunft (1 = Quelltext, 0 = Makrodatei)
+//   ersetzeIdx:        >= 0: das vorhandene Makro an dieser Stelle ersetzen, sonst -1 (neu anlegen)
+// Rückgabe: Index des Makros.
+static int macroAnlegen(const char *name, const char *paramsIn, int zeilenKapazitaet, int ausQuelltext, int ersetzeIdx) {
+    int macroIndex;
+    if (ersetzeIdx >= 0) {
+        macroIndex = ersetzeIdx;
+        free(macros[macroIndex].macroParsedLines);
+    } else {
+        if (macroCount >= macroCapacity) {
+            macroCapacity *= GROWTH_FACTOR;
+            macroDefinitionen *temp = (macroDefinitionen *)realloc(macros, macroCapacity * sizeof(macroDefinitionen));
+            if (!temp) {
+                fprintf(stderr, "Speichererweiterung fehlgeschlagen!\n");
+                exit(RC_FEHLER);
+            }
+            macros = temp;
+        }
+        macroIndex = macroCount++;
+    }
+    macros[macroIndex].macroParsedLines = (lineElements *)calloc(zeilenKapazitaet, sizeof(lineElements));
+    if (!macros[macroIndex].macroParsedLines) {
+        fprintf(stderr, "Speicherzuweisung für Makrozeilen fehlgeschlagen!\n");
+        exit(RC_FEHLER);
+    }
+    strcpy(macros[macroIndex].macroName, name);
+    strcpy(macros[macroIndex].macro, "MACRO");
+    macros[macroIndex].macroLineCount = 0;
+    macros[macroIndex].ausQuelltext = ausQuelltext;
+
+    char params[256];
+    strncpy(params, paramsIn, sizeof(params) - 1);
+    params[sizeof(params) - 1] = '\0';
+    int paramCount = 0;
+    if (params[0] != '\0') {
+        if (strspn(params, "0123456789") == strlen(params)) {
+            paramCount = atoi(params);
+        } else {
+            char *token = strtok(params, " ");
+            while (token && paramCount < MACRO_PARAMETER_ANZAHL) {
+                strcpy(macros[macroIndex].macroParameters[paramCount], token);
+                paramCount++;
+                token = strtok(NULL, " ");
+            }
+        }
+    }
+    // Doku 4: Es sind maximal 9 Parameter zulaessig ($1 ... $9).
+    if (paramCount > 9) {
+        is_error0 = 1;
+        char meldeName[MACRO_PARAMETER_LAENGE];
+        strncpy(meldeName, name, sizeof(meldeName) - 1);
+        meldeName[sizeof(meldeName) - 1] = '\0';
+        size_t meldeLen = strlen(meldeName);
+        if (meldeLen > 0 && meldeName[meldeLen - 1] == ':') meldeName[meldeLen - 1] = '\0';
+        PRINT_FEHLER("Makro %s: %d Parameter angegeben, zulaessig sind maximal 9.", meldeName, paramCount);
+    }
+    macros[macroIndex].macroParameterAnzahl = paramCount;
+    return macroIndex;
+}
 
 // Läd alle MAcros aus der Datei ins Array `macros`
 void erzeugeMacroArray(const char *macroFileName) {
@@ -1886,67 +2071,26 @@ void erzeugeMacroArray(const char *macroFileName) {
         if (*lineBuffer == '\0' || strcmp(lineBuffer, "\n") == 0) {
             continue;
         }
-        // Speicher nach Bedarf erweitern
-        if (macroCount >= macroCapacity) {
-            macroCapacity *= GROWTH_FACTOR;
-            macroDefinitionen *temp = (macroDefinitionen *)realloc(macros, macroCapacity * sizeof(macroDefinitionen));
-            if (!temp) {
-                fprintf(stderr, "Speichererweiterung fehlgeschlagen!\n");
-                exit(RC_FEHLER);
-            }
-            macros = temp;
-        }
 
         // Extrahiere den Makronamen und überprüfe auf Duplikate
         char name[MACRO_PARAMETER_LAENGE] = "", macro[16] = "", params[256] = "";
-        int paramCount = 0;
 
-        int scannedFields = sscanf(lineBuffer, "%s %s %255[^\n]", name, macro, params);
+        int scannedFields = sscanf(lineBuffer, "%255s %15s %255[^\n]", name, macro, params);   // Feldbreiten: macro[16] lief über
         if (scannedFields >= 2 && strcmp(macro, "MACRO") == 0) {
-            // Prüfe, ob der Makroname bereits existiert
-            for (int i = 0; i < macroCount; i++) {
-                if (strcmp(macros[i].macroName, name) == 0) {  
-                    fprintf(stderr, "Fehler: Makro '%s' wurde bereits definiert! Überspringe bis zum Ende des Makros.\n", name);
-                    
-                    // Überspringe alle Zeilen bis zum nächsten Makroende
-                    while (fgets(lineBuffer, sizeof(lineBuffer), macroFile)) {
-                        if (strstr(lineBuffer, "macroende") || strstr(lineBuffer, "MACROENDE") || strstr(lineBuffer, "MEND")) {
-                            break; 
-                        }
+            if (macroSuche(name) >= 0) {
+                fprintf(stderr, "Fehler: Makro '%s' wurde bereits definiert! Überspringe bis zum Ende des Makros.\n", name);
+
+                // Überspringe alle Zeilen bis zum nächsten Makroende
+                while (fgets(lineBuffer, sizeof(lineBuffer), macroFile)) {
+                    if (strstr(lineBuffer, "macroende") || strstr(lineBuffer, "MACROENDE") || strstr(lineBuffer, "MEND")) {
+                        break;
                     }
-                    continue; 
                 }
+                continue;
             }
 
             // Falls kein Duplikat gefunden wurde, speichere das neue Makro
-            macroIndex = macroCount++;
-
-            macros[macroIndex].macroParsedLines = (lineElements *)malloc(MACRODEFINITIONEN * sizeof(lineElements));
-            if (!macros[macroIndex].macroParsedLines) {
-                fprintf(stderr, "Speicherzuweisung für Makrozeilen fehlgeschlagen!\n");
-                exit(RC_FEHLER);
-            }
-
-            strcpy(macros[macroIndex].macroName, name); 
-            strcpy(macros[macroIndex].macro, macro); 
-            macros[macroIndex].macroLineCount = 0;  
-
-            if (scannedFields == 3) {
-                // Prüfe, ob params eine Zahl ist
-                if (strspn(params, "0123456789") == strlen(params)) {
-                    paramCount = atoi(params);
-                } else {
-                    // Zerlege params in einzelne Wörter
-                    char *token = strtok(params, " ");
-                    while (token && paramCount < MACRO_PARAMETER_ANZAHL) {
-                        strcpy(macros[macroIndex].macroParameters[paramCount], token);  
-                        paramCount++;
-                        token = strtok(NULL, " ");
-                    }
-                }
-            }
-
-            macros[macroIndex].macroParameterAnzahl = paramCount; 
+            macroIndex = macroAnlegen(name, params, MACRODEFINITIONEN, 0, -1);
             macroActive = 1;
             continue;
         }
@@ -1969,6 +2113,100 @@ void erzeugeMacroArray(const char *macroFileName) {
 }
 
 // ----------------
+
+static int istMacroBeginn(const char *sp2) {
+    return strcmp(sp2, "MACRO") == 0;
+}
+
+static int istMacroEnde(const char *sp2) {
+    return strcmp(sp2, "MEND") == 0 || strcmp(sp2, "MACROENDE") == 0 || strcmp(sp2, "macroende") == 0;
+}
+
+// Sucht im bereits geparsten Quelltext (linesAsm) nach Makrodefinitionen
+//     NAME:  MACRO [n]  ...  MEND
+// legt sie im Array `macros` an (wie die Makros der Makrodatei) und ersetzt die Definition im Quelltext
+// durch eine Kommentarzeile. Ein gleichnamiges Makro der Makrodatei wird für diesen Lauf ersetzt
+// (die Makrodatei selbst bleibt unverändert); ein zweites gleichnamiges Makro im Quelltext ist ein Fehler.
+// Pro Fehlerursache wird genau eine Meldung ausgegeben.
+// Rückgabe: Anzahl der Fehler.
+static int sammleQuelltextMakros(void) {
+    int fehler = 0;
+    int aus = 0;   // Schreibindex des bereinigten Quelltextes
+    int i = 0;
+
+    while (i < lineCountAsm) {
+        if (istMacroEnde(linesAsm[i].sp2)) {
+            PRINT_FEHLER("%s", "Makrodefinition im Quelltext: MEND ohne zugehöriges MACRO.");
+            fehler++; i++;
+            continue;
+        }
+        if (!istMacroBeginn(linesAsm[i].sp2)) {
+            if (aus != i) linesAsm[aus] = linesAsm[i];
+            aus++; i++;
+            continue;
+        }
+
+        // Definition beginnt bei Zeile i; Ende unter Beachtung der Schachtelungstiefe suchen
+        char defName[MACRO_PARAMETER_LAENGE];
+        macroNameOhneDoppelpunkt(linesAsm[i].sp1, defName, sizeof(defName));
+
+        int tiefe = 1, ende = -1, verschachtelt = -1;
+        for (int j = i + 1; j < lineCountAsm; j++) {
+            if (istMacroBeginn(linesAsm[j].sp2)) {
+                if (verschachtelt < 0) verschachtelt = j;
+                tiefe++;
+            } else if (istMacroEnde(linesAsm[j].sp2)) {
+                if (--tiefe == 0) { ende = j; break; }
+            }
+        }
+
+        if (verschachtelt >= 0) {
+            char innen[MACRO_PARAMETER_LAENGE];
+            macroNameOhneDoppelpunkt(linesAsm[verschachtelt].sp1, innen, sizeof(innen));
+            PRINT_FEHLER("Makrodefinition im Quelltext: %s beginnt innerhalb der Definition von %s (Schachtelung ist nicht erlaubt; fehlt ein MEND?).",
+                         innen[0] ? innen : "(ohne Namen)", defName[0] ? defName : "(ohne Namen)");
+            fehler++;
+            i = (ende >= 0) ? ende + 1 : lineCountAsm;
+            continue;
+        }
+        if (ende < 0) {
+            PRINT_FEHLER("Makrodefinition im Quelltext: Fehlendes MEND für %s.", defName[0] ? defName : "(ohne Namen)");
+            fehler++;
+            i = lineCountAsm;
+            continue;
+        }
+        if (defName[0] == '\0') {
+            PRINT_FEHLER("%s", "Makrodefinition im Quelltext: MACRO ohne Namen (Syntax: NAME:  MACRO [Parameteranzahl]).");
+            fehler++;
+            i = ende + 1;
+            continue;
+        }
+
+        int vorhanden = macroSuche(linesAsm[i].sp1);
+        if (vorhanden >= 0 && macros[vorhanden].ausQuelltext) {
+            PRINT_FEHLER("Makrodefinition im Quelltext: %s ist im Quelltext bereits definiert.", defName);
+            fehler++;
+            i = ende + 1;
+            continue;
+        }
+        if (vorhanden >= 0) {
+            PRINT_WARNUNG("Makro %s aus der Makrodatei wird für diesen Lauf durch die Definition im Quelltext ersetzt.", defName);
+        }
+
+        // Rumpf einschließlich MEND-Zeile übernehmen, genau wie bei den Makros der Makrodatei
+        int idx = macroAnlegen(linesAsm[i].sp1, linesAsm[i].sp3, ende - i, 1, vorhanden);
+        memcpy(macros[idx].macroParsedLines, &linesAsm[i + 1], (ende - i) * sizeof(lineElements));
+        macros[idx].macroLineCount = ende - i;
+
+        // Definition im Quelltext durch Kommentarzeile ersetzen (defName wurde vorher gesichert)
+        snprintf(linesAsm[aus].sp1, sizeof(linesAsm[aus].sp1), ";+++ Makrodefinition %.200s im Quelltext (%d Zeilen)", defName, ende - i - 1);
+        linesAsm[aus].sp2[0] = linesAsm[aus].sp3[0] = linesAsm[aus].sp4[0] = '\0';
+        aus++;
+        i = ende + 1;
+    }
+    lineCountAsm = aus;
+    return fehler;
+}
 
 void printAllMacros() {
     for (int i = 0; i < macroCount; i++) {
@@ -2067,22 +2305,60 @@ void printFormattedAsmListing(lineElements lineAsmAufgeloest[], int lineCountAsm
 }
 
 
-void printFormattedAsmListingX(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgeloest, FILE *dmpFile) {
+// Entfernt ANSI-Farbcodes (ESC [ <Ziffern und ;> m) aus text (in place).
+static void entferneFarbcodes(char *text) {
+    char *r = text, *w = text;
+    while (*r) {
+        if (*r == '\033' && r[1] == '[') {
+            const char *q = r + 2;
+            while ((*q >= '0' && *q <= '9') || *q == ';') q++;
+            if (*q == 'm') { r = (char *)q + 1; continue; }
+        }
+        *w++ = *r++;
+    }
+    *w = '\0';
+}
+
+// Schreibt das formatierte Listing nach f. Mit ohneFarben = 1 (Datei .dmp) werden die ANSI-Farbcodes
+// vorher aus den Feldern entfernt und die Spaltenbreiten aus dem Text ohne Farbcodes berechnet;
+// frueher standen in der .dmp bei Fehlerlaeufen Escape-Sequenzen (z. B. um die Marke EE).
+static void schreibeListingX(FILE *f, int ohneFarben, lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgeloest) {
+    char b0[sizeof(lineAsmAufgeloest[0].sp0)];
+    char b1[sizeof(lineAsmAufgeloest[0].sp1)];
+    char b2[sizeof(lineAsmAufgeloest[0].sp2)];
+    char b3[sizeof(lineAsmAufgeloest[0].sp3)];
+    char b4[sizeof(lineAsmAufgeloest[0].sp4)];
+    const char *s0, *s1, *s2, *s3, *s4;
+
+#define HOLE_FELDER(idx) \
+    do { \
+        s0 = lineAsmAufgeloest[idx].sp0; s1 = lineAsmAufgeloest[idx].sp1; s2 = lineAsmAufgeloest[idx].sp2; \
+        s3 = lineAsmAufgeloest[idx].sp3; s4 = lineAsmAufgeloest[idx].sp4; \
+        if (ohneFarben) { \
+            snprintf(b0, sizeof(b0), "%s", s0); entferneFarbcodes(b0); s0 = b0; \
+            snprintf(b1, sizeof(b1), "%s", s1); entferneFarbcodes(b1); s1 = b1; \
+            snprintf(b2, sizeof(b2), "%s", s2); entferneFarbcodes(b2); s2 = b2; \
+            snprintf(b3, sizeof(b3), "%s", s3); entferneFarbcodes(b3); s3 = b3; \
+            snprintf(b4, sizeof(b4), "%s", s4); entferneFarbcodes(b4); s4 = b4; \
+        } \
+    } while (0)
+
     int maxWidth1 = 0, maxWidth2 = 0, maxWidth3 = 0;
 
     // **1. Schritt: Maximale Breiten für sp1, sp2, sp3 berechnen**
     for (int i = 0; i < lineCountAsmAufgeloest; i++) {
+        HOLE_FELDER(i);
         // Prüfen, ob sp1 ignoriert werden soll
-        char *trimmed = lineAsmAufgeloest[i].sp1;
+        const char *trimmed = s1;
         while (*trimmed == ' ' || *trimmed == '\t') trimmed++; // Leerzeichen & Tabs entfernen
 
         if (*trimmed != ';' && *trimmed != '#' && *trimmed != '$'  && *trimmed != '*' && *trimmed != '&') { // Zeilen mit `$` ausschließen
-            int len1 = strlen(lineAsmAufgeloest[i].sp1);
+            int len1 = strlen(s1);
             if (len1 > maxWidth1) maxWidth1 = len1;
         }
 
-        int len2 = strlen(lineAsmAufgeloest[i].sp2);
-        int len3 = strlen(lineAsmAufgeloest[i].sp3);
+        int len2 = strlen(s2);
+        int len3 = strlen(s3);
 
         if (len2 > maxWidth2) maxWidth2 = len2;
         if (len3 > maxWidth3) maxWidth3 = len3;
@@ -2092,42 +2368,25 @@ void printFormattedAsmListingX(lineElementsX lineAsmAufgeloest[], int lineCountA
     snprintf(formatString, sizeof(formatString), "%%-20s %%-%ds %%-%ds %%-%ds %%s\n", maxWidth1, maxWidth2, maxWidth3);
 
     for (int i = 0; i < lineCountAsmAufgeloest; i++) {
-        char *trimmed = lineAsmAufgeloest[i].sp1;
+        HOLE_FELDER(i);
+        const char *trimmed = s1;
         while (*trimmed == ' ' || *trimmed == '\t') trimmed++; // Leerzeichen & Tabs entfernen
 
         if (*trimmed == ';' || *trimmed == '#' || *trimmed == '$' || *trimmed == '*' || *trimmed == '&') {
             // Direkte Ausgabe ohne feste Spaltenbreite
-            printf("%-20s %s %s %s %s\n",
-                lineAsmAufgeloest[i].sp0,
-                lineAsmAufgeloest[i].sp1,
-                lineAsmAufgeloest[i].sp2,
-                lineAsmAufgeloest[i].sp3,
-                lineAsmAufgeloest[i].sp4);
-            if (dmpFile) {
-                fprintf(dmpFile, "%-20s %s %s %s %s\n",
-                    lineAsmAufgeloest[i].sp0,
-                    lineAsmAufgeloest[i].sp1,
-                    lineAsmAufgeloest[i].sp2,
-                    lineAsmAufgeloest[i].sp3,
-                    lineAsmAufgeloest[i].sp4);
-            }
+            fprintf(f, "%-20s %s %s %s %s\n", s0, s1, s2, s3, s4);
         } else {
             // Formatierte Ausgabe mit dynamischer Spaltenbreite
-            printf(formatString,
-                lineAsmAufgeloest[i].sp0,
-                lineAsmAufgeloest[i].sp1,
-                lineAsmAufgeloest[i].sp2,
-                lineAsmAufgeloest[i].sp3,
-                lineAsmAufgeloest[i].sp4);
-            if (dmpFile) {
-                fprintf(dmpFile, formatString,
-                    lineAsmAufgeloest[i].sp0,
-                    lineAsmAufgeloest[i].sp1,
-                    lineAsmAufgeloest[i].sp2,
-                    lineAsmAufgeloest[i].sp3,
-                    lineAsmAufgeloest[i].sp4);
-            }
+            fprintf(f, formatString, s0, s1, s2, s3, s4);
         }
+    }
+#undef HOLE_FELDER
+}
+
+void printFormattedAsmListingX(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgeloest, FILE *dmpFile) {
+    schreibeListingX(stdout, 0, lineAsmAufgeloest, lineCountAsmAufgeloest);       // Bildschirm: mit Farben
+    if (dmpFile) {
+        schreibeListingX(dmpFile, 1, lineAsmAufgeloest, lineCountAsmAufgeloest);  // .dmp: ohne Farbcodes
     }
 }
 
@@ -2141,7 +2400,8 @@ void pass0() {
     erzeugeMacroArray("c82ass.makros");
 
     int in_macro = 0;
-    int macro_errors = 0;
+    int quelltext_errors = sammleQuelltextMakros();   // Makrodefinitionen im Quelltext
+    int macro_errors = quelltext_errors;
     char old_mname[256]="";
 
     for (int i = 0; i < macroCount; i++) {
@@ -2185,8 +2445,10 @@ void pass0() {
     // Fehler-Ausgabe
     if (macro_errors > 0) {
         is_error = 1;
-        PRINT_FEHLER("%d Makros in der Definitionsdatei sind fehlerhaft.\n", macro_errors);
-        printAllMacros();
+        PRINT_FEHLER("%d fehlerhafte Makrodefinition(en) (Makrodatei oder Quelltext).\n", macro_errors);
+        if (macro_errors > quelltext_errors) {
+            printAllMacros();    // Auflistung nur, wenn die Makrodatei Fehler enthält (wie bisher)
+        }
         exit(RC_FEHLER);
     }
 
@@ -2459,6 +2721,61 @@ void processLiteralEntry(lineElements lineAsmAufgeloestTemp[], int *lineCountAsm
 
 // ----------------------------------------------------
 
+// Prueft den Operanden von db/dbn gemaess Doku (<zahl> ::= <oktalzahl> | <dezimalzahl>):
+//   oktalzahl   = fuehrende 0, nur Ziffern 0-7 ("0" allein ist zulaessig)
+//   dezimalzahl = [+|-] Ziffer 1-9, danach Ziffern 0-9
+// Alles andere (abc, 5x, 3+1, 09, #5, leer) ist ein Fehler; frueher wurde es stillschweigend als
+// 0 oder als der gueltige Zahlenanfang gelesen und verschob alle folgenden Adressen.
+// Rueckgabe 1 = gueltig (Anzahl in *wert), 0 = ungueltig (Text in meldung).
+static int pruefeDbOperand(const char *operation, const char *operand, long *wert, char *meldung, size_t groesse) {
+    const char *p = (operand != NULL) ? operand : "";
+    if (*p == '\0') {
+        snprintf(meldung, groesse, "%s: Operand fehlt (erwartet wird eine Zahl).", operation);
+        return 0;
+    }
+    int oktal = (p[0] == '0');
+    const char *q = p;
+    if (!oktal && (*q == '+' || *q == '-')) q++;
+    int gueltig = (*q != '\0');
+    if (oktal) {
+        for (; *q; q++) if (*q < '0' || *q > '7') { gueltig = 0; break; }
+    } else {
+        if (*q < '1' || *q > '9') gueltig = 0;
+        for (; gueltig && *q; q++) if (*q < '0' || *q > '9') gueltig = 0;
+    }
+    if (!gueltig) {
+        snprintf(meldung, groesse,
+                 "%s: Operand \"%s\" ist keine gültige Zahl (Oktalzahl mit führender 0 oder Dezimalzahl).",
+                 operation, operand);
+        return 0;
+    }
+    errno = 0;
+    long v = strtol(p, NULL, oktal ? 8 : 10);
+    if (v < 0) {
+        snprintf(meldung, groesse, "%s: Operand \"%s\" darf nicht negativ sein.", operation, operand);
+        return 0;
+    }
+    if (errno == ERANGE || v > 010000) {
+        snprintf(meldung, groesse, "%s: Operand \"%s\" ist zu groß (die Trommel hat nur 010000 Speicherplätze).",
+                 operation, operand);
+        return 0;
+    }
+    *wert = v;
+    return 1;
+}
+
+// Baut aus den Zeilenelementen den Text der Quellzeile fuer Fehlermeldungen (Pass 1 hat keine
+// fertige Zeile; frueher erschien dort "in Zeile: ``").
+static void baueMeldeZeile(char *ziel, size_t groesse, const lineElements *z) {
+    ziel[0] = '\0';
+    const char *teile[3] = { z->sp1, z->sp2, z->sp3 };
+    for (int k = 0; k < 3; k++) {
+        if (teile[k][0] == '\0') continue;
+        if (ziel[0] != '\0') strncat(ziel, " ", groesse - strlen(ziel) - 1);
+        strncat(ziel, teile[k], groesse - strlen(ziel) - 1);
+    }
+}
+
 void pass1(char *symbolLogFile) {
     printf("Löse Literale auf \n");
 
@@ -2494,8 +2811,22 @@ void pass1(char *symbolLogFile) {
         }
 
 
-        // irgendwo ein Literal enthalten ?    
-        if ( (lineAsmAufgeloest[i].sp3[0] == '#' || lineAsmAufgeloest[i].sp3[0] == '@')) {
+        // dt/dto/dtm: Ein Operand, der mit '#' beginnt, ist KEIN Text, sondern die Schreibweise eines
+        // Literals (Doku 2, <literal> ::= #<werteausdruck>). Soll ein Text mit '#' am Anfang ausgegeben
+        // werden, muss er in \...\ stehen (dt \#ab\). Ein '#' innerhalb des Textes (dt a#b) bleibt Text.
+        if ( istTextAnweisung(lineAsmAufgeloest[i].sp2) && lineAsmAufgeloest[i].sp3[0] == '#' ) {
+            baueMeldeZeile(line, sizeof(line), &lineAsmAufgeloest[i]);
+            printAdressError(lineAsmAufgeloest[i].sp3, "Operand", "beginnt mit # und ist daher kein Text; Text mit # braucht \\...\\", line);
+            MELDE_FEHLER_P1("Operand %s ist kein Text (beginnt mit #); Text mit # muss in \\...\\ stehen.", lineAsmAufgeloest[i].sp3);
+            is_error1 = 1;
+        }
+
+        // irgendwo ein Literal enthalten ?
+        // Nicht bei dt/dto/dtm: Dort ist der Operand ein Text; ein '#' innerhalb des Textes ist ein
+        // Textzeichen, ein fuehrendes '#' wird oben als Fehler gemeldet (dt # schrieb frueher "l0001"),
+        // ein '@' wird von der Zeichenpruefung in Pass 3 gemeldet.
+        if ( !istTextAnweisung(lineAsmAufgeloest[i].sp2) &&
+             (lineAsmAufgeloest[i].sp3[0] == '#' || lineAsmAufgeloest[i].sp3[0] == '@')) {
             char oldName[256]="";
             char literalValue[256];
             char literalName[50];
@@ -2553,8 +2884,11 @@ void pass1(char *symbolLogFile) {
             if (!( (strstr(lineAsmAufgeloest[i].sp2, "equ") != NULL) ||  (strstr(lineAsmAufgeloest[i].sp2, "abs") != NULL) )) {  
                copyAndIncrementLineElements(i);
             }
-            if (!isValidSp3_keinLiteralEnthalten(lineAsmAufgeloest[i].sp3)) {
-                printAdressError("", "Operand", " darf kein #-Literal sein", line);
+            // Text-Anweisungen ausgenommen: Ein '#' im dt-Text (z. B. dt \a#b\) ist ein Sonderzeichen.
+            if (!istTextAnweisung(lineAsmAufgeloest[i].sp2) &&
+                !isValidSp3_keinLiteralEnthalten(lineAsmAufgeloest[i].sp3)) {
+                baueMeldeZeile(line, sizeof(line), &lineAsmAufgeloest[i]);
+                printAdressError(lineAsmAufgeloest[i].sp3, "Operand", "darf kein #-Literal sein", line);
                 MELDE_FEHLER_P1("Operand %s darf kein #-Literal enthalten.",lineAsmAufgeloest[i].sp3);
                 is_error1 = 1;
             }
@@ -2565,15 +2899,17 @@ void pass1(char *symbolLogFile) {
             
 
         // end
-        if ( strcmp(lineAsmAufgeloest[i].sp2, "end") == 0 ) {
-            copyAndIncrementLineElements;
+        // Die Literale werden einmalig hinter dem ersten end ausgegeben. end_war wird jetzt beim
+        // Erkennen von end gesetzt (frueher nur innerhalb der Literalschleife) und die Schleife
+        // wird nicht mehr verlassen: Zeilen hinter end (abs, equ) werden weiter ausgewertet, auch
+        // wenn das Programm Literale enthaelt. Ausserdem erscheint die Warnung "end fehlt" nicht
+        // mehr faelschlich, wenn end vorhanden ist, aber kein Literal.
+        if ( strcmp(lineAsmAufgeloest[i].sp2, "end") == 0 && end_war == 0 ) {
+            end_war=1;
             for (int i = 0; i < literalCount; i++) {
-                end_war=1;
                 processLiteralEntry( lineAsmAufgeloestTemp, &lineCountAsmAufgeloestTemp, literalTable, i);
             }
         }
-    
-        if ( end_war != 0 ) { break; };
     }
     
     if ( end_war == 0 ) {
@@ -2793,8 +3129,10 @@ void pass2(char *symbolLogFile, char *symFileName) {
         }
 
         char textkonst[1024]="";
-        extractBackslashContent(lineAsmAufgeloestTemp[i].sp3,textkonst);
+        // Zeile zuerst kopieren: extractBackslashContent schneidet den \...\-Text
+        // aus sp3 heraus, Pass 3 braucht ihn aber noch in lineAsmAufgeloest.
         copyAndIncrementLineElements2(i);
+        extractBackslashContent(lineAsmAufgeloestTemp[i].sp3,textkonst);
 
 
         strcpy(operation, lineAsmAufgeloestTemp[i].sp2);
@@ -2815,6 +3153,12 @@ void pass2(char *symbolLogFile, char *symFileName) {
                   MELDE_FEHLER_P2(i, message );
                }
             }
+        } else if ( lineAsmAufgeloestTemp[i].sp1[0] != '\0' ) {
+            // Ein Label, das nicht gueltig ist (Ziffer am Anfang, Zeichen wie - . oder ae), wurde frueher
+            // still verworfen und fehlte dann ohne Meldung in .sym und Symboltabelle.
+            is_error2 = 1;
+            sprintf(message, "Label \"%s\" ist unzulaessig: erlaubt sind Buchstaben, Ziffern und _, das erste Zeichen ist keine Ziffer.", lineAsmAufgeloestTemp[i].sp1);
+            MELDE_FEHLER_P2(i, message );
         }
 
 
@@ -2839,7 +3183,9 @@ void pass2(char *symbolLogFile, char *symFileName) {
             is_start = 1;
             programCounter = 0;
             if (strlen(label) > 0) {
-                sprintf(message, "Ein Label: \"%s\" vor `start` wird ignoriert.", label);
+                // Doku 3.7: Ein Label vor `start` ist ein Fehler (frueher nur still verworfen).
+                is_error2 = 1;
+                sprintf(message, "Ein Label: \"%s\" vor `start` ist nicht zulaessig.", label);
                 MELDE_FEHLER_P2(i, message );
             }
             if (operand && !strchr(operand, ';')) {
@@ -2909,18 +3255,14 @@ void pass2(char *symbolLogFile, char *symFileName) {
             if (  isValidLabel(label) ) { 
                 addSymbol(label, programCounter, relativAdresse, operation, operand,4,i);
             }
-            if (operand) {
-                int byteCount;
-                if (operand[0] == '0') {
-                    byteCount = strtol(operand, NULL, 8);
+            {
+                long byteCount = 0;
+                if ( pruefeDbOperand(operation, operand, &byteCount, message, sizeof(message)) ) {
+                    programCounter += (unsigned int)byteCount;
                 } else {
-                    byteCount = strtol(operand, NULL, 10);
+                    is_error2 = 1;
+                    MELDE_FEHLER_P2(i, message );
                 }
-                programCounter += byteCount;
-            } else {
-                is_error2 = 1;
-                sprintf(message, "Operand: \"%s\" ohne `Operation`.", operand);
-                MELDE_FEHLER_P2(i, message );
             }
         }
 
@@ -2928,18 +3270,14 @@ void pass2(char *symbolLogFile, char *symFileName) {
             if (  isValidLabel(label)) { 
                 addSymbol(label, programCounter, relativAdresse, operation, operand,5,i);
             }
-            if (operand) {
-                int byteCount;
-                if (operand[0] == '0') {
-                    byteCount = strtol(operand, NULL, 8);
+            {
+                long byteCount = 0;
+                if ( pruefeDbOperand(operation, operand, &byteCount, message, sizeof(message)) ) {
+                    programCounter += (unsigned int)byteCount;
                 } else {
-                    byteCount = strtol(operand, NULL, 10);
+                    is_error2 = 1;
+                    MELDE_FEHLER_P2(i, message );
                 }
-                programCounter += byteCount;
-            } else {
-                is_error2 = 1;
-                sprintf(message, "Operand: \"%s\" ohne `Operation`.", operand);
-                MELDE_FEHLER_P2(i, message );
             }
         }
 
@@ -3243,6 +3581,28 @@ void pass2(char *symbolLogFile, char *symFileName) {
 
     resolveSymbols();
 
+    // `dw <literal>` in einer Zeile OHNE Label (Doku 3.3: "Speichert die <adresse> von
+    // <literalsymbol> auf dem aktuellen <speicherplatz>").
+    //
+    // resolveSymbols() ersetzt den Literalnamen im Operanden (z. B. "l0001") nur dann durch die
+    // Adresse des Literals, wenn die dw-Zeile ein Label hat, denn der "spaete Symbol"-Eintrag
+    // haengt an addSymbol(label, ...). Ohne Label blieb "l0001" im Operanden stehen, und Pass 3
+    // meldete "Operand l0001 ist ungueltig" (rc 16), obwohl `dw #5` und `dw @a` zulaessig sind.
+    //
+    // Hier wird derselbe Ersatztext (12 Oktalziffern, keine Hauptleitadresse) nachgetragen, den
+    // resolveSymbols() bei einer Zeile mit Label erzeugt. Ersetzt werden nur echte Literalnamen
+    // aus der Literaltabelle; `dw a` und `dw a+1` bleiben wie in Doku 3.3 ein Fehler.
+    for (int li = 0; li < lineCountAsmAufgeloest; li++) {
+        if (strcmp(lineAsmAufgeloest[li].sp2, "dw") != 0) continue;
+        if (!isLiteralInTable(lineAsmAufgeloest[li].sp3)) continue;
+        for (int si = 0; si < symbolCount; si++) {
+            if (strcmp(symbolTable[si].symbol, lineAsmAufgeloest[li].sp3) == 0) {
+                sprintf(lineAsmAufgeloest[li].sp3, "%012o", (unsigned int)symbolTable[si].address);
+                break;
+            }
+        }
+    }
+
     fprintf(symbolLog, "Symboltabelle\n\n");
     fprintf(symbolLog, "Symbol                             | RelAddr |    Adresse      | original Operation\n");
     fprintf(symbolLog, "-----------------------------------| ------- | --------------- | ----------------\n");
@@ -3278,7 +3638,7 @@ void pass2(char *symbolLogFile, char *symFileName) {
 // -------------------------------------------------------
 
 long long int evaluateValue(char *operand, int *errorFlag) {
-    unsigned long long values[512];     
+    long long values[512];     // vorzeichenbehaftet, damit Subtraktion und negative Werte stimmen
     char operators[512];   
     int valueIndex = 0, operatorIndex = 0;
 
@@ -3303,8 +3663,13 @@ long long int evaluateValue(char *operand, int *errorFlag) {
         }
         tempToken[tokenLength] = '\0';
 
+        // Fuehrendes Vorzeichen (-5, +5): als 0-5 bzw. 0+5 auswerten
+        if (tokenLength == 0 && valueIndex == 0 && *currentPos != '\0' && strchr("+-", *currentPos)) {
+            values[valueIndex++] = 0;
+        }
+
         if (tokenLength > 0) {
-            unsigned long long value = 0;
+            long long value = 0;
             char *endPtr;
             if (tempToken[0] == '0') {
                 value = strtol(tempToken, &endPtr, 8);
@@ -3325,11 +3690,17 @@ long long int evaluateValue(char *operand, int *errorFlag) {
         }
     }
 
+    // Jeder Operator braucht einen rechten Operanden (z. B. "5-" ist ungueltig)
+    if (operatorIndex >= valueIndex) {
+        *errorFlag = 1;
+        return 0;
+    }
+
     // Multiplikation und Division zuerst ausführen
     for (int i = 0; i < operatorIndex; i++) {
         if (operators[i] == '*' || operators[i] == '/') {
-            unsigned long long leftValue = values[i];
-            unsigned long long rightValue = values[i + 1];
+            long long leftValue = values[i];
+            long long rightValue = values[i + 1];
 
             if (operators[i] == '*') {
                 values[i] = leftValue * rightValue;
@@ -3355,7 +3726,7 @@ long long int evaluateValue(char *operand, int *errorFlag) {
     }
 
     // Addition und Subtraktion ausführen
-    unsigned long long totalValue = values[0];
+    long long totalValue = values[0];
     for (int i = 0; i < operatorIndex; i++) {
         if (operators[i] == '+') {
             totalValue += values[i + 1];
@@ -3584,6 +3955,52 @@ unsigned int evaluateAddress(char *operand, char *line, int *errorFlag, int *raA
 }
 
 
+// Prueft den <adressausdruck> von da (und von @-Literalen, die als da-Zeile erzeugt werden) gemaess
+// Doku 3.4: kein Vorzeichen (negative Adressen gibt es nicht), hoechstens ein Symbol, keine fehlenden
+// Operanden (z. B. "5-" oder "x+*2"). Der Wertebereich 00000 bis 07777 wird nach der Auswertung
+// geprueft. Eine Sternadresse (*) wird von sternadresseBearbeiten geprueft.
+// Rueckgabe 1 = in Ordnung, 0 = Fehler (Text in meldung).
+static int pruefeAdressausdruck(const char *operand, char *meldung, size_t groesse) {
+    const char *p = (operand != NULL) ? operand : "";
+    while (*p == ' ' || *p == '\t') p++;
+    if (*p == '\0') {
+        snprintf(meldung, groesse, "Adressausdruck fehlt.");
+        return 0;
+    }
+    if (*p == '*') return 1;
+    if (*p == '-' || *p == '+') {
+        snprintf(meldung, groesse, "Der Adressausdruck darf nicht mit einem Vorzeichen beginnen (Adressen sind 00000 bis 07777).");
+        return 0;
+    }
+    int symbole = 0;
+    for (;;) {
+        char token[MAX_LINE_LENGTH];
+        int n = 0;
+        while (*p && !strchr("+-*/", *p)) {
+            if (n < (int)sizeof(token) - 1) token[n++] = *p;
+            p++;
+        }
+        while (n > 0 && (token[n - 1] == ' ' || token[n - 1] == '\t')) n--;   // Leerraum am Ende entfernen
+        token[n] = '\0';
+        if (n == 0) {
+            snprintf(meldung, groesse, "Im Adressausdruck fehlt ein Operand (zwei Operatoren hintereinander oder Operator am Ende).");
+            return 0;
+        }
+        if (isSymbol(token)) symbole++;
+        if (*p == '\0') break;
+        p++;                       // Operator ueberspringen
+        if (*p == '\0') {
+            snprintf(meldung, groesse, "Im Adressausdruck fehlt ein Operand (zwei Operatoren hintereinander oder Operator am Ende).");
+            return 0;
+        }
+    }
+    if (symbole > 1) {
+        snprintf(meldung, groesse, "Der Adressausdruck enthält mehr als ein Symbol (höchstens ein Symbol ist erlaubt).");
+        return 0;
+    }
+    return 1;
+}
+
 char* getOperationCode(char *operation) {
     static char octalCodeString[4]; 
     for (int i = 0; opsTable[i].symbolicCode != NULL; i++) {
@@ -3593,7 +4010,11 @@ char* getOperationCode(char *operation) {
         }
     }
 
-    if (strlen(operation) == 3 && isdigit(operation[0]) && isdigit(operation[1]) && isdigit(operation[2])) {
+    // Oktale Operationscodes bestehen aus genau drei Oktalziffern (0-7); z. B. 999 ist ungueltig
+    if (strlen(operation) == 3 &&
+        operation[0] >= '0' && operation[0] <= '7' &&
+        operation[1] >= '0' && operation[1] <= '7' &&
+        operation[2] >= '0' && operation[2] <= '7') {
         strncpy(octalCodeString, operation, 3);
         octalCodeString[3] = '\0'; 
         return octalCodeString;
@@ -3707,7 +4128,7 @@ TableRow outUmschluesselungsTable[OUT_SIZE] = {
     {01240, 77, 109},
     {01530, 63, 44},
     {0730, 33, 46},
-    {01000, 45, 465},
+    {01000, 465, 45},   // Zeile 48: Tabelle 1: Gbuch = 465 (Dreieck), Klbuch = 45 (Minus)
     {0320, 32, 32}
 };
 //    {0320, 32, 32}
@@ -4012,6 +4433,58 @@ void outAdressError(const char *label, char *typ, char *text) {
 }
 // ----------------------
 
+// Belegungspruefung (Pass 3): Jedes durch Befehle oder Daten (dw, da, dbn, dt, dto, dtm, dz)
+// tatsaechlich beschriebene Wort der Trommel wird genau einmal belegt. Ueberschneidet sich die
+// sequentielle Speicherbelegung mit einem frueher belegten Bereich (z.B. Programm laeuft in einen
+// mit equ weiter hinten angelegten Datenbereich, oder ein spaeteres equ springt zurueck), ist das
+// ein Fehler. `db` reserviert nur und beschreibt keine Zellen: es wird nicht geprueft.
+#define BELEGUNG_ADRESSEN 010000   // 4 Oktalstellen
+static int belegtVonZeile[BELEGUNG_ADRESSEN];   // 0 = frei, sonst Index in lineAsmAufgeloest + 1
+
+static void meldeBelegungskonflikt(int adresse, int alteZeile, int neueZeile) {
+    char text[1024];
+    char alt[300];
+    char neu[300];
+    snprintf(alt, sizeof(alt), "%.60s %.20s %.60s", lineAsmAufgeloest[alteZeile].sp1, lineAsmAufgeloest[alteZeile].sp2, lineAsmAufgeloest[alteZeile].sp3);
+    snprintf(neu, sizeof(neu), "%.60s %.20s %.60s", lineAsmAufgeloest[neueZeile].sp1, lineAsmAufgeloest[neueZeile].sp2, lineAsmAufgeloest[neueZeile].sp3);
+    snprintf(text, sizeof(text), ";%s*** 3 Fehler%s: Adresse %04o doppelt belegt: \"%s\" ueberschneidet sich mit \"%s\".",
+             _violett, _normal, adresse, neu, alt);
+    PRINT_FEHLER("Adresse %04o doppelt belegt: \"%s\" ueberschneidet sich mit \"%s\".", adresse, neu, alt);
+    lineAsmAufgeloestX[lineCountAsmAufgeloestX].adrValid = 0;
+    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, "");
+    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, text);
+    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, "");
+    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp3, "");
+    strcpy(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp4, "");
+    lineCountAsmAufgeloestX++;
+    is_error3 = 1;
+}
+
+// Belegt die Worte [von, bis) fuer die Zeile `zeile`; meldet pro Zeile hoechstens einen Konflikt.
+static void belegeAdressen(int von, int bis, int zeile) {
+    int gemeldet = 0;
+    for (int a = von; a < bis; a++) {
+        if (a < 0 || a >= BELEGUNG_ADRESSEN) {
+            if (!gemeldet) {
+                PRINT_FEHLER("Adresse %04o liegt ausserhalb der Trommel (0000-7777).", a);
+                is_error3 = 1;
+                gemeldet = 1;
+            }
+            break;
+        }
+        if (belegtVonZeile[a] != 0) {
+            if (!gemeldet) {
+                meldeBelegungskonflikt(a, belegtVonZeile[a] - 1, zeile);
+                gemeldet = 1;
+            }
+        } else {
+            belegtVonZeile[a] = zeile + 1;
+        }
+    }
+}
+
+// ----------------------
+
 // Erzeugt die .test-Datei direkt aus den strukturierten Listing-Zeilen
 // (denselben Daten, aus denen auch die .dmp-Datei erzeugt wird - siehe
 // printFormattedAsmListingX). Jede Zeile hat sp0 = "<adresse>: <K1> [<K2>] [<Wert>]",
@@ -4133,6 +4606,8 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
     const char semikolon = ';';
     char buffer[512];
 
+    memset(belegtVonZeile, 0, sizeof(belegtVonZeile));
+
     zFlag = 0; // Unterscheidung 2. Spalte -- 3. Spalte
 
     const char *dreua[] = { "251", "271", "030", "032", "034", "036", "132", "134", "136", "031", "033", "035", "037", "131", "133", "135", "137"};
@@ -4205,6 +4680,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
 
 
         errorFlag=0;
+        int pcVorher = programCounter;   // fuer die Belegungspruefung
 
         char label[256];     
         char operation[256]; 
@@ -4301,7 +4777,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 if ( errorFlag != 0) {is_error3=1; printHell = 1; }
 
             } else if (strcmp(operation, "dw") == 0) {
-                if (strspn(operand, "-0123456789") == strlen(operand) && operand[0] != '0' && !(operand[0] == '-' && operand[1] == '0')) {
+                if (strspn(operand, "-0123456789") == strlen(operand) && operand[0] != '0' && !(operand[0] == '-' && operand[1] == '0') && strchr(operand + 1, '-') == NULL) {
                     char octalString[MAX_LINE_LENGTH];
                     if ( (operand[0] == '-') || (operand[0] == '+') ) {
                         // Falls das erste Zeichen ein '-', prüfe das zweite Zeichen
@@ -4321,6 +4797,17 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                     strcpy(operand, octalString); 
                 }
                 unsigned long long dwValue = evaluateValue(operand, &errorFlag);
+                // Negative Werte als 33-Bit-Wort (11 Oktalziffern) im Zweierkomplement ausgeben.
+                // Falls die C8205 negative Zahlen anders darstellt, nur diese Zeile aendern.
+                // Zulaessiger Bereich: -2^32 ... 2^33-1 (33-Bit-Wort, vorzeichenlos bzw. Zweierkomplement).
+                if (errorFlag == 0) {
+                    long long dwWert = (long long)dwValue;
+                    if (dwWert < -4294967296LL || dwWert > 0x1FFFFFFFFLL) {
+                        errorFlag = 1;   // passt nicht in ein Maschinenwort
+                    } else if (dwWert < 0) {
+                        dwValue &= 0x1FFFFFFFFULL;
+                    }
+                }
 
                 if (errorFlag == 0 ) {
                     if ( dwValue == 0) {
@@ -4343,19 +4830,28 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 programCounter++;
 
             } else if (strcmp(operation, "da") == 0) {
-                if (strspn(operand, "-0123456789") == strlen(operand) && operand[0] != '0' && !(operand[0] == '-' && operand[1] == '0')) {
-                    char octalString[MAX_LINE_LENGTH];
-                    if (operand[0] == '0') {
-                        snprintf(octalString, sizeof(octalString), "%lo", strtol(operand, NULL, 8));
-                    } else {
-                        snprintf(octalString, sizeof(octalString), "%lo", strtol(operand, NULL, 10));
-                    }
-                    strcpy(operand, octalString);
-                }
-//---------------------------------------
+              char adrMeldung[512];
+              if (!pruefeAdressausdruck(operand, adrMeldung, sizeof(adrMeldung))) {
+                sprintf(buffer, "%04o: %sEE%s %04o %s   ", programCounter, _violett, _normal, 0, operand); // Fehlerausgabe
+                copyAndIncrementLineElementsX (i,buffer);
+                outAdressError(operand, "Operand", adrMeldung);
+                printHell = 1;
+                is_error3=1;
+                programCounter++;
+              } else {
+                // Frueher wurde hier eine reine Dezimalzahl in eine Oktalzeichenkette umgewandelt und danach von
+                // evaluateAddress wieder als Dezimalzahl gelesen (da 10 ergab Adresse 12). evaluateAddress versteht
+                // Dezimal- und Oktalzahlen selbst; die Umwandlung entfaellt.
                 raAdr=relativadresse;
                 unsigned int dwValue = evaluateAddress(operand, "", &errorFlag, &raAdr, "", programCounter, &absolutadresse );
-                if (errorFlag == 0 ) {
+                if (errorFlag == 0 && dwValue > 07777) {
+                    // Wertebereich der Adresse (negative Werte erscheinen hier als sehr grosse Zahl)
+                    sprintf(buffer, "%04o: %sEE%s %04o %s   ", programCounter, _violett, _normal, 0, operand); // Fehlerausgabe
+                    copyAndIncrementLineElementsX (i,buffer);
+                    outAdressError(operand, "Operand", "Der Adressausdruck liegt außerhalb des Bereichs 00000 bis 07777.");
+                    printHell = 1;
+                    is_error3=1;
+                } else if (errorFlag == 0 ) {
                     if ( absolutadresse != 0 ) { 
                         sprintf(buffer, "%04o: 00 %04o",programCounter,dwValue<<9);
                         fprintf(machineCodeFile, "%s.\n", buffer);
@@ -4371,6 +4867,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                     is_error3=1;
                 }
                 programCounter++;
+              }
 
             } else if (strcmp(operation, "db") == 0) {
                 // Bereich ohne initialisierung definieren
@@ -4402,11 +4899,13 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                     } else {
                         byteCount = strtol(operand, NULL, 10);
                     }
-                    for (int i = 0; i < byteCount - 1; i++) {
-                        sprintf(buffer, "%04o: 00 0",programCounter);
+                    // Folgeworte des Bereichs: eigene Schleifenvariable k (das aeussere i ist der
+                    // Index der Quelltextzeile) und aufsteigende Adressen.
+                    for (int k = 0; k < byteCount - 1; k++) {
+                        sprintf(buffer, "%04o: 00 0", programCounter + k + 1);
                         fprintf(machineCodeFile, "%s.\n", buffer);
                         fprintf(hilfsFile, "\n");
-                        copyAndIncrementLineElementsX(i,buffer); 
+                        copyAndIncrementLineElementsSpOnly(i,buffer); 
                     }
                     programCounter += byteCount;
                 } else {
@@ -4517,12 +5016,22 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 } else {
                     sprintf(buffer, "%04o: %sEE%s %04o %s   ", programCounter, _violett, _normal, 0, operationCode); // Fehlerausgabe
                     copyAndIncrementLineElementsX (i,buffer);
-                    outAdressError(operand, "Operationscode", " ist ungültig");
+                    outAdressError(operation, "Operationscode", " ist ungültig");
                     is_error3 = 1;
                     printHell = 1;
                 }
                 programCounter++;
             }
+        }
+
+        // Belegungspruefung: equ/start setzen nur den Zaehler, abs/end/db belegen keine Zelle.
+        if ( programCounter > pcVorher
+             && strstr(operation, "equ") == NULL
+             && strcmp(operation, "start") != 0
+             && strcmp(operation, "abs") != 0
+             && strcmp(operation, "end") != 0
+             && strcmp(operation, "db") != 0 ) {
+            belegeAdressen(pcVorher, programCounter, i);
         }
 
         printHell = 0;   
@@ -4543,7 +5052,7 @@ void printUsage(const char *programName) {
     printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei\n", programName);
 }
 void greetings() {
-    printf("C8205 Assembler C82aas Version 0.2\n");
+    printf("C8205 Assembler C82aas Version 0.03\n");
 }
 
 char projektVerzeichnis[512] = {0};

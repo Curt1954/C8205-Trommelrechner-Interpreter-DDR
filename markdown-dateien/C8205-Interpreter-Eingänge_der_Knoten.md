@@ -1,5 +1,7 @@
 # ** Knotendefinition **
 #
+# Version: 0.03-001
+#
 # Zeilenformat:
 # Knotennummer; Eingänge...; Typ; Text; Ausgänge
 #

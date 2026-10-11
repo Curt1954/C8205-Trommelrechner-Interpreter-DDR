@@ -21,4 +21,4 @@ H G R
 Prüfungen:
 BZ=3011 AC=00000000005 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 3000: 00000000005
---pruefe-sw-ausgabe bsp_5_11_pos-sw-ausgabe.txt
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/bsp_5_11_pos-sw-ausgabe.txt

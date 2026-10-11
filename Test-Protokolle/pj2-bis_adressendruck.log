@@ -1,0 +1,116 @@
+Test pj2-bis_adressendruck
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  1000: 00001010211
+  1001: 00007773240
+  1002: 00004500030
+  1003: 00000100025
+  1004: 00000000020
+  1010: 01234567012
+  #DOK-0001 BIS-Test Adressendruck (Ansprung 0100); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh)
+  #PROT STUFE=2
+  #STARTE 1000 (Makro: H G M+ 512x E M- R, E 512-mal = dezimal)
+Tastenfolge: (aus #STARTE erzeugt)
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  M gedrueckt halten: OR := OR ODER 025 (BR = AR 025)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00000002000 (BZ+1 im Adressfeld)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0002, AR := 0002, AC := 00000003000 (BZ+1 im Adressfeld)
+  ... 509 weitere E (BZ 0003 bis 0777): je Anschlag BZ := BZ+1, AR := BZ, AC := BZ+1 im Adressfeld (kompakte Protokollform bei #STARTE)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 1000, AR := 1000, AC := 00001001000 (BZ+1 im Adressfeld)
+  M loslassen: OR-Verknuepfung mit 025 entfaellt fuer Folgeschritte
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=1000 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
+  BR=1010 211  (vor Knoten 002)  BZ=1001 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=1002 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+  BR=4500 030  (vor Knoten 002)  BZ=1003 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+  BR=0100 005  (vor Knoten 007)  BZ=1004 AC=00001004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0240 000  (vor Knoten 007)  BZ=0101 AC=00001004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7557 240  (vor Knoten 002)  BZ=0241 AC=00001004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=1170 030  (vor Knoten 002)  BZ=0242 AC=00001004000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 211  (vor Knoten 002)  BZ=0243 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+  BR=7560 240  (vor Knoten 002)  BZ=0244 AC=01234567012 FÜ=0 V1=0 V2=0 V3=0
+  BR=0314 616  (vor Knoten 002)  BZ=0245 AC=24713560240 FÜ=0 V1=0 V2=0 V3=0
+  BR=0314 616  (vor Knoten 002)  BZ=0246 AC=16273405005 FÜ=0 V1=0 V2=0 V3=0
+  BR=0314 616  (vor Knoten 002)  BZ=0247 AC=45670120123 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=0250 AC=45670120123 FÜ=0 V1=0 V2=0 V3=0
+  BR=0126 211  (vor Knoten 002)  BZ=0251 AC=70000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7554 240  (vor Knoten 002)  BZ=0252 AC=70000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0103 005  (vor Knoten 007)  BZ=0253 AC=00000253000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7555 240  (vor Knoten 002)  BZ=0104 AC=00000253000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0101 000  (vor Knoten 007)  BZ=0105 AC=00000253000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 217  (vor Knoten 002)  BZ=0102 AC=13560240247 FÜ=0 V1=0 V2=0 V3=0
+  BR=0110 006  (vor Knoten 007)  BZ=0103 AC=27340500516 FÜ=0 V1=0 V2=0 V3=0
+  BR=0111 006  (vor Knoten 007)  BZ=0111 AC=56701201234 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=0112 AC=56701201234 FÜ=0 V1=0 V2=0 V3=0
+  BR=0124 200  (vor Knoten 002)  BZ=0113 AC=00000000004 FÜ=0 V1=0 V2=0 V3=0
+  BR=0221 520  (vor Knoten 002)  BZ=0114 AC=77777777776 FÜ=0 V1=0 V2=0 V3=0
+  BR=0040 030  (vor Knoten 002)  BZ=0115 AC=77777777776 FÜ=0 V1=0 V2=0 V3=0
+  BR=7554 311  (vor Knoten 002)  BZ=0116 AC=70000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7555 170  (vor Knoten 002)  BZ=0117 AC=70000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=0120 004  (vor Knoten 007)  BZ=0120 AC=60000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7554 240  (vor Knoten 002)  BZ=0121 AC=60000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=0101 000  (vor Knoten 007)  BZ=0122 AC=60000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7773 217  (vor Knoten 002)  BZ=0102 AC=35602402471 FÜ=0 V1=0 V2=1 V3=0
+  BR=0110 006  (vor Knoten 007)  BZ=0103 AC=73405005162 FÜ=0 V1=0 V2=1 V3=0
+  BR=0111 006  (vor Knoten 007)  BZ=0111 AC=67012012345 FÜ=0 V1=0 V2=1 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=0112 AC=67012012345 FÜ=0 V1=0 V2=1 V3=0
+  BR=0124 200  (vor Knoten 002)  BZ=0113 AC=00000000005 FÜ=0 V1=0 V2=1 V3=0
+  BR=0221 520  (vor Knoten 002)  BZ=0114 AC=77777777776 FÜ=0 V1=0 V2=1 V3=0
+  BR=0250 030  (vor Knoten 002)  BZ=0115 AC=77777777776 FÜ=0 V1=0 V2=1 V3=0
+  BR=7554 311  (vor Knoten 002)  BZ=0116 AC=60000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7555 170  (vor Knoten 002)  BZ=0117 AC=60000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=0120 004  (vor Knoten 007)  BZ=0120 AC=40000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7554 240  (vor Knoten 002)  BZ=0121 AC=40000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=0101 000  (vor Knoten 007)  BZ=0122 AC=40000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7773 217  (vor Knoten 002)  BZ=0102 AC=56024024713 FÜ=0 V1=0 V2=1 V3=0
+  BR=0110 006  (vor Knoten 007)  BZ=0103 AC=34050051627 FÜ=0 V1=0 V2=1 V3=0
+  BR=0111 006  (vor Knoten 007)  BZ=0111 AC=70120123456 FÜ=0 V1=0 V2=1 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=0112 AC=70120123456 FÜ=0 V1=0 V2=1 V3=0
+  BR=0124 200  (vor Knoten 002)  BZ=0113 AC=00000000006 FÜ=0 V1=0 V2=1 V3=0
+  BR=0221 520  (vor Knoten 002)  BZ=0114 AC=77777777776 FÜ=0 V1=0 V2=1 V3=0
+  BR=0260 030  (vor Knoten 002)  BZ=0115 AC=77777777776 FÜ=0 V1=0 V2=1 V3=0
+  BR=7554 311  (vor Knoten 002)  BZ=0116 AC=40000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7555 170  (vor Knoten 002)  BZ=0117 AC=40000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=0120 004  (vor Knoten 007)  BZ=0120 AC=00000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7554 240  (vor Knoten 002)  BZ=0121 AC=00000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=0101 000  (vor Knoten 007)  BZ=0122 AC=00000000000 FÜ=0 V1=0 V2=1 V3=0
+  BR=7773 217  (vor Knoten 002)  BZ=0102 AC=60240247135 FÜ=0 V1=0 V2=1 V3=0
+  BR=0110 006  (vor Knoten 007)  BZ=0103 AC=40500516273 FÜ=0 V1=0 V2=1 V3=0
+  BR=0111 006  (vor Knoten 007)  BZ=0111 AC=01201234567 FÜ=0 V1=0 V2=1 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=0112 AC=01201234567 FÜ=0 V1=0 V2=1 V3=0
+  BR=0124 200  (vor Knoten 002)  BZ=0113 AC=00000000007 FÜ=0 V1=0 V2=1 V3=0
+  BR=0221 520  (vor Knoten 002)  BZ=0114 AC=77777777776 FÜ=0 V1=0 V2=1 V3=0
+  BR=0070 030  (vor Knoten 002)  BZ=0115 AC=77777777776 FÜ=0 V1=0 V2=1 V3=0
+  BR=7554 311  (vor Knoten 002)  BZ=0116 AC=00000000000 FÜ=0 V1=1 V2=1 V3=1
+  BR=7555 100  (vor Knoten 007)  BZ=0117 AC=00000000000 FÜ=0 V1=1 V2=1 V3=1
+  BR=0253 000  (vor Knoten 007)  BZ=7556 AC=00000000000 FÜ=0 V1=1 V2=1 V3=1
+  BR=7560 211  (vor Knoten 002)  BZ=0254 AC=01234567012 FÜ=0 V1=1 V2=1 V3=1
+  BR=7773 240  (vor Knoten 002)  BZ=0255 AC=01234567012 FÜ=0 V1=1 V2=1 V3=1
+  BR=7557 000  (vor Knoten 007)  BZ=0256 AC=01234567012 FÜ=0 V1=1 V2=1 V3=1
+  BR=1004 000  (vor Knoten 007)  BZ=7560 AC=01234567012 FÜ=0 V1=1 V2=1 V3=1
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=1005 AC=01234567012 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=1005 ist=1005 OK
+  AC: soll=01234567012 ist=01234567012 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=1 ist=1 OK
+  V2: soll=1 ist=1 OK
+  0001: soll=00000150000 ist=00000150000 OK
+  7773: soll=01234567012 ist=01234567012 OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/pj2-bis_adressendruck_erwartet.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+Test wahr

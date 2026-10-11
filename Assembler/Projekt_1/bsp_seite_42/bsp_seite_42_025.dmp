@@ -1,7 +1,6 @@
 0000: 01 2000 000            000 beginn ;
       20 0000 2000           equ 02000  ;
-      20 0000 2000   beginn: equ 02000  ; automatisch generiert
-2000: 00 4500 030            030 04500  ; 4500 oder K2 oder LSL2 oder SW1 Output
+2000: 00 4500 030    beginn: 030 04500  ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0570 030            dz  $ingb  
 2002: 01 2015 211            211 z_a    
 2003: 01 2021 240            240 up+1   

@@ -1,5 +1,0 @@
-        000     go      
-        equ     02000   
-go:     030     04600   ; Anwahl Kanal 1 (Leser 1)
-        010     0       ; Eingabe-Halt 1. Art
-        020     0       ; unbedingter Stopp

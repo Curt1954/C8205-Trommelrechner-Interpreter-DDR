@@ -1,5 +1,7 @@
 # ** Variablentabelle T2 **
 #
+# Version: 0.03-001
+#
 # Variablenname;  Beschreibung der Anweisung oder des Tests;  Behandlungsart
 #
 # Behandlungsart (unabhängig vom Knotentyp Anweisung/Test):

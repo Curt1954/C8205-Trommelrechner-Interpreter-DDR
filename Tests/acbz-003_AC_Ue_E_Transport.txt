@@ -1,0 +1,13 @@
+Trommeldatei:
+#DOK-0001 Originaldokumentation 4.2: H G Ü E transportiert den AC nach 7777. #AC=00000000123 gibt den Anfangs-AC vor, G lässt ihn unverändert.
+#PROT STUFE=2
+#AC=00000000123
+#BZ=0100
+0000: 00000000020 # Stopp (wird vom Transport-Ablauf als nächster Befehl geladen)
+
+Tastenfolge:
+H G Ü E
+
+Prüfungen:
+AC=00000000123
+7777: 00000000123

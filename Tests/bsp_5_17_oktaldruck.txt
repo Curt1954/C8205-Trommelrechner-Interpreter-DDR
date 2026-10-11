@@ -56,4 +56,4 @@ Prüfungen:
 BZ=3037 AC=00000000000 AR=3001 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
 3020: 00000000000
 7777: 70123456701
---pruefe-sw-ausgabe bsp_5_17_oktaldruck-sw-ausgabe.txt
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/bsp_5_17_oktaldruck-sw-ausgabe.txt

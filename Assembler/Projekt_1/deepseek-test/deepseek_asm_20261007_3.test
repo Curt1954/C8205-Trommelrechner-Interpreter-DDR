@@ -1,0 +1,9 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000570030 # dz $ingb
+0001: 00001170030 # dz $inkb
+0002: 00000000020 # 020 0
+Tastenfolge:
+H G R

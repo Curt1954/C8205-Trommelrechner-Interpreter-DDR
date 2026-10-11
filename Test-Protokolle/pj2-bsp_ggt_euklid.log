@@ -1,0 +1,101 @@
+Test pj2-bsp_ggt_euklid
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
+  3000: 00003020211
+  3001: 00003021330
+  3002: 00003013170
+  3003: 00003005140
+  3004: 00003021220
+  3005: 00003015240
+  3006: 00003021211
+  3007: 00003020240
+  3010: 00003015211
+  3011: 00003021240
+  3012: 00003000000
+  3013: 00007774240
+  3014: 00001111021
+  3020: 00000000060
+  3021: 00000000044
+  #DOK-0001 Bestimmung des groessten gemeinsamen Teilers nach Euklid (pj2), a=060 (48), b=044 (36), erwartet ggT=014 (12); durchläuft a>b, a<b und a=b
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=3020 211  (vor Knoten 002)  BZ=3001 AC=00000000060 FÜ=0 V1=0 V2=0 V3=0
+  BR=3021 330  (vor Knoten 002)  BZ=3002 AC=00000000060 FÜ=0 V1=0 V2=1 V3=0
+  BR=3013 170  (vor Knoten 002)  BZ=3003 AC=00000000060 FÜ=0 V1=0 V2=1 V3=0
+  BR=3005 140  (vor Knoten 002)  BZ=3004 AC=00000000060 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 220  (vor Knoten 002)  BZ=3005 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3015 240  (vor Knoten 002)  BZ=3006 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 211  (vor Knoten 002)  BZ=3007 AC=00000000044 FÜ=0 V1=0 V2=1 V3=0
+  BR=3020 240  (vor Knoten 002)  BZ=3010 AC=00000000044 FÜ=0 V1=0 V2=1 V3=0
+  BR=3015 211  (vor Knoten 002)  BZ=3011 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 240  (vor Knoten 002)  BZ=3012 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=3013 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3020 211  (vor Knoten 002)  BZ=3001 AC=00000000044 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 330  (vor Knoten 002)  BZ=3002 AC=00000000044 FÜ=0 V1=0 V2=1 V3=0
+  BR=3013 170  (vor Knoten 002)  BZ=3003 AC=00000000044 FÜ=0 V1=0 V2=1 V3=0
+  BR=3005 140  (vor Knoten 002)  BZ=3004 AC=00000000044 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 220  (vor Knoten 002)  BZ=3005 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3015 240  (vor Knoten 002)  BZ=3006 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 211  (vor Knoten 002)  BZ=3007 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3020 240  (vor Knoten 002)  BZ=3010 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3015 211  (vor Knoten 002)  BZ=3011 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 240  (vor Knoten 002)  BZ=3012 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=3013 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3020 211  (vor Knoten 002)  BZ=3001 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 330  (vor Knoten 002)  BZ=3002 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3013 170  (vor Knoten 002)  BZ=3003 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3005 100  (vor Knoten 007)  BZ=3004 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3015 240  (vor Knoten 002)  BZ=3006 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3021 211  (vor Knoten 002)  BZ=3007 AC=00000000030 FÜ=0 V1=1 V2=0 V3=0
+  BR=3020 240  (vor Knoten 002)  BZ=3010 AC=00000000030 FÜ=0 V1=1 V2=0 V3=0
+  BR=3015 211  (vor Knoten 002)  BZ=3011 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3021 240  (vor Knoten 002)  BZ=3012 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=3013 AC=00000000014 FÜ=0 V1=1 V2=0 V3=0
+  BR=3020 211  (vor Knoten 002)  BZ=3001 AC=00000000030 FÜ=0 V1=1 V2=0 V3=0
+  BR=3021 330  (vor Knoten 002)  BZ=3002 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3013 170  (vor Knoten 002)  BZ=3003 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3005 140  (vor Knoten 002)  BZ=3004 AC=00000000030 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 220  (vor Knoten 002)  BZ=3005 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3015 240  (vor Knoten 002)  BZ=3006 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 211  (vor Knoten 002)  BZ=3007 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3020 240  (vor Knoten 002)  BZ=3010 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3015 211  (vor Knoten 002)  BZ=3011 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 240  (vor Knoten 002)  BZ=3012 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3000 000  (vor Knoten 007)  BZ=3013 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3020 211  (vor Knoten 002)  BZ=3001 AC=00000000014 FÜ=0 V1=0 V2=1 V3=0
+  BR=3021 330  (vor Knoten 002)  BZ=3002 AC=00000000014 FÜ=0 V1=1 V2=1 V3=1
+  BR=3013 100  (vor Knoten 007)  BZ=3003 AC=00000000014 FÜ=0 V1=1 V2=1 V3=1
+  BR=7774 240  (vor Knoten 002)  BZ=3014 AC=00000000014 FÜ=0 V1=1 V2=1 V3=1
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=3015 AC=00000000000 AR=1111 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=3015 ist=3015 OK
+  AC: soll=00000000000 ist=00000000000 OK
+  AR: soll=1111 ist=1111 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=1 ist=1 OK
+  V2: soll=1 ist=1 OK
+  3015: soll=00000000014 ist=00000000014 OK
+  3020: soll=00000000014 ist=00000000014 OK
+  3021: soll=00000000014 ist=00000000014 OK
+  7774: soll=00000000014 ist=00000000014 OK
+Test wahr

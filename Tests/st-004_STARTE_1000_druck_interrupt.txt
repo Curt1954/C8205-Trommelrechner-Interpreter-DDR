@@ -1,0 +1,21 @@
+Trommeldatei:
+#DOK-1000 Programm ab 1000: Schreibwerk-Ausgabe "XY", dann INTERRUPT (Sprung nach Zelle 0001 = Minimalprogramm, Druck von BZ und AC), dann "xy" und Stopp. Voraussetzung: pj2-bis_minimalprogramm.test lief vorher
+#DOK-1010 Stopp in 1010 (US): Erwartet Terminalausgabe XY, Zeile BZ/AC, yxy; BZ=1011. Zelle 0001 wird von diesem Test nicht veraendert
+#STARTE 1000        # = H G M+ 512 mal E M- R (512 = 1000 oktal): Ansprung des Speicherplatzes 1000
+#PROT STUFE=2
+# Es gibt bewusst keine Zeile --sw-ausgabe: die Schreibwerk-Ausgabe geht aufs Terminal.
+
+# Beginn Programm bei 1000
+1000: 00004500030 # 030 4500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+1001: 00000570030 # 030 0570 ; Um. GB: Grossbuchstabenlage
+1002: 00001470030 # 030 1470 ; Ausgabe X
+1003: 00001500030 # 030 1500 ; Ausgabe Y
+#INTERRUPT H G M+ E M- R # BR 0000 025: Sprung mit Rueckkehrabsicht nach Zelle 0001, Rueckkehradresse im AC; G waehlt Kanal K0 an
+1004: 00004500030 # 030 4500 ; Anwahl Kanal K2 erneut noetig, denn G hat K0 angewaehlt
+1005: 00001170030 # 030 1170 ; Um. KB: Kleinbuchstabenlage
+1006: 00001470030 # 030 1470 ; Ausgabe x
+1007: 00001500030 # 030 1500 ; Ausgabe y
+1010: 00000000020 # 020 0    ; Stopp
+
+Prüfungen:
+BZ=1011 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1

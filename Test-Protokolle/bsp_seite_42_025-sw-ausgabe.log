@@ -67,10 +67,10 @@ Tastenfolge: H G R
 2021: 00000430030
 2022: 00002013000
 2023: 00000000777
-2024: 00000000000
-2025: 00000000000
-2026: 00000000000
-2027: 00000000000
+2024: 00000000145
+2025: 00000000310
+2026: 00000000067
+2027: 00000000001
 --- Ende Diagnose ---
   BR=0001 164  (vor Knoten 002)  BZ=2014 AC=00002013000 FÜ=0 V1=0 V2=0 V3=0
 
@@ -101,9 +101,5 @@ Ergebnispruefung:
   2021: soll=00000430030 ist=00000430030 OK
   2022: soll=00002013000 ist=00002013000 OK
   2023: soll=00000000777 ist=00000000777 OK
-  2024: soll=00000000000 ist=00000000000 OK
-  2025: soll=00000000000 ist=00000000000 OK
-  2026: soll=00000000000 ist=00000000000 OK
-  2027: soll=00000000000 ist=00000000000 OK
-  Schreibwerk: soll=/home/shared_folder_1/scan/fertig/neu/Tests/bsp_seite_42_025_stanzer-sw-ausgabe.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Tests/bsp_seite_42_025_stanzer-sw-ausgabe.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

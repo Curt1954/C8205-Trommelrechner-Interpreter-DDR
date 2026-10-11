@@ -1,5 +1,7 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
+Version: 0.03-006
+
 [Deutsch](README.md) | **English**
 
 This project reconstructs and simulates the instruction processing of the **Cellatron C 8205**, a small
@@ -43,11 +45,21 @@ as regression tests.
 | `c8205_interp.py` | Python interpreter |
 | `c8205_befehlssweep.py` | Completeness test over all 512 operation codes |
 | `c8205_interpreter.sh`, `c8205_interpreter.bat` | Wrappers: run a test and write the log to `Test-Protokolle/` |
+| `compute_all_tests.sh` | runs the interpreter for all test definitions in `Tests/` |
+| `c8205_bis_test.sh` | Wrapper for tests of the BIS building blocks: first loads the minimal program (`Tests/pj2-bis_minimalprogramm.test`), then the given test file |
+| `test_bis.sh` | runs all BIS tests one after another (empty drum, minimal program, then each `pj2-bis_*` test) |
+| `test.sh` | older version of `test_bis.sh` (without the test `pj2-bis_druck_bz_ac`) |
+| `erzeuge_leere_trommel.py` | creates the empty drum file `virtuelle_Geraete/Trommel/trommel.txt` (also resets a used drum) |
+| `c8205_lochstreifen_anzeige.py` | helper program: displays a virtual punched tape as plain text in a window |
+| `c8205_lochstreifen_eingabe.py` | helper program: creates a virtual punched tape from keyboard input in a window |
 | `markdown-dateien/` | Rule set and project description (.md); the interpreter reads the node graph from here |
 | `PDF/` | Readable versions of the documents (A4) |
-| `Tests/` | Test orders (`.txt`) |
+| `Tests/` | Test orders (mostly `.txt`; the extension is free, the assembler produces `.test`) |
+| `Test-Ergebnisvergleiche/` | Expected-result files for file checks (names ending in `-ausgabe.txt` or `_erwartet.txt`) |
 | `Test-Protokolle/` | Logs (`.log`) of the runs |
-| `virtuelle_Geraete/` | Storage for virtual devices (punched tape reader, punch, typewriter unit, keyboard input) |
+| `virtuelle_Geraete/` | Storage for virtual devices (punched tape reader, punch, typewriter unit, keyboard input, drum) |
+| `CSV/` | Overview table of all tests (`test_tabelle.py` produces `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` opens it in LibreOffice Calc) |
+| `Bausteininterpretiersystem BIS/` | Sub-project BIS (documentation only for now) |
 | `Assembler/` | Assembler `c82ass` with source code, binaries, examples and documentation |
 
 Abridged overview (subfolders of the logs and of the example projects are not listed individually):
@@ -57,25 +69,38 @@ C8205/
 ├── c8205_interp.py                 Python interpreter
 ├── c8205_befehlssweep.py           Completeness test (512 operation codes)
 ├── c8205_interpreter.sh / .bat     Wrappers with log file
+├── compute_all_tests.sh            run all test definitions in Tests/
+├── c8205_bis_test.sh               Wrapper for BIS tests (loads the minimal program first)
+├── test_bis.sh                     run all BIS tests one after another
+├── test.sh                         older version of test_bis.sh
+├── erzeuge_leere_trommel.py        create an empty drum file
+├── c8205_lochstreifen_anzeige.py   show a punched tape as plain text (helper program)
+├── c8205_lochstreifen_eingabe.py   create a punched tape from keyboard input (helper program)
 ├── markdown-dateien/               Rule set and project description (.md)
 ├── PDF/                            Readable versions (A4)
-├── Tests/                          Test orders (.txt)
+├── Tests/                          Test orders (.txt or .test)
+├── Test-Ergebnisvergleiche/        Expected-result files for file checks
 ├── Test-Protokolle/                Logs of the runs (.log)
+├── CSV/                            Overview table of all tests (test_tabelle.py)
+├── Bausteininterpretiersystem BIS/ Sub-project BIS (documentation only for now)
 ├── virtuelle_Geraete/
 │   ├── Leser1/, Leser2/            Punched tape input
 │   ├── Stanzer1/                   Punch output
 │   ├── SW-Ausgabe/                 Typewriter unit output
-│   └── T-SW-Eingabe/               Keyboard / typewriter unit input (channel K0)
+│   ├── T-SW-Eingabe/               Keyboard / typewriter unit input (channel K0)
+│   └── Trommel/                    Drum file trommel.txt
 └── Assembler/
+    ├── c82ass.sh                   Run the assembler
+    ├── asm_alle.sh                 assemble all .asm files under a folder (reports errors only)
+    ├── asm_aufraeumen.sh           delete unneeded files (.log, .mqo, .obj, .sym)
+    ├── make_c82ass.sh / .bat       Build the assembler (Linux / Windows)
     ├── Sourcecode/                 C source code and macro file
     ├── _Linux/, _Windows/          Binaries
     ├── Dokumentation/              .odt (authoritative), .md, .pdf
-    ├── Projekt_1/, Proj_FeldSortieren/   Example projects
-    └── Claude_bsp_reassemblierung/ many example and test projects, one folder each
+    ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Project folders (any number, any name)
+    └── Claude_bsp_reassemblierung/ Project folders: among others the source code of the tests in Tests/
 ```
 
-<!-- Please check: the line on Claude_bsp_reassemblierung is a cautious description. The folder
-     Assembler/Claude is deliberately not listed. Both are still missing from C8205-Projektstruktur.md. -->
 
 The complete directory description is in `markdown-dateien/C8205-Projektstruktur.md` (German).
 
@@ -95,16 +120,40 @@ The test runs the program, prints the characters of the output instructions to t
 c8205_interpreter.bat 0015-030.txt       # Windows
 ```
 
+Run all test definitions in `Tests/` at once:
+
+```
+./compute_all_tests.sh
+```
+
 All switches (devices, log depth, file checks) and error messages are described in
 `markdown-dateien/C8205-Interpreter-Python_Interpreter.md` (German).
+
+## Quick start: Claude interpreter (without Python)
+
+A test can also be run without Python: an AI works through the node graph by hand. To do so, upload the rule set
+(`markdown-dateien/`, without `Python_Interpreter`, `PDF`, `Projektstruktur`, `Projektueberblick`, `Versionierung` and the assembler
+documentation) and the test file, and give a start instruction. The steps, the choice of files and a suggested start
+instruction are described in `markdown-dateien/C8205-Interpreter-Durchführung_eines_Tests.md` (German), section 1b
+(as a PDF: `PDF/C8205-Testhandbuch_A4.pdf`, "Kurzanleitung: Test starten").
 
 ## Quick start: assembler
 
 The assembler runs on Linux and Windows 10. Call on Linux:
 
 ```
-Assembler/c82ass.sh -p Projekt_1 -s bsp_5_16
+Assembler/c82ass.sh -p Projekt_1/bsp_16 -s bsp_5_16
 ```
+
+Assemble all `.asm` files below a folder at once (only errors are reported; exit code 0 = no errors,
+1 = errors):
+
+```
+Assembler/asm_alle.sh [base directory]
+```
+
+To build it from the source code: `Assembler/make_c82ass.sh` (Linux) or `Assembler/make_c82ass.bat`
+(Windows, MinGW-w64).
 
 Among other files, the assembler produces the object code (`.obj`), a memory listing (`.dmp`) and a `.test` file.
 The latter contains the drum file in the interpreter's test format and, once the test markers and the key
@@ -113,27 +162,61 @@ in `Assembler/Dokumentation/` (the `.odt` is authoritative; German).
 
 ## Where to start reading
 
+**First time here?** Start with `markdown-dateien/C8205-Einstieg_fuer_Neueinsteiger.md` (in German): it explains what
+the project contains (interpreter, assembler, BIS), in which order to read the documents, and what can be skipped at
+first.
+
+**Already know the project, or want a compact overall overview?** Continue here:
+
 1. `PDF/C8205-Projektueberblick_A4.pdf` or `markdown-dateien/C8205-Interpreter-Projektueberblick.md`: what the
    project is and how the documents relate (including a document map).
 2. `markdown-dateien/C8205-Interpreter-Überblick_und_Gesamtaufbau.md`: root of the rule set (device structure,
-   the four phases of instruction processing).
+   the four phases of instruction processing). As a PDF: `PDF/C8205-Rechnerbeschreibung_A4.pdf`.
 3. Then by interest: hardware (`Magnettrommel`, `Bedienpult_mit_Schaltern`, `Lochstreifenleser`), control logic
    (`Eingänge_der_Knoten`, `Beschreibung_der_Knoten`, `Befehlsliste`), practice (`Python_Interpreter`,
    `Durchführung_eines_Tests`).
 
-The PDFs are finished reading versions and are not updated automatically. The `.md` files are authoritative.
+## PDF documents
+
+The `PDF/` folder contains reading versions in A4 format, designed according to the guideline
+`markdown-dateien/C8205-Interpreter-PDF.md`. They are not updated automatically from the `.md` files and may
+therefore be older than their source (the date is shown in the document). The `.md` files are authoritative.
+All PDFs are in German.
+
+| PDF | Contents |
+|---|---|
+| `C8205-Projektueberblick_A4.pdf` | Overview: goal, architecture, assembler, virtual hardware, test concept, document map |
+| `C8205-Rechnerbeschreibung_A4.pdf` | Structure, registers, machine word, magnetic drum, instruction cycle and instruction types |
+| `C8205-Bedienpult_und_Peripherie_A4.pdf` | Keys, switches, lamps, channels, punched tape reader, punch, typewriter unit |
+| `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Operating `c8205_interp.py`: call, switches, devices |
+| `C8205-Testhandbuch_A4.pdf` | Quick guide "Test starten" (Claude and Python interpreter), writing tests and reading logs |
+| `C8205-Durchfuehrung_eines_Tests_A4.pdf` | The test format in the wording of the source |
+| `C8205-Knotengraph_A4.pdf` | The node graph as a diagram, split into A4 tiles |
+| `C8205-Knotentabellen_A4.pdf` | Node table and variable table T2 in the wording of the sources |
+| `C8205-Einzelbefehlsliste_A4.pdf` | Generic instruction description and overview of all 512 operation codes |
+| `C8205-Kodetabellen_A4.pdf` | Character code table (R 300 punched tape code) |
+| `Assembler/Dokumentation/C8205_Assembler_Dokumentation.pdf` | Assembler `c82ass`: call, language, macros, example |
 
 ## Status
 
-<!-- Please check and update: the project overview describes the Python interpreter as not yet complete and
-     stub-free, and its section 8 "Stand und offene Punkte" (status and open issues) is empty. -->
-The project is under development. The interpreter reports instructions that are not yet implemented as stubs.
-`c8205_befehlssweep.py` checks over all 512 operation codes whether everything is in place for each instruction.
+The interpreter deliberately reports every point where the rule set is unclear or where no implementation exists
+yet as a **stub** and stops with a message instead of guessing ("fail loudly"). This is intended and not a defect.
+`c8205_befehlssweep.py` checks whether an implementation exists for each of the 512 operation codes.
+
+## Version numbers
+
+Every `.md` file and the interpreter carry their own version number of the form `y.xx-zzz` (major version, minor
+version, build); in the documents it is the line `Version:` below the title. The interpreter's number is shown by
+`python3 c8205_interp.py --version`. Structure and rules: `markdown-dateien/C8205-Versionierung.md` (German).
+
+**Rule for everyone who contributes (including AI sessions):** every change to one of these files raises its build
+(`zzz`) by 1. The major and minor version are raised only when the project owner explicitly asks for it.
 
 ## License
 
-<!-- To be decided. -->
-Not yet specified.
+MIT License, see [LICENSE](LICENSE). It covers the interpreter, the assembler, the tests and the documents written
+for this project. Rights to the original documentation of the C 8205, from which the rule set was reconstructed,
+remain with their respective owners.
 
 ## Sources and background
 

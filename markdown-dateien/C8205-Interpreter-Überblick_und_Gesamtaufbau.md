@@ -1,18 +1,22 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
+Version: 0.03-001
+
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
-(Interpreter, Assembler) ein. Details, die in Teildokumenten ausführlich beschrieben sind, werden hier
+(Interpreter, Assembler, BIS) ein. Details, die in Teildokumenten ausführlich beschrieben sind, werden hier
 nicht wiederholt, sondern nur referenziert (Abschnitt 7).
 
 Die Verzeichnisstruktur des Gesamtprojekts (welcher Pfad was enthält) steht nicht hier, sondern im
 Wurzeldokument "C8205-Projektstruktur.md".
 
-Das Projekt hat zwei Teilprojekte:
+Das Projekt hat drei Teilprojekte:
 - den **Interpreter** (Python): führt Programme des C 8205 interpretativ nach dem Knotengraphen aus
   (Abschnitt 6.1),
 - den **Assembler** `c82ass` (C): übersetzt Assembler-Quelltext in Objektcode für den C 8205
-  (Abschnitt 6.2).
+  (Abschnitt 6.2),
+- das **Bausteininterpretationssystem BIS**: Programmsystem (Anwendungs-Software), das auf dem C 8205 selbst
+  läuft (Abschnitt 6.3).
 
 
 ## 1. Einordnung und Leistungsdaten
@@ -322,7 +326,7 @@ die Trommelposition (Wortzeitzähler mod 32 und Reihenfolge der Magnettrommel-Da
 
 Der Interpreter (`c8205_interp.py`) führt Programme des C 8205 interpretativ aus: Er läuft den
 Knotengraphen des Befehlsablaufs (Phasen I bis IV) ab und bildet Register, Flags, Trommelspeicher und
-Peripherie nach (alle Zeiten = 0). Testaufträge liegen in `Tests/`, Protokolle in `Test-Protokolle/`. Der
+Peripherie nach (alle Zeiten = 0). Testaufträge liegen in `Tests/`, Protokolle in `Test-Protokolle/`, der Trommelspeicher als persistente Datei in `virtuelle_Geraete/Trommel/` (er behält seinen Inhalt über Tests hinweg). Der
 Vollständigkeitstest `c8205_befehlssweep.py` prüft alle 512 Operationscodes gegen den Knotengraphen.
 Einzelheiten: "C8205-Interpreter-Python_Interpreter.md" (Bedienung, Schalter, Geräte) und
 "C8205-Interpreter-Durchführung_eines_Tests.md" (Testdatei, Tastenfolge, Protokoll).
@@ -343,6 +347,19 @@ Einzelheiten stehen nicht hier, sondern an einer Stelle:
 - Verzeichnisse und vom Assembler erzeugte Dateien: "C8205-Projektstruktur.md", Abschnitt 3,
 - vom Assemblerergebnis zum Testauftrag des Interpreters: "C8205-Interpreter-Durchführung_eines_Tests.md",
   Abschnitt 2a.
+
+
+### 6.3 BIS (Bausteininterpretationssystem)
+
+Das BIS ist ein offenes Unterprogrammsystem für den C 8205 (Ein- und Ausgabe von Dezimalzahlen, Multiplikation und
+Division von Fest- und Gleitkommazahlen, Addition und Subtraktion von Gleitkommazahlen, Serviceprogramme). Es ist
+Software für den Rechner und kein Teil der simulierten Hardware; Interpreter und Assembler kennen es nicht. Die
+Hardware kennt nur die Eingabe eines Zeichens, alles Weitere leisten die Bausteine des BIS. Zum BIS gehören das
+"Kleine Eingabeprogramm" (KEP, Spur 0, Adressen 0000 bis 0037 oktal), das der Assembler-Objektcode (6.2) voraussetzt,
+und das Minimalprogramm. Erfasst sind bisher die allgemeine Beschreibung, das KEP und das Minimalprogramm.
+
+Einzelheiten stehen nicht hier, sondern in "C8205-Interpreter-BIS.md"; Einordnung als Teilprojekt:
+"C8205-Interpreter-Projektueberblick.md", Abschnitt 3a, und "C8205-Projektstruktur.md", Abschnitt 3a.
 
 
 ## 7. Verweise auf die Teildokumente
@@ -373,9 +390,15 @@ Einzelheiten stehen nicht hier, sondern an einer Stelle:
 - Sprache, Anweisungen, Makros, Beispiel: "C8205_Assembler_Dokumentation.odt" (maßgeblich) bzw. ".md" (Ableitung).
 - Vom Assemblerergebnis zum Testauftrag des Interpreters: "C8205-Interpreter-Durchführung_eines_Tests.md", Abschnitt 2a.
 
+**BIS**
+- Inhalt (allgemeine Beschreibung, KEP, Minimalprogramm, Eingabekennzeichen K₁/K₂): "C8205-Interpreter-BIS.md".
+- Einordnung als Teilprojekt: "C8205-Interpreter-Projektueberblick.md", Abschnitt 3a; "C8205-Projektstruktur.md", Abschnitt 3a.
+- Zahlendarstellungen des BIS (Gleitkomma, Tetraden, Festkomma): "C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md".
+
 **Ausgabe**
 - Gestaltung aller PDF-Ausgaben sowie Namensschema und Liste der erzeugten PDFs: "C8205-Interpreter-PDF.md" (Abschnitt 8: Dateibenennung).
 - Verzeichnisstruktur des Gesamtprojekts: "C8205-Projektstruktur.md".
+- Versionsnummern der Dateien (Aufbau `y.xx-zzz`, Regeln, Ort der Nummer): "C8205-Versionierung.md".
 
 
 ## 8. Offene Punkte

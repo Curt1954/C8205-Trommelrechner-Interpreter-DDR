@@ -1,0 +1,41 @@
+Test acbz-001_AC_und_BZ_vorbelegt
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000210
+  0001: 00000000020
+  3000: 00000000045
+  #DOK-0001 #AC und #BZ zusammen: AC = 00000000200, BZ = 0100. G setzt BZ := 0, der AC bleibt: Start in Zelle 0000.
+  #DOK-0002 Befehl 210 addiert die Zelle 3000 (45) zum AC: AC = 245.
+  #AC=00000000200
+  #BZ=0100
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Anfangswerte: AC = 00000000200 (#AC), BZ = 0100 (#BZ)
+  Nicht spezifizierte Register (AR, OR, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000200 FÜ=0 V1=0 V2=0 V3=0
+  BR=3000 210  (vor Knoten 002)  BZ=0001 AC=00000000245 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0002 AC=00000000245 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0002 ist=0002 OK
+  AC: soll=00000000245 ist=00000000245 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+Test wahr

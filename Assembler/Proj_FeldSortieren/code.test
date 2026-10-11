@@ -47,7 +47,7 @@ Trommeldatei:
 0054: 00000215211 # m1: 211 min_index ; Lade min_index in AC
 0055: 00000213330 # 330 i ; Vergleiche mit i
 0056: 00000015170 # 170 loop1 ; Springe wenn  AC=min_index == i
-0057: 00000213211 # 211 i ; Lade `i`
+0057: 00000213211 # swap: 211 i ; Lade `i`
 0060: 00000212210 # 210 afeld_base ; Addiere Anfangsadresse des Arrays
 0061: 00000220210 # 210 l0002 ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
 0062: 00000075240 # 240 ML0004MTA ; Speichere den vollständigen Ladebefehl für `afeld_base[i]`
@@ -69,7 +69,7 @@ Trommeldatei:
 0102: 00000000000 # ML0001MTA: dw 0 ; Hier steht der Speicherbefehl für   240 afeld_base[min_index]
 0103: 00000015000 # 000 loop1 ; nächster Durchlauf Schleife 1
 0200: 00000000006 # len0: dw 000000000006 ; Anzahl der Elemente im Array
-0202: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0202: 00004500030 # ausgabe: 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
 0203: 00000040030 # feld_base: dto 4172k0 ; Startelement des Arrays, alles Kleinbuchstaben-Ausgabebefehle
 0204: 00000010030
 0205: 00000070030

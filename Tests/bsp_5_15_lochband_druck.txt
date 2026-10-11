@@ -51,4 +51,4 @@ Prüfungen:
 BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 3021: 00000200030
 3061: 00000000020
---pruefe-sw-ausgabe bsp_5_15_lochband_druck-sw-ausgabe.txt
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/bsp_5_15_lochband_druck-sw-ausgabe.txt

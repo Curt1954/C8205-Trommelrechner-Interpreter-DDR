@@ -1,5 +1,7 @@
 # Lochstreifenleser
 
+Version: 0.03-001
+
 Hardwarebeschreibung des Lochstreifenlesers 303 am Rechner C 8205.
 
 Die Zeichenkode-Tabellen (Zeichenkode des Lochbands) stehen in der Datei

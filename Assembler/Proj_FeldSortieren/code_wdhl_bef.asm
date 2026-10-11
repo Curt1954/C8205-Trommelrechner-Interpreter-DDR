@@ -18,7 +18,7 @@
 
              start 
              241 i           ; i löschen, damit Programm mehrfach gestartet werden kann.
-             TEST      123
+             TEST      i
              MACHE_ADRESSEINHEIT2 len0 len 9 ; Lade Schleifenbegrenzung (length - 1) von len, verschiebe 9x links
              000 firstEntry
 

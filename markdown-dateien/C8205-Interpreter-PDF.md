@@ -1,5 +1,7 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
+Version: 0.03-001
+
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,
 Kodetabellen/Tabelle 1, ggf. weitere) soll ohne erneute Design-Entscheidung nach demselben Muster
@@ -136,8 +138,10 @@ entfällt er). Bisher:
 - `C8205-Einzelbefehlsliste_A4.pdf` (Quelle: C8205-Interpreter-Befehlsliste.md)
 - `C8205-Kodetabellen_A4.pdf` (Quelle: C8205-Interpreter-Kodetabellen.md)
 - `C8205-Projektueberblick_A4.pdf` (Quelle: C8205-Interpreter-Projektueberblick.md)
-- `C8205-Rechnerbeschreibung_A4.pdf`, `C8205-Bedienpult_und_Peripherie_A4.pdf`,
-  `C8205-Bedienungsanleitung_Interpreter_A4.pdf`, `C8205-Testhandbuch_A4.pdf` (redaktionell)
+- `C8205-BIS_A4.pdf` (Quelle: C8205-Interpreter-BIS.md; Fließtext und Tabellen nach Abschnitt 6a, ohne Kachelung)
+- `C8205-Rechnerbeschreibung_A4.pdf` (redaktionell; erzeugt mit `PDF/erzeuge_rechnerbeschreibung_pdf.py`, Bausteine aus `pdflib.py`; Stand 08.10.2026)
+- `C8205-Bedienpult_und_Peripherie_A4.pdf`, `C8205-Bedienungsanleitung_Interpreter_A4.pdf`,
+  `C8205-Testhandbuch_A4.pdf` (redaktionell)
 - `C8205_Assembler_Dokumentation.pdf` (Export aus der .odt mit LibreOffice, nicht nach dieser Richtlinie;
   Ausnahme vom Namensmuster, da der Name der Quelle übernommen wird)
 
@@ -148,6 +152,8 @@ Neueste Änderung zuerst. Einträge vom 2026-10-02 sind aus den Entscheidungsver
 
 | Datum | Änderung | Abschnitt |
 |---|---|---|
+| 2026-10-08 | `C8205-Rechnerbeschreibung_A4.pdf` auf Stand 08.10.2026 gebracht (neu: 3.2 externe Darstellung/Tetraden, 6.4 persistente Trommeldatei, Hinweis zu A=3/Z=2,3, Verweise auf das BIS-PDF) und mit dem Skript `erzeuge_rechnerbeschreibung_pdf.py` reproduzierbar gemacht. | 8 |
+| 2026-10-07 | `C8205-BIS_A4.pdf` in die Liste der PDFs aufgenommen (Quelle angegeben). | 8 |
 | 2026-10-05 | `C8205-Knotentabellen_A4.pdf` in die Liste der PDFs aufgenommen (Quellen angegeben); bei `C8205-Knotengraph_A4.pdf` ebenfalls die Quellen ergänzt. | 8 |
 | 2026-10-05 | Verweis in der Einleitung berichtigt: Das Änderungsprotokoll ist Abschnitt 9 (stand fälschlich als Abschnitt 8, das ist die Dateibenennung). | Einleitung |
 | 2026-10-05 | Änderungsprotokoll angelegt und mit den bisher nur im Text vermerkten Entscheidungen gefüllt. | 9 |

@@ -3,11 +3,19 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
+Version: 0.03-007
+(Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
+REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
+Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
+
 Aufruf:  python3 c8205_interp.py [--mdverz VERZ] [--out VERZ|DATEI.log]
          [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
-         [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT]
+         [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL] [--zwischenablage auto|tk|system]
          [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] TEST.txt [TEST2.txt ...]
+         python3 c8205_interp.py --version      (zeigt die Versionsnummer und endet)
          (--leser1, --leser2, --stanzer1, --sw-ausgabe und --k0 duerfen auch als Zeile in der Testdatei stehen; die Kommandozeile hat Vorrang)
+         (--SW-TERMINAL: Schreibwerk-Ausgabe zusaetzlich im Fenster "SW Ausgabe"; das Fenster bleibt auch nach dem Testende offen, bis es mit X
+          geschlossen wird; Text mit der Maus markieren und kopieren; NUR als Kommandozeilenschalter, nicht als Zeile in der Testdatei)
          --out mit Endung (z. B. Test-Protokolle/test1.log): das Protokoll wird genau in diese Datei geschrieben
          (fehlende Ordner werden angelegt; nur mit einem Test). Ohne Endung: Verzeichnis, Protokoll dann
          in VERZ/<Testname>/protokoll.txt (Vorgabe fuer --out: Test-Protokolle/ neben dem Skript). Eine Protokolldatei entsteht nur bei #PROT STUFE=2.
@@ -23,6 +31,39 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
 
+Aenderung 10.10.2026 (Version 0.03-007): Das Fenster "SW Ausgabe" (--SW-TERMINAL) bleibt jetzt IMMER offen, auch nach dem Ende des Tests und
+  unabhaengig von der Mausposition, bis es mit X geschlossen wird (die Selbstschliessung bei Zeiger ausserhalb entfaellt, ebenso der Hinweis,
+  den Mauszeiger vorher in die rechte untere Ecke zu stellen). Markieren und Kopieren wie in den Lochstreifen-Hilfsprogrammen (Anzeige/Eingabe):
+  Kopieren beim Loslassen der Maustaste (auch nach Doppelklick), mit Strg+C, Strg+Umschalt+C, Strg+Einfg (auch ohne Fokus im Textfeld) und ueber
+  das Kontextmenue (rechte Maustaste; macOS auch mittlere Taste/Strg+Klick) mit "Kopieren" und "Alles markieren"; Strg+A markiert alles; Rueckmeldung
+  in der Titelleiste. Verfahren: Windows Win32-API (CF_UNICODETEXT, bis zu 20 Versuche), Linux/macOS/WSL zuerst wl-copy bzw. xsel (sonst xclip),
+  pbcopy, clip.exe, Tk nur als Rueckfall; derselbe Text wird binnen 5 s nicht erneut abgelegt. Neuer Schalter --zwischenablage auto|tk|system
+  (Vorgabe auto), wirkt nur mit --SW-TERMINAL. Das Fenster laeuft unter Linux (eigene Sitzung) und Windows (ohne Konsolenfenster) weiter,
+  auch wenn der Interpreter oder sein Terminal schon beendet ist.
+Aenderung 10.10.2026 (Version 0.03-006): Mit --SW-TERMINAL werden auch alle Eingaben ueber K0 (Pult-Tastatur T oder Schreibwerk SW, vom Terminal
+  oder aus --k0 datei=PFAD) als Echo im Fenster "SW Ausgabe" ausgegeben, in Dunkelgelb (Ausgaben des Rechners bleiben in der Standardfarbe).
+  Echo nur fuer angenommene Zeichen, in der Darstellung des Schreibwerks (a028/sw_zeichen) bei der gerade gueltigen Zeichenlage KB/GB.
+  Lochbandleser (K1/K2) werden nicht ausgegeben. Ohne --SW-TERMINAL aendert sich nichts.
+Aenderung 10.10.2026 (Version 0.03-005): Hilfetext (--help) und Kopfkommentar zu --SW-TERMINAL: Hinweis, dass das Fenster nur zu sehen ist, wenn der
+  Mauszeiger VOR dem Aufruf in der rechten unteren Bildschirmecke steht. Keine Aenderung am Verhalten.
+Aenderung 10.10.2026 (Version 0.03-004): --SW-TERMINAL oeffnet jetzt ein eigenes Ausgabefenster "SW Ausgabe" (nur Text, 130 x 36 Zeichen,
+  verschiebbar, Standardposition rechts unten auf dem Desktop; Tkinter, als eigener Prozess, der Text ueber eine Pipe erhaelt). Alle
+  Zeichen, die auf das Schreibwerk gehen, erscheinen darin, gleichgueltig ob --sw-ausgabe gesetzt ist; Datei bzw. Terminal bleiben wie bisher.
+  Nach dem Ende des Aufrufs schliesst sich das Fenster selbst, wenn der Mauszeiger nicht darin steht; steht er darin, bleibt es offen,
+  bis es mit X geschlossen wird. Ist kein Fenster moeglich (kein tkinter, keine grafische Oberflaeche), erscheint eine Warnung und der Test
+  laeuft ohne Fenster weiter. Ersetzt die Spiegelung der Ausgabe ins Terminal aus Version 0.03-003. Weiterhin nur Kommandozeile.
+Aenderung 10.10.2026 (Version 0.03-003): Neuer Kommandozeilenschalter --SW-TERMINAL (Standard: aus). Mit --sw-ausgabe geht die
+  Schreibwerk-Ausgabe (K2) nur in die Datei; mit --SW-TERMINAL erscheint sie zusaetzlich auf dem Terminal (dunkelgelb), auch bei
+  --NO-TERMOUT. Ohne --sw-ausgabe aendert der Schalter nichts (die Ausgabe geht ohnehin ans Terminal). Der Schalter wird beim
+  Testlauf ausgewertet und ist nur auf der Kommandozeile zulaessig; als Zeile in der Testdatei ist er ein Formfehler.
+Aenderung 09.10.2026 (Version 0.03-002): Regel zum Hochzaehlen der Versionsnummer im Kopfkommentar ergaenzt (jede Aenderung: Build + 1;
+  Haupt- und Unterversion nur auf Aufforderung des Projektinhabers). Keine Aenderung am Verhalten.
+Aenderung 09.10.2026 (Version 0.03-001): Versionsnummer der Form y.xx-zzz eingefuehrt (Ausgangsstand 0.03-001, festgelegt vom
+  Projektinhaber; Definition: markdown-dateien/C8205-Versionierung.md). Konstante VERSION, Zeile "Version:" im Kopfkommentar und
+  Schalter --version (zeigt die Version und endet). Am Ablauf der Tests und an allen Ausgaben aendert sich nichts.
+Aenderung 08.10.2026: Neue Testmarken #AC=<11 Oktalstellen> und #BZ=<4 Oktalstellen> (Durchfuehrung_eines_Tests.md, Abschnitt 2).
+  Sind sie angegeben, werden AC bzw. BZ vor der ersten Taste und vor jedem Befehl auf den Wert gesetzt (Anfangszustand); fehlen sie,
+  bleibt alles wie bisher (AC=0, BZ=0). Eine danach abgearbeitete Taste G wirkt unveraendert wie bisher (BZ:=0, AC bleibt).
 Aenderung 04.10.2026 (5): Befehlsentnahme nach X-Abbruch (GX/WX, B=5/7; Befehlsliste 4.1.6, Abb. 10): Der naechste Befehl wird ohne
   Wartezeit W1 entnommen. Die Spur kommt aus dem Befehlszaehler (AR=BZ=b+1), der Sektor aus der Trommellage in der zweiten Wortzeit nach
   dem Abbruch (= Sektor der Zusatzzelle + 2 physische Schritte, je +15 oktal). Der Befehl muss also NICHT in Zelle b+1 stehen. AR und BZ
@@ -80,26 +121,36 @@ Aenderung 04.10.2026: Abgleich mit Originaldokumentation 4.3.2.5 (Ausgabe-Halt):
 Aenderung 03.10.2026 (2): ANWEISUNG-017 geaendert (T2: "Wenn der Ausgabebefehl keine Kanal-Anwahl ist, wird das Zeichen auf dem
   angewaehlten Kanal ausgegeben ..."): die Zeichenausgabe (SW/Stanzer) steht jetzt in a017 (Knoten 23); a028 (Knoten 39) waehlt nur noch
   den Kanal bei Anwahlbefehlen. Verhalten nach aussen unveraendert.
+Aenderung 07.10.2026: Trommel materialisiert. Die Trommel ist jetzt eine persistente Textdatei
+  (virtuelle_Geraete/Trommel/trommel.txt, 4096 Zeilen aaaa: ttttttttttt). Der Interpreter liest sie
+  beim Teststart, uebertraegt die Adresse:Wert-Zeilen der Testdatei initial auf die Trommel und
+  schreibt jede Zelländerung eines Befehls unmittelbar als Zeilenupdate in die Datei. Neue Klasse
+  Trommel und Funktion pruefe_trommeldatei; Machine.rd/Machine.wr arbeiten ueber die Trommel.
 """
 import argparse
 import difflib
 import os
 import random
 import re
+import subprocess
 import sys
 import time
+
+VERSION = '0.03-007'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
 
-# physische Zugriffsreihenfolge der Trommel: PHYS_LOG[physische Position p] = logische Sektoradresse
-# (Magnettrommel.md, Abschnitt Speichernumerierung/Interleaving; alle Werte oktal)
+TROMMEL_ZEILE_LAENGE = 18
+TROMMEL_ADR_ANZAHL = 4096
+TROMMEL_ZEILE_RE = re.compile(r'^([0-7]{4}): ([0-7]{11})\n$')
+
 PHYS_LOG = [0o00,0o15,0o32,0o07,0o24,0o01,0o16,0o33,
             0o10,0o25,0o02,0o17,0o34,0o11,0o26,0o03,
             0o20,0o35,0o12,0o27,0o04,0o21,0o36,0o13,
             0o30,0o05,0o22,0o37,0o14,0o31,0o06,0o23]
 
-TABELLE1 = [   # (Nr, Klbuch, Gbuch, Ausgabe-Adresse (3 Oktalstellen), Ascii GB, Ascii KB, Eingabe-Adresse, Sprung-Umstellung)
+TABELLE1 = [
     (1, '1', '<', '001', 60, 49, 1, False),
     (2, '2', '"', '002', 34, 50, 2, False),
     (3, '3', '≈', '023', 0, 51, 3, False),
@@ -148,15 +199,15 @@ TABELLE1 = [   # (Nr, Klbuch, Gbuch, Ausgabe-Adresse (3 Oktalstellen), Ascii GB,
     (46, ',', '?', '153', 63, 44, 59, True),
     (47, '.', '!', '073', 33, 46, 27, True),
     (48, '-', '△', '100', 465, 45, 32, True),
-    (49, 'Leertaste', 'ZR', '032', 32, 32, 10, True),   # Sprung-Umstellung ja (Kodetabellen 1.4/1.5/1.8, KEP-Zelle 0032)
+    (49, 'Leertaste', 'ZR', '032', 32, 32, 10, True),
     (50, 'Irrung Zeichen', 'Irrung Zeichen', '377', 0, 0, None, False),
     (51, 'Irrung Satz', 'Irrung Satz', '016', 0, 0, 14, True),
     (52, 'Transport (Relikt)', 'Transport (Relikt)', '177', 0, 0, 63, False),
 ]
-AUSGABE_ZEILE = {r[3]: r for r in TABELLE1 if r[0] != 52}      # Zeile 52 (Transport) ist ein Relikt
-SW_ZEILE = {int(r[3], 8) & 0o157: r for r in TABELLE1 if r[0] not in (50, 52)}   # Schreibwerk: 6 Bit (v u 8 4 2 1), p und w ignoriert (Original 4.3.2.5)
+AUSGABE_ZEILE = {r[3]: r for r in TABELLE1 if r[0] != 52}
+SW_ZEILE = {int(r[3], 8) & 0o157: r for r in TABELLE1 if r[0] not in (50, 52)}
 EINGABE_ZEILE = {r[6]: r for r in TABELLE1 if r[6] is not None and r[0] != 52}
-EINGABE_ZEILE[0o36] = (0, 'Irrung Block', 'Irrung Block', '', 0, 0, 0o36, True)   # IB (Pult-Taste, Auslegung des Interpreters)
+EINGABE_ZEILE[0o36] = (0, 'Irrung Block', 'Irrung Block', '', 0, 0, 0o36, True)
 
 
 def octs(v, n):
@@ -164,22 +215,22 @@ def octs(v, n):
 
 
 def sgn(w):
-    """33-Bit-Wort als vorzeichenbehaftete Dualzahl (Zweierkomplement, z0 = Vorzeichen)."""
     w &= MASK33
     return w - (1 << 33) if (w >> 32) else w
 
 
 class Stub(Exception):
-    """Nicht (oder nicht eindeutig) definiert / nicht implementiert -> Test bricht laut ab."""
+    pass
 
 
 class LaufFehler(Exception):
-    """Fehler beim Ablauf des Knotengraphen (Geraet nicht nutzbar, Stub, fehlender Ausgang)."""
+    pass
 
 
-# ----------------------------------------------------------------------------------------------
-# Einlesen von Knotengraph und Variablentabelle T2
-# ----------------------------------------------------------------------------------------------
+class KonfigFehler(Stub):
+    pass
+
+
 def load_graph(path):
     g = {}
     for raw in open(path, encoding='utf-8'):
@@ -218,30 +269,156 @@ def load_t2(path):
     return t2
 
 
-# ----------------------------------------------------------------------------------------------
-# Testdatei einlesen und formal pruefen (Abschnitt 2 und 5 der Testbeschreibung)
-# ----------------------------------------------------------------------------------------------
+def pruefe_trommeldatei(pfad):
+    fehler = []
+    if not os.path.isfile(pfad):
+        return [f'Trommeldatei nicht gefunden: {pfad}']
+    try:
+        # newline='' : keine Umwandlung von CRLF in LF; die Pruefung sieht die echten Zeilenenden.
+        with open(pfad, encoding='utf-8', newline='') as fh:
+            zeilen = fh.readlines()
+    except OSError as e:
+        return [f'Trommeldatei nicht lesbar: {pfad} ({e.strerror})']
+    if any(z.endswith('\r\n') for z in zeilen):
+        return [f'Trommeldatei hat CRLF-Zeilenenden (19 Byte je Zeile): {pfad}. Erwartet wird LF '
+                f'({TROMMEL_ZEILE_LAENGE} Byte je Zeile), da der Interpreter Zellen ueber Adresse x '
+                f'{TROMMEL_ZEILE_LAENGE} positioniert. Datei auf LF umstellen '
+                f'(z. B. mit erzeuge_leere_trommel.py neu erzeugen oder dos2unix).']
+    if len(zeilen) != TROMMEL_ADR_ANZAHL:
+        fehler.append(f'Trommeldatei hat {len(zeilen)} Zeilen; erwartet werden genau '
+                      f'{TROMMEL_ADR_ANZAHL} (Adressen 0000 bis 7777).')
+    erwartete_adr = 0
+    for nr, z in enumerate(zeilen, 1):
+        if nr > TROMMEL_ADR_ANZAHL:
+            break
+        m = TROMMEL_ZEILE_RE.match(z)
+        if not m:
+            fehler.append(f'Zeile {nr}: ungueltiges Format (erwartet "aaaa: ttttttttttt"): {z.rstrip()!r}')
+            erwartete_adr += 1
+            continue
+        adr = int(m.group(1), 8)
+        if adr != erwartete_adr:
+            fehler.append(f'Zeile {nr}: Adresse {m.group(1)} erwartet, gefunden {octs(erwartete_adr, 4)}.')
+        erwartete_adr += 1
+    return fehler
+
+
+class Trommel:
+    def __init__(self, pfad):
+        self.pfad = pfad
+        self.mem = {}
+        self.datei = None
+        fehler = pruefe_trommeldatei(pfad)
+        if fehler:
+            raise KonfigFehler('Trommeldatei formal fehlerhaft:\n  - ' + '\n  - '.join(fehler))
+        with open(pfad, encoding='utf-8', newline='') as fh:
+            for z in fh:
+                m = TROMMEL_ZEILE_RE.match(z)
+                if not m:
+                    continue
+                self.mem[int(m.group(1), 8)] = int(m.group(2), 8)
+        try:
+            # newline='' : Python schreibt '\n' unveraendert (nie '\r\n') und rechnet beim Lesen nichts um;
+            # nur so stimmt die Byteposition Adresse x TROMMEL_ZEILE_LAENGE auch unter Windows.
+            self.datei = open(pfad, 'r+', encoding='utf-8', newline='')
+        except OSError as e:
+            raise KonfigFehler(f'Trommeldatei nicht zum Schreiben zu oeffnen: {pfad} ({e.strerror})')
+
+    def rd(self, adresse):
+        return self.mem.get(adresse & MASK12, 0)
+
+    def wr(self, adresse, wert):
+        adresse &= MASK12
+        wert &= MASK33
+        self.mem[adresse] = wert
+        zeile = f'{adresse:04o}: {wert:011o}\n'
+        pos = adresse * TROMMEL_ZEILE_LAENGE
+        try:
+            self.datei.seek(pos)
+            self.datei.write(zeile)
+        except OSError as e:
+            raise KonfigFehler(f'Trommeldatei nicht beschreibbar: {self.pfad} ({e.strerror})')
+
+    def uebertrage_aus_testdatei(self, test_mem):
+        for adr, wert in test_mem.items():
+            self.wr(adr, wert)
+
+    def schliessen(self):
+        if self.datei is not None:
+            try:
+                self.datei.close()
+            except OSError:
+                pass
+            self.datei = None
+
+
+def interrupt_token_ok(t):
+    u = t.upper().replace('\u00dc', 'UE')
+    if u in ('H', 'R', 'G', 'E', 'ST', 'UE', 'M', 'M+', 'M-', 'K0', 'K1', 'K2', 'K3'):
+        return True
+    if re.fullmatch(r'(BS|SP|SW)(=[01]|\+|-)', u):
+        return True
+    return bool(re.fullmatch(r'(M|SW|BS|SP)-?(DRUECK\w*|GEDRUECKT-HALTEN|LOS\w*)', u))
+
+
+def interrupt_pruefe(tokens):
+    """Formale Pruefung der Tastenfolge eines #INTERRUPT; liefert Fehlertexte."""
+    fe = []
+    if not tokens:
+        return ['ohne Tastenfolge']
+    if tokens[0].upper() != 'H':
+        fe.append(f'die erste Taste muss H sein, gefunden {tokens[0]!r}')
+    mhalt = False
+    for t in tokens:
+        if not interrupt_token_ok(t):
+            fe.append(f'unbekannte Taste {t!r}')
+            continue
+        u = t.upper().replace('\u00dc', 'UE')
+        if u == 'R' and mhalt:
+            fe.append('R bei noch gedrueckter Taste M')
+        if u.startswith('M') and u not in ('ST',):
+            press = u in ('M', 'M+') or 'DRUECK' in u or 'HALT' in u
+            release = u == 'M' or not press
+            if press:
+                if mhalt:
+                    fe.append('M gedrueckt, obwohl M bereits gedrueckt ist')
+                mhalt = True
+            if release:
+                if not mhalt:
+                    fe.append('M losgelassen, obwohl M nicht gedrueckt ist')
+                mhalt = False
+    if mhalt:
+        fe.append('Tastenfolge endet mit gedrueckter Taste M')
+    return fe
+
+
 class Test:
     def __init__(self, path):
         self.path = path
         self.name = os.path.splitext(os.path.basename(path))[0]
         self.mem = {}
-        self.dok = []          # Liste (xxxx, text) in Dateireihenfolge
-        self.spei = []         # Liste (xxxx, start, ende) in Dateireihenfolge
-        self.spur = []         # Liste (xxxx, adresse) in Dateireihenfolge
+        self.dok = []
+        self.spei = []
+        self.spur = []
         self.stufe = None
+        self.ac_init = None
+        self.bz_init = None
         self.tasten = []
-        self.zeilen = []       # uebernommene Adresszeilen (fuer das Protokoll)
-        self.pruef_reg = {}    # Abschnitt 3a: Register/Flag-Sollwerte, Schluessel -> int
-        self.pruef_mem = {}    # Abschnitt 3a: Speicher-Sollwerte, Adresse -> int
+        self.interrupts = []
+        self.starte = None
+        self.starte_nr = None
+        self._letzte_adr = None
+        self._offen = []
+        self.zeilen = []
+        self.pruef_reg = {}
+        self.pruef_mem = {}
         self._pruef_regzeile_gesehen = False
-        self.geraete = {}         # Abschnitt 2b: 'leser1' / 'leser2' / 'stanzer1' / 'sw_ausgabe' / 'k0' -> Wert (Zeile --leser1 PFAD usw., --k0 datei=PFAD in der Testdatei)
-        self.pruef_dateien = {}   # Abschnitt 3b: 'pruefe_stanzer1' / 'pruefe_sw_ausgabe' -> Soll-Datei (Zeile im Abschnitt Pruefungen:)
+        self.geraete = {}
+        self.pruef_dateien = {}
         self.fehler = []
         self.hinweise = []
         self._parse()
 
-    # Abschnitt 3a: zulaessige Schluessel der Pruefungen-Register/Flag-Zeile, mit Sollbreite (Oktalstellen)
     PRUEF_SCHLUESSEL = {'BZ': 4, 'AC': 11, 'AR': 4, 'FE': 1, 'FUE': 1, 'BS': 1, 'US': 1,
                         'E': 1, 'A': 1, 'V1': 1, 'V2': 1}
 
@@ -293,7 +470,7 @@ class Test:
                     self._pruef_regzeile_gesehen = True
                 continue
             m_ger = re.fullmatch(r'--(sw-ausgabe|k0|leser1|leser2|stanzer1)(?:\s+(.*?))?\s*(?:#.*)?', s)
-            if m_ger:                                      # Abschnitt 2b: Geraetezuordnung als Zeile der Testdatei
+            if m_ger:
                 key = m_ger.group(1).replace('-', '_')
                 wert = (m_ger.group(2) or '').strip()
                 if not wert:
@@ -309,9 +486,51 @@ class Test:
                     if key in ('leser1', 'leser2') and os.path.isdir(wert):
                         self.hinweise.append(f'Hinweis Zeile {nr}: --{m_ger.group(1)} {wert} ist ein Verzeichnis: alle Dateien darin werden als Lochstreifen gelesen; eine einzelne Datei ist sicherer')
                 continue
+            if re.match(r'--sw-terminal(\s|#|$)', s, re.I):
+                self.fehler.append(f'Zeile {nr}: --SW-TERMINAL ist nur als Kommandozeilenschalter zulaessig, nicht in der Testdatei')
+                continue
+            if re.match(r'#STARTE(\s|$)', s, re.I):
+                if modus == 'pruefungen':
+                    self.fehler.append(f'Zeile {nr}: #STARTE ist im Abschnitt Pruefungen: nicht zulaessig')
+                    continue
+                wert = s[len('#STARTE'):].split('#', 1)[0].strip()
+                if not wert:
+                    self.fehler.append(f'Zeile {nr}: #STARTE ohne Oktalzahl')
+                elif not re.fullmatch(r'[0-7]{1,4}', wert):
+                    self.fehler.append(f'Zeile {nr}: #STARTE {wert!r} ungueltig (1 bis 4 Oktalziffern erwartet)')
+                elif self.starte is not None:
+                    self.fehler.append(f'Zeile {nr}: #STARTE mehrfach')
+                else:
+                    self.starte = int(wert, 8)
+                    self.starte_nr = nr
+                continue
+            if re.match(r'#STARTE', s, re.I):
+                self.fehler.append(f'Zeile {nr}: fehlerhafte Testmarke #STARTE: {s!r}')
+                continue
+            if re.match(r'#INTERRUPT(\s|$)', s, re.I):
+                if modus != 'trommel':
+                    self.fehler.append(f'Zeile {nr}: #INTERRUPT ist nur im Abschnitt Trommeldatei: zulaessig')
+                    continue
+                tok = s[len('#INTERRUPT'):].split('#', 1)[0].split()
+                fe = interrupt_pruefe(tok)
+                if self._letzte_adr is None:
+                    fe.append('steht vor der ersten Befehlszeile (muss ZWISCHEN zwei Befehlszeilen stehen)')
+                elif any(i['nach'] == self._letzte_adr for i in self.interrupts):
+                    fe.append(f'nach Adresse {octs(self._letzte_adr,4)} ist schon ein #INTERRUPT angegeben')
+                if fe:
+                    for f in fe:
+                        self.fehler.append(f'Zeile {nr}: #INTERRUPT: {f}')
+                else:
+                    ir = dict(nach=self._letzte_adr, tokens=tok, nr=nr, folgt=False)
+                    self.interrupts.append(ir)
+                    self._offen.append(ir)
+                continue
+            if re.match(r'#INTERRUPT', s, re.I):
+                self.fehler.append(f'Zeile {nr}: fehlerhafte Testmarke #INTERRUPT: {s!r}')
+                continue
             if modus == 'pruefungen':
                 m_dat = re.fullmatch(r'--pruefe-(stanzer1|sw-ausgabe)(?:\s+(.*?))?\s*(?:#.*)?', s)
-                if m_dat:                                   # Abschnitt 3b: Dateipruefung als Zeile der Testdatei
+                if m_dat:
                     key = 'pruefe_' + m_dat.group(1).replace('-', '_')
                     soll = (m_dat.group(2) or '').strip()
                     if not soll:
@@ -367,6 +586,20 @@ class Test:
                 else:
                     self.stufe = int(m.group(1))
                 continue
+            m = re.fullmatch(r'#(AC|BZ)\s*=\s*(\S*)\s*(?:#.*)?', s)
+            if m:
+                reg, val = m.group(1), m.group(2)
+                breite = 11 if reg == 'AC' else 4
+                if getattr(self, reg.lower() + '_init') is not None:
+                    self.fehler.append(f'Zeile {nr}: #{reg} mehrfach')
+                elif not re.fullmatch(r'[0-7]{%d}' % breite, val):
+                    self.fehler.append(f'Zeile {nr}: #{reg}={val!r} ungueltig ({breite} Oktalstellen erwartet)')
+                else:
+                    setattr(self, reg.lower() + '_init', int(val, 8))
+                continue
+            if re.match(r'#(AC|BZ)\b', s):
+                self.fehler.append(f'Zeile {nr}: fehlerhafte Testmarke #{s[1:3]}: {s!r}')
+                continue
             if s.startswith('#'):
                 continue
             m = re.fullmatch(r'([0-7]{4}):\s*([0-7]{11})\s*(#.*)?', s)
@@ -378,29 +611,37 @@ class Test:
                 self.fehler.append(f'Zeile {nr}: Adresse {m.group(1)} widerspruechlich belegt')
             self.mem[a] = w
             self.zeilen.append(f'{m.group(1)}: {m.group(2)}')
+            for ir in self._offen:
+                ir['folgt'] = True
+            self._offen = []
+            self._letzte_adr = a
         if self.stufe is None:
             self.stufe = 1
-        # #SPEI/#SPUR sind von #DOK unabhaengig (einzeln zulaessig); nur die Spanne von #SPEI wird geprueft
         for x, s0, e0 in self.spei:
             if not s0 <= e0:
                 self.fehler.append(f'#SPEI-{octs(x,4)} {octs(s0,4)}-{octs(e0,4)}: keine gueltige Spanne')
+        if self.starte is not None:
+            if self.tasten:
+                self.fehler.append(f'Zeile {self.starte_nr}: #STARTE ersetzt die Tastenfolge; daneben darf keine Tastenfolge stehen')
+            else:
+                self.tasten = ['H', 'G', 'M+'] + ['E'] * self.starte + ['M-', 'R']
+        for ir in self.interrupts:
+            if not ir['folgt']:
+                self.fehler.append(f'Zeile {ir["nr"]}: #INTERRUPT: steht nicht zwischen zwei Befehlszeilen (keine Zeile danach)')
         if not self.tasten:
             self.fehler.append('Tastenfolge fehlt')
 
 
-# ----------------------------------------------------------------------------------------------
-# Rechnerzustand
-# ----------------------------------------------------------------------------------------------
 class Machine:
     FLAGS = ['E', 'A', 'T', 'SW', 'K1', 'K2', 'K3', 'FE', 'FUE', 'BS', 'US', 'V1', 'V2', 'H', 'SP']
 
-    def __init__(self, mem):
-        self.mem = dict(mem)
+    def __init__(self, trommel):
+        self.trommel = trommel
         self.AC = self.BZ = self.AR = self.OR = self.adr = 0
         self.fl = {k: 0 for k in self.FLAGS}
         self.x_merker = 0
-        self.x_fetch = False            # Befehlsentnahme unmittelbar nach X-Abbruch (Sektor aus der Trommellage)
-        self.x_sek = 0                  # Sektor dieser Entnahme (zweite Wortzeit nach dem Abbruch)
+        self.x_fetch = False
+        self.x_sek = 0
         self.zaehler = 0
         self.start_sek = 0
         self.vgl_ac = 0
@@ -409,25 +650,27 @@ class Machine:
         self.halt_grund = ''
         self.came_from = None
         self.diag_hook = None
-        self.sw_lage = random.choice(['KB', 'GB'])   # Zeichenlage des Schreibwerks beim Netz-Einschalten zufaellig
-        self.sw_zeilenanfang = True                  # Terminal-Cursor am Zeilenanfang (SW-Ausgabe)
+        self.sw_lage = random.choice(['KB', 'GB'])
+        self.sw_zeilenanfang = True
         self.log = lambda s: None
-        self.leser = {1: None, 2: None}              # Lochbandleser 1/2 (Kanal K1/K2), None = nicht angegeben
-        self.stanzer = None                          # Lochbandstanzer 1 (Kanal K1)
-        self.sw_datei = None                         # Schreibwerk-Ausgabe in Datei (--sw-ausgabe), None = Terminal
+        self.leser = {1: None, 2: None}
+        self.stanzer = None
+        self.sw_datei = None
         self.eingabe_sprung = False
-        self.k0 = None                               # K0-Eingabequelle (--k0), None = nicht angegeben
-        self.zeichenlage = 'KB'                      # Zeichenlage der Eingabe (rechnerweit, Start KB)
-        self.vor_phase2 = False                      # Automat steht vor Phase II (nach E unter gehaltenem M)
-        self.br_aufgestellt = False                  # BR aufgestellt, noch nicht ausgefuehrt (Ue, E-Schritt): R startet bei Knoten 19
-        self.lese_adr = False                        # Eingabe-Lesebefehl: Operand ist die Adresse selbst
-        self.br_tasten_m = False                     # BR wurde durch M (ohne E) aufgestellt: Phase III gilt als abgelaufen (eintritt_br)
+        self.k0 = None
+        self.zeichenlage = 'KB'
+        self.vor_phase2 = False
+        self.vor_phase1 = False   # nach einem #INTERRUPT: Phase IV des vorigen Befehls ist abgelaufen, E beginnt bei Phase I
+        self.br_aufgestellt = False
+        self.bz_g = False   # G hat BR = 0000 000 aufgestellt; BZ wird erst durch dessen Ausfuehrung 0
+        self.lese_adr = False
+        self.br_tasten_m = False
 
     def rd(self, a):
-        return self.mem.get(a & MASK12, 0)      # nicht genannte Zellen = 0 (O-2, geklaert)
+        return self.trommel.rd(a)
 
     def wr(self, a, v):
-        self.mem[a & MASK12] = v & MASK33
+        self.trommel.wr(a, v)
 
     @property
     def B(self): return (self.OR >> 6) & 7
@@ -452,18 +695,15 @@ def sektor(a):
     return a & 0o37
 
 
-# ----------------------------------------------------------------------------------------------
-# Tests (Rueckgabe bool) und Anweisungen (ANWEISUNG-nnn aus der Variablentabelle T2)
-# ----------------------------------------------------------------------------------------------
 def t002(m):
     r = m.x_merker
     m.x_merker = 0
-    m.x_fetch = bool(r)                 # nach X-Abbruch: Entnahme in Phase II aus dem zeitlich faelligen Sektor (a005)
+    m.x_fetch = bool(r)
     return bool(r)
 
-def t003(m): return True                        # interpretativ: Koinzidenz immer erfuellt
+def t003(m): return True
 def t006(m): return m.B not in (0, 1) and m.A in (5, 7) and m.L == 1
-def t008(m): return (m.B <= 1 and m.A in (4, 5, 7)) or (m.B == 0 and m.A == 6 and m.z30 == 1)   # T2: + bedingter Sprung mit Rueckkehrabsicht
+def t008(m): return (m.B <= 1 and m.A in (4, 5, 7)) or (m.B == 0 and m.A == 6 and m.z30 == 1)
 
 def t009(m):
     B, A = m.B, m.A
@@ -475,14 +715,14 @@ def t009(m):
                 (B == 1 and A == 5 and (v2 or v3)) or
                 (B == 0 and A == 7 and m.fl['FUE']) or
                 (B == 1 and A == 7 and v3) or
-                (B == 0 and A == 6 and m.z30 == 1 and m.fl['SP']))   # bedingter Sprung mit Rueckkehrabsicht: Schalter SP
+                (B == 0 and A == 6 and m.z30 == 1 and m.fl['SP']))
 
 def t011(m): return m.L == 1
 def t013(m): return m.B <= 1 and m.A == 2 and m.z30 == 1
 def t014(m): return m.B <= 1 and m.A == 2 and m.z30 == 0
 def t015(m): return m.B <= 1 and m.A == 1
 def t016(m): return m.B <= 1 and m.A == 3
-def t018(m): return (m.B <= 1 and m.A in (0, 4, 5, 7)) or (m.B == 0 and m.A == 6 and m.z30 == 1)   # T2: + bedingter Sprung mit Rueckkehrabsicht bei SP nicht gesetzt
+def t018(m): return (m.B <= 1 and m.A in (0, 4, 5, 7)) or (m.B == 0 and m.A == 6 and m.z30 == 1)
 def t019(m): return m.B == 3
 def t020(m): return bool(m.fl['FUE'])
 def t023(m): return m.B >= 4
@@ -496,27 +736,23 @@ def t042(m): return m.B in (5, 7) and m.ac_neg(r_abhaengig=True)
 def t043(m): return m.B <= 1 and m.A in (2, 6) and m.z30 == 0
 
 def t024(m):
-    # normale Abbruchbedingung (040 ODER 041); die X-Bedingung (042) wird an Knoten 73 getestet
     return t040(m) or t041(m)
 
 
 def a044(m):
-    # Sektor der Befehlsentnahme: Phase I belegt die 1. Wortzeit nach dem Abbruch, die Entnahme liegt in der 2. Wortzeit
-    # (Befehlsliste 4.1.6); eine Wortzeit = ein physischer Schritt = +15 oktal in der logischen Sektornummer
     m.x_sek = (sektor(m.AR) + 2 * 0o15) & 0o37
-    m.x_merker = 1                  # Merker wird erst bei Auswertung an Knoten 4 (002) geloescht
+    m.x_merker = 1
 
 
-def a001(m):                        # gleichzeitig, Altwerte
+def a001(m):
     t_ar, t_bz = m.AR, m.BZ
     m.AR = t_bz
     m.BZ = (t_ar + 1) & MASK12
 
-def a004(m): pass                   # interpretativ ohne Wirkung
+def a004(m): pass
 
 def a005(m):
     if m.x_fetch:
-        # direkt nach X-Abbruch: Spur aus AR (= BZ = b+1), Sektor aus der Trommellage; AR und BZ bleiben unveraendert (b+1)
         m.x_fetch = False
         w = m.rd((m.AR & ~0o37) | m.x_sek)
     else:
@@ -525,13 +761,14 @@ def a005(m):
     m.adr = (w >> 9) & MASK12
 
 def a007(m): m.BZ = m.adr
-def a010(m):                        # T2: interne Umstellung der Operation
+def a010(m):
     if m.A == 6:
-        m.OR = (m.OR & ~0o070) | 0o020  # B=0/A=6/z30=1, SP gesetzt: A := 2 (Sprung mit Rueckkehrabsicht, Knoten 19)
+        m.OR = (m.OR & ~0o070) | 0o020
     else:
         if m.B == 0 and m.A == 7:
-            m.fl['FUE'] = 0             # Ueberlaufsprung bei vorhandenem Ueberlauf: der Ueberlauf wird gleichzeitig geloescht (Programmieranleitung 4.3.2.10)
-        m.OR = m.OR & ~0o070            # A=4,5,7: A := 0 (unbedingter Sprung)
+            m.fl['FUE'] = 0
+        m.OR = m.OR & ~0o070
+
 def a012(m): m.AC = 0
 
 def a021(m):
@@ -540,13 +777,13 @@ def a021(m):
     lese, m.lese_adr = m.lese_adr, False
 
     def addsub(sub, cond_pos):
-        ac, v = sgn(m.AC), sgn(m.rd(a))     # Eingabe-Lesebefehl (B+2, A=1) ist eine gewoehnliche Addition: addiert den INHALT der Zelle a=AR (KEP, Kodetabellen 1.8)
+        ac, v = sgn(m.AC), sgn(m.rd(a))
         res = ac - v if sub else ac + v
-        if B in (2, 3) and R == 0:      # Ueberlauf nur bei Einzel-/markierten Einzelbefehlen ohne R
+        if B in (2, 3) and R == 0:
             m.fl['FUE'] = 0 if -(1 << 32) <= res < (1 << 32) else 1
         m.AC = res & MASK33
 
-    if B == 1 and A == 6:               # Leer-Befehl (Z>=4): keine Operation, Loeschung lief in Phase III
+    if B == 1 and A == 6:
         pass
     elif A == 0:
         m.AC &= m.rd(a)
@@ -556,21 +793,17 @@ def a021(m):
         addsub(True, None)
     elif A == 3:
         if B == 3 and Z in (0, 1):
-            pass                        # nur Vergleichersetzen
+            pass
         elif Z == 3:
-            pass                        # Leer-Operation (Einzelbefehlsuebersicht, geht der Formel vor)
+            pass
         elif Z == 2:
-            # Befehlsliste 4.3 (A=3, Z=2): z32 ist das niederwertigste Bit des AC (Programmieranleitung 6.1.2,
-            # Multiplikation: Multiplikatorbit wird durch die Rechtsverschiebung abgebaut), NICHT das Loeschbit L.
-            # z32=1: <AC> := Vr[<AC>+<a>]; z32=0: <AC> := Vr<AC>. Die Verschiebung (R=1) leistet a022; ein Uebertrag
-            # aus der Addition gelangt dabei nach z0 (Summe < 2, Festkomma-Produktaufbau).
             m.vr_uebertrag = 0
             if m.AC & 1:
                 summe = m.AC + m.rd(a)
                 m.AC = summe & MASK33
                 m.vr_uebertrag = (summe >> 33) & 1
         else:
-            addsub(not m.ac_neg(), None)   # AC<0: Addition, AC>=0: Subtraktion
+            addsub(not m.ac_neg(), None)
     elif A == 4:
         m.wr(a, m.AC)
     elif A == 5:
@@ -593,8 +826,6 @@ def a021(m):
 def a022(m):
     R = m.R
     if m.B == 1 and m.A == 6 and m.Z >= 4:
-        # Leer-Befehl (Befehlsliste Nr. 66/67: 164, 166 "Leer-Operation ohne Loeschen"): OHNE Resultatbehandlung,
-        # das Z-Feld erzeugt hier keine Verschiebung (die Loeschung bei Z=5,7 lief bereits in Phase III).
         R = 0
     if R == 1:
         m.AC = ((m.AC >> 1) & MASK33) | (getattr(m, 'vr_uebertrag', 0) << 32)
@@ -604,31 +835,29 @@ def a022(m):
     elif R == 3:
         m.AC = ((m.AC << 1) & MASK33) | ((m.AC >> 32) & 1)
     if (m.B, m.A, m.Z) == (1, 6, 4) and m.diag_hook:
-        m.diag_hook(m)                  # Hook nach ANWEISUNG-022 (Abschnitt 7 der Testbeschreibung)
+        m.diag_hook(m)
 
 def a025(m):
-    m.AR = (m.AR & ~0o37) | ((m.AR + 0o15) & 0o37)     # naechster Sektor in physischer Folge
+    m.AR = (m.AR & ~0o37) | ((m.AR + 0o15) & 0o37)
 
 def a026(m): m.BZ = (((m.AC >> 9) & MASK12) | m.adr) & MASK12
 def a027(m): m.OR = m.OR & ~(1 << 5)
-def a029(m):
-    # <AC> := <AC> v Vr<BZ> (Befehlsliste) bzw. <AC> v (1/2 <BZ>) (Spezialgrafik): <BZ> steht wie ein Adressfeld in
-    # z12-z23 (Bits 9..20); die Rechtsverschiebung wirkt auf das 33-Bit-Wort, das unterste BZ-Bit landet in z24
-    # (Bit 8) und geht NICHT verloren (Aenderung 02.10.2026, vorher auf 12 Bit abgeschnitten).
-    m.AC = (m.AC | (m.BZ << 8)) & MASK33
-    m.OR = m.OR & ~0o070                # T2 ANWEISUNG-013: danach Umstellung auf unbedingten Sprung (A := 0), Sprungteil laeuft ueber Knoten 59/61
 
-def a030(m):                        # Knoten 45 (nur von Knoten 42): unbedingter Stopp
+def a029(m):
+    m.AC = (m.AC | (m.BZ << 8)) & MASK33
+    m.OR = m.OR & ~0o070
+
+def a030(m):
     m.fl['US'] = 1
     m.halt_grund = 'Unbedingter Stop (US:=1)'
     m.halted = True
 
-def a045(m):                        # Knoten 79 (nur von Knoten 43): bedingter Stopp, Schalter BS gesetzt
+def a045(m):
     m.fl['BS'] = 1
     m.halt_grund = 'Bedingter Stop (BS:=1)'
     m.halted = True
 
-def a046(m):                        # Knoten 30, 46, 58, 66: Halt wegen Ueberlauf, weder US noch BS (nur Lampe FUE)
+def a046(m):
     m.halt_grund = 'Halt wegen Ueberlauf (FUE bereits 1)'
     m.halted = True
 
@@ -648,7 +877,6 @@ def a037(m):
 
 
 def sw_zeichen(m, zeile):
-    """Text fuer die Ausgabe einer Tabelle-1-Zeile in der aktuellen SW-Zeichenlage."""
     nr, kl, gb, _, a_gb, a_kb = zeile[:6]
     a = a_kb if m.sw_lage == 'KB' else a_gb
     if a in (9, 10, 32) or 33 <= a <= 255:
@@ -661,27 +889,21 @@ ROT = '\033[31m'
 RESET = '\033[0m'
 GERAETE = {'leser1': None, 'leser2': None, 'stanzer1': None, 'sw_ausgabe': None, 'k0': None,
            'pruefe_stanzer1': None, 'pruefe_sw_ausgabe': None}
-NO_TERMOUT = False             # --NO-TERMOUT: Ausgaben des Interpreters selbst am Terminal unterdruecken
-POLL_SEKUNDEN = 0.5            # stilles Warten auf neue Dateien (Leser, K0)
+NO_TERMOUT = False
+SW_FENSTER = None      # --SW-TERMINAL: SwFenster-Objekt, sonst None
+POLL_SEKUNDEN = 0.5
 
 
 def tp(*a, **k):
-    """Ausgabe des Interpreters am Terminal (entfaellt bei --NO-TERMOUT)."""
     if not NO_TERMOUT:
         print(*a, **k)
 
 
 def vp(*a, **k):
-    """Meldung bei fehlgeschlagener Vorab-Pruefung: bleibt auch bei --NO-TERMOUT sichtbar."""
     print(*a, **k)
 
 
-class KonfigFehler(Stub):
-    """Geraet wird benutzt, ist aber nicht (oder falsch) angegeben."""
-
-
 def rot(m, text):
-    """Fehlermeldung auf dem Terminal (stderr), rot wenn Terminal (entfaellt bei --NO-TERMOUT)."""
     if NO_TERMOUT:
         return
     if not m.sw_zeilenanfang:
@@ -695,8 +917,6 @@ def rot(m, text):
 
 
 class _Stapel:
-    """Dateien eines Pfads (Datei = ein Eintrag, Verzeichnis = alle Dateien in Namensreihenfolge). Ist der Vorrat
-    erschoepft, wartet naechste() still (ohne Meldung) auf eine neu erscheinende Datei (nur Verzeichnis)."""
     def __init__(self, pfad, fehlertext):
         self.pfad = pfad
         self.fehlertext = fehlertext
@@ -721,13 +941,10 @@ class _Stapel:
                 self.offen.extend(neu)
             if self.offen:
                 return self.offen.pop(0)
-            time.sleep(POLL_SEKUNDEN)          # stilles Warten auf eine neue Datei (Strg+C bricht ab)
+            time.sleep(POLL_SEKUNDEN)
 
 
 class Leser:
-    """Lochbandleser: PFAD = Datei (ein Streifen) oder Verzeichnis (Streifen in Namensreihenfolge).
-    Eine Zeile je Lochungszeile: acht Zeichen 0/1 fuer w v u p 8 4 2 1; Leerzeilen = Vorspann.
-    Ende des Streifens ohne weitere Datei: stilles Warten auf eine neue Datei (Lochstreifenleser A5)."""
     def __init__(self, pfad):
         self.pfad = pfad
         self.stapel = _Stapel(pfad, 'Lochstreifen-Pfad nicht gefunden')
@@ -754,9 +971,8 @@ class Leser:
 
 
 class Stanzer:
-    """Lochbandstanzer: PFAD = Datei (oder Verzeichnis -> stanzer-ausgabe.txt darin); eine Zeile je Zeichen."""
     def __init__(self, pfad):
-        if os.path.isdir(pfad) or pfad.endswith(('/', '\\')):    # vorhandenes Verzeichnis oder Name mit Trennzeichen am Ende
+        if os.path.isdir(pfad) or pfad.endswith(('/', '\\')):
             self.pfad = os.path.join(pfad, 'stanzer-ausgabe.txt')
         else:
             self.pfad = pfad
@@ -771,8 +987,6 @@ class Stanzer:
 
 
 class SwDatei:
-    """Schreibwerk-Ausgabe (K2) in die Datei sw-ausgabe.txt: PFAD = Verzeichnis (oder Name ohne Endung -> Verzeichnis,
-    wird angelegt) bzw. Datei. Angelegt erst bei der ersten Ausgabe eines Tests, danach angehaengt."""
     def __init__(self, pfad):
         if os.path.isdir(pfad) or not os.path.splitext(pfad)[1]:
             self.pfad = os.path.join(pfad, 'sw-ausgabe.txt')
@@ -803,20 +1017,17 @@ for _r in TABELLE1:
 NAMEN.update({'ZR': ROW_NR[49], 'WM': ROW_NR[12], 'TAB': ROW_NR[12], 'WRZL': ROW_NR[38],
               'IS': ROW_NR[51], 'IB': EINGABE_ZEILE[0o36]})
 
-# Pult-Tastatur (K0, Schalter SW nicht gedrueckt = Flag T): nur 0-9 + - , . : ZR WM IS IB (B und D haben
-# keinen Code und sind "nicht weiter benoetigt"). Bei gedrueckter SW-Taste sind alle Codes der Tabelle 1 eingebbar.
 T_ERLAUBT = {_r[6] for _r in TABELLE1
              if _r[6] is not None and _r[0] != 52 and _r[1] in list('0123456789+-,.:')}
 T_ERLAUBT |= {ROW_NR[49][6], ROW_NR[12][6], ROW_NR[51][6], 0o36}
 
 
 def k0_zeile(tok, lage):
-    """Tabelle-1-Zeile zu einem K0-Zeichen (Host-Zeichen oder Name wie ZR, WM, IS, IB, TAB, WRZL)."""
     if tok == ' ':
         return ROW_NR[49]
     if len(tok) == 1:
         code = ord(tok)
-        for ci in ((4, 5) if lage == 'GB' else (5, 4)):          # Ascii GB = Index 4, Ascii KB = Index 5
+        for ci in ((4, 5) if lage == 'GB' else (5, 4)):
             for r in TABELLE1:
                 if r[0] != 52 and r[6] is not None and r[ci] == code:
                     return r
@@ -825,9 +1036,6 @@ def k0_zeile(tok, lage):
 
 
 class K0Quelle:
-    """K0-Eingabe: PFAD None = Terminal (Host-Tastatur, ein Tastendruck je Eingabebefehl); sonst PFAD = Datei oder
-    Verzeichnis mit Textdateien (alphanumerische Reihenfolge; ein Zeichen oder Name je Zeile, '#' = Kommentar).
-    Ist die letzte Datei zu Ende, wartet naechstes() still auf eine neu erscheinende Datei."""
     def __init__(self, pfad=None):
         self.tast = pfad is None
         self.pfad = pfad
@@ -836,7 +1044,6 @@ class K0Quelle:
         self.pos = 0
 
     def naechstes(self):
-        """Naechstes Zeichen/Name; None nur bei Terminal-Eingabe ohne weitere Zeichen (stdin zu Ende)."""
         if self.tast:
             if sys.stdin.isatty():
                 if sys.platform == 'win32':
@@ -847,7 +1054,7 @@ class K0Quelle:
                     fd = sys.stdin.fileno()
                     alt = termios.tcgetattr(fd)
                     try:
-                        tty.setcbreak(fd)                   # Taste sofort, kein Echo, Strg+C wirkt weiter
+                        tty.setcbreak(fd)
                         c = sys.stdin.read(1)
                     finally:
                         termios.tcsetattr(fd, termios.TCSADRAIN, alt)
@@ -871,11 +1078,13 @@ class K0Quelle:
                 return z if len(z) == 1 else z.strip()
             self.zeilen = None
 
-SW_FARBE = '\033[33m'          # dunkelgelb (ANSI 33); Ausgabe durch Ausgabebefehle
+SW_FARBE = '\033[33m'
 SW_RESET = '\033[0m'
 
 def sw_schreibe(m, s):
-    if m.sw_datei is not None:                  # --sw-ausgabe: nur in die Datei, nichts am Terminal
+    if SW_FENSTER is not None:
+        SW_FENSTER.schreibe(s)
+    if m.sw_datei is not None:
         m.sw_datei.schreibe(s)
         return
     if sys.stdout.isatty() and 'NO_COLOR' not in os.environ:
@@ -885,12 +1094,320 @@ def sw_schreibe(m, s):
     sys.stdout.flush()
     m.sw_zeilenanfang = s.endswith('\n')
 
+
+def sw_fenster_unmoeglich():
+    """Grund, warum kein Fenster geoeffnet werden kann, sonst None."""
+    if sys.platform.startswith('linux') and not (os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY')):
+        return 'keine grafische Oberflaeche (DISPLAY nicht gesetzt)'
+    try:
+        import tkinter  # noqa: F401
+    except ImportError:
+        return 'tkinter fehlt (Linux: Paket python3-tk installieren)'
+    return None
+
+
+class SwFenster:
+    """Ausgabefenster "SW Ausgabe" (--SW-TERMINAL): eigener Prozess, bekommt den Text ueber eine Pipe."""
+
+    def __init__(self, zwischenablage='auto'):
+        self.proc = None
+        self.versucht = False
+        self.zwischenablage = zwischenablage   # auto | tk | system (Kopierverfahren, s. zwischenablage_kopieren)
+
+    def oeffne(self):
+        if self.versucht:
+            return
+        self.versucht = True
+        grund = sw_fenster_unmoeglich()
+        if grund:
+            vp(f'WARNUNG: --SW-TERMINAL: kein Ausgabefenster moeglich: {grund}. Der Test laeuft ohne Fenster.')
+            return
+        kw = {}
+        if sys.platform == 'win32':
+            kw['creationflags'] = subprocess.CREATE_NO_WINDOW | subprocess.CREATE_NEW_PROCESS_GROUP
+        else:
+            kw['start_new_session'] = True   # Strg+C/Schliessen des Terminals trifft nur den Interpreter, das Fenster bleibt
+        try:
+            self.proc = subprocess.Popen([sys.executable, os.path.abspath(__file__), '--sw-fenster-prozess', self.zwischenablage],
+                                         stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, **kw)
+        except OSError as e:
+            vp(f'WARNUNG: --SW-TERMINAL: Ausgabefenster konnte nicht gestartet werden ({e}). Der Test laeuft ohne Fenster.')
+            self.proc = None
+
+    def schreibe(self, s):
+        if self.proc is None:
+            return
+        try:
+            self.proc.stdin.write(s.encode('utf-8'))
+            self.proc.stdin.flush()
+        except (OSError, ValueError):   # Fenster wurde schon mit X geschlossen
+            self.proc = None
+
+    def echo(self, s):
+        """Echo einer K0-Eingabe: in \x01 ... \x02 eingeschlossen, das Fenster zeigt es in Dunkelgelb."""
+        self.schreibe('\x01' + s + '\x02')
+
+    def ende(self):
+        """Ende des Aufrufs: Pipe schliessen. Das Fenster bleibt immer offen, bis es mit X geschlossen wird."""
+        if self.proc is None:
+            return
+        try:
+            self.proc.stdin.close()
+        except OSError:
+            pass
+        self.proc = None
+
+
+# ---- Zwischenablage des Fensters (laeuft nur im Fensterprozess); Verfahren wie in den Lochstreifen-Hilfsprogrammen ----
+
+def _zab_win32(text):
+    """Windows: Win32-API (CF_UNICODETEXT, Zeilenenden \\r\\n), bis zu 20 Versuche im Abstand von 50 ms."""
+    import ctypes
+    from ctypes import wintypes
+    u32 = ctypes.WinDLL('user32', use_last_error=True)
+    k32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    u32.OpenClipboard.argtypes = [wintypes.HWND]
+    u32.OpenClipboard.restype = wintypes.BOOL
+    u32.EmptyClipboard.restype = wintypes.BOOL
+    u32.CloseClipboard.restype = wintypes.BOOL
+    u32.SetClipboardData.argtypes = [wintypes.UINT, wintypes.HANDLE]
+    u32.SetClipboardData.restype = wintypes.HANDLE
+    k32.GlobalAlloc.argtypes = [wintypes.UINT, ctypes.c_size_t]
+    k32.GlobalAlloc.restype = wintypes.HGLOBAL
+    k32.GlobalLock.argtypes = [wintypes.HGLOBAL]
+    k32.GlobalLock.restype = wintypes.LPVOID
+    k32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
+    k32.GlobalUnlock.restype = wintypes.BOOL
+    k32.GlobalFree.argtypes = [wintypes.HGLOBAL]
+    k32.GlobalFree.restype = wintypes.HGLOBAL
+    roh = (text.replace('\r\n', '\n').replace('\n', '\r\n') + '\0').encode('utf-16-le')
+    for _ in range(20):
+        if u32.OpenClipboard(None):
+            try:
+                u32.EmptyClipboard()
+                h = k32.GlobalAlloc(0x0002, len(roh))   # GMEM_MOVEABLE
+                if not h:
+                    return False
+                p = k32.GlobalLock(h)
+                if not p:
+                    k32.GlobalFree(h)
+                    return False
+                ctypes.memmove(p, roh, len(roh))
+                k32.GlobalUnlock(h)
+                if not u32.SetClipboardData(13, h):     # CF_UNICODETEXT; bei Erfolg gehoert der Speicher Windows
+                    k32.GlobalFree(h)
+                    return False
+                return True
+            finally:
+                u32.CloseClipboard()
+        time.sleep(0.05)
+    return False
+
+
+def _zab_systemprogramme():
+    """Moegliche Systemprogramme (Name, Aufruf, Kodierung) in der Reihenfolge des Versuchs; fehlende werden uebersprungen.
+    Wird bei jedem Kopieren neu bestimmt (nach WAYLAND_DISPLAY / XDG_SESSION_TYPE / DISPLAY und den installierten Programmen)."""
+    import shutil
+    env = os.environ
+    liste = []
+    if sys.platform == 'darwin':
+        liste.append(('pbcopy', ['pbcopy'], 'utf-8'))
+    else:
+        wayland = bool(env.get('WAYLAND_DISPLAY')) or env.get('XDG_SESSION_TYPE', '').lower() == 'wayland'
+        if wayland:
+            liste.append(('wl-copy', ['wl-copy'], 'utf-8'))
+        if env.get('DISPLAY'):
+            liste.append(('xsel', ['xsel', '--clipboard', '--input'], 'utf-8'))
+            liste.append(('xclip', ['xclip', '-selection', 'clipboard', '-t', 'UTF8_STRING'], 'utf-8'))
+        try:
+            with open('/proc/version', encoding='utf-8', errors='replace') as f:
+                wsl = 'microsoft' in f.read().lower()
+        except OSError:
+            wsl = False
+        if wsl:
+            liste.append(('clip.exe', ['clip.exe'], 'utf-16'))
+    return [p for p in liste if shutil.which(p[1][0])]
+
+
+def _zab_programm(aufruf, kodierung, text):
+    if aufruf[0] == 'clip.exe':
+        text = text.replace('\n', '\r\n')
+    try:
+        r = subprocess.run(aufruf, input=text.encode(kodierung), stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL, timeout=3)
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return r.returncode == 0
+
+
+def _zab_tk(root, text):
+    """Tk-Zwischenablage (Rueckfall), bis zu 5 Versuche."""
+    for _ in range(5):
+        try:
+            root.clipboard_clear()
+            root.clipboard_append(text)
+            root.update()
+            if root.clipboard_get() == text:
+                return True
+        except Exception:
+            pass
+        time.sleep(0.05)
+    return False
+
+
+def zwischenablage_kopieren(root, text, modus='auto'):
+    """Legt text in die Zwischenablage. modus: auto (zuerst System, dann Tk), tk (nur Tk), system (nur Systemprogramm/Win32).
+    Rueckgabe: (Erfolg, Name des Verfahrens)."""
+    if modus in ('auto', 'system'):
+        if sys.platform == 'win32':
+            if _zab_win32(text):
+                return True, 'Win32'
+        else:
+            for name, aufruf, kodierung in _zab_systemprogramme():
+                if _zab_programm(aufruf, kodierung, text):
+                    return True, name
+    if modus in ('auto', 'tk'):
+        if _zab_tk(root, text):
+            return True, 'Tk'
+    return False, ''
+
+
+def sw_fenster_main(zwischenablage='auto'):
+    """Wird im eigenen Prozess ausgefuehrt (interner Aufruf --sw-fenster-prozess [MODUS])."""
+    import codecs
+    import queue
+    import threading
+    import tkinter as tk
+
+    if zwischenablage not in ('auto', 'tk', 'system'):
+        zwischenablage = 'auto'
+    root = tk.Tk()
+    TITEL = 'SW Ausgabe'
+    root.title(TITEL)
+    txt = tk.Text(root, width=130, height=36, wrap='char', font='TkFixedFont', state='disabled')
+    txt.tag_configure('echo', foreground='#B8860B')   # Dunkelgelb: Echo der K0-Eingaben
+    txt.pack(fill='both', expand=True)
+    root.resizable(False, False)
+    root.update_idletasks()
+    b, h = root.winfo_reqwidth(), root.winfo_reqheight()
+    x = max(0, root.winfo_screenwidth() - b - 10)
+    y = max(0, root.winfo_screenheight() - h - 70)   # Rand fuer Taskleiste/Dock
+    root.geometry(f'+{x}+{y}')
+
+    q = queue.Queue()
+    im_echo = [False]   # zwischen \x01 und \x02 (kann ueber Pipe-Pakete hinweg dauern)
+
+    def leser():
+        while True:
+            daten = sys.stdin.buffer.read1(4096)
+            q.put(daten or None)
+            if not daten:
+                return
+
+    threading.Thread(target=leser, daemon=True).start()
+    dec = codecs.getincrementaldecoder('utf-8')('replace')
+
+    def abfragen():
+        try:
+            while True:
+                daten = q.get_nowait()
+                if daten is None:                      # Ende des Aufrufs: Fenster bleibt offen, bis X geklickt wird
+                    return
+                text = dec.decode(daten).replace('\r', '')
+                txt.configure(state='normal')
+                for teil in re.split('([\x01\x02])', text):
+                    if teil == '\x01':
+                        im_echo[0] = True
+                    elif teil == '\x02':
+                        im_echo[0] = False
+                    elif teil:
+                        txt.insert('end', teil, ('echo',) if im_echo[0] else ())
+                txt.see('end')
+                txt.configure(state='disabled')
+        except queue.Empty:
+            pass
+        root.after(30, abfragen)
+
+    # ---- Markieren und Kopieren (wie in den Lochstreifen-Hilfsprogrammen) ----
+    titel_job = [None]
+    letzte = ['', 0.0]   # zuletzt kopierter Text und Zeitpunkt: derselbe Text wird binnen 5 s nicht erneut abgelegt
+
+    def meldung(s):
+        root.title(f'{TITEL} - {s}')
+        if titel_job[0] is not None:
+            root.after_cancel(titel_job[0])
+        titel_job[0] = root.after(2500, lambda: root.title(TITEL))
+
+    def kopiere(_ereignis=None):
+        try:
+            text = txt.get('sel.first', 'sel.last')
+        except tk.TclError:
+            return 'break'          # nichts markiert
+        if not text:
+            return 'break'
+        if text == letzte[0] and time.monotonic() - letzte[1] < 5.0:
+            meldung(f'kopiert ({len(text)} Zeichen)')
+            return 'break'
+        ok, verfahren = zwischenablage_kopieren(root, text, zwischenablage)
+        if ok:
+            letzte[0], letzte[1] = text, time.monotonic()
+            meldung(f'kopiert ({len(text)} Zeichen, {verfahren})')
+        else:
+            meldung('Kopieren fehlgeschlagen')
+        return 'break'
+
+    def alles_markieren(_ereignis=None):
+        txt.tag_add('sel', '1.0', 'end-1c')
+        return 'break'
+
+    def nach_maus_loslassen(_ereignis):
+        root.after(20, kopiere)     # kurz warten, bis die Markierung feststeht; Tk-eigene Bindung bleibt unberuehrt
+
+    def taste_win32(e):
+        """Windows: Strg+C / Strg+A / Strg+Einfg auch ueber den Tastenkode (nicht-lateinisches Layout).
+        AltGr (= Strg+Alt) ist kein Strg-Befehl."""
+        if not (e.state & 0x0004) or (e.state & 0x20000):
+            return None
+        if e.keycode == 67 or e.keycode == 45:
+            return kopiere()
+        if e.keycode == 65:
+            return alles_markieren()
+        return None
+
+    for w in (txt, root):    # auch wenn der Tastaturfokus nicht im Textfeld liegt
+        for folge in ('<Control-c>', '<Control-C>', '<Control-Insert>'):
+            w.bind(folge, kopiere)
+        for folge in ('<Control-a>', '<Control-A>'):
+            w.bind(folge, alles_markieren)
+        if sys.platform == 'win32':
+            w.bind('<Control-KeyPress>', taste_win32)
+    txt.bind('<ButtonRelease-1>', nach_maus_loslassen, add='+')   # auch nach Doppelklick
+
+    menue = tk.Menu(root, tearoff=0)
+    menue.add_command(label='Kopieren', command=kopiere)
+    menue.add_command(label='Alles markieren', command=alles_markieren)
+
+    def kontextmenue(e):
+        try:
+            menue.tk_popup(e.x_root, e.y_root)
+        finally:
+            menue.grab_release()
+
+    txt.bind('<Button-3>', kontextmenue)
+    if sys.platform == 'darwin':
+        txt.bind('<Button-2>', kontextmenue)
+        txt.bind('<Control-Button-1>', kontextmenue)
+
+    root.after(30, abfragen)
+    root.mainloop()
+
+
 def a028(m):
     a = m.AR
-    if a & 0o4000:                              # Anwahlbefehl (a1 >= 4): Kanal waehlen
+    if a & 0o4000:
         kanal = {0o7: 0, 0o6: 1, 0o5: 2, 0o4: 3}.get((a >> 6) & 0o7)
         if kanal is None:
-            m.fl['A'] = 1                       # nicht existierende Anwahl: Rechner stoppt mit gesetztem Flag A (Lampe A, Original 4.3.2.5)
+            m.fl['A'] = 1
             raise Stub(f'Anwahlbefehl {octs(a,4)}: a2 < 4 nicht definiert; Flag A bleibt gesetzt')
         for k in (1, 2, 3):
             m.fl[f'K{k}'] = 1 if k == kanal else 0
@@ -899,27 +1416,26 @@ def a028(m):
         else:
             m.fl['T'] = m.fl['SW'] = 0
         return
-    # Ausgabebefehl (a1 <= 3): die Ausgabe selbst leistet ANWEISUNG-017 (Knoten 23)
 
 
-def a017(m):                                    # T2: Ausgabe nur, wenn der Befehl keine Kanal-Anwahl ist
+def a017(m):
     a = m.AR
     if a & 0o4000:
-        return                                  # Kanal-Anwahl (in ANWEISUNG-028 erledigt): keine Ausgabe
-    m.fl['A'] = 1                               # Ausgabebefehl: Zeichen ueber Ausgabe-Adresse
-    v8 = (a >> 3) & 0o377                       # z13..z20 (Lochkanaele w v u p 8 4 2 1)
+        return
+    m.fl['A'] = 1
+    v8 = (a >> 3) & 0o377
     z = AUSGABE_ZEILE.get(format(v8, 'o').rjust(3, '0'))
-    if m.fl['K2']:                              # K2 = Schreibwerk (SW), unabhaengig vom Schalter SW
-        z = SW_ZEILE.get(v8 & 0o157)            # Original 4.3.2.5: nur z14, z15, z17-z20; z13 (w) und z16 (p) werden nicht ausgewertet
+    if m.fl['K2']:
+        z = SW_ZEILE.get(v8 & 0o157)
         if z is None:
             m.log(f'Hinweis: Ausgabe-Adresse {octs(a,4)} nicht in Tabelle 1 - keine Ausgabe')
         elif z[3] == '117':
-            m.sw_lage = 'KB'                    # wirkt, erzeugt aber keine sichtbare Ausgabe
+            m.sw_lage = 'KB'
         elif z[3] == '057':
             m.sw_lage = 'GB'
         else:
             sw_schreibe(m, sw_zeichen(m, z))
-    elif m.fl['K1']:                            # K1 = Lochbandstanzer 1
+    elif m.fl['K1']:
         if m.stanzer is None:
             rot(m, 'FEHLER: Ausgabe auf Lochbandstanzer 1 (Kanal K1) angefordert, aber --stanzer1 nicht angegeben.')
             raise KonfigFehler('--stanzer1 nicht angegeben')
@@ -927,12 +1443,22 @@ def a017(m):                                    # T2: Ausgabe nur, wenn der Befe
             m.log(f'Hinweis: Ausgabe-Adresse {octs(a,4)} nicht in Tabelle 1 - nichts gestanzt')
         else:
             m.stanzer.stanze(int(z[3], 8))
-    else:                                       # K0, K3 oder keine Anwahl: kein Ausgabegeraet (Original: Stopp mit gesetztem Flag A)
+    else:
         raise Stub('Ausgabe-Halt ohne Ausgabegeraet (Kanal K0, K3 oder keine Anwahl); nach der Originaldokumentation 4.3.2.5 '
                    'stoppt der Rechner mit gesetztem Flag A (Lampe A)')
     m.fl['A'] = 0
 
-def a032(m):                                    # Ausfuehren der Eingabe (Leser K1/K2, Pult-Tastatur/Schreibwerk K0)
+def k0_echo_text(m, zeile):
+    """Darstellung eines angenommenen K0-Zeichens wie beim Schreibwerk (sw_zeichen), aber mit der Eingabe-Zeichenlage."""
+    nr, kl, gb, _, a_gb, a_kb = zeile[:6]
+    a = a_kb if m.zeichenlage == 'KB' else a_gb
+    if a in (9, 10, 32) or 33 <= a <= 255:
+        return chr(a)
+    name = kl if m.zeichenlage == 'KB' else gb
+    return f'<{name or "Nr." + str(nr)}>'
+
+
+def a032(m):
     m.fl['E'] = 1
     if m.fl['K1'] or m.fl['K2']:
         k = 1 if m.fl['K1'] else 2
@@ -942,17 +1468,17 @@ def a032(m):                                    # Ausfuehren der Eingabe (Leser 
             raise KonfigFehler(f'--leser{k} nicht angegeben')
         try:
             z = leser.naechste()
-            while z == '11111111':              # "Irrung Zeichen": von der Paritaetspruefung ausgeschlossen, nicht ins AR, uebersprungen (Orig. 4.3.2.2, Abb. 16)
+            while z == '11111111':
                 z = leser.naechste()
         except KonfigFehler as e:
             rot(m, f'FEHLER: Lochbandleser {k}: {e}')
             raise
-        if z is None:                           # (nicht erreichbar: der Leser wartet still auf neue Dateien)
+        if z is None:
             m.halted = True
             m.halt_grund = f'Lochbandleser {k}: kein Lochstreifen mehr - Rechner wartet (Flag E bleibt 1)'
             return
         lb = int(z, 2)
-        if bin(lb).count('1') % 2 == 0:         # gerade Zahl gelochter Spuren = Geraetefehler
+        if bin(lb).count('1') % 2 == 0:
             m.fl['FE'] = 1
             m.halted = True
             m.halt_grund = f'Fehler bei Eingabe (FE): gerade Zahl von Lochungen ({z})'
@@ -961,17 +1487,17 @@ def a032(m):                                    # Ausfuehren der Eingabe (Leser 
         e = EINGABE_ZEILE.get(ea)
         if e is None:
             raise Stub(f'Eingabeadresse {ea:02o} (Lochbild {z}) kommt in Tabelle 1 nicht vor')
-    elif not m.fl['K3'] and (m.fl['T'] or m.fl['SW']):       # K0: Tastatur (T) oder Schreibwerk (SW)
+    elif not m.fl['K3'] and (m.fl['T'] or m.fl['SW']):
         modus = 'Schreibwerk (SW)' if m.fl['SW'] else 'Pult-Tastatur (T)'
         if m.k0 is None:
-            m.k0 = K0Quelle(None)               # Vorgabe ohne --k0: Terminal
+            m.k0 = K0Quelle(None)
         while True:
             try:
                 tok = m.k0.naechstes()
             except KonfigFehler as ex:
                 rot(m, f'FEHLER: {ex}')
                 raise
-            if tok is None:                     # nur Terminal-Eingabe (stdin zu Ende): Halt EINGABE_ENDE
+            if tok is None:
                 m.halted = True
                 m.halt_grund = 'EINGABE_ENDE: K0-Eingabequelle zu Ende (Flag E bleibt 1)'
                 return
@@ -983,26 +1509,28 @@ def a032(m):                                    # Ausfuehren der Eingabe (Leser 
                          f'nur 0-9 + - , . : ZR WM IS IB (fuer alle Codes: Schalter SW druecken)')
             else:
                 break
-            if m.k0.tast:                       # Taste ohne Wirkung: weiter auf gueltige Taste warten
+            if m.k0.tast:
                 continue
             rot(m, f'FEHLER: K0-Eingabe: {grund}.')
             raise KonfigFehler(grund)
         ea = e[6]
+        if SW_FENSTER is not None:
+            SW_FENSTER.echo(k0_echo_text(m, e))
     else:
         raise Stub('Eingabebefehl: Kanal K3 bzw. kein Kanal angewaehlt - keine Eingabe moeglich')
     m.AR |= ea
     m.eingabe_sprung = e[7]
-    if e[0] == 25:                              # Um. KB / Um. GB aendern die Zeichenlage der Eingabe
+    if e[0] == 25:
         m.zeichenlage = 'KB'
     elif e[0] == 26:
         m.zeichenlage = 'GB'
     m.fl['E'] = 0
 
-def a033(m):                                    # Umstellung nach der Eingabe
+def a033(m):
     if m.eingabe_sprung:
-        m.OR &= ~0o070                          # A := 0 (unbedingter Sprung)
+        m.OR &= ~0o070
     else:
-        m.OR = (m.OR & ~0o700) | (((m.B + 2) & 7) << 6)     # B := B+2, A bleibt 1 (Lesebefehl)
+        m.OR = (m.OR & ~0o700) | (((m.B + 2) & 7) << 6)
         m.lese_adr = True
 
 def make_stub(n):
@@ -1019,15 +1547,7 @@ for _n, _f in list(globals().items()):
 TYP = {'Konnektor': 'KON', 'Phasenzuordnung': 'PHA', 'Anweisung': 'ANW', 'Test': 'TST'}
 
 
-# ----------------------------------------------------------------------------------------------
-# Tastenfolge (Abschnitt 3): nur die dort beschriebenen Faelle sind definiert
-# ----------------------------------------------------------------------------------------------
 def eintritt_br(m):
-    """Einstiegsknoten fuer einen durch Tasten aufgestellten, noch nicht ausgefuehrten BR.
-    Nach M (ohne E) gilt Phase III des Stop-Befehls als abgelaufen (Originaldokumentation 4.3.2.3, Abb. 19). Ist BR dann ein Sprung mit
-    Rueckkehrabsicht (B=0/1, A=2, Z>=4), entfallen die Sprungoperation (Knoten 40, ANWEISUNG-029) und die Loeschanweisung; ausgefuehrt werden
-    nur Ueberlauftest, Resultatbehandlung und Phase II. Einstieg bei Konnektor 4 (Knoten 54) mit der Umstellung A:=0, die Knoten 40 sonst
-    vornimmt (damit Knoten 59 den Sprungteil ueber Phase IV fuehrt). Jeder andere BR (Ue, ST, E ohne M) beginnt bei Knoten 19."""
     B, A, Z = (m.OR >> 6) & 7, (m.OR >> 3) & 7, m.OR & 7
     nach_m = m.br_tasten_m
     m.br_tasten_m = False
@@ -1037,13 +1557,44 @@ def eintritt_br(m):
     return 19
 
 
+def _starte_kompakt(eff):
+    """Kompakte Protokollform fuer #STARTE (Ergaenzung 08.10.2026): Eine Folge von mindestens 4 aufeinanderfolgenden
+    Zeilen 'E  : (M gehalten) ...' wird auf die ersten zwei Zeilen, eine Sammelzeile und die letzte Zeile gekuerzt.
+    Die Rechnung bleibt unberuehrt, nur die Protokollzeilen werden gekuerzt. Ausgeschriebene Tastenfolgen werden
+    nicht gekuerzt (der Aufruf erfolgt nur bei #STARTE)."""
+    praefix = 'E  : (M gehalten)'
+    aus = []
+    i = 0
+    while i < len(eff):
+        if not eff[i].startswith(praefix):
+            aus.append(eff[i])
+            i += 1
+            continue
+        j = i
+        while j < len(eff) and eff[j].startswith(praefix):
+            j += 1
+        folge = eff[i:j]
+        if len(folge) < 4:
+            aus += folge
+        else:
+            m_a = re.search(r'BZ := (\d{4})', folge[2])
+            m_b = re.search(r'BZ := (\d{4})', folge[-2])
+            bis = m_b.group(1) if m_b else '????'
+            von = m_a.group(1) if m_a else '????'
+            aus += folge[:2]
+            aus.append(f'... {len(folge) - 3} weitere E (BZ {von} bis {bis}): je Anschlag BZ := BZ+1, AR := BZ, '
+                       'AC := BZ+1 im Adressfeld (kompakte Protokollform bei #STARTE)')
+            aus.append(folge[-1])
+        i = j
+    return aus
+
+
 def tastenfolge(m, tokens, run_e=None):
-    """Wertet die Tastenfolge aus. run_e fuehrt einen Einzelschritt E ohne M ueber den Knotengraphen aus."""
     eff = []
     ok = True
-    mhalt = False                 # M hat nur die Stellungen "gedrueckt" und "losgelassen"; Token M = M+ und sofort M-
-    e_unter_m = 0                 # Anzahl E-Schritte waehrend des aktuellen Haltens von M
-    or_basis = m.OR               # OR ohne den Beitrag von M (M verknuepft disjunktiv mit 025)
+    mhalt = False
+    e_unter_m = 0
+    or_basis = m.OR
     sw_gedrueckt = False
     toks = list(tokens)
 
@@ -1057,21 +1608,22 @@ def tastenfolge(m, tokens, run_e=None):
             eff.append('H  : Schalter H-R -> "H", Flag H := 1')
         elif u == 'G':
             for k in m.fl:
-                if k not in ('H', 'T', 'BS', 'SP'):     # BS, SP: eingerastete Schalter, G kann sie mechanisch nicht loesen
+                if k not in ('H', 'T', 'BS', 'SP'):
                     m.fl[k] = 0
             m.fl['T'], m.fl['SW'] = (0, 1) if sw_gedrueckt else (1, 0)
             m.AR = 0
             m.adr = 0
             or_basis = 0
             or_neu()
-            m.BZ = 0
+            m.bz_g = True   # BZ bleibt; BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000 (E ohne weitere Operation, R)
             m.br_aufgestellt = False
             m.br_tasten_m = False
             m.vor_phase2 = False
-            m.fl['US'] = 1                # Rechner steht nach G im Halt-Zustand: US := 1 (loescht ST oder R)
+            m.vor_phase1 = False
+            m.fl['US'] = 1
             eff.append('G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, '
                        + ('SW gedrueckt -> SW := 1' if sw_gedrueckt else 'SW nicht gedrueckt -> T := 1')
-                       + '; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)')
+                       + '; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)')
         elif u.startswith('SW') and (u.find('DRUECK') >= 0 or u in ('SW=1', 'SW+')):
             sw_gedrueckt = True
             m.fl['SW'], m.fl['T'] = 1, 0
@@ -1102,10 +1654,9 @@ def tastenfolge(m, tokens, run_e=None):
                     continue
                 mhalt = False
                 if e_unter_m == 0:
-                    # kein E unter M: BR = AR 025 bleibt aufgestellt und wird erst durch E oder R ausgefuehrt
                     or_basis |= 0o025
                     m.br_aufgestellt = True
-                    m.br_tasten_m = True          # Phase III gilt als abgelaufen (eintritt_br)
+                    m.br_tasten_m = True
                     or_neu()
                     if u != 'M':
                         eff.append('M loslassen: kein E unter M -> BR = AR 025 bleibt aufgestellt (Ausfuehrung durch E oder R)')
@@ -1137,12 +1688,18 @@ def tastenfolge(m, tokens, run_e=None):
                 m.br_aufgestellt = True
                 eff.append(f'Ue : AR := 7777; OR := OR ODER 240 -> BR = 7777 {octs(m.OR,3)} (Transport, aufgestellt, nicht ausgefuehrt)')
         elif u == 'E' and mhalt:
-            # E unter gehaltenem M (Bedienpult 4.3, Durchfuehrung 4.3, Beispiel B): Phase IV fuehrt "AR 025" aus,
-            # danach Phase I; Phase II ist verhindert. Wirkung (Autor): BZ := BZ+1, AR := BZ, und <AC> steht
-            # mit BZ+1 im Adressfeld (Beispiel B nach 4xE: <AC> = 0000 0005 000). Loeschbit von 025 -> AC ersetzt.
-            m.BZ = (m.BZ + 1) & MASK12
-            m.AR = m.BZ
-            m.AC = ((m.BZ + 1) & MASK12) << 9
+            if m.bz_g:
+                # erstes E nach G: BR = 0000 025 springt nach 0000 mit Rueckkehrabsicht; der alte BZ geht als
+                # Rueckkehradresse (alter BZ + 2) in den AC, BZ := 1 (Befehl aus Zelle 0000 geholt)
+                alt = m.BZ
+                m.bz_g = False
+                m.BZ = 1
+                m.AR = 1
+                m.AC = ((alt + 2) & MASK12) << 9
+            else:
+                m.BZ = (m.BZ + 1) & MASK12
+                m.AR = m.BZ
+                m.AC = ((m.BZ + 1) & MASK12) << 9
             m.vor_phase2 = True
             m.br_tasten_m = False
             e_unter_m += 1
@@ -1157,6 +1714,9 @@ def tastenfolge(m, tokens, run_e=None):
             elif m.halted:
                 eff.append(f'E  : Automat steht im Stopp ({m.halt_grund}) -> keine weitere Ausfuehrung')
             else:
+                if m.bz_g and m.OR == 0:
+                    m.BZ = 0
+                    m.bz_g = False
                 eff.append(run_e())
         elif u in ('K0', 'K1', 'K2', 'K3'):
             kn = int(u[1])
@@ -1175,6 +1735,9 @@ def tastenfolge(m, tokens, run_e=None):
                 eff.append('?? : R bei noch gedruecktem M (M muss vorher losgelassen werden)')
             m.fl['H'] = 0
             m.fl['US'] = 0
+            if m.bz_g and m.OR == 0:
+                m.BZ = 0
+                m.bz_g = False
             eff.append('R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B'
                        + (' bzw. bei Knoten 19 (nach M mit Sprung mit Rueckkehrabsicht bei Knoten 54), wenn BR aufgestellt ist' if m.br_aufgestellt else ''))
         else:
@@ -1194,11 +1757,14 @@ def tastenfolge(m, tokens, run_e=None):
     return ok, eff
 
 
-# ----------------------------------------------------------------------------------------------
-# Lauf durch den Knotengraphen
-# ----------------------------------------------------------------------------------------------
-def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
-    m = Machine(test.mem)
+def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=False):
+    trommel.uebertrage_aus_testdatei(test.mem)
+
+    m = Machine(trommel)
+    if test.ac_init is not None:
+        m.AC = test.ac_init
+    if test.bz_init is not None:
+        m.BZ = test.bz_init
     for k, key in ((1, 'leser1'), (2, 'leser2')):
         if GERAETE[key]:
             m.leser[k] = Leser(GERAETE[key])
@@ -1206,10 +1772,10 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
         m.stanzer = Stanzer(GERAETE['stanzer1'])
     if GERAETE['sw_ausgabe']:
         m.sw_datei = SwDatei(GERAETE['sw_ausgabe'])
-    m.k0 = K0Quelle(GERAETE['k0'])             # ohne --k0: Terminal
+    m.k0 = K0Quelle(GERAETE['k0'])
     stufe = test.stufe
-    zeilen = []          # Knotenprotokoll (bei Stufe 1 -> Bildschirm, bei 2 -> Datei)
-    diag_screen = []     # Diagnoseausgaben (stets Bildschirm)
+    zeilen = []
+    diag_screen = []
     m.log = lambda s: zeilen.append(s)
     kopf = []
 
@@ -1231,7 +1797,7 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
                     a = spur | log
                     out.append(f'{octs(a,4)}: {octs(mm.rd(a),11)}')
         if not out:
-            return                  # keine Marke passt zur Befehlsadresse: keine Ausgabe
+            return
         diag_screen.extend(out)
         zeilen.extend(['--- Diagnose (Befehl 164) ---'] + out + ['--- Ende Diagnose ---'])
 
@@ -1244,13 +1810,12 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
                       f'V1={f["V1"]} V2={f["V2"]} V3={f["V1"] & f["V2"]}')
 
     def exec_node(node):
-        """Fuehrt genau einen Knoten aus und liefert den Folgeknoten (None: kein Ausgang)."""
         n = graph[node]
         typ = n['typ']
         zusatz = ''
         br_nach = None
         if node == 2:
-            br_zeile(2)             # Befehlsregister vor Knoten 2 (Beginn Phase I)
+            br_zeile(2)
         try:
             if typ == 'Konnektor':
                 bez = n['text']
@@ -1296,20 +1861,22 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
             zeilen.append(f'K{node:03d} {fe}')
             raise LaufFehler(fe)
         if knotentest:
-            # nur mit --knotentest: Zeilen der getesteten Knoten (Kxxx KON/PHA/ANW/TST ...)
             zeilen.append(f'K{node:03d} {text} BZ={octs(m.BZ,4)} AR={octs(m.AR,4)} AC={octs(m.AC,11)}{zusatz}')
         if br_nach:
-            # Konnektor-Sprung zu Knoten 7 (Konnektor 1): Knoten 7 wird uebersprungen, die BR-Zeile steht
-            # unmittelbar nach der Konnektorzeile, also direkt vor Knoten 7 (bzw. dessen Nachfolger 6).
             br_zeile(br_nach)
         if n.get('end'):
             return None
         return nxt
 
     def run_e():
-        """Taste E (ohne M): ab Knoten 19 (BR aufgestellt) Phase IV, I, II, III, Halt vor erneutem Eintritt in Knoten 19 (HP3)."""
-        node = 8 if m.vor_phase2 else eintritt_br(m)       # nach E unter M steht der Automat vor Phase II; sonst Knoten 19 bzw. 54 (nach M)
+        if m.vor_phase2:
+            node = 8
+        elif m.vor_phase1 and not m.br_aufgestellt:
+            node = 2
+        else:
+            node = eintritt_br(m)
         m.vor_phase2 = False
+        m.vor_phase1 = False
         schritt = 0
         while True:
             schritt += 1
@@ -1344,19 +1911,64 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
         kopf.append(f'  #SPEI-{octs(x,4)} {octs(s0,4)}-{octs(e0,4)}')
     for x, aaaa in test.spur:
         kopf.append(f'  #SPUR-{octs(x,4)} {octs(aaaa,4)}')
+    if test.ac_init is not None:
+        kopf.append(f'  #AC={octs(test.ac_init,11)}')
+    if test.bz_init is not None:
+        kopf.append(f'  #BZ={octs(test.bz_init,4)}')
+    for ir in test.interrupts:
+        kopf.append(f'  #INTERRUPT nach Befehl {octs(ir["nach"],4)}: ' + ' '.join(ir['tokens']))
     kopf.append(f'  #PROT STUFE={stufe}')
-    kopf.append('Tastenfolge: ' + ' '.join(test.tasten))
+    if test.starte is not None:
+        kopf.append(f'  #STARTE {octs(test.starte,4)} (Makro: H G M+ {test.starte}x E M- R, E {test.starte}-mal = dezimal)')
+        kopf.append('Tastenfolge: (aus #STARTE erzeugt)')
+    else:
+        kopf.append('Tastenfolge: ' + ' '.join(test.tasten))
+    if test.starte is not None:
+        eff = _starte_kompakt(eff)
     kopf += ['  ' + e for e in eff]
-    kopf.append('  Nicht spezifizierte Register (AC, ...) starten mit 0.')
+    if test.ac_init is not None or test.bz_init is not None:
+        kopf.append('  Anfangswerte: ' + ', '.join(
+            [f'AC = {octs(test.ac_init,11)} (#AC)' if test.ac_init is not None else 'AC = 0 (kein #AC)',
+             f'BZ = {octs(test.bz_init,4)} (#BZ)' if test.bz_init is not None else 'BZ = 0 (kein #BZ)']))
+        kopf.append('  Nicht spezifizierte Register (AR, OR, ...) starten mit 0.')
+    else:
+        kopf.append('  Nicht spezifizierte Register (AC, ...) starten mit 0.')
     if not ok:
         return dict(ok=False, grund='Tastenfolge nicht gueltig/definiert', kopf=kopf, zeilen=[], diag=[], m=m)
 
     if m.halted or m.fl['H']:
-        # Tastenfolge endet im Halt (ohne R) oder der Einzelschritt endete im Stopp: der Automat laeuft nicht weiter
         grund = m.halt_grund if m.halted else 'Halt (Schalter H): Tastenfolge endet ohne R'
         return dict(ok=True, grund=grund, kopf=kopf, zeilen=zeilen, diag=diag_screen, m=m, knoten=0)
 
+    ir_tab = {ir['nach']: ir for ir in test.interrupts}
+    cur = None          # Adresse des Befehls, dessen Phase I zuletzt begonnen hat
+    ende_grund = None
+
+    def interrupt(ir, adr):
+        m.br_aufgestellt = m.br_tasten_m = m.vor_phase2 = m.bz_g = False
+        m.vor_phase1 = True
+        zeilen.append(f'--- INTERRUPT nach Befehl {octs(adr,4)} (Testzeile {ir["nr"]}): '
+                      f'BZ={octs(m.BZ,4)} AC={octs(m.AC,11)} ---')
+        try:
+            ok_i, eff_i = tastenfolge(m, ir['tokens'], run_e)
+        except LaufFehler as e:
+            return 'fehler', str(e)
+        zeilen.extend('  ' + e for e in eff_i)
+        m.vor_phase1 = False
+        letzte = ir['tokens'][-1].upper()
+        if not ok_i:
+            return 'fehler', f'Tastenfolge nicht gueltig (INTERRUPT Testzeile {ir["nr"]}, nach Befehl {octs(adr,4)})'
+        if m.halted:
+            return 'ende', m.halt_grund
+        if letzte == 'ST':
+            m.fl['H'] = 0
+        if letzte in ('R', 'ST'):
+            zeilen.append('--- Ende INTERRUPT: Ablauf wird fortgesetzt ---')
+            return 'weiter', None
+        return 'ende', f'Halt (Schalter H): INTERRUPT nach Befehl {octs(adr,4)} endet ohne R/ST'
+
     node = eintritt_br(m) if m.br_aufgestellt else 1
+    m.br_aufgestellt = False
     zaehl = 0
     fehler = None
     while not m.halted:
@@ -1364,6 +1976,20 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
         if zaehl > max_knoten:
             fehler = 'Abbruch: Knotenlimit erreicht (Endlosschleife?)'
             break
+        if node == 2 and ir_tab:
+            if cur is not None and cur in ir_tab and m.BZ == ((cur + 1) & MASK12):
+                status, info = interrupt(ir_tab[cur], cur)
+                cur = None
+                if status == 'fehler':
+                    fehler = info
+                    break
+                if status == 'ende':
+                    ende_grund = info
+                    break
+                node = eintritt_br(m) if m.br_aufgestellt else 1
+                m.br_aufgestellt = False
+                continue
+            cur = m.BZ
         try:
             nxt = exec_node(node)
         except LaufFehler as e:
@@ -1377,7 +2003,7 @@ def lauf(test, graph, t2, outdir, max_knoten=2_000_000, knotentest=False):
         m.came_from = node
         node = nxt
 
-    return dict(ok=fehler is None, grund=fehler or m.halt_grund, kopf=kopf, zeilen=zeilen,
+    return dict(ok=fehler is None, grund=fehler or ende_grund or m.halt_grund, kopf=kopf, zeilen=zeilen,
                 diag=diag_screen, m=m, knoten=zaehl)
 
 
@@ -1385,11 +2011,7 @@ def flags_text(m):
     return ' '.join(f'{k}={m.fl[k]}' for k in ('FE', 'FUE', 'BS', 'US', 'E', 'A', 'V1', 'V2'))
 
 
-# ----------------------------------------------------------------------------------------------
-# Ergebnispruefung (Abschnitt 3a der Testbeschreibung): optionaler Abschnitt "Pruefungen:"
-# ----------------------------------------------------------------------------------------------
 def pruefe_ergebnis(test, m):
-    """Liefert None, wenn keine Pruefungen-Sektion vorhanden ist, sonst (wahr, zeilen)."""
     if not test.pruef_reg and not test.pruef_mem:
         return None
     wahr = True
@@ -1416,25 +2038,21 @@ def pruefe_ergebnis(test, m):
     return wahr, zeilen
 
 
-DIFF_MAX = 100          # hoechstens so viele diff-Zeilen je Vergleich ausgeben
+DIFF_MAX = 100
 
 
 def _zeilen_von(pfad):
-    with open(pfad, encoding='utf-8', errors='replace') as fh:    # universelle Zeilenenden: CRLF = LF
+    with open(pfad, encoding='utf-8', errors='replace') as fh:
         return fh.read().splitlines()
 
 
 def soll_pfad(datei, testpfad):
-    """Soll-Datei der Dateipruefungen: ein Name ohne Ordner liegt neben der Testdatei (Tests/),
-    ein Pfad mit Ordner gilt so, wie angegeben."""
     if os.path.dirname(datei):
         return datei
     return os.path.join(os.path.dirname(testpfad), datei)
 
 
 def vergleiche_datei(name, soll, ist, ist_erzeugt):
-    """Vergleicht Soll- und Ist-Datei (Abschnitt 3b). Liefert (gut, zeilen).
-    Falsch, wenn eine der Dateien fehlt oder sich der Inhalt (Zeile fuer Zeile) unterscheidet."""
     kopf = f'  {name}: soll={soll} ist={ist}'
     fehlt = []
     if not os.path.isfile(soll):
@@ -1455,14 +2073,11 @@ def vergleiche_datei(name, soll, ist, ist_erzeugt):
 
 
 def dateipruefungen(test):
-    """Wirksame Dateipruefungen: Eintrag der Kommandozeile, sonst Zeile im Abschnitt Pruefungen: der Testdatei."""
     return {k: GERAETE[k] or test.pruef_dateien.get(k) for k in ('pruefe_stanzer1', 'pruefe_sw_ausgabe')
             if GERAETE[k] or test.pruef_dateien.get(k)}
 
 
 def pruefe_dateien(test, testpfad, m):
-    """--pruefe-stanzer1 / --pruefe-sw-ausgabe. Liefert None, wenn keine der beiden Pruefungen angegeben ist,
-    sonst (wahr, zeilen)."""
     wahr, zeilen, da = True, [], False
     for key, name, geraet in (('pruefe_stanzer1', 'Stanzer 1', m.stanzer),
                               ('pruefe_sw_ausgabe', 'Schreibwerk', m.sw_datei)):
@@ -1479,8 +2094,6 @@ def pruefe_dateien(test, testpfad, m):
 
 
 def finde_testdatei(pfad, here):
-    """Testdatei wie angegeben; sonst nur ueber den Dateinamen unterhalb des aktuellen Verzeichnisses
-    und des Skript-Verzeichnisses suchen (Gross-/Kleinschreibung und Unicode-Form egal)."""
     import unicodedata
     if os.path.isfile(pfad):
         return pfad
@@ -1490,7 +2103,6 @@ def finde_testdatei(pfad, here):
     treffer = []
     for wurzel in dict.fromkeys([os.getcwd(), here]):
         for d, dirs, files in os.walk(wurzel):
-            # PDF-Erzeugung/ (und dessen _work/) enthaelt nur Kopien fuer die PDF-Beispiele: nie durchsuchen
             dirs[:] = [x for x in dirs if not x.startswith('.')
                        and x not in ('Test-Protokolle', 'ergebnis', 'PDF-Erzeugung', '_work')]
             for fn in files:
@@ -1499,7 +2111,6 @@ def finde_testdatei(pfad, here):
                     if q not in treffer:
                         treffer.append(q)
     if len(treffer) > 1:
-        # mehrere Treffer: bevorzugt die Testablage Tests/ unmittelbar unter aktuellem oder Skript-Verzeichnis
         ablagen = {os.path.abspath(os.path.join(w, 'Tests')) for w in (os.getcwd(), here)}
         bevorzugt = [q for q in treffer if os.path.abspath(os.path.dirname(q)) in ablagen]
         if len(set(os.path.abspath(q) for q in bevorzugt)) == 1:
@@ -1510,7 +2121,6 @@ def finde_testdatei(pfad, here):
 
 
 def vorab_geraete(test):
-    """Formale Vorab-Pruefung der Geraetepfade (Python_Interpreter.md, 8.2/8.4). Liefert Fehlertexte."""
     fehler = []
     for k, key in ((1, 'leser1'), (2, 'leser2')):
         p = GERAETE[key]
@@ -1528,13 +2138,19 @@ def vorab_geraete(test):
 
 
 def main():
-    global NO_TERMOUT
+    global NO_TERMOUT, SW_FENSTER
     here = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser()
     ap.add_argument('tests', nargs='+')
+    ap.add_argument('--version', action='version', version='%(prog)s ' + VERSION,
+                    help='zeigt die Versionsnummer (Form y.xx-zzz) und beendet das Programm')
     ap.add_argument('--mdverz', default=os.path.join(here, 'markdown-dateien'), metavar='VERZ',
                     help='Verzeichnis mit den beiden .md-Dateien (Knotengraph und Knotenbeschreibung); '
                     'Standard: markdown-dateien/ neben dem Skript')
+    ap.add_argument('--trommel', metavar='PFAD',
+                    default=os.path.join(here, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'),
+                    help='Pfad der Trommeldatei (4096 Zeilen "aaaa: ttttttttttt"); '
+                    'Standard: virtuelle_Geraete/Trommel/trommel.txt neben dem Skript')
     ap.add_argument('--leser1', '--lochbandleser1', metavar='PFAD', help='Lochstreifen fuer Leser 1 (Kanal K1): Datei oder Verzeichnis')
     ap.add_argument('--leser2', '--lochbandleser2', metavar='PFAD', help='Lochstreifen fuer Leser 2 (Kanal K2): Datei oder Verzeichnis')
     ap.add_argument('--stanzer1', '--lochbandstanzer1', metavar='PFAD', help='Ausgabedatei des Stanzers 1 (Kanal K1)')
@@ -1557,16 +2173,27 @@ def main():
     ap.add_argument('--NO-TERMOUT', action='store_true', default=False, dest='no_termout',
                     help='unterdrueckt alle Ausgaben des Interpreters selbst am Terminal (Ausnahmen: vom '
                     'C8205-Programm erzeugte Zeichen, Meldungen bei fehlgeschlagener Vorab-Pruefung)')
+    ap.add_argument('--SW-TERMINAL', action='store_true', default=False, dest='sw_terminal',
+                    help='Schreibwerk-Ausgabe zusaetzlich in einem eigenen Fenster "SW Ausgabe" (130 x 36 Zeichen, '
+                    'rechts unten) zeigen, gleichgueltig ob --sw-ausgabe gesetzt ist. Das Fenster bleibt auch nach dem '
+                    'Ende des Tests offen, bis es mit X geschlossen wird; Text mit der Maus markieren und kopieren '
+                    '(Maus loslassen, Strg+C, Strg+Einfg, Kontextmenue) (Standard: aus; '
+                    'nur Kommandozeile, nicht in der Testdatei)')
+    ap.add_argument('--zwischenablage', choices=['auto', 'tk', 'system'], default='auto', metavar='auto|tk|system',
+                    help='Kopierverfahren des Fensters "SW Ausgabe" (nur mit --SW-TERMINAL): auto = zuerst Systemprogramm '
+                    '(Windows: Win32-API; Linux: wl-copy, xsel, xclip; macOS: pbcopy), dann Tk; tk = nur Tk-Zwischenablage; '
+                    'system = nur Systemprogramm bzw. Win32-API (Standard: auto)')
     args = ap.parse_args()
     if args.k0 and not args.k0.startswith('datei='):
         ap.error("--k0: 'datei=PFAD' erwartet (ohne --k0 wird vom Terminal gelesen; 'tastatur' entfaellt)")
     NO_TERMOUT = args.no_termout
+    SW_FENSTER = SwFenster(args.zwischenablage) if args.sw_terminal else None
     GERAETE.update(leser1=args.leser1, leser2=args.leser2, stanzer1=args.stanzer1,
                    sw_ausgabe=args.sw_ausgabe, k0=args.k0.split('=', 1)[1] if args.k0 else None,
                    pruefe_stanzer1=args.pruefe_stanzer1, pruefe_sw_ausgabe=args.pruefe_sw_ausgabe)
 
-    GERAETE_ZEILEN = ('leser1', 'leser2', 'stanzer1', 'sw_ausgabe', 'k0')   # Geraete, die auch als Zeile der Testdatei stehen duerfen
-    cli_geraete = {k: GERAETE[k] for k in GERAETE_ZEILEN}      # Werte der Kommandozeile (Vorrang vor der Testdatei)
+    GERAETE_ZEILEN = ('leser1', 'leser2', 'stanzer1', 'sw_ausgabe', 'k0')
+    cli_geraete = {k: GERAETE[k] for k in GERAETE_ZEILEN}
 
     out_ist_datei = bool(os.path.splitext(args.out)[1])
     if out_ist_datei and len(args.tests) > 1:
@@ -1590,105 +2217,127 @@ def main():
     if nichtimpl:
         tp('WARNUNG: nicht implementierte ANWEISUNG-Nummern:', nichtimpl)
 
-    rc = 0          # Rueckkehrcode: bezieht sich auf genau einen Test, bei mehreren auf den zuletzt bearbeiteten
-    for pfad in args.tests:
-        gefunden = finde_testdatei(pfad, here)
-        if isinstance(gefunden, list):
-            vp(f'\nFEHLER: Testdatei {pfad!r} nicht eindeutig gefunden:')
-            for g in gefunden:
-                vp('  -', g)
-            rc = 16
-            continue
-        if gefunden is None:
-            vp(f'\nFEHLER: Testdatei nicht gefunden: {pfad!r} (aktuelles Verzeichnis: {os.getcwd()})')
-            rc = 16
-            continue
-        if gefunden != pfad:
-            tp(f'Testdatei: {gefunden}')
-        pfad = gefunden
-        t = Test(pfad)
-        for k in GERAETE_ZEILEN:                                # Abschnitt 2b: Kommandozeile vor Testdatei
-            GERAETE[k] = cli_geraete[k] or t.geraete.get(k)
-        tp(f'\n=== Test {t.name} (#PROT STUFE={t.stufe}) ===')
-        for h in t.hinweise:
-            tp(h)
-        vorab = list(t.fehler) + vorab_geraete(t)
-        if vorab:
-            vp('FORMALE PRUEFUNG NEGATIV - Test startet nicht, Klaerung erforderlich:')
-            for f in vorab:
-                vp('  -', f)
-            rc = 16
-            continue
-        try:
-            r = lauf(t, graph, t2, args.out, knotentest=args.knotentest)
-        except KeyboardInterrupt:
-            tp('\nABBRUCH durch den Benutzer (Strg+C)')
-            rc = 8
-            continue
-        m = r['m']
-        if not m.sw_zeilenanfang:
-            tp()
-        if not r['ok']:
-            tp('TEST NICHT ORDNUNGSGEMAESS BEENDET:', r['grund'])
-        if t.stufe == 1:
-            tp('-- Knotenzustaende --')
-            for z in r['zeilen']:
-                tp(z)
-        if r['diag'] and t.stufe != 1:
-            tp('-- Diagnose --')
-            for z in r['diag']:
-                tp(z)
-        tp(f'Ende: {r["grund"]} | Knoten: {r.get("knoten", 0)} | BZ={octs(m.BZ,4)} AC={octs(m.AC,11)} '
-           f'AR={octs(m.AR,4)} | {flags_text(m)}')
+    trommel_fehler = pruefe_trommeldatei(args.trommel)
+    if trommel_fehler:
+        vp(f'\nFEHLER: Trommeldatei "{args.trommel}" ist formal fehlerhaft - Test(s) starten nicht:')
+        for f in trommel_fehler[:50]:
+            vp('  -', f)
+        if len(trommel_fehler) > 50:
+            vp(f'  ... {len(trommel_fehler) - 50} weitere Fehler')
+        sys.exit(16)
+    try:
+        trommel = Trommel(args.trommel)
+    except KonfigFehler as e:
+        vp(f'\nFEHLER: Trommeldatei "{args.trommel}" kann nicht geoeffnet werden: {e}')
+        sys.exit(16)
 
-        # Abschnitt 3a: Ergebnispruefung (falls im Test angegeben) - stets auf dem Bildschirm,
-        # unabhaengig von #PROT STUFE, analog zur #DOK-Diagnose (Abschnitt 7)
-        pruef = pruefe_ergebnis(t, m)
-        dpruef = pruefe_dateien(t, pfad, m) if r['ok'] else None       # Abschnitt 3b (nur bei ordnungsgemaessem Ende)
-        if dpruef is not None:
-            pruef = dpruef if pruef is None else (pruef[0] and dpruef[0], pruef[1] + dpruef[1])
-        elif pruef is None and dateipruefungen(t):
-            pruef = (False, [])                                      # nur um unten "nicht durchgefuehrt" auszugeben
-        pruef_ausgabe = []
-        if pruef is not None:
+    rc = 0
+    try:
+        for pfad in args.tests:
+            gefunden = finde_testdatei(pfad, here)
+            if isinstance(gefunden, list):
+                vp(f'\nFEHLER: Testdatei {pfad!r} nicht eindeutig gefunden:')
+                for g in gefunden:
+                    vp('  -', g)
+                rc = 16
+                continue
+            if gefunden is None:
+                vp(f'\nFEHLER: Testdatei nicht gefunden: {pfad!r} (aktuelles Verzeichnis: {os.getcwd()})')
+                rc = 16
+                continue
+            if gefunden != pfad:
+                tp(f'Testdatei: {gefunden}')
+            pfad = gefunden
+            t = Test(pfad)
+            for k in GERAETE_ZEILEN:
+                GERAETE[k] = cli_geraete[k] or t.geraete.get(k)
+            tp(f'\n=== Test {t.name} (#PROT STUFE={t.stufe}) ===')
+            for h in t.hinweise:
+                tp(h)
+            vorab = list(t.fehler) + vorab_geraete(t)
+            if vorab:
+                vp('FORMALE PRUEFUNG NEGATIV - Test startet nicht, Klaerung erforderlich:')
+                for f in vorab:
+                    vp('  -', f)
+                rc = 16
+                continue
+            if SW_FENSTER is not None:
+                SW_FENSTER.oeffne()
+            try:
+                r = lauf(t, graph, t2, args.out, trommel, knotentest=args.knotentest)
+            except KeyboardInterrupt:
+                tp('\nABBRUCH durch den Benutzer (Strg+C)')
+                rc = 8
+                continue
+            m = r['m']
+            if not m.sw_zeilenanfang:
+                tp()
             if not r['ok']:
-                pruef_ausgabe = ['Ergebnispruefung: nicht durchgefuehrt '
-                                 '(Test nicht ordnungsgemaess beendet)']
-            else:
-                wahr, pzeilen = pruef
-                pruef_ausgabe = ['Ergebnispruefung:'] + pzeilen + [f'Test {"wahr" if wahr else "falsch"}']
-            for z in pruef_ausgabe:
-                tp(z)
+                tp('TEST NICHT ORDNUNGSGEMAESS BEENDET:', r['grund'])
+            if t.stufe == 1:
+                tp('-- Knotenzustaende --')
+                for z in r['zeilen']:
+                    tp(z)
+            if r['diag'] and t.stufe != 1:
+                tp('-- Diagnose --')
+                for z in r['diag']:
+                    tp(z)
+            tp(f'Ende: {r["grund"]} | Knoten: {r.get("knoten", 0)} | BZ={octs(m.BZ,4)} AC={octs(m.AC,11)} '
+               f'AR={octs(m.AR,4)} | {flags_text(m)}')
 
-        # Rueckkehrcode dieses Tests (Python_Interpreter.md, Abschnitt 9)
-        if not r['ok']:
-            rc = 16 if r['grund'].startswith('Tastenfolge nicht gueltig') else 8
-        elif pruef is None:
-            rc = 4
-        else:
-            rc = 0 if pruef[0] else 6
+            pruef = pruefe_ergebnis(t, m)
+            dpruef = pruefe_dateien(t, pfad, m) if r['ok'] else None
+            if dpruef is not None:
+                pruef = dpruef if pruef is None else (pruef[0] and dpruef[0], pruef[1] + dpruef[1])
+            elif pruef is None and dateipruefungen(t):
+                pruef = (False, [])
+            pruef_ausgabe = []
+            if pruef is not None:
+                if not r['ok']:
+                    pruef_ausgabe = ['Ergebnispruefung: nicht durchgefuehrt '
+                                     '(Test nicht ordnungsgemaess beendet)']
+                else:
+                    wahr, pzeilen = pruef
+                    pruef_ausgabe = ['Ergebnispruefung:'] + pzeilen + [f'Test {"wahr" if wahr else "falsch"}']
+                for z in pruef_ausgabe:
+                    tp(z)
 
-        if t.stufe == 2:
-            if out_ist_datei:
-                p = args.out
-                os.makedirs(os.path.dirname(os.path.abspath(p)), exist_ok=True)
+            if not r['ok']:
+                rc = 16 if r['grund'].startswith('Tastenfolge nicht gueltig') else 8
+            elif pruef is None:
+                rc = 4
             else:
-                d = os.path.join(args.out, t.name)
-                os.makedirs(d, exist_ok=True)
-                p = os.path.join(d, 'protokoll.txt')
-            with open(p, 'w', encoding='utf-8') as fh:
-                fh.write('\n'.join(r['kopf']) + '\n\n== 2. Zustaende des Knotenautomaten ==\n')
-                fh.write('\n'.join(r['zeilen']) + '\n\n')
-                fh.write(f'== Ende ==\n{r["grund"]}\nBZ={octs(m.BZ,4)} AC={octs(m.AC,11)} AR={octs(m.AR,4)} '
-                         f'{flags_text(m)}\n')
-                if pruef_ausgabe:
-                    fh.write('\n== 3. Ergebnispruefung ==\n' + '\n'.join(pruef_ausgabe) + '\n')
-            tp('Protokolldatei:', p)
-        elif out_ist_datei:
-            tp(f'Hinweis: keine Protokolldatei {args.out}, da #PROT STUFE={t.stufe} '
-               f'(Datei entsteht nur bei #PROT STUFE=2).')
+                rc = 0 if pruef[0] else 6
+
+            if t.stufe == 2:
+                if out_ist_datei:
+                    p = args.out
+                    os.makedirs(os.path.dirname(os.path.abspath(p)), exist_ok=True)
+                else:
+                    d = os.path.join(args.out, t.name)
+                    os.makedirs(d, exist_ok=True)
+                    p = os.path.join(d, 'protokoll.txt')
+                with open(p, 'w', encoding='utf-8') as fh:
+                    fh.write('\n'.join(r['kopf']) + '\n\n== 2. Zustaende des Knotenautomaten ==\n')
+                    fh.write('\n'.join(r['zeilen']) + '\n\n')
+                    fh.write(f'== Ende ==\n{r["grund"]}\nBZ={octs(m.BZ,4)} AC={octs(m.AC,11)} AR={octs(m.AR,4)} '
+                             f'{flags_text(m)}\n')
+                    if pruef_ausgabe:
+                        fh.write('\n== 3. Ergebnispruefung ==\n' + '\n'.join(pruef_ausgabe) + '\n')
+                tp('Protokolldatei:', p)
+            elif out_ist_datei:
+                tp(f'Hinweis: keine Protokolldatei {args.out}, da #PROT STUFE={t.stufe} '
+                   f'(Datei entsteht nur bei #PROT STUFE=2).')
+    finally:
+        trommel.schliessen()
+        if SW_FENSTER is not None:
+            SW_FENSTER.ende()
+
     sys.exit(rc)
 
 
 if __name__ == '__main__':
-    main()
+    if sys.argv[1:2] == ['--sw-fenster-prozess']:   # interner Aufruf fuer --SW-TERMINAL
+        sw_fenster_main(sys.argv[2] if len(sys.argv) > 2 else 'auto')
+    else:
+        main()

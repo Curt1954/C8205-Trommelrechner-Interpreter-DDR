@@ -1,0 +1,31 @@
+Trommeldatei:
+# Ermittlung des Maximums von drei Zahlen (Programmobjektdatei, vom Lader relokiert)
+# Programmladeadresse (Kennzeichen 01) = 3000, Datenladeadresse (Kennzeichen 02) = 3020; Kennzeichen 00 = absolut
+# Fall: b ist das Maximum; a=00000000100 b=00000000300 c=00000000200
+#PROT STUFE=2
+
+0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang
+3000: 00003020211 # 0000 02 0 211. ; M:=a
+3001: 00003021330 # 0001 02 1 330. ; M>=b ?
+3002: 00003004150 # 0002 01 4 150. ; M>=b ?
+3003: 00003021211 # 0003 02 1 211. ; M:=b
+3004: 00003022330 # 0004 02 2 330. ; M>=c ?
+3005: 00003007150 # 0005 01 7 150. ; M>=c ?
+3006: 00003022211 # 0006 02 2 211. ; M:=c
+3007: 00007776240 # 0007 00 7776 240. ; M->R2
+3010: 00001111021 # 0010 00 1111 021. ; Stopp
+# Datenbereich (ab Datenladeadresse)
+3020: 00000000100 # a
+3021: 00000000300 # b
+3022: 00000000200 # c
+7776: 00000000000 # R2 (Ergebnis M)
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3011 AC=00000000000 AR=1111 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
+3020: 00000000100
+3021: 00000000300
+3022: 00000000200
+7776: 00000000300

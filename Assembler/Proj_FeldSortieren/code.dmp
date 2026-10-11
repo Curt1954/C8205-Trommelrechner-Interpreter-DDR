@@ -46,9 +46,7 @@
 0054: 01 0215 211    m1:          211    min_index    ; Lade min_index in AC
 0055: 01 0213 330                 330    i            ; Vergleiche mit i
 0056: 01 0015 170                 170    loop1        ; Springe wenn  AC=min_index == i
-      20 0000 0057                equ    00057        ; automatisch generiert
-      20 0000 0057   swap:        equ    00057        ; automatisch generiert
-0057: 01 0213 211                 211    i            ; Lade `i`
+0057: 01 0213 211    swap:        211    i            ; Lade `i`
 0060: 01 0212 210                 210    afeld_base   ; Addiere Anfangsadresse des Arrays
 0061: 01 0220 210                 210    l0002        ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
 0062: 01 0075 240                 240    ML0004MTA    ; Speichere den vollständigen Ladebefehl für `afeld_base[i]`
@@ -72,8 +70,7 @@
       20 0000 0200                equ100 00200        
 0200: 00 00000000006 len0:        dw     000000000006 ; Anzahl der Elemente im Array
 0201: 20 0202        len:         db     1            ; Länge des Array in Adreßeinheiten umgerechnet
-      20 0000 0202   ausgabe:     equ    00202        ; automatisch generiert
-0202: 00 4500 030                 030    04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+0202: 00 4500 030    ausgabe:     030    04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0040 030    feld_base:   dto    4172k0       ; Startelement des Arrays, alles Kleinbuchstaben-Ausgabebefehle
       00 0010 030    ;    
       00 0070 030    ;    

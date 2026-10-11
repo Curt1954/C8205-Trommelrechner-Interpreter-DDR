@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Adresseneingabe (Ansprung 0316); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Eingabe . (die Konstante Null braucht nur das Schlusszeichen)
+#PROT STUFE=2
+#STARTE 1000
+--leser1 virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_null.txt
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+
+# Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0337 werden nicht belegt)
+1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen
+1001: 00000316025  # 025 0316 ; Adresseneingabe
+1002: 00007773240  # 240 r1 ; R1 := eingelesene Konstante
+1003: 00004500030  # 030 4500 ; Kanal K2 (Schreibwerk) anwaehlen
+1004: 00000100025  # 025 0100 ; Adressendruck
+1005: 00000000020  # 020 0 ; Stopp
+
+Prüfungen:
+BZ=1006 AC=00000000000 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+7773: 00000000000  # R1 = eingelesene Konstante
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/pj2-bis_adresseneingabe_null_erwartet.txt

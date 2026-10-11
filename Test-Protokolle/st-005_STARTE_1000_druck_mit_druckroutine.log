@@ -1,0 +1,71 @@
+Test st-005_STARTE_1000_druck_mit_druckroutine
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  1000: 00004500030
+  1001: 00000570030
+  1002: 00001470030
+  1003: 00001500030
+  1004: 00004500030
+  1005: 00001170030
+  1006: 00001470030
+  1007: 00001500030
+  1010: 00000000020
+  #DOK-1000 Programm ab 1000: Schreibwerk-Ausgabe "XY", dann INTERRUPT mit Druck von BZ und AC durch die Druckroutine (Zelle 0001), dann "xy" und Stopp
+  #DOK-1010 Voraussetzung: Minimalprogramm mit Druckroutine ist auf der Trommel (vorher Tests/asm_druck_tastenfolge.txt ausfuehren). Zelle 0001 wird hier NICHT belegt.
+  #DOK-1011 Erwartet am Terminal: XY, eine Zeile "BZ 00001004000 AC 00001001000", dann xy. Stopp in 1010, BZ=1011; V1=V2=1 stammen aus der Druckroutine
+  #INTERRUPT nach Befehl 1003: H G Ü E H G M+ E M- R
+  #PROT STUFE=2
+  #STARTE 1000 (Makro: H G M+ 512x E M- R, E 512-mal = dezimal)
+Tastenfolge: (aus #STARTE erzeugt)
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  M gedrueckt halten: OR := OR ODER 025 (BR = AR 025)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00000002000 (BZ+1 im Adressfeld)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0002, AR := 0002, AC := 00000003000 (BZ+1 im Adressfeld)
+  ... 509 weitere E (BZ 0003 bis 0777): je Anschlag BZ := BZ+1, AR := BZ, AC := BZ+1 im Adressfeld (kompakte Protokollform bei #STARTE)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 1000, AR := 1000, AC := 00001001000 (BZ+1 im Adressfeld)
+  M loslassen: OR-Verknuepfung mit 025 entfaellt fuer Folgeschritte
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=1000 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
+  BR=4500 030  (vor Knoten 002)  BZ=1001 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0570 030  (vor Knoten 002)  BZ=1002 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
+  BR=1470 030  (vor Knoten 002)  BZ=1003 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
+--- INTERRUPT nach Befehl 1003 (Testzeile 14): BZ=1004 AC=00001001000 ---
+  BR=7777 240  (vor Knoten 002)  BZ=1004 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  Ue : AR := 7777; OR := OR ODER 240 -> BR = 7777 240 (Transport, aufgestellt, nicht ausgefuehrt)
+  E  : Einzelschritt (Phase IV, I, II, III), Halt vor Knoten 019; BR=4500 030 BZ=1005 AR=4500 AC=00001001000
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  M gedrueckt halten: OR := OR ODER 025 (BR = AR 025)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00001007000 (BZ+1 im Adressfeld)
+  M loslassen: OR-Verknuepfung mit 025 entfaellt fuer Folgeschritte
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+--- Ende INTERRUPT: Ablauf wird fortgesetzt ---
+  BR=0000 000  (vor Knoten 002)  BZ=0001 AC=00001007000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0010 065  (vor Knoten 002)  BZ=0002 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0003 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=1011 ist=0003 FEHLER
+  AC: soll=00001001000 ist=00000000000 FEHLER
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=1 ist=0 FEHLER
+  V2: soll=1 ist=0 FEHLER
+  7777: soll=00001001000 ist=00001001000 OK
+Test falsch

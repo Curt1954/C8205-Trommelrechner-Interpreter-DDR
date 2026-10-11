@@ -1,0 +1,90 @@
+Trommeldatei:
+#DOK-0001 Druck von BZ und AC (Zelle 0001) mit Treiber: AC = Rueckkehrbefehl 0000 3007 000 (b = 3004), 7777 = 70123456701. Erwartet: BZ 00003004000 AC 70123456701, danach Fortsetzung bei 3004 (Stopp) mit dem AC.
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+#PROT STUFE=2
+0001: 00000150000 # 000 druck ; Zelle 0001: Sprung zum Druck von BZ und AC
+0040: 00000320025 # haupt: 025 kzeingabe ; Aufruf Unterprogramm Kennzeicheneingabe
+0041: 00000000020 # 020 0 ; STUB Fortsetzung nach der Rueckkehr
+0053: 00000000020 # befehlsdruck: 020 0 ; STUB Befehlsdruck (Ansprungzelle 053)
+0100: 00000000020 # adressendruck: 020 0 ; STUB Adressendruck (Ansprungzelle 100)
+0101: 00007773217 # okt_loop: 217 r1 ; AC := Vzl(R1): 1. von 3 Verschiebungen
+0102: 00000110006 # 006 okt_v3 ; 2. Verschiebung (Sprung auf die uebernaechste benutzte Zelle)
+0105: 00000010030 # dto 1 ; Position 31 (Ziffer 1)
+0106: 00000260030 # dto 6 ; Position 36 (Ziffer 6), Sektor 06
+0110: 00000111006 # okt_v3: 006 okt_sp ; 3. Verschiebung
+0111: 00007773240 # okt_sp: 240 r1 ; R1 := Vzl3(R1) (AC bleibt)
+0112: 00000124200 # 200 okt_mask ; AC := Ziffer d (letzte Triade)
+0113: 00000221520 # okt_gx: 520 okt_e1 ; GX-Subtraktion auf der Einsen-Spur: waehlt den Ausgabebefehl
+0114: 00000040030 # dto 4 ; Position 34 (Ziffer 4); beim GX-Befehl die uebersprungene Zelle b+1
+0115: 00000126311 # 311 okt_z ; AC := z; Vergleicher 3, falls z = 0
+0116: 00000127170 # 170 okt_rs ; z = 0: Rueckkehr (Zelle okt_rs wird als Befehl ausgefuehrt)
+0117: 00000120004 # 004 okt_zn ; AC := z um 1 Bit nach links (Verschiebung im Sprungbefehl)
+0120: 00000126240 # okt_zn: 240 okt_z ; z := Vl(z)
+0121: 00000101000 # 000 okt_loop ; naechste Ziffer
+0122: 00000020030 # dto 2 ; Position 32 (Ziffer 2), Sektor 22
+0123: 00000070030 # dto 7 ; Position 37 (Ziffer 7), Sektor 23
+0124: 00000000007 # okt_mask: dw 07 ; Maske fuer die letzte Triade
+0125: 77740000000 # okt_z0: dw 077740000000 ; Anfangswert des Zaehlers: 10 Einsen
+0126: 00000000000 # okt_z: dbn 1 ; Zaehler (Einsen, wird nach links geschoben)
+0130: 00000200030 # dto 0 ; Position 30 (Ziffer 0), Sektor 30
+0131: 00000250030 # dto 5 ; Position 35 (Ziffer 5), Sektor 31
+0132: 00000127240 # okt_anf: 240 okt_rs ; Rueckkehrbefehl sichern
+0133: 00001170030 # dz $inkb ; Umschaltung in Kleinbuchstabenlage (Ziffern)
+0134: 00000125211 # 211 okt_z0 ; Zaehler := 10 Einsen
+0135: 00000126240 # 240 okt_z
+0136: 00000101000 # 000 okt_loop ; Sektor 36; der Sektor 37 danach ist der Ausgabebefehl der Ziffer 3
+0137: 00000230030 # dto 3 ; Position 33 (Ziffer 3), Sektor 37
+0150: 00000176220 # druck: 220 dr_drei ; AC := AC - 3 Adresseinheiten = Befehl 0000 bbbb 000
+0151: 00007600240 # 240 dr_rs ; als Fortsetzungsbefehl merken (Zelle dr_rs wird am Ende ausgefuehrt)
+0152: 00007773240 # 240 r1 ; R1 := BZ-Wort
+0153: 00004500030 # 030 04500 ; Anwahl Kanal K2 (Schreibwerk)
+0154: 00002720030 # dz $wrzl ; neue Zeile
+0155: 00000570030 # dtm \BZ \
+0156: 00000620030
+0157: 00001710030
+0160: 00000320030
+0161: 00000276025 # 025 triadendruck ; BZ-Wort drucken
+0162: 00000320030 # dz $zr ; Zwischenraum
+0163: 00000570030 # dtm \AC \
+0164: 00000610030
+0165: 00000430030
+0166: 00000320030
+0167: 00007777211 # 211 ac7777 ; AC := gerettete AC-Inhalt (Zelle 7777)
+0170: 00007773240 # 240 r1
+0171: 00000276025 # 025 triadendruck ; AC drucken
+0172: 00002720030 # dz $wrzl ; Zeilenende
+0173: 00007777211 # 211 ac7777 ; AC := gerettete AC-Inhalt: das Programm setzt mit seinem AC fort
+0174: 00000000060 # 060 0 ; bedingter Stopp (bei eingerastetem BS)
+0175: 00007600000 # 000 dr_rs ; Fortsetzung: Zelle dr_rs (Arbeitsbereich) wird als Befehl 000 b ausgefuehrt
+0176: 00000003000 # dr_drei: dw 03000 ; 3 Adresseinheiten
+0205: 00000000001 # dw 01 ; Sektor 05 (Position 32)
+0213: 00000000001 # dw 01 ; Sektor 13 (Position 27)
+0214: 00000000001 # dw 01 ; Sektor 14 (Position 34)
+0221: 00000000001 # okt_e1: dw 01 ; Sektor 21 (Position 25): Start des GX-Befehls
+0222: 00000000001 # dw 01 ; Sektor 22 (Position 32)
+0230: 00000000001 # dw 01 ; Sektor 30 (Position 30)
+0231: 00000000001 # dw 01 ; Sektor 31 (Position 35)
+0236: 00000000001 # dw 01 ; Sektor 36 (Position 26)
+0237: 00000000001 # dw 01 ; Sektor 37 (Position 33)
+0262: 00000000020 # eingabewortkz: 020 0 ; STUB Eingabe eines Wortes mit Kennzeichen (262)
+0263: 00000000020 # eingabeprogst: 020 0 ; STUB Eingabe eines Programmstueckes (263)
+0276: 00000132000 # triadendruck: 000 okt_anf ; Triadendruck (Ansprungzelle 276): Sprung zum Code ab okt_anf
+0316: 00000000020 # adresseneingabe: 020 0 ; STUB Adresseneingabe (Ansprungzelle 316)
+0320: 00000000020 # kzeingabe: 020 0 ; STUB Unterprogramm Kennzeicheneingabe
+0000: 00003000000 # 000 3000 ; Sprung zum Testtreiber
+3000: 00003010211 # 211 3010 ; AC := Wert fuer 7777
+3001: 00007777240 # 240 7777 ; gerettet nach 7777 (wie H G Ue E)
+3002: 00003011211 # 211 3011 ; AC := Rueckkehrbefehl 0000 3007 000
+3003: 00000001000 # 000 0001 ; Sprung nach Zelle 0001
+3004: 00003004020 # 020 3004 ; Befehl b: Stopp (hier wird fortgesetzt)
+3010: 70123456701 # Wert
+3011: 00003007000 # 000 3007 ; Rueckkehrbefehl
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=3005 AC=70123456701 AR=3004 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+7777: 70123456701
+7600: 00003004000
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/asm_druck_bz_ac_erwartet.txt

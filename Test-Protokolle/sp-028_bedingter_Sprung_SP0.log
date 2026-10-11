@@ -16,7 +16,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
 Tastenfolge: SP=0 H G R
   SP : Schalter SP geloest -> Flag SP := 0
   H  : Schalter H-R -> "H", Flag H := 1
-  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; <BZ> := 0 (vorweggenommene Wirkung des Sprungs nach 0000)
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
   R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
   Nicht spezifizierte Register (AC, ...) starten mit 0.
 

@@ -1,7 +1,6 @@
 0000: 01 2000 000            000 beginn ;
       20 0000 2000           equ 02000  ;
-      20 0000 2000   beginn: equ 02000  ; automatisch generiert
-2000: 00 4600 030            030 04600  ; 4600 oder K1 oder LSL1 oder LSS1
+2000: 00 4600 030    beginn: 030 04600  ; 4600 oder K1 oder LSL1 oder LSS1
 2001: 01 2014 211            211 z_a    
 2002: 01 2020 240            240 up+1   
 2003: 01 2017 025            025 up     

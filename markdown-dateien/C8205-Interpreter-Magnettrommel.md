@@ -1,5 +1,7 @@
 ** Magnettrommel (Speicher) **
 
+Version: 0.03-001
+
 Der gesamte Speicher liegt magnetisch auf einer Trommel, organisiert in Zellen (Maschinenworten).
 
 
@@ -105,3 +107,11 @@ eingeschalteten Zusatzschalter ist – wobei 40 (oktal) → Bit0, 100 (oktal) �
 bei Hauptschalter EIN immer gesperrt, unabhängig von den fünf Zusatzschaltern. Folge: Bahnen ab Spur
 2000 (oktal) (Bahn-Nr. ≥ 32) sind über diese Schalter grundsätzlich nie sperrbar (die Regel deckt nur
 5 Bit = 32 Bahnen ab).
+
+
+## Nachbildung im Interpreter (Ergänzung 07.10.2026)
+
+Der Python-Interpreter bildet den Speicher als persistente Textdatei nach (Vorgabe `virtuelle_Geraete/Trommel/trommel.txt`): 4096 Zeilen `aaaa: ttttttttttt`, je Zelle eine Zeile,
+geordnet nach der **logischen** Adresse `0000` bis `7777` (nicht nach der physischen Reihenfolge der Sektoren, Abschnitt „Speichernumerierung / Interleaving“). Zeitverhalten (Wortzeit, Wartezeit,
+Zugriffszeit) wird nicht nachgebildet, alle Zeiten sind 0; die Formeln der zeitoptimalen Folgeadresse sind nur eine Layout-Hilfe. Der Inhalt bleibt über Tests und Aufrufe hinweg erhalten. Format,
+Prüfung, Überlagerung durch die Testzeilen und Zurücksetzen: `C8205-Interpreter-Python_Interpreter.md`, Abschnitt 8.5, und `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2c.

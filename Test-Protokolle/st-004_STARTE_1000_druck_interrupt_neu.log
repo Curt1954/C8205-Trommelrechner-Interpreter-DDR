@@ -1,0 +1,52 @@
+Test st-004_STARTE_1000_druck_interrupt_neu
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  1000: 00004500030
+  1001: 00000570030
+  1002: 00001470030
+  1003: 00001500030
+  1004: 00004500030
+  1005: 00001170030
+  1006: 00001470030
+  1007: 00001500030
+  1010: 00000000020
+  #DOK-0001 Programmunterbrechung und Druck von BZ und AC ueber das Minimalprogramm (BIS-2.2.12.1). Voraussetzung: Die Trommel enthaelt das Minimalprogramm (pj2-bis_minimalprogramm.test vorher laufen lassen). Der Test setzt und veraendert die Zelle 0001 NICHT; sie wird von der Trommel genommen (000 0150) und in den Pruefungen kontrolliert.
+  #SPEI-0001 1000-1010
+  #AC=00000012345
+  #BZ=1003
+  #PROT STUFE=2
+Tastenfolge: H G Ü E G M+ E M- SP=0 R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  Ue : AR := 7777; OR := OR ODER 240 -> BR = 7777 240 (Transport, aufgestellt, nicht ausgefuehrt)
+  E  : Einzelschritt (Phase IV, I, II, III), Halt vor Knoten 019; BR=1500 030 BZ=1004 AR=1500 AC=00000012345
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  M gedrueckt halten: OR := OR ODER 025 (BR = AR 025)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00001006000 (BZ+1 im Adressfeld)
+  M loslassen: OR-Verknuepfung mit 025 entfaellt fuer Folgeschritte
+  SP : Schalter SP geloest -> Flag SP := 0
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Anfangswerte: AC = 00000012345 (#AC), BZ = 1003 (#BZ)
+  Nicht spezifizierte Register (AR, OR, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=7777 240  (vor Knoten 002)  BZ=1003 AC=00000012345 FÜ=0 V1=0 V2=0 V3=0
+  BR=0000 000  (vor Knoten 002)  BZ=0001 AC=00001006000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0010 065  (vor Knoten 002)  BZ=0002 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0003 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=1011 ist=0003 FEHLER
+  AR: soll=0000 ist=0000 OK
+  US: soll=1 ist=1 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  0001: soll=00000150000 ist=00000010065 FEHLER
+  7777: soll=00000012345 ist=00000012345 OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/st-004_STARTE_1000_druck_interrupt_neu_erwartet.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt FEHLER (Ist-Datei fehlt, vom Lauf nicht angelegt)
+Test falsch

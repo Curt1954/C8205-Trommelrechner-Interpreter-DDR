@@ -271,6 +271,10 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
         }
     }
 
+    // Zeilenende aus projekdetails entfernen, bevor die Endung geprüft/ergänzt wird
+    // (sonst steht der Zeilenumbruch vor ".asm" und die Endung geht verloren).
+    removeNewline(dateiname);
+
     char tempdn[1024]={0};
     strcpy(tempdn,dateiname);
     char *dotPos = strrchr(dateiname, '.'); // Sucht letzten Punkt
@@ -445,8 +449,13 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
                     snprintf(neueDateiName, sizeof(neueDateiName), "%s.%s", projektdetailsDatei, oldProjekt);
                     createFileName(neueDateiName, sizeof(neueDateiName), projektdetailsDatei, oldProjekt);
 
+                    // Gesicherte Datei des neuen Projekts: der Name wird genauso gebildet wie beim
+                    // Sichern (Schrägstriche -> '_'), sonst wird sie bei Pfaden wie A/x nie gefunden.
+                    char neuesProjektKopie[512];
+                    strncpy(neuesProjektKopie, projektVerzeichnis, sizeof(neuesProjektKopie) - 1);
+                    neuesProjektKopie[sizeof(neuesProjektKopie) - 1] = '\0';
                     char neueDateiName2[1024];
-                    snprintf(neueDateiName2, sizeof(neueDateiName2), "%s.%s", projektdetailsDatei, projektVerzeichnis);
+                    createFileName(neueDateiName2, sizeof(neueDateiName2), projektdetailsDatei, neuesProjektKopie);
 
                 
                     FILE *kopieFile = fopen(neueDateiName, "w");

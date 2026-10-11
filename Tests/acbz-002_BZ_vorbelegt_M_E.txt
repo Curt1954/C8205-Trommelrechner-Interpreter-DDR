@@ -1,0 +1,12 @@
+Trommeldatei:
+#DOK-0001 #BZ=0010 und eine Tastenfolge ohne G: der Anfangs-BZ bleibt erhalten, das E unter gehaltenem M zählt BZ := 0011, AR := 0011, AC := 0012 im Adressfeld.
+#DOK-0002 R beginnt dann mit der Befehlsentnahme aus Zelle 0011 (Stopp 020): BZ = 0012.
+#PROT STUFE=2
+#BZ=0010
+0011: 00000000020 # Stopp
+
+Tastenfolge:
+H M-gedrückt-halten E M-loslassen R
+
+Prüfungen:
+BZ=0012 AC=00000012000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

@@ -1,5 +1,7 @@
 # ** Datenstrukturen **
 
+Version: 0.03-001
+
 Namensbereiche: Flags, Register, Felder des Befehlswortes sowie die Knoten und
    Konnektoren der Knotentabelle sind getrennte Beschreibungsbereiche. Innerhalb
    eines Bereichs muss jeder Name eindeutig sein, zwischen Bereichen dürfen gleiche
@@ -38,9 +40,18 @@ Ganze Festkommazahlen (Programmieranleitung 6.2)
   Programme mit Gruppenbefehlen gebildet; die Stellung des Kommas legt dort die Programmierung fest
   (gebrochen: Programmieranleitung 6.1, ganz: 6.2). Testaufträge: `Tests/bsp_6_1_*.txt`, `Tests/bsp_6_2_*.txt`.
 
-Gleitkommazahlen (Programmieranleitung 6.3, Abb. 28)
-- Darstellung z = m · 2ᵉ mit der **normalisierten Mantisse** 0,5 ≤ |m| < 1 für z ≠ 0. Die Gleitkommadarstellung ist
+Gleitkommazahlen (Programmieranleitung 6.3, Abb. 28; ergänzt 07.10.2026 um die Definitionen des
+Bausteininterpretationssystems BIS, siehe C8205-Interpreter-BIS.md und den folgenden Abschnitt „externe Darstellung")
+- **Allgemeine halblogarithmische Schreibweise:** Jede Zahl lässt sich als Produkt aus Mantisse m und Basispotenz mit dem
+  Exponenten e darstellen: z = ± m · Bᵉ (B = Basis des Zahlensystems). Damit die Darstellung eindeutig wird, gilt die
+  Normalisierungsvorschrift B⁻¹ ≤ m < 1 (für z ≠ 0). Die Mantisse m bestimmt die Ziffernfolge von z, der Exponent e legt fest,
+  an welcher Stelle der Mantisse das Komma steht.
+- **Intern** (Basis B = 2, Definition des BIS): z = ± m · 2ᵉ mit der **normalisierten Mantisse** 0,5 ≤ |m| < 1 für z ≠ 0
+  (dezimal betrachtet). Exponent, Betrag der Mantisse und Vorzeichen werden getrennt gespeichert. Die Gleitkommadarstellung ist
   reine Programmkonvention: Der Rechner kennt keine Gleitkommabefehle, das Programm interpretiert das Maschinenwort.
+  Sowohl die Ein- und Ausgabe von Zahlen als auch die Interpretation des Inhalts der Maschinenworte werden durch das jeweils zur
+  Anwendung kommende Interpretiersystem bestimmt, das die entsprechenden Routinen enthalten muss (BIS-Dokumentation).
+  Die externe Darstellung ist auf zweierlei Art möglich: in Dezimalschreibweise oder in Gleitkommadarstellung.
 - Aufteilung des Maschinenwortes:
 
 | Bits | Inhalt | Breite |
@@ -49,11 +60,19 @@ Gleitkommazahlen (Programmieranleitung 6.3, Abb. 28)
 | z₁ – z₆ | Maschinenexponent e′ = e + 32 = Σ (i=0 bis 5) eᵢ · 2ⁱ, höchstwertiges Bit e₅ = z₁, niederwertigstes e₀ = z₆ | 6 Bit |
 | z₇ – z₃₂ | Mantissenbetrag m₁ m₂ … m₂₆ (m₁ = z₇, m₂₆ = z₃₂) | 26 Bit |
 
+  Stellenwerte (Abbildung der BIS-Dokumentation): z₁ … z₆ tragen die Gewichte 2⁵, 2⁴, 2³, 2², 2¹, 2⁰ (Exponent e′); z₇ … z₃₂ tragen
+  die Gewichte 2⁻¹, 2⁻², 2⁻³, …, 2⁻²⁴, 2⁻²⁵, 2⁻²⁶ (Mantisse m); z₀ ist das Vorzeichen (Vz).
+
+- Vorzeichenstelle: für z ≥ 0 ist z₀ = 0, für z < 0 ist z₀ = 1.
+- Um Vorzeichenrechnungen im Exponenten zu vermeiden, wird der tatsächliche Exponent intern um 2⁵ = 32 erhöht angegeben:
+  e′ = e + 32.
 - Die Mantisse ist **nicht** im Zweierkomplement abgelegt, sondern als Betrag mit getrenntem Vorzeichen z₀.
-  Wegen der Normalisierung ist m₁ = 1.
+  Wegen der Normalisierung ist m₁ = 1: Bei allen Gleitkommazahlen außer der Gleitkommanull ist das Bit z₇ stets mit Eins besetzt.
 - Exponentenbereich 0 ≤ e′ ≤ 63, also −32 ≤ e ≤ 31. Mantissenbereich 0,5 ≤ |m| ≤ 1 − 2⁻²⁶.
-  Zahlenbereich: 2⁻³³ = 0,5 · 2⁻³² ≤ |z| ≤ (1 − 2⁻²⁶) · 2³¹, sowie z = 0.
-- **Null:** eindeutig mit mᵢ = 0 (i = 1 … 26) und e = −32, d. h. e′ = 0. Das ist das Wort `00000000000`
+  Zahlenbereich: 2⁻³³ = 0,5 · 2⁻³² ≤ |z| ≤ (1 − 2⁻²⁶) · 2³¹ = 2³¹ − 2⁵, sowie z = 0.
+  Die kleinste darstellbare positive Zahl ≠ 0 ist z = 0,5 · 2⁻³² = 2⁻³³.
+- **Null:** Die Gleitkommanull entspricht der dualen Null, d. h. alle Dualstellen sind mit Null besetzt. Eindeutig mit
+  mᵢ = 0 (i = 1 … 26) und e = −32, d. h. e′ = 0. Das ist das Wort `00000000000`
   (positive Null, z₀ = 0). Die Bitkombination „negative Null" (z₀ = 1, Rest 0) ist keine gültige Darstellung.
 - Beispiel: z = −16 = −0,5 · 2⁵ ist `1 100101 10000000000000000000000000` (Vorzeichen, Exponent e′ = 37, Mantissenbetrag),
   oktal `62600000000`. Zum Vergleich z = +16 ist `22600000000`.
@@ -67,6 +86,51 @@ Gleitkommazahlen (Programmieranleitung 6.3, Abb. 28)
     positiv geordnet sind, ordnen die Betragswörter (z₀ = 0) wie die ganzen Zahlen: |a| < |b| genau dann, wenn
     das Wort von |a| als ganze Zahl kleiner ist. Der markierte Einzelbefehl (Vergleicher setzen) genügt.
   - Testaufträge: `Tests/bsp_6_3_1_*.txt` (Betrag), `bsp_6_3_2_*.txt` (Vorzeichenumkehr), `bsp_6_3_3_*.txt` (Ordnen).
+
+Gleitkommazahlen, externe Darstellung (Quelle: BIS-Dokumentation, Ergänzung 07.10.2026)
+- Die Quelle beschreibt das Programmsystem BIS, nicht die Rechner-Hardware. Die externe Darstellung und der Eingabezahlenbereich
+  gelten daher für die Ein- und Ausgabe unter BIS (die interne Darstellung ist dieselbe wie oben).
+- Die **externe** Darstellung einer Gleitkommazahl (Ein- und Ausgabe) kennt zwei Formen: die übliche Dezimalschreibweise
+  oder die Gleitkommadarstellung, die sich für Mantisse und Exponent auf das Dezimalsystem bezieht: z = ± m · 10ᴱ.
+- Normalisierungsvorschrift: 0,1 ≤ m < 1 (für z ≠ 0). Der Exponent E wird **nicht** erhöht (anders als intern e′ = e + 32);
+  er besteht aus Vorzeichen und Betrag: E = ± |E|.
+- **Form der externen Gleitkommazahl:** Vorzeichen der Mantisse, höchstens acht dezimale Mantissenziffern m₁ m₂ … m₈,
+  Exponentenvorzeichen und Exponent E; Schreibweise z = (±) m₁m₂m₃m₄m₅m₆m₇m₈ (±) E (die Vorzeichen in Klammern sind optional).
+- **Eingabezahlenbereich:** Da E bei der Eingabe nicht größer als 8 sein darf, gilt |z| ≤ (1 − 10⁻⁸) · 10⁸. Die kleinste
+  eingebbare positive Zahl ≠ 0 ist z = 0,1 · 10⁻⁸ = 10⁻⁹.
+- **Dezimalschreibweise:** z = (±) a,b. Der Eingabezahlenbereich ist derselbe: |z| ≤ (1 − 10⁻⁸) · 10⁸. Die größte eingebbare
+  Zahl ist 99 999 999, die kleinste ≠ 0 ist 0,000000001.
+- **Genauigkeit (handschriftlicher Randvermerk der Quelle):** m = 26 Dual = 7 Dezimalstellen; nur 7 Dezimalziffern lassen sich
+  genau verarbeiten. Die achte Mantissenziffer der externen Form ist daher nicht mehr exakt darstellbar.
+- Die externe Darstellung ist wie die interne reine Konvention des Programmsystems (BIS) bzw. des Programms; der Rechner selbst kennt
+  weder Gleitkomma noch Dezimalumwandlung. Der Assembler `c82ass` kennt keine Gleitkomma- oder Dezimalbruch-Literale
+  (Zahlen nur als Oktal- oder ganze Dezimalzahl, Assemblerdokumentation 3.2); ein Gleitkommawort wird als Oktalzahl mit
+  führender 0 mit `dw` angegeben (z. B. −16: `dw 062600000000`, wie `dw 004000000000` in den Beispielprogrammen).
+- Nicht übernommen: Die handschriftliche Randnotiz zu Seite 1.3 (Zahlenbeispiele mit „72 Stellen") ist in der Kopie nicht
+  eindeutig lesbar und passt nicht zum Zahlenbereich von 2³¹ ≈ 2 · 10⁹; sie gehört offenbar nicht zur Definition des C 8205.
+
+Tetradendarstellung (Quelle: BIS-Dokumentation, Ergänzung 07.10.2026)
+- **Idee:** Bei der Tetradendarstellung von Dezimalzahlen wird jede Dezimalziffer als vierstellige Dualzahl (Tetrade) geschrieben.
+  Sie unterscheidet sich von der reinen Dezimaldarstellung nur dadurch, dass für eine Ziffer nicht ein, sondern vier Zeichen
+  verwendet werden. Handschriftlicher Randvermerk der Quelle (am Rand abgeschnitten, sinngemäß): nur für Ein- und Ausgabe.
+- **Intern:** In den 33 Dualstellen des Maschinenwortes lassen sich 8 Tetraden unterbringen. Zuordnung (höchstwertige Ziffer links):
+
+| Wortstellen | z₀–z₃ | z₄–z₇ | z₈–z₁₁ | z₁₂–z₁₅ | z₁₆–z₁₉ | z₂₀–z₂₃ | z₂₄–z₂₇ | z₂₈–z₃₁ | z₃₂ |
+|---|---|---|---|---|---|---|---|---|---|
+| Tetrade | t₇ | t₆ | t₅ | t₄ | t₃ | t₂ | t₁ | t₀ | – |
+
+- Ein Maschinenwort fasst höchstens 8 Tetraden (8 · 4 = 32 Bit); das 33. Bit, **z₃₂, bleibt frei**. Die Tetraden stehen damit **linksbündig** im Wort: t₇ beginnt bei z₀, die
+  niederwertigste Tetrade t₀ endet bei z₃₁, nicht bei z₃₂. Beim Auswerten eines Tetradenworts bleibt z₃₂ unberücksichtigt.
+- Die Tetraden t₇ … t₀ sind nicht mit den Oktal-Triaden des Maschinenwortes (t₁₀ … t₀, 3 Bit) zu verwechseln; die Bezeichnung t
+  hat hier eine andere Bedeutung. Tetraden und Triaden liegen im Wort nicht deckungsgleich.
+- **Extern:** Die Zahl besteht aus höchstens acht Dezimalziffern **ohne Vorzeichen**. Zahlenbereich: z ≤ 10⁸ − 1 = 99 999 999
+  (Ziffern 0 bis 9, handschriftlicher Zusatz „Dezimal 0–9").
+- **Beispiel der Quelle:** externes Wort 2 8 1 3 6 9 0 5 ergibt das interne Wort `0010 1000 0001 0011 0110 1001 0000 0101 0`
+  (33 Bit, letzte Stelle z₃₂ = 0), oktal `12011551012` (nachgerechnet).
+- **Rechnen:** Im Bausteininterpretationssystem gibt es nur Programme für die Ein- und Ausgabe von Tetraden. Rechenoperationen mit
+  Zahlen in Tetradendarstellung können nicht durchgeführt werden. Der Rechner selbst hat dafür keine Befehle; die Darstellung
+  ist wie die Gleitkommadarstellung reine Programmkonvention. Der Assembler `c82ass` kennt kein Tetraden-Literal; ein Tetradenwort
+  wird wie jedes andere Wort als Oktalzahl mit führender 0 angegeben (obiges Beispiel: `dw 012011551012`).
 
 Zahlen treten auf
    in Flags ( 1 dual-bit)

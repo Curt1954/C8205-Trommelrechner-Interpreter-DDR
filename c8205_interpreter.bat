@@ -63,7 +63,7 @@ endlocal & exit /b %ERRORLEVEL%
 rem Schalter des Interpreters, die ein eigenes Wertargument mitnehmen
 rem (Liste wie in c8205_interpreter.sh). Rueckgabe 0 = Wertschalter, 1 = nicht.
 :ist_wertschalter
-for %%s in (--mdverz --leser1 --lochbandleser1 --leser2 --lochbandleser2 --stanzer1 --lochbandstanzer1 --sw-ausgabe --k0 --out --pruefe-stanzer1 --pruefe-sw-ausgabe) do (
+for %%s in (--mdverz --leser1 --lochbandleser1 --leser2 --lochbandleser2 --stanzer1 --lochbandstanzer1 --sw-ausgabe --k0 --out --pruefe-stanzer1 --pruefe-sw-ausgabe --zwischenablage) do (
     if "%~1"=="%%s" exit /b 0
 )
 exit /b 1

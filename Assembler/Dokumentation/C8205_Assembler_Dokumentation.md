@@ -5,6 +5,10 @@ zum Durchsuchen und Zitieren. **Maßgeblich bleibt die .odt** (siehe `C8205-Proj
 Abschnitte 1 und 3); bei Widersprüchen gilt die .odt. Diese Ableitung wird nicht automatisch
 aktualisiert, wenn die .odt sich ändert.
 
+Stand 09.10.2026: Die Abschnitte 1 bis 5 dieser Ableitung wurden an das tatsächliche Verhalten des Assemblers `c82ass`
+(Version 0.2, einschließlich der in Abschnitt 6.3 beschriebenen Korrekturen im Quellcode) angepasst. Was gegenüber der
+.odt geändert wurde und warum, steht in Abschnitt 6 am Ende dieser Datei. Die .odt wurde am 09.10.2026 entsprechend angepasst.
+
 Hinweis zur Nummerierung: Die Original-Gliederung springt nach Abschnitt "3.2 Sprachdefinition" erneut
 bei "3." ein (Abschnitt "Assembleranweisungen"), obwohl bereits eine übergeordnete Ebene "3. Der
 Assembler c82ass" existiert. Das ist keine Übertragungsfehler dieser Ableitung, sondern so in der Quelle
@@ -12,7 +16,7 @@ vorgefunden und hier unverändert übernommen (analog zur Praxis in `C8205-Proje
 Unstimmigkeiten zu vermerken statt sie eigenmächtig zu bereinigen).
 
 
-# Cross-Assembler für C8205 / C8205Z – v.02
+# Cross-Assembler für C8205 / C8205Z – Version 0.03-001
 
 Die gesamte Software läuft sowohl unter Linux als auch Windows 10. Sie ist in C (gcc) programmiert; die
 grafische Oberfläche benutzt node.js.
@@ -31,15 +35,20 @@ gekürzt), Ausgabe von `ls -1R`:
 
 ```
 ./Assembler:
-c82ass                         # Batch-Datei zum Erzeugen des Assemblers
-c82ass.bat                     # Batch-Datei zum Erzeugen des Assemblers unter Windows (Pendant zu c82ass)
 c82ass.sh                      # Ausführen des Assemblers
+asm_alle.sh                    # assembliert alle .asm-Dateien unterhalb eines Verzeichnisses (meldet nur Fehler)
+asm_aufraeumen.sh              # entfernt .log, .mqo, .obj und .sym (Trockenlauf; --loeschen löscht)
 Dokumentation                  # diese Dokumentation
 _Linux                         # Linux-Binary des Assemblers
+make_c82ass.bat                # Batch-Datei zum Erzeugen des Assemblers unter Windows (Pendant zu make_c82ass.sh)
+make_c82ass.sh                 # Skript zum Erzeugen des Assemblers unter Linux
 projekdetails                  # zuletzt benutzte Aufrufparameter
-projekdetails.<Projekt>        # gesicherte Aufrufparameter je Projekt
+projekdetails.<Projekt>        # gesicherte Aufrufparameter je Projekt (`/` im Projektnamen wird zu `_`)
 Projekt_1                      # Projektverzeichnis (Beispiel, mit Unterverzeichnissen)
 Proj_FeldSortieren             # Projektverzeichnis (Beispiel, ohne Unterverzeichnisse)
+Projekt_2                      # Projektverzeichnis (Beispiel, ohne Unterverzeichnisse)
+Claude                         # weitere Beispielprojekte (ohne Unterverzeichnisse)
+Claude_bsp_reassemblierung     # weitere Beispielprojekte, je Programm ein Unterverzeichnis
 Sourcecode                     # C-Quellcode des Assemblers selbst
 _Windows                       # Windows-Binary des Assemblers
 
@@ -52,6 +61,12 @@ c82ass
 ./Assembler/Projekt_1:
 bsp_5.15
 bsp_5.16
+bsp_seite_39
+bsp_seite_40
+bsp_seite_42
+deepseek-test
+dt_test
+ziffern
 
 ./Assembler/Projekt_1/bsp_5.16:
 bsp_5_16.asm  bsp_5_16.dmp  bsp_5_16.log  bsp_5_16.mqo  bsp_5_16.obj  bsp_5_16.sym  bsp_5_16.test
@@ -78,14 +93,16 @@ nur erwähnt, weil `c82ass` Dateien für sie erzeugt (`.mqo` und `.obj` für `c8
 für `c82dump`). Für die Prüfung von Assemblerergebnissen im Interpreter dient stattdessen die Datei `.test`
 (s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a).
 
-`c82ass` ist ein Shell-Script zum Erzeugen des Assemblers. Die `.bat`-Datei leistet das Gleiche für den
+`make_c82ass.sh` ist ein Shell-Script zum Erzeugen des Assemblers. Die Datei `make_c82ass.bat` leistet das Gleiche für den
 MinGW-w64-Crosscompiler unter Windows. Der Pfad `_Linux` enthält alle Linux-Binaries und Libraries, der
 Pfad `_Windows` die Pendants für Windows 10. `Sourcecode` enthält ausschließlich den C-Quellcode.
+
+`asm_alle.sh [Basisverzeichnis]` assembliert alle `.asm`-Dateien unterhalb eines Verzeichnisses (Vorgabe: `./`) mit `c82ass.sh`. Bei fehlerfreiem Lauf erscheint keine Meldung; bei einem Fehler wird die Datei mit den Fehlerzeilen des Assemblers gemeldet. Rückgabewert: 0 = alles fehlerfrei, 1 = Fehler. `asm_aufraeumen.sh` entfernt die erzeugten Dateien `.log`, `.mqo`, `.obj` und `.sym` unterhalb von `Assembler` (nicht in `Dokumentation`, `Sourcecode`, `_Linux`, `_Windows`); ohne Parameter wird nur angezeigt, was gelöscht würde (Trockenlauf), mit `--loeschen` wird tatsächlich gelöscht. Beide Skripte gehören in das Verzeichnis `Assembler`.
 
 
 ## 2. Überblick
 
-Sowohl das Programm `c82ass.sh` (Linux) als auch das Windows-Binary `_Windows\c82ass.exe` (die Datei `c82ass.bat` erzeugt es nur) werden über Aufrufparameter versorgt.
+Sowohl das Programm `c82ass.sh` (Linux) als auch das Windows-Binary `_Windows\c82ass.exe` (die Datei `make_c82ass.bat` erzeugt es nur) werden über Aufrufparameter versorgt.
 Bei jedem Start eines der Programme werden die jeweils letztbenutzten Parameter automatisch in der Datei
 `projekdetails` abgelegt, sodass ein Folgestart ohne Angabe von Parametern gelingt. Zur Änderung müssen
 die Parameter einfach mit veränderten Werten wieder angegeben werden.
@@ -93,8 +110,23 @@ die Parameter einfach mit veränderten Werten wieder angegeben werden.
 ```
 $ c82ass.sh -h
 C8205 Assembler C82aas Version 0.2
-Usage: c82ass.sh -p Projektverzeichnis -s Quellcode-Datei
+Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei
 ```
+
+Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint daher `./_Linux/c82ass`. `c82ass.sh` ruft
+`./_Linux/c82ass` relativ auf und muss deshalb aus dem Verzeichnis `Assembler` gestartet werden; dort werden auch
+`projekdetails` und (zuerst) `c82ass.makros` gesucht.
+
+- `-p` nennt das Verzeichnis, in dem die `.asm`-Datei **direkt** liegt (z. B. `Projekt_1/bsp_5.16`). Unterverzeichnisse
+  werden nicht durchsucht; ein Pfadanteil bei `-s` wird abgeschnitten.
+- Hat der Name bei `-s` keine Endung aus genau drei Zeichen, wird `.asm` angehängt (`bsp_5_16` wird zu `bsp_5_16.asm`).
+- `projekdetails` enthält die Zeilen `-p <Verzeichnis>` und `-s <Datei>`; fehlt einer der Parameter im Aufruf, wird der
+  gespeicherte Wert benutzt. Beim Wechsel des Projektverzeichnisses wird die bisherige Datei als
+  `projekdetails.<altes Projekt>` gesichert (Schrägstriche im Namen werden zu `_`, z. B. `projekdetails.Projekt_1_bsp_5.16`)
+  und die gesicherte Datei des neuen Projekts, falls vorhanden, zurückgeholt.
+- Rückgabecode: 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch). Parameter ab einem Argument, das mit `>` beginnt,
+  werden ignoriert.
+- Unbekannte Optionen (z. B. `-x`) werden ohne Meldung ignoriert; der Lauf verwendet dann die gespeicherten Parameter.
 
 
 ## 3. Der Assembler c82ass
@@ -106,24 +138,52 @@ Version: 0.2
 Der Assembler `c82ass` erwartet eine Eingabedatei mit `<quelltext>` unter einem Dateinamen `.asm`.
 
 - **Pass 0:** liest die Makrodatei `c82ass.makros` (fester Name; gesucht zuerst im Arbeitsverzeichnis des Aufrufs, sonst in `Sourcecode/`),
-  prüft die Makrodefinitionen und löst die Makroaufrufe im Quelltext auf (Abschnitt 4).
+  sammelt die im Quelltext definierten Makros (Abschnitt 4.1), prüft die Makrodefinitionen und löst die Makroaufrufe im Quelltext auf (Abschnitt 4).
 - **Pass 1:** ermittelt die Literaltabelle, ausgegeben im Logfile `.log`.
 - **Pass 2:** ermittelt die Symboltabelle, ausgegeben im Logfile `.log`, und schreibt die Symboldatei `.sym`.
 - **Pass 3:** erzeugt aus dem aufgelösten Quelltext (Literale und Symbole eingesetzt) die Kennzeichenbefehle
   für das „Kleine Eingabeprogramm", ausgegeben im Objektfile `.obj`. Im selben Pass entstehen die Hilfsdatei
   `.mqo`, die formatierte Speicherbelegung `.dmp` und die Trommeldatei `.test` für den Interpreter.
 
-Auf STDOUT gibt der Assembler den formatierten Quelltext (einschließlich der aufgelösten Literale) aus.
-Fehlermeldungen erfolgen innerhalb dieser Ausgabe.
+Auf STDOUT gibt der Assembler den formatierten Quelltext (einschließlich der aufgelösten Literale) aus. Meldungen mit `Fehler:`,
+`Warnung:` und `Abbruch` sowie die Statuszeilen `Projektverzeichnis:`, `Benutze für -s die Datei:` und `Startadresse:` gehen auf STDERR
+(farbig hervorgehoben). Fehler werden je nach Pass in unterschiedlicher Form gemeldet (siehe die folgende Tabelle); jeder Fehler beendet
+den Lauf mit Rückgabecode 16. Bei Fehlern können `.obj`, `.mqo` und `.dmp` trotzdem teilweise entstehen und sind dann nicht verwendbar.
+
+**Fehlerausgaben**
+
+| Fehlerart | Ausgabe auf STDOUT (Listing) | Ausgabe auf STDERR | Ablauf danach |
+|---|---|---|---|
+| Makrodefinition fehlerhaft (Pass 0) | – | `Fehler: Makrodefinition …`, `Fehler: N fehlerhafte Makrodefinition(en) …` | Abbruch nach Pass 0, keine Ausgabedateien |
+| Makroaufruf fehlerhaft (Pass 0), z. B. Parameteranzahl oder -typ | `;*** Fehler: erwartet 2 Parameter, aber 1 wurden übergeben!` bzw. `;*** Fehler $1 Parameter $1: Wert "123" …` | `Warnung: Compilierung endete mit FEHLERn.` | Abbruch nach Pass 0, keine Ausgabedateien |
+| Syntaxfehler in Pass 1 (z. B. `#` am Anfang eines `dt`-Textes) | `;*** 1 Fehler: …` | `Fehler: bei Operand: … in Zeile: …`, `Fehler: Abbruch wegen Syntaxfehler.` | Pass 2 läuft noch (`.log`, `.sym`), Pass 3 entfällt |
+| Fehler in Pass 2 (z. B. Symbol doppelt, Programmzählerüberlauf über 7777) | `;*** (2) Fehler: …` | `Fehler: Abbruch wegen Syntaxfehler.` | Pass 3 entfällt |
+| Fehler in Pass 3 (Operand oder Operationscode ungültig) | Zeile `<adresse>: EE …` mit darunter stehender Meldungszeile `bei Operand: … ungültig` | `Fehler: Abbruch.` | alle Pässe gelaufen, `.obj`, `.mqo`, `.dmp`, `.test` unvollständig |
+| Belegungsfehler in Pass 3 | `;*** 3 Fehler: Adresse … doppelt belegt: …` | `Fehler: Adresse … doppelt belegt: …`, `Fehler: Abbruch.` | wie Fehler in Pass 3 |
+
+**Belegungsprüfung (Pass 3):** Jedes Wort der Trommel darf nur von einer Anweisung beschrieben werden. Geprüft werden Maschinenbefehle,
+`dw`, `da`, `dbn`, `dt`, `dto`, `dtm`, `dz` und die automatisch erzeugten Literale. Überschneidet sich die fortlaufende Speicherbelegung mit
+einem früher belegten Bereich, zum Beispiel weil ein `equ` zurückspringt oder das Programm in einen mit `equ` weiter hinten angelegten
+Datenbereich hineinläuft, meldet der Assembler `Adresse <oktal> doppelt belegt: "<neue Zeile>" ueberschneidet sich mit "<frühere Zeile>".`
+und der Lauf endet mit Rückgabecode 16. Pro Zeile wird höchstens ein Konflikt gemeldet. Nicht geprüft werden `db` (reserviert nur
+Speicherplätze), `equ`, `start`, `abs` und `end`.
 
 Aufrufbeispiel:
 
 ```
+
+**Auswertung von Ausdrücken** (`<werteausdruck>` und `<adressausdruck>`): `*` und `/` binden stärker als `+` und `-`;
+Operatoren gleichen Ranges werden von links nach rechts ausgewertet (`2+3*4` ergibt 14, `10-2-3` ergibt 5). `/` ist eine
+ganzzahlige Division, deren Ergebnis zur Null hin abgeschnitten wird (`7/2` ergibt 3, `-7/2` ergibt -3); eine Division durch 0 ist
+ein Fehler. Ein Vorzeichen ist nur am Anfang des Ausdrucks zulässig (`-7/2`, `+5`, nicht `7/-2` oder `--5`). Klammern und
+Leerzeichen innerhalb eines Ausdrucks sind nicht zulässig.
+
+**Mnemonische Operationscodes (unvollendet):** Der Assembler enthält den Ansatz einer Tabelle mnemonischer Operationscodes (Datei `c8205_op_codes.c`). Zurzeit kennt er, ausschließlich in Kleinbuchstaben, `add` (Code 003), `sub` (004), `ld` (005), `jmp` (006), `stopp` (007) und `nop` (000). Der Operand wird wie bei dreistelligen Operationscodes behandelt und darf entfallen. Die Werte sind vorläufige Platzhalter und entsprechen nicht dem Befehlssatz des C8205; die Tabelle ist unvollständig, und die Mnemonics sollten in Programmen nicht verwendet werden. Maßgeblich bleibt der dreistellige Oktalcode. Die Tabelle ist als Grundlage für eine spätere Erweiterung um vollständige Mnemonics gedacht.
 $ c82ass.sh -p PzBeispiele_4 -s bsp_5.17_Oktaldruck.asm
 ```
 
-Die `<adresse>` der Befehle im Objektfile beginnt immer bei 0000 bzw. bei dem durch `start` eingestellten
-Wert.
+Die `<adresse>` der Befehle im Objektfile beginnt immer bei 0000. Ein Operand von `start` ändert die Adressen
+nicht; der Wert steht nur in der Kennzeichenzeile `21 0000 <zahl>` (siehe 3.7).
 
 Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`-Datei (Beispiel
 `Projekt_1/bsp_5.16/`):
@@ -131,12 +191,12 @@ Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`
 | Endung | Inhalt |
 |---|---|
 | `.asm` | Quelltext (Eingabe) |
-| `.dmp` | formatierte Speicherbelegung (Listing): je Zeile Adresse mit Maschinenwort (`<adresse>: <K1> [<K2>] [<Wert>]`), Label, Mnemonic, Operand und Kommentar in Spalten. Es ist dasselbe Listing, das der Assembler auf STDOUT ausgibt (Meldung „Ausgabe der formatierten Speicherbelegung nach: …“) |
-| `.log` | Literaltabelle, Symboltabelle, Tabelle der absoluten Symbole |
-| `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet |
+| `.dmp` | formatierte Speicherbelegung (Listing): je Zeile Adresse mit Maschinenwort (`<adresse>: <K1> [<K2>] [<Wert>]`), Label, Mnemonic, Operand und Kommentar in Spalten. Es ist dasselbe Listing, das der Assembler auf STDOUT ausgibt (Meldung „Ausgabe der formatierten Speicherbelegung nach: …“), jedoch ohne die Farbcodes der Fehlermeldungen |
+| `.log` | Abschnitte, soweit vorhanden: Literaltabelle, EQU-Definitionen, ABS-Definitionen, Symboltabelle (Symbol, RelAddr, Adresse, original Operation) und Adresstabelle (nach Adresse sortiert) |
+| `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet. Gegenüber dem Quelltext fehlen `start`, `end`, Makrodefinitionen, reine Kommentarzeilen und `abs`-Anweisungen; Makroaufrufe sind durch ihre Ersetzung ersetzt, `equ`-Operanden aufgelöst, und die Literale stehen am Ende als `dw`-Zeilen (`l0001 dw 5`) |
 | `.obj` | mit `c82load` ladefähiger Objektcode K1K2 |
-| `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen |
-| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Platzhalter-Definitionen für Testmarken und Tastenfolge sowie ggf. dem Leerbefehl 164, die für den jeweiligen Fall ergänzt bzw. erweitert werden müssen; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
+| `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen. Je Zeile `<symbol>,<adresse>` (vierstellig oktal, in Quelltextreihenfolge, einschließlich Literalsymbolen wie `l0001`) |
+| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (`Trommeldatei:`, `#DOK-0001`, `#SPEI-0001 0000-0000`, `#PROT STUFE=2`) und Fuß (`Tastenfolge:`, `H G R`), die für den jeweiligen Fall ergänzt bzw. erweitert werden müssen. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
 
 Vor jedem Lauf löscht der Assembler die Dateien `.log`, `.obj`, `.mqo`, `.sym`, `.test` und `.dmp` des
 Projekts und erzeugt sie neu. Die früher in dieser Dokumentation genannten Endungen `.mqt` (modifizierter
@@ -163,7 +223,10 @@ nur ein Rest davon).
 <adresssymbol>       ::= Zeichenfolge aus 1 bis 32 Zeichen:
                           <alphazeichen> [ <alphazeichen> | <dezimalziffer> [ … ]],
                           abgeschlossen durch Doppelpunkt.
-                          Sie wird vom Programmierer frei definiert.
+                          Sie wird vom Programmierer frei definiert. Der Unterstrich `_` wird ebenfalls akzeptiert.
+                          Das erste Zeichen ist ein Buchstabe oder `_`, keine Ziffer. Erlaubt sind nur die ASCII-Buchstaben
+                          `a`–`z`, `A`–`Z`, die Ziffern `0`–`9` und `_`; Zeichen wie `-`, `.` oder `ä` sind unzulässig.
+                          Doppelt definierte Symbole, Symbole über 32 Zeichen und unzulässige Symbole sind Fehler.
 <literalsymbol>      ::= 'l' (kleines L) gefolgt von einer Oktalziffernfolge von genau 4
                           Oktalziffern, abgeschlossen durch Doppelpunkt.
                           Sie wird vom Assembler automatisch aus dem Inhalt des Literalzählers vergeben.
@@ -173,7 +236,12 @@ nur ein Rest davon).
                           Einschränkungen: kein negatives Vorzeichen;
                           Wertebereich nur von 00000 … 07777;
                           nur maximal ein Symbol erlaubt.
+                          Ein Vorzeichen am Anfang (auch `+`) ist nicht zulässig.
+                          Verstöße meldet der Assembler als Fehler in Pass 3.
 <werteausdruck>      ::= <wert><rechenzeichen>[<wert><rechenzeichen> … ]
+                          Einschränkung: Bei `dw` und in `#`-Literalen sind keine Symbole zulässig (auch keine
+                          `abs`-Symbole), dort nur Zahlen; Wertebereich -2^32 … 2^33-1. Adressen werden mit `da` oder
+                          `@`-Literalen geschrieben.
 <literal>            ::= #<werteausdruck> | @<adressausdruck>
                           Literal bedeutet, dass der numerische Wert von <werteausdruck> oder
                           <adressausdruck> auf einem vom Assembler selbst festgelegten
@@ -185,9 +253,9 @@ nur ein Rest davon).
 <trenner>            ::= Tabulator[<trenner>[...]] | Leertaste<trenner>[...]]
 <befehl>             ::= [<symbol>] <trenner><operationscode> [<trenner><operand>]
                           [<trenner><kommentar>]
-                          Alle Befehle müssen auf einer Zeile stehen.
+                          Alle Befehle müssen auf einer Zeile stehen; eine Zeile darf höchstens 255 Zeichen lang sein.
 <operationscode>     ::= <maschinenbefehl> | <assembleranweisung>
-<assembleranweisung> ::= start | end | db | dw | da | dt | dp | dz | equ
+<assembleranweisung> ::= start | end | db | dbn | dw | da | dt | dto | dtm | dz | equ | equ10 | equ40 | equ100 | abs
 <maschinenbefehl>    ::= <oktalziffer><oktalziffer><oktalziffer>
 <quelltext>          ::= <befehl>[<befehl> [ … ]]
 ```
@@ -203,6 +271,8 @@ nur ein Rest davon).
 [<symbol>]  db  <zahl>
 ```
 Hält `<zahl>` Speicherplätze frei, ohne ihren Inhalt zu definieren.
+`<zahl>` muss eine Oktalzahl (führende 0) oder eine Dezimalzahl sein, höchstens 010000. Negative Zahlen, Ausdrücke
+(z. B. `3+1`), Symbole und ein fehlender Operand sind Fehler.
 
 ### 3.2 Definiere Bereich auf Null
 
@@ -210,14 +280,20 @@ Hält `<zahl>` Speicherplätze frei, ohne ihren Inhalt zu definieren.
 [<symbol>]  dbn  <zahl>
 ```
 Hält `<zahl>` Speicherplätze frei, setzt ihren Inhalt auf 0.
+Für `<zahl>` gilt dasselbe wie bei `db`. Je Speicherplatz erzeugt `dbn` in der Objektdatei die Zeile `00 0.`.
 
 ### 3.3 Definiere Wert
 
 ```
 [<symbol>]  dw  <werteausdruck>
 ```
-- Speichert den numerischen Wert von `<werteausdruck>` auf dem `<speicherplatz>`.
+- Speichert den numerischen Wert von `<werteausdruck>` auf dem `<speicherplatz>`. Zulässig ist der Bereich -2^32 bis
+  2^33-1 (33-Bit-Wort), sonst meldet der Assembler `Operand ist ungültig`. Negative Werte werden im Zweierkomplement
+  gespeichert (`dw -5` ergibt `77777777773`). Symbole sind im `<werteausdruck>` von `dw` nicht zulässig; Adressen
+  schreibt man mit `da`.
 - Es wird keine Hauptleitadresse addiert.
+- In der Objektdatei steht ein Datenwort als `00 <elf Oktalziffern>.`; nur der Wert 0 wird kurz als `<adresse>: 0.` ausgegeben
+  (Nullwort ohne Kennzeichen).
 
 ```
 [<symbol>]  dw  <literal>
@@ -252,10 +328,27 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 - Gespeichert wird ein Code gemäß R300-Code Ausgabeadresse C8205 (siehe R300-code.pdf). Die
   Abspeicherung erfolgt als Folge von Speicherplatzinhalten in der Form (oktal): `0000 xxxx 030`, wobei
   `xxxx` die Ausgabeadresse ist.
-- Die Zeichen „\" am Anfang und Ende sind nur erforderlich, wenn der Text Leerzeichen enthält.
-- Außer für das erste Zeichen werden die Umschaltzeichen automatisch aus dem Text abgeleitet. Achtung:
-  Jedes neue `dt` beginnt wieder mit der Annahme, dass die Einstellung KB/GB zum ersten Zeichen des
-  Textes passt.
+- Die Zeichen „\" am Anfang und Ende sind erforderlich, wenn der Text mit `#` beginnt, ein `;` enthält (sonst beginnt dort der
+  Kommentar) oder führende bzw. abschließende Leerzeichen enthalten soll. Leerzeichen innerhalb des Textes (`dt a b`) sind auch ohne
+  „\" zulässig; sonst werden führende und abschließende Leerzeichen entfernt.
+  Ein führendes `#` kennzeichnet ein Literal (`#<werteausdruck>`), keinen Text; `dt #ab` und `dto #x` meldet der
+  Assembler als Fehler. Richtig ist `dt \#ab\` bzw. `dto \#x\`. Ein `#` innerhalb des Textes (`dt a#b`) ist zulässig.
+- `dt` ist für längere, zusammenhängende Textausgaben gedacht. Sein Vorteil: Der Text lässt sich ohne
+  ausgeschriebene Umschaltzeichen definieren, der Quelltext bleibt gut lesbar. Für verstreute Einzelzeichen
+  ist `dt` nicht geeignet, dafür nimmt man `dz` (3.6) und schreibt alle Umschaltzeichen explizit.
+- Der Assembler setzt `dt` zur Assemblerzeit in Maschinenbefehle um und kennt den Zustand KB/GB zur
+  Laufzeit nicht. Er führt den Zustand nur in der Reihenfolge des Quelltexts weiter. Beim allerersten `dt`
+  des Quelltexts nimmt er KB an. Jedes weitere `dt` setzt den Zustand des vorangehenden `dt` fort und fügt
+  nur dort ein Umschaltzeichen ein, wo sich der Zustand innerhalb des Textes ändert.
+- Daraus folgt: Vor jeder zusammengehörenden Folge von `dt`-Anweisungen muss ein Umschaltbefehl
+  durchlaufen werden, der exakt auf den Zustand des ersten Zeichens dieser Folge schaltet (`dz $inkb`,
+  `dz $ingb` oder `dtm` als erste Anweisung der Folge). Das gilt für jede Folge neu. Es kann dabei ein
+  eigentlich unnötiger Umschaltbefehl entstehen. Der ist beabsichtigt, weil sich Assemblerzeit und
+  Laufzeit nicht synchronisieren lassen. Umschaltzeichen mit `dz` zwischen zusammengehörenden
+  `dt`-Anweisungen sind nicht zulässig, sie bringen den Zustand des Assemblers durcheinander.
+- Praktischer Hinweis dazu: `dtm` fügt immer vor dem ersten Zeichen ein Umschaltzeichen passend zum ersten
+  Buchstaben ein. Damit ist es die natürliche erste Anweisung einer `dt`-Folge. Es ersetzt das von Hand
+  gesetzte `dz $inkb` oder `dz $ingb` davor.
 - `dto` verhält sich wie `dt`, außer dass generell KEINE Umschaltzeichen automatisch eingefügt werden.
   Das bedeutet, in einer `dto`-Anweisung kann man KEINE gemischte Groß- und Kleinschreibung definieren
   (auch keine Zahlen und Großbuchstaben usw.).
@@ -266,7 +359,7 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 
 ```
 [<symbol>]  dz  $wrzl | $sm | $inkb | $ingb | $irrz | $irrs | $trans | $bm | $vorl |
-                $irrb | $wr | $tab | $zr | % | ; | + | ` | / | , | . | -
+                $irrb | $wr | $tab | $zr | % | : | + | ` | / | , | . | -
 ```
 - Gespeichert wird ein Code gemäß R300-Code Ausgabeadresse C8205 (siehe Tabelle 2 unten). Die
   Abspeicherung erfolgt auf einem Speicherplatz in der Form (oktal): `0000 ssss 030`. Eine automatische
@@ -277,13 +370,16 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
              dz  $wrzl  ; Zeilenschaltung
          MEND
   ```
+  (In der mitgelieferten `c82ass.makros` enthält `WRZL` zusätzlich die Anweisung `ANWAHL 4700`.)
 
 ### 3.7 Beginn des Quellcodes
 
 ```
 start  [<zahl>]
 ```
-- Nur als 1. Anweisung im `<quelltext>` zulässig. Eine Maschinencodeausgabe erfolgt nicht.
+- Nur als 1. Anweisung im `<quelltext>` zulässig, und nur einmal; ein Label vor `start` ist ein Fehler. Der Operand
+  muss eine Konstante sein. Der Befehlszähler beginnt unabhängig vom Operanden bei 0. Eine Maschinencodeausgabe erfolgt
+  nicht; mit Operand wird im Objektcode die Kennzeichenzeile `21 0000 <zahl>` ausgegeben.
 - Ist `<zahl>` angegeben, wird die 1. Leitadresse in den „Lochstreifen" ausgegeben. Es wird dann durch
   `c82load` auf diese 1. Leitadresse + Ladeadresse geladen. Die Ladeadresse existiert dabei nur beim
   Laden mit `c82load`.
@@ -299,8 +395,8 @@ start  [<zahl>]
   Kennzeichenbefehl für das Setzen der Relativadresse ausgegeben (KZ=20).
 - Das weitere Laden erfolgt auf 1. Leitadresse + Ladeadresse + Relativadresse. Die Ladeadresse existiert
   dabei nur beim Laden mit `c82load`.
-- Die Anweisungen `equ100`, `equ40` und `equ10` runden entsprechend auf die nächste volle
-  Speicheradresse auf.
+- Die Anweisungen `equ100`, `equ40` und `equ10` runden den Befehlszähler (Operand `*`) oder den numerischen Operanden
+  auf das nächste Vielfache von 0100, 040 bzw. 010 (oktal) auf.
 
 ### 3.9 Definition Absolutadresse
 
@@ -319,10 +415,14 @@ start  [<zahl>]
 ```
 [<symbol>]  end
 ```
-- Hinter dieser Anweisung sollten nur noch `abs`- oder `equ`-Anweisungen folgen. Der Assembler ordnet
-  hinter „end" die automatisch erzeugten Literaldefinitionen ein, sodass sie noch zum verschieblichen
-  Teil hinzukommen. Ein nachfolgendes `equ` käme also HINTER die Literale.
+- Hinter dieser Anweisung sollten nur noch `abs`- oder `equ`-Anweisungen folgen. Sie werden auch dann
+  ausgewertet, wenn das Programm Literale enthält. Makrodefinitionen (siehe Abschnitt 4.1) dürfen
+  ebenfalls dort stehen. Der Assembler ordnet hinter dem ersten „end" die automatisch erzeugten
+  Literaldefinitionen ein, sodass sie noch zum verschieblichen Teil hinzukommen. Ein nachfolgendes
+  `equ` käme also HINTER die Literale. Ein weiteres „end" ändert daran nichts.
 - Eine Maschinencodeausgabe erfolgt für „end" nicht.
+- Code und Daten (Maschinenbefehle, `db`, `dw` usw.) hinter „end" sind nicht vorgesehen. Der Assembler
+  lehnt sie nicht ab, sondern übersetzt sie hinter den Literalen (soweit vorhanden) mit.
 
 
 ### Tabelle 2: Sonderzeichen für die dz-Anweisung
@@ -346,7 +446,7 @@ Spalte 1: String, der als Operand bei `dz` anzugeben ist. Spalte 2: 4 Oktalziffe
 | `$tab` | 01550 |
 | `$wr` | 01120 |
 | `%` | 01740 |
-| `;` | 0150 |
+| `:` | 0150 |
 | `+` | 0400 |
 | `` ` `` | 01600 |
 | `/` | 01410 |
@@ -354,7 +454,7 @@ Spalte 1: String, der als Operand bei `dz` anzugeben ist. Spalte 2: 4 Oktalziffe
 | `.` | 0730 |
 | `-` | 01000 |
 
-(In der Quelle sind `$wrzl` und `$sm` beide mit 02720 gelistet — so übernommen, nicht aufgelöst.)
+(In der Quelle sind `$wrzl` und `$sm` beide mit 02720 gelistet — so übernommen, nicht aufgelöst. Das Zeichen `;` kann bei `dz` nicht angegeben werden, weil es einen Kommentar einleitet; der Operand für den Code 0150 ist `:`, passend zu Tabelle 3.)
 
 ### Tabelle 3: Ausgabe-Umschlüsselung außer Sonderzeichen dz
 
@@ -421,19 +521,32 @@ nicht ergänzt.)
 Der Präprozessor ist sehr einfach gehalten und hat eine starre Syntax. Er prüft, ob eine Operation ein
 Makroname ist. Die Prüfung erfolgt in der Textdatei `c82ass.makros`, die erweitert werden darf. Der Assembler sucht sie unter
 diesem festen Namen zuerst im Arbeitsverzeichnis des Aufrufs, sonst unter `Sourcecode/c82ass.makros`; fehlt sie
-an beiden Orten, bricht er mit einer Fehlermeldung ab.
+an beiden Orten, bricht er mit einer Fehlermeldung ab. Zusätzlich können Makros direkt im Quelltext definiert werden (Abschnitt 4.1).
 
 - Jedes dort definierte Makro beginnt mit dem Makronamen, unmittelbar gefolgt von einem Doppelpunkt und
-  nach einem Tab dem Schlüsselwort `MACRO`.
+  danach (getrennt durch Tab oder Leerzeichen) dem Schlüsselwort `MACRO`.
 - Müssen dem Makro Parameter übergeben werden, folgt nach `MACRO`, getrennt durch Leerzeichen, die
   Anzahl der Parameter. Es sind maximal 9 Parameter zulässig.
 - Danach kommen die Definitionsanweisungen des Makros. Sie können die formalen Parameter `$x` mit
   x=1..9 enthalten, die durch die Übergabeparameter ggf. mehrfach ersetzt werden.
-- Jedes Makro wird durch das Schlüsselwort `<tab>MEND` abgeschlossen.
+- Jedes Makro wird durch das Schlüsselwort `MEND` abgeschlossen (Leerraum davor ist beliebig).
 
 Im Definitionsteil kann für jeden Parameter eine Prüfliste angegeben werden. Ist sie angegeben, darf der
 betreffende Parameter nur die Werte der Liste annehmen. Eine Prüfliste wird durch `$PRx` mit x=1..9
 definiert; sie muss auf einer Zeile für sich stehen.
+
+Statt einer Werteliste kann hinter `$PRx` eine Typangabe stehen (z. B. `$PR1: $TYPADR`). Dann prüft der Assembler
+beim Makroaufruf, ob der übergebene Wert zum Typ passt; sonst meldet er einen Fehler
+`Parameter $x: Wert "<wert>" …`:
+
+| Typ | Zulässiger Wert beim Aufruf |
+|---|---|
+| `$TYPADR` | eine symbolische Adresse (ein Label, z. B. `marke`) oder eine Sternadresse (`*`, `*+3`); keine Zahl |
+| `$TYPKON` | eine Oktalkonstante: nur Ziffern 0–7, beginnt mit `0` (z. B. `0100`); `100` oder `09` sind Fehler |
+| `$TYPABS` | ein Symbol, das im Quelltext mit `abs` definiert ist (z. B. `absx: abs 05`) |
+
+Die Prüfung erfolgt vor der eigentlichen Übersetzung und ist deshalb nur syntaktisch: Bei `$TYPADR` wird nicht
+geprüft, ob das Label im Programm vorkommt (das meldet die spätere Symbolauflösung).
 
 Die Definition der zu generierenden Anweisungen kann durch eine `$IF`-`$ELIF`-`$ENDIF`-Struktur gesteuert
 werden. Sie kann mehrfach auftreten, darf aber nicht geschachtelt werden. Die Schlüsselworte `$IF`,
@@ -458,24 +571,24 @@ Beispiel:
 
 ```
 ANWAHL:  MACRO 1
-  $PR1 4000 4100 4200 4300 4400 4500 4600 4700 K0 K1 K2 K3 LSL1 LSL2 LKL1 LKS1 LSS1 SW1I SW1O SW2O KONI
+  $PR1 4000 4100 4200 4300 4400 4500 4600 4700 K0 K1 K2 K3 K4 K5 K6 K7 LSL1 LSL2 LKL1 LKS1 LSS1 SW1I SW1O SW2O KONI
   # Generieren einer Anwahl für Zeichenkanäle
       $IF  $1  =  4000 | $1 = K7
-         030 4000  ; 4000 oder K7
+         030 04000  ; 4000 oder K7
       $ELIF  $1  =  4100 | $1 = K6
-         030 4100  ; 4100 oder K6
+         030 04100  ; 4100 oder K6
       $ELIF  $1  =  4200 | $1 = K5
-         030 4200  ; 4200 oder K5
+         030 04200  ; 4200 oder K5
       $ELIF  $1  =  4300 | $1 = K4 | $1 = LKS1
-         030 4300  ; 4300 oder K4 oder LKS1
+         030 04300  ; 4300 oder K4 oder LKS1
       $ELIF  $1  =  4400 | $1 = K3 | $1 = LKL1 | $1 = SW2O
-         030 4400  ; 4400 oder K3 oder LKL1 oder SW2 Output
+         030 04400  ; 4400 oder K3 oder LKL1 oder SW2 Output
       $ELIF  $1  =  4500 | $1 = K2 | $1 = LSL2 | $1 = SW1O
-         030 4500  ; 4500 oder K2 oder LSL2 oder SW1 Output
+         030 04500  ; 4500 oder K2 oder LSL2 oder SW1 Output
       $ELIF  $1  =  4600 | $1 = K1 | $1 = LSL1 | $1 = LSS1
-         030 4600  ; 4600 oder K1 oder LSL1 oder LSS1
+         030 04600  ; 4600 oder K1 oder LSL1 oder LSS1
       $ELIF  $1  =  4700 | $1 = K0 | $1 = SW1I | $1 = KONI
-         030 4700  ; 4700 oder K0 oder SW1 Input oder KON Input
+         030 04700  ; 4700 oder K0 oder SW1 Input oder KON Input
       $ENDIF
          MEND
 ```
@@ -492,18 +605,20 @@ input_loop:  ANWAHL  LSL1
 In einem solchen Fall wird generiert:
 
 ```
-;   ANWAHL   LSL1
-input_loop:  030  04600
+input_loop:  030  04600  ; 4600 oder K1 oder LSL1 oder LSS1
 ```
+
+Der Makroaufruf selbst wird nicht als Kommentarzeile (`;   ANWAHL   LSL1`) ausgegeben; er erscheint weder im Listing
+noch in `.mqo`, `.dmp` oder `.test`.
 
 Enthält das Makro selbst eine Schleife mit einem Label, z. B.:
 
 ```
 BSP1:  MACRO
 # Makro enthält eine Schleife
-start%:  211  …
+ML0001%: 211  …
          …
-         000  start%
+         000  ML0001%
          MEND
 ```
 
@@ -512,47 +627,90 @@ generierende Anweisung ein eigenes Label hat:
 
 ```
 loop      equ  *
-start0001 211  …
+ML0001DKR 211  …
           …
-          000  start0001
+          000  ML0001DKR
 ```
 
 Hat die erste Anweisung kein eigenes Label, entfällt die `equ`-Anweisung und die erste Anweisung erhält
-das Label des Makroaufrufs.
+das Label des Makroaufrufs. Ausnahme: Ist die erste Anweisung `equ`, `abs`, `start` oder `end`, bleibt die `equ`-Anweisung
+bestehen.
 
 Ein Makro SOLLTE kein „normales" Label der Assemblersprache enthalten, sonst kann es nur einmalig
-aufgerufen werden. Stattdessen sollte ein generisches Label verwendet werden, das mit einem Buchstaben
-beginnt, ggf. weitere Buchstaben und Zahlen enthält, und vor dem Doppelpunkt ein `%`-Zeichen hat. Dieses
-`%`-Zeichen wird durch die vierstellige Makroaufrufnummer ersetzt.
+aufgerufen werden. Stattdessen muss ein generisches Label verwendet werden: genau `ML`, vier Ziffern und `%`, danach der
+Doppelpunkt (z. B. `ML0004%:`). Jedes andere Label mit `%` meldet den Fehler `Macrolabel muß mit ML beginnen …`. Bei jedem
+Aufruf wird das `%` durch drei Großbuchstaben ersetzt (z. B. `ML0001DKR`), sodass jeder Aufruf ein eigenes Label erhält.
 
 Makro-Aufrufparameter, die exakt 4 Ziffern enthalten und nur diese, werden ggf. als 4-Ziffern-String
 geprüft (durch `$PRx`); sie erhalten bei der Benutzung (Ersetzung des formalen Parameters) automatisch
 eine Vornull. Beispiel: `ANWAHL 4600` erzeugt:
 
 ```
-;    ANWAHL 4600
-     030    04600
+     030    04600  ; 4600 oder K1 oder LSL1 oder LSS1
+```
+
+### 4.1 Makros im Quelltext
+
+Makros können nicht nur in der Makrodatei `c82ass.makros`, sondern auch direkt im Quelltext (`.asm`) definiert
+werden. Die Definition hat dieselbe Syntax wie in der Makrodatei: Sie beginnt mit dem Makronamen, unmittelbar
+gefolgt von einem Doppelpunkt, danach folgt das Schlüsselwort `MACRO` (bei Bedarf mit der Anzahl der Parameter).
+Abgeschlossen wird sie durch `MEND` (zulässig sind auch `MACROENDE` und `macroende`). Der Doppelpunkt hinter dem
+Makronamen ist im Quelltext Pflicht.
+
+- **Gültigkeit:** Eine Definition darf an beliebiger Stelle im Quelltext stehen, auch vor `start`. Das Makro gilt
+  im gesamten Quelltext, auch für Aufrufe, die vor der Definition stehen. Die Definition selbst erzeugt keinen Code.
+- **Definitionsteil:** Es gelten alle Regeln dieses Abschnitts (formale Parameter `$x`, Prüflisten `$PRx`,
+  `$IF`-`$ELIF`-`$ENDIF`, Kommentare mit `#` und `;`, generische Labels mit `%`). Ein Makro darf andere Makros
+  aufrufen, gleichgültig ob sie in der Makrodatei oder im Quelltext definiert sind, aber nicht sich selbst.
+- **Gleicher Name wie in der Makrodatei:** Das Makro im Quelltext ersetzt das gleichnamige Makro der Makrodatei,
+  jedoch nur für diesen Assemblerlauf; die Makrodatei selbst bleibt unverändert. Der Assembler gibt dazu eine
+  Warnung aus. Die Ersetzung wirkt auch dort, wo ein anderes Makro das ersetzte Makro aufruft.
+- **Fehler:** Ein Makroname darf im Quelltext nur einmal definiert werden. Weitere Fehler sind eine `MACRO`-Zeile
+  ohne Namen, eine Definition innerhalb einer anderen Definition (Schachtelung ist nicht erlaubt), ein fehlendes
+  `MEND` und ein `MEND` ohne zugehöriges `MACRO`. Der Assembler meldet den Fehler und bricht nach Pass 0 ab.
+
+Beispiel:
+
+```
+ZEILE2:  MACRO
+         dz  $wrzl  ; Zeilenschaltung
+         dz  $wrzl  ; Zeilenschaltung
+         MEND
+```
+
+Der Aufruf `ZEILE2` erzeugt die beiden Anweisungen `dz $wrzl`.
+
+Soll das Makro `WRZL` der Makrodatei nur für ein Programm anders arbeiten, wird es im Quelltext neu definiert:
+
+```
+WRZL:    MACRO
+         dz  $wrzl  ; Zeilenschaltung
+         dz  $wrzl  ; Zeilenschaltung
+         MEND
+```
+
+Der Assembler meldet dazu:
+
+```
+Warnung: Makro WRZL aus der Makrodatei wird für diesen Lauf durch die Definition im Quelltext ersetzt.
 ```
 
 
 ## 5. Compilierungsbeispiel
 
 ```
-c82ass.sh -p Projekt_1 -s bsp_5_16
+c82ass.sh -p Projekt_1/bsp_5.16 -s bsp_5_16
 ```
 
 ### 5.1 Quelltext bsp_5_16.asm und Assemblerlauf
 
+Hinweis: Die Datei `Projekt_1/bsp_5.16/bsp_5_16.asm` ist eine veränderte Fassung des hier abgedruckten Beispiels: Sie beginnt mit dem Startsprung `000 go` mit `equ 02000` und der Marke `go:`, enthält vor dem Halt den Debug-Befehl `164 0001`, und der Datenbereich beginnt mit `equ 02100` statt `equ 0100`. Ihr Objektcode weicht deshalb von 5.2 ab; der abgedruckte Quelltext ergibt genau den Objektcode in 5.2.
+
 ```
+Projektverzeichnis: Projekt_1/bsp_5.16
+Benutze für -s die Datei: bsp_5_16
+Startadresse: 0000
 C8205 Assembler C82aas Version 0.2
-Projektverzeichnis: Projekt_1
-Benutze für -s die Datei: bsp_5_16.asm
-Eingabedatei: Projekt_1/bsp_5.16/bsp_5_16.asm
-Log-Datei: Projekt_1/bsp_5.16/bsp_5_16.log
-Maschinencode-Datei: Projekt_1/bsp_5.16/bsp_5_16.obj
-Hilfsdatei: Projekt_1/bsp_5.16/bsp_5_16.mqo
-Symboltabelle-Datei: Projekt_1/bsp_5.16/bsp_5_16.sym
-Verarbeite Quellcode: Projekt_1/bsp_5.16/bsp_5_16.asm
 
 Pass 0
 Verarbeite 'c82ass.makros', Erzeuge Macroersetzungen
@@ -605,7 +763,13 @@ zvektor:        db      5
 ende:           end
 ```
 
-Ausgabe als Minimalprogramm-Objekt in: `Projekt_1/bsp_5.16/bsp_5_16.obj`
+Nach dem Listing meldet der Assembler:
+
+```
+Ausgabe als Minimalprogramm-Objektdatei nach: Projekt_1/bsp_5.16/bsp_5_16.obj
+Ausgabe der formatierten Speicherbelegung nach: Projekt_1/bsp_5.16/bsp_5_16.dmp
+Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: Projekt_1/bsp_5.16/bsp_5_16.test
+```
 
 ### 5.2 Durch c82ass erzeugter Objektcode (K1K2-Programmcode) für „Kleines Eingabeprogramm"
 
@@ -639,4 +803,171 @@ Ausgabe als Minimalprogramm-Objekt in: `Projekt_1/bsp_5.16/bsp_5_16.obj`
 0032: 00 00000000005.
       20 0000 0100.
 0100: 20 0105.
+/
 ```
+
+
+## 6. Abgleich mit dem Assembler c82ass (Prüfung vom 08.10.2026)
+
+Grundlage der Prüfung: Binary `c82ass` (Version 0.2), Quellcode `ca82ass.c` und `ca82_standards.c`, Makrodatei
+`c82ass.makros` sowie Testläufe mit dem Binary. Der Text der geänderten `.odt` stimmt mit den Abschnitten 1 bis 5 dieser
+Datei inhaltlich überein (nur Formatierung und Tippfehler unterscheiden sich). Die folgenden Punkte betreffen das Verhalten des Assemblers. Die Abschnitte 1 bis 5
+wurden am 09.10.2026 an dieses Verhalten angepasst; Abschnitt 6.1 bleibt als Änderungsprotokoll erhalten (die Spalte
+"Dokumentation sagt" nennt den Text der .odt vor der Anpassung).
+
+### 6.1 Abweichungen zwischen Dokumentation und Assembler
+
+| Nr. | Stelle | Dokumentation sagt | c82ass tut |
+|---|---|---|---|
+| 1 | 3.1, 5 (Aufruf) | `-p Projekt_1 -s bsp_5_16`, Dateien liegen in `Projekt_1/bsp_5.16/` | `-p` muss das Verzeichnis sein, in dem die `.asm` direkt liegt, also `-p Projekt_1/bsp_5.16`. Unterverzeichnisse werden nicht durchsucht. Ein Pfadanteil in `-s` wird abgeschnitten. Sonst: `Fehler: Die Datei … existiert nicht im Projektverzeichnis`, Rückgabecode 16. |
+| 2 | 2 | `c82ass.sh -h` meldet `Usage: c82ass.sh -p …` | Meldet den Aufrufnamen aus `argv[0]`, über `c82ass.sh` also `Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei`. |
+| 3 | 5.1 | Ausgabe mit Zeilen `Eingabedatei:`, `Log-Datei:`, `Maschinencode-Datei:`, `Hilfsdatei:`, `Symboltabelle-Datei:`, `Verarbeite Quellcode:` | Gibt tatsächlich aus: `Projektverzeichnis: …`, `Benutze für -s die Datei: …`, `Startadresse: …`, Banner, die Pässe, das Listing und am Ende `Ausgabe als Minimalprogramm-Objektdatei nach: …`, `Ausgabe der formatierten Speicherbelegung nach: …`, `Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: …`. |
+| 4 | 3.1 (Fehlermeldungen) | Fehlermeldungen erfolgen innerhalb der STDOUT-Ausgabe | Nur Fehler aus den Pässen stehen im Listing auf STDOUT (Zeile `;*** (n) Fehler: …`). Meldungen mit `Fehler:`, `Warnung:` und `Abbruch` gehen farbig nach STDERR, ebenso die Statuszeilen `Projektverzeichnis:`, `Benutze für -s die Datei:` und `Startadresse:`. |
+| 5 | 3.1 (`.log`) | Literaltabelle, Symboltabelle, Tabelle der absoluten Symbole | Abschnitte, sofern vorhanden: `Literaltabelle`, `EQU-Definitionen`, `ABS-Definitionen`, `Symboltabelle` (Spalten Symbol, RelAddr, Adresse, original Operation) und `Adresstabelle` (nach Adresse sortiert). |
+| 6 | 3.1 (`.test`) | Platzhalter für Testmarken und Tastenfolge, ggf. Leerbefehl 164 | Der Assembler schreibt keinen Leerbefehl 164. Aufbau: Kopf `Trommeldatei:`, `#DOK-0001`, `#SPEI-0001 0000-0000`, `#PROT STUFE=2`; je Wort mit K1 = 00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`/`dto`/`dtm`, Nullwort) eine Zeile `<adresse>: <11 Oktalziffern> # <Quelltext>`; Fuß `Tastenfolge:` und `H G R`. `db`, `equ`, `start`, `abs` erzeugen keine Zeile. |
+| 7 | 3.1 (`.sym`) | Symboldatei | Format je Zeile `<symbol>,<adresse>` mit vierstelliger Oktaladresse, in Quelltextreihenfolge, einschließlich Literalsymbolen (`l0001`). |
+| 8 | 3.2, 3.8 | `<assembleranweisung>` kennt nur `equ`; im Text stehen `equ100`, `equ40`, `equ10` | Die drei Varianten sind echte Operationscodes. Sie runden den Befehlszähler (Operand `*`) oder den numerischen Operanden auf das nächste Vielfache von 0100, 040 bzw. 010 auf. |
+| 9 | 3.6, Tabelle 2 | `dz`-Operand `;` mit Code 0150 | `;` ist nicht möglich, weil das Semikolon einen Kommentar einleitet (`dz Operand nicht gültig`). Der Assembler kennt stattdessen `:` mit Code 0150 (passend zu Tabelle 3). `$wrzl` und `$sm` haben beide 02720, wie dokumentiert. |
+| 10 | 3.3, 3.2 | `<werteausdruck>` darf Symbole enthalten | Bei `dw` und in `#`-Literalen sind Symbole nicht zulässig, auch keine `abs`-Symbole: `dw a+1`, `dw #a`, `dw x1+1` und `210 #a+2` melden `Operand … ist ungültig`. Adressen schreibt man mit `da` oder mit `@`-Literalen (`da a+1`, `dw @a`). In Maschinenbefehlen sind `abs`-Symbole im Operanden erlaubt (`211 x1+2` erzeugt K1K2=00). |
+| 11 | 3.7 | `start` nur als 1. Anweisung | Stimmt, zusätzlich: `start` darf nur einmal vorkommen, der Operand muss eine Konstante sein, ein Label vor `start` ist ein Fehler. Mit Operand schreibt der Assembler die Objektzeile `21 0000 <zahl>`. Der Befehlszähler beginnt unabhängig vom Operand bei 0. |
+| 12 | 3.2 | Maschinenbefehl = drei Oktalziffern | **Behoben im Quellcode (Schritt 6):** Früher wurde jede dreistellige Dezimalzahl als Operationscode akzeptiert (`999 0` ergab K1K2=01, Code 999). Jetzt sind nur drei Oktalziffern 0–7 gültig; sonst meldet der Assembler `bei Operand: <code> Operationscode ist ungültig` und endet mit Rückgabecode 16. Die Meldung nennt dabei den Operationscode, früher stand dort fälschlich der Operand. |
+| 13 | 3.2 | Symbole: Buchstaben und Ziffern | Der Unterstrich wird akzeptiert (`label_1:`). Das erste Zeichen darf keine Ziffer sein (`1abc:` ist ein Fehler), und außer ASCII-Buchstaben, Ziffern und `_` ist kein Zeichen zulässig (`ab-c:`, `x.y:`, `äb:` sind Fehler). Die Meldung lautet `Label "<name>:" ist unzulaessig: erlaubt sind Buchstaben, Ziffern und _, das erste Zeichen ist keine Ziffer.`, danach endet der Lauf mit `Abbruch wegen Syntaxfehler`. Labels über 32 Zeichen und doppelt definierte Labels sind ebenfalls Fehler. Eine Quelltextzeile darf höchstens 255 Zeichen lang sein. |
+| 14 | 4 | Makrodefinition: `MACRO` nach einem Tab, Abschluss `<tab>MEND` | Die Trennung erfolgt durch beliebigen Leerraum, Leerzeichen genügen (so ist `c82ass.makros` geschrieben). |
+| 15 | 4 | Generisches Makro-Label: Buchstabe, Buchstaben/Ziffern, `%` vor dem Doppelpunkt; Beispiel `start%:`, erzeugt `start0001` | Erlaubt ist nur `ML` + genau vier Ziffern + `%` + `:`, z. B. `ML0004%:`. Alles andere meldet `Macrolabel muß mit ML beginnen …` (der Hinweistext nannte früher irrtümlich fünf Ziffern, `ML01234%`; behoben in Schritt 3). Das `%` wird durch drei Großbuchstaben ersetzt (z. B. `ML0001DKR`), nicht durch die Aufrufnummer. Das Beispiel `start%:` ist damit nicht lauffähig. |
+| 16 | 4 | Makroaufruf mit Label: Hat die erste erzeugte Anweisung kein eigenes Label, entfällt die `equ`-Anweisung | **Behoben im Quellcode (Schritt 5):** Früher wurde die Zeile `<label> equ * ; automatisch generiert` immer erzeugt (im Objektcode als Zeile `20 0000 <adr>`). Jetzt erhält die erste erzeugte Anweisung das Label des Aufrufs, und die `equ`-Zeile entfällt, wie beschrieben. Die `equ`-Zeile bleibt, wenn die erste Anweisung selbst ein Label trägt oder ein `equ`, `abs`, `start` oder `end` ist (dort würde das Label sonst einen anderen Wert als die Adresse bekommen). Kommentarzeilen vor der ersten Anweisung werden übersprungen. Symboltabelle und Maschinencode sind unverändert. |
+| 17 | 4 | Beispielmakro `ANWAHL` erzeugt `030 4000` usw. | Die Makrodatei erzeugt `030 04000` (mit führender Null). Das Makro `WRZL` in der Makrodatei enthält zusätzlich `ANWAHL 4700`; das Beispiel in 3.6 zeigt nur `dz $wrzl`. |
+
+### 6.2 Ergänzungen (im Dokument bisher nicht beschrieben)
+
+- **Rückgabecodes:** 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch). Beim Aufruf werden alle Parameter ab einem Argument,
+  das mit `>` beginnt, ignoriert.
+- **Fehlerausgaben:** Die Form der Fehlermeldungen hängt vom Pass ab (`;*** Fehler: …` in Pass 0, `;*** 1 Fehler: …` in Pass 1,
+  `;*** (2) Fehler: …` in Pass 2, Zeile mit `EE` und Meldungszeile in Pass 3). Früher stand in 3.1 nur die Form `;*** (<Pass>) Fehler: …`.
+  Die vollständige Übersicht steht jetzt als Tabelle in Abschnitt 3.1.
+- **Belegungsprüfung:** Der Assembler meldet in Pass 3 Adressen, die von mehr als einer Anweisung beschrieben werden
+  (`Adresse … doppelt belegt`). Beschrieben jetzt in Abschnitt 3.1.
+- **Ausdrücke:** Rangfolge (`*` `/` vor `+` `-`), Auswertung von links nach rechts, ganzzahlige Division zur Null hin, Division durch 0 als Fehler,
+  Vorzeichen nur am Anfang, keine Klammern und Leerzeichen. Beschrieben jetzt nach der Grammatik in Abschnitt 2.
+- **`dt` und Backslashes:** Früher stand, die Zeichen „\" seien nur bei Leerzeichen im Text oder führendem `#` nötig. Tatsächlich sind Leerzeichen im Text
+  auch ohne „\" zulässig; nötig sind sie bei führendem `#`, bei `;` im Text und bei führenden bzw. abschließenden Leerzeichen (3.5).
+- **Mnemonische Operationscodes:** `add`, `sub`, `ld`, `jmp`, `stopp` und `nop` werden vom Assembler mit vorläufigen Platzhalter-Codes akzeptiert; als unvollendeter Ansatz
+  beschrieben in Abschnitt 2 (nach der Grammatik).
+- **Nullwort:** `dw 0` erscheint in der Objektdatei als `<adresse>: 0.`, `dbn` je Wort als `00 0.` (3.2, 3.3).
+- **Unbekannte Optionen** (z. B. `-x`) werden ohne Meldung ignoriert (Abschnitt 2).
+- **`.mqo`:** Inhalt genauer beschrieben (Abschnitt 3.1, Dateiliste).
+- **Verzeichnisübersicht (1.1):** ergänzt um `asm_alle.sh`, `asm_aufraeumen.sh`, `Projekt_2`, `Claude`, `Claude_bsp_reassemblierung` und die weiteren Unterordner von `Projekt_1`; die beiden Skripte sind kurz beschrieben.
+- **Beispiel 5.1:** Hinweis, dass die Projektdatei `bsp_5_16.asm` eine veränderte Fassung des abgedruckten Beispiels ist.
+- **Arbeitsverzeichnis:** `c82ass.sh` ruft `./_Linux/c82ass` relativ auf. Der Aufruf muss daher aus dem Verzeichnis `Assembler`
+  erfolgen. Dort werden auch `projekdetails` und (zuerst) `c82ass.makros` gesucht.
+- **`projekdetails`:** enthält die Zeilen `-p <Projektverzeichnis>` und `-s <Datei>` (der Dateiname so, wie angegeben, ohne
+  ergänzte Endung). Fehlt `-p` oder `-s` im Aufruf, wird der gespeicherte Wert benutzt. Beim Wechsel des Projektverzeichnisses
+  wird die bisherige Datei als `projekdetails.<altes Projekt>` gesichert; Schrägstriche im Projektnamen werden dabei durch `_`
+  ersetzt (z. B. `projekdetails.Projekt_1_bsp_5.16`).
+- **Dateiendung bei `-s`:** Hat der Name keinen Punkt oder keine Endung mit genau drei Zeichen, wird `.asm` angehängt
+  (`bsp_5.17_Oktaldruck` wird zu `bsp_5.17_Oktaldruck.asm`). Eine dreistellige Endung wie in `x.v10` wird dagegen als Endung
+  behandelt.
+- **Fehlerlisting:** Fehler stehen im Listing als `;*** (<Pass>) Fehler: …`. Danach folgt `Abbruch wegen Syntaxfehler.`. Bei
+  Fehlern in Pass 3 können `.obj`, `.mqo` und `.dmp` trotzdem teilweise entstehen und sind dann nicht verwendbar.
+- **Objektcode-Kennzeichen:** `start <zahl>` erzeugt `21 0000 <zahl>`, `equ` (auch `equ10/40/100`) und `db` erzeugen `20 …`,
+  `dz`, `dt`, `dto`, `dtm` erzeugen `00 <code> 030`; die Objektdatei endet mit einer Zeile `/`.
+- **Makroparameter:** Formale Parameter sind `$1` bis `$9`. Mehr als 9 Parameter in der Kopfzeile (Anzahl oder Namensliste) meldet der Assembler als Fehler.
+  Ein Makro, das sich selbst aufruft, meldet `Rekursiver Macro-Aufruf von: <name>`. Eine falsche Parameteranzahl beim Aufruf
+  ist ein Fehler.
+- **Prüftypen für `$PRx`:** `$TYPADR`, `$TYPKON` und `$TYPABS` (Beschreibung in Abschnitt 4). Früher wurde nicht der beim
+  Aufruf übergebene Wert geprüft, sondern der Text `$TYPADR` selbst; die Prüfung hatte keine Wirkung, und bei jedem Makro mit
+  Typangabe erschienen Debug-Zeilen (`!!!!…  pruefliste …`). Beides ist im Quellcode behoben. Folge: Aufrufe, die bisher
+  unbemerkt falsche Werte übergaben, melden jetzt einen Fehler, z. B. `TEST 123` (Zahl statt Label). In `Proj_FeldSortieren/code_wdhl_bef.asm` steht inzwischen
+  der gültige Aufruf `TEST i`.
+- **Mitgelieferte Makros in `c82ass.makros`:**
+
+| Makro | Parameter | Zweck |
+|---|---|---|
+| `WRZL` | – | `dz $wrzl` und `ANWAHL 4700` |
+| `KB`, `GB` | – | `dz $inkb` bzw. `dz $ingb` (Umschaltung Klein-/Großbuchstaben) |
+| `ANWAHL` | 1 (Kanal) | `030 0xxxx` für Zeichenkanäle (4000…4700, K0…K7, LSL1, LSL2, LKL1, LKS1, LSS1, SW1I, SW1O, SW2O, KONI) |
+| `TANWAHL` | 1 | `030 05x00` für Zusatztrommeln (5100…5400, ZTR1…ZTR4) |
+| `TROUT` | 2 (Haupttrommeladresse, Zusatztrommeladresse) | `032 $2` und `401 $1` |
+| `TRIN` | 2 (Zusatztrommeladresse, Haupttrommeladresse) | `032 $1` und `461 $2` |
+| `WDHL` | 5 (Löschen JA/NE, Resultatsbehandlung LI/RE/ZL/OHNE, Operation KON/ADD/SUB/BADD, Anzahl 1…32, Adresse) | Wiederholungsbefehl |
+| `ARRAY_LOAD`, `ARRAY_STORE`, `ARRAY_VGL` | 3 (Arrayadresse, Indexvariable, Adresse des erzeugten Befehls) | bilden Lade-, Speicher- bzw. Vergleicherbefehl für `array[index]` |
+| `ARRAY_SWAP` | 4 (Arrayadresse, Indexvar1, Indexvar2, Arbeitsspeicher) | vertauscht zwei indizierte Arrayelemente |
+| `MACHE_ADRESSEINHEIT` | 2 (Werteadresse, Zieladresse) | Wert laden, 9-mal links schieben, speichern |
+| `MACHE_ADRESSEINHEIT2` | 3 (Werteadresse, Zieladresse, Anzahl) | wie oben mit Wiederholungsbefehl |
+| `TEST` | 1 | Testmakro für die Typprüfung `$TYPADR` |
+
+### 6.3 Auffälligkeiten im Assembler (vermutlich Fehler im Programm, nicht in der Dokumentation)
+
+1. **`dbn` (behoben im Quellcode, Schritt 1):** Die Ausgabeschleife in Pass 3 benutzt als Schleifenvariable wieder `i` und verdeckt damit den Zeilenindex. Folge: Im
+   Listing (`.dmp`, STDOUT) und in der `.test` erscheinen zusätzliche, fremde Zeilen (z. B. `start` oder das vorangehende `db`)
+   an der Adresse des `dbn`. Außerdem wird der Befehlszähler in der Schleife nicht erhöht, die `.obj` enthält deshalb
+   `dbn 3` als dreimal `0010: 00 0.` mit derselben Adresse. Beispiel: `a: db 010` / `b: dbn 3` / `c: dw 1`. Nach der Korrektur erscheinen die Folgeworte als `0011: 00 0.` und `0012: 00 0.` mit aufsteigenden Adressen und ohne fremde Zeilen.
+2. **Subtraktion und Vorzeichen bei `dw` (behoben im Quellcode, Schritt 2):** Früher speicherte `dw -5` den Wert 5 und
+   `dw 5-7` ebenfalls 5, `dw 0-5` erzeugte eine 22-stellige Oktalzahl. Ursachen: Ein Ausdruck aus Ziffern und `-` wurde als eine
+   einzige Zahl gelesen, ein führendes Vorzeichen ging bei der Auswertung verloren, und es wurde mit vorzeichenlosen 64-Bit-Werten
+   gerechnet. Jetzt wird vorzeichenbehaftet gerechnet, ein führendes `-` oder `+` gilt als Vorzeichen, und ein Operator ohne
+   rechten Operanden (`dw 5-`) meldet `Operand … ist ungültig`. Negative Ergebnisse werden als 33-Bit-Wort (11 Oktalziffern) im
+   **Zweierkomplement** ausgegeben: `dw -5` ergibt `77777777773`, `dw 5-7` ergibt `77777777776`. Das entspricht der Darstellung
+   der C8205 (negative Zahlen als Zweierkomplement z̃ = 2³³ − z, z₀ = 1; siehe `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md`).
+3. **Absturz bei ungültigem Makro-Label (behoben im Quellcode, Schritt 3):** Früher brach der Assembler bei einem Makro mit
+   einem Label im Format `name%:` (z. B. dem Beispiel `start%:`) ohne Label am Aufruf mit `double free or corruption` ab
+   (Rückgabecode 134, nicht 16). Ursache: Die Fehlerzeile wurde in einen zu kleinen Zwischenspeicher geschrieben und
+   überschrieb außerdem die Folgezeile des Makros. Jetzt wird hinter der fehlerhaften Zeile eine Fehlerzeile eingefügt, alle
+   anderen Zeilen bleiben unverändert, und der Lauf endet regulär mit Rückgabecode 16. Der Hinweistext nennt jetzt das richtige
+   Format `ML` + vier Ziffern + `%` (z. B. `ML0004%:`) statt `ML01234%`.
+4. **`projekdetails` (behoben im Quellcode, Schritt 4, Datei `ca82_standards.c`):** Zwei Fehler, beide im Lauf bestätigt.
+   (a) Beim Sichern wurden Schrägstriche im Projektnamen durch `_` ersetzt, beim Zurückholen für das neue Projekt aber nicht.
+   Bei Pfaden wie `Projekt_1/bsp_5.16` blieb die gesicherte Datei deshalb ungenutzt, das gespeicherte `-s` ging verloren.
+   Jetzt wird der Name in beiden Fällen gleich gebildet. (b) Wurde `-s` aus `projekdetails` gelesen und stand dort ohne
+   Endung (z. B. `-s f`), ging die Endung `.asm` verloren, weil der Zeilenumbruch noch davor stand. Der Aufruf ohne Parameter
+   endete dann mit `Die Datei …/f für Parameter -s existiert nicht`. Jetzt wird der Zeilenumbruch vorher entfernt. Ein Aufruf
+   ohne Parameter benutzt damit wie in Abschnitt 6.2 beschrieben die zuletzt gespeicherten Werte, auch wenn `-s` ohne Endung
+   angegeben wurde.
+5. **Wertebereich bei `dw` (behoben im Quellcode, Schritt 6):** Früher wurden Werte außerhalb des 33-Bit-Wortes angenommen und
+   mit mehr als 11 Oktalziffern ausgegeben (z. B. `dw 0100000000000`, `dw 8589934592`, `dw 99999999999999999999`). Jetzt gilt der
+   Bereich −2³² bis 2³³−1 (vorzeichenlos bis `77777777777`, negativ im Zweierkomplement). Alles darüber oder darunter meldet
+   `bei Operand: <wert> Operand ist ungültig`.
+6. **Ungültige Labels (behoben im Quellcode):** Früher akzeptierte die Prüffunktion `isValidLabel` ein Label mit führender Ziffer
+   (`1abc:` stand in der `.sym`). Labels mit unzulässigen Zeichen (`ab-c:`, `x.y:`, `äb:`) wurden beim Anlegen der Symboltabelle
+   ohne Meldung übersprungen und fehlten in der `.sym`. Jetzt wird die führende Ziffer abgelehnt, und jedes unzulässige Label
+   meldet `Label "<name>:" ist unzulaessig …` mit Zeilennummer im Listing. Geprüft mit `1abc:`, `ab-c:`, `x.y:`, `äb:` (Fehler) und
+   `ok_1:` (steht in der `.sym`). Die mitgelieferte Datei `_Linux/c82ass` muss dafür neu aus `Sourcecode/` gebaut werden
+   (`make_c82ass.sh`); ein älteres Binary zeigt noch das alte Verhalten.
+7. **Zeilen hinter `end` bei vorhandenen Literalen (behoben im Quellcode):** Früher wurden bei einem Programm mit mindestens
+   einem Literal (`#…`, `@…`) alle Zeilen hinter `end` ignoriert: `abs`- und `equ`-Definitionen fehlten in `.log`,
+   Symboltabelle und `.sym`, und ein dort definiertes `abs`-Symbol führte beim Benutzen zu `Adresse (3) ist ungültig`. Ohne
+   Literal wurden diese Zeilen ausgewertet. Außerdem erschien in Läufen mit Fehlern, aber ohne Literal, fälschlich die Warnung
+   `end - Anweisung fehlt`. Ursache: Pass 1 setzte die Kennung „end gesehen“ nur innerhalb der Literalschleife und verließ danach die
+   Zeilenschleife. Jetzt werden die Literale einmalig beim ersten `end` ausgegeben und die Zeilen dahinter immer ausgewertet
+   (Abschnitt 3.10). Die mitgelieferte Datei `_Linux/c82ass` muss dafür neu aus `Sourcecode/` gebaut werden (`make_c82ass.sh`).
+8. **Falsche Zahl in der Meldung bei falscher Makro-Parameterzahl (behoben im Quellcode):** Die Meldung
+   `erwartet N Parameter, aber M wurden übergeben!` nannte für M statt der übergebenen Parameter einen Zeilenzähler (meist 0).
+   Beispiel: Makro mit `MACRO 2`, Aufruf `A2 x` meldete „… aber 0 wurden übergeben“. Jetzt steht dort die tatsächliche Zahl
+   (hier 1). Verhalten und Rückgabecode (16) sind unverändert.
+9. **Fehlertexte (behoben im Quellcode):** (a) Die Meldungen zu `dt`/`dto`/`dtm` mit `#` am Anfang des Operanden und zu einem
+   `#`-Literal in einer Assembleranweisung hatten leere Angaben (`bei Operand:  Operand …` und `in Zeile: ``). Jetzt stehen dort der
+   Operand und die Quellzeile. (b) `db -1` und `dbn -1` meldeten „Programmzählerüberlauf über 7777“; jetzt:
+   `db: Operand "-1" darf nicht negativ sein.` (c) Bei einem Makro mit mehr als 9 Parametern stand der Doppelpunkt des Makronamens
+   doppelt (`Makro A3:: …`). Verhalten und Rückgabecodes sind unverändert.
+10. **Operandenprüfung bei `db` und `dbn` (behoben im Quellcode):** Früher wurde ein ungültiger Operand stillschweigend verarbeitet:
+    `db abc` reservierte 0 Worte, `db 5x` 5 Worte, `db 3+1` 3 Worte, `db 09` 0 Worte, `db #5` 0 Worte, ein fehlender Operand ebenfalls 0 Worte.
+    Alle folgenden Adressen waren damit verschoben, der Lauf endete mit Rückgabecode 0. Jetzt gilt `<zahl>` wie in der Grammatik
+    (Oktalzahl mit führender 0 oder Dezimalzahl, höchstens 010000); alles andere meldet z. B.
+    `db: Operand "abc" ist keine gültige Zahl (Oktalzahl mit führender 0 oder Dezimalzahl).`, `… ist zu groß …` oder
+    `db: Operand fehlt (erwartet wird eine Zahl).` Gültige Operanden verhalten sich unverändert.
+11. **Farbcodes in der `.dmp` bei Fehlerläufen (behoben im Quellcode):** Bei Fehlern in Pass 3 (z. B. `dw 5-`, unbekanntes Symbol) enthielt die
+    Datei `.dmp` die ANSI-Escape-Sequenzen der Bildschirmfarben (um die Marke `EE` und die Meldungszeile), weil dasselbe Listing auf den
+    Bildschirm und in die Datei geschrieben wurde; zusätzlich waren die Spaltenbreiten von diesen unsichtbaren Zeichen verfälscht. Jetzt wird
+    die `.dmp` ohne Farbcodes geschrieben und die Spalten werden aus dem sichtbaren Text berechnet. Die Bildschirmausgabe und alle
+    fehlerfreien `.dmp`-Dateien sind unverändert.
+12. **Prüfungen beim `<adressausdruck>` von `da` und `@`-Literalen (behoben im Quellcode):** Die in der Grammatik genannten Einschränkungen
+    wurden nicht geprüft: `da -1` ergab `37777777000`, `da x+y` (zwei Symbole) wurde ausgewertet, `da x-5` und `da 4096` ergaben Adressen außerhalb
+    von 00000…07777, und bei einem führenden Vorzeichen oder einem fehlenden Operand (`da 5-`, `da x+*2`) lief die Berechnung mit einem nicht
+    gesetzten Wert (Ergebnis unbestimmt). Jetzt meldet Pass 3 diese Fälle als Fehler (Zeile `EE` mit Meldungszeile). Gültige Ausdrücke sind
+    unverändert; alle 118 Beispiele ergeben identische Ausgabedateien.
+13. **Dezimalzahlen ab 8 bei `da` (behoben im Quellcode):** `da 10` ergab Adresse 12 (dezimal gelesen), `da 100` die Adresse 0220, `da 4095`
+    einen Wert außerhalb des Adressbereichs. Ursache: Eine Dezimalzahl wurde zuerst in eine Oktalzeichenkette umgewandelt und dann wieder
+    als Dezimalzahl gelesen. Oktalzahlen mit führender 0 und Zahlen unter 8 waren nicht betroffen. Jetzt werden Dezimal- und Oktalzahlen richtig ausgewertet.
+14. **`ANWAHL K4` … `K7` wurden abgelehnt (behoben in der Makrodatei):** Das Makro `ANWAHL` in `c82ass.makros` hat Zweige für `K4` bis `K7`
+    (Codes 04300, 04200, 04100, 04000), aber die Prüfliste `$PR1` enthielt nur `K0` bis `K3`; `ANWAHL K5` meldete deshalb
+    `Wert "K5" steht nicht in der Pruefliste`. Jetzt steht `K0 … K7` in der Prüfliste (Tabelle in 6.2 und Beispiel in Abschnitt 4 entsprechend).
+    Der Assembler selbst ist davon nicht betroffen, es genügt die neue `c82ass.makros`.

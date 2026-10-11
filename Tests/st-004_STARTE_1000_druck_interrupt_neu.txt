@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Programmunterbrechung und Druck von BZ und AC ueber das Minimalprogramm (BIS-2.2.12.1). Voraussetzung: Die Trommel enthaelt das Minimalprogramm (pj2-bis_minimalprogramm.test vorher laufen lassen). Der Test setzt und veraendert die Zelle 0001 NICHT; sie wird von der Trommel genommen (000 0150) und in den Pruefungen kontrolliert.
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+#SPEI-0001 1000-1010
+#PROT STUFE=2
+#BZ=1003
+#AC=00000012345
+
+# Hauptprogramm, unterbrochen nach dem Befehl in Zelle 1003 (Zustand BZ=1003, AC=00000012345 per Testmarke)
+1000: 00004500030 # 030 4500 ; Anwahl Kanal K2
+1001: 00000570030 # 030 0570 ; Grossbuchstaben
+1002: 00001470030 # 030 1470 ; Zeichen X
+1003: 00001500030 # 030 1500 ; Zeichen Y
+1004: 00004500030 # 030 4500 ; Anwahl Kanal K2
+1005: 00001170030 # 030 1170 ; Kleinbuchstaben
+1006: 00001470030 # 030 1470 ; Zeichen x
+1007: 00001500030 # 030 1500 ; Zeichen y
+1010: 00000000020 # 020 0    ; Stopp
+
+Tastenfolge:
+H G Ü E G M+ E M- SP=0 R
+
+Prüfungen:
+BZ=1011 AR=0000 US=1 FE=0 FUE=0
+7777: 00000012345
+0001: 00000150000
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/st-004_STARTE_1000_druck_interrupt_neu_erwartet.txt
