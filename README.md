@@ -1,6 +1,6 @@
 # C 8205 – Simulation eines DDR-Kleinrechners von 1968
 
-Version: 0.03-006
+Version: 0.03-007
 
 **Deutsch** | [English](README.en.md)
 
@@ -193,7 +193,7 @@ können deshalb einen älteren Stand haben (der Stand steht im Dokument). Maßge
 | `C8205-Knotentabellen_A4.pdf` | Knotentabelle und Variablentabelle T2 im Wortlaut der Quellen |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generische Befehlsbeschreibung und Übersicht aller 512 Operationscodes |
 | `C8205-Kodetabellen_A4.pdf` | Zeichenkodetabelle (R 300-Lochstreifenkode) |
-| `Assembler/Dokumentation/C8205_Assembler_Dokumentation.pdf` | Assembler `c82ass`: Aufruf, Sprache, Makros, Beispiel |
+| `Assembler/Dokumentation/C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: Aufruf, Sprache, Makros, Beispiel |
 
 ## Stand
 

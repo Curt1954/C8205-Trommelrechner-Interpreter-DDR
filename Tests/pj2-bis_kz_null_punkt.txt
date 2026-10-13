@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Eingabe 0 . (BIS-2.2.3): K1 = 0 und sofort die Wortmarke: das Wort 0000 0000 000, die folgenden 10 Oktalziffern sind null; K2 und die Wortsumme werden dabei zurueckgesetzt (vorbesetzte Arbeitszellen 7702 und 7703); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Hauptprogramm im Stub-Stand (Stopp 0041 nach der Rueckkehr der Kennzeicheneingabe)
+#PROT STUFE=2
+#STARTE 1000
+--leser1 virtuelle_Geraete/Leser1/pj2-bis_kz_null_punkt.txt
+
+# Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0613 und 0700 bis 0777 werden nicht belegt)
+1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen
+1001: 00000262025  # 025 0262 ; Aufruf
+1002: 00000000020  # 020 0 ; Stopp nach der Rueckkehr
+7702: 00000007000  # K2 vorbesetzt (wird auf 0 gesetzt)
+7703: 00000000700  # Wortsumme vorbesetzt (wird auf 0 gesetzt)
+
+Prüfungen:
+BZ=1003 AC=00000000000 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+7701: 00000000000  # kz_k1 = 0
+7702: 00000000000  # kz_k2 = 0
+7703: 00000000000  # kz_kw = 0

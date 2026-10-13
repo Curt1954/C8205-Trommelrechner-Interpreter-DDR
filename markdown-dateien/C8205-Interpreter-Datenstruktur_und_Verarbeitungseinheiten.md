@@ -1,6 +1,6 @@
 # ** Datenstrukturen **
 
-Version: 0.03-001
+Version: 0.03-002
 
 Namensbereiche: Flags, Register, Felder des Befehlswortes sowie die Knoten und
    Konnektoren der Knotentabelle sind getrennte Beschreibungsbereiche. Innerhalb
@@ -182,6 +182,8 @@ FE bei einem durch die Paritätskontrolle ermittelten Eingabefehler im 8-Kanal-K
 angewählten Kanal, bei K0 unterscheiden T und SW zwischen Tastatur und Schreibwerk. Die Lampen V(1-2) zeigen den Vergleicherstand
 zur Zeit des Setzens: Lampe 1 = Vergleicher 1, Lampe 2 = Vergleicher 2, beide = Vergleicher 3. Die untere Lampenreihe zeigt das
 Befehlsregister in Triaden: vier Triaden Adreßteil (Gewichte 1000, 100, 10, 1 oktal), drei Triaden Operationsteil (B, A, Z).
+Die Lampe B ist die Betriebsanzeige, die Lampe N zeigt an, dass die Netzstromversorgung anliegt (Lampenfeld: Abb. 6 der
+Bedienungsanleitung, Abbildung in `C8205-Interpreter-Bedienpult_mit_Schaltern.md`).
 
 Register sind:                     (dezimal)
   AC       Akkumulator               33 Bit

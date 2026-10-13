@@ -41,14 +41,15 @@ Trommeldatei:
 3075: 00001550030 # 030 1550 ; Tabulator
 3076: 00003015000 # 000 3015 ; Sprung zur Eingabe
 
-# Testende (nicht Teil des Buchprogramms): Das Zeichen "/" (Eingabeadresse 61) führt nach 3061, dort steht ein unbedingter Stopp.
+# Testende (nicht Teil des Buchprogramms): Das Zeichen "/" (Eingabeadresse 61, keine Sprung-Umstellung) liefert den Inhalt der Zelle 3061 (unbedingter Stopp) in den AC;
+# die Eingabe speichert ihn nach 3021 und führt ihn dort aus (BZ=3022).
 3061: 00000000020 # 020 0 ; unbedingter Stopp
 
 Tastenfolge:
 H G R
 
 Prüfungen:
-BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
-3021: 00000200030
+BZ=3022 AC=00000000020 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3021: 00000000020
 3061: 00000000020
 --pruefe-sw-ausgabe Test-Ergebnisvergleiche/bsp_5_15_lochband_druck-sw-ausgabe.txt

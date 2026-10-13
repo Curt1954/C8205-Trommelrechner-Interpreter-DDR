@@ -3,7 +3,7 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
-Version: 0.03-007
+Version: 0.03-009
 (Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
 REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
 Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
@@ -31,6 +31,14 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
 
+Aenderung 12.10.2026 (Version 0.03-009): TABELLE1 um die Zeile 55 (WR, Wagenruecklauf ohne Zeilenschaltung) erweitert (Kodetabellen 1.4, Tabelle 2):
+  Eingabeadresse 052 (Lochbild v 8 2, 01001010, ungerade Parität), Ausgabe-Adresse 112x, Sprung-Umstellung nein, ASCII 13/13. Der Lochbandleser nimmt WR jetzt an
+  (EINGABE_ZEILE; vorher: Zeichen nicht in Tabelle 1), der Stanzer stanzt es (AUSGABE_ZEILE), K0 kennt den Namen \"WR\" (NAMEN). Das Schreibwerk gibt \"<WR>\" aus
+  (SW_ZEILE; ein Wagenruecklauf ohne Zeilenschaltung ist in der Textdatei nicht darstellbar, wie bei den anderen Namenszeichen ohne Textform). Tests wr-001, wr-002.
+Aenderung 12.10.2026 (Version 0.03-008): Sprung-Umstellung der Eingabeadressen in TABELLE1 korrigiert (Projektinhaber; Kodetabellen 1.4/1.5, Version 0.03-005):
+  Eingabeadresse 20 ("+" / "=", Zeile 24): False (vorher True); Eingabeadresse 60 (Zeile 36, "`" / ";"): True (vorher False);
+  Eingabeadresse 61 (Zeile 37, "/" / ")"): False (vorher True). Eingabeadresse 12 und 15 bleiben True. Damit haben genau 12 Zeilen Sprung-Umstellung
+  (Tabulator, ":", Um. KB, Um. GB, Zeile 36, SatzMarke, ",", ".", "-", Irrung Satz, Leertaste/ZWR, BM). Wirkt in a033 (m.eingabe_sprung).
 Aenderung 10.10.2026 (Version 0.03-007): Das Fenster "SW Ausgabe" (--SW-TERMINAL) bleibt jetzt IMMER offen, auch nach dem Ende des Tests und
   unabhaengig von der Mausposition, bis es mit X geschlossen wird (die Selbstschliessung bei Zeiger ausserhalb entfaellt, ebenso der Hinweis,
   den Mauszeiger vorher in die rechte untere Ecke zu stellen). Markieren und Kopieren wie in den Lochstreifen-Hilfsprogrammen (Anzeige/Eingabe):
@@ -74,6 +82,9 @@ Aenderung 04.10.2026 (5), Tasten nach Stopp (Originaldokumentation 4.3.2.3, Abb.
   Sprungoperation <AC>:=<AC> v Vr<BZ> ausfuehrte), sondern bei Knoten 54 (Konnektor 4) nach Umstellung A:=0 (eintritt_br). Es laufen nur
   Ueberlauftest, Resultatbehandlung und Phase II ab. Alle anderen aufgestellten BR (Ue, ST, E ohne M) beginnen weiter bei Knoten 19.
   Machine.br_tasten_m merkt, dass der BR durch M aufgestellt wurde (G und E unter M loeschen den Merker). Tests tk-001 bis tk-008.
+Aenderung 11.10.2026: TABELLE1 um die Zeilen 52 (ZV, Eingabeadresse 072, Sprung-Umstellung nein, Ausgabe 172) und 53 (BM, Eingabeadresse 072, Sprung-Umstellung ja,
+  Ausgabe 352) erweitert; "Transport (Relikt)" ist jetzt Zeile 54 (Kodetabellen 1.4). ZV und BM haben dieselbe Eingabeadresse; der Lochbandleser unterscheidet
+  sie am Lochbild (ZV 01111010, BM 11101010, LOCHBILD_ZEILE). Das Schreibwerk gibt weder ZV noch BM aus (SW_ZEILE); der Stanzer stanzt beide (AUSGABE_ZEILE).
 Aenderung 04.10.2026 (4): Auch --leser1, --leser2 und --stanzer1 duerfen als Zeile in der Testdatei stehen (Durchfuehrung_eines_Tests.md,
   Abschnitt 2b), Regeln wie bei --sw-ausgabe und --k0 (in jedem Abschnitt, je Schalter hoechstens einmal, Kommandozeile hat Vorrang,
   relative Pfade vom aktuellen Verzeichnis aus). Zeigt --leser1/--leser2 in der Testdatei auf ein Verzeichnis, erscheint ein Hinweis
@@ -136,7 +147,7 @@ import subprocess
 import sys
 import time
 
-VERSION = '0.03-007'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
+VERSION = '0.03-009'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
@@ -174,7 +185,7 @@ TABELLE1 = [
     (21, 'o', 'O', '106', 79, 111, 38, False),
     (22, 'p', 'P', '127', 80, 112, 39, False),
     (23, ':', '(', '015', 40, 58, 13, True),
-    (24, '+', '=', '040', 61, 43, 16, True),
+    (24, '+', '=', '040', 61, 43, 16, False),
     (25, 'Um. KB', 'Um. KB', '117', 0, 0, 47, True),
     (26, 'Um. GB', 'Um. GB', '057', 0, 0, 31, True),
     (27, 'a', 'A', '061', 65, 97, 17, False),
@@ -186,8 +197,8 @@ TABELLE1 = [
     (33, 'j', 'J', '121', 74, 106, 33, False),
     (34, 'k', 'K', '122', 75, 107, 34, False),
     (35, 'l', 'L', '103', 76, 108, 35, False),
-    (36, '`', ';', '160', 59, 96, 48, False),
-    (37, '/', ')', '141', 41, 47, 49, True),
+    (36, '`', ';', '160', 59, 96, 48, True),
+    (37, '/', ')', '141', 41, 47, 49, False),
     (38, 'SatzMarke', 'WRZL', '272', 10, 10, 26, True),
     (39, 'y', 'Y', '150', 89, 121, 56, False),
     (40, 'x', 'X', '147', 88, 120, 55, False),
@@ -202,11 +213,17 @@ TABELLE1 = [
     (49, 'Leertaste', 'ZR', '032', 32, 32, 10, True),
     (50, 'Irrung Zeichen', 'Irrung Zeichen', '377', 0, 0, None, False),
     (51, 'Irrung Satz', 'Irrung Satz', '016', 0, 0, 14, True),
-    (52, 'Transport (Relikt)', 'Transport (Relikt)', '177', 0, 0, 63, False),
+    (52, 'ZV', 'ZV', '172', 0, 0, 58, False),
+    (53, 'BM', 'BM', '352', 0, 0, 58, True),
+    (54, 'Transport (Relikt)', 'Transport (Relikt)', '177', 0, 0, 63, False),
+    (55, 'WR', 'WR', '112', 13, 13, 42, False),
 ]
-AUSGABE_ZEILE = {r[3]: r for r in TABELLE1 if r[0] != 52}
-SW_ZEILE = {int(r[3], 8) & 0o157: r for r in TABELLE1 if r[0] not in (50, 52)}
-EINGABE_ZEILE = {r[6]: r for r in TABELLE1 if r[6] is not None and r[0] != 52}
+AUSGABE_ZEILE = {r[3]: r for r in TABELLE1 if r[0] != 54}
+SW_ZEILE = {int(r[3], 8) & 0o157: r for r in TABELLE1 if r[0] not in (50, 52, 53, 54)}
+# ZV (Zeile 52) und BM (Zeile 53) haben dieselbe Eingabeadresse 072 und unterscheiden sich nur im Lochbild (ZV: v u p 8 2, BM: w v u 8 2) und in der
+# Sprung-Umstellung (ZV nein, BM ja; Tabelle 1, Ergaenzung 11.10.2026). In EINGABE_ZEILE steht unter 072 deshalb nur ZV; BM wird ueber LOCHBILD_ZEILE gefunden.
+EINGABE_ZEILE = {r[6]: r for r in TABELLE1 if r[6] is not None and r[0] not in (53, 54)}
+LOCHBILD_ZEILE = {0b01111010: next(r for r in TABELLE1 if r[0] == 52), 0b11101010: next(r for r in TABELLE1 if r[0] == 53)}
 EINGABE_ZEILE[0o36] = (0, 'Irrung Block', 'Irrung Block', '', 0, 0, 0o36, True)
 
 
@@ -1010,7 +1027,7 @@ def _norm(s):
 
 NAMEN = {}
 for _r in TABELLE1:
-    if _r[0] != 52:
+    if _r[0] != 54:
         for _nm in (_r[1], _r[2]):
             if len(_nm) > 1:
                 NAMEN.setdefault(_norm(_nm), _r)
@@ -1018,7 +1035,7 @@ NAMEN.update({'ZR': ROW_NR[49], 'WM': ROW_NR[12], 'TAB': ROW_NR[12], 'WRZL': ROW
               'IS': ROW_NR[51], 'IB': EINGABE_ZEILE[0o36]})
 
 T_ERLAUBT = {_r[6] for _r in TABELLE1
-             if _r[6] is not None and _r[0] != 52 and _r[1] in list('0123456789+-,.:')}
+             if _r[6] is not None and _r[0] != 54 and _r[1] in list('0123456789+-,.:')}
 T_ERLAUBT |= {ROW_NR[49][6], ROW_NR[12][6], ROW_NR[51][6], 0o36}
 
 
@@ -1029,7 +1046,7 @@ def k0_zeile(tok, lage):
         code = ord(tok)
         for ci in ((4, 5) if lage == 'GB' else (5, 4)):
             for r in TABELLE1:
-                if r[0] != 52 and r[6] is not None and r[ci] == code:
+                if r[0] != 54 and r[6] is not None and r[ci] == code:
                     return r
         return None
     return NAMEN.get(_norm(tok))
@@ -1484,7 +1501,7 @@ def a032(m):
             m.halt_grund = f'Fehler bei Eingabe (FE): gerade Zahl von Lochungen ({z})'
             return
         ea = (lb & 0x0F) | ((lb >> 1) & 0x30)
-        e = EINGABE_ZEILE.get(ea)
+        e = LOCHBILD_ZEILE.get(lb) or EINGABE_ZEILE.get(ea)
         if e is None:
             raise Stub(f'Eingabeadresse {ea:02o} (Lochbild {z}) kommt in Tabelle 1 nicht vor')
     elif not m.fl['K3'] and (m.fl['T'] or m.fl['SW']):

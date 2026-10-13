@@ -1,6 +1,6 @@
 # Lochstreifenleser
 
-Version: 0.03-001
+Version: 0.03-002
 
 Hardwarebeschreibung des Lochstreifenlesers 303 am Rechner C 8205.
 
@@ -53,7 +53,7 @@ Metallbürsten).
 
 ## A4 Lochbandkode (Tabelle 1)
 
-Die Tabelle 1 selbst (52 Zeilen mit Lochbildern), die Spaltenbedeutungen,
+Die Tabelle 1 selbst (54 Zeilen mit Lochbildern), die Spaltenbedeutungen,
 die Konsistenzprüfung, die Sonderzeilen und die Auffälligkeiten stehen in
 der Datei "C8205-Interpreter-Kodetabellen.md", Abschnitt 1. Die
 E/A-Befehle gehören sowohl zum Rechner als auch zum Leser bzw. Stanzer;
@@ -337,3 +337,34 @@ erhalten, bis eine neue sie löscht.
 **Fehlerbehandlung:** Es gibt keine Fehlerbehandlung im Rechner. Tritt ein (physischer) Fehler auf, sind Ein- und
 Ausgabe blockiert, und der Rechner bleibt stehen, sobald er einen Ein- oder Ausgabebefehl ausführen will. Wie bei
 Leser und Stanzer werden physische Fehler nicht in Flags abgebildet.
+
+## C4 Tastatur des Schreibwerks (Eingabe)
+
+Die Tastatur des Schreibwerks ist die Eingabeseite des Schreibwerks (s. A5). Abbildung 1 zeigt ihre Tasten. Bei den Tasten mit
+zwei Zeichen steht oben das Zeichen der Großbuchstabenlage, unten das der Kleinbuchstabenlage; „KB“ und „GB“ schalten die
+Lage um (s. A4). Die Taste mit zwei Kreisen ist unbenutzt und nicht eingabefähig. Die Taste mit £ (oben) und $ (unten),
+dem Pfundzeichen, ist eingabefähig.
+
+![Tastatur des Schreibwerks](abbildungen/C8205-Abb-Tastatur_Schreibwerk.png)
+
+*Abbildung 1: Tastatur des Schreibwerks (neu gezeichnet nach Abb. 14 „Schreibwerktastatur“ und der Zeichnung „Tastatur des Schreibwerkes“ der Originalunterlagen). Grau: Taste ohne Funktion*
+
+Die Beschriftungen der Zeichnung und die Bezeichnungen der Bedienelemente in Abb. 13 „Schreibwerk“ der Originalunterlagen
+(Nummer in Klammern) entsprechen einander so:
+
+| Taste | Bezeichnung in der Zeichnung | Bezeichnung in Abb. 13 |
+|---|---|---|
+| ganz links oben (senkrechter Strich) | Randversteller | Randstellertaste (70) |
+| oben rechts, Pfeil nach rechts | Rücktaste | Rücktaste (49) |
+| oben rechts, Minuszeichen | Tab. löschen | Tabulator löschen (48) |
+| rechts neben der Taste mit = und + | Tab. setzen | Tabulator setzen (47) |
+| hohe Taste rechts | WRZL | Wagenrücklauf mit Zeilenschaltung (50) |
+| hohe Taste links | – | Wagenrücklauf ohne Zeilenschaltung (71) |
+| unten links, Pfeil nach oben | Zeilenschaltung-ZV | Zeilenschalttaste (74) |
+| lange Taste unten | Leertaste-ZWR | Leertaste (54) |
+| unten rechts, Pfeil nach links | Tab. Auslösung | Tabulatortaste (53) |
+| KB | KB | Umschalttaste für Kleinbuchstaben (73) |
+| GB | GB | Umschalttaste für Großbuchstaben (52) |
+
+Zwei weitere Bedienelemente sitzen als Rädchen neben der Tastatur und sind in der Abbildung nicht dargestellt: der
+Farbbandumschalter (72) links und der Anschlagregler (51) rechts.

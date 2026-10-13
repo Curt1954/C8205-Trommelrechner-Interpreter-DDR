@@ -10,8 +10,8 @@ Trommeldatei:
 #    Er wird bei 3105 ausgeführt. Erwartet: Marke = dieser Befehl selbst (AC = Zelleninhalt).
 # Wird ein Zeichen falsch eingeordnet, hat die Marke einen anderen Wert und die Prüfung der Marke schlägt fehl.
 # Die Marken sind mit 77777777777 vorbelegt, so fällt auch ein Zeichen auf, das gar nicht gelesen wird.
-# Das Zeichen "/" (Eingabeadresse 61, Sprung-Umstellung ja) beendet den Streifen: Zelle 3061 = unbedingter Stopp; bei falscher Einordnung
-# stoppt der Rechner stattdessen bei 3105 (BZ=3106).
+# Das Zeichen "/" (Eingabeadresse 61, Sprung-Umstellung nein) beendet den Streifen: Zelle 3061 = unbedingter Stopp; er wird als Zelleninhalt in den AC
+# gebracht, nach 3105 gespeichert und dort ausgeführt (BZ=3106). Bei falscher Einordnung (ja) stoppt der Rechner stattdessen in der Zelle 3061 (BZ=3062).
 # "Irrung Zeichen" (gerade Parität) wird vom Leser übersprungen, "Transport" (Relikt) fehlt im Streifen.
 
 # Startstück
@@ -40,7 +40,7 @@ Trommeldatei:
 3012: 00003222000 # 000 3222 ; "Leertaste / ZR" (Eingabe 12, Sprung-Umstellung ja): Sprung zur Routine
 3015: 00003202000 # 000 3202 ; ": / (" (Eingabe 15, Sprung-Umstellung ja): Sprung zur Routine
 3016: 00003224000 # 000 3224 ; "Irrung Satz" (Eingabe 16, Sprung-Umstellung ja): Sprung zur Routine
-3020: 00003204000 # 000 3204 ; "+ / =" (Eingabe 20, Sprung-Umstellung ja): Sprung zur Routine
+3020: 00003420240 # 240 3420 ; "+ / =" (Eingabe 20, Sprung-Umstellung nein): <3420> := <AC> (erwartet: dieser Befehl selbst)
 3021: 00003421240 # 240 3421 ; "a / A" (Eingabe 21, Sprung-Umstellung nein): <3421> := <AC> (erwartet: dieser Befehl selbst)
 3022: 00003422240 # 240 3422 ; "b / B" (Eingabe 22, Sprung-Umstellung nein): <3422> := <AC> (erwartet: dieser Befehl selbst)
 3023: 00003423240 # 240 3423 ; "c / C" (Eingabe 23, Sprung-Umstellung nein): <3423> := <AC> (erwartet: dieser Befehl selbst)
@@ -64,8 +64,8 @@ Trommeldatei:
 3050: 00003450240 # 240 3450 ; "q / Q" (Eingabe 50, Sprung-Umstellung nein): <3450> := <AC> (erwartet: dieser Befehl selbst)
 3051: 00003451240 # 240 3451 ; "r / R" (Eingabe 51, Sprung-Umstellung nein): <3451> := <AC> (erwartet: dieser Befehl selbst)
 3057: 00003206000 # 000 3206 ; "Um. KB" (Eingabe 57, Sprung-Umstellung ja): Sprung zur Routine
-3060: 00003460240 # 240 3460 ; "` / ;" (Eingabe 60, Sprung-Umstellung nein): <3460> := <AC> (erwartet: dieser Befehl selbst)
-3061: 00000000020 # 020 0 ; "/" (Eingabe 61, Streifenende): unbedingter Stopp, Sprung-Umstellung ja
+3060: 00003204000 # 000 3204 ; "` / ;" (Eingabe 60, Sprung-Umstellung ja): Sprung zur Routine
+3061: 00000000020 # 020 0 ; "/" (Eingabe 61, Streifenende, Sprung-Umstellung nein): unbedingter Stopp, wird nach 3105 gespeichert und dort ausgeführt
 3062: 00003462240 # 240 3462 ; "s / S" (Eingabe 62, Sprung-Umstellung nein): <3462> := <AC> (erwartet: dieser Befehl selbst)
 3063: 00003463240 # 240 3463 ; "t / T" (Eingabe 63, Sprung-Umstellung nein): <3463> := <AC> (erwartet: dieser Befehl selbst)
 3064: 00003464240 # 240 3464 ; "u / U" (Eingabe 64, Sprung-Umstellung nein): <3464> := <AC> (erwartet: dieser Befehl selbst)
@@ -81,7 +81,7 @@ Trommeldatei:
 3201: 00003102000 # 000 3102 ; Sprung zur Eingabe
 3202: 00003415240 # 240 3415 ; <3415> := <AC>  (erwartet 0)
 3203: 00003102000 # 000 3102 ; Sprung zur Eingabe
-3204: 00003420240 # 240 3420 ; <3420> := <AC>  (erwartet 0)
+3204: 00003460240 # 240 3460 ; <3460> := <AC>  (erwartet 0)
 3205: 00003102000 # 000 3102 ; Sprung zur Eingabe
 3206: 00003457240 # 240 3457 ; <3457> := <AC>  (erwartet 0)
 3207: 00003102000 # 000 3102 ; Sprung zur Eingabe
@@ -153,8 +153,9 @@ Tastenfolge:
 H G R
 
 Prüfungen:
-BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+BZ=3106 AC=00000000020 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 3061: 00000000020
+3105: 00000000020
 3400: 00003400240
 3401: 00003401240
 3402: 00003402240
@@ -168,7 +169,7 @@ BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 3412: 00000000000
 3415: 00000000000
 3416: 00000000000
-3420: 00000000000
+3420: 00003420240
 3421: 00003421240
 3422: 00003422240
 3423: 00003423240
@@ -192,7 +193,7 @@ BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 3450: 00003450240
 3451: 00003451240
 3457: 00000000000
-3460: 00003460240
+3460: 00000000000
 3462: 00003462240
 3463: 00003463240
 3464: 00003464240

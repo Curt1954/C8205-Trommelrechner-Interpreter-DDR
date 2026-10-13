@@ -16,6 +16,6 @@
 3015: 20 3016        c:      db  1       ; Hilfszelle c (db belegt nichts, wird nicht geprueft)
       20 0000 3012           equ 03012   ; FEHLER: liegt noch im Programm (3000 bis 3014)
 3012: 00 00000000060 a:      dw  060     
-                     ;[35m*** 3 Fehler[0m: Adresse 3012 doppelt belegt: "a: dw 060" ueberschneidet sich mit " 000 euklid".   
+                     ;*** 3 Fehler: Adresse 3012 doppelt belegt: "a: dw 060" ueberschneidet sich mit " 000 euklid".   
 3013: 00 00000000044 b:      dw  044     
-                     ;[35m*** 3 Fehler[0m: Adresse 3013 doppelt belegt: "b: dw 044" ueberschneidet sich mit "ende: 240 t".   
+                     ;*** 3 Fehler: Adresse 3013 doppelt belegt: "b: dw 044" ueberschneidet sich mit "ende: 240 t".   

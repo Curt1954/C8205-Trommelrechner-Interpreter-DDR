@@ -593,7 +593,7 @@ Rückkehr erfolgt in die Zelle hinter dem Aufruf (BIS-2.2.10).
 
 **Beispiel `pj2-bis_adressendruck.txt`** (Soll-Datei `pj2-bis_adressendruck_erwartet.txt`, Ansprungzelle 0100): Das Hauptprogramm holt das Testwort `01234567012` (`0123 4567 012`)
 aus Zelle 1010 in den AC, speichert es nach R1 und ruft Adressendruck (`025 0100`). Gedruckt werden nur die Wortstellen z12 bis z23, also die mittleren vier Oktalziffern;
-erwartet wird die Schreibwerk-Ausgabe `4567`. R1 bleibt unverändert, weil das Unterprogramm es vor der Drehung in der Arbeitszelle 7560 sichert und am Ende zurückholt
+erwartet wird die Schreibwerk-Ausgabe `4567`. R1 bleibt unverändert, weil das Unterprogramm es vor der Drehung in der Arbeitszelle 7744 sichert und am Ende zurückholt
 (die 12 + 12 Bit Drehung beim Druck von vier Ziffern ergeben nicht eine ganze Umdrehung von 33 Bit; beim Befehlsdruck schließen die 9 Bit des Operationsteils den Kreis).
 Der AC enthält am Ende das zurückgeholte R1 (der AC nach einer Ausgabe ist belanglos). Der Code des Adressendrucks liegt auf Spur 0240 (Zellen 0240 bis 0255), die Ansprungzelle 0100 enthält den Sprung dorthin.
 Geprüft am 08.10.2026 auf leerer Trommel mit `c8205_bis_test.sh`: `Test wahr`; der Test `pj2-bis_befehlsdruck` bleibt mit dem erweiterten Minimalprogramm `Test wahr`.
@@ -608,7 +608,7 @@ Die Lochstreifendateien enthalten die Zeichen im R 300-Code, eine Zeile je Zeich
 | `_4stellig` | `1234.` | R1 = `00001234000`, Schreibwerk `1234`, Stopp 1005, BZ=1006 |
 | `_8stellig` | `12345670.` | R1 = `12345670000` (Wortstellen z0 bis z23 belegt), Schreibwerk `5670` (die mittleren vier Ziffern), BZ=1006 |
 | `_null` | `.` | R1 = 0 (die Konstante Null braucht nur das Schlusszeichen), Schreibwerk `0000`, BZ=1006 |
-| `_zr` | `1` ZR | Sprung zur Kennzeicheneingabe (Stub 0320): BZ=0321, AC = `00000001000` |
+| `_zr` | `1` ZR `0` `0` `5` `.` | ZR bricht die Adresseneingabe ab und springt nach `kz_neu` (Zelle `ae_zr`, 0412). Die neu gestartete Kennzeicheneingabe liest K₁ = 0, K₂ = 0 und das Wort 5 und kehrt über `kz_rs` (7700, im Test mit `000 1010` vorbesetzt) nach 1010 zurück. Die Zellen 1002 bis 1005 des Hauptprogramms (Speichern nach R₁, Druck, Stopp) werden nicht erreicht. Stopp, BZ=1011, AC = `00000000005`, `kz_k1` (7701) = `kz_k2` (7702) = 0 |
 | `_ueberzaehlig` | `1234567091.` | Ab der neunten Ziffer wird alles ignoriert (auch die 9): R1 = `12345670000`, Schreibwerk `5670`, BZ=1006 |
 | `_ziffer8_halt` | `128.` | Die 8 ist keine Oktalziffer: HALT im Befehl `ae_halt` (Zelle 0257), BZ=0260, AC = `10000012000` (gelesene Konstante plus Haltmarke 2 hoch 30) |
 | `_ziffer9_erste` | `9` | Auch als erstes Zeichen HALT: BZ=0260, AC = `10000000000`, V1=V2=1 (Gleichheit im Vergleich 330) |
@@ -616,9 +616,13 @@ Die Lochstreifendateien enthalten die Zeichen im R 300-Code, eine Zeile je Zeich
 Die Adresseneingabe liest mit dem Eingabe-Halt `010 ae_tab` (Tabelle ab 0400, nach BIS-2.2.12.3 gehören die Plätze bis 437 zum Minimalprogramm): Jede Ziffer addiert d·0100 in den AC, danach drehen drei Sprünge `006` den AC um eine Oktalstelle nach links.
 Die Konstante steht damit rechtsbündig in den Oktalstellen t3 bis t10 (`0000 aaaa 000` bei vier Stellen).
 **Ziffern 8 und 9** sind keine Oktalziffern und führen zum **HALT**: Ihre Tabellenzellen enthalten 2 hoch 30 (`ae_pois`), der Vergleich `330 ae_pois` mit dem Sprung `150 ae_halt` erkennt das (kein gültiger AC ist an dieser Stelle so groß), und der Stopp `ae_halt` (Zelle 0257) hält an.
-**Jede Ziffer ab der neunten wird ignoriert**, bis das Schlusszeichen kommt, auch 8 und 9: Ein Zähler (Register 7563, sieben Einsen, je Ziffer um 1 Bit nach links geschoben, wie im Triadendruck) zählt acht Ziffern, danach liest die Schleife `ae_ign` jedes Zeichen mit Löschen (`011`) und verwirft es.
-Die Konstante wird dazu in Register 7562 gehalten, der Punkt holt sie zurück (Tabellenzellen 0433 `211 ae_sv` und 0434 `000 ae_rs`); der Rückkehrbefehl liegt in 7561. Damit sind die Arbeitszellen 7554 bis 7563 voll belegt.
+**Jede Ziffer ab der neunten wird ignoriert**, bis das Schlusszeichen kommt, auch 8 und 9: Ein Zähler (Arbeitszelle 7760, sieben Einsen, je Ziffer um 1 Bit nach links geschoben, wie im Triadendruck) zählt acht Ziffern, danach liest die Schleife `ae_ign` jedes Zeichen mit Löschen (`011`) und verwirft es.
+Die Konstante wird dazu in der Arbeitszelle 7757 gehalten, der Punkt holt sie zurück (Tabellenzellen 0433 `211 ae_sv` und 0434 `000 ae_rs`); der Rückkehrbefehl liegt in 7756. Die Arbeitszellen der Adresseneingabe liegen damit auf 7756 bis 7760; die Zellen 7554 bis 7563 sind den Ansprungzellen der anderen Bausteine vorbehalten und werden vom Minimalprogramm nicht benutzt.
 Geprüft am 08.10.2026 auf leerer Trommel mit `c8205_bis_test.sh`: alle sieben Tests `Test wahr`, ebenso `pj2-bis_befehlsdruck` und `pj2-bis_adressendruck`.
+
+**Verlegung der Arbeitszellen (11.10.2026).** Die Arbeitszellen der Ausgabe- und Eingabeunterprogramme (`okt_z`, `okt_rs`, `bd_rs`, `ad_rs`, `ad_sv`, `ae_rs`, `ae_sv`, `ae_z`) lagen auf 7554 bis 7563, den Speicherplätzen der Ansprungzellen der anderen Bausteine.
+Sie liegen jetzt auf 7740 bis 7744 und 7756 bis 7760 (Spezifikation `C8205-Interpreter-BIS.md`, BIS-A.3). Geprüft auf leerer Trommel mit dem neu assemblierten Minimalprogramm (`Assembler/Projekt_2/pj2-bis_minimalprogramm.test`, Kopie in `Tests/`):
+alle zehn Tests `pj2-bis_*` (die oben genannten sowie `_zr` und `pj2-bis_druck_bz_ac`) `Test wahr`; die Zellen 7554 bis 7563 bleiben nach allen Läufen null.
 
 ## 3. Schritt 2 jedes Tests: die Tastenfolge zur Definition des Ausgangszustands
 

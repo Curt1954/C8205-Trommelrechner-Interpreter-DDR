@@ -61,7 +61,7 @@ Trommeldatei:
 0072: 00000000000 # ML0001PWD: dw 0 ; Hier steht der Speicherbefehl für   240 afeld_base[min_index]
 0073: 00000006000 # 000 loop1 ; nächster Durchlauf Schleife 1
 0074: 00000005605 # 605 00005 ; 5 mal Linksverschiebung
-0100: 00000000006 # len0: dw 000000000006 ; Anzahl der Elemente im Array
+0100: 00000000006 # len0: dw feld_ende-feld_base ; Anzahl der Elemente im Array
 0102: 00004500030 # ausgabe: 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
 0103: 00000040030 # feld_base: dto 4172k0 ; Startelement des Arrays, alles Kleinbuchstaben-Ausgabebefehle
 0104: 00000010030

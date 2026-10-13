@@ -1,0 +1,20 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; neue Hauptleitadresse und Relativadresse mitten im Lochband: 3000: 5; 2 1 3100 . dann 3100: 6; 2 0 5 . dann 3105: 7
+#PROT STUFE=2
+#STARTE 1000
+--leser1 virtuelle_Geraete/Leser1/pj2-bis_ps_hla_neu_mitten.txt
+
+# Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0613 und 0700 bis 0777 werden nicht belegt)
+1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen
+1001: 00000263025  # 025 0263 ; Aufruf
+1002: 00000000020  # 020 0 ; Stopp nach der Rueckkehr
+3001: 00000000000  # vorbesetzt, weil die Trommel zwischen den Tests erhalten bleibt: nach der neuen Hauptleitadresse nicht fortgesetzt
+
+Prüfungen:
+BZ=1003 AC=00000000000 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+3000: 00000000005  # Wort 5
+3001: 00000000000  # nach der neuen Hauptleitadresse nicht fortgesetzt
+3100: 00000000006  # Wort 6
+3105: 00000000007  # Wort 7 (3100 + 5)
+7724: 00003100000  # Hauptleitadresse 3100
+7761: 00003106240  # Abspeicherbefehl 240 3106

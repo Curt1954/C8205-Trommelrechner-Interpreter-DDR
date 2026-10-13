@@ -7,12 +7,23 @@ Spalten:
   3. Dateien der virtuellen Geräte (Leser, SW-Ausgabe, K0, ...) und
      Test-Vergleichsdateien (--pruefe-sw-ausgabe / --pruefe-stanzer1)
   4. zugehöriger ASM-Quelltext (falls vorhanden)
+  5. ASM-Zuordnung: leer = ASM-Datei mit gleichem Namen; sonst die Art der
+     Zuordnung (über Trommelinhalt, über Namen, Voraussetzung: Minimalprogramm)
+
+Spalte 2 enthaelt standardmaessig nur die erste #DOK-Zeile (hoechstens
+--max-inhalt Zeichen). Haben mehrere Tests denselben Text, werden bei ihnen
+weitere #DOK-Zeilen angehaengt, bis sie sich unterscheiden. --voll liefert
+wie frueher alle #DOK-Zeilen ungekuerzt.
+
+Die MD-Ausgabe ist eine Projektdatei nach C8205-Versionierung.md: Titelzeile, darunter
+'Version: y.xx-zzz'. Neue Datei: 0.01-001; aendert sich der Inhalt gegenueber der vorhandenen
+Ausgabedatei, steigt der Build um 1 (Unter- und Hauptversion setzt nur der Projektinhaber).
 
 Aufruf (aus beliebigem Verzeichnis; die Basis mit Tests/ und Assembler/ wird
 automatisch gesucht: aktuelles Verzeichnis, Skriptverzeichnis, jeweils deren
 Elternverzeichnis - z.B. wenn das Skript in CSV/ neben Assembler/ liegt):
     python3 test_tabelle.py                    # schreibt test_tabelle.csv, .md, .xlsx (wenn openpyxl da ist)
-    python3 test_tabelle.py --basis /pfad --format md csv xlsx html
+    python3 test_tabelle.py --basis /pfad --format md csv xlsx html [--max-inhalt 140 | --voll]
 Die Ausgabedateien landen im Skriptverzeichnis (oder unter --ausgabe, wenn Pfad angegeben).
 """
 import argparse
@@ -22,6 +33,7 @@ import html
 import os
 import re
 import sys
+from collections import Counter, defaultdict
 
 ASM_VERZEICHNISSE = ["Claude", "Claude_bsp_reassemblierung", "Proj_FeldSortieren",
                      "Projekt_1", "Projekt_2"]
@@ -85,14 +97,46 @@ def trommelzellen(pfad):
     return zellen
 
 
-def beschreibung(zeilen):
-    """#DOK-Zeilen (ohne Duplikate) zu einem Text verbinden."""
+def dok_texte(zeilen):
+    """Texte der #DOK-Zeilen in Dateireihenfolge, ohne Duplikate und ohne leere."""
     teile = []
     for z in zeilen:
         m = re.match(r"#DOK-\d+\s*(.*)", z)
         if m and m[1].strip() and m[1].strip() not in teile:
             teile.append(m[1].strip())
-    return " ".join(teile)
+    return teile
+
+
+def kuerze(text, maxlen):
+    """Text auf hoechstens ca. maxlen Zeichen kuerzen (an einer Wortgrenze, mit ' …')."""
+    if not maxlen or len(text) <= maxlen:
+        return text
+    schnitt = text[:maxlen]
+    if " " in schnitt:
+        schnitt = schnitt.rsplit(" ", 1)[0]
+    return schnitt.rstrip(" ,;:(") + " …"
+
+
+def kurzbeschreibungen(namen, dok_je_test, ersatz, maxlen):
+    """Name -> Kurzbeschreibung. Grundlage ist die erste #DOK-Zeile (ohne #DOK-Zeile
+    der Ersatztext). Tests mit gleichem Text bekommen weitere #DOK-Zeilen angehaengt,
+    bis sie sich unterscheiden oder keine mehr da sind; danach wird gekuerzt."""
+    n_zeilen = {n: 1 for n in namen}
+
+    def text(n):
+        d = dok_je_test[n]
+        return " ".join(d[:n_zeilen[n]]) if d else ersatz[n]
+
+    while True:
+        zaehler = Counter(text(n) for n in namen)
+        geaendert = False
+        for n in namen:
+            if zaehler[text(n)] > 1 and n_zeilen[n] < len(dok_je_test[n]):
+                n_zeilen[n] += 1
+                geaendert = True
+        if not geaendert:
+            break
+    return {n: kuerze(text(n), maxlen) for n in namen}
 
 
 def ersatzbeschreibung(zeilen, name):
@@ -185,7 +229,7 @@ def finde_asm(testpfad, stamm, asm, asm_zellen, text=""):
     return "", ""
 
 
-def sammle(basis):
+def sammle(basis, voll=False, maxlen=140):
     testdir = os.path.join(basis, "Tests")
     if not os.path.isdir(testdir):
         sys.exit(f"Verzeichnis nicht gefunden: {testdir}")
@@ -196,6 +240,7 @@ def sammle(basis):
         asm_zellen[rel] = trommelzellen(t) if os.path.exists(t) else {}
 
     zeilen_tab = []
+    dok_je_test, ersatz = {}, {}
     for name in sorted(os.listdir(testdir)):
         if not name.endswith((".txt", ".test")):
             continue
@@ -205,16 +250,45 @@ def sammle(basis):
         if not any(x.startswith("Trommeldatei") for x in z):
             continue
         stamm = os.path.splitext(name)[0]
-        text = beschreibung(z) or ersatzbeschreibung(z, name)
+        dok = dok_texte(z)
+        dok_je_test[name] = dok
+        ersatz[name] = "" if dok else ersatzbeschreibung(z, name)
+        text = " ".join(dok) or ersatz[name]  # voller Text; fuer die ASM-Suche
         geraete = geraete_zeilen(z, basis, name)
         rel, hinweis = finde_asm(pfad, stamm, asm, asm_zellen, text)
-        zeilen_tab.append((name, text, "\n".join(geraete), rel))
+        zeilen_tab.append([name, text, "\n".join(geraete), rel, hinweis.strip(" ()")])
         if hinweis:
             print(f"Hinweis: {name} -> {rel}{hinweis}", file=sys.stderr)
-    return zeilen_tab
+    if not voll:
+        kurz = kurzbeschreibungen([r[0] for r in zeilen_tab], dok_je_test, ersatz, maxlen)
+        for r in zeilen_tab:
+            r[1] = kurz[r[0]]
+    return [tuple(r) for r in zeilen_tab]
 
 
-KOPF = ["Testdatei", "Inhalt des Tests", "Dateien virtueller Geräte / Vergleichsdatei", "ASM-Quelltext"]
+PLATZHALTER = ("[Tastenfolge", "(keine #DOK")
+
+
+def berichte_luecken(tab):
+    """Hinweise (stderr): Tests ohne echte Beschreibung und Tests mit gleicher Beschreibung."""
+    platz = [r[0] for r in tab if r[1].startswith(PLATZHALTER)]
+    if platz:
+        print(f"Hinweis: {len(platz)} Tests ohne #DOK-Text (nur Platzhalter): " + ", ".join(platz),
+              file=sys.stderr)
+    gruppen = defaultdict(list)
+    for r in tab:
+        if not r[1].startswith(PLATZHALTER):
+            gruppen[r[1]].append(r[0])
+    gleich = [ns for ns in gruppen.values() if len(ns) > 1]
+    if gleich:
+        print(f"Hinweis: {len(gleich)} Gruppen mit gleicher Beschreibung "
+              f"({sum(len(ns) for ns in gleich)} Tests) - #DOK-Zeilen unterscheidbar machen:", file=sys.stderr)
+        for ns in gleich:
+            print("  " + ", ".join(ns), file=sys.stderr)
+
+
+KOPF = ["Testdatei", "Inhalt des Tests", "Dateien virtueller Geräte / Vergleichsdatei", "ASM-Quelltext",
+        "ASM-Zuordnung"]
 
 
 def schreibe_csv(tab, pfad):
@@ -224,13 +298,54 @@ def schreibe_csv(tab, pfad):
         w.writerows(tab)
 
 
-def schreibe_md(tab, pfad):
+MD_TITEL = "Testübersicht"
+VERSION_RE = re.compile(r"^Version: (\d+)\.(\d{2})-(\d{3})$", re.M)
+
+
+def md_einleitung(voll, maxlen):
+    """Zwei kurze Absaetze vor der Tabelle: Herkunft und Lesart der Spalten."""
+    if voll:
+        inhalt = "alle `#DOK`-Zeilen der Testdatei"
+    elif maxlen:
+        inhalt = (f"die erste `#DOK`-Zeile der Testdatei (höchstens {maxlen} Zeichen; haben mehrere Tests "
+                  "denselben Text, sind weitere `#DOK`-Zeilen angehängt)")
+    else:
+        inhalt = "die erste `#DOK`-Zeile der Testdatei (haben mehrere Tests denselben Text, sind weitere angehängt)"
+    return (
+        "Übersicht aller Testdateien in `Tests/`, erzeugt von `test_tabelle.py`. Die Spalte „Inhalt des Tests“ "
+        f"nennt {inhalt}; fehlt sie, steht die Tastenfolge in eckigen Klammern oder ein Hinweis in runden Klammern.\n\n"
+        "Die Spalte „ASM-Zuordnung“ ist leer, wenn die ASM-Datei denselben Namen wie die Testdatei hat; sonst nennt "
+        "sie die Art der Zuordnung (über Trommelinhalt, über Namen oder Voraussetzung: Minimalprogramm auf der Trommel)."
+    )
+
+
+def md_version(pfad, rumpf):
+    """Version fuer die MD-Datei nach C8205-Versionierung.md (Abschnitt 3): ohne vorhandene Versionszeile
+    0.01-001; gleicher Inhalt wie in der vorhandenen Datei: Version bleibt; sonst Build + 1."""
+    alt = ""
+    if os.path.exists(pfad):
+        with open(pfad, encoding="utf-8") as f:
+            alt = f.read()
+    m = VERSION_RE.search(alt)
+    if not m:
+        return "0.01-001"
+    if alt[m.end():] == "\n\n" + rumpf:
+        return f"{m[1]}.{m[2]}-{m[3]}"
+    if int(m[3]) >= 999:
+        sys.exit("Build 999 erreicht: laut C8205-Versionierung.md vor der naechsten Aenderung den Projektinhaber fragen.")
+    return f"{m[1]}.{m[2]}-{int(m[3]) + 1:03d}"
+
+
+def schreibe_md(tab, pfad, voll=False, maxlen=140):
     def e(s):
         return s.replace("|", "\\|").replace("\n", "<br>")
+    zeilen = ["| " + " | ".join(KOPF) + " |", "|" + "---|" * len(KOPF)]
+    zeilen += ["| " + " | ".join(e(x) for x in r) + " |" for r in tab]
+    rumpf = md_einleitung(voll, maxlen) + "\n\n" + "\n".join(zeilen) + "\n"
+    version = md_version(pfad, rumpf)
     with open(pfad, "w", encoding="utf-8") as f:
-        f.write("| " + " | ".join(KOPF) + " |\n|" + "---|" * len(KOPF) + "\n")
-        for r in tab:
-            f.write("| " + " | ".join(e(x) for x in r) + " |\n")
+        f.write(f"# {MD_TITEL}\n\nVersion: {version}\n\n" + rumpf)
+    print(f"MD-Version: {version}")
 
 
 def schreibe_html(tab, pfad):
@@ -261,7 +376,7 @@ def schreibe_xlsx(tab, pfad):
         ws.append(list(r))
     for c in ws[1]:
         c.font = Font(bold=True)
-    for sp, breite in zip("ABCD", (42, 80, 60, 50)):
+    for sp, breite in zip("ABCDE", (42, 70, 60, 50, 30)):
         ws.column_dimensions[sp].width = breite
     for row in ws.iter_rows(min_row=1):
         for c in row:
@@ -278,18 +393,24 @@ def main():
     ap.add_argument("--format", nargs="+", default=["csv", "md", "xlsx"],
                     choices=["csv", "md", "xlsx", "html"])
     ap.add_argument("--ausgabe", default="test_tabelle", help="Dateiname ohne Endung")
+    ap.add_argument("--max-inhalt", type=int, default=140,
+                    help="Hoechstlaenge der Spalte 'Inhalt des Tests' in Zeichen (0 = unbegrenzt; Standard 140)")
+    ap.add_argument("--voll", action="store_true",
+                    help="alle #DOK-Zeilen ungekuerzt (Verhalten vor der Kuerzung)")
     a = ap.parse_args()
 
     basis = finde_basis(a.basis)
     print("Basis:", basis)
-    tab = sammle(basis)
+    tab = sammle(basis, a.voll, a.max_inhalt)
     ausgabe = a.ausgabe if os.path.isabs(a.ausgabe) else os.path.join(SKRIPTDIR, a.ausgabe)
     for fmt in a.format:
         ziel = f"{ausgabe}.{fmt}"
-        ok = {"csv": schreibe_csv, "md": schreibe_md, "html": schreibe_html,
-              "xlsx": schreibe_xlsx}[fmt](tab, ziel)
+        ok = {"csv": schreibe_csv,
+              "md": lambda t, z: schreibe_md(t, z, a.voll, a.max_inhalt),
+              "html": schreibe_html, "xlsx": schreibe_xlsx}[fmt](tab, ziel)
         if ok is not False:
             print("geschrieben:", ziel)
+    berichte_luecken(tab)
     ohne_asm = sum(1 for r in tab if not r[3])
     print(f"{len(tab)} Tests, davon {len(tab) - ohne_asm} mit ASM-Quelltext, {ohne_asm} ohne.")
 

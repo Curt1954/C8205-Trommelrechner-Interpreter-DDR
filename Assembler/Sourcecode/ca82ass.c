@@ -211,6 +211,11 @@ int is_error3 = 0;
 int is_error_abs = 0;
 int printHell = 0;
 
+// Pragma ";#; LEITADRESSE xx": Kennzeichen, das im Objektcode (.obj) und im Listing (STDOUT, .dmp) anstelle von 01 ausgegeben wird.
+// Standard 01, erlaubt sind 01 bis 09.
+int leitadresseKennzeichen = 1;
+int leitadressePragmaGesetzt = 0;   // 1, wenn das Pragma im Quelltext angegeben war
+
 unsigned int absolutadresse;
 
 typedef struct {
@@ -653,6 +658,65 @@ void processLine(char *line, lineElements linesAsm[], int *lineCount) {
     (*lineCount)++;
 }
 
+// Vergleich ohne Beachtung der Gross-/Kleinschreibung (nur fuer Pragma-Schluesselwort und start).
+static int gleichOhneGrossKlein(const char *a, const char *b) {
+    while (*a && *b) {
+        if (toupper((unsigned char)*a) != toupper((unsigned char)*b)) return 0;
+        a++; b++;
+    }
+    return *a == '\0' && *b == '\0';
+}
+
+// Pragma   ;#; LEITADRESSE xx
+//   - steht als Kommentarzeile im Quelltext und muss VOR `start` stehen,
+//   - darf keinmal oder genau einmal vorkommen (Standard ohne Pragma: 01),
+//   - xx ist zweistellig und liegt zwischen 01 und 09.
+// Wirkung: Alle Befehle und Konstanten, die im Objektcode (.obj) bisher mit dem Kennzeichen 01 erzeugt
+// wurden, erhalten stattdessen den Wert xx (siehe schreibeObjZeile).
+// Liefert 1, wenn die Zeile ein LEITADRESSE-Pragma ist (auch ein fehlerhaftes), sonst 0.
+static int verarbeiteLeitadressePragma(const char *zeile, int zeilennr, int startGesehen) {
+    const char *p = zeile;
+    while (*p == ' ' || *p == '\t') p++;
+    if (strncmp(p, ";#;", 3) != 0) return 0;
+    p += 3;
+    while (*p == ' ' || *p == '\t') p++;
+
+    char wort[32];
+    size_t n = 0;
+    while (isalnum((unsigned char)*p) || *p == '_') {
+        if (n < sizeof(wort) - 1) wort[n++] = *p;
+        p++;
+    }
+    wort[n] = '\0';
+    if (!gleichOhneGrossKlein(wort, "LEITADRESSE")) return 0;   // anderes ";#;"-Kommentar: bleibt Kommentar
+
+    while (*p == ' ' || *p == '\t') p++;
+
+    if (startGesehen) {
+        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE muss vor `start` stehen.", zeilennr);
+        is_error = 1;
+        return 1;
+    }
+    if (leitadressePragmaGesetzt) {
+        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE darf nur einmal vorkommen.", zeilennr);
+        is_error = 1;
+        return 1;
+    }
+    leitadressePragmaGesetzt = 1;
+
+    // Wert: genau zwei Ziffern 01 ... 09; danach nur noch Leerraum oder ein Kommentar (;).
+    int wertOk = isdigit((unsigned char)p[0]) && isdigit((unsigned char)p[1])
+                 && (p[2] == '\0' || p[2] == ' ' || p[2] == '\t' || p[2] == ';' || p[2] == '\r' || p[2] == '\n');
+    int wert = wertOk ? (p[0] - '0') * 10 + (p[1] - '0') : 0;
+    if (!wertOk || wert < 1 || wert > 9) {
+        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE erwartet einen zweistelligen Wert von 01 bis 09 (z. B. ;#; LEITADRESSE 02).", zeilennr);
+        is_error = 1;
+        return 1;
+    }
+    leitadresseKennzeichen = wert;
+    return 1;
+}
+
 void ladeAssemblerZeilen(const char *inputFileName) {
     FILE *inputFile = fopen(inputFileName, "r");
     if (!inputFile) {
@@ -663,6 +727,7 @@ void ladeAssemblerZeilen(const char *inputFileName) {
     char line[1024];
     int zeilennr = 0;
     int vorigeZeileOffen = 0;   // 1 = vorige fgets-Teilzeile hatte kein Zeilenende (Zeile laenger als Puffer)
+    int startGesehen = 0;       // 1, sobald die Anweisung `start` gelesen wurde (Pragma LEITADRESSE muss davor stehen)
     while (fgets(line, sizeof(line), inputFile)) {
         int hatZeilenende = (strchr(line, '\n') != NULL);
 
@@ -693,7 +758,12 @@ void ladeAssemblerZeilen(const char *inputFileName) {
             is_error = 1;
             continue;
         }
+        verarbeiteLeitadressePragma(line, zeilennr, startGesehen);   // vor processLine: line wird dort veraendert
+        int zeilenVorher = lineCountAsm;
         processLine(line, linesAsm, &lineCountAsm);
+        if (lineCountAsm > zeilenVorher && gleichOhneGrossKlein(linesAsm[lineCountAsm - 1].sp2, "start")) {
+            startGesehen = 1;
+        }
     }
     fclose(inputFile); 
 
@@ -2319,6 +2389,25 @@ static void entferneFarbcodes(char *text) {
     *w = '\0';
 }
 
+// Ersetzt in der Adress-/Kennzeichenspalte des Listings (sp0, z. B. "0007: 01 2006 241" oder "      01 2006 241")
+// das Kennzeichen 01 durch den Wert des Pragmas LEITADRESSE (Standard 01 = keine Aenderung).
+// Die Ersetzung erfolgt an Ort und Stelle (zwei Zeichen durch zwei Zeichen), die Spaltenbreite bleibt gleich.
+static void ersetzeKennzeichen01(char *sp0) {
+    if (leitadresseKennzeichen == 1) return;
+    char *p = sp0;
+    while (*p == ' ') p++;
+    char *q = p;
+    while (*q >= '0' && *q <= '7') q++;
+    if (q > p && *q == ':') {          // Adressspalte "<oktalzahl>:" ueberspringen
+        p = q + 1;
+        while (*p == ' ') p++;
+    }
+    if (p[0] == '0' && p[1] == '1' && (p[2] == ' ' || p[2] == '\0')) {
+        p[0] = (char)('0' + leitadresseKennzeichen / 10);
+        p[1] = (char)('0' + leitadresseKennzeichen % 10);
+    }
+}
+
 // Schreibt das formatierte Listing nach f. Mit ohneFarben = 1 (Datei .dmp) werden die ANSI-Farbcodes
 // vorher aus den Feldern entfernt und die Spaltenbreiten aus dem Text ohne Farbcodes berechnet;
 // frueher standen in der .dmp bei Fehlerlaeufen Escape-Sequenzen (z. B. um die Marke EE).
@@ -2340,6 +2429,10 @@ static void schreibeListingX(FILE *f, int ohneFarben, lineElementsX lineAsmAufge
             snprintf(b2, sizeof(b2), "%s", s2); entferneFarbcodes(b2); s2 = b2; \
             snprintf(b3, sizeof(b3), "%s", s3); entferneFarbcodes(b3); s3 = b3; \
             snprintf(b4, sizeof(b4), "%s", s4); entferneFarbcodes(b4); s4 = b4; \
+        } \
+        if (leitadresseKennzeichen != 1) { \
+            if (s0 != b0) snprintf(b0, sizeof(b0), "%s", s0); \
+            ersetzeKennzeichen01(b0); s0 = b0; \
         } \
     } while (0)
 
@@ -3362,8 +3455,12 @@ void pass2(char *symbolLogFile, char *symFileName) {
                         MELDE_FEHLER_P2(i, message );
                     } else {
                         if ( is_error == -2 ) {
+                            // Der <werteausdruck> von dw darf Symbole enthalten (Doku 3.3), auch spaeter definierte.
+                            // Er wird erst in Pass 3 ausgewertet, wenn alle Symbole bekannt sind; deshalb hier kein
+                            // "spaetes Symbol" (BITMASK) mehr, das den Operanden in resolveSymbols() durch eine Zahl
+                            // ersetzt haette (ohne Pruefung auf relative Adressen, und nur bei dw-Zeilen mit Marke).
                             if (  isValidLabel(label) ) {
-                                addSymbol(label, programCounter | 010000000000 , relativAdresse, operation, operand,10,i);
+                                addSymbol(label, programCounter , relativAdresse, operation, operand,10,i);
                             }
                         } else {
                             if ( is_error != 0 ) {
@@ -3591,7 +3688,8 @@ void pass2(char *symbolLogFile, char *symFileName) {
     //
     // Hier wird derselbe Ersatztext (12 Oktalziffern, keine Hauptleitadresse) nachgetragen, den
     // resolveSymbols() bei einer Zeile mit Label erzeugt. Ersetzt werden nur echte Literalnamen
-    // aus der Literaltabelle; `dw a` und `dw a+1` bleiben wie in Doku 3.3 ein Fehler.
+    // aus der Literaltabelle. Andere Symbole im Operanden von dw (`dw a`, `dw a-b`, `dw x1+1`) bleiben
+    // unveraendert stehen und werden in Pass 3 nach den Regeln von Doku 3.3 ausgewertet (evaluateValue).
     for (int li = 0; li < lineCountAsmAufgeloest; li++) {
         if (strcmp(lineAsmAufgeloest[li].sp2, "dw") != 0) continue;
         if (!isLiteralInTable(lineAsmAufgeloest[li].sp3)) continue;
@@ -3637,25 +3735,53 @@ void pass2(char *symbolLogFile, char *symFileName) {
 
 // -------------------------------------------------------
 
+// Grund des letzten Fehlers von evaluateValue (NULL = kein besonderer Grund, nur Syntax-/Bereichsfehler).
+// Wird von Pass 3 an die Meldung "Operand ist ungueltig" angehaengt.
+static const char *evaluateValueGrund = NULL;
+
+// Liefert 1 und setzt *wert und *absolut, wenn das Symbol in der Symboltabelle steht (sonst 0).
+// *absolut = 1: Symbol wurde mit abs definiert (nicht verschieblich); sonst ist es eine Relativadresse
+// (Marke, equ-Symbol, Literalsymbol).
+static int sucheSymbolFuerWert(const char *name, long long *wert, int *absolut) {
+    for (int i = 0; i < symbolCount; i++) {
+        if (strcmp(symbolTable[i].symbol, name) == 0) {
+            *wert = (long long)(symbolTable[i].address & ~BITMASK);
+            *absolut = sucheInAbsTabelle(name) ? 1 : 0;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// Wertet den <werteausdruck> von dw aus (Doku 3.3).
+//   Zahlen:    Oktalzahl (fuehrende 0) oder Dezimalzahl.
+//   Symbole:   abs-Symbole sind erlaubt. Relative Symbole (Marken, equ-Symbole) sind nur erlaubt, wenn sich ihre
+//              Verschiebung aufhebt: die Differenz zweier symbolischer Adressen ist absolut und zulaessig.
+//              Eine einzelne symbolische Adresse (Ergebnis relativ) ist nicht zulaessig; Adressen schreibt man mit da.
+//   Rechnen:   * und / vor + und -, links nach rechts. Relative Symbole duerfen nicht multipliziert oder dividiert werden.
+// Jedes Symbol wird mit seinem Verschiebungsgrad gefuehrt: abs-Symbole und Zahlen 0, relative Symbole +1;
+// bei + addieren, bei - subtrahieren sich die Grade. Das Ergebnis ist nur bei Grad 0 absolut.
 long long int evaluateValue(char *operand, int *errorFlag) {
     long long values[512];     // vorzeichenbehaftet, damit Subtraktion und negative Werte stimmen
-    char operators[512];   
+    int       grade[512];      // Verschiebungsgrad je Wert (0 = absolut)
+    char operators[512];
     int valueIndex = 0, operatorIndex = 0;
 
     *errorFlag = 0; // Standardmäßig kein Fehler
+    evaluateValueGrund = NULL;
 
     char *currentPos = operand;
 
     while (*currentPos != '\0') {
-        while (*currentPos == ' ') currentPos++;  
+        while (*currentPos == ' ') currentPos++;
 
         char tempToken[512];
         int tokenLength = 0;
 
         // Extrahiere Zahl oder Symbol bis zum Operator
         while (*currentPos != '\0' && !strchr("+-*/", *currentPos)) {
-            if (!isdigit(*currentPos)) {
-                *errorFlag = 1; 
+            if (!(isalnum((unsigned char)*currentPos) || *currentPos == '_') || tokenLength >= (int)sizeof(tempToken) - 1) {
+                *errorFlag = 1;
                 return 0;
             }
             tempToken[tokenLength++] = *currentPos;
@@ -3665,21 +3791,36 @@ long long int evaluateValue(char *operand, int *errorFlag) {
 
         // Fuehrendes Vorzeichen (-5, +5): als 0-5 bzw. 0+5 auswerten
         if (tokenLength == 0 && valueIndex == 0 && *currentPos != '\0' && strchr("+-", *currentPos)) {
+            grade[valueIndex] = 0;
             values[valueIndex++] = 0;
         }
 
         if (tokenLength > 0) {
             long long value = 0;
-            char *endPtr;
-            if (tempToken[0] == '0') {
-                value = strtol(tempToken, &endPtr, 8);
-            } else { 
-                value = strtol(tempToken, &endPtr, 10);
+            int grad = 0;
+            if (isdigit((unsigned char)tempToken[0])) {
+                // Zahl: nur Ziffern
+                char *endPtr;
+                if (tempToken[0] == '0') {
+                    value = strtol(tempToken, &endPtr, 8);
+                } else {
+                    value = strtol(tempToken, &endPtr, 10);
+                }
+                if (*endPtr != '\0') {
+                    *errorFlag = 1; // Nicht konvertierbarer Wert
+                    return 0;
+                }
+            } else {
+                // Symbol
+                int absolut = 0;
+                if (!sucheSymbolFuerWert(tempToken, &value, &absolut)) {
+                    evaluateValueGrund = "Symbol nicht definiert";
+                    *errorFlag = 1;
+                    return 0;
+                }
+                grad = absolut ? 0 : 1;
             }
-            if (*endPtr != '\0') {
-                *errorFlag = 1; // Nicht konvertierbarer Wert
-                return 0;
-            }
+            grade[valueIndex] = grad;
             values[valueIndex++] = value; // Speichere den konvertierten Wert
         }
 
@@ -3702,8 +3843,18 @@ long long int evaluateValue(char *operand, int *errorFlag) {
             long long leftValue = values[i];
             long long rightValue = values[i + 1];
 
+            // Eine relative Adresse darf nicht multipliziert oder dividiert werden.
+            if (grade[i] != 0 || grade[i + 1] != 0) {
+                evaluateValueGrund = "symbolische Adresse in * oder /";
+                *errorFlag = 1;
+                return 0;
+            }
+
             if (operators[i] == '*') {
-                values[i] = leftValue * rightValue;
+                if (__builtin_mul_overflow(leftValue, rightValue, &values[i])) {
+                    *errorFlag = 1; // Ueberlauf
+                    return 0;
+                }
             } else if (operators[i] == '/') {
                 if (rightValue == 0) {
                     *errorFlag = 1; // Division durch Null ist unzulässig
@@ -3715,6 +3866,7 @@ long long int evaluateValue(char *operand, int *errorFlag) {
             // Werte und Operatoren verschieben
             for (int j = i + 1; j < valueIndex - 1; j++) {
                 values[j] = values[j + 1];
+                grade[j] = grade[j + 1];
             }
             valueIndex--;
             for (int j = i; j < operatorIndex - 1; j++) {
@@ -3727,12 +3879,22 @@ long long int evaluateValue(char *operand, int *errorFlag) {
 
     // Addition und Subtraktion ausführen
     long long totalValue = values[0];
+    int totalGrad = grade[0];
     for (int i = 0; i < operatorIndex; i++) {
         if (operators[i] == '+') {
-            totalValue += values[i + 1];
+            if (__builtin_add_overflow(totalValue, values[i + 1], &totalValue)) { *errorFlag = 1; return 0; }
+            totalGrad += grade[i + 1];
         } else if (operators[i] == '-') {
-            totalValue -= values[i + 1];
+            if (__builtin_sub_overflow(totalValue, values[i + 1], &totalValue)) { *errorFlag = 1; return 0; }
+            totalGrad -= grade[i + 1];
         }
+    }
+
+    // Ergebnis relativ (z. B. eine einzelne symbolische Adresse, "a+1", "a+b"): nicht zulaessig.
+    if (totalGrad != 0) {
+        evaluateValueGrund = "Ergebnis ist relativ; Adressen mit da schreiben, erlaubt ist nur die Differenz zweier Adressen";
+        *errorFlag = 1;
+        return 0;
     }
 
     return totalValue;
@@ -4180,6 +4342,31 @@ void copyAndIncrementLineElementsSpOnly(int i, char *buffer) {
 }
 
 
+// Schreibt eine Zeile in die Objektdatei (.obj).
+//  - Die Adreßspalte entfaellt: "0007: 01 0006 241" wird zu "01 0006 241"; bei Zeilen, die schon bisher keine
+//    Adresse hatten ("      20 0000 0100"), entfallen die fuehrenden Leerzeichen.
+//  - Das Kennzeichen 01 wird durch den Wert des Pragmas LEITADRESSE ersetzt (Standard 01).
+// Die Puffer fuer .dmp und .test behalten die Adresse; sie werden von dieser Funktion nicht veraendert.
+// Das Listing (STDOUT und .dmp) erhaelt das Kennzeichen xx in schreibeListingX (ersetzeKennzeichen01).
+static void schreibeObjZeile(FILE *objFile, const char *zeile) {
+    const char *p = zeile;
+    while (*p == ' ') p++;
+
+    // Adreßspalte "<oktalzahl>:" samt folgenden Leerzeichen ueberspringen
+    const char *q = p;
+    while (*q >= '0' && *q <= '7') q++;
+    if (q > p && *q == ':') {
+        p = q + 1;
+        while (*p == ' ') p++;
+    }
+
+    if (p[0] == '0' && p[1] == '1' && (p[2] == ' ' || p[2] == '\0')) {
+        fprintf(objFile, "%02d%s.\n", leitadresseKennzeichen, p + 2);
+    } else {
+        fprintf(objFile, "%s.\n", p);
+    }
+}
+
 // Auflösen des dt Befehls
 int zFlagErz = 0; // Zustandsflag
 int textPC = 0;   // Trommeladresse des naechsten von erzeugenText ausgegebenen Wortes
@@ -4204,7 +4391,7 @@ void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
     // Trommeladresse, beginnend bei textPC. Die Adresse wird pro Zeile in
     // .adr/.adrValid gemerkt, damit erzeugeTestDatei sie verwenden kann.
     void ausgabeWort(const char *wort) {
-        fprintf(machineCodeFile, "%s.\n", wort);
+        schreibeObjZeile(machineCodeFile, wort);
         lineElementsX *z = &lineAsmAufgeloestX[lineCountAsmAufgeloestX];
         if (ersteAusgabe == 1) {
             fprintf(hilfsFile, "%s\n", line);
@@ -4376,7 +4563,7 @@ void dzAuswertung(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
         if (strcmp(operand, dzTable[i].symbol) == 0) {
             // Zweite Spalte ausgeben
             sprintf(buffer, "      00 %04o 030", dzTable[i].octalValue);
-            fprintf(machineCodeFile, "%s.\n", buffer);
+            schreibeObjZeile(machineCodeFile, buffer);
 
             fprintf(hilfsFile, "%s\n", line);
             copyAndIncrementLineElementsX(iii, buffer);
@@ -4741,7 +4928,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
             if (strcmp(operation, "start") == 0) {
                 if ( startAdresse != 0) {
                     sprintf(buffer, "      21 0000 %04o", startAdresse);
-                    fprintf(machineCodeFile, "%s.\n", buffer);
+                    schreibeObjZeile(machineCodeFile, buffer);
                     copyAndIncrementLineElementsX(i,buffer);
                     fprintf(hilfsFile,"%s\n", line);
                 }
@@ -4759,7 +4946,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                         relativadresse = (relativadresse + 0010 - 1) & ~(0010 - 1); // Aufrunden auf nächste 0010
                     }                
                     sprintf(buffer, "      20 0000 %04o", relativadresse);
-                    fprintf(machineCodeFile, "%s.\n", buffer);
+                    schreibeObjZeile(machineCodeFile, buffer);
                     replaceSubstring(line, operand, relativadresse);
                     fprintf(hilfsFile,"%s\n", line);
                     replaceSubstring(lineAsmAufgeloest[i].sp3, operand, relativadresse);
@@ -4812,18 +4999,25 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 if (errorFlag == 0 ) {
                     if ( dwValue == 0) {
                         sprintf(buffer, "%04o: 0",programCounter);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
 
                     } else {
                         sprintf(buffer, "%04o: 00 %011llo", programCounter,dwValue);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
                     }
                     fprintf(hilfsFile,"%s\n", line);
                     copyAndIncrementLineElementsX(i,buffer); 
                 } else {
                     sprintf(buffer, "%04o: %sEE%s %04o %s   ", programCounter, _violett, _normal, 0, operand); // Fehlerausgabe
                     copyAndIncrementLineElementsX (i,buffer);
-                    outAdressError(operand, "Operand", " ist ungültig");
+                    if (evaluateValueGrund != NULL) {
+                        // Symbolfehler (Doku 3.3): Grund an die Standardmeldung anhaengen
+                        char dwMeldung[512];
+                        snprintf(dwMeldung, sizeof(dwMeldung), " ist ungültig (%s)", evaluateValueGrund);
+                        outAdressError(operand, "Operand", dwMeldung);
+                    } else {
+                        outAdressError(operand, "Operand", " ist ungültig");
+                    }
                     printHell = 1;
                     is_error3=1;
                 }
@@ -4854,10 +5048,10 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 } else if (errorFlag == 0 ) {
                     if ( absolutadresse != 0 ) { 
                         sprintf(buffer, "%04o: 00 %04o",programCounter,dwValue<<9);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
                     } else { 
                         sprintf(buffer, "%04o: 01 %04o",programCounter,dwValue<<9);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
                     }
                     fprintf(hilfsFile,"%s\n", line);
                     copyAndIncrementLineElementsX(i,buffer); 
@@ -4880,7 +5074,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                     }
                     programCounter += byteCount;
                     sprintf(buffer, "%04o: 20 %04o", programCounter-byteCount,programCounter);
-                    fprintf(machineCodeFile, "%s.\n", buffer);
+                    schreibeObjZeile(machineCodeFile, buffer);
                     fprintf(hilfsFile,"%s\n",line);
                     copyAndIncrementLineElementsX(i,buffer); 
                 } else {
@@ -4890,7 +5084,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 // Bereich auf Null definieren
                 if (operand) {
                     sprintf(buffer, "%04o: 00 0",programCounter);
-                    fprintf(machineCodeFile, "%s.\n", buffer);
+                    schreibeObjZeile(machineCodeFile, buffer);
                     fprintf(hilfsFile,"%s\n",line);
                     copyAndIncrementLineElementsX(i,buffer); 
                     int byteCount;
@@ -4903,7 +5097,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                     // Index der Quelltextzeile) und aufsteigende Adressen.
                     for (int k = 0; k < byteCount - 1; k++) {
                         sprintf(buffer, "%04o: 00 0", programCounter + k + 1);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
                         fprintf(hilfsFile, "\n");
                         copyAndIncrementLineElementsSpOnly(i,buffer); 
                     }
@@ -4971,7 +5165,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                         unsigned int address = evaluateAddress(operand, "", &errorFlag, &raAdr, "", programCounter, &absolutadresse);
                         if (errorFlag == 0 ) {
                             sprintf(buffer, "%04o: 00 %04o %s", programCounter, address, operationCode);
-                            fprintf(machineCodeFile, "%s.\n", buffer);
+                            schreibeObjZeile(machineCodeFile, buffer);
 
                             fprintf(hilfsFile,"%s\n", line);
                             copyAndIncrementLineElementsX(i,buffer); 
@@ -4982,7 +5176,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                         }
                     } else {
                         sprintf(buffer, "%04o: 00 %s", programCounter, operationCode);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
                         fprintf(hilfsFile,"%s\n", line);
                         copyAndIncrementLineElementsX(i,buffer); 
                     }
@@ -4993,10 +5187,10 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                         if (errorFlag == 0) {
                             if ( absolutadresse != 0 ) { 
                                 sprintf(buffer, "%04o: 00 %04o %s", programCounter, address, operationCode);
-                                fprintf(machineCodeFile, "%s.\n", buffer);
+                                schreibeObjZeile(machineCodeFile, buffer);
                             } else {
                                 sprintf(buffer, "%04o: 01 %04o %s", programCounter, address, operationCode);
-                                fprintf(machineCodeFile, "%s.\n", buffer);
+                                schreibeObjZeile(machineCodeFile, buffer);
                             }
                             fprintf(hilfsFile,"%s\n", line);
                             copyAndIncrementLineElementsX(i,buffer); 
@@ -5009,7 +5203,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                         }
                     } else {
                         sprintf(buffer, "%04o: 01 %s", programCounter, operationCode);
-                        fprintf(machineCodeFile, "%s.\n", buffer);
+                        schreibeObjZeile(machineCodeFile, buffer);
                         fprintf(hilfsFile,"%s\n", line);
                         copyAndIncrementLineElementsX(i,buffer); 
                     }
@@ -5052,7 +5246,7 @@ void printUsage(const char *programName) {
     printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei\n", programName);
 }
 void greetings() {
-    printf("C8205 Assembler C82aas Version 0.03\n");
+    printf("C8205 Assembler C82aas Version 1.00\n");
 }
 
 char projektVerzeichnis[512] = {0};
@@ -5152,7 +5346,9 @@ int main(int argc, char *argv[]) {
         return RC_FEHLER;
     }
     printf("\n");
-
+    if (leitadressePragmaGesetzt) {
+        PRINT_MSG("Leitadresse: %02d", leitadresseKennzeichen);
+    }
 
     printf("\n");
     printf("Pass 0\n");

@@ -1,0 +1,17 @@
+
+Trommeldatei:
+#DOK-0001 Lochbandeingabe von WR (Wagenrücklauf ohne Zeilenschaltung): Eingabeadresse 0052, Lochbild 01001010, keine Sprung-Umstellung
+--leser1 virtuelle_Geraete/Leser1/wr-001_wr.txt
+#PROT STUFE=2
+
+0000: 00002000000 # 000 go
+2000: 00004600030 # 030 4600 ; Anwahl Kanal 1 (Leser 1)
+2001: 00000000010 # 010 0 ; Eingabe-Halt 1. Art
+2002: 00000000020 # 020 0 ; unbedingter Stopp
+0052: 00000000007 # Konstante 7: Inhalt der Zelle (Adreßteil 0000 v Eingabeadresse 52), den die Eingabe von WR zum AC addiert (keine Sprung-Umstellung)
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=2003 AC=00000000007 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

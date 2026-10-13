@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.03-006
+Version: 0.03-007
 
 [Deutsch](README.md) | **English**
 
@@ -195,7 +195,7 @@ All PDFs are in German.
 | `C8205-Knotentabellen_A4.pdf` | Node table and variable table T2 in the wording of the sources |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generic instruction description and overview of all 512 operation codes |
 | `C8205-Kodetabellen_A4.pdf` | Character code table (R 300 punched tape code) |
-| `Assembler/Dokumentation/C8205_Assembler_Dokumentation.pdf` | Assembler `c82ass`: call, language, macros, example |
+| `Assembler/Dokumentation/C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: call, language, macros, example |
 
 ## Status
 

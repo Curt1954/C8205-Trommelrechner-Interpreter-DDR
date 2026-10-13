@@ -1,6 +1,6 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
-Version: 0.03-001
+Version: 0.03-002
 
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
@@ -63,6 +63,14 @@ Der Informationsfluss zwischen diesen Baueinheiten: Pult-Tastatur sowie die beid
 speisen (jeweils über einen Puffer) das Leitwerk/Rechenwerk, das seinerseits mit dem Trommelspeicher
 verbunden ist; vom Leitwerk/Rechenwerk führt der Weg über einen weiteren Puffer zu Schreibwerk und
 Lochbandstanzer.
+
+Abbildung 1 zeigt die Baueinheiten auf ihren Tischen: links den Peripherietisch mit Lochbandstanzer und den beiden
+Lesern (Leser 2 links von Leser 1), in der Mitte den Rechentisch mit dem Bedienpult, rechts das Schreibwerk auf dem
+Schreibwerktisch.
+
+![Gesamtansicht des C 8205](abbildungen/C8205-Abb-Gesamtansicht.png)
+
+*Abbildung 1: Gesamtansicht des C 8205 (Foto, Originalunterlagen). 1 Lochbandstanzer, 2 Peripherietisch, 3 Leser 2, 4 Leser 1, 5 Tastatur-Anzeige-Einheit (Bedienpult), 6 Rechentisch, 7 SVE-Tisch (Stromversorgungstisch), 8 Ein- und Ausgabe-Schreibwerk, 9 Schreibwerktisch*
 
 Als **2. Peripherie** (wechselnd anschließbar) kommen lochbanderzeugende bzw. lochbandverarbeitende
 Geräte in einem beliebigen 5-Kanal- oder 8-Kanal-Kode in Frage (beim 8-Kanal-Kode mit

@@ -1,0 +1,17 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; Sofortbefehl als Schlusszeichen (BIS-2.2.9): 1 0 1 0 5 0 0 0 0 . = Sprung nach 1050 (dort Stopp)
+#PROT STUFE=2
+#STARTE 1000
+--leser1 virtuelle_Geraete/Leser1/pj2-bis_ps_sofortbefehl_sprung.txt
+
+# Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0613 und 0700 bis 0777 werden nicht belegt)
+1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen
+1001: 00000263025  # 025 0263 ; Aufruf
+1002: 00000000020  # 020 0 ; Stopp nach der Rueckkehr
+1050: 00000000020  # 020 0 ; Stopp: Ziel des Sofortbefehls
+
+Prüfungen:
+BZ=1051 AC=00001050000 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+3000: 00000000005  # Wort 5
+7705: 00001050000  # Sofortzelle kz_xw: 000 1050
+7706: 00000551000  # kz_xr = 000 ps_us

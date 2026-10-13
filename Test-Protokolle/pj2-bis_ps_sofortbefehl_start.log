@@ -1,0 +1,42 @@
+Test pj2-bis_ps_sofortbefehl_start
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  3000: 00000000005
+  3001: 00000000006
+  7705: 00003000211
+  7706: 00000551000
+  #DOK-0001 BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; Starttaste nach dem Sofortbefehl (BIS-2.2.4): Der Lauf beginnt hinter dem Stopp ps_us (BZ = 0552), Sofortzelle 7705 = 211 3000. Die Adresse wird um 1 erhoeht (211 3001), der Befehl ausgefuehrt (AC := 6), danach wieder US im Stopp ps_us
+  #BZ=0552
+  #PROT STUFE=2
+Tastenfolge: R
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Anfangswerte: AC = 0 (kein #AC), BZ = 0552 (#BZ)
+  Nicht spezifizierte Register (AR, OR, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0552 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7705 211  (vor Knoten 002)  BZ=0553 AC=00003000211 FÜ=0 V1=0 V2=0 V3=0
+  BR=0313 210  (vor Knoten 002)  BZ=0554 AC=00003001211 FÜ=0 V1=0 V2=0 V3=0
+  BR=7705 240  (vor Knoten 002)  BZ=0555 AC=00003001211 FÜ=0 V1=0 V2=0 V3=0
+  BR=7705 000  (vor Knoten 007)  BZ=0556 AC=00003001211 FÜ=0 V1=0 V2=0 V3=0
+  BR=3001 211  (vor Knoten 002)  BZ=7706 AC=00000000006 FÜ=0 V1=0 V2=0 V3=0
+  BR=0551 000  (vor Knoten 007)  BZ=7707 AC=00000000006 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0552 AC=00000000006 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0552 ist=0552 OK
+  AC: soll=00000000006 ist=00000000006 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  7705: soll=00003001211 ist=00003001211 OK
+  7706: soll=00000551000 ist=00000551000 OK
+Test wahr

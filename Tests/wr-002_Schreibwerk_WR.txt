@@ -1,0 +1,18 @@
+
+Trommeldatei:
+#DOK-0001 Ausgabe von WR (Ausgabe-Adresse 112) auf dem Schreibwerk: Der Interpreter schreibt <WR>
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+#PROT STUFE=2
+
+0000: 00002000000 # 000 go
+2000: 00004500030 # 030 4500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+2001: 00001170030 # 030 1170 ; Umschaltung auf KB
+2002: 00001120030 # 030 1120 ; Ausgabe WR (Ausgabe-Adresse 112)
+2003: 00000000020 # 020 0 ; unbedingter Stopp
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=2004 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/wr-002_Schreibwerk_WR-sw-ausgabe.txt

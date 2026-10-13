@@ -1,6 +1,11 @@
 #!/bin/bash
-# Oeffnet test_tabelle.csv in LibreOffice Calc und markiert Zellen der letzten
-# Spalte gruen, deren Wert groesser ist als der in der Spalte davor.
+# Oeffnet test_tabelle.csv in LibreOffice Calc und richtet die Ansicht ein:
+#   - Zeilenumbruch in allen Zellen, feste Spaltenbreiten, Zeilenhoehe nach Inhalt
+#   - fette, eingefrorene Kopfzeile
+#   - gelb:   "Inhalt des Tests" ist nur ein Platzhalter ("[Tastenfolge: ...]"
+#             bzw. "(keine #DOK-Beschreibung ...)") -> #DOK-Zeile in der Testdatei fehlt
+#   - orange: "ASM-Quelltext" ist nur vermutet bzw. Voraussetzung
+#             (Spalte "ASM-Zuordnung" ist nicht leer)
 # Funktioniert aus jedem Verzeichnis (Pfade relativ zum Skript).
 
 SKRIPTDIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
@@ -86,23 +91,65 @@ letzte_spalte = cursor.RangeAddress.EndColumn
 print(f"Letzte Zeile:  {letzte_zeile + 1}")
 print(f"Letzte Spalte: {letzte_spalte + 1}")
 
-if letzte_spalte < 1:
-    print("Zu wenige Spalten zum Vergleichen.")
-    sys.exit(0)
+# Spaltenbreiten (1/100 mm) in der Reihenfolge der Spalten:
+# Testdatei, Inhalt, Geraete/Vergleichsdatei, ASM-Quelltext, ASM-Zuordnung
+BREITEN = [6500, 9500, 9500, 8000, 4500]
+for sp, breite in enumerate(BREITEN):
+    if sp <= letzte_spalte:
+        sheet.Columns.getByIndex(sp).Width = breite
 
-anzahl_gruen = 0
+# Zeilenumbruch in allen Zellen, Inhalt oben ausgerichtet, Zeilenhoehe nach Inhalt
+bereich = sheet.getCellRangeByPosition(0, 0, letzte_spalte, letzte_zeile)
+bereich.IsTextWrapped = True
+bereich.CellBackColor = -1  # alte Markierungen zuruecksetzen
+try:
+    bereich.VertJustify = uno.Enum("com.sun.star.table.CellVertJustify", "TOP")
+except Exception as e:
+    print("Hinweis: Ausrichtung oben nicht gesetzt:", e)
+bereich.Rows.OptimalHeight = True
+
+# Kopfzeile fett (150.0 = FontWeight.BOLD)
+sheet.getCellRangeByPosition(0, 0, letzte_spalte, 0).CharWeight = 150.0
+
+
+def spalte(praefix):
+    """Spaltennummer anhand der Kopfzeile (Anfang des Titels) oder None."""
+    for sp in range(letzte_spalte + 1):
+        if sheet.getCellByPosition(sp, 0).String.startswith(praefix):
+            return sp
+    return None
+
+
+sp_inhalt = spalte("Inhalt")
+sp_asm = spalte("ASM-Quelltext")
+sp_zuordnung = spalte("ASM-Zuordnung")
+
+GELB = 0xFFF59D
+ORANGE = 0xFFCC80
+PLATZHALTER = ("[Tastenfolge", "(keine #DOK")
+anzahl_gelb = 0
+anzahl_orange = 0
 for zeile in range(1, letzte_zeile + 1):  # Zeile 0 = Ueberschrift
-    links = sheet.getCellByPosition(letzte_spalte - 1, zeile)
-    rechts = sheet.getCellByPosition(letzte_spalte, zeile)
-    if rechts.Value > links.Value:
-        rechts.CellBackColor = 0x00FF00
-        anzahl_gruen += 1
-    else:
-        rechts.CellBackColor = -1
+    if sp_inhalt is not None:
+        zelle = sheet.getCellByPosition(sp_inhalt, zeile)
+        if zelle.String.startswith(PLATZHALTER):
+            zelle.CellBackColor = GELB
+            anzahl_gelb += 1
+    if sp_asm is not None and sp_zuordnung is not None:
+        zuordnung = sheet.getCellByPosition(sp_zuordnung, zeile)
+        if zuordnung.String.strip():
+            zuordnung.CellBackColor = ORANGE
+            sheet.getCellByPosition(sp_asm, zeile).CellBackColor = ORANGE
+            anzahl_orange += 1
 
-print(f"Gruen markiert: {anzahl_gruen} Zellen")
+print(f"Gelb markiert (nur Platzhalter statt Beschreibung): {anzahl_gelb} Zellen")
+print(f"Orange markiert (ASM vermutet / Voraussetzung):     {anzahl_orange} Zeilen")
 
 doc.CurrentController.setActiveSheet(sheet)
+try:
+    doc.CurrentController.freezeAtPosition(0, 1)  # Kopfzeile einfrieren
+except Exception as e:
+    print("Hinweis: Kopfzeile nicht eingefroren:", e)
 frame = doc.CurrentController.Frame
 frame.ContainerWindow.setVisible(True)
 print("Fertig.")
@@ -110,4 +157,3 @@ PY
 
 # Python ist fertig, LibreOffice bleibt offen, bis das Fenster geschlossen wird
 wait "$LO_PID"
-

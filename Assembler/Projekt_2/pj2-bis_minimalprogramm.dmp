@@ -4,27 +4,27 @@
 0040: 01 0262 025    haupt:           025 eingabewortkz   ; Aufruf Eingabe eines Wortes mit Kennzeichen (Ansprungzelle 262)
 0041: 01 0000 020                     020 0               ; STUB Fortsetzung nach der Rueckkehr: AC = Wort, kz_k1 = K1, kz_k2 = K2
       20 0000 0053                    equ 00053           
-0053: 00 7556 240    befehlsdruck:    240 bd_rs           ; Rueckkehrbefehl sichern (Register 7556)
+0053: 00 7742 240    befehlsdruck:    240 bd_rs           ; Rueckkehrbefehl sichern (Arbeitszelle 7742)
 0054: 00 7640 441                     441 nullspur        ; Nullspur 7640 bis 7677 := 0 (Gruppenbefehl mit Loeschen, loescht auch den AC)
       00 1170 030                     dz  $inkb           ; Umschaltung in Kleinbuchstabenlage (Ziffern)
 0056: 00 7773 211                     211 r1              ; AC := Befehl
 0057: 00 7644 616                     616 nz_12           ; 12 Linksverschiebungen (W-Addition ueber die Nullzellen 7644 bis Position 37, Nullspur)
 0060: 00 7773 240                     240 r1              ; R1 := um 12 Bit gedrehter Befehl
 0061: 01 0126 211                     211 bd_za           ; Zaehler fuer 4 Ziffern (3 Einsen)
-0062: 00 7554 240                     240 okt_z           
+0062: 00 7740 240                     240 okt_z           
 0063: 01 0103 025                     025 okt_ein         ; Adresse drucken
       00 0320 030                     dz  $zr             ; Zwischenraum
 0065: 01 0127 211                     211 bd_zb           ; Zaehler fuer 3 Ziffern (2 Einsen)
-0066: 00 7554 240                     240 okt_z           
+0066: 00 7740 240                     240 okt_z           
 0067: 01 0103 025                     025 okt_ein         ; Operationsteil drucken
-0070: 00 7556 000                     000 bd_rs           ; Rueckkehr (Zelle bd_rs wird als Befehl ausgefuehrt)
+0070: 00 7742 000                     000 bd_rs           ; Rueckkehr (Zelle bd_rs wird als Befehl ausgefuehrt)
       20 0000 0100                    equ 00100           
 0100: 01 0240 000    adressendruck:   000 ad_anf          ; Adressendruck (Ansprungzelle 100): Sprung zum Code ab ad_anf (Spur 0240)
       20 0000 0101                    equ 00101           
 0101: 00 7773 217    okt_loop:        217 r1              ; AC := Vzl(R1): 1. von 3 Verschiebungen
 0102: 01 0110 006                     006 okt_v3          ; 2. Verschiebung (Sprung auf die uebernaechste benutzte Zelle)
       20 0000 0103                    equ 00103           
-0103: 00 7555 240    okt_ein:         240 okt_rs          ; Rueckkehrbefehl sichern (Register 7555)
+0103: 00 7741 240    okt_ein:         240 okt_rs          ; Rueckkehrbefehl sichern (Arbeitszelle 7741)
 0104: 01 0101 000                     000 okt_loop        
       20 0000 0105                    equ 00105           
       00 0010 030                     dto 1               ; Position 31 (Ziffer 1)
@@ -35,10 +35,10 @@
 0112: 01 0124 200                     200 okt_mask        ; AC := Ziffer d (letzte Triade)
 0113: 01 0221 520    okt_gx:          520 okt_e1          ; GX-Subtraktion auf der Einsen-Spur: waehlt den Ausgabebefehl
       00 0040 030                     dto 4               ; Position 34 (Ziffer 4); beim GX-Befehl die uebersprungene Zelle b+1
-0115: 00 7554 311                     311 okt_z           ; AC := z; Vergleicher 3, falls z = 0
-0116: 00 7555 170                     170 okt_rs          ; z = 0: Rueckkehr (Zelle okt_rs wird als Befehl ausgefuehrt)
+0115: 00 7740 311                     311 okt_z           ; AC := z; Vergleicher 3, falls z = 0
+0116: 00 7741 170                     170 okt_rs          ; z = 0: Rueckkehr (Zelle okt_rs wird als Befehl ausgefuehrt)
 0117: 01 0120 004                     004 okt_zn          ; AC := z um 1 Bit nach links (Verschiebung im Sprungbefehl)
-0120: 00 7554 240    okt_zn:          240 okt_z           ; z := Vl(z)
+0120: 00 7740 240    okt_zn:          240 okt_z           ; z := Vl(z)
 0121: 01 0101 000                     000 okt_loop        ; naechste Ziffer
       00 0020 030                     dto 2               ; Position 32 (Ziffer 2), Sektor 22
       00 0070 030                     dto 7               ; Position 37 (Ziffer 7), Sektor 23
@@ -48,10 +48,10 @@
 0127: 00 60000000000 bd_zb:           dw  060000000000    ; Befehlsdruck: Zaehler fuer 3 Ziffern (2 Einsen)
       00 0200 030                     dto 0               ; Position 30 (Ziffer 0), Sektor 30
       00 0250 030                     dto 5               ; Position 35 (Ziffer 5), Sektor 31
-0132: 00 7555 240    okt_anf:         240 okt_rs          ; Rueckkehrbefehl sichern
+0132: 00 7741 240    okt_anf:         240 okt_rs          ; Rueckkehrbefehl sichern
       00 1170 030                     dz  $inkb           ; Umschaltung in Kleinbuchstabenlage (Ziffern)
 0134: 01 0125 211                     211 okt_z0          ; Zaehler := 10 Einsen
-0135: 00 7554 240                     240 okt_z           
+0135: 00 7740 240                     240 okt_z           
 0136: 01 0101 000                     000 okt_loop        ; Sektor 36; der Sektor 37 danach ist der Ausgabebefehl der Ziffer 3
       00 0230 030                     dto 3               ; Position 33 (Ziffer 3), Sektor 37
       20 0000 0150                    equ 00150           
@@ -93,28 +93,28 @@
 0236: 00 00000000001                  dw  01              ; Sektor 36 (Position 26)
 0237: 00 00000000001                  dw  01              ; Sektor 37 (Position 33)
       20 0000 0240                    equ 00240           
-0240: 00 7557 240    ad_anf:          240 ad_rs           ; Rueckkehrbefehl sichern (Register 7557)
+0240: 00 7743 240    ad_anf:          240 ad_rs           ; Rueckkehrbefehl sichern (Arbeitszelle 7743)
 0241: 00 7640 441                     441 nullspur        ; Nullspur 7640 bis 7677 := 0 (Gruppenbefehl mit Loeschen, loescht auch den AC)
       00 1170 030                     dz  $inkb           ; Umschaltung in Kleinbuchstabenlage (Ziffern)
 0243: 00 7773 211                     211 r1              ; AC := Wert
-0244: 00 7560 240                     240 ad_sv           ; R1 sichern (Register 7560)
+0244: 00 7744 240                     240 ad_sv           ; R1 sichern (Arbeitszelle 7744)
 0245: 00 7644 616                     616 nz_12           ; 12 Linksverschiebungen (W-Addition ueber die Nullzellen 7644 bis Position 37, Nullspur)
 0246: 00 7773 240                     240 r1              ; R1 := um 12 Bit gedrehtes Wort, die Adressziffern stehen oben
 0247: 01 0126 211                     211 bd_za           ; Zaehler fuer 4 Ziffern (3 Einsen)
-0250: 00 7554 240                     240 okt_z           
+0250: 00 7740 240                     240 okt_z           
 0251: 01 0103 025                     025 okt_ein         ; Adresse drucken (4 Ziffern)
-0252: 00 7560 211                     211 ad_sv           ; R1 zurueckholen
+0252: 00 7744 211                     211 ad_sv           ; R1 zurueckholen
 0253: 00 7773 240                     240 r1              
-0254: 00 7557 000                     000 ad_rs           ; Rueckkehr (Zelle ad_rs wird als Befehl ausgefuehrt)
+0254: 00 7743 000                     000 ad_rs           ; Rueckkehr (Zelle ad_rs wird als Befehl ausgefuehrt)
       20 0000 0262                    equ 00262           
 0262: 01 0331 000    eingabewortkz:   000 kz_anf          ; Eingabe eines Wortes mit Kennzeichen (Ansprungzelle 262): Sprung zum Code ab kz_anf (Spur 0332)
 0263: 01 0000 020    eingabeprogst:   020 0               ; STUB Eingabe eines Programmstueckes (263)
       20 0000 0264                    equ 00264           
-0264: 00 7561 240    ae_anf:          240 ae_rs           ; Rueckkehrbefehl sichern (Register 7561)
+0264: 00 7756 240    ae_anf:          240 ae_rs           ; Rueckkehrbefehl sichern (Arbeitszelle 7756)
 0265: 01 0256 211                     211 ae_z0           ; Zaehleranfang: 7 Einsen
-0266: 00 7563 240                     240 ae_z            ; Zaehler setzen (Register 7563)
+0266: 00 7760 240                     240 ae_z            ; Zaehler setzen (Arbeitszelle 7760)
 0267: 01 0400 211                     211 ae_tab          ; AC := 0 (Zelle ae_tab, Ziffer 0, enthaelt 0)
-0270: 00 7562 240                     240 ae_sv           ; Konstante := 0 (Register 7562)
+0270: 00 7757 240                     240 ae_sv           ; Konstante := 0 (Arbeitszelle 7757)
 0271: 01 0400 010    ae_loop:         010 ae_tab          ; Eingabe-Halt: Ziffer lesen, AC := AC + d * 0100; ZR oder Punkt: Sprung in die Tabelle
 0272: 01 0410 330                     330 ae_pois         ; Vergleich AC mit 2 hoch 30: ab dort Ziffer 8 oder 9
 0273: 01 0257 150                     150 ae_halt         ; AC >= 2 hoch 30: Ziffer 8 oder 9, HALT
@@ -137,13 +137,13 @@
 0260: 01 0400 011    ae_ign:          011 ae_tab          ; ab der 9. Ziffer: Zeichen lesen, AC loeschen (Ziffer wird verworfen); ZR/Punkt wie oben
 0261: 01 0260 000                     000 ae_ign          ; naechstes Zeichen
       20 0000 0300                    equ 00300           
-0300: 00 7562 240    ae_zt:           240 ae_sv           ; Konstante sichern (Register 7562)
-0301: 00 7563 311                     311 ae_z            ; AC := Zaehler; Vergleicher 3, falls Zaehler = 0
+0300: 00 7757 240    ae_zt:           240 ae_sv           ; Konstante sichern (Arbeitszelle 7757)
+0301: 00 7760 311                     311 ae_z            ; AC := Zaehler; Vergleicher 3, falls Zaehler = 0
 0302: 01 0260 170                     170 ae_ign          ; Zaehler = 0: 8 Ziffern gelesen, weitere Ziffern verwerfen
 0303: 01 0307 004                     004 ae_zn           ; AC := Zaehler um 1 Bit nach links
       20 0000 0307                    equ 00307           
-0307: 00 7563 240    ae_zn:           240 ae_z            ; Zaehler := Vl(Zaehler)
-0310: 00 7562 211                     211 ae_sv           ; AC := Konstante zurueck
+0307: 00 7760 240    ae_zn:           240 ae_z            ; Zaehler := Vl(Zaehler)
+0310: 00 7757 211                     211 ae_sv           ; AC := Konstante zurueck
 0311: 01 0271 000                     000 ae_loop         ; naechstes Zeichen
       20 0000 0331                    equ 00331           
 0331: 00 7700 240    kz_anf:          240 kz_rs           ; Rueckkehrbefehl sichern (Arbeitszelle 7700)
@@ -254,5 +254,5 @@
 0411: 00 10000000000                  dw  010000000000    ; Ziffer 9: 2 hoch 30, Haltmarke
 0412: 01 0332 000    ae_zr:           000 kz_neu          ; ZR (Offset 012): Sprung zum Neustart der Kennzeicheneingabe (neues K1); auch Konstante fuer kz_xr (kz_lq)
       20 0000 0433                    equ 00433           
-0433: 00 7562 211                     211 ae_sv           ; Punkt (Offset 033): AC := Konstante
-0434: 00 7561 000                     000 ae_rs           ; Rueckkehr zum Aufrufer, AC = Konstante
+0433: 00 7757 211                     211 ae_sv           ; Punkt (Offset 033): AC := Konstante
+0434: 00 7756 000                     000 ae_rs           ; Rueckkehr zum Aufrufer, AC = Konstante

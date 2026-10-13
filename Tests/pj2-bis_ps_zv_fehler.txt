@@ -1,0 +1,16 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Programmstueck-Eingabe (Ansprung 0263); ZV (ohne Sprung-Umstellung) ist kein Schlusszeichen: Die Tabellenzelle 7672 wird als Datum gelesen (Fehler), Sprung nach 0000, das Hauptprogramm uebernimmt und liest 0 0 7 .; Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Hauptprogramm im Stub-Stand (Stopp 0041 nach der Rueckkehr der Kennzeicheneingabe)
+#PROT STUFE=2
+#STARTE 1000
+--leser1 virtuelle_Geraete/Leser1/pj2-bis_ps_zv_fehler.txt
+
+# Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0573 werden nicht belegt)
+1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen
+1001: 00000263025  # 025 0263 ; Aufruf
+1002: 00000000020  # 020 0 ; Stopp nach der Rueckkehr
+
+Prüfungen:
+BZ=0042 AC=00000000007 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+3000: 00000000005  # Wort 5 vor dem Fehler
+3001: 00000000000  # danach nichts mehr abgespeichert
+7700: 00000041000  # kz_rs = 000 0041: Aufruf durch das Hauptprogramm

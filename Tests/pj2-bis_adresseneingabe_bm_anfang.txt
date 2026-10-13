@@ -1,0 +1,13 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Adresseneingabe (Ansprung 0316), Eingabe BM 0 0 5 .: BM hat Sprung-Umstellung, die Tabellenzelle ae_tab+072 ist null: Sprung nach 0000, das Hauptprogramm liest 0 0 5 .; Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Hauptprogramm im Stub-Stand (Stopp 0041 nach der Rueckkehr der Kennzeicheneingabe)
+#PROT STUFE=2
+#STARTE 1000
+--leser1 virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_bm_anfang.txt
+
+# Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0613 und 0700 bis 0777 werden nicht belegt)
+1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen
+1001: 00000316025  # 025 0316 ; Aufruf
+1002: 00000000020  # 020 0 ; Stopp nach der Rueckkehr
+
+Prüfungen:
+BZ=0042 AC=00000000005 FE=0 FUE=0 BS=0 US=1 E=0 A=0

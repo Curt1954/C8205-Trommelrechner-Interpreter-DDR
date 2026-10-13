@@ -1,4 +1,5 @@
 ; Abdruck numerischer Texte vom Lochband im R300 Code.
+;#; LEITADRESSE 02
                start
 start:         dt       \0123456789 \
 ;               dz       $zr

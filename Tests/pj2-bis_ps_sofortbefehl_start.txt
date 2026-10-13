@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001 BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; Starttaste nach dem Sofortbefehl (BIS-2.2.4): Der Lauf beginnt hinter dem Stopp ps_us (BZ = 0552), Sofortzelle 7705 = 211 3000. Die Adresse wird um 1 erhoeht (211 3001), der Befehl ausgefuehrt (AC := 6), danach wieder US im Stopp ps_us
+#PROT STUFE=2
+#BZ=0552
+
+# Anfangszustand nach dem ersten Stopp: Sofortbefehl 211 3000 in kz_xw, kz_xr = 000 ps_us, Daten 5 und 6
+3000: 00000000005  # Datenwort 5
+3001: 00000000006  # Datenwort 6
+7705: 00003000211  # 211 3000 ; kz_xw: Sofortbefehl
+7706: 00000551000  # 000 0551 ; kz_xr: Sprung nach ps_us
+
+Tastenfolge:
+R
+
+Prüfungen:
+BZ=0552 AC=00000000006 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+7705: 00003001211  # Sofortzelle nach der Starttaste: 211 3001
+7706: 00000551000  # kz_xr = 000 ps_us

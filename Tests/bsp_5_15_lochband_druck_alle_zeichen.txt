@@ -9,6 +9,7 @@ Trommeldatei:
 # Zeichen mit Sprung-Umstellung: die Zelle enthält einen Sprung zu einer eigenen Druckroutine ab 3200, die zur Eingabe zurückspringt.
 # Anders als im Buch sind alle Zeichen der Tabelle 1 belegt (das Buch behandelt nur Ziffern, Zwischenraum, + - , Tabulator, Wagenrücklauf).
 # Das Zeichen "/" (Eingabeadresse 61) beendet jeden Lochstreifen und steht nur am Streifenende; seine Zelle 3061 enthält den unbedingten Stopp (wie im Buchprogramm).
+# Eingabeadresse 61 hat keine Sprung-Umstellung: der Stopp wird als Zelleninhalt in den AC gebracht, nach 3105 gespeichert und dort ausgeführt (BZ=3106).
 # "Transport" (Relikt, Zeile 52) lässt der Interpreter als Eingabe nicht zu und fehlt im Streifen.
 # "Irrung Zeichen" (gerade Parität) wird vom Leser übersprungen. Die Schreibwerk-Lage (KB/GB) wird durch Um. KB / Um. GB im Streifen mitgeführt.
 
@@ -38,7 +39,7 @@ Trommeldatei:
 3012: 00003222000 # 000 3222 ; Sprung zur Druckroutine "Leertaste / ZR" (Eingabe 12)
 3015: 00003202000 # 000 3202 ; Sprung zur Druckroutine ": / (" (Eingabe 15)
 3016: 00003224000 # 000 3224 ; Sprung zur Druckroutine "Irrung Satz" (Eingabe 16)
-3020: 00003204000 # 000 3204 ; Sprung zur Druckroutine "+ / =" (Eingabe 20)
+3020: 00000400030 # 030 0400 ; Druckbefehl "+ / =" (Eingabe 20)
 3021: 00000610030 # 030 0610 ; Druckbefehl "a / A" (Eingabe 21)
 3022: 00000620030 # 030 0620 ; Druckbefehl "b / B" (Eingabe 22)
 3023: 00000430030 # 030 0430 ; Druckbefehl "c / C" (Eingabe 23)
@@ -62,7 +63,7 @@ Trommeldatei:
 3050: 00001300030 # 030 1300 ; Druckbefehl "q / Q" (Eingabe 50)
 3051: 00001110030 # 030 1110 ; Druckbefehl "r / R" (Eingabe 51)
 3057: 00003206000 # 000 3206 ; Sprung zur Druckroutine "Um. KB" (Eingabe 57)
-3060: 00001600030 # 030 1600 ; Druckbefehl "` / ;" (Eingabe 60)
+3060: 00003204000 # 000 3204 ; Sprung zur Druckroutine "` / ;" (Eingabe 60)
 3061: 00000000020 # 020 0 ; "/" (Eingabe 61, letztes Zeichen des Streifens): unbedingter Stopp = Testende
 3062: 00001420030 # 030 1420 ; Druckbefehl "s / S" (Eingabe 62)
 3063: 00001630030 # 030 1630 ; Druckbefehl "t / T" (Eingabe 63)
@@ -79,7 +80,7 @@ Trommeldatei:
 3201: 00003102000 # 000 3102 ; Sprung zur Eingabe
 3202: 00000150030 # 030 0150 ; Druck ": / ("
 3203: 00003102000 # 000 3102 ; Sprung zur Eingabe
-3204: 00000400030 # 030 0400 ; Druck "+ / ="
+3204: 00001600030 # 030 1600 ; Druck "` / ;"
 3205: 00003102000 # 000 3102 ; Sprung zur Eingabe
 3206: 00001170030 # 030 1170 ; Druck "Um. KB"
 3207: 00003102000 # 000 3102 ; Sprung zur Eingabe
@@ -102,6 +103,7 @@ Tastenfolge:
 H G R
 
 Prüfungen:
-BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+BZ=3106 AC=00000000020 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 3061: 00000000020
+3105: 00000000020
 --pruefe-sw-ausgabe Test-Ergebnisvergleiche/bsp_5_15_lochband_druck_alle_zeichen-sw-ausgabe.txt

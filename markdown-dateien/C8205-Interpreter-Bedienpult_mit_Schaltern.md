@@ -1,10 +1,55 @@
 ** Bedienpult mit Schaltern **
 
-Version: 0.03-001
+Version: 0.03-002
 
 Im physischen Bedienpult des Rechners C8205 sind sowohl Schalter, Eingabetasten und Lampen,
 die die Flag-Zustände anzeigen, lokalisiert.
 Im Rechner werden die Schalterzustände in gleichnamigen Flags gespeichert als 0/1-Werte.
+
+
+## Aufbau des Bedienpults
+
+Das Bedienpult heißt in den Originalunterlagen „Tastatur-Anzeige-Einheit“ (Nr. 5 der Gesamtansicht in
+`C8205-Interpreter-Überblick_und_Gesamtaufbau.md`, Abschnitt 2). Oben liegt das Lampenfeld (Abbildung 2). Darunter stehen
+links die Kanalauswahltasten K0 bis K3, paarweise untereinander (K0 über K1, K2 über K3), und rechts die Schalter SP, BS
+und LS sowie die Umschalttaste T-SW (beschriftet „SW“). Unter jeder dieser vier Tasten liegt eine weitere Taste, die auf
+Foto und Zeichnung unbeschriftet ist. Unten liegt die Tastatur (Abbildung 3). Auf dem Foto tragen die Schalter rechts die
+Beschriftung „BSt“ und „LSt“; dieses Regelwerk schreibt durchgehend „BS“ und „LS“.
+
+![Bedienpult des C 8205](abbildungen/C8205-Abb-Bedienpult_Foto.png)
+
+*Abbildung 1: Das Bedienpult des C 8205 (Foto, Originalunterlagen)*
+
+
+## Lampenfeld
+
+Die obere Reihe (große Lampen) zeigt die Zustände E, A, T, SW, K1, K2, K3, FE, FÜ, BS, US, R, H, B und N; T und SW
+gehören zur Anzeige des Kanals K0. Die Lampe B ist die Betriebsanzeige, die Lampe N zeigt an, dass die
+Netzstromversorgung anliegt; unter N sitzt ein Schlüsselschalter. Die untere Reihe zeigt das Befehlsregister in Triaden zu
+je drei Lampen mit den Gewichten 4, 2, 1: vier Triaden Adreßregister AR (oktale Wertigkeiten 1000, 100, 10, 1) und drei
+Triaden Operationsregister OR (B, A, Z). Rechts davon zeigen die Lampen V 1 und V 2 den Vergleicherstand. Die Bedeutung der
+Zustandslampen steht in `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md` (bei den Flags).
+
+![Lampenfeld des Bedienpults](abbildungen/C8205-Abb-Lampenfeld.png)
+
+*Abbildung 2: Lampenfeld des Bedienpults mit Gewichten und Wertigkeiten der Befehlsregisteranzeige (neu gezeichnet nach Abb. 6 „Lampenfeld“ der Bedienungsanleitung des C 8205 und der Tabelle „Bedeutung der Befehlsregisteranzeige“)*
+
+
+## Tastenanordnung
+
+Abbildung 3 zeigt die Tasten des Bedienpults nach der Zeichnung „Tastatur des C 8205“; die Kanalauswahltasten K0 bis K3
+stehen hier nach dem Foto. Gestrichelt umrandet sind die drei Gruppen, die die Zeichnung ausweist:
+
+- **Tasten mit Rollensperre:** E, M, G, Ü,
+- **Schalter mit Rollensperre:** T und SW,
+- **Tasten mit Entriegelung und Rollensperre:** B, +, 1, 3, 5, 7, 9, „.“, „:“, D, −, 0, 2, 4, 6, 8, „,“, ZR, IS, IB und WM.
+
+H und R (gegeneinander verriegelt, s. Schalter „H-R“) und ST (elektronisch verriegelt) gehören keiner Gruppe an. Die
+Zeichnung erklärt die Begriffe „Rollensperre“ und „Entriegelung“ nicht.
+
+![Tastatur des Bedienpults](abbildungen/C8205-Abb-Tastatur_Bedienpult.png)
+
+*Abbildung 3: Tastatur des Bedienpults mit den Tastengruppen (neu gezeichnet nach der Zeichnung „Tastatur des C 8205“ und dem Foto)*
 
 
 ## Netzschalter
