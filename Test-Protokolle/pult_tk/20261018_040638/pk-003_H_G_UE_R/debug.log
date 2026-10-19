@@ -1,0 +1,38 @@
+    0.001 [MainThread  ] START    Grafik G3-001, Debuglog DL-002, Python 3.11.4, Linux-6.2.0-27-generic-x86_64-with-glibc2.37, Aufruf: ['/home/shared_folder_1/scan/fertig/neu/c8205_grafik.py', '--STUMM', '--netz-schnell', '--BASP', '000000', '--trommel', '/home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-003_H_G_UE_R/trommel.txt', '--leser1', '/home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-003_H_G_UE_R/Leser1', '--leser2', '/home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-003_H_G_UE_R/Leser2', '--stanzer1', '/home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-003_H_G_UE_R/Stanzer1', '--WIEDERGABE', '/home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-003_H_G_UE_R/klickspur.txt', '--DEBUGLOG', '/home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-003_H_G_UE_R/debug.log']
+    0.092 [MainThread  ] WIEDERGABE beginnt: 6 Ereignisse, Dauer 5.500 s
+    0.092 [MainThread  ] FOKUS    FocusIn .!toplevel
+    0.093 [MainThread  ] FOKUS    FocusOut .!toplevel
+    0.093 [MainThread  ] FOKUS    FocusIn .
+    0.093 [MainThread  ] FOKUS    FocusIn .!canvas
+    0.093 [MainThread  ] KLICK    Pult-Klick NETZ: WIRKT | netz=hochlauf stellung=H eingabe_erwartet=False halter=[]
+    0.093 [MainThread  ] WIEDERGABE 1/6 t=0.000 klick NETZ: wirkt=1 (aufgezeichnet 1)
+    1.087 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['H', 'K0', 'T'] halter=[] maus_gehalten=[] | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.092 [MainThread  ] KLICK    Pult-Klick H: ohne Wirkung | netz=betrieb stellung=H eingabe_erwartet=False halter=[]
+    1.092 [MainThread  ] WIEDERGABE 2/6 t=1.000 klick H: wirkt=0 (aufgezeichnet 0)
+    1.696 [MainThread  ] TOKEN    an den Rechner: G
+    1.696 [MainThread  ] RECHNER  Taste G vorgemerkt (thread_modus=True) | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.696 [MainThread  ] KLICK    Pult-Klick G: WIRKT | netz=betrieb stellung=H eingabe_erwartet=False halter=[]
+    1.696 [MainThread  ] WIEDERGABE 3/6 t=1.600 klick G: wirkt=1 (aufgezeichnet 1)
+    1.698 [rechner     ] RECHNER  Ausfuehrung Taste G beginnt | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.698 [rechner     ] RECHNER  Ausfuehrung Taste G endet | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.087 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['H', 'K0', 'T'] halter=[] maus_gehalten=[] | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.292 [MainThread  ] TOKEN    an den Rechner: UE
+    2.292 [MainThread  ] RECHNER  Taste UE vorgemerkt (thread_modus=True) | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.292 [MainThread  ] KLICK    Pult-Klick UE: WIRKT | netz=betrieb stellung=H eingabe_erwartet=False halter=[]
+    2.292 [MainThread  ] WIEDERGABE 4/6 t=2.200 klick UE: wirkt=1 (aufgezeichnet 1)
+    2.297 [rechner     ] RECHNER  Ausfuehrung Taste UE beginnt | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.297 [rechner     ] RECHNER  Ausfuehrung Taste UE endet | BZ=0000 BR=7777 240 AR=7777 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.893 [MainThread  ] TOKEN    an den Rechner: R
+    2.893 [MainThread  ] RECHNER  Taste R vorgemerkt (thread_modus=True) | BZ=0000 BR=7777 240 AR=7777 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.893 [MainThread  ] KLICK    Pult-Klick R: WIRKT | netz=betrieb stellung=R eingabe_erwartet=False halter=[]
+    2.893 [MainThread  ] WIEDERGABE 5/6 t=2.800 klick R: wirkt=1 (aufgezeichnet 1)
+    2.893 [rechner     ] RECHNER  Ausfuehrung Taste R beginnt | BZ=0000 BR=7777 240 AR=7777 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.893 [rechner     ] RECHNER  Ausfuehrung Taste R endet | BZ=0000 BR=7777 240 AR=7777 AC=00000000000 H=0 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=True halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.893 [rechner     ] RECHNER  Lauf beginnt (R) | BZ=0000 BR=7777 240 AR=7777 AC=00000000000 H=0 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=True halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.897 [rechner     ] RECHNER  Lauf endet: Unbedingter Stop (US:=1) | BZ=0001 BR=0005 020 AR=0005 AC=00000000000 H=0 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=True mhalt=False warteschlange=[] eingabe_erwartet=False
+    3.088 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'T'] halter=[] maus_gehalten=[] | BZ=0001 BR=0005 020 AR=0005 AC=00000000000 H=0 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=True mhalt=False warteschlange=[] eingabe_erwartet=False
+    4.088 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'T'] halter=[] maus_gehalten=[] | BZ=0001 BR=0005 020 AR=0005 AC=00000000000 H=0 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=True mhalt=False warteschlange=[] eingabe_erwartet=False
+    5.088 [wache       ] STATUS   takt_alter=0.00s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'T'] halter=[] maus_gehalten=[] | BZ=0001 BR=0005 020 AR=0005 AC=00000000000 H=0 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=True mhalt=False warteschlange=[] eingabe_erwartet=False
+    5.593 [MainThread  ] KLICK    Pult-Klick NETZ: WIRKT | netz=auslauf stellung=R eingabe_erwartet=False halter=[]
+    5.593 [MainThread  ] WIEDERGABE 6/6 t=5.500 klick NETZ: wirkt=1 (aufgezeichnet 1)
+    5.593 [MainThread  ] WIEDERGABE Ende: 6 Ereignisse, 0 Abweichung(en) der Wirkung

@@ -1,0 +1,22 @@
+Trommeldatei:
+#DOK-0020 Test Linksverschiebung (R=2, Code 544), AC startet mit 3: z0 entscheidet, alle 32 Zellen werden geschrieben
+#SPEI-0020 4000-4037
+#PROT STUFE=0
+0000: 00003000211 # AC := <3000>
+0001: 00004001544 # GX-Transport nach 4001, Z=2 (R=2, ohne Loeschen)
+0003: 00000000020 # 020 Stopp
+# Folgebefehl nach dem X-Abbruch: liegt im zeitlich faelligen Sektor der Spur 0000 (nicht in b+1), danach b+2 = 0003
+0016: 00000020164 # 164 Leerbefehl (Diagnose #DOK-0020)
+# Beginn Datenbereich
+3000: 00000000003
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+
+BZ=0004 AC=40000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+4000: 03000000000
+4001: 00000000003
+4037: 00060000000

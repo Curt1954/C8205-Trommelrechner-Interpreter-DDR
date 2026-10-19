@@ -1,0 +1,130 @@
+0000: 01 2000 000    beginn:   000 anfang   ; Zelle 0000: Sprung nach 02000
+      20 0000 2000             equ 02000    
+2000: 00 4600 030    anfang:   030 04600    ; 4600 oder K1 oder LSL1 oder LSS1
+2001: 01 2014 211              211 anfbef   ; i := 0 (auch bei Neustart)
+2002: 01 2006 240              240 gemein   
+2003: 01 2016 211              211 kbsp     ; Lage := KB (auch bei Neustart): Code 15 beendet
+2004: 01 2020 240              240 ziel     
+2005: 01 0400 011    schleife: 011 ztab     ; Eingabe-Halt mit Loeschen: AC := Zelle ztab ODER Eingabeadresse (ohne Sprung)
+2006: 00 4000 240    gemein:   240 SPUR     ; Zeichen: AC (Ausgabebefehl) -> Zelle 04000 + i
+2007: 01 2006 211              211 gemein   
+2010: 01 2013 210              210 eins     ; i := i + 1
+2011: 01 2006 240              240 gemein   
+2012: 01 2005 000              000 schleife 
+2013: 00 00000001000 eins:     dw  01000    ; 1 in den Adressstellen (Adresse << 9)
+2014: 00 00004000240 anfbef:   dw  04000240 ; Speicherbefehl "240 04000" (Anfangswert von gemein)
+2015: 00 00000000020 stopp:    dw  020      ; unbedingter Stopp
+2016: 01 2021 000    kbsp:     000 hende    ; Datenwort: Sprung nach hende (Lage KB)
+2017: 01 2027 000    gbsp:     000 hklam    ; Datenwort: Sprung nach hklam (Lage GB)
+2020: 01 2021 000    ziel:     000 hende    ; Sprungziel fuer Code 15, je nach Lage (ztab+015 springt hierher)
+2021: 01 2006 211    hende:    211 gemein   ; ":" in KB: AC := Speicherbefehl "240 04000+i"
+2022: 01 2025 240              240 esp      
+2023: 01 2015 211              211 stopp    
+2024: 00 4600 030              030 04600    ; 4600 oder K1 oder LSL1 oder LSS1
+2025: 0              esp:      dw  0        ; wird zu "240 04000+i": Stopp speichern
+2026: 00 4000 000              000 SPUR     ; Ausgabebefehle ablaufen lassen, am Ende der Stopp
+2027: 01 2031 211    hklam:    211 w15      ; "(" in GB: normales Zeichen
+2030: 01 2006 000              000 gemein   
+2031: 00 00000150030 w15:      dw  0150030  ; Ausgabebefehl, Ausgabeadresse 0150
+2032: 01 2016 211    h57:      211 kbsp     ; Um. KB: Lage merken ...
+2033: 01 2020 240              240 ziel     
+2034: 01 2036 211              211 w57      ; ... und das Umschaltzeichen als Ausgabebefehl speichern
+2035: 01 2006 000              000 gemein   
+2036: 00 00001170030 w57:      dw  01170030 
+2037: 01 2017 211    h37:      211 gbsp     ; Um. GB: Lage merken ...
+2040: 01 2020 240              240 ziel     
+2041: 01 2043 211              211 w37      
+2042: 01 2006 000              000 gemein   
+2043: 00 00000570030 w37:      dw  0570030  
+2044: 01 2046 211    h12:      211 w12      ; Code 12: Leertaste / ZR
+2045: 01 2006 000              000 gemein   
+2046: 00 00000320030 w12:      dw  0320030  
+2047: 01 2051 211    h16:      211 w16      ; Code 16: Irrung Satz
+2050: 01 2006 000              000 gemein   
+2051: 00 00000160030 w16:      dw  0160030  
+2052: 01 2054 211    h32:      211 w32      ; Code 32: SatzMarke / WRZL
+2053: 01 2006 000              000 gemein   
+2054: 00 00002720030 w32:      dw  02720030 
+2055: 01 2057 211    h33:      211 w33      ; Code 33: . / !
+2056: 01 2006 000              000 gemein   
+2057: 00 00000730030 w33:      dw  0730030  
+2060: 01 2062 211    h40:      211 w40      ; Code 40: - / Dreieck
+2061: 01 2006 000              000 gemein   
+2062: 00 00001000030 w40:      dw  01000030 
+2063: 01 2065 211    h60:      211 w60      ; Code 60: ` / ;
+2064: 01 2006 000              000 gemein   
+2065: 00 00001600030 w60:      dw  01600030 
+2066: 01 2070 211    h72:      211 w72      ; Code 72: BM
+2067: 01 2006 000              000 gemein   
+2070: 00 00003520030 w72:      dw  03520030 
+2071: 01 2073 211    h73:      211 w73      ; Code 73: , / ?
+2072: 01 2006 000              000 gemein   
+2073: 00 00001530030 w73:      dw  01530030 
+2074: 01 2076 211    h75:      211 w75      ; Code 75: Tabulator
+2075: 01 2006 000              000 gemein   
+2076: 00 00001550030 w75:      dw  01550030 
+      20 0000 0400             equ 00400    ; Tabelle ztab
+0400: 00 00000200030 ztab:     dw  0200030  ; 00: 0 / #
+0401: 00 00000010030           dw  010030   ; 01: 1 / <
+0402: 00 00000020030           dw  020030   ; 02: 2 / "
+0403: 00 00000230030           dw  0230030  ; 03: 3 / ≈
+0404: 00 00000040030           dw  040030   ; 04: 4 / [
+0405: 00 00000250030           dw  0250030  ; 05: 5 / >
+0406: 00 00000260030           dw  0260030  ; 06: 6 / '
+0407: 00 00000070030           dw  070030   ; 07: 7 / ≋
+0410: 00 00000100030           dw  0100030  ; 10: 8 / ~
+0411: 00 00000310030           dw  0310030  ; 11: 9 / ]
+0412: 01 2044 000              000 h12      ; 12: Leertaste / ZWR (Sprung-Umstellung)
+0413: 0                        dw  0        ; 13: unbelegt
+0414: 0                        dw  0        ; 14: unbelegt
+0415: 01 2020 000              000 ziel     ; 15: : / ( (Sprung-Umstellung, Ziel je nach Lage)
+0416: 01 2047 000              000 h16      ; 16: Irrung Satz / Irrung Satz (Sprung-Umstellung)
+0417: 0                        dw  0        ; 17: unbelegt
+0420: 00 00000400030           dw  0400030  ; 20: + / =
+0421: 00 00000610030           dw  0610030  ; 21: a / A
+0422: 00 00000620030           dw  0620030  ; 22: b / B
+0423: 00 00000430030           dw  0430030  ; 23: c / C
+0424: 00 00000640030           dw  0640030  ; 24: d / D
+0425: 00 00000450030           dw  0450030  ; 25: e / E
+0426: 00 00000460030           dw  0460030  ; 26: f / F
+0427: 00 00000670030           dw  0670030  ; 27: g / G
+0430: 00 00000700030           dw  0700030  ; 30: h / H
+0431: 00 00000510030           dw  0510030  ; 31: i / I
+0432: 01 2052 000              000 h32      ; 32: SatzMarke / WRZL (Sprung-Umstellung)
+0433: 01 2055 000              000 h33      ; 33: . / ! (Sprung-Umstellung)
+0434: 0                        dw  0        ; 34: unbelegt
+0435: 0                        dw  0        ; 35: unbelegt
+0436: 0                        dw  0        ; 36: unbelegt
+0437: 01 2037 000              000 h37      ; 37: Um. GB / Um. GB (Sprung-Umstellung)
+0440: 01 2060 000              000 h40      ; 40: - / △ (Sprung-Umstellung)
+0441: 00 00001210030           dw  01210030 ; 41: j / J
+0442: 00 00001220030           dw  01220030 ; 42: k / K
+0443: 00 00001030030           dw  01030030 ; 43: l / L
+0444: 00 00001240030           dw  01240030 ; 44: m / M
+0445: 00 00001050030           dw  01050030 ; 45: n / N
+0446: 00 00001060030           dw  01060030 ; 46: o / O
+0447: 00 00001270030           dw  01270030 ; 47: p / P
+0450: 00 00001300030           dw  01300030 ; 50: q / Q
+0451: 00 00001110030           dw  01110030 ; 51: r / R
+0452: 00 00001120030           dw  01120030 ; 52: WR / WR
+0453: 0                        dw  0        ; 53: unbelegt
+0454: 0                        dw  0        ; 54: unbelegt
+0455: 0                        dw  0        ; 55: unbelegt
+0456: 00 00003770030           dw  03770030 ; 56: Irrung Zeichen / Irrung Zeichen
+0457: 01 2032 000              000 h57      ; 57: Um. KB / Um. KB (Sprung-Umstellung)
+0460: 01 2063 000              000 h60      ; 60: ` / ; (Sprung-Umstellung)
+0461: 00 00001410030           dw  01410030 ; 61: / / )
+0462: 00 00001420030           dw  01420030 ; 62: s / S
+0463: 00 00001630030           dw  01630030 ; 63: t / T
+0464: 00 00001440030           dw  01440030 ; 64: u / U
+0465: 00 00001650030           dw  01650030 ; 65: v / V
+0466: 00 00001660030           dw  01660030 ; 66: w / W
+0467: 00 00001470030           dw  01470030 ; 67: x / X
+0470: 00 00001500030           dw  01500030 ; 70: y / Y
+0471: 00 00001710030           dw  01710030 ; 71: z / Z
+0472: 01 2066 000              000 h72      ; 72: ZV / BM (Sprung-Umstellung)
+0473: 01 2071 000              000 h73      ; 73: , / ? (Sprung-Umstellung)
+0474: 00 00001740030           dw  01740030 ; 74: % / *
+0475: 01 2074 000              000 h75      ; 75: Tabulator / Tabulator (Sprung-Umstellung)
+0476: 0                        dw  0        ; 76: unbelegt
+0477: 00 00001770030           dw  01770030 ; 77: Transport (Relikt) / Transport (Relikt)

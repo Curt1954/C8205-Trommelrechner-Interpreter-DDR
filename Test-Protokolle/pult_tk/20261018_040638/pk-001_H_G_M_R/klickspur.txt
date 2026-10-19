@@ -1,0 +1,11 @@
+# C8205-Klickspur 1
+# fall: pk-001_H_G_M_R
+# trommel_md5: 7ffd2004415b147906af5bec25c0a9ee
+# erzeugt von: grafik_pult_tk_test.py PTK-001
+    0.000 klick NETZ wirkt=1
+    1.000 klick H wirkt=0
+    1.600 klick G wirkt=1
+    2.200 klick M wirkt=1
+    2.350 los M
+    2.800 klick R wirkt=1
+    5.500 klick NETZ wirkt=1

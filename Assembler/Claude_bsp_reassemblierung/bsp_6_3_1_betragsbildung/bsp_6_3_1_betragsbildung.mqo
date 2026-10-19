@@ -1,0 +1,7 @@
+               000            m3000          ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+               equ            03000          
+m3000:         215            d7777          ; 7777 215 ; <AC>:=Vl(x), Linksverschiebung (Vorzeichen z0 faellt heraus)
+               002            m3002          ; 3002 002 ; <AC>:=|x|, Rechtsverschiebung (Sprung zur naechsten Zelle)
+m3002:         020            03000          ; 3000 020 ; unbedingter Stopp
+               equ            07777          
+d7777:         dw             062600000000   ; x = -0.5*2^5

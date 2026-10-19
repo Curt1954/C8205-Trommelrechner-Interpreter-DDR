@@ -1,6 +1,6 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
-Version: 0.03-011
+Version: 0.03-013
 
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,
@@ -147,17 +147,18 @@ Zeilen getrennt, mit mindestens 6 Zeilen oben und 4 Zeilen unten.
 - **Abbildung und Bildunterschrift** bleiben zusammen.
 
 
-### 3a.7 Bekannte Abweichungen der Skripte (Stand 2026-10-11)
+### 3a.7 Bekannte Abweichungen der Skripte (Stand 2026-10-14)
 
 Bis zur Anpassung der Skripte weichen sie wie folgt von Abschnitt 3a und 4 ab. Der Eintrag wird gestrichen, sobald das
 Skript angepasst ist.
 
-- **`build_testhandbuch.py`** und **`erzeuge_knoten_pdfs.py`** (Knotengraph und Knotentabellen): kein Deckblatt nach
-  Abschnitt 4; der Stand wird von Hand gesetzt (Parameter oder Konstante), nicht als Erzeugungsdatum.
+- **`erzeuge_knoten_pdfs.py`, nur das Knotengraph-PDF** (die Knotentabellen erzeugt seit der Anpassung der eingebettete
+  Baustein `erzeuge_knotentabellen_pdf.py` mit Deckblatt und Erzeugungsdatum nach Abschnitt 3a und 4): kein Deckblatt nach
+  Abschnitt 4; der Stand wird aus den Datumsangaben der Quelltexte abgeleitet, nicht als Erzeugungsdatum gesetzt.
 - **`pdflib.py`:** `Doc` trägt Titel „C 8205 – Testhandbuch“ und Betreff „Testhandbuch“ fest (nur für das Testhandbuch
   richtig; das Rechnerbeschreibungs-Skript und `md2pdf.py` überschreiben beides).
-- **`erzeuge_knoten_pdfs.py`:** importiert `pdflib.py` nicht und führt Schriften, Maße und Farben doppelt; Text in reinem
-  Schwarz und #555555 statt Tinte und Grau; Fußzeile mit Grundlinie 31 statt 28 pt; Überschrift Ebene 2 mit 11 statt 10 pt;
+- **`erzeuge_knoten_pdfs.py`, Knotengraph-PDF:** zeichnet mit eigenem Code und führt Schriften, Maße und Farben selbst (der
+  eingebettete Baustein `pdflib.py` wird für die Knotentabellen verwendet); Text in reinem Schwarz und #555555 statt Tinte und Grau; Fußzeile mit Grundlinie 31 statt 28 pt; Überschrift Ebene 2 mit 11 statt 10 pt;
   Tabellen mit Gitter und hellgrauem Kopf (#D9D9D9); Kopfzeile auch auf Seite 1; Titel „C8205 Knotengraph“ statt
   „C 8205 – Knotengraph“.
 
@@ -349,11 +350,15 @@ ergänzt, bevor das PDF erzeugt wird.
 | PDF | Titel | Untertitel | Art | Bereich |
 |---|---|---|---|---|
 | `C8205-Projektueberblick_A4.pdf` | Projektüberblick | Was das Projekt ist, wie es aufgebaut ist und wie die Dokumente zusammenhängen | ÜBERBLICK | GESAMTPROJEKT |
+| `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` | Einstieg für Neueinsteiger | Was das Projekt enthält, in welcher Reihenfolge man liest und wo man bei einer Frage weiterliest | ÜBERBLICK | GESAMTPROJEKT |
 | `C8205-Rechnerbeschreibung_A4.pdf` | Rechnerbeschreibung | Aufbau, Register, Maschinenwort, Zahlendarstellung, Magnettrommel und Befehlszyklus des Cellatron C 8205 | BESCHREIBUNG | RECHNER UND REGELWERK |
 | `C8205-Bedienpult_und_Peripherie_A4.pdf` | Bedienpult und Peripherie | Tasten, Schalter, Lampen, Kanäle, Lochstreifenleser, -stanzer und Schreibwerk | BESCHREIBUNG | RECHNER UND REGELWERK |
 | `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Bedienungsanleitung Python-Interpreter | Aufruf, Schalter und Geräte von c8205_interp.py | HANDBUCH | INTERPRETER |
 | `C8205-Testhandbuch_A4.pdf` | Testhandbuch | Wie ein Test aufgebaut ist, wie er abläuft und wie man sein Ergebnis liest | HANDBUCH | INTERPRETER |
 | `C8205-Durchfuehrung_eines_Tests_A4.pdf` | Durchführung eines Tests | Das Testformat im Wortlaut der Quelle: Trommeldatei, Tastenfolge, Prüfungen, Geräte, Protokoll | REFERENZ | INTERPRETER |
+| `C8205-GRAFIK_Beschreibung_A4.pdf` | GRAFIK-Interpreter: Beschreibung | Zweck, Fenster, Geräte, Töne, Aufruf und Grenzen des GRAFIK-Modus im Wortlaut der Quelle | BESCHREIBUNG | INTERPRETER |
+| `C8205-GRAFIK_Pruefverfahren_A4.pdf` | GRAFIK-Interpreter: Prüfverfahren | Wie man prüft, dass der GRAFIK-Interpreter das Soll der Beschreibung erfüllt: Läufe, Tests, Abnahme | HANDBUCH | INTERPRETER |
+| `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | Lochstreifen-Hilfsprogramme | Anzeige, Eingabe und Umwandlung virtueller Lochstreifen: Format, Aufruf, Zwischenablage und Installation | HANDBUCH | INTERPRETER |
 | `C8205-Knotengraph_A4.pdf` | Knotengraph | Ablaufplan der Befehlsverarbeitung (Phasen I bis IV) als Knoten- und Testgraph | DIAGRAMM | RECHNER UND REGELWERK |
 | `C8205-Knotentabellen_A4.pdf` | Knotentabellen | Knotentabelle und Variablentabelle T2 im Wortlaut der Quellen | REFERENZ | RECHNER UND REGELWERK |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Einzelbefehlsliste | Generische Befehlsbeschreibung und vollständige Übersicht der Einzelbefehle | REFERENZ | RECHNER UND REGELWERK |
@@ -447,7 +452,7 @@ nach Abschnitt 2 ohnehin DejaVu Sans):
   GitHub ihn unter dem Bild), ist er die Bildunterschrift; sonst gilt der Text in den eckigen Klammern. Die Druckgröße ergibt
   sich aus der Pixelzahl und der im PNG gespeicherten Auflösung (dpi), begrenzt auf die Satzspiegelbreite und 340 pt Höhe;
   ohne Angabe gelten 72 dpi. Fehlt die Bilddatei, bricht die Erzeugung ab. Selbst gezeichnete Abbildungen
-  (`PDF/zeichne_abbildungen.py`) verwenden die Farben von 3a/4 und werden 1:1 gesetzt, ihre Schrift ist deshalb mindestens
+  (`PDF/pdf-layout-scripte/zeichne_abbildungen.py`) verwenden die Farben von 3a/4 und werden 1:1 gesetzt, ihre Schrift ist deshalb mindestens
   etwa 6 pt groß.
 
 ## 7. Werkzeuge
@@ -472,10 +477,18 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
 - `C8205-Einzelbefehlsliste_A4.pdf` (Quelle: C8205-Interpreter-Befehlsliste.md)
 - `C8205-Kodetabellen_A4.pdf` (Quelle: C8205-Interpreter-Kodetabellen.md)
 - `C8205-Projektueberblick_A4.pdf` (Quelle: C8205-Interpreter-Projektueberblick.md)
+- `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` (Quelle: C8205-Einstieg_fuer_Neueinsteiger.md; Wortlaut nach Abschnitt 6a, erzeugt mit
+  `PDF/pdf-layout-scripte/erzeuge_einstieg_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-BIS_A4.pdf` (Quelle: C8205-Interpreter-BIS.md; Fließtext und Tabellen nach Abschnitt 6a, ohne Kachelung)
 - `C8205-Durchfuehrung_eines_Tests_A4.pdf` (Quelle: C8205-Interpreter-Durchführung_eines_Tests.md; Wortlaut nach
-  Abschnitt 6a, erzeugt mit `PDF/erzeuge_durchfuehrung_pdf.py`, das `PDF/md2pdf.py` aufruft)
-- `C8205-Rechnerbeschreibung_A4.pdf` (redaktionell; erzeugt mit `PDF/erzeuge_rechnerbeschreibung_pdf.py`, Bausteine aus `pdflib.py`; Stand 08.10.2026)
+  Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_durchfuehrung_pdf.py`, das `md2pdf.py` aufruft)
+- `C8205-GRAFIK_Beschreibung_A4.pdf` (Quelle: C8205-Interpreter-GRAFIK_Beschreibung.md; Wortlaut nach
+  Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_grafik_beschreibung_pdf.py`, das `md2pdf.py` aufruft)
+- `C8205-GRAFIK_Pruefverfahren_A4.pdf` (Quelle: C8205-Interpreter-GRAFIK_Pruefverfahren.md; Wortlaut nach
+  Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_grafik_pruefverfahren_pdf.py`, das `md2pdf.py` aufruft)
+- `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` (Quelle: C8205-Interpreter-Lochstreifen-Hilfsprogramme.md; Wortlaut nach Abschnitt 6a,
+  erzeugt mit `PDF/pdf-layout-scripte/erzeuge_lochstreifen_hilfsprogramme_pdf.py`, das `md2pdf.py` aufruft)
+- `C8205-Rechnerbeschreibung_A4.pdf` (redaktionell; erzeugt mit `PDF/pdf-layout-scripte/erzeuge_rechnerbeschreibung_pdf.py`, Bausteine aus `pdflib.py`; Stand 08.10.2026)
 - `C8205-Bedienpult_und_Peripherie_A4.pdf` (redaktionell; Quellen: C8205-Interpreter-Bedienpult_mit_Schaltern.md und
   C8205-Interpreter-Lochstreifenleser.md; ergänzend herangezogen, aber nicht auf dem Deckblatt:
   Datenstruktur_und_Verarbeitungseinheiten.md und Kodetabellen.md; erzeugt mit
@@ -484,34 +497,16 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
   C8205-Interpreter-Durchführung_eines_Tests.md)
 - `C8205-Testhandbuch_A4.pdf` (redaktionell; Quelle: C8205-Interpreter-Durchführung_eines_Tests.md)
 - `C8205-Assemblerdokumentation_A4.pdf` (Quelle: C8205_Assembler_Dokumentation.md; Wortlaut nach Abschnitt 6a, erzeugt
-  mit `PDF/md2pdf.py`; liegt in `Assembler/Dokumentation/` neben der .odt und der .md)
+  mit `PDF/pdf-layout-scripte/md2pdf.py`; liegt in `Assembler/Dokumentation/` neben der .odt und der .md)
 - `C8205-Projektstruktur_A4.pdf` (Quelle: C8205-Projektstruktur.md; Wortlaut nach Abschnitt 6a, erzeugt mit
   `PDF/pdf-layout-scripte/erzeuge_projektstruktur_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` (Quelle: C8205-Interpreter-PDF.md, diese Datei; Wortlaut nach Abschnitt 6a, erzeugt
-  mit `PDF/md2pdf.py`)
+  mit `PDF/pdf-layout-scripte/md2pdf.py`)
 
 ## 9. Änderungsprotokoll
 
-Neueste Änderung zuerst. Einträge vom 2026-10-02 sind aus den Entscheidungsvermerken in Abschnitt 2 und 8 übernommen
-(das Protokoll war bis dahin leer).
+Neueste Änderung zuerst. Erledigte Einträge werden gestrichen; zurzeit gibt es keine offenen Einträge.
 
 | Datum | Änderung | Abschnitt |
 |---|---|---|
-| 2026-10-13 | Layoutscript `erzeuge_bedienpult_peripherie_pdf.py` für `C8205-Bedienpult_und_Peripherie_A4.pdf` in Abschnitt 8 eingetragen (redaktionell, Bausteine aus `pdflib.py`, wie die Rechnerbeschreibung); das PDF ist damit reproduzierbar und in `make_all_pdf.sh` aufgenommen. | 8 |
-| 2026-10-12 | Abbildungen in `md2pdf.py`: Bildzeilen `![...](...)` werden mit Bildunterschrift gesetzt (neuer Baustein `pdflib.bild`), Regel in 6a ergänzt; neues Zeichenskript `zeichne_abbildungen.py` in `PDF/pdf-layout-scripte/`. Die Konverter-Skripte erzeugen unverändert denselben Text und dieselben Seitenzahlen. | 6a |
-| 2026-10-12 | `C8205-Projektstruktur_A4.pdf` in 4.6 und Abschnitt 8 aufgenommen (Art RICHTLINIE, Bereich GESAMTPROJEKT; Wortlaut-PDF nach 6a, Skript `erzeuge_projektstruktur_pdf.py`). | 4.6, 8 |
-| 2026-10-11 | Layoutscript `PDF/erzeuge_durchfuehrung_pdf.py` für `C8205-Durchfuehrung_eines_Tests_A4.pdf` in Abschnitt 8 eingetragen: Es legt die Deckblattdaten aus 4.6 fest, ruft `md2pdf.py` auf und hält Überleitungszeilen und aufeinanderfolgende Überschriften am Seitenende beim Folgeblock (3a.6). Das PDF ist damit nach Abschnitt 3a und 4 neu erzeugt (Quelle Version 0.03-009, 27 Seiten). | 8 |
-| 2026-10-11 | `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` in 4.6 und Abschnitt 8 aufgenommen (bisher nur im PDF selbst festgelegt) und neu erzeugt; der Dateiname auf dem Deckblatt stimmt jetzt mit dem Dateinamen überein (vorher `…_A4_TEST.pdf`). | 4.6, 8 |
-| 2026-10-11 | Quellen der redaktionellen PDFs `Bedienpult_und_Peripherie`, `Bedienungsanleitung_Interpreter` und `Testhandbuch` in Abschnitt 8 eingetragen (nach den Angaben in den PDFs selbst); der Punkt „Offen“ in 4.6 entfällt. | 4.6, 8 |
-| 2026-10-11 | Assemblerdokumentation regulär: Das Assembler-PDF wird wie alle anderen aus der .md erzeugt (Wortlaut nach 6a, mit Deckblatt); die Ausnahme (Export aus der .odt, ohne Deckblatt, Namensmuster der Quelle) entfällt. Neu: Zeile in 4.6 (Art BESCHREIBUNG, Bereich ASSEMBLER), Eintrag `C8205-Assemblerdokumentation_A4.pdf` in Abschnitt 8. Erledigte Vermerke gestrichen: „Angepasst“ in 3a.7, Hinweis zur Durchführung eines Tests in Abschnitt 8, „bisher/jetzt“ in 4.6. | 3a.7, 4.6, 8 |
-| 2026-10-11 | Skripte schrittweise angepasst: `pdflib.py`, `md2pdf.py` und `erzeuge_rechnerbeschreibung_pdf.py` setzen Abschnitt 3a und 4 um; die Liste der Abweichungen in 3a.7 entsprechend gekürzt. | 3a |
-| 2026-10-11 | Folgeseiten festgelegt (neuer Abschnitt 3a): Lage, Schrift und Farben von Kopf- und Fußzeile (Fußzeile mit Haarlinie, Kopfzeile ab Seite 2, Kopfzeilentitel „C 8205 – Titel“), Soll-Werte der Textelemente, ein einheitlicher Tabellenstil (dunkler Kopf, kein Zebramuster), Hinweis-/Achtung-Kästen, Codeblöcke, Seitenumbrüche; bekannte Abweichungen der Skripte in 3a.7. „Seitenfolge Knotengraph“ samt Knotentabellen in 4.5. Blau und Orange als Hinweis-/Achtung-Farben in Abschnitt 5 ergänzt. | 3, 3a, 4, 5 |
-| 2026-10-11 | Deckblatt festgelegt: eigene Seite 1 für alle PDFs mit einheitlichem Aufbau, Maßen, Texten und Wertevorrat (Art, Bereich); Angabenblock mit Quelle, **Version der Quelle** und Stand, dazu fester Aktualitätshinweis (entscheidet den offenen Punkt in `C8205-Versionierung.md`, Abschnitt 8); Lesehinweise und Inhaltsverzeichnis wandern auf Seite 2; Leerseite als Paritätsregel für Kachel-PDFs gefasst; Deckblattdaten je PDF (4.6); Titelgröße des Deckblatts von 16 auf 26 pt; Kopf-/Fußzeile erst ab Seite 2; `C8205-Durchfuehrung_eines_Tests_A4.pdf` in Abschnitt 8 nachgetragen. | 2, 3, 4, 8 |
-| 2026-10-08 | `C8205-Rechnerbeschreibung_A4.pdf` auf Stand 08.10.2026 gebracht (neu: 3.2 externe Darstellung/Tetraden, 6.4 persistente Trommeldatei, Hinweis zu A=3/Z=2,3, Verweise auf das BIS-PDF) und mit dem Skript `erzeuge_rechnerbeschreibung_pdf.py` reproduzierbar gemacht. | 8 |
-| 2026-10-07 | `C8205-BIS_A4.pdf` in die Liste der PDFs aufgenommen (Quelle angegeben). | 8 |
-| 2026-10-05 | `C8205-Knotentabellen_A4.pdf` in die Liste der PDFs aufgenommen (Quellen angegeben); bei `C8205-Knotengraph_A4.pdf` ebenfalls die Quellen ergänzt. | 8 |
-| 2026-10-05 | Verweis in der Einleitung berichtigt: Das Änderungsprotokoll ist Abschnitt 9 (stand fälschlich als Abschnitt 8, das ist die Dateibenennung). | Einleitung |
-| 2026-10-05 | Änderungsprotokoll angelegt und mit den bisher nur im Text vermerkten Entscheidungen gefüllt. | 9 |
-| 2026-10-02 | Schrift: einheitlich DejaVu Sans / Bold / Mono für alle Dokumente; Ausnahme Knotengraph (Kacheln bleiben Helvetica). Grund: Helvetica stellt die Unicode-Notation nicht dar. | 2, 6a |
-| 2026-10-02 | Dateinamen: Suffix `_A4` bei allen A4-PDFs, auch bei einfachen Text-/Tabellendokumenten ohne Kachelung. | 8 |
 

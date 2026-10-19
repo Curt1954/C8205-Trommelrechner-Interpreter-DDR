@@ -209,7 +209,7 @@ def pult_tastatur(ziel):
 # ---------------------------------------------------------------------------- Abbildung 3: Schreibwerk-Tastatur
 def schreibwerk_tastatur(ziel):
     """Schreibwerktastatur. Vorlagen: Zeichnung 'Tastatur des Schreibwerkes', Bedienungsanleitung Abb. 14
-    (Foto) und Abb. 13 (Teileliste). Grau: Taste ohne Funktion (nicht eingabefaehig)."""
+    (Foto) und Abb. 13 (Teileliste). Die Taste mit zwei Kreisen ist der Eingabetaster der Blockmarke BM."""
     W, H = 190, 100
     fig, ax = neue_flaeche(W, H)
     a, pt = 8.2, 9.8
@@ -223,10 +223,10 @@ def schreibwerk_tastatur(ziel):
     taste(ax, pos(0, 0), y0, main="|", fs=9)
     for i, t in enumerate(r0):
         taste(ax, pos(0, i + 1), y0, oben=t[0], unten=t[1], fs=8.5)
-    xk = pos(0, 12)                                                  # Taste mit zwei Kreisen (ohne Kode)
-    taste(ax, xk, y0, grau=True)
+    xk = pos(0, 12)                                                  # Taste mit zwei Kreisen: Eingabetaster Blockmarke BM
+    taste(ax, xk, y0)
     for fy in (0.31, 0.71):
-        ax.add_patch(Circle((xk + a / 2, y0 + a * fy), 1.2, fc="none", ec=MUTED, lw=0.8, zorder=4))
+        ax.add_patch(Circle((xk + a / 2, y0 + a * fy), 1.2, fc="none", ec=INK, lw=0.8, zorder=4))
     taste(ax, pos(0, 13), y0, main="→", fs=9)                      # Ruecktaste
     taste(ax, pos(0, 14), y0, main="−", fs=9)                      # Tab. loeschen
     # Reihe 1
@@ -275,6 +275,9 @@ def schreibwerk_tastatur(ziel):
         text(ax, xt if ha == "center" else xt + (1.2 if ha == "left" else -1.2), yt, s_, fs=7.0, ha=ha, va=va)
     marke(pos(0, 0) + a / 2, y0, pos(0, 0) + a / 2, y0 - 4.0, "Randversteller", ha="left", va="bottom")
     marke(pos(0, 13) + a / 2, y0, pos(0, 13) + a / 2, y0 - 4.0, "Rücktaste", ha="center", va="bottom")
+    xbm = pos(0, 12) + 2.0                                           # Eingabetaster BM: Beschriftung hoeher, damit sie nicht an "Rücktaste" stösst
+    linie(ax, xbm, y0, xbm, y0 - 8.5, lw=0.6)
+    text(ax, xbm - 1.2, y0 - 8.5, "Eingabetaster Blockmarke BM", fs=7.0, ha="right", va="center")
     marke(pos(0, 14) + a, y0 + a / 2, pos(0, 14) + a + 4.0, y0 + a / 2, "Tab. löschen", ha="left")
     marke(pos(o1, 12) + a, y1 + a / 2, xw + 7.0 + 3.0, y1 + a / 2, "Tab. setzen", ha="left")
     marke(xw + 3.5, wy1, xw + 3.5, wy1 + 4.0, "WRZL", ha="center", va="top")
@@ -285,11 +288,6 @@ def schreibwerk_tastatur(ziel):
     xt_ = pos(o2, 0) + 16.5 + 88.0 + 4.6 + 6.2
     marke(xt_, y4 + a, xt_, y4 + 15.5, "Tab. Auslösung", ha="center", va="top")
     # Legende
-    ax.add_patch(FancyBboxPatch((5.0, H - 13.6), 4.6, 4.6, boxstyle="round,pad=0,rounding_size=0.8",
-                                fc=GRAU_TASTE, ec=INK, lw=0.7))
-    text(ax, 11.5, H - 11.3,
-         "Taste mit zwei Kreisen: unbenutzt, nicht eingabefähig",
-         fs=6.6, ha="left", color=INK)
     text(ax, 5.0, H - 5.5,
          "Tasten mit zwei Zeichen: oben Großbuchstabenlage, unten Kleinbuchstabenlage; KB / GB schalten die Lage um.",
          fs=6.3, ha="left", color=MUTED)

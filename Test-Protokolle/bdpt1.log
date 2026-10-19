@@ -1,0 +1,37 @@
+Test bdpt1
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002000000
+  0001: 00002005000
+  2000: 00002010211
+  2001: 00002010210
+  2002: 00002010210
+  2003: 00007777240
+  2004: 00000001020
+  2005: 00002011211
+  2006: 00007777240
+  2007: 00000002020
+  2010: 00000000100
+  2011: 00000000310
+  #DOK-0001 
+  #SPEI-0001 0000-0000
+  #TROMMEL=LEER (Trommel vor dem Test geleert: alle 4096 Zellen = 0; danach die Zeilen von Trommeldatei:)
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2000 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2010 211  (vor Knoten 002)  BZ=2001 AC=00000000100 FÜ=0 V1=0 V2=0 V3=0
+  BR=2010 210  (vor Knoten 002)  BZ=2002 AC=00000000200 FÜ=0 V1=0 V2=0 V3=0
+  BR=2010 210  (vor Knoten 002)  BZ=2003 AC=00000000300 FÜ=0 V1=0 V2=0 V3=0
+  BR=7777 240  (vor Knoten 002)  BZ=2004 AC=00000000300 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=2005 AC=00000000300 AR=0001 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

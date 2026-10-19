@@ -1,0 +1,23 @@
+               000            beginn         
+               equ            02000          
+adr_a:         da             000000002022   ; Adrese der ersten Komponente Vektor
+adr_b:         da             000000002025   ; Adresse der letzten Komponente Vektor
+beginn:        241            zelle_s        ; s:=0
+               211            adr_a          
+schleife:      240            zelle_i        ; i:=a
+               251            0              
+               210            zelle_s        ; summe := summe + Speicher[i]
+               240            zelle_s        ; s:=summe
+               211            zelle_i        
+               210            adr_1          ; i:=i+1
+               330            adr_b          
+               140            schleife       
+               211            zelle_s        ; AC:=Summe
+halt:          164            00001          ; DEBUG Nr. 0001 aktivieren
+               020            0              ; halt
+adr_1:         dw             01000          ; eine Adreßeinheit
+               equ            02022          
+a:             dw             0144           
+               dw             0145           
+               dw             0310           
+b:             dw             067            

@@ -35,7 +35,10 @@ asm_druck_tastenfolge.txt;Druck von BZ und AC (Bedienpult 4.2, 4.3): Ein bei 500
 Test-Ergebnisvergleiche/asm_druck_tastenfolge_erwartet.txt";;
 asm_okt_triadendruck.txt;Triadendruck (Zelle 0276) mit GX-Befehl als Ziffernwaehler (Programmieranleitung 5.17): R1 = 70123456701 wird als 11 Oktalziffern gedruckt.;"virtuelle_Geraete/SW-Ausgabe
 Test-Ergebnisvergleiche/okt_erwartet.txt";;
+bdpt1.test;TROMMEL=LEER [Tastenfolge: H G R];;Projekt_1/bedienpult_tasten/bdpt1.asm;
 betrag.test;Test betrag: z = -|a+b| + |-b+c| + |-c+d| mit a=5 b=3 c=7 d=2, erwartet z=1;;Claude/betrag.asm;
+bs-001_bedingter_Stopp_nur_mit_Schalter_BS.txt;"Flag/Lampe BS und Schalter BS sind getrennt: BS+ stellt nur den Schalter ein (Flag BS bleibt 0); erst der bedingte Stopp 060 bei …";;;
+bs-002_BS_Schalter_ohne_Stopp.txt;BS+ allein setzt das Flag BS nicht, und ST ist ohne Stopp (US = 0, Flag BS = 0) elektronisch verriegelt: keine Wirkung.;;;
 bsp_5_10_ohne_ueberlauf.txt;Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=1 b=2 c=3, Summe 6 ohne Ueberlauf;;Claude_bsp_reassemblierung/bsp_5_10_ohne_ueberlauf/bsp_5_10_ohne_ueberlauf.asm;
 bsp_5_10_ueberlauf_ab.txt;Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=37777777777 (groesste positive Zahl) b=1, Ueberlauf bei a+b;;Claude_bsp_reassemblierung/bsp_5_10_ueberlauf_ab/bsp_5_10_ueberlauf_ab.asm;
 bsp_5_10_ueberlauf_c.txt;Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=20000000000 b=17777777777 c=1, Ueberlauf erst bei a+b+c;;Claude_bsp_reassemblierung/bsp_5_10_ueberlauf_c/bsp_5_10_ueberlauf_c.asm;
@@ -94,7 +97,13 @@ bsp_seite_42_025.test;Unterprogrammtechnik,  Sprung mit Rückkehrabsicht, 025;;C
 bsp_seite_42_025_stanzer.test;Unterprogrammtechnik,  Sprung mit Rückkehrabsicht, 025;Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt;Claude_bsp_reassemblierung/bsp_seite_42_025_stanzer/bsp_seite_42_025_stanzer.asm;
 bz-001_BZ_vorbelegt_G.txt;#BZ=0100 setzt den Anfangs-BZ vor der ersten Taste. Die danach abgearbeitete Taste G wirkt wie bisher: BZ := 0.;;;
 int-001_weiter.txt;[Tastenfolge: H G R];;;
+int-002_Ende_ohne_R.txt;[Tastenfolge: H G R];;;
 int-003_Ue_E.txt;[Tastenfolge: H G R];;;
+int-004_G_ST.txt;[Tastenfolge: H G R];;;
+int-005_Sprung_uebersprungen.txt;[Tastenfolge: H G R];;;
+int-006_mehrere_Zeilen.txt;[Tastenfolge: H G R];;;
+k1_leser_stanzer.test;[Tastenfolge: H G R];"virtuelle_Geraete/Leser1_02/lb_kopie_quelle.txt
+Test-Ergebnisvergleiche/k1_leser_stanzer-stanzer-ausgabe.txt";Projekt_1/sw_eingabe/k1_leser_stanzer.asm;
 lb-001_Irrung_Zeichen_uebersprungen.txt;Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp;virtuelle_Geraete/Leser1/lb-001_irrung_zeichen_dann_1.txt;Claude_bsp_reassemblierung/lb-001_Irrung_Zeichen_uebersprungen/lb-001_Irrung_Zeichen_uebersprungen.asm;
 lb-002_ohne_Irrung_Zeichen.txt;Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp;virtuelle_Geraete/Leser1/lb-002_ohne_Irrung_Zeichen.txt;Claude_bsp_reassemblierung/lb-002_ohne_Irrung_Zeichen/lb-002_ohne_Irrung_Zeichen.asm;
 lb-003_Paritaetsfehler.txt;Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp;virtuelle_Geraete/Leser1/lb-003_paritaetsfehler.txt;Claude_bsp_reassemblierung/lb-003_Paritaetsfehler/lb-003_Paritaetsfehler.asm;
@@ -145,6 +154,11 @@ pj2-bis_kz_zr_im_wort.txt;"BIS-Test Eingabe 0 0 1 2 ZR 0 0 5 .: ZR loescht das W
 pj2-bis_kz_zr_vor_k1.txt;"BIS-Test Eingabe ZR 0 0 5 .: ZR als K1 ist unzulaessig (F2), Sprung nach 0000 und Neustart ueber das Hauptprogramm; das Wort 5 kommt dort …";virtuelle_Geraete/Leser1/pj2-bis_kz_zr_vor_k1.txt;Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
 pj2-bis_kz_zv_vor_k1.txt;BIS-Test Eingabe ZV 0 0 5 .: ZV (Eingabeadresse 072, ohne Sprung-Umstellung, Lochbild 01111010) liest als K1 eine 0 (Fehlerpruefung, Sprung …;virtuelle_Geraete/Leser1/pj2-bis_kz_zv_vor_k1.txt;Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
 pj2-bis_minimalprogramm.test;[Tastenfolge: H G R];;Projekt_2/pj2-bis_minimalprogramm.asm;
+pj2-bis_minimalprogramm_adressdruck.test;[Tastenfolge: H G R];;Projekt_2/pj2-bis_minimalprogramm_adressdruck.asm;
+pj2-bis_minimalprogramm_adresseneingabe.test;[Tastenfolge: H G R];;Projekt_2/pj2-bis_minimalprogramm_adresseneingabe.asm;
+pj2-bis_minimalprogramm_v2.test;[Tastenfolge: H G R];;Projekt_2/pj2-bis_minimalprogramm.asm;über Namen
+pj2-bis_minimalprogramm_v3.test;[Tastenfolge: H G R];;Projekt_2/pj2-bis_minimalprogramm_v3.asm;
+pj2-bis_minimalprogramm_wort_mit_kz.test;[Tastenfolge: H G R];;Projekt_2/pj2-bis_minimalprogramm_wort_mit_kz.asm;
 pj2-bis_ps_adressaenderung_k2.txt;"BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; die 2. Leitadresse (2 2 100 .) hat keinen Einfluss auf die …";virtuelle_Geraete/Leser1/pj2-bis_ps_adressaenderung_k2.txt;Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
 pj2-bis_ps_hla_auf_band.txt;"BIS-Test Programmstueck-Eingabe (Ansprung 0263); Voraussetzung: Minimalprogramm auf der Trommel; Hauptleitadresse auf dem Lochband: 2 1 3 0 …";virtuelle_Geraete/Leser1/pj2-bis_ps_hla_auf_band.txt;Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
 pj2-bis_ps_hla_neu_mitten.txt;"BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; neue Hauptleitadresse und Relativadresse mitten im …";virtuelle_Geraete/Leser1/pj2-bis_ps_hla_neu_mitten.txt;Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
@@ -166,6 +180,13 @@ pj2-bsp_maximum_3_zahlen_b_max.txt;Ermittlung des Maximums von drei Zahlen (Prog
 pj2-bsp_maximum_3_zahlen_c_max.txt;Ermittlung des Maximums von drei Zahlen (Programmobjektdatei, vom Lader relokiert) Programmladeadresse (Kennzeichen 01) = 3000 …;;Projekt_2/pj2_maximum_3_zahlen.asm;über Namen
 pj2-bsp_maximum_3_zahlen_gleich.txt;Ermittlung des Maximums von drei Zahlen (Programmobjektdatei, vom Lader relokiert) Programmladeadresse (Kennzeichen 01) = 3000 …;;Projekt_2/pj2_maximum_3_zahlen.asm;über Namen
 pj2-bsp_vertauschung_zahlenfelder.txt;Vertauschung zweier Zahlenfelder a (3100-3104) und b (3200-3204), Unterprogramm ab 3000;;Projekt_2/pj2_vertauschung_zahlenfelder.asm;über Trommelinhalt
+r300_eingabe.test;R300-Eingabe: alle Zeichen mit Computertaste ueber SW einlesen und als Echo ausgeben (RE-001);"virtuelle_Geraete/SW-Ausgabe/r300_eingabe.txt
+virtuelle_Geraete/T-SW-Eingabe/r300_eingabe.txt
+Test-Ergebnisvergleiche/r300_eingabe-sw-ausgabe.txt";Projekt_1/r300_eingabe/r300_eingabe.asm;
+s1-R1.txt;Test verkuerzter Gruppen-Transport mit Rechtsverschiebung (R=1, Code 542), AC startet mit 6;;;
+s2-R2.txt;Test Linksverschiebung (R=2, Code 544), AC startet mit 3: z0 entscheidet, alle 32 Zellen werden geschrieben;;;
+s3-neg.txt;Test Sonderfall: AC ist bereits vor der ersten Zelle negativ (R=2): die erste Zelle wird noch geschrieben, dann Abbruch;;;
+s4-spur.txt;Test Ausgabe einer ganzen Spur in physischer Zugriffsreihenfolge;;;
 sp-025_024_Sprung.txt;[Tastenfolge: H G R];;Claude_bsp_reassemblierung/sp-025_024_Sprung/sp-025_024_Sprung.asm;
 sp-026_Sprung_zyklisch.txt;[Tastenfolge: H G R];;Claude_bsp_reassemblierung/sp-026_Sprung_zyklisch/sp-026_Sprung_zyklisch.asm;
 sp-027_bedingter_Sprung.txt;Bedingter Sprung mit Rueckkehrabsicht, SP=1, ungerader BZ, R=2 und R=3;;Claude_bsp_reassemblierung/sp-027_bedingter_Sprung/sp-027_bedingter_Sprung.asm;
@@ -182,6 +203,13 @@ st-004_STARTE_1000_druck_interrupt.txt;"Programm ab 1000: Schreibwerk-Ausgabe ""
 st-004_STARTE_1000_druck_interrupt_neu.txt;Programmunterbrechung und Druck von BZ und AC ueber das Minimalprogramm (BIS-2.2.12.1). Voraussetzung: Die Trommel enthaelt das …;"virtuelle_Geraete/SW-Ausgabe
 Test-Ergebnisvergleiche/st-004_STARTE_1000_druck_interrupt_neu_erwartet.txt";Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
 st-005_STARTE_1000_druck_mit_druckroutine.txt;"Programm ab 1000: Schreibwerk-Ausgabe ""XY"", dann INTERRUPT mit Druck von BZ und AC durch die Druckroutine (Zelle 0001), dann ""xy"" und Stopp";;Projekt_2/pj2-bis_minimalprogramm.asm;Voraussetzung: Minimalprogramm auf der Trommel
+sw_eingabe.test;[Tastenfolge: H SW=1 G R];;;
+sw_eingabe_k2.test;[Tastenfolge: H SW=1 G R];;;
+sw_eingabe_lage.test;[Tastenfolge: H SW=1 G R];;Projekt_1/sw_eingabe/sw_eingabe_lage.asm;
+sw_eingabe_leser_stanzer.test;[Tastenfolge: H G R];;Projekt_1/sw_eingabe/sw_eingabe_leser_stanzer.asm;
+sw_zwei_ziffern.test;"Zwei Ziffern ueber SW einlesen, zwischen den Eingaben Anwahlbefehl K2 (Ausgabe); Eingabe: 2, 3";"virtuelle_Geraete/SW-Ausgabe/sw_zwei_ziffern.txt
+virtuelle_Geraete/T-SW-Eingabe/sw_zwei_ziffern.txt
+Test-Ergebnisvergleiche/sw_zwei_ziffern-sw-ausgabe.txt";Projekt_1/sw_zwei_ziffern/sw_zwei_ziffern.asm;
 tk-001_US_H_M_R.txt;Tastenfolge H G M R: nach G steht BR = 0000 000, M ergibt BR = 0000 025 (Sprung mit Rückkehrabsicht), R führt aus.;;Claude_bsp_reassemblierung/tk-001_US_H_M_R/tk-001_US_H_M_R.asm;
 tk-002_US_M_nach_E_AC_Linksverschiebung.txt;Tastenfolge H G M+ E M- M R: Nach G und einem E unter M gilt BZ = 1, AR = 1 und AC = 00000002000 (BZ+1 im Adreßfeld).;;Claude_bsp_reassemblierung/tk-002_US_M_nach_E_AC_Linksverschiebung/tk-002_US_M_nach_E_AC_Linksverschiebung.asm;
 tk-003_US_Ue_R.txt;Tastenfolge H G Ü R: BR = 7777 240 (Transport ⟨7777⟩ := AC), R führt aus (Start bei Knoten 19).;;Claude_bsp_reassemblierung/tk-003_US_Ue_R/tk-003_US_Ue_R.asm;
@@ -190,6 +218,10 @@ tk-005_US_ST_Transport_AC.txt;Tastenfolge H G M+ E M- ST R: US ist durch G geset
 tk-006_ST_ohne_Stopp_wirkungslos.txt;Tastenfolge ST R ohne vorheriges G: Der Rechner steht nicht im Stopp (US = 0, BS = 0), ST ist elektronisch verriegelt und ohne Wirkung.;;Claude_bsp_reassemblierung/tk-006_ST_ohne_Stopp_wirkungslos/tk-006_ST_ohne_Stopp_wirkungslos.asm;
 tk-007_Ue_ohne_H_wirkungslos.txt;Tastenfolge Ü R ohne Schalter H: Ü wirkt nur bei gesetztem H und ist hier ohne Wirkung.;;Claude_bsp_reassemblierung/tk-007_Ue_ohne_H_wirkungslos/tk-007_Ue_ohne_H_wirkungslos.asm;
 tk-008_US_Ue_E_Einzelschritt.txt;Tastenfolge H G Ü E: BR = 7777 240. E (ohne M) führt Phase IV (⟨7777⟩ := AC = 0), Phase I, Phase II (Zelle 0000) und Phase III aus und hält …;;Claude_bsp_reassemblierung/tk-008_US_Ue_E_Einzelschritt/tk-008_US_Ue_E_Einzelschritt.asm;
+trommel-001_leer.txt;"#TROMMEL=LEER: Die Trommel wird vor dem Test geleert; danach gelten nur die Zeilen dieses Abschnitts.";;;
+wr-001_Leser_WR.txt;Lochbandeingabe von WR (Wagenrücklauf ohne Zeilenschaltung): Eingabeadresse 0052, Lochbild 01001010, keine Sprung-Umstellung;virtuelle_Geraete/Leser1/wr-001_wr.txt;;
+wr-002_Schreibwerk_WR.txt;Ausgabe von WR (Ausgabe-Adresse 112) auf dem Schreibwerk: Der Interpreter schreibt <WR>;"virtuelle_Geraete/SW-Ausgabe
+Test-Ergebnisvergleiche/wr-002_Schreibwerk_WR-sw-ausgabe.txt";;
 ziffern_0.test;Ziffer 0-3 einlesen und auswerten, Eingabe: 0;"virtuelle_Geraete/SW-Ausgabe/ziffern_0.txt
 virtuelle_Geraete/T-SW-Eingabe/ziffern_0.txt
 Test-Ergebnisvergleiche/ziffern_0-sw-ausgabe.txt";Projekt_1/ziffern/ziffern.asm;über Trommelinhalt

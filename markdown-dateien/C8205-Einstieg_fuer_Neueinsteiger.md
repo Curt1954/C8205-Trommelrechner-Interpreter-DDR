@@ -1,6 +1,6 @@
 # Einstieg in das C 8205-Projekt
 
-Version: 0.01-002
+Version: 0.01-003
 
 **Zweck dieses Dokuments (Orientierung für neue Leser):** Dieses Dokument richtet sich an Leser, die das C-8205-Projekt zum ersten Mal sehen. Es erklärt nicht alle technischen Einzelheiten des Rechners. Stattdessen zeigt es, **was im Projekt enthalten ist, in welcher Reihenfolge man die Dokumentation lesen sollte und wo man bei einer konkreten Frage weiterliest.**
 
@@ -130,6 +130,10 @@ Das BIS ist **kein Bestandteil des Python-Interpreters**.
 Es handelt sich um Programmsysteme, die auf dem historischen C 8205 laufen bzw. dafür vorgesehen sind.
 
 Wenn du zunächst verstehen möchtest, **wie der simulierte Rechner selbst funktioniert**, kannst du das BIS zunächst überspringen.
+
+### 2.4 Zwei Betriebsarten des Interpreters: TEST und GRAFIK
+
+**GRAFIK:** Den Python-Interpreter gibt es in zwei Betriebsarten. **TEST** läuft ohne Fenster und prüft Programme automatisch. **GRAFIK** zeigt das Bedienpult und das Schreibwerk als Fenster, spielt Töne und bildet die Trommel nach; wer den Rechner ausprobieren will, beginnt dort. Mehr: `C8205-Interpreter-GRAFIK_Beschreibung.md`.
 
 ## 3. Die wichtigste Unterscheidung
 

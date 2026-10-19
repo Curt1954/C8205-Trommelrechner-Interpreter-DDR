@@ -1,6 +1,6 @@
 # ** Bausteininterpretationssystem (BIS) **
 
-Version: 0.03-001
+Version: 0.03-003
 
 Dieses Dokument gibt den Inhalt der Quelle wieder und ordnet ihn in das Projekt ein. Die Gliederungsnummern der Quelle werden nicht
 übernommen; Verweise auf Abschnitte oder andere Dokumente enthält dieses Dokument nicht.
@@ -87,7 +87,7 @@ geladen wurde, wird der Inhalt von Zelle 0000 ausgetauscht; dort steht dann ein 
 (Eingabe mit Kennzeichen). Das erklärt, warum HGR (Sprung nach 0000) bei geladenem Minimalprogramm die Eingabe mit Kennzeichen startet.
 Die Zellen 0002 und 0022 bis 0024 bleiben dabei erhalten: Sie sind die Initialisierung des KEP (0022 und 0023 setzen die
 Hauptleitadresse in Zelle 7724 auf `0014 000`, weil sie beim frisch geladenen KEP noch nicht gesetzt ist; 0024 setzt ⟨AC⟩ := 0 und springt zur
-Eingabe). Die in BIS-2.2.10.1 genannte Ansprungzelle 022 (Druck von BZ und AC) liegt in diesem Bereich; der Widerspruch ist ungeklärt.
+Eingabe).
 Überschrieben wird außerdem die im KEP unbelegte Zelle 0001: Dort steht dann ein unbedingter Sprung zum Druck von BZ und AC
 (Einsprung von HG M↓ E M↑ R, s. BIS-2.2.12). Alle übrigen Zellen des KEP bleiben unverändert.
 Das Hauptprogramm, zu dem Zelle 0000 springt, ruft das Unterprogramm Kennzeicheneingabe auf.
@@ -221,7 +221,7 @@ K₁ und K₂ gehen jeder Eingabe über das Minimalprogramm voran. Die externe N
 - **K₁** (erstes Kennzeichen) ist das Unterscheidungsmerkmal für die verschiedenen möglichen Arten einer Information; entsprechend
   K₁ wird das eingelesene Wort interpretiert und weiterverarbeitet. Als 1. Kennzeichen sind definiert:
   - die Ziffern 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-  - die Buchstaben B und D,
+  - die Tastatur-Tasten B und D (nicht die SW-Tasten B und D !),
   - die Zeichen Plus (+), Zwischenraum (ZR), Schrägstrich (/), Doppelpunkt (:) und Blockmarke (BM); BM tritt nur im R 300-Lochbandcode auf.
 - **K₂** (zweites Kennzeichen) kann die Werte 0 bis 9 annehmen. Bei Befehlen dient es der Adressenmodifikation 1. Art; bei K₁ = 2
   wählt es die Art der Hilfsadresse.
@@ -486,7 +486,7 @@ Programme zum Druck von Adressen, Befehlen und Triaden bezeichnet):
 | Triadendruck | 276 |
 | Befehlsdruck | 053 |
 | Adressendruck | 100 |
-| Druck Befehlszähler BZ und Akkumulator AC | 022 |
+| Druck Befehlszähler BZ und Akkumulator AC | 0001 (Zelle im KEP-Bereich mit Sprung ins Minimalprogramm; die Routine selbst hat keinen festen Platz) |
 
 **Befehlsdruck** (Wortlaut sinngemäß nach der Programmieranleitung, Seitenabbild): Es werden bei diesem Druck die Wortstellen z₀ bis z₁₁ nicht
 berücksichtigt, da diese für die interne Befehlsinterpretation keine Bedeutung haben. Die Befehlsadresse wird mit 4, der Operationsteil mit 3
@@ -571,7 +571,7 @@ Vorgehen:
 
 War der letzte im Hauptprogramm abgearbeitete Befehl ein Ausgabebefehl, so wird dieser bei Fortsetzung des Programms noch einmal ausgeführt.
 
-Anmerkung (Lesehilfe, nicht Wortlaut der Quelle): Die Tastenfolge mit einmaligem E ist der Sprung nach Speicherplatz 1; die Ansprungzelle dieses Hilfsprogramms ist also 0001. Danach steht im Akkumulator die um 2 Einheiten erhöhte Adresse des nächsten
+Anmerkung (Lesehilfe, nicht Wortlaut der Quelle): Die Tastenfolge mit einmaligem E ist der Sprung nach Speicherplatz 1; die Ansprungzelle dieses Hilfsprogramms ist also 0001. Danach steht im Akkumulator die um 2 Einheiten erhöhte Adresse des nächsten Befehls.
 
 ##### BIS-2.2.12.2 Ansprung des Kleinen Eingabeprogramms
 
@@ -624,6 +624,12 @@ im Interpreter ausführen.
 
 ### BIS-A.1 Eingabe- und Hilfsprogramme (Anschlußzellen 201 bis 430)
 
+Erläuterung der Quelle (Wortlaut sinngemäß, Seitenabbild „Anschluß- und Ansprungzellen"): Das Minimalprogramm verarbeitet die Kennzeichen K₁ = 3 bis 9 nicht selbst, sondern enthält nur die Anschlußbedingungen für die entsprechenden Leseprogramme. Wird z. B. K₁ = 5 eingegeben, muss außer dem Minimalprogramm noch der Baustein B 2.2 abgespeichert sein. K₁ = 5 bewirkt dann einen Sprung zu dem in B 2.2 enthaltenen Eingabeprogramm für Dezimalzahlen. Nach dem Einlesen der Zahl erfolgt die Rückkehr zum Minimalprogramm; dieses speichert die Zahl ab und geht über zur Eingabe eines neuen ersten Kennzeichens.
+
+Für die Herstellung der Anschlußbedingungen im Minimalprogramm ist notwendig, dass beim Einlesen eines Eingabebausteins B 2.1, B 2.2 oder B 2.3 bestimmte Zellen im Minimalprogramm versorgt werden. Dem Minimalprogramm muss also mitgeteilt werden, wohin der jeweilige Baustein abgespeichert wird. Bei der 8-Kanal-Variante des Minimalprogramms werden Speicherplätze der Spur 200–240 als Anschlußzellen verwendet. Den Kennzeichen K₁ entsprechen im Einzelnen die Zellen der folgenden Tabelle.
+
+Anmerkung (Festlegung des Projektinhabers): K₁ = D bezeichnet die Taste D der Bedienpult-Tastatur, nicht den Buchstaben D des Schreibwerks.
+
 | Baustein | Programm | Anschlußzelle | Anschlußbedingung |
 |---|---|---|---|
 | B 2.1 | Eingabe einer Dezimalzahl (Umwandlung in Gleitkommazahl) mit K₁ = 3 | 203 | 02 4000 0253 000. |
@@ -634,6 +640,7 @@ im Interpreter ausführen.
 | B 2.1 | Eingabe von Dezimalzahlen (Umwandlung in Gleitkommazahlen) ohne Kennzeichen im Satz mit K₁ = 8 | 210 | 02 4000 0167 000. |
 | B 2.2 | Eingabe von Dezimalzahlen (Umwandlung in Festkommazahlen, K. h.) ohne Kennzeichen im Satz mit K₁ = 9 | 211 | 02 4000 0102 000. |
 | B 2.5 | Eingabe von Externbefehlen mit K₁ = + | 220 | 02 4000 0135 000. |
+| – | Ansprung der Hilfsprogramme (Bedienungs- und Kontrollprogramme) mit K₁ = D (Taste D der Bedienpult-Tastatur, nicht der Buchstabe D des Schreibwerks) | 224 | |
 | B 6.2 | Bereichsausschreiben mit D3 | 403 | 02 10 000. |
 | B 6.2 | Bereichsausschreiben mit D4 | 404 | 02 26 000. |
 | B 6.2 | Bereichsausschreiben mit D5 | 405 | 02 55 000. |
@@ -644,7 +651,7 @@ im Interpreter ausführen.
 
 
 Anmerkung (11.10.2026): Der Bereich 0400 bis 0477 mit den Anschlusszellen 403 bis 410 und 430 ist im Minimalprogramm frei; die Tabelle `ae_tab` der Adresseneingabe liegt auf 0700 bis 0777.
-**Offener Punkt (Beobachtung):** Die Anschlusszellen 203, 205 bis 207, 210, 211 und 220 liegen im Bereich 0040 bis 0377 und sind im Quelltext von Befehlen oder Konstanten der Kennzeicheneingabe belegt;
+**Offener Punkt (Beobachtung):** Die Anschlusszellen 203, 205 bis 207, 210, 211, 220 und 224 liegen im Bereich 0040 bis 0377 und sind im Quelltext von Befehlen oder Konstanten der Kennzeicheneingabe belegt;
 nur 204 ist frei. Ein Baustein, der seine Anschlussbedingung dort ablegt, würde diese Zellen überschreiben.
 
 ### BIS-A.2 Rechen-, Ausgabe- und Satzeingabeprogramme (Ansprungzellen 7540 bis 7575)

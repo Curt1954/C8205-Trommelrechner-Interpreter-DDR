@@ -1,0 +1,1 @@
+R300 Eingabe, die Anzeige jeder Taste macht das Fenster

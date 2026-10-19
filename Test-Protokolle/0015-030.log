@@ -24,13 +24,13 @@ Tastenfolge: H G M-drücken E M-loslassen R
   H  : Schalter H-R -> "H", Flag H := 1
   G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
   M gedrueckt halten: OR := OR ODER 025 (BR = AR 025)
-  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00000002000 (BZ+1 im Adressfeld)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00000002000 (BZ+1 im Adressfeld); BR-Adressteil := AR
   M loslassen: OR-Verknuepfung mit 025 entfaellt fuer Folgeschritte
   R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
   Nicht spezifizierte Register (AC, ...) starten mit 0.
 
 == 2. Zustaende des Knotenautomaten ==
-  BR=0000 000  (vor Knoten 002)  BZ=0001 AC=00000002000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0001 000  (vor Knoten 002)  BZ=0001 AC=00000002000 FÜ=0 V1=0 V2=0 V3=0
   BR=7240 000  (vor Knoten 007)  BZ=0002 AC=00000002000 FÜ=0 V1=0 V2=0 V3=0
   BR=4500 030  (vor Knoten 002)  BZ=7241 AC=00000002000 FÜ=0 V1=0 V2=0 V3=0
   BR=2720 030  (vor Knoten 002)  BZ=7242 AC=00000002000 FÜ=0 V1=0 V2=0 V3=0

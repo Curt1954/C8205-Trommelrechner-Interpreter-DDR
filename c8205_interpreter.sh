@@ -53,4 +53,4 @@ prot_file="${prot_file%.*}.log"
 
 # Vorgaben zuerst, dann die vom Benutzer übergebenen Schalter; bei doppelter
 # Angabe (z. B. --out, --mdverz) gilt der später genannte, also der vom Benutzer.
-python3 c8205_interp.py --mdverz ./markdown-dateien --out "Test-Protokolle/$prot_file" "$file" "${rest[@]}"
+python3 c8205_interp.py --MODUS=TEST --mdverz ./markdown-dateien --out "Test-Protokolle/$prot_file" "$file" "${rest[@]}"

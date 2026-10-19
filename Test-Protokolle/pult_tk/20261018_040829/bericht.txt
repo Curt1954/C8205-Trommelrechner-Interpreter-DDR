@@ -1,0 +1,201 @@
+Pult-Tastentest GRAFIK PTK-001, 20261018_040829, GRAFIK mit Tkinter-Fenster, Python 3.11.4, linux
+Projekt: /home/shared_folder_1/scan/fertig/neu
+Faelle: 8, Zeitfaktor 1.0
+
+=== pk-001_H_G_M_R: Tastenfolge H G M R: M ergibt BR = 0000 025, R fuehrt aus; Stopp 020 in Zelle 0000.
+    Tastenfolge: H G M R
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 6.0 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 7 Ereignissen (beginnt: 7 Ereignisse, Dauer 5.500 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 7 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll G M+ M- R | ist G M+ M- R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0001 | ist 0001
+  OK      Zustand AC: soll 00000000000 | ist 00000000000
+  OK      Zustand AR: soll 0005 | ist 0005
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0000: soll 00000005020 | ist 00000005020
+  ==> pk-001_H_G_M_R: OK
+
+=== pk-002_H_G_Mplus_E_Mminus_M_R: H G M+ E M- M R: E unter M, danach M, R (AC linksverschoben).
+    Tastenfolge: H G M+ E M- M R
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 8.2 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 11 Ereignissen (beginnt: 11 Ereignisse, Dauer 7.700 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 11 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll G M+ E+ E- M- M+ M- R | ist G M+ E+ E- M- M+ M- R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0002 | ist 0002
+  OK      Zustand AC: soll 00000004000 | ist 00000004000
+  OK      Zustand AR: soll 0010 | ist 0010
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0001: soll 00000010020 | ist 00000010020
+  ==> pk-002_H_G_Mplus_E_Mminus_M_R: OK
+
+=== pk-003_H_G_UE_R: H G Ue R: Transport AC nach 7777, danach Stopp aus Zelle 0000.
+    Tastenfolge: H G Ü R
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 6.0 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 6 Ereignissen (beginnt: 6 Ereignisse, Dauer 5.500 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 6 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll G UE R | ist G UE R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0001 | ist 0001
+  OK      Zustand AC: soll 00000000000 | ist 00000000000
+  OK      Zustand AR: soll 0005 | ist 0005
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0000: soll 00000005020 | ist 00000005020
+  OK      Trommel 7777: soll 00000000000 | ist 00000000000
+  ==> pk-003_H_G_UE_R: OK
+
+=== pk-004_H_G_Mplus_E_Mminus_UE_R: H G M+ E M- Ue R: E unter M, Ue stellt 7777 240 ein, R transportiert AC nach 7777.
+    Tastenfolge: H G M+ E M- Ü R
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 8.2 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 10 Ereignissen (beginnt: 10 Ereignisse, Dauer 7.700 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 10 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll G M+ E+ E- M- UE R | ist G M+ E+ E- M- UE R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0002 | ist 0002
+  OK      Zustand AC: soll 00000002000 | ist 00000002000
+  OK      Zustand AR: soll 0010 | ist 0010
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0001: soll 00000010020 | ist 00000010020
+  OK      Trommel 7777: soll 00000002000 | ist 00000002000
+  ==> pk-004_H_G_Mplus_E_Mminus_UE_R: OK
+
+=== pk-005_H_G_Mplus_E_Mminus_ST_R: H G M+ E M- ST R: ST nimmt die Stopp-Wirkung zurueck, der Lauf geht bis zum zweiten Stopp.
+    Tastenfolge: H G M+ E M- ST R
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 8.2 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 10 Ereignissen (beginnt: 10 Ereignisse, Dauer 7.700 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 10 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll G M+ E+ E- M- ST R | ist G M+ E+ E- M- ST R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0003 | ist 0003
+  OK      Zustand AC: soll 00000002000 | ist 00000002000
+  OK      Zustand AR: soll 0020 | ist 0020
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0001: soll 00000002000 | ist 00000002000
+  OK      Trommel 0002: soll 00000020020 | ist 00000020020
+  ==> pk-005_H_G_Mplus_E_Mminus_ST_R: OK
+
+=== pk-006_ST_R_ohne_Stopp: ST R ohne vorherigen Stopp: ST ist wirkungslos.
+    Tastenfolge: ST R
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 4.8 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 4 Ereignissen (beginnt: 4 Ereignisse, Dauer 4.300 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 4 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll ST R | ist ST R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0001 | ist 0001
+  OK      Zustand AC: soll 00000000000 | ist 00000000000
+  OK      Zustand AR: soll 0005 | ist 0005
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0000: soll 00000005020 | ist 00000005020
+  ==> pk-006_ST_R_ohne_Stopp: OK
+
+=== pk-007_R_UE_Rollensperre: R Ue: In Stellung R ist Ue mechanisch gesperrt (Rollensperre); 7777 bleibt unveraendert. (Im Pult steht H beim Einschalten, deshalb nicht dasselbe wie tk-007.)
+    Tastenfolge: R Ü
+  HINWEIS TEST-Interpreter entfaellt fuer diesen Fall (Soll von Hand): Rollensperre ist eine Pult-Eigenschaft; der TEST-Interpreter kann "R Ü" nicht ausdruecken (Tastenfolge nicht gueltig). Soll von Hand: wie pk-006.
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 4.8 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 4 Ereignissen (beginnt: 4 Ereignisse, Dauer 4.300 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 4 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll R | ist R
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Lauf nach R hat geendet (Zeile "Lauf endet")
+  OK      Zustand BZ: soll 0001 | ist 0001
+  OK      Zustand AC: soll 00000000000 | ist 00000000000
+  OK      Zustand AR: soll 0005 | ist 0005
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0000: soll 00000005020 | ist 00000005020
+  OK      Trommel 7777: soll 00000000555 | ist 00000000555
+  ==> pk-007_R_UE_Rollensperre: OK
+
+=== pk-008_H_G_UE_E: H G Ue E: Einzelschritt, haelt vor Knoten 19; 7777 wird mit AC = 0 beschrieben.
+    Tastenfolge: H G Ü E
+  OK      TEST-Interpreter: Anforderung bestanden (Trommel geeignet, Soll bestaetigt)
+  OK      Interpreter beendet sich selbst, Rueckgabewert 0 (ist: 0, Dauer 4.5 s)
+  OK      Debug-Log beginnt mit START
+  OK      Wiedergabe beginnt mit 7 Ereignissen (beginnt: 7 Ereignisse, Dauer 4.000 s)
+  OK      Wiedergabe endet mit 0 Abweichungen der Wirkung (Ende: 7 Ereignisse, 0 Abweichung(en) der Wirkung)
+  OK      keine Zeile mit ABWEICHUNG
+  OK      Tokens an den Rechner: soll G UE E+ E- | ist G UE E+ E-
+  OK      keine FEHLER- und WATCHDOG-Zeilen
+  OK      Zustand BZ: soll 0001 | ist 0001
+  OK      Zustand AC: soll 00000000000 | ist 00000000000
+  OK      Zustand AR: soll 0005 | ist 0005
+  OK      Zustand FE: soll 0 | ist 0
+  OK      Zustand FUE: soll 0 | ist 0
+  OK      Zustand BS: soll 0 | ist 0
+  OK      Zustand US: soll 1 | ist 1
+  OK      Zustand E: soll 0 | ist 0
+  OK      Zustand A: soll 0 | ist 0
+  OK      Hinweis: V1 und V2 stehen nicht im Debug-Log und werden nicht geprueft
+  OK      Trommel 0000: soll 00000005020 | ist 00000005020
+  OK      Trommel 7777: soll 00000000000 | ist 00000000000
+  ==> pk-008_H_G_UE_E: OK
+
+SUMME: 8 von 8 Faellen bestanden - ALLE OK

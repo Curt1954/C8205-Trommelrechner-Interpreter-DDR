@@ -1,0 +1,20 @@
+Trommeldatei:
+#DOK-0001 #TROMMEL=LEER: Die Trommel wird vor dem Test geleert; danach gelten nur die Zeilen dieses Abschnitts.
+#TROMMEL=LEER                # alle 4096 Zellen = 0, dann die folgenden Zeilen
+#PROT STUFE=2
+
+0000: 00002000000 # 000 beginn ; Sprung nach 2000
+2000: 00000000020 # 020 0 ; halt
+2001: 00000000777 # dw 0777 ; vom Test belegt
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+
+BZ=2001 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+2001: 00000000777
+2002: 00000000000
+2023: 00000000000
+7777: 00000000000

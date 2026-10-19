@@ -1,0 +1,41 @@
+Test int-002_Ende_ohne_R
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000211
+  0001: 00003001210
+  0002: 00000000020
+  3000: 00000000100
+  3001: 00000000045
+  #INTERRUPT nach Befehl 0000: H
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+--- INTERRUPT nach Befehl 0000 (Testzeile 4): BZ=0001 AC=00000000100 ---
+  H  : Schalter H-R -> "H", Flag H := 1
+  Ende der Tastenfolge ohne R: Rechner bleibt im Halt (H)
+
+== Ende ==
+Halt (Schalter H): INTERRUPT nach Befehl 0000 endet ohne R/ST
+BZ=0001 AC=00000000100 AR=3000 FE=0 FUE=0 BS=0 US=0 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0001 ist=0001 OK
+  AC: soll=00000000100 ist=00000000100 OK
+  AR: soll=3000 ist=3000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=0 ist=0 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+Test wahr

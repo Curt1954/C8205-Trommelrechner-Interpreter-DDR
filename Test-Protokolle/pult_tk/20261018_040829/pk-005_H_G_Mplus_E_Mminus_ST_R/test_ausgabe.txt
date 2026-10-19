@@ -1,0 +1,21 @@
+Hinweis: Trommeldatei /home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040829/pk-005_H_G_Mplus_E_Mminus_ST_R/test_trommel.txt fehlte oder war formal fehlerhaft; sie wurde neu angelegt (alle Zellen 0), weil der erste Test #TROMMEL=LEER enthaelt.
+
+=== Test pk-005_H_G_Mplus_E_Mminus_ST_R (#PROT STUFE=2) ===
+Trommel: vor dem Test geleert (#TROMMEL=LEER)
+Ende: Unbedingter Stop (US:=1) | Knoten: 48 | BZ=0003 AC=00000002000 AR=0020 | FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+Ergebnispruefung:
+  BZ: soll=0003 ist=0003 OK
+  AC: soll=00000002000 ist=00000002000 OK
+  AR: soll=0020 ist=0020 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  0001: soll=00000002000 ist=00000002000 OK
+  0002: soll=00000020020 ist=00000020020 OK
+Test wahr
+Protokolldatei: /home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040829/pk-005_H_G_Mplus_E_Mminus_ST_R/test_protokoll/pk-005_H_G_Mplus_E_Mminus_ST_R/protokoll.txt

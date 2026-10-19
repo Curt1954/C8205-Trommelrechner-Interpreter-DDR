@@ -1,0 +1,103 @@
+0000: 01 2000 000                  000 haupt1       ; Zelle 0000: Sprung zum ersten Hauptprogramm
+      20 0000 0100                 equ 00100        
+0100: 00 7717 311    gruppe:       311 td_g         ; AC := Gruppenzaehler; Vergleicher 3, falls td_g = 0
+0101: 01 0260 170                  170 raum         ; td_g = 0: 4 Ziffern gedruckt, Leerzeichen ausgeben
+0102: 01 0132 004                  004 zg           ; AC := td_g um 1 Bit nach links
+0103: 00 7777 217    schleife:     217 adr7777      ; das auszugebende Wort als Uebergabe
+0104: 01 0115 006                  006 verschieben  
+      20 0000 0105                 spa 00105        
+      00 0010 030                  dto 1            
+      00 0260 030                  dto 6            
+0107: 00 7721 520    zu_gx:        520 adr7721      
+0110: 00 77740000000 konst_t:      dw  077740000000 ; Zaehler triadendruck: 10 Einsen = 11 Ziffern (liegt hier, die Zelle wird uebersprungen)
+0111: 00 7720 311                  311 td_z         
+0112: 00 7741 170                  170 td_rs        
+0113: 01 0134 004                  004 zn           ; td_z := td_z um 1 Bit nach links
+      20 0000 0114                 spa 00114        
+      00 0040 030                  dto 4            
+0115: 01 0124 006    verschieben:  006 speichern_r1 
+0116: 20 0117                      db  1            ; ungenutzt
+0117: 00 00000000007 konst_7:      dw  07           ; Konstante 0000 0000 007 zum Ausblenden
+0120: 20 0122                      db  2            ; ungenutzt
+      20 0000 0122                 spa 00122        
+      00 0020 030                  dto 2            
+      00 0070 030                  dto 7            
+0124: 00 7777 240    speichern_r1: 240 adr7777      
+0125: 01 0117 200                  200 konst_7      
+0126: 01 0107 000                  000 zu_gx        
+0127: 00 00000000001 konst_1:      dw  01           ; Konstante
+      20 0000 0130                 spa 00130        
+      00 0200 030                  dto 0            
+      00 0250 030                  dto 5            
+0132: 00 7717 240    zg:           240 td_g         ; td_g := td_g um 1 Bit nach links
+0133: 01 0103 000                  000 schleife     ; naechste Ziffer
+0134: 00 7720 240    zn:           240 td_z         
+0135: 01 0100 000                  000 gruppe       ; Gruppenzaehler pruefen
+0136: 20 0137                      db  1            ; unbenutzt
+      20 0000 0137                 spa 00137        
+      00 0230 030                  dto 3            
+      20 0000 0200                 equ 00200        
+0200: 00 7741 240    triadendruck: 240 td_rs        ; Rueckkehrbefehl sichern
+0201: 01 0127 211                  211 konst_1      
+0202: 00 7724 440                  440 adr7724      ; Einsen-Spur anlegen
+0203: 01 0110 211                  211 konst_t      ; Zaehler: 11 Ziffern
+0204: 00 7720 240                  240 td_z         
+0205: 01 0233 211                  211 konst_4      ; Gruppenzaehler: 4 Ziffern
+0206: 00 7717 240                  240 td_g         
+0207: 01 0103 000                  000 schleife     
+      20 0000 0220                 equ 00220        
+0220: 00 7741 240    adressdruck:  240 td_rs        ; Rueckkehrbefehl sichern
+0221: 00 7640 441                  441 nullspur     ; Nullspur := 0 (loescht auch den AC)
+0222: 00 7777 211                  211 adr7777      ; AC := Wort
+0223: 00 7644 616                  616 nz_12        ; 12 Bit zyklisch links
+0224: 00 7777 240                  240 adr7777      ; Wort zurueck in die Transportzelle
+0225: 01 0127 211                  211 konst_1      
+0226: 00 7724 440                  440 adr7724      ; Einsen-Spur anlegen
+0227: 01 0233 211                  211 konst_4      ; Zaehler: 4 Ziffern
+0230: 00 7720 240                  240 td_z         
+0231: 00 7717 240                  240 td_g         ; Gruppenzaehler (wird bei 4 Ziffern nie 0)
+0232: 01 0103 000                  000 schleife     
+0233: 00 70000000000 konst_4:      dw  070000000000 ; 3 Einsen = 4 Ziffern (Zaehler und Gruppenzaehler)
+      20 0000 0240                 equ 00240        
+0240: 00 7741 240    befehlsdruck: 240 td_rs        ; Rueckkehrbefehl sichern
+0241: 00 7640 441                  441 nullspur     ; Nullspur := 0 (loescht auch den AC)
+0242: 00 7777 211                  211 adr7777      ; AC := Wort
+0243: 00 7644 616                  616 nz_12        ; 12 Bit zyklisch links
+0244: 00 7777 240                  240 adr7777      ; Wort zurueck in die Transportzelle
+0245: 01 0127 211                  211 konst_1      
+0246: 00 7724 440                  440 adr7724      ; Einsen-Spur anlegen
+0247: 01 0254 211                  211 konst_b      ; Zaehler: 7 Ziffern
+0250: 00 7720 240                  240 td_z         
+0251: 01 0233 211                  211 konst_4      ; Gruppenzaehler: 4 Ziffern
+0252: 00 7717 240                  240 td_g         
+0253: 01 0103 000                  000 schleife     
+0254: 00 77000000000 konst_b:      dw  077000000000 ; Zaehler: 6 Einsen = 7 Ziffern
+      20 0000 0260                 equ 00260        
+      00 0320 030    raum:         dz  $zr          ; Leerzeichen ausgeben
+0261: 01 0233 211                  211 konst_4      ; Gruppenzaehler neu: 4 Ziffern
+0262: 00 7717 240                  240 td_g         
+0263: 01 0103 000                  000 schleife     
+      20 0000 2000   haupt1:       equ 02000        
+2000: 00 4500 030                  030 04500        ; Kanal K2 (Schreibwerk) anwaehlen
+      00 1170 030                  dz  $inkb        ; Kleinbuchstabenlage (Ziffern)
+2002: 01 2006 211                  211 beisp_1      
+2003: 00 7777 240                  240 adr7777      
+2004: 01 0200 025                  025 triadendruck 
+2005: 01 0000 020                  020 0000         ; Stopp
+2006: 00 01234567012 beisp_1:      dw  01234567012  ; alle 11 Triaden: 0123 4567 012
+      20 0000 2100   haupt2:       equ 02100        
+2100: 00 4500 030                  030 04500        ; Kanal K2 (Schreibwerk) anwaehlen
+      00 1170 030                  dz  $inkb        ; Kleinbuchstabenlage (Ziffern)
+2102: 01 2106 211                  211 beisp_2      
+2103: 00 7777 240                  240 adr7777      
+2104: 01 0220 025                  025 adressdruck  
+2105: 01 0000 020                  020 0000         ; Stopp
+2106: 00 01234567012 beisp_2:      dw  01234567012  ; mittlere 4 Triaden: 4567
+      20 0000 2200   haupt3:       equ 02200        
+2200: 00 4500 030                  030 04500        ; Kanal K2 (Schreibwerk) anwaehlen
+      00 1170 030                  dz  $inkb        ; Kleinbuchstabenlage (Ziffern)
+2202: 01 2206 211                  211 beisp_3      
+2203: 00 7777 240                  240 adr7777      
+2204: 01 0240 025                  025 befehlsdruck 
+2205: 01 0000 020                  020 0000         ; Stopp
+2206: 00 01234567012 beisp_3:      dw  01234567012  ; untere 7 Triaden: 4567 012

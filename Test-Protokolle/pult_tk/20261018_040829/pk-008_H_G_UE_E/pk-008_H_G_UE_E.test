@@ -1,0 +1,14 @@
+Trommeldatei:
+#DOK-0001 H G Ue E: Einzelschritt, haelt vor Knoten 19; 7777 wird mit AC = 0 beschrieben.
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005020
+7777: 00000000555
+
+Tastenfolge:
+H G Ü E
+
+Prüfungen:
+BZ=0001 AC=00000000000 AR=0005 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+0000: 00000005020
+7777: 00000000000

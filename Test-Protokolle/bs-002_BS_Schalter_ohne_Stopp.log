@@ -1,0 +1,37 @@
+Test bs-002_BS_Schalter_ohne_Stopp
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00000000060
+  #DOK-0001 BS+ allein setzt das Flag BS nicht, und ST ist ohne Stopp (US = 0, Flag BS = 0) elektronisch verriegelt: keine Wirkung.
+  #DOK-0002 Ohne wirksames ST wird kein Transport aufgestellt; BZ, AC und AR bleiben unveraendert.
+  #PROT STUFE=2
+Tastenfolge: H BS+ ST
+  H  : Schalter H-R -> "H", Flag H := 1
+  BS : Schalter BS gedrueckt (eingerastet) -> Schalterstellung 1, Flag BS unveraendert (0)
+  ST : elektronisch verriegelt, Rechner steht weder im bedingten noch im unbedingten Stopp -> keine Wirkung
+  Ende der Tastenfolge ohne R: Rechner bleibt im Halt (H)
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+
+
+== Ende ==
+Halt (Schalter H): Tastenfolge endet ohne R
+BZ=0000 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=0 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0000 ist=0000 OK
+  AC: soll=00000000000 ist=00000000000 OK
+  AR: soll=0000 ist=0000 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=0 ist=0 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  0000: soll=00000000060 ist=00000000060 OK
+Test wahr

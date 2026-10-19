@@ -1,0 +1,61 @@
+Test pj2-bis_minimalprogramm_wort_mit_kz
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002400000
+  0100: 00007741240
+  0101: 00000115000
+  0102: 00000000000
+  0103: 00000000001
+  0104: 00000000002
+  0105: 00000000003
+  0106: 00000000004
+  0107: 00000000005
+  0110: 00000000006
+  0111: 00000000007
+  0112: 00000000010
+  0113: 00000000011
+  0114: 00000115001
+  0115: 00000102010
+  0116: 00007706644
+  0117: 00007706214
+  0120: 00000115000
+  0122: 00000000022
+  0124: 00000000024
+  0133: 00007706211
+  0134: 00007741000
+  0135: 00000102014
+  0136: 00000137004
+  0137: 00000135004
+  0140: 00007741000
+  0152: 00000115001
+  0173: 00000140002
+  2400: 00004700030
+  2401: 00000100025
+  2402: 00007773240
+  2403: 00000000020
+  #DOK-0001 
+  #SPEI-0001 0000-0000
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2400 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=4700 030  (vor Knoten 002)  BZ=2401 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0100 005  (vor Knoten 007)  BZ=2402 AC=00002402000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7741 240  (vor Knoten 002)  BZ=0101 AC=00002402000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0115 000  (vor Knoten 007)  BZ=0102 AC=00002402000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0102 000  (vor Knoten 007)  BZ=0116 AC=00002402000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7706 211  (vor Knoten 002)  BZ=0134 AC=00031024016 FÜ=0 V1=0 V2=0 V3=0
+  BR=7741 000  (vor Knoten 007)  BZ=0135 AC=00031024016 FÜ=0 V1=0 V2=0 V3=0
+  BR=2402 000  (vor Knoten 007)  BZ=7742 AC=00031024016 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=2403 AC=00031024016 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=2404 AC=00031024016 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

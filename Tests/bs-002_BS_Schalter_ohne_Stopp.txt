@@ -1,0 +1,12 @@
+Trommeldatei:
+#DOK-0001 BS+ allein setzt das Flag BS nicht, und ST ist ohne Stopp (US = 0, Flag BS = 0) elektronisch verriegelt: keine Wirkung.
+#DOK-0002 Ohne wirksames ST wird kein Transport aufgestellt; BZ, AC und AR bleiben unveraendert.
+#PROT STUFE=2
+0000: 00000000060 # 060 bedingter Stopp
+
+Tastenfolge:
+H BS+ ST
+
+Prüfungen:
+BZ=0000 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=0 E=0 A=0 V1=0 V2=0
+0000: 00000000060

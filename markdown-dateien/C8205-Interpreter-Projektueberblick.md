@@ -1,6 +1,6 @@
 # C8205-Interpreter: Projektüberblick
 
-Version: 0.03-005
+Version: 0.03-008
 
 Dieses Dokument richtet sich an Menschen, die das Projekt nicht im Detail verfolgt haben, und
 beschreibt zusammenhängend, was hier entsteht und wie die Einzeldokumente zueinander stehen. Es
@@ -90,8 +90,7 @@ Assemblerdokumentation (`Assembler/Dokumentation/`, die `.odt` ist maßgeblich);
 - **Brücke zum Interpreter:** Die zusätzlich erzeugte `.test`-Datei enthält die vollständige Trommeldatei im
   Testformat des Interpreters (`Adresse: Wert`, oktal, mit der jeweiligen Quelltextzeile als Kommentar) sowie
   Platzhalter-Definitionen für Testmarken und Tastenfolge und ggf. den Leerbefehl `164`. Diese Platzhalter müssen
-  für den jeweiligen Fall ergänzt bzw. erweitert werden (Debug-Nummern und Texte der Testmarken `#DOK-xxxx`,
-  `#SPEI-xxxx`, `#PROT STUFE=n`, bei Bedarf `#AC=`/`#BZ=`, Tastenfolge z. B. `H G R`bei Bedarf `#AC=`/`#BZ=`/`#INTERRUPT`, Tastenfolge z. B. `H G R`bei Bedarf `#AC=`/`#BZ=`/`#INTERRUPT`, Tastenfolge z. B. `H G R` oder das Makro `#STARTE n`, optional Prüfungen). Danach wird die Datei als
+  für den jeweiligen Fall ergänzt bzw. erweitert werden (Testmarken, Tastenfolge und Prüfungen: `Durchführung_eines_Tests.md`, Abschnitte 2 bis 3b). Danach wird die Datei als
   Testauftrag `Tests/asm_NNNN_<Programmname>.txt` abgelegt (Namensschema: `Projektstruktur.md`, Abschnitt 2).
   Der Code selbst stammt unverändert aus dem Assemblerlauf (`Durchführung_eines_Tests.md`, Abschnitt 2a).
 
@@ -160,7 +159,11 @@ Interpreter-Teilprojekt, werden vom Interpreter aber nicht aufgerufen (Doku: `C8
 
 Jede virtuelle Datei wird nur angelegt, wenn der jeweilige Test das Gerät tatsächlich benutzt, und am
 Testende zum Download bereitgestellt. Ausnahme ist die Trommeldatei: Sie muss bei jedem Lauf vorhanden sein und wird vom
-Interpreter nie angelegt (Hilfsskript `erzeuge_leere_trommel.py`).
+Interpreter nie angelegt (Hilfsskript `testscripte/erzeuge_leere_trommel.py`).
+
+### 4a. Zwei Betriebsarten: TEST und GRAFIK
+
+**GRAFIK:** Der Python-Interpreter läuft in zwei Betriebsarten. **TEST** ist der Stapelbetrieb für automatische Tests (Trommeldatei, Tastenfolge, Testmarken). **GRAFIK** (Vorgabe ohne Angabe) bedient den Rechner wie am Pult: Bedienpult- und Schreibwerk-Fenster, Töne, echte Trommel. Beschreibung: `C8205-Interpreter-GRAFIK_Beschreibung.md`; Prüfung: `C8205-Interpreter-GRAFIK_Pruefverfahren.md`.
 
 ## 5. Testkonzept: Trommeldatei, Tastenfolge, Testmarken, automatische Prüfung
 
@@ -173,20 +176,9 @@ Python- oder vom Claude-Interpreter ausgeführt wird. Ein Test besteht aus:
 - **Tastenfolge:** definiert den Ausgangszustand von Registern und Flags vor Beginn der Befehlsschleife
   — welche Tasten/Schalter in welcher Reihenfolge betätigt werden (z. B. `H G R` für einen regulären
   Start), einschließlich der jeweiligen Wirkung auf Register und Flags.
-- **Testmarken** für die Auswertung, ohne Entsprechung in der realen Elektronik:
-  - `#DOK-xxxx <Text>` löst bei Erreichen des Leerbefehls 164 an Adresse xxxx eine Diagnoseausgabe aus
-    (Text, Register BZ/AC, Flags FE/FÜ/BS/US/E/A).
-  - `#SPEI-xxxx ssss-eeee` gibt zusätzlich einen Speicherbereich aus.
-  - `#SPUR-xxxx aaaa` gibt zusätzlich eine ganze Trommelspur in physischer Zugriffsreihenfolge aus.
-  - `#PROT STUFE=n` (0/1/2) steuert die Protokolltiefe, bis hin zu einer vollständigen, Knoten-für-Knoten
-    protokollierten Protokolldatei bei STUFE=2.
-  - `#AC=` (11 Oktalziffern) und `#BZ=` (4 Oktalziffern) geben optional die Anfangswerte von Akkumulator und
-    Befehlszähler vor der ersten Taste vor (Ergänzung 08.10.2026); ohne sie starten beide mit 0. Die Taste `G`
-    wirkt danach wie bisher.
-  - `#STARTE n` (Ergänzung 09.10.2026) steht für die Tastenfolge `H G M+ E … E M- R` (Ansprung des Speicherplatzes n,
-    `Durchführung_eines_Tests.md`, Abschnitt 2e).
-  - `#INTERRUPT H <Tasten>` (Ergänzung 08.10.2026) unterbricht den Programmlauf zwischen zwei Befehlszeilen mit einer
-    weiteren Tastenfolge (`Durchführung_eines_Tests.md`, Abschnitt 2d).
+- **Testmarken** (Zeilen mit `#…` in der Testdatei) für Diagnoseausgaben, Anfangswerte, Starthilfen, Unterbrechungen, Protokolltiefe
+  und den Trommelzustand; sie haben keine Entsprechung in der realen Elektronik. Vollständige Liste und Wirkung:
+  `Durchführung_eines_Tests.md`, Abschnitte 2 bis 2g.
 - **Prüfungen** (optional, Abschnitt `Prüfungen:` am Ende der Testdatei): Sollwerte für Register, Flags und
   Speicherzellen sowie Dateiprüfungen für die Stanzer- und die Schreibwerk-Ausgabe; das Gesamtergebnis lautet
   *Test wahr* oder *Test falsch* (`Durchführung_eines_Tests.md`, Abschnitte 3a und 3b).
@@ -246,10 +238,11 @@ Hauptversion und Unterversion werden nur auf ausdrückliche Aufforderung des Pro
 | Datei | Rolle |
 |---|---|
 | `c8205_interp.py` | Der Python-Interpreter selbst (Abschnitt 2): liest Knotengraph und T2 zur Laufzeit aus den .md-Dateien, führt Tests aus |
-| `c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes (Abschnitt 5) |
-| `erzeuge_leere_trommel.py` | Erzeugt bzw. setzt die Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` auf eine leere Trommel zurück (alle 4096 Zellen 0) |
-| `c8205_lochstreifen_anzeige.py` | Hilfsprogramm: schreibt einen virtuellen Lochstreifen als Klartext in einem Fenster aus (Abschnitt 4) |
-| `c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben (Abschnitt 4) |
+| `Hilfsprogramme/c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes (Abschnitt 5) |
+| `testscripte/erzeuge_leere_trommel.py` | Erzeugt bzw. setzt die Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` auf eine leere Trommel zurück (alle 4096 Zellen 0) |
+| `Hilfsprogramme/c8205_lochstreifen_anzeige.py` | Hilfsprogramm: schreibt einen virtuellen Lochstreifen als Klartext in einem Fenster aus (Abschnitt 4) |
+| `Hilfsprogramme/c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben (Abschnitt 4) |
+| `Hilfsprogramme/c8205_lochstreifen_umwandlung.py` | Hilfsprogramm: wandelt eine Textdatei in einen virtuellen Lochstreifen um und umgekehrt, ohne Fenster (Abschnitt 4) |
 | `Assembler/Sourcecode/` (C-Dateien) | C-Quellcode des Assemblers `c82ass` selbst (Abschnitt 3) |
 
 ## 7. PDF-Dokumente im Überblick
@@ -263,15 +256,21 @@ Abschnitt 8.
 | PDF | Inhalt |
 |---|---|
 | `C8205-Projektueberblick_A4.pdf` | dieses Dokument |
+| `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` | Was das Projekt enthält, in welcher Reihenfolge man liest und wo man bei einer Frage weiterliest |
 | `C8205-Rechnerbeschreibung_A4.pdf` | Aufbau, Register, Maschinenwort, Magnettrommel, Befehlszyklus und Befehlsarten des Rechners (redaktionell) |
 | `C8205-Bedienpult_und_Peripherie_A4.pdf` | Tasten, Schalter, Lampen, Kanäle, Lochstreifenleser, -stanzer und Schreibwerk; Token der Tastenfolge (redaktionell) |
 | `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Bedienung von `c8205_interp.py`: Aufruf, Schalter, Geräte (redaktionell) |
 | `C8205-Testhandbuch_A4.pdf` | Kurzanleitung „Test starten" (Claude- und Python-Interpreter), Tests schreiben und Protokolle lesen (redaktionell) |
 | `C8205-Durchfuehrung_eines_Tests_A4.pdf` | Das Testformat im Wortlaut der Quelle: Trommeldatei, Tastenfolge, Testmarken, Prüfungen, virtuelle Geräte, Protokoll |
+| `C8205-GRAFIK_Beschreibung_A4.pdf` | Der GRAFIK-Interpreter: Zweck, Fenster, Geräte, Töne, Aufruf und Grenzen im Wortlaut der Quelle |
+| `C8205-GRAFIK_Pruefverfahren_A4.pdf` | Prüfverfahren des GRAFIK-Interpreters: Läufe, Tests, Abnahme im Wortlaut der Quelle |
 | `C8205-Knotengraph_A4.pdf` | Der komplette Knotengraph als Diagramm, auf A4-Kacheln aufgeteilt |
 | `C8205-Knotentabellen_A4.pdf` | Knotentabelle und Variablentabelle T2 im Wortlaut der Quellen |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generische Befehlsbeschreibung und vollständige Einzelbefehlsübersicht |
 | `C8205-Kodetabellen_A4.pdf` | Die Zeichenkodetabelle (Tabelle 1), Lochbild-Spalten als ●/○-Grafik |
+| `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | Anzeige, Eingabe und Umwandlung virtueller Lochstreifen: Format, Aufruf, Zwischenablage und Installation |
+| `C8205-Projektstruktur_A4.pdf` | Verzeichnisse, Skripte und erzeugte Dateien des Gesamtprojekts: welcher Pfad wofür zuständig ist |
+| `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | Seitenformat, Folgeseiten, Deckblatt, Farben und Kachelung aller PDF-Ausgaben |
 | `C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: Aufruf, Sprache, Anweisungen, Makros, Beispiel; liegt in `Assembler/Dokumentation/` (im Wortlaut der `.md`, die `.odt` bleibt maßgeblich) |
 
 ## 8. Stand und offene Punkte

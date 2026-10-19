@@ -1,0 +1,8 @@
+# C8205-Klickspur 1
+# fall: pk-007_R_UE_Rollensperre
+# trommel_md5: f532eef1f3faf7f8cd269b724ca51138
+# erzeugt von: grafik_pult_tk_test.py PTK-001
+    0.000 klick NETZ wirkt=1
+    1.000 klick R wirkt=1
+    3.500 klick UE wirkt=0
+    4.300 klick NETZ wirkt=1

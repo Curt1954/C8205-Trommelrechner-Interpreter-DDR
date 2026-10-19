@@ -1,37 +1,29 @@
 ** Assemblerdokumentation (durchsuchbare Ableitung) **
 
-Version: 1.00-004
+Version: 1.00-008
 
-Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-003 (per `extract-text`), gedacht
+Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-005 (per `extract-text`), gedacht
 zum Durchsuchen und Zitieren. **Maßgeblich bleibt die .odt** (siehe `C8205-Projektstruktur.md`,
 Abschnitte 1 und 3); bei Widersprüchen gilt die .odt. Diese Ableitung wird nicht automatisch
 aktualisiert, wenn die .odt sich ändert.
 
-Stand 11.10.2026: Die Abschnitte 1 bis 5 stimmen inhaltlich mit der .odt in der Version 1.00-003 überein. Neu gegenüber 1.00-001:
-Abschnitt 3.11 beschreibt das Pragma `;#; LEITADRESSE xx` (bisher nur im Assembler vorhanden, nicht dokumentiert); dazu kurze Ergänzungen in
-3.1 (Statuszeile, Fehlerausgaben, `.obj`), 3.7 und 3.8. Rechtschreibung,
-Anführungszeichen und offensichtliche Tippfehler sind bereinigt; Überschriften, Codeblöcke und Tabellen haben die Form der
-Markdown-Ableitung; einzelne Zusätze der Ableitung (Tabellenköpfe, Beispiele und Erläuterungen in Klammern, „Anmerkung zur
-Ableitung“) ändern den Inhalt der .odt nicht. Wo die .odt in sich
-widersprüchlich ist, steht ihr Wortlaut mit einer Anmerkung (Abschnitt 3.2, Grammatik von `<werteausdruck>`). Die Anweisung
-`dw <literal>` beschreibt die .odt nicht mehr; sie ist deshalb auch in Abschnitt 3.3 dieser Ableitung entfallen (der Assembler
-akzeptiert sie weiterhin, s. Abschnitt 6.3, Nr. 15). Abschnitt 6 stammt nicht aus der .odt.
+Stand 19.10.2026 (Ableitung neu abgeglichen mit der .odt vom 16.10.2026, Entscheidung des Projektinhabers: OP-23 „aus der .odt ableiten“): Der Satz zu `node.js` ist entfallen (steht in der .odt nicht mehr); `-WARN=SYS` (1.1) und die Anweisung `spa` (neuer Abschnitt 3.3.10, damit „Ende des verschieblichen Teils“ = 3.3.11 und „Pragma LEITADRESSE“ = 3.3.12) sind aus der .odt übernommen. **Die .odt verweist an mehreren Stellen auf „3.3.11“ für das Pragma, obwohl dort 3.3.12 steht; diese Ableitung führt die richtigen Verweise (3.3.12).** Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist nicht geändert und nennt `node.js` noch.
 
-Stand 09.10.2026 (Vorgeschichte): Die Abschnitte 1 bis 5 dieser Ableitung wurden an das tatsächliche Verhalten des Assemblers `c82ass`
-(damals Version 0.04, einschließlich der in Abschnitt 6.3 beschriebenen Korrekturen im Quellcode) angepasst; die erste Prüfung vom 08.10.2026 bezog sich auf Version 0.2. Was damals gegenüber der
-.odt geändert wurde und warum, steht in Abschnitt 6 am Ende dieser Datei. Die .odt wurde am 09.10.2026 entsprechend angepasst.
+Stand 16.10.2026: Die Abschnitte 1 bis 5 stimmen inhaltlich mit der erneuerten .odt (Version 1.00-005, zuletzt gespeichert am
+16.10.2026) überein. Neu gegenüber der vorigen Ableitung (Stand 15.10.2026): Der `<adressausdruck>` (3.2) nennt keine Obergrenze für die
+Zahl der Symbole mehr (die Zeile „nur maximal ein Symbol erlaubt“ ist entfallen). Beim `<werteausdruck>` (3.2) und bei `dw` (3.3.3) sind
+paarweise Differenzen symbolischer Adressen zulässig, auch mehrfach. Die Verzeichnisstruktur (1.1) ist gekürzt (Beispielprojekte nur noch
+`Projekt_1`). In 3.3.8 entfällt der Satz zum Pragma `LEITADRESSE`; die Ladeadresse existiert dort nur beim Laden des Objektcodes.
 
-Hinweis zur Nummerierung: Die Original-Gliederung springt nach Abschnitt "3.2 Sprachdefinition" erneut
-bei "3." ein (Abschnitt "Assembleranweisungen"), obwohl bereits eine übergeordnete Ebene "3. Der
-Assembler c82ass" existiert. Das ist keine Übertragungsfehler dieser Ableitung, sondern so in der Quelle
-vorgefunden und hier unverändert übernommen (analog zur Praxis in `C8205-Projektstruktur.md`, Abschnitt 4,
-Unstimmigkeiten zu vermerken statt sie eigenmächtig zu bereinigen).
+Rechtschreibung, Anführungszeichen und offensichtliche Tippfehler sind bereinigt; Überschriften, Codeblöcke und Tabellen haben die Form der
+Markdown-Ableitung; einzelne Zusätze der Ableitung (Tabellenköpfe, Beispiele und Erläuterungen in Klammern) ändern den Inhalt der .odt
+nicht. Die Anweisung `dw <literal>` beschreibt die .odt nicht; sie ist deshalb auch in Abschnitt 3.3.3 dieser Ableitung nicht beschrieben
+(der Assembler weist sie ab, s. Abschnitt 6). Abschnitt 6 stammt nicht aus der .odt.
 
 
-# Cross-Assembler für C8205 / C8205Z – Version 1.00-001
+# Cross-Assembler für C8205 / C8205Z – Version 1.00-005
 
-Die gesamte Software läuft sowohl unter Linux als auch Windows 10. Sie ist in C (gcc) programmiert; die
-grafische Oberfläche benutzt node.js.
+Die gesamte Software läuft sowohl unter Linux als auch Windows 10. Sie ist in C (gcc) programmiert.
 
 
 ## 1. Installation
@@ -56,10 +48,6 @@ _Linux                         # Linux-Binary des Assemblers
 projekdetails                  # zuletzt benutzte Aufrufparameter
 projekdetails.<Projekt>        # gesicherte Aufrufparameter je Projekt
 Projekt_1                      # Projektverzeichnis (Beispiel, mit Unterverzeichnissen)
-Proj_FeldSortieren             # Projektverzeichnis (Beispiel, ohne Unterverzeichnisse)
-Projekt_2                      # Projektverzeichnis (Beispiel, ohne Unterverzeichnisse)
-Claude                         # weitere Beispielprojekte (ohne Unterverzeichnisse)
-Claude_bsp_reassemblierung     # weitere Beispielprojekte, je Programm ein Unterverzeichnis
 Sourcecode                     # C-Quellcode des Assemblers selbst
 _Windows                       # Windows-Binary des Assemblers
 ```
@@ -77,15 +65,7 @@ bsp_5.16
 bsp_seite_39
 bsp_seite_40
 bsp_seite_42
-deepseek-test
-dt_test
-ziffern
-
-./Assembler/Projekt_1/bsp_5.16:
-bsp_5_16.asm  bsp_5_16.dmp  bsp_5_16.log  bsp_5_16.mqo  bsp_5_16.obj  bsp_5_16.sym  bsp_5_16.test
-
-./Assembler/Proj_FeldSortieren:
-code.asm  code_wdhl_bef.asm  code.log  code.mqo  code.obj  code.sym  code.test
+… --weitere ---
 
 ./Assembler/Sourcecode:
 c8205_op_codes.c  c82_austausch.c  c82_austausch.h  ca82ass.c
@@ -140,6 +120,7 @@ Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint dahe
 - Rückgabecode: 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch). Parameter ab einem Argument, das mit `>` beginnt,
   werden ignoriert.
 - Unbekannte Optionen (z. B. `-x`) werden ohne Meldung ignoriert; der Lauf verwendet dann die gespeicherten Parameter.
+- `-WARN=SYS` meldet unbenutzte Symbole.
 
 
 ## 3. Der Assembler c82ass
@@ -167,7 +148,7 @@ $ c82ass.sh -p PzBeispiele_4 -s bsp_5.17_Oktaldruck.asm
 
 Meldungen mit `Fehler:`,
 `Warnung:` und `Abbruch` sowie die Statuszeilen `Projektverzeichnis:`, `Benutze für -s die Datei:`, `Leitadresse:` (nur wenn der Quelltext das
-Pragma `LEITADRESSE` enthält, siehe 3.11) und `Startadresse:` gehen auf STDERR
+Pragma `LEITADRESSE` enthält, siehe 3.3.12) und `Startadresse:` gehen auf STDERR
 (farbig hervorgehoben). Fehler werden je nach Pass in unterschiedlicher Form gemeldet (siehe die folgende Tabelle); jeder Fehler beendet
 den Lauf mit Rückgabecode 16. Bei Fehlern können `.obj`, `.mqo` und `.dmp` trotzdem teilweise entstehen und sind dann nicht verwendbar.
 
@@ -175,7 +156,7 @@ den Lauf mit Rückgabecode 16. Bei Fehlern können `.obj`, `.mqo` und `.dmp` tro
 
 | Fehlerart | Ausgabe auf STDOUT (Listing) | Ausgabe auf STDERR | Ablauf danach |
 |---|---|---|---|
-| Pragma `LEITADRESSE` fehlerhaft (beim Einlesen des Quelltextes, vor Pass 0; siehe 3.11) | – | `Fehler: Zeile <n> der Quelldatei: Das Pragma LEITADRESSE …`, `Fehler: Abbruch.` | Abbruch, keine Ausgabedateien |
+| Pragma `LEITADRESSE` fehlerhaft (beim Einlesen des Quelltextes, vor Pass 0; siehe 3.3.12) | – | `Fehler: Zeile <n> der Quelldatei: Das Pragma LEITADRESSE …`, `Fehler: Abbruch.` | Abbruch, keine Ausgabedateien |
 | Makrodefinition fehlerhaft (Pass 0) | – | `Fehler: Makrodefinition …`, `Fehler: N fehlerhafte Makrodefinition(en) …` | Abbruch nach Pass 0, keine Ausgabedateien |
 | Makroaufruf fehlerhaft (Pass 0), z. B. Parameteranzahl oder -typ | `;*** Fehler: erwartet 2 Parameter, aber 1 wurden übergeben!` bzw. `;*** Fehler $1 Parameter $1: Wert "123" …` | `Warnung: Compilierung endete mit FEHLERn.` | Abbruch nach Pass 0, keine Ausgabedateien |
 | Syntaxfehler in Pass 1 (z. B. `#` am Anfang eines `dt`-Textes) | `;*** 1 Fehler: …` | `Fehler: bei Operand: … in Zeile: …`, `Fehler: Abbruch wegen Syntaxfehler.` | Pass 2 läuft noch (`.log`, `.sym`), Pass 3 entfällt |
@@ -191,7 +172,7 @@ und der Lauf endet mit Rückgabecode 16. Pro Zeile wird höchstens ein Konflikt 
 Speicherplätze), `equ`, `start`, `abs` und `end`.
 
 Die `<adresse>` der Befehle im Objektfile beginnt immer bei 0000. Ein Operand von `start` ändert die Adressen
-nicht; der Wert steht nur in der Kennzeichenzeile `21 0000 <zahl>` (siehe 3.7).
+nicht; der Wert steht nur in der Kennzeichenzeile `21 0000 <zahl>` (siehe 3.3.7).
 
 Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`-Datei (Beispiel
 `Projekt_1/bsp_5.16/`):
@@ -199,10 +180,10 @@ Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`
 | Endung | Inhalt |
 |---|---|
 | `.asm` | Quelltext (Eingabe) |
-| `.dmp` | formatierte Speicherbelegung (Listing; das Kennzeichen 01 kann durch das Pragma `LEITADRESSE` ersetzt sein, siehe 3.11): je Zeile Adresse mit Maschinenwort (`<adresse>: <K1> [<K2>] [<Wert>]`), Label, Mnemonic, Operand und Kommentar in Spalten. Es ist dasselbe Listing, das der Assembler auf STDOUT ausgibt (Meldung „Ausgabe der formatierten Speicherbelegung nach: …“), jedoch ohne die Farbcodes der Fehlermeldungen |
+| `.dmp` | formatierte Speicherbelegung (Listing; das Kennzeichen 01 kann durch das Pragma `LEITADRESSE` ersetzt sein, siehe 3.3.12): je Zeile Adresse mit Maschinenwort (`<adresse>: <K1> [<K2>] [<Wert>]`), Label, Mnemonic, Operand und Kommentar in Spalten. Es ist dasselbe Listing, das der Assembler auf STDOUT ausgibt (Meldung „Ausgabe der formatierten Speicherbelegung nach: …“), jedoch ohne die Farbcodes der Fehlermeldungen |
 | `.log` | Abschnitte, soweit vorhanden: Literaltabelle, EQU-Definitionen, ABS-Definitionen, Symboltabelle (Symbol, RelAddr, Adresse, original Operation) und Adresstabelle (nach Adresse sortiert) |
 | `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet. Gegenüber dem Quelltext fehlen `start`, `end`, Makrodefinitionen, reine Kommentarzeilen und `abs`-Anweisungen; Makroaufrufe sind durch ihre Ersetzung ersetzt, `equ`-Operanden aufgelöst, und die Literale stehen am Ende als `dw`-Zeilen (`l0001 dw 5`) |
-| `.obj` | mit `c82load` ladefähiger Objektcode K1K2; das Kennzeichen 01 kann mit dem Pragma `LEITADRESSE` durch 02 … 09 ersetzt werden (siehe 3.11) |
+| `.obj` | mit `c82load` ladefähiger Objektcode K1K2; das Kennzeichen 01 kann mit dem Pragma `LEITADRESSE` durch 00 oder 02 … 09 ersetzt werden (siehe 3.3.12); bei 00 entfällt außerdem die Kennzeichenzeile `21 0000 <zahl>` |
 | `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen. Je Zeile `<symbol>,<adresse>` (vierstellig oktal, in Quelltextreihenfolge, einschließlich Literalsymbolen wie `l0001`) |
 | `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (`Trommeldatei:`, `#DOK-0001`, `#SPEI-0001 0000-0000`, `#PROT STUFE=2`) und Fuß (`Tastenfolge:`, `H G R`), die für den jeweiligen Fall ergänzt bzw. erweitert werden müssen. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
 
@@ -241,13 +222,13 @@ Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an.
 <operand>            ::= <werteausdruck> | <literal> | (leer)
 <adressausdruck>     ::= <wert><rechenzeichen>[<wert><rechenzeichen> … ]
                           Einschränkungen: kein negatives Vorzeichen;
-                          Wertebereich nur von 00000 … 07777;
-                          nur maximal ein Symbol erlaubt.
+                          Wertebereich nur von 00000 … 07777.
                           Ein Vorzeichen am Anfang (auch `+`) ist nicht zulässig.
                           Verstöße meldet der Assembler als Fehler in Pass 3.
 <werteausdruck>      ::= <wert><rechenzeichen>[<wert><rechenzeichen> … ]
-                          Einschränkung: Bei `dw` und in `#`-Literalen sind keine Symbole zulässig
-                          (auch keine `abs`-Symbole), dort nur Zahlen; Wertebereich -2^32 … 2^33-1.
+                          Einschränkung: Bei `dw` und in `#`-Literalen ist ein relatives Ergebnis (eine einzelne symbolische
+                          Adresse, auch mit Zahl) nicht zulässig. Zulässig: Zahlen, `abs`-Symbole, die paarweisen
+                          Differenzen symbolischer Adressen (auch mehrere). Wertebereich -2^32 … 2^33-1.
                           Adressen werden mit `da` oder `@`-Literalen geschrieben.
 <literal>            ::= #<werteausdruck> | @<adressausdruck>
                           Literal bedeutet, dass der numerische Wert von <werteausdruck> oder
@@ -257,6 +238,9 @@ Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an.
 <adresse>            ::= numerischer Wert eines <symbol>, der einen <speicherplatz> adressiert.
 <kommentar>          ::= ; (Semikolon) gefolgt von ASCII-Zeichen. | (leer)
                           Innerhalb der \-Zeichen von dt wird ; nicht als Kommentar betrachtet.
+<blockkommentar>     ::= ```   als beginn auf einer Zeile für sich, ab Spalte 1
+                          ```   als Ende auf einer Zeile für sich, ab Spalte 1
+                          Dazwischen beliebiger Text
 <trenner>            ::= Tabulator[<trenner>[...]] | Leertaste<trenner>[...]]
 <befehl>             ::= [<symbol>] <trenner><operationscode> [<trenner><operand>]
                           [<trenner><kommentar>]
@@ -267,11 +251,6 @@ Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an.
 <quelltext>          ::= <befehl>[<befehl> [ … ]]
 ```
 
-(Anmerkung zur Ableitung: Die Einschränkung zu `<werteausdruck>` steht so in der .odt (Version 1.00-001). Sie widerspricht
-Abschnitt 3.3 derselben .odt, nach dem bei `dw` die Differenz zweier symbolischer Adressen und `abs`-Symbole zulässig sind und nur
-ein relatives Ergebnis ausgeschlossen ist. Das Verhalten von `c82ass` 1.00 entspricht Abschnitt 3.3 (Abschnitt 6.1, Nr. 10). Die .odt
-ist an dieser Stelle noch nicht berichtigt.)
-
 **Auswertung von Ausdrücken** (`<werteausdruck>` und `<adressausdruck>`): `*` und `/` binden stärker als `+` und `-`;
 Operatoren gleichen Ranges werden von links nach rechts ausgewertet (`2+3*4` ergibt 14, `10-2-3` ergibt 5). `/` ist eine
 ganzzahlige Division, deren Ergebnis zur Null hin abgeschnitten wird (`7/2` ergibt 3, `-7/2` ergibt -3); eine Division durch 0 ist
@@ -281,11 +260,9 @@ Leerzeichen innerhalb eines Ausdrucks sind nicht zulässig.
 **Mnemonische Operationscodes (unvollendet):** Der Assembler enthält den Ansatz einer Tabelle mnemonischer Operationscodes (Datei `c8205_op_codes.c`). Zurzeit kennt er, ausschließlich in Kleinbuchstaben, `add` (Code 003), `sub` (004), `ld` (005), `jmp` (006), `stopp` (007) und `nop` (000). Der Operand wird wie bei dreistelligen Operationscodes behandelt und darf entfallen. Die Werte sind vorläufige Platzhalter und entsprechen nicht dem Befehlssatz des C8205; die Tabelle ist unvollständig, und die Mnemonics sollten in Programmen nicht verwendet werden. Maßgeblich bleibt der dreistellige Oktalcode. Die Tabelle ist als Grundlage für eine spätere Erweiterung um vollständige Mnemonics gedacht.
 
 
-## 3. Assembleranweisungen
+### 3.3 Assembleranweisungen
 
-(Nummerierung wie im Original: startet hier erneut bei "3.", s. Hinweis zur Nummerierung oben.)
-
-### 3.1 Definiere Bereich
+### 3.3.1 Definiere Bereich
 
 ```
 [<symbol>]  db  <zahl>
@@ -294,7 +271,7 @@ Hält `<zahl>` Speicherplätze frei, ohne ihren Inhalt zu definieren.
 `<zahl>` muss eine Oktalzahl (führende 0) oder eine Dezimalzahl sein, höchstens 010000. Negative Zahlen, Ausdrücke
 (z. B. `3+1`), Symbole und ein fehlender Operand sind Fehler.
 
-### 3.2 Definiere Bereich auf Null
+### 3.3.2 Definiere Bereich auf Null
 
 ```
 [<symbol>]  dbn  <zahl>
@@ -302,7 +279,7 @@ Hält `<zahl>` Speicherplätze frei, ohne ihren Inhalt zu definieren.
 Hält `<zahl>` Speicherplätze frei, setzt ihren Inhalt auf 0.
 Für `<zahl>` gilt dasselbe wie bei `db`. Je Speicherplatz erzeugt `dbn` in der Objektdatei die Zeile `00 0.`.
 
-### 3.3 Definiere Wert
+### 3.3.3 Definiere Wert
 
 ```
 [<symbol>]  dw  <werteausdruck>
@@ -311,13 +288,13 @@ Für `<zahl>` gilt dasselbe wie bei `db`. Je Speicherplatz erzeugt `dbn` in der 
   2^33-1 (33-Bit-Wort), sonst meldet der Assembler `Operand ist ungültig`. Negative Werte werden im Zweierkomplement
   gespeichert (`dw -5` ergibt `77777777773`). Ein Ergebnis, das ein relativer Wert ist, ist im `<werteausdruck>` von
   `dw` nicht zulässig; das meint eine einzelne symbolische Adresse (`dw a`, `dw a+1`, Meldung `Operand ist ungültig`).
-  Dagegen ist die Differenz zweier symbolischer Adressen zulässig (`dw ende-anfang`). Auch absolute Symbole (`abs`)
+  Dagegen sind paarweise Differenzen symbolischer Adressen zulässig, auch mehrfach (`dw ende-anfang`, `dw a-b+c-d`). Auch absolute Symbole (`abs`)
   sind zulässig; Adressen schreibt man mit `da`.
 - Es wird keine Hauptleitadresse addiert.
 - In der Objektdatei steht ein Datenwort als `00 <elf Oktalziffern>.`; nur der Wert 0 wird kurz als `<adresse>: 0.` ausgegeben
   (Nullwort ohne Kennzeichen).
 
-### 3.4 Definiere Adresse
+### 3.3.4 Definiere Adresse
 
 ```
 [<symbol>]  da  <adressausdruck>
@@ -333,7 +310,7 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 - Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 - Nimmt stattdessen die `<adresse>` von `<literalsymbol>` in den Befehl, der das `<literal>` enthält.
 
-### 3.5 Definiere Text zur Ausgabe von Zeichen
+### 3.3.5 Definiere Text zur Ausgabe von Zeichen
 
 ```
 [<symbol>]  dt[o|m]  \<alphazeichen> | <leerzeichen> | <dezimalziffer>
@@ -349,7 +326,7 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
   Assembler als Fehler. Richtig ist `dt \#ab\` bzw. `dto \#x\`. Ein `#` innerhalb des Textes (`dt a#b`) ist zulässig.
 - `dt` ist für längere, zusammenhängende Textausgaben gedacht. Sein Vorteil: Der Text lässt sich ohne
   ausgeschriebene Umschaltzeichen definieren, der Quelltext bleibt gut lesbar. Für verstreute Einzelzeichen
-  ist `dt` nicht geeignet, dafür nimmt man `dz` (3.6) und schreibt alle Umschaltzeichen explizit.
+  ist `dt` nicht geeignet, dafür nimmt man `dz` (3.3.6) und schreibt alle Umschaltzeichen explizit.
 - Der Assembler setzt `dt` zur Assemblerzeit in Maschinenbefehle um und kennt den Zustand KB/GB zur
   Laufzeit nicht. Er führt den Zustand nur in der Reihenfolge des Quelltexts weiter. Beim allerersten `dt`
   des Quelltexts nimmt er KB an. Jedes weitere `dt` setzt den Zustand des vorangehenden `dt` fort und fügt
@@ -369,7 +346,7 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 - `dtm` verhält sich wie `dt`, außer dass vor dem ersten Zeichen generell ein Umschaltzeichen, dem ersten
   Buchstaben entsprechend, automatisch eingefügt wird.
 
-### 3.6 Definiere Zeichen (spezielle Sonderzeichen)
+### 3.3.6 Definiere Zeichen (spezielle Sonderzeichen)
 
 ```
 [<symbol>]  dz  $wrzl | $sm | $inkb | $ingb | $irrz | $irrs | $trans | $bm | $vorl |
@@ -388,7 +365,7 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 - Das Zeichen `;` kann bei `dz` nicht angegeben werden, weil es einen Kommentar einleitet; der Operand für den Code 0150 ist `:`
   (vgl. Tabelle 2 und 3).
 
-### 3.7 Beginn des Quellcodes
+### 3.3.7 Beginn des Quellcodes
 
 ```
 start  [<zahl>]
@@ -400,9 +377,11 @@ start  [<zahl>]
   `c82load` auf diese 1. Leitadresse + Ladeadresse geladen. Die Ladeadresse existiert dabei nur beim
   Laden mit `c82load`.
 - Das Kennzeichen 01, das für die 1. Leitadresse steht, kann mit dem Pragma `;#; LEITADRESSE xx` durch ein anderes
-  Kennzeichen ersetzt werden (Abschnitt 3.11). Das Pragma muss vor `start` stehen.
+  Kennzeichen ersetzt werden (Abschnitt 3.3.12). Das Pragma muss vor `start` stehen.
+- Mit `;#; LEITADRESSE 00` wird dem Objektcode kein Leitbefehl vorangestellt: Die Kennzeichenzeile `21 0000 <zahl>` entfällt
+  (im Objektcode und im Listing); der Operand von `start` hat dann keine Wirkung auf Objektcode und Listing (Abschnitt 3.3.12).
 
-### 3.8 Definition Relativadresse
+### 3.3.8 Definition Relativadresse
 
 ```
 [<symbol>]  equ  <werteausdruck> | *
@@ -412,12 +391,11 @@ start  [<zahl>]
 - Eine Maschinencodeausgabe erfolgt nicht. Im Objektcode für das „Kleine Eingabeprogramm" wird der
   Kennzeichenbefehl für das Setzen der Relativadresse ausgegeben (KZ=20).
 - Das weitere Laden erfolgt auf 1. Leitadresse + Ladeadresse + Relativadresse. Die Ladeadresse existiert
-  dabei nur beim Laden mit `c82load`. Mit dem Pragma `LEITADRESSE` (Abschnitt 3.11) tragen die Wörter im Objektcode
-  statt 01 das Kennzeichen xx.
+  dabei nur beim Laden des Objektcodes.
 - Die Anweisungen `equ100`, `equ40` und `equ10` runden den Befehlszähler (Operand `*`) oder den numerischen Operanden
   auf das nächste Vielfache von 0100, 040 bzw. 010 (oktal) auf.
 
-### 3.9 Definition Absolutadresse
+### 3.3.9 Definition Absolutadresse
 
 ```
 [<symbol>]  abs  <oktalzahl> | <dezimalzahl>
@@ -429,7 +407,17 @@ start  [<zahl>]
 - `abs` kann mehrfach mit dem gleichen Wert definiert werden, ohne Fehler zu erzeugen, aber nicht
   mehrfach mit dem gleichen Symbol für unterschiedliche Werte.
 
-### 3.10 Ende des verschieblichen Teils des Quelltextes
+### 3.3.10 Definition Absolute Sektoradresse
+
+```
+[<symbol>]  spa  <oktalzahl> | <dezimalzahl>      im Bereich 00..77 (oktal)
+```
+- Dieser Befehl verhält sich wie ein `equ *`, nur dass die rechten beiden Oktalziffern durch den Wert von
+  `<oktalzahl> | <dezimalzahl>`, dargestellt in 2 Oktalziffern, ersetzt werden.
+- Beispiel: `spa 020` macht, wenn die Anweisung auf `*` steht, mit dem Beispielwert `*==0256` das Gleiche wie `equ 0220`.
+  Steht `spa 020` auf 0277, wirkt sie wie `equ 0220`. Steht `spa` auf 0301, wirkt sie wie 0320.
+
+### 3.3.11 Ende des verschieblichen Teils des Quelltextes
 
 ```
 [<symbol>]  end
@@ -444,31 +432,36 @@ start  [<zahl>]
   lehnt sie nicht ab, sondern übersetzt sie hinter den Literalen (soweit vorhanden) mit.
 
 
-### 3.11 Pragma LEITADRESSE
+### 3.3.12 Pragma LEITADRESSE
 
 ```
 ;#; LEITADRESSE <xx>
 ```
 - Ein Pragma ist eine Kommentarzeile, die mit `;#;` beginnt und dem Assembler eine Anweisung gibt. Es ist keine
-  Assembleranweisung im Sinne der Abschnitte 3.1 bis 3.10, erzeugt weder Maschinencode noch ein Wort auf der Trommel und
+  Assembleranweisung im Sinne der Abschnitte 3.3.1 bis 3.3.11, erzeugt weder Maschinencode noch ein Wort auf der Trommel und
   steht auf einer eigenen Zeile (Einrückung mit Leerzeichen oder Tabulator ist zulässig). Ein anderes Kommentar, das mit
   `;#;` beginnt, bleibt ein gewöhnliches Kommentar.
-- `<xx>` ist genau zweistellig und liegt zwischen 01 und 09 (`02`, nicht `2`; `00` und `10` sind Fehler). Danach folgt nur
+- `<xx>` ist genau zweistellig und liegt zwischen 00 und 09 (`02`, nicht `2`; `10` ist ein Fehler). Danach folgt nur
   noch Leerraum oder ein Kommentar (`;`). Das Schlüsselwort `LEITADRESSE` wird ohne Beachtung der Groß-/Kleinschreibung
   erkannt und vom Wert durch Leerraum getrennt.
 - Das Pragma darf höchstens einmal vorkommen und muss **vor** `start` stehen. Ohne Pragma gilt 01.
 - Wirkung: Im Objektcode (`.obj`) und im Listing (STDOUT und `.dmp`) steht anstelle des Kennzeichens 01 (K1K2=01, bezogen auf
-  die 1. Leitadresse, siehe 3.7 und 3.8) das Kennzeichen `<xx>`. Das betrifft alle Zeilen, die sonst mit 01 beginnen, also Maschinenbefehle und Adresskonstanten (`da`).
-  Zeilen mit anderen Kennzeichen bleiben unverändert: 00 (absolute Wörter, `dw`, `#`-Literale, `abs`-Symbole im Operanden),
-  20 (`equ`, `db`) und 21 (`start` mit Operand) sowie das Nullwort. Die Dateien `.test`, `.mqo`, `.sym` und `.log`
-  enthalten kein Kennzeichen und ändern sich nicht.
+  die 1. Leitadresse, siehe 3.3.7 und 3.3.8) das Kennzeichen `<xx>`. Das betrifft alle Zeilen, die sonst mit 01 beginnen.
+  Zeilen mit anderen Kennzeichen bleiben unverändert. Die Dateien
+  `.test`, `.mqo`, `.sym` und `.log` enthalten kein Kennzeichen und ändern sich nicht.
+- Sonderfall `;#; LEITADRESSE 00`: Der Code wird so als Objektcode (`.obj`) ausgegeben, wie ihn der Assembler erzeugt hat, aber mit dem
+  Kennzeichen 00 statt 01. Das dient dazu, bereits absolut codierte Programme im Objektcode-Format auszugeben (K1K2=00: keine
+  Adressänderung beim Laden, vgl. 3.3.9). Dem Objektcode wird dabei kein Leitbefehl vorangestellt: Die Kennzeichenzeile `21 0000 <zahl>`,
+  die `start` mit Operand sonst erzeugt (3.3.7), wird weder in die `.obj` noch in das Listing (STDOUT und `.dmp`) geschrieben. Die
+  Kennzeichenzeilen `20 0000 <adresse>` für `equ` bleiben erhalten. Im Objektcode sind die früheren 01-Wörter dann von den
+  übrigen 00-Wörtern nicht mehr zu unterscheiden.
 - Hat der Quelltext das Pragma, gibt der Assembler auf STDERR die Statuszeile `Leitadresse: <xx>` aus (nach
   `Benutze für -s die Datei:`). Das gilt auch für `;#; LEITADRESSE 01`.
 - Fehler (jeweils `Fehler: Zeile <n> der Quelldatei: …`, danach `Fehler: Abbruch.`, Rückgabecode 16, keine Ausgabedateien):
   - Das Pragma steht hinter `start`: „Das Pragma LEITADRESSE muss vor `start` stehen.“
   - Das Pragma kommt ein zweites Mal vor: „Das Pragma LEITADRESSE darf nur einmal vorkommen.“
-  - Der Wert fehlt, ist nicht zweistellig oder liegt außerhalb von 01 … 09: „Das Pragma LEITADRESSE erwartet einen zweistelligen
-    Wert von 01 bis 09 (z. B. ;#; LEITADRESSE 02).“
+  - Der Wert fehlt, ist nicht zweistellig oder liegt außerhalb von 00 … 09: „Das Pragma LEITADRESSE erwartet einen zweistelligen
+    Wert von 00 bis 09 (z. B. ;#; LEITADRESSE 02).“
 - Achtung: Ein falsch geschriebenes Schlüsselwort (zum Beispiel `LEITADRESS`) oder ein Wert ohne Trennung vom Schlüsselwort
   (`LEITADRESSE02`) wird nicht gemeldet. Die Zeile gilt dann als gewöhnliches Kommentar, und das Kennzeichen bleibt 01. Ob das
   Pragma gewirkt hat, zeigt die Statuszeile `Leitadresse:`.
@@ -485,6 +478,22 @@ Beispiel (`Projekt_1/bsp_5.16/bsp_5_16.asm`, Quelltext beginnt mit der Zeile `;#
 | `164   0001` | `01 0001 164.` | `03 0001 164.` |
 
 Im Listing (`.dmp` und STDOUT) steht in denselben Zeilen entsprechend `03` statt `01` in der Kennzeichenspalte, zum Beispiel `0000: 03 2000 000`.
+
+Beispiel für `00` (kleines Programm, das nicht zum Projekt gehört; der Quelltext beginnt mit der Zeile `;#; LEITADRESSE 00`, danach folgt
+`start 0100`):
+
+| Quelltextzeile | `.obj` ohne Pragma | `.obj` mit `;#; LEITADRESSE 00` |
+|---|---|---|
+| `start 0100` | `21 0000 0100.` | keine Zeile |
+| `anf: 211 wert` | `01 0020 211.` | `00 0020 211.` |
+| `240 ziel` | `01 0021 240.` | `00 0021 240.` |
+| `000 anf` | `01 0000 000.` | `00 0000 000.` |
+| `equ 020` | `20 0000 0020.` | `20 0000 0020.` |
+| `wert: dw 5` | `00 00000000005.` | `00 00000000005.` |
+| `ziel: da anf` | `01 0000.` | `00 0000.` |
+| `020 0` | `01 0000 020.` | `00 0000 020.` |
+
+Im Listing (`.dmp` und STDOUT) steht entsprechend `00` statt `01` (zum Beispiel `0000: 00 0020 211`), und die Zeile `21 0000 0100` fehlt.
 
 ### Tabelle 2: Sonderzeichen für die dz-Anweisung
 
@@ -514,8 +523,6 @@ Spalte 1: String, der als Operand bei `dz` anzugeben ist. Spalte 2: 4 Oktalziffe
 | `,` | 01530 |
 | `.` | 0730 |
 | `-` | 01000 |
-
-(In der Quelle sind `$wrzl` und `$sm` beide mit 02720 gelistet — so übernommen, nicht aufgelöst.)
 
 ### Tabelle 3: Ausgabe-Umschlüsselung außer Sonderzeichen dz
 
@@ -572,8 +579,7 @@ ASCII-Code Großbuchstabe (dez.), ASCII-Code Kleinbuchstabe (dez.).
 | - | — | 1000 | — | 45 |
 | Leertaste | ZwR | 0320 | 32 | 32 |
 
-(Zeile "i/I" in der Quelle als "I / I" notiert — hier als Klein-/Großbuchstabe interpretiert und so
-übernommen. Zeile "-" hat in der Quelle keinen Eintrag in Spalte "ASCII Groß (dez)" — als "—" markiert,
+(Zeile "-" hat in der Quelle keine Einträge in den Spalten "Groß" und "ASCII Groß (dez)" — als "—" markiert,
 nicht ergänzt.)
 
 
@@ -864,45 +870,24 @@ Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: Projekt_1/bsp_5.16/b
 0032: 00 00000000005.
       20 0000 0100.
 0100: 20 0105.
-/
 ```
 
 
-## 6. Abgleich mit dem Assembler c82ass (Prüfung vom 08.10.2026)
+## 6. Abgleich mit dem Assembler c82ass
 
-Grundlage der Prüfung: Binary `c82ass` (Version 0.2), Quellcode `ca82ass.c` und `ca82_standards.c`, Makrodatei
-`c82ass.makros` sowie Testläufe mit dem Binary. Der Text der geänderten `.odt` stimmt mit den Abschnitten 1 bis 5 dieser
-Datei inhaltlich überein (nur Formatierung und Tippfehler unterscheiden sich). Die folgenden Punkte betreffen das Verhalten des Assemblers. Die Abschnitte 1 bis 5
-wurden am 09.10.2026 an dieses Verhalten angepasst; Abschnitt 6.1 bleibt als Änderungsprotokoll erhalten (die Spalte
-"Dokumentation sagt" nennt den Text der .odt vor der Anpassung).
+Dieser Abschnitt stammt nicht aus der .odt. Er hält fest, was am Verhalten des Assemblers `c82ass` auffällt und in der .odt nicht
+beschrieben ist, und wie der Quelltext `ca82ass.c` an die erneuerte .odt angepasst wurde. Grundlage ist der Quelltext (Stand
+16.10.2026); ein Lauf mit neu erzeugtem Binary steht noch aus.
 
-### 6.1 Abweichungen zwischen Dokumentation und Assembler
+### 6.1 Auffälligkeiten im Assembler
 
-| Nr. | Stelle | Dokumentation sagt | c82ass tut |
+| Nr. | Stelle | c82ass tut | Anmerkung |
 |---|---|---|---|
-| 1 | 3.1, 5 (Aufruf) | `-p Projekt_1 -s bsp_5_16`, Dateien liegen in `Projekt_1/bsp_5.16/` | `-p` muss das Verzeichnis sein, in dem die `.asm` direkt liegt, also `-p Projekt_1/bsp_5.16`. Unterverzeichnisse werden nicht durchsucht. Ein Pfadanteil in `-s` wird abgeschnitten. Sonst: `Fehler: Die Datei … existiert nicht im Projektverzeichnis`, Rückgabecode 16. |
+| 1 | `dw <literal>` (3.3.3) | `dw #5` und `dw @a` weist Pass 1 mit einer Fehlermeldung ab („Operand … ist bei dw nicht zulaessig: ein Literal ist eine relative Adresse“). Das Linux-Binary vom 15.10.2026 hatte `dw #5` noch ohne Meldung angenommen und die Adresse der Literalzelle statt des Werts eingesetzt; im Quelltext ist das behoben. | Die .odt beschreibt `dw <literal>` nicht. Den Wert 5 erhält man mit `dw 5`, Adressen mit `da`. Offen: Binary neu erzeugen und das Verhalten bestätigen. |
 
-### 6.2 Ergänzungen (im Dokument bisher nicht beschrieben)
+### 6.2 Angleichung an die erneuerte .odt (16.10.2026)
 
-- **Rückgabecodes:** 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch). Beim Aufruf werden alle Parameter ab einem Argument,
-  das mit `>` beginnt, ignoriert.
-- **Mitgelieferte Makros in `c82ass.makros`:**
-
-| Makro | Parameter | Zweck |
-|---|---|---|
-| `WRZL` | – | `dz $wrzl` und `ANWAHL 4700` |
-| `KB`, `GB` | – | `dz $inkb` bzw. `dz $ingb` (Umschaltung Klein-/Großbuchstaben) |
-| `ANWAHL` | 1 (Kanal) | `030 0xxxx` für Zeichenkanäle (4000…4700, K0…K7, LSL1, LSL2, LKL1, LKS1, LSS1, SW1I, SW1O, SW2O, KONI) |
-| `TANWAHL` | 1 | `030 05x00` für Zusatztrommeln (5100…5400, ZTR1…ZTR4) |
-| `TROUT` | 2 (Haupttrommeladresse, Zusatztrommeladresse) | `032 $2` und `401 $1` |
-| `TRIN` | 2 (Zusatztrommeladresse, Haupttrommeladresse) | `032 $1` und `461 $2` |
-| `WDHL` | 5 (Löschen JA/NE, Resultatsbehandlung LI/RE/ZL/OHNE, Operation KON/ADD/SUB/BADD, Anzahl 1…32, Adresse) | Wiederholungsbefehl |
-| `ARRAY_LOAD`, `ARRAY_STORE`, `ARRAY_VGL` | 3 (Arrayadresse, Indexvariable, Adresse des erzeugten Befehls) | bilden Lade-, Speicher- bzw. Vergleicherbefehl für `array[index]` |
-| `ARRAY_SWAP` | 4 (Arrayadresse, Indexvar1, Indexvar2, Arbeitsspeicher) | vertauscht zwei indizierte Arrayelemente |
-| `MACHE_ADRESSEINHEIT` | 2 (Werteadresse, Zieladresse) | Wert laden, 9-mal links schieben, speichern |
-| `MACHE_ADRESSEINHEIT2` | 3 (Werteadresse, Zieladresse, Anzahl) | wie oben mit Wiederholungsbefehl |
-| `TEST` | 1 | Testmakro für die Typprüfung `$TYPADR` |
-
-### 6.3 Auffälligkeiten im Assembler (vermutlich Fehler im Programm, nicht in der Dokumentation)
-
--- keine --
+| Nr. | Stelle | Änderung in c82ass | Anmerkung |
+|---|---|---|---|
+| 1 | `<adressausdruck>` (3.2) bei `da` und `@`-Literalen | Die Prüfung „höchstens ein Symbol“ entfällt. Ausdrücke mit mehreren Symbolen, z. B. `da marke+absx`, werden angenommen. | Die Auswertung ist unverändert (Summe bzw. Differenz der Werte; K1K2=00, sobald ein `abs`-Symbol vorkommt, sonst 01, vgl. 3.3.9). Die Differenz zweier Marken (`da a-b`) wird dabei weiterhin mit der Leitadresse verschoben; dazu sagt die .odt nichts. Offen: festlegen, ob das gewollt ist. |
+| 2 | `<werteausdruck>` bei `dw` (3.2, 3.3.3) | Mehrere Differenzen (`dw a-b+c-d`) konnte der Assembler schon auswerten. Geändert sind nur Kommentare und der Fehlertext: „erlaubt sind nur paarweise Differenzen von Adressen“. | – |

@@ -1,6 +1,6 @@
 # C 8205 – Simulation eines DDR-Kleinrechners von 1968
 
-Version: 0.03-007
+Version: 0.03-012
 
 **Deutsch** | [English](README.en.md)
 
@@ -42,6 +42,10 @@ sich Läufe als Regressionstests wiederholen.
 | Pfad | Inhalt |
 |---|---|
 | `c8205_interp.py` | Python-Interpreter |
+| `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik-interpreter-module/grafik_*.py` | Modus GRAFIK: Pult-Fenster, Schreibwerk-Fenster, Töne (Mischer, Schreibwerk, Leser, Stanzer, Rechner) |
+| `c-module/` | C-Module: Trommel, Bahnsperre, Unterbrechung, Tonmischer `tonmisch`; Erweiterungsmodul in `c-module/python/` |
+| `ton/` | Klänge (`sw_toene/`, `toene_rechner_stanzer/`, Netzgeräusche), Testrahmen `sw_ton.py`, `SW_Ton_Beschreibung.md` |
+| `testscripte/` | Prüfungen und Testskripte, u. a. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
 | `c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes |
 | `c8205_interpreter.sh`, `c8205_interpreter.bat` | Wrapper: starten einen Test und schreiben das Protokoll nach `Test-Protokolle/` |
 | `compute_all_tests.sh` | führt den Interpreter für alle Testdefinitionen in `Tests/` aus |
@@ -108,7 +112,7 @@ Die vollständige Verzeichnisbeschreibung steht in `markdown-dateien/C8205-Proje
 Voraussetzung ist Python 3. Zusätzliche Pakete werden nicht benötigt.
 
 ```
-python3 c8205_interp.py Tests/0015-030.txt
+python3 c8205_interp.py --MODUS=TEST Tests/0015-030.txt
 ```
 
 Der Test führt das Programm aus, gibt die Zeichen der Ausgabebefehle auf dem Terminal aus (erwartet:
@@ -127,6 +131,32 @@ Alle Testdefinitionen in `Tests/` auf einmal ausführen:
 
 Alle Schalter (Geräte, Protokolltiefe, Dateiprüfungen) und Fehlermeldungen beschreibt
 `markdown-dateien/C8205-Interpreter-Python_Interpreter.md`.
+
+## Schnellstart: Modus GRAFIK mit Pult, Schreibwerk-Fenster und Tönen (Stufe 4)
+
+Neben dem Stapelbetrieb (`c8205_interp.py`, ohne Fenster und ohne Töne) gibt es den Modus GRAFIK: Bedienpult-Fenster,
+Schreibwerk-Fenster und alle Töne (Rechner, Schreibwerk, Lochstreifenleser, Lochbandstanzer).
+
+```
+python3 c8205_grafik.py                    # mit Tönen (Linux: braucht paplay, pw-cat, aplay oder ffplay)
+python3 c8205_grafik.py --STUMM            # ohne Töne und ohne Hochlaufwartezeit
+python3 c8205_grafik.py --TON=5955         # Lautstärke je Gruppe: Pult SW LL LS (0 = stumm, 5 = Voreinstellung)
+python3 c8205_grafik.py --leser1 virtuelle_Geraete/Leser1/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
+```
+
+- Schreibwerk: **80 ms Schreibwerkzeit je Zeichen (70 bis 90 ms), Zeichenklang 100 ms**, Tabulator 400 ms, Wagenrücklauf 360 ms.
+  Bei eingerastetem Selektor SW gibt es keine Ausgabe, keinen Ton und kein Warten.
+- Stanzer: ungefähr 50 Zeichen je Sekunde; Dauerstanzen unter 50 ms Abstand, nach 5 s ohne Zeichen aus.
+- Fehlt ein Abspielprogramm, endet der Start ohne `--STUMM` mit Rückkehrcode 16.
+- Der Mischer ist das C-Modul `c-module/tonmisch.c` (in das Erweiterungsmodul `c8205_trommel` eingebunden; bauen mit
+  `cd c-module/python && python3 setup.py build_ext --inplace`). Ohne gebautes Modul läuft der Python-Mischer.
+- **Stand:** Stufe 4 ist unter Linux geschrieben und per Logiktest geprüft; die Hörprüfung, ein vollständiger Lauf aller
+  Abnahmefälle am Fenster und Windows (`winmm`) stehen noch aus. Einzelheiten: `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (Beschreibung) und `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (Prüfung, offene Punkte).
+- Der Ton-Testrahmen `ton/sw_ton.py` bleibt als selbständiges Programm für die Klänge (`ton/SW_Ton_Beschreibung.md`).
+
+Beispiel Lochband kopieren: `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` liest von Leser 1 (`ANWAHL LSL1`) und stanzt auf
+Stanzer 1 (`ANWAHL LSS1`); `:` in KB (Code 15) beendet die Eingabe und wird nicht gestanzt. Test im Stapelbetrieb:
+`python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test`.
 
 ## Schnellstart: Claude-Interpreter (ohne Python)
 
@@ -189,6 +219,8 @@ können deshalb einen älteren Stand haben (der Stand steht im Dokument). Maßge
 | `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Bedienung von `c8205_interp.py`: Aufruf, Schalter, Geräte |
 | `C8205-Testhandbuch_A4.pdf` | Kurzanleitung „Test starten“ (Claude- und Python-Interpreter), Tests schreiben und Protokolle lesen |
 | `C8205-Durchfuehrung_eines_Tests_A4.pdf` | Das Testformat im Wortlaut der Quelle |
+| `C8205-GRAFIK_Beschreibung_A4.pdf` | Der GRAFIK-Interpreter: Zweck, Fenster, Geräte, Töne, Aufruf, Grenzen (Wortlaut der Quelle) |
+| `C8205-GRAFIK_Pruefverfahren_A4.pdf` | Prüfverfahren des GRAFIK-Interpreters: Läufe, Tests, Abnahme |
 | `C8205-Knotengraph_A4.pdf` | Der Knotengraph als Diagramm, auf A4-Kacheln aufgeteilt |
 | `C8205-Knotentabellen_A4.pdf` | Knotentabelle und Variablentabelle T2 im Wortlaut der Quellen |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generische Befehlsbeschreibung und Übersicht aller 512 Operationscodes |
@@ -220,3 +252,7 @@ bleiben bei ihren jeweiligen Inhabern.
 
 Das Regelwerk wurde aus Originalunterlagen des Rechners (u. a. Programmieranleitung und Originaldokumentation)
 rekonstruiert. Die Dokumente zitieren sie abschnittsweise.
+
+## Änderung Interpreter 0.03-016 (18.10.2026)
+
+Der Anwahlbefehl K0 wertet die dauerhafte Schalterstellung SW aus (Eingabe vom Schreibwerk-Fenster im Modus GRAFIK). Beschreibung: `C8205-Versionierung.md` (Abschnitt 10.2); Handbuch: `C8205-Interpreter-Bedienpult_mit_Schaltern.md`, `C8205-Interpreter-Python_Interpreter.md`. Die PDFs unter `PDF/` sind noch nicht neu erzeugt.

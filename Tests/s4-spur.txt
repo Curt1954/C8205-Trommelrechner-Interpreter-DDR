@@ -1,0 +1,21 @@
+Trommeldatei:
+#DOK-0023 Test Ausgabe einer ganzen Spur in physischer Zugriffsreihenfolge
+#SPUR-0023 4000
+#PROT STUFE=0
+0000: 00003000211 # AC := <3000>
+0001: 00004001544 # GX-Transport nach 4001, Z=2 (R=2, ohne Loeschen)
+0003: 00000000020 # 020 Stopp
+# Folgebefehl nach dem X-Abbruch: liegt im zeitlich faelligen Sektor der Spur 0000 (nicht in b+1), danach b+2 = 0003
+0016: 00000023164 # 164 Leerbefehl (Diagnose #DOK-0023)
+# Beginn Datenbereich
+3000: 00000000003
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+
+BZ=0004 AC=40000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+4000: 03000000000
+4023: 01400000000

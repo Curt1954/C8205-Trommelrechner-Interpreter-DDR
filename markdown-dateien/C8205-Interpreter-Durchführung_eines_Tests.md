@@ -1,6 +1,6 @@
 ** Durchführung eines Tests **
 
-Version: 0.03-009
+Version: 0.03-013
 
 ## 1. Einordnung und Testvoraussetzungen
 
@@ -18,7 +18,7 @@ Jeder Test nimmt an, dass der Rechner eingeschaltet ist.
 Der Vor-Zustand vom Einschalten bis zum Beginn der Interpretation der Befehlsschleife am Konnektor B
 wird definiert durch:
 - die Interpretation der betätigten Tasten und Schalter,
-- den Trommelinhalt: den Inhalt der persistenten Trommel, nachdem die Zeilen des Tests auf sie geschrieben wurden (Abschnitte 2 und 2c), sowie
+- den Trommelinhalt: den Inhalt der persistenten Trommel, nachdem die Zeilen des Tests auf sie geschrieben wurden (Abschnitte 2 und 2c; mit der Testmarke `#TROMMEL=` zuvor geleert oder mit einem Abbild belegt, Abschnitt 2g), sowie
 - optional die Anfangswerte von Akkumulator und Befehlszähler, die die Testmarken `#AC=` und `#BZ=` vorgeben (Abschnitt 2, Ergänzung 08.10.2026).
 
 ## 1a. Zwei Ausführende: Python-Interpreter und Claude-Interpreter
@@ -100,20 +100,20 @@ Neues fest, sondern verweist auf die Abschnitte, in denen die Einzelheiten stehe
 1. **Voraussetzung:** Python 3 (nur Standardbibliothek). Im Projektordner liegen `c8205_interp.py` und daneben
    `markdown-dateien/`; der Interpreter liest daraus `C8205-Interpreter-Eingänge_der_Knoten.md` und
    `C8205-Interpreter-Beschreibung_der_Knoten.md` (anderer Ort: Schalter `--mdverz`). Außerdem muss die Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` vorhanden sein
-   (leer erzeugen: `python3 erzeuge_leere_trommel.py`; anderer Ort: Schalter `--trommel`; Abschnitt 2c).
+   (leer erzeugen: `python3 testscripte/erzeuge_leere_trommel.py`; anderer Ort: Schalter `--trommel`; Abschnitt 2c).
 2. **Testdatei ablegen** in `Tests/` (die Endung ist frei; der Assembler erzeugt `.test`). Geräte werden per Schalter
    oder Zeile zugeordnet (Abschnitt 2b); Dateien dafür liegen üblicherweise unter `virtuelle_Geraete/`.
 3. **Starten**, direkt oder mit dem Wrapper, der das Protokoll nach `Test-Protokolle/` schreibt:
 
    ```
-   python3 c8205_interp.py Tests/0015-030.txt
+   python3 c8205_interp.py --MODUS=TEST Tests/0015-030.txt
    ./c8205_interpreter.sh 0015-030.txt        # Linux/macOS, Protokoll: Test-Protokolle/0015-030.log
    c8205_interpreter.bat 0015-030.txt         # Windows
-   ./compute_all_tests.sh                     # alle Testdefinitionen in Tests/
+   testscripte/compute_all_tests.sh           # alle Testdefinitionen in Tests/
    ```
 
    Die Trommel behält ihren Inhalt von Test zu Test und von Aufruf zu Aufruf. Für einen Lauf auf leerer Trommel vorher
-   `python3 erzeuge_leere_trommel.py` aufrufen (Abschnitt 2c).
+   `python3 testscripte/erzeuge_leere_trommel.py` aufrufen (Abschnitt 2c); die Hilfsskripte liegen im Ordner `testscripte/`.
 
 4. **Ergebnis lesen**: Endzeile (`Ende: …`), Ergebnisprüfung (*Test wahr* oder *Test falsch*) und Rückkehrcode
    (0 wahr, 4 ohne Prüfung, 6 falsch, 8 Laufzeitfehler, 16 Vorab-Prüfung negativ oder Trommeldatei fehlerhaft, 2 ungültiger Aufruf;
@@ -402,19 +402,19 @@ Das Schlüsselwort `Trommeldatei:` in der Testdatei bleibt unverändert.
 3. **Übernahme der Testzeilen:** Vor dem Start des Tests schreibt der Interpreter die `Adresse: Wert`-Zeilen des Trommelabschnitts auf die Trommel (Überlagerung). Eine Zelle, die der Test nennt, hat danach genau diesen Wert; eine Zelle,
    die er nicht nennt, behält den Wert, den sie vorher hatte. Register und Flags starten dagegen bei jedem Test neu (Abschnitt 3).
 4. **Formale Prüfung:** Die Trommeldatei wird einmal je Aufruf vor dem ersten Test geprüft (Abschnitt 5). Ist sie fehlerhaft oder nicht vorhanden, startet kein Test des Aufrufs.
-5. **Zurücksetzen:** Der Interpreter setzt die Trommel nie zurück und legt die Datei nie an. Eine leere Trommel (alle Zellen `00000000000`) erzeugt das Hilfsskript `erzeuge_leere_trommel.py`; es überschreibt eine vorhandene Datei.
+5. **Zurücksetzen:** Ohne Testmarke setzt der Interpreter die Trommel nie zurück und legt die Datei nie an. Eine leere Trommel (alle Zellen `00000000000`) erzeugt das Hilfsskript `erzeuge_leere_trommel.py`; es überschreibt eine vorhandene Datei. Ein Test kann das Zurücksetzen selbst verlangen: `#TROMMEL=LEER` (Abschnitt 2g); nur dann, und nur im ersten Test eines Aufrufs, legt der Interpreter eine fehlende oder fehlerhafte Trommeldatei neu an.
 
 **Folgen für die Testdefinition.**
 
 - Das Ergebnis eines Tests hängt vom Trommelstand vor dem Test ab, sobald der Test eine Zelle **liest oder prüft** (Befehle, `#SPEI`/`#SPUR`, Speicherprüfzeilen in `Prüfungen:`), die er nicht selbst im Trommelabschnitt belegt.
   Solche Tests sind nur auf leerer Trommel reproduzierbar.
-- **Empfehlung:** Ein Test nennt alle Zellen, auf die sich sein Ergebnis stützt, auch die mit Wert 0 (`aaaa: 00000000000`). Dann ist er von der Vorgeschichte unabhängig. Wo das nicht gewollt ist, wird vor dem Lauf eine leere Trommel erzeugt.
-- **Reihenfolge:** Bei mehreren Tests auf derselben Trommel (mehrere Testdateien in einem Aufruf, mehrere Aufrufe nacheinander, Sammelläufe wie `compute_all_tests.sh`) bestimmt die Reihenfolge den Anfangszustand jedes Tests.
+- **Empfehlung:** Ein Test nennt alle Zellen, auf die sich sein Ergebnis stützt, auch die mit Wert 0 (`aaaa: 00000000000`). Dann ist er von der Vorgeschichte unabhängig. Wo das nicht gewollt ist, steht im Test `#TROMMEL=LEER` (Abschnitt 2g), oder es wird vor dem Lauf eine leere Trommel erzeugt.
+- **Reihenfolge:** Bei mehreren Tests auf derselben Trommel (mehrere Testdateien in einem Aufruf, mehrere Aufrufe nacheinander, Sammelläufe wie `testscripte/compute_all_tests.sh`) bestimmt die Reihenfolge den Anfangszustand jedes Tests.
   Beispiel: `bsp_seite_42_025-sw-ausgabe` prüft die Zellen `2024` bis `2027` auf 0, ohne sie zu belegen; es ist auf leerer Trommel `Test wahr`, nach `bsp_seite_40` (belegt `2024` bis `2026`) `Test falsch`.
 - **Sollwerte** (Abschnitt 3a und Regressionsläufe) gelten für einen Lauf auf leerer Trommel oder für einen Test, der seine Zellen selbst nennt.
 - **Protokoll:** Der Abschnitt „Ausgangsbedingungen“ (8.1) zeigt nur die vom Test geschriebenen Zeilen, nicht den ganzen Trommelinhalt vor dem Test.
 
-**Claude-Interpreter.** Er hat keine Trommeldatei. Er legt nur die Zeilen des Trommelabschnitts an; Zellen, die der Test nicht nennt, gelten als 0, entsprechend einem Python-Lauf auf leerer Trommel. Für die Gegenprobe (Abschnitt 1a)
+**Claude-Interpreter.** Er hat keine Trommeldatei. Er legt nur die Zeilen des Trommelabschnitts an; Zellen, die der Test nicht nennt, gelten als 0, entsprechend einem Python-Lauf auf leerer Trommel; `#TROMMEL=LEER` ist dort ohne Wirkung (2g). Für die Gegenprobe (Abschnitt 1a)
 wird der Python-Lauf deshalb auf einer frisch erzeugten, leeren Trommel gestartet.
 
 ## 2d. Unterbrechung des Programmlaufs durch `#INTERRUPT` (Ergänzung 08.10.2026)
@@ -575,12 +575,12 @@ Triadendruck), braucht das **Minimalprogramm auf der Trommel**. Das ist für all
 1. **Schritt 1: Minimalprogramm laden.** `./c8205_interpreter.sh Tests/pj2-bis_minimalprogramm.test` belegt die Zellen 0000 bis 0337 sowie die Tabelle der Adresseneingabe auf 0400 bis 0434
    (Sprung auf das Hauptprogramm in 0000, Druck von BZ und AC in 0001, die Unterprogramme ab 0040). Der Test ist fertig und
    beliebig oft wiederholbar. Er setzt vorher nichts zurück; wer eine saubere Ausgangslage braucht, erzeugt zuerst eine leere Trommel
-   (`python3 erzeuge_leere_trommel.py`, Abschnitt 2c).
+   (`python3 testscripte/erzeuge_leere_trommel.py`, Abschnitt 2c).
 2. **Schritt 2: der eigentliche Test.** Er liegt mit Hauptprogramm üblicherweise ab Zelle 1000, ruft das Unterprogramm über seine
    feste Ansprungzelle auf und endet mit einem Stopp. Er belegt **keine** Zelle des Minimalprogramms (0000 bis 0337), auch nicht 0001
    (dazu die Fehlerfalle in Abschnitt 2c: Eine Testzeile `0001: …` überlagert die persistente Trommel und bleibt für spätere Tests).
 3. **Dokumentation im Test:** Der Test nennt die Voraussetzung in einer `#DOK`-Zeile.
-4. **Wrapper:** `c8205_bis_test.sh TESTDATEI` führt Schritt 1 und Schritt 2 hintereinander aus (Projektstruktur, Abschnitt 1).
+4. **Wrapper:** `testscripte/c8205_bis_test.sh TESTDATEI` führt Schritt 1 und Schritt 2 hintereinander aus (Projektstruktur, Abschnitt 1).
 
 Aufruf eines Unterprogramms aus dem Hauptprogramm: Der Wert steht in R1 (Register 7773, `211 wert` und `240 r1`), der Aufrufer wählt den
 Ausgabekanal an (`030 4500` für K2, die Ausgabeunterprogramme enthalten keinen Anwahlbefehl), dann folgt `025 ansprungzelle`; die
@@ -624,6 +624,57 @@ Geprüft am 08.10.2026 auf leerer Trommel mit `c8205_bis_test.sh`: alle sieben T
 Sie liegen jetzt auf 7740 bis 7744 und 7756 bis 7760 (Spezifikation `C8205-Interpreter-BIS.md`, BIS-A.3). Geprüft auf leerer Trommel mit dem neu assemblierten Minimalprogramm (`Assembler/Projekt_2/pj2-bis_minimalprogramm.test`, Kopie in `Tests/`):
 alle zehn Tests `pj2-bis_*` (die oben genannten sowie `_zr` und `pj2-bis_druck_bz_ac`) `Test wahr`; die Zellen 7554 bis 7563 bleiben nach allen Läufen null.
 
+## 2g. Die Testmarke `#TROMMEL=LEER` und `#TROMMEL=MP` (Ergänzung 13.10.2026)
+
+Die Trommel ist dauerhaft (2c): Ohne weitere Angabe erbt ein Test den Trommelstand der vorigen Läufe. Mit der Testmarke `#TROMMEL=` verlangt der Test
+seinen Anfangszustand selbst. Er ist dann von der Vorgeschichte und von der Reihenfolge der Läufe unabhängig, auch im Einzellauf und in Sammelläufen.
+
+**Schreibweise** (im Abschnitt `Trommeldatei:`, wie `#AC=` und `#BZ=`; ein Kommentar mit `#` dahinter ist zulässig):
+
+```
+#TROMMEL=LEER
+#TROMMEL=MP      # Minimalprogramm
+```
+
+| Wert | Wirkung vor dem Test |
+| --- | --- |
+| `LEER` | Alle 4096 Zellen der Trommel werden 0. |
+| `MP` | Die Trommel wird mit dem Abbild des Minimalprogramms belegt (Trommelvorlage `virtuelle_Geraete/Trommelvorlagen/MP.txt`, Format wie die Trommeldatei, 2c). |
+
+**Ohne die Marke bleibt die Trommel unverändert** (2c); alle bisherigen Tests laufen wie vorher.
+
+**Ablauf** (Python-Interpreter):
+
+1. formale Prüfung des Tests (Abschnitt 5);
+2. die Trommel wird neu gesetzt; die Trommeldatei wird dabei vollständig neu geschrieben;
+3. die Zeilen des Abschnitts `Trommeldatei:` überlagern danach den Inhalt (2c, Regel 3);
+4. Tastenfolge und Programmlauf wie üblich.
+
+Die Reihenfolge 2 vor 3 ist zwingend: Zellen, die der Test selbst nennt, haben ihren Wert; alle übrigen sind 0 (`LEER`) bzw. haben den Wert des Abbilds (`MP`).
+Register, Flags und Geräte sind davon nicht berührt; sie beginnen ohnehin bei jedem Test neu.
+
+**`MP` (vorgesehen).** Das Abbild des Minimalprogramms ist eine Datei im Format der Trommeldatei (2c). Es entsteht aus dem fertigen Minimalprogramm; im Projekt
+ist das der Trommelstand nach dem Laden mit `Tests/pj2-bis_minimalprogramm.test` auf leerer Trommel (2f). Mit `#TROMMEL=MP` entfällt dann der Vorlauf mit
+`c8205_bis_test.sh`. Solange die Vorlage fehlt, ist `#TROMMEL=MP` formal ungültig: Der Test startet nicht (Rückkehrcode 16) und meldet
+`#TROMMEL=MP: Trommelvorlage (Minimalprogramm) nicht gefunden: …`. Der Interpreter erzeugt die Vorlage nie selbst.
+
+**Fehlende oder fehlerhafte Trommeldatei.** Steht `#TROMMEL=LEER` (oder `#TROMMEL=MP` mit gültiger Vorlage) im **ersten** Test eines Aufrufs und ist die Trommeldatei nicht
+vorhanden oder formal fehlerhaft (2c, Regel 4), so ist ihr alter Inhalt ohne Belang: Der Interpreter legt sie neu an (4096 Zeilen, alle Zellen 0; fehlende Ordner werden
+angelegt) und meldet das in einer Hinweiszeile, statt mit Rückkehrcode 16 zu enden. Steht die Marke erst in einem späteren Test, gilt die Prüfung vor dem ersten Test wie bisher.
+
+**Der bisherige Inhalt geht verloren.** Der Test überschreibt die verwendete Trommeldatei ohne Rückfrage. Deshalb zeigt der Bildschirm die Zeile
+`Trommel: vor dem Test geleert (#TROMMEL=LEER)` (bei `MP`: `… mit dem Abbild "Minimalprogramm" belegt (#TROMMEL=MP)`), und das Protokoll (8.1, Ausgangsbedingungen) nennt die Marke.
+Liegt auf der Standard-Trommel ein Arbeitsstand, den man behalten will, bekommen solche Tests mit `--trommel PFAD` eine eigene Trommeldatei.
+
+**Grenzen.** Die Marke stellt nur den leeren Zustand oder ein Abbild her. Braucht ein Test einen anderen Trommelinhalt, so nennt er die Zellen selbst im Abschnitt
+`Trommeldatei:` oder stellt den Inhalt durch einen vorherigen Lauf her. So lädt `compute_all_tests.sh` vor `st-004*` das Minimalprogramm und vor `st-005` die Druckroutine
+aus `asm_druck_tastenfolge.txt`; die Druckroutine ist ein bewusst vereinfachter Sonderfall und wird von Fall zu Fall hergerichtet.
+
+**Claude-Interpreter.** Er hat keine Trommeldatei; für nicht genannte Zellen gilt 0 (2c). `#TROMMEL=LEER` hat dort daher keine Wirkung. `#TROMMEL=MP` gilt entsprechend,
+sofern ihm das Abbild vorliegt; sonst startet der Test nicht (Grundsatz „laut scheitern“, Abschnitt 5).
+
+**Beispiel:** `Tests/trommel-001_leer.txt` belegt zwei Zellen selbst und prüft, dass drei weitere Zellen 0 sind. Er ist auch auf einer verschmutzten Trommel `Test wahr`.
+
 ## 3. Schritt 2 jedes Tests: die Tastenfolge zur Definition des Ausgangszustands
 
 Nach Übernahme einer korrekten Trommeldatei wird eine Tastenfolge angegeben, die auf die Ebene von
@@ -639,7 +690,7 @@ Tastenfolge: `H` `G` `R`
 | Schritt | Aktion | Wirkung auf Register/Flags |
 |---|---|---|
 | 1 | Schalter H-R → "H" | Flag H := 1 |
-| 2 | Taste "G" | alle Flags außer H, T, BS und SP werden gelöscht, danach US := 1 (s. Fall 1); BR wird auf "0000 000" gesetzt (unbedingter Sprung nach Speicherplatz 0000); K0 wird angewählt, Schalter "SW" ist nicht gedrückt → Flag T := 1; **BZ und AC bleiben unverändert** (G hat laut Dokument "keinen Einfluss auf ... Befehlszählerinhalt"). `<BZ>:=0` ist erst das Ergebnis der Ausführung des durch G aufgestellten Befehls "0000 000" (ANWEISUNG-007, `<BZ>:=a`, hier a=0000), also des Sprungs nach 0000. Dieser Sprung wird ausgeführt, wenn auf G kein `M+ E … E M-` folgt, hier durch `R` (Schritt 3). Der Interpreter setzt BZ := 0 deshalb erst bei `R` bzw. bei `E` ohne `M`, nicht bei G (Ergänzung 09.10.2026). Gibt der Test `#BZ=` vor (Abschnitt 2), bleibt dieser Wert nach G bis zur Ausführung des Sprungs erhalten |
+| 2 | Taste "G" | alle Flags außer H, T und SP werden gelöscht (auch das Flag BS; der Schalter BS bleibt eingerastet), danach US := 1 (s. Fall 1); BR wird auf "0000 000" gesetzt (unbedingter Sprung nach Speicherplatz 0000); K0 wird angewählt, Schalter "SW" ist nicht gedrückt → Flag T := 1; **BZ und AC bleiben unverändert** (G hat laut Dokument "keinen Einfluss auf ... Befehlszählerinhalt"). `<BZ>:=0` ist erst das Ergebnis der Ausführung des durch G aufgestellten Befehls "0000 000" (ANWEISUNG-007, `<BZ>:=a`, hier a=0000), also des Sprungs nach 0000. Dieser Sprung wird ausgeführt, wenn auf G kein `M+ E … E M-` folgt, hier durch `R` (Schritt 3). Der Interpreter setzt BZ := 0 deshalb erst bei `R` bzw. bei `E` ohne `M`, nicht bei G (Ergänzung 09.10.2026). Gibt der Test `#BZ=` vor (Abschnitt 2), bleibt dieser Wert nach G bis zur Ausführung des Sprungs erhalten |
 | 3 | Schalter H-R → "R" | Flag H := 0, US := 0; der von G aufgestellte BR "0000 000" wird ausgeführt: Sprung nach 0000, `<BZ>:=0000`; Interpretation setzt bei Konnektor B fort, mit BZ=0000 |
 
 Prinzip: Tastenfolgen werden nicht nur als Rohschalterzustände, sondern bis zur Wirkung der dadurch
@@ -671,7 +722,7 @@ Abschnitt 4.4, steht jetzt "→ H".)
 | Schritt | Aktion | Wirkung auf Register/Flags |
 |---|---|---|
 | 1 | H-R → "H" | Flag H := 1 |
-| 2 | Taste "G" | alle Flags außer H, T, BS, SP := 0; BR := "0000 000"; K0 angewählt, T := 1; BZ und AC bleiben unverändert (Originaldokumentation; G setzt BZ nicht, der Sprung nach 0000 des aufgestellten BR "0000 000" findet hier nicht statt, weil `M+ E … E M-` folgt, s. 3.1 und 3.3) |
+| 2 | Taste "G" | alle Flags außer H, T, SP := 0 (auch BS); BR := "0000 000"; K0 angewählt, T := 1; BZ und AC bleiben unverändert (Originaldokumentation; G setzt BZ nicht, der Sprung nach 0000 des aufgestellten BR "0000 000" findet hier nicht statt, weil `M+ E … E M-` folgt, s. 3.1 und 3.3) |
 | 3 | "M" gedrückt halten | OR := OR OR 025 → BR := "0000 025" (Sprung mit Rückkehrabsicht, Adresse 0000) |
 | 4 | 1. "E" | Befehlsentnahme (Phase II) durch gehaltenes M verhindert; BZ := 0001, AR := 0001; ⟨AC⟩ := 0000 0002 000 (Rücksprungadresse BZ+1 im Adressfeld) |
 | 5 | 2. "E" | BZ := 0002, AR := 0002; ⟨AC⟩ := 0000 0003 000 |
@@ -732,11 +783,13 @@ Ergänzung 04.10.2026: Nach einem Stop-Befehl (02Z bzw. 06Z, Z<4) entsteht durch
 mit negiertem AC, s. `Ü`), nach `G` (OR = 000) dagegen 240. Die Fortsetzung verläuft wie bei der entstandenen
 Operation (Wartezeit W₂, Überlauftest, Phase IV, Phase I). Der Stopp selbst erfolgt vor der Wartezeit W₂ (Abb. 19).
 
-**BS und SP** sind einrastende Schalter. Die Token `BS=1` / `SP=1` (Schalter gedrückt und eingerastet) setzen das
-gleichnamige Flag auf 1, `BS=0` / `SP=0` (Schalter gelöst) setzen es auf 0; mehr geschieht nicht. Da die Schalter
-mechanisch einrasten, kann `G` sie nicht lösen: `G` lässt die Flags BS und SP unverändert (wie H). Nur ein
-`BS=0` bzw. `SP=0` in der Tastenfolge löst sie wieder. Die Schalter sind nicht an H gebunden und in jeder
-Reihenfolge zu den anderen Tasten zulässig.
+**BS und SP** sind einrastende Schalter. `SP=1` (Schalter gedrückt und eingerastet) setzt das Flag SP auf 1, `SP=0`
+(Schalter gelöst) setzt es auf 0; mehr geschieht nicht. `BS=1` bzw. `BS=0` legt dagegen nur die Schalterstellung BS
+fest; das Flag BS ist nicht der Schalterzustand, es wird erst 1, wenn ein programmierter "Bedingter Stopp" bei
+eingerastetem Schalter wirksam wird. Da die Schalter mechanisch einrasten, kann `G` sie nicht lösen: `G` lässt das
+Flag SP und die Schalterstellung BS unverändert (wie H); das Flag BS löscht `G` (es beseitigt einen programmierten
+Stopp). Nur ein `BS=0` bzw. `SP=0` in der Tastenfolge löst die Schalter wieder. Die Schalter sind nicht an H gebunden
+und in jeder Reihenfolge zu den anderen Tasten zulässig.
 
 **E (ohne M)** ist definiert (s. 4.2, Fall 5): Phase IV und Phase I, dann Phase II und III, danach Halt
 (Halt-Punkt HP3 = Eintritt in Knoten 19). E ist nur bei gesetztem Schalter H wirksam. Eine Tastenfolge darf
@@ -917,13 +970,16 @@ Ebenso lässt sich eine Stanzer-Prüfung vollständig in der Testdatei beschreib
 ### 3b.1 Soll-Datei und Ist-Datei
 
 - **Soll-Datei** ist die hinter dem Schalter genannte `DATEI`. Ein reiner Dateiname ohne Verzeichnisangabe liegt im
-  Verzeichnis der Testdatei (üblicherweise `Tests/`); eine Angabe mit Verzeichnis gilt so, wie sie geschrieben ist.
-  Beispiel: Liegt der Test unter `Tests/bsp_seite_42_025_stanzer.test`, dann bezeichnet
-  `--pruefe-stanzer1 bsp_seite_42_025_stanzer-stanzer-ausgabe.txt` die Datei
-  `Tests/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt`.
-  **Namenskonvention (Ergänzung 08.10.2026):** Soll-Dateien liegen in `Tests/`, sind aber keine Tests. Ihr Name endet auf
-  `-ausgabe.txt` oder `_erwartet.txt`; `compute_all_tests.sh` überspringt solche Dateien. Ein anderer Name lässt das Skript die
-  Soll-Datei als Test starten (Rückkehrcode 16, weil Tastenfolge und Zeilenformat fehlen).
+  Verzeichnis der Testdatei (üblicherweise `Tests/`); eine Angabe mit Verzeichnis gilt so, wie sie geschrieben ist (relativ
+  zum Arbeitsverzeichnis). Die Soll-Dateien liegen im Ordner `Test-Ergebnisvergleiche/` und werden in der Testdatei mit diesem
+  Pfad genannt.
+  Beispiel: Der Test `Tests/bsp_seite_42_025_stanzer.test` enthält die Zeile
+  `--pruefe-stanzer1 Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt`; verglichen wird mit der Datei
+  `Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt`.
+  **Namenskonvention (Ergänzung 08.10.2026):** Soll-Dateien sind keine Tests und liegen deshalb nicht in `Tests/`. Ihr Name
+  endet auf `-ausgabe.txt` oder `_erwartet.txt`; `compute_all_tests.sh` überspringt Dateien mit solchen Namen. Läge eine
+  Soll-Datei mit anderem Namen in `Tests/`, würde das Skript sie als Test starten (Rückkehrcode 16, weil Tastenfolge und
+  Zeilenformat fehlen).
 - **Ist-Datei** ist die vom Lauf erzeugte Ausgabedatei des jeweiligen Geräts (6.3.1, 6.3.2), z. B.
   `virtuelle_Geraete/Stanzer1/stanzer-ausgabe.txt`. Maßgeblich ist nur eine Datei, die **dieser Lauf** angelegt hat:
   eine aus einem früheren Lauf übrig gebliebene Datei gilt als nicht vorhanden, wenn der Lauf selbst keine Ausgabe
@@ -969,7 +1025,7 @@ BZ=2014 AC=00002012000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 2012: 00000001164
 ...
 2022: 00000000777
---pruefe-stanzer1 bsp_seite_42_025_stanzer-stanzer-ausgabe.txt
+--pruefe-stanzer1 Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt
 ```
 
 Aufruf:
@@ -979,7 +1035,7 @@ Aufruf:
 ```
 
 Der Test stanzt drei Zeichen nach `virtuelle_Geraete/Stanzer1/stanzer-ausgabe.txt`. Verglichen wird diese Datei mit
-`Tests/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt`. Ist die Datei mit den Soll-Zeilen
+`Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt`. Ist die Datei mit den Soll-Zeilen
 `00110001`, `00110010`, `00100011` identisch und stimmen auch die `Prüfungen:` des Tests, endet der Lauf mit `Test wahr`
 (Rückkehrcode 0), sonst mit `Test falsch` (Rückkehrcode 6).
 
@@ -997,7 +1053,7 @@ ihrem (unspezifizierten) Vorwert notiert (z. B. ⟨AR⟩, ⟨OR⟩, ⟨BZ⟩, �
 | Aktion | Wirkung |
 |---|---|
 | H | H:=1 |
-| G | alle Flags außer H, T, BS, SP := 0 (damit u. a. auch FÜ:=0, FE:=0, falls zuvor gesetzt; BS und SP sind eingerastete Schalter und bleiben unverändert, s. 3.3); zusätzlich wird **US:=1** gesetzt (Voraussetzung für "G" ist der Halt-Zustand, und "G" stellt BR auf "0000 000"); BR:="0000 000" (AR:=0000, OR:=000); K0 angewählt, T:=1; BZ unverändert |
+| G | alle Flags außer H, T, SP := 0 (damit u. a. auch FÜ:=0, FE:=0, BS:=0, falls zuvor gesetzt; SP ist ein eingerasteter Schalter und bleibt unverändert, s. 3.3); zusätzlich wird **US:=1** gesetzt (Voraussetzung für "G" ist der Halt-Zustand, und "G" stellt BR auf "0000 000"); BR:="0000 000" (AR:=0000, OR:=000); K0 angewählt, T:=1; BZ unverändert |
 
 *(Anmerkung: Ob die Hardware nach "H, G" tatsächlich US=1 anzeigt – etwa weil der zuvor programmierte
 Stopp-Befehl formal noch nicht abgearbeitet ist – oder ob G stattdessen auch US auf 0 setzt, ist in der
@@ -1061,7 +1117,7 @@ Knotenfolge: 54, 55, 59, 61, 62, 63, 7, 6, 5, 8 (Einstieg s. 3.3). ⟨BZ⟩ wird
 | Aktion | Wirkung |
 |---|---|
 | H | H:=1 |
-| G | alle Flags außer H,T,BS,SP := 0, danach US:=1; BR:="0000 000" (AR:=0000, OR:=000); K0 angewählt, T:=1; BZ unverändert (⟨BZ⟩) |
+| G | alle Flags außer H,T,SP := 0, danach US:=1; BR:="0000 000" (AR:=0000, OR:=000); K0 angewählt, T:=1; BZ unverändert (⟨BZ⟩) |
 | Ü | AR:="7777"; OR := 000 OR 240 = 240 → BR:="7777 240" |
 | E (einzelner Tipp) | Phase IV: Ausführung von BR="7777 240" → `<7777>:=<AC>`. Danach Phase I: `<AR>:=<BZ>` (=⟨BZ⟩). Danach Phase II: `<BZ>:=ADR; <OR>:=OP` (Inhalt der Zelle ⟨BZ⟩). Danach Phase III: `<AR>:=<BZ>=ADR`, gleichzeitig `<BZ>:=<AR>+1`. Automat stoppt danach wieder (H bleibt =1) |
 
@@ -1074,7 +1130,7 @@ Ergebnis: `<7777> := <AC>`, danach Stopp mit neu geladenem BR aus Zelle ⟨BZ⟩
 | Aktion | Wirkung |
 |---|---|
 | H | H:=1 |
-| G | alle Flags außer H,T,BS,SP := 0, danach US:=1; BR:="0000 000" (AR:=0000, OR:=000); K0 angewählt, T:=1; BZ und AC bleiben unverändert (⟨BZ⟩, ⟨AC⟩ — G hat keinen Einfluss auf Akkumulator- und Befehlszählerinhalt) |
+| G | alle Flags außer H,T,SP := 0, danach US:=1; BR:="0000 000" (AR:=0000, OR:=000); K0 angewählt, T:=1; BZ und AC bleiben unverändert (⟨BZ⟩, ⟨AC⟩ — G hat keinen Einfluss auf Akkumulator- und Befehlszählerinhalt) |
 | M gedrückt halten | OR := 000 OR 025 = 025 → BR:="0000 025" (Sprung mit Rückkehrabsicht); solange M gehalten wird, verhindert ein nachfolgendes E die Befehlsentnahme in Phase II |
 | 1. E (unter gehaltenem M) | Phase IV wird ausgeführt: BR="0000 025" → `<AC>` erhält die um 2 erhöhte Adresse ⟨BZ⟩+2 des nächsten abzuarbeitenden Befehls (im Adressfeld, s. 3.3); BZ := ⟨BZ⟩+1, AR := BZ; Phase II bleibt wegen gehaltenem M gesperrt, Automat steht vor Phase II |
 | M loslassen | Sperre der Phase-II-Verhinderung entfällt |
@@ -1102,7 +1158,7 @@ Zu prüfen ist dabei insbesondere:
   keine Adresse ist mehrfach mit widersprüchlichem Wert belegt (jede Adresse hat innerhalb eines Tests
   genau einen definierten Speicherinhalt).
 - **Persistente Trommel (Python-Interpreter, s. Abschnitt 2c):** Die Trommeldatei `trommel.txt` muss vorhanden und beschreibbar sein und genau 4096 Zeilen `aaaa: ttttttttttt` mit lückenlos aufsteigenden Adressen
-  `0000` bis `7777` enthalten. Diese Prüfung gilt für den ganzen Aufruf und läuft vor dem ersten Test; schlägt sie fehl, startet kein Test.
+  `0000` bis `7777` enthalten. Diese Prüfung gilt für den ganzen Aufruf und läuft vor dem ersten Test; schlägt sie fehl, startet kein Test. Ausnahme: Steht `#TROMMEL=LEER` im ersten Test des Aufrufs, wird die Trommeldatei neu angelegt (Abschnitt 2g).
 - **Testmarken `#SPEI-xxxx`:** Eine solche Testmarke ist nur zu einem im selben Test bereits
   definierten `#DOK-xxxx` mit gleichem `xxxx` zulässig; die angegebene Adressspanne `ssss-eeee` muss
   eine gültige Spanne bilden (s. dazu den Hinweis in Abschnitt 2 zum dortigen mutmaßlichen Tippfehler).
@@ -1112,6 +1168,8 @@ Zu prüfen ist dabei insbesondere:
   bzw. 4 (`#BZ=`) Oktalziffern (0 bis 7). Fehlt eine Marke, ist das gültig (Register startet mit 0, Abschnitt 2).
 - **`#STARTE` (Ergänzung 09.10.2026, Abschnitt 2e):** Wert nicht leer, 1 bis 4 Oktalziffern, höchstens einmal, nicht im Abschnitt `Prüfungen:`,
   keine zusätzliche Tastenfolge; ein Test mit `#STARTE` braucht keinen Abschnitt `Tastenfolge:`.
+- **`#TROMMEL=` (Ergänzung 13.10.2026, Abschnitt 2g):** Wert `LEER` oder `MP`, höchstens einmal, nicht im Abschnitt `Prüfungen:`; bei `MP` muss die Trommelvorlage
+  `virtuelle_Geraete/Trommelvorlagen/MP.txt` vorhanden und formal gültig sein (Format wie die Trommeldatei, 2c). Fehlt die Marke, ist das gültig (die Trommel bleibt unverändert).
 - **`#INTERRUPT` (Ergänzung 08.10.2026, Abschnitt 2d):** nur im Abschnitt `Trommeldatei:`, zwischen zwei Befehlszeilen, höchstens einmal je
   Befehlszeile; erste Taste `H`, nur bekannte Tasten, zulässige M-Folge, mindestens eine Taste.
 - **Tastenfolge:** Sie definiert, wie in Abschnitt 3 beschrieben, den Ausgangszustand des Rechners vor
@@ -1197,6 +1255,27 @@ Ablauf:
    Host-Tastatur-Eingabe angefordert und entgegengenommen – nicht etwa eine ganze Zeile oder mehrere
    Zeichen auf einmal.
 
+**Hinweis auf wartende Terminal-Eingabe (Ergänzung 13.10.2026, Python-Interpreter):** Wartet der Interpreter auf ein
+Zeichen vom Host-Terminal, ohne dass K0 über `--k0` umgeleitet ist (Standardfall dieses Abschnitts), so steht das
+Terminal sonst scheinbar still. Deshalb schreibt der Interpreter beim **ersten** solchen Warten eines Tests einmal die Zeile
+
+```
+--- Achtung: Terminaleingaben erforderlich (K0 ohne Umleitung --k0); Abbruch mit Strg+C ---
+```
+
+auf den Fehlerkanal (stderr; gelb, wenn stderr ein Terminal ist und die Umgebungsvariable `NO_COLOR` nicht gesetzt ist).
+Dazu gilt:
+
+- Die Zeile erscheint nur einmal je Test, nicht vor jedem Eingabe-Halt.
+- Sie erscheint nur, wenn der Standardeingang ein Terminal ist. Kommt die Eingabe über eine Pipe oder eine Dateiumleitung
+  (`<`), wartet niemand am Terminal, und es erscheint nichts.
+- Sie erscheint auch mit `--NO-TERMOUT`, weil sie keine Ergebnisausgabe ist.
+- Ist K0 mit `--k0` umgeleitet (6.1.2), erscheint sie nie.
+- Strg+C beendet den Test.
+- Stand 13.10.2026: Im Projekt fordert nur `Tests/pj2-bis_minimalprogramm.test` echte Terminaleingaben an (Ladeschritt für die
+  BIS-Tests, 2f). Skripte, die ihn nur zum Laden des Minimalprogramms benutzen (z. B. `compute_all_tests.sh`), starten ihn
+  deshalb mit geschlossenem Standardeingang (`</dev/null`).
+
 #### 6.1.2 Flag für Datei-Eingabe: beide Subkanäle aus Datei
 
 Wird dem Interpreter für K0 eine Eingabedatei bzw. ein Eingabeverzeichnis zugeordnet (Python-Interpreter:
@@ -1213,7 +1292,7 @@ vom Terminal.
   Eingabebefehl auf K0 ansteht, wartet der Interpreter still (ohne Meldung), bis eine neue Datei in den
   Pfad kopiert bzw. beim Claude-Interpreter hochgeladen wird – wie bei den Lochstreifenlesern (6.2).
 
-Fehlt dieses Flag, gilt der Standardfall aus 6.1.1 (Terminal-Eingabe).
+Fehlt dieses Flag, gilt der Standardfall aus 6.1.1 (Terminal-Eingabe, mit dem dortigen Hinweis).
 
 #### 6.1.3 Einordnung
 
@@ -1409,7 +1488,7 @@ Bei STUFE=2 enthält die Protokolldatei, in der zeitlichen Reihenfolge ihres Auf
 Tests:
 
 - die Protokollierung der Ausgangsbedingungen: die vom Test übernommenen Trommelzeilen (Abschnitt 2; nicht der ganze Trommelinhalt, Abschnitt 2c), die Testmarken
-  `#AC=` und `#BZ=` (falls angegeben, mit den Anfangswerten von AC und BZ) sowie die
+  `#AC=` und `#BZ=` (falls angegeben, mit den Anfangswerten von AC und BZ), die Testmarke `#TROMMEL=` (falls angegeben, Abschnitt 2g) sowie die
   Tastenfolge zur Definition des Ausgangszustands mit ihrer Wirkung auf Register und Flags
   (Abschnitt 3),
 - die Protokollierung der Zustände des Knotenautomaten: die beim Durchlauf des Knotengraphen ab
@@ -1439,7 +1518,8 @@ bereitgestellt.
 
 ## 9. Ausblick
 
-Mit Abschnitt 3 ist das initiale Starten eines in der Trommeldatei definierten Tests vollständig
-beschrieben. Abschnitt 4 ergänzt dies um weitere, vom Teststart unabhängige Tastensequenz-Beispiele.
-Der eigentliche Durchlauf durch den Knotengraphen ab Konnektor B ist in der Datei
-"C8205-Interpreter-Eingänge_der_Knoten.md" beschrieben.
+Dieses Dokument beschreibt die Durchführung eines Tests: den Aufbau der Testdatei (Abschnitt 2 bis 2g), die Tastenfolge
+zum Aufstellen des Ausgangszustands (Abschnitt 3), die Ergebnisprüfung (3a) und die Dateiprüfungen (3b), weitere
+Tastensequenzen (Abschnitt 4), die formale Gültigkeitsprüfung (Abschnitt 5), die Zeichenein- und -ausgabe (Abschnitt 6),
+die Diagnoseausgabe (Abschnitt 7) und die Protokolldatei (Abschnitt 8). Der eigentliche Durchlauf durch den Knotengraphen ab
+Konnektor B ist in der Datei "C8205-Interpreter-Eingänge_der_Knoten.md" beschrieben.

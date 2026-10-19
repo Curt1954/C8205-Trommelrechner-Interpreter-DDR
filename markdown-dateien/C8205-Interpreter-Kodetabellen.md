@@ -1,6 +1,6 @@
 # Kodetabellen
 
-Version: 0.03-005
+Version: 0.03-006
 
 Die Zeichenkode-Tabellen des C 8205: R 300-Lochstreifenkode (Tabelle 1) und externer R 300-Code (Tabelle 2).
 
@@ -207,7 +207,7 @@ dort beschrieben.
   Lochstreifen erfasst, denn irren tut nur der Mensch. Der Rechner könnte die Zeichen ausgeben, wenn
   das im Programm so programmiert ist; eine Automatik gibt es nicht. Ein Gerätefehler (FE leuchtet,
   der Rechner stoppt) liegt nur bei einer anderen Zeile mit gerader Lochzahl vor
-  (Lochstreifenleser A2 und A4).
+  (Lochstreifenleser A0 und A4).
 - **"ZV" und "BM" (Zeilen 52 und 53):** Zeilenvorschub und Blockmarke (Ergänzung des Projektinhabers vom 11.10.2026). Beide haben die Eingabeadresse 72 und unterscheiden sich
   im Lochbild (ZV v u p 8 2, BM w v u 8 2) und in der Sprung-Umstellung (ZV nein, BM ja). Ein Eingabebefehl springt also bei BM, bei ZV nicht; ein ZV wirkt wie jedes
   Zeichen ohne Sprung-Umstellung (die Tabellenzelle wird als Datum gelesen). Nach den "Bemerkungen zur Eingabe" (BIS-2.2.1a) ist ein ZV zwischen zwei Zahlen im 8-Kanal-Code

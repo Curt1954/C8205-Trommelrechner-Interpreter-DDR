@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0020 Test Sonderfall: AC ist bereits vor der ersten Zelle negativ (R=2): die erste Zelle wird noch geschrieben, dann Abbruch
+#SPEI-0020 4000-4037
+#PROT STUFE=0
+0000: 00003000211 # AC := <3000>
+0001: 00004001544 # GX-Transport nach 4001, Z=2 (R=2, ohne Loeschen)
+0002: 00000020164 # Leerbefehl, Diagnose #DOK-0020
+0003: 00000000020 # 020 Stopp
+3000: 40000000000
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+
+BZ=0004 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+4001: 40000000000

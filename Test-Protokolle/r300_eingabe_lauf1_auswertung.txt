@@ -1,0 +1,22 @@
+Auswertung des Laufs r300_eingabe  (RLA-001)
+Log: /mnt/user-data/uploads/r300_eingabe_debug.log   Tipps: 97   Tokens am Rechner: 92   Sollfolge: 92 Token
+
+[OK] Fokus: bei 97 von 97 Tipps lag der Fokus im SW-Text
+[BEFUND] Wiedergabe-Taste = angekommene Taste: 91 von 97
+         Tipp Nr 33: erzeugt grave: kein Tastenereignis im SW-Fenster angekommen   (Wiedergabe-Artefakt; echte Tastatur im Handbetrieb pruefen)
+         Tipp Nr 49: erzeugt bracketleft: angekommen als 8 (Zeichen '8')   (Wiedergabe-Artefakt; echte Tastatur im Handbetrieb pruefen)
+         Tipp Nr 52: erzeugt asciitilde: angekommen als plus (Zeichen '+')   (Wiedergabe-Artefakt; echte Tastatur im Handbetrieb pruefen)
+         Tipp Nr 53: erzeugt bracketright: angekommen als 9 (Zeichen '9')   (Wiedergabe-Artefakt; echte Tastatur im Handbetrieb pruefen)
+         Tipp Nr 95: erzeugt at: angekommen als q (Zeichen 'q')   (Wiedergabe-Artefakt; echte Tastatur im Handbetrieb pruefen)
+         Tipp Nr 96: erzeugt EuroSign: angekommen als e (Zeichen 'e')   (Wiedergabe-Artefakt; echte Tastatur im Handbetrieb pruefen)
+[BEFUND] Vorgemerkte Zeichen (nach Umschaltzeichen) beim Rechner angekommen: 1 von 6
+         Tipp Nr 47 (less): Zeichen '<' vorgemerkt, Tokens danach nur ['Um. GB']  -> VERLOREN (ohne Logzeile)
+         Tipp Nr 50 (greater): Zeichen '>' vorgemerkt, Tokens danach nur ['Um. GB']  -> VERLOREN (ohne Logzeile)
+         Tipp Nr 52 (asciitilde): Zeichen '+' vorgemerkt, Tokens danach nur ['Um. KB']  -> VERLOREN (ohne Logzeile)
+         Tipp Nr 54 (numbersign): Zeichen '#' vorgemerkt, Tokens danach nur ['Um. GB']  -> VERLOREN (ohne Logzeile)
+         Tipp Nr 89 (a): Zeichen 'a' vorgemerkt, Tokens danach nur ['Um. KB']  -> VERLOREN (ohne Logzeile)
+[OK] Spur ab 3000: 92 von 92 Worten passen zum gelieferten Token; Zelle nach der Spur 00000000000
+[OK] Echo am SW = Tokens am Rechner (ohne Umschaltzeichen): 86 Zeichen, erwartet 86
+[OK] Zeichen ohne R300-Code verworfen: ['adiaeresis', 'odiaeresis', 'section', 'ssharp', 'udiaeresis']
+
+Ergebnis: 2 Befund(e)

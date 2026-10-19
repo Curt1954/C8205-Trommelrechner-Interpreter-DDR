@@ -38,9 +38,22 @@ lauf() {
 for dat in Tests/*.txt; do
     # Soll-Dateien der Dateiprüfungen sind keine Tests; die Tests des BIS (pj2-bis_*) setzen das Minimalprogramm
     # auf der Trommel voraus und laufen mit test_bis.sh
-    case "$dat" in *-ausgabe.txt|*_erwartet.txt|Tests/pj2-bis_*.txt) continue;; esac
+    # st-004* und st-005 setzen einen bestimmten Trommelinhalt voraus (Zelle 0001); sie laufen unten mit ihren Vorbedingungen
+    case "$dat" in *-ausgabe.txt|*_erwartet.txt|Tests/pj2-bis_*.txt|Tests/st-004_*.txt|Tests/st-005_*.txt) continue;; esac
     lauf "$dat"
 done
+
+# Tests mit Voraussetzung auf der Trommel: Die Trommel behält ihren Inhalt von Test zu Test, im Lauf über alle Tests
+# stünde in Zelle 0001 sonst, was der vorige Test dort hinterlassen hat.
+#  - st-004*: Minimalprogramm des BIS (Tests/pj2-bis_minimalprogramm.test); Zelle 0001 wird von den Tests nicht verändert
+#  - st-005:  Druckroutine aus Tests/asm_druck_tastenfolge.txt (Zelle 0001 = Sprung zum Druck von BZ und AC)
+python3 "$HIER/erzeuge_leere_trommel.py"
+# Das Minimalprogramm wartet nach dem Laden auf Tastatureingabe; hier nicht: Standardeingang geschlossen (rc 4, keine Prüfungen)
+lauf Tests/pj2-bis_minimalprogramm.test </dev/null
+lauf Tests/st-004_STARTE_1000_druck_interrupt.txt
+lauf Tests/st-004_STARTE_1000_druck_interrupt_neu.txt
+lauf Tests/asm_druck_tastenfolge.txt
+lauf Tests/st-005_STARTE_1000_druck_mit_druckroutine.txt
 
 python3 "$HIER/erzeuge_leere_trommel.py"
 

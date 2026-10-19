@@ -1,0 +1,38 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002400000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0100: 00007741240 # kz_eingabe: 240 kz_rs ; Rueckkehrbefehl sichern auf Arbeitszelle
+0101: 00000115000 # 000 eingabe
+0102: 00000000000 # kz_tab: dw 0 ; Ziffer 0
+0103: 00000000001 # dw 01 ; Ziffer 1
+0104: 00000000002 # dw 02 ; Ziffer 2
+0105: 00000000003 # dw 03 ; Ziffer 3
+0106: 00000000004 # dw 04 ; Ziffer 4
+0107: 00000000005 # dw 05 ; Ziffer 5
+0110: 00000000006 # dw 06 ; Ziffer 6
+0111: 00000000007 # dw 07 ; Ziffer 7
+0112: 00000000010 # dw 010 ; Ziffer 8
+0113: 00000000011 # dw 011 ; Ziffer 9
+0114: 00000115001 # 001 eingabe ; Fortsetzung nach Eingabe von ZW
+0115: 00000102010 # eingabe: 010 kz_tab
+0116: 00007706644 # 644 adr7706
+0117: 00007706214 # 214 adr7706
+0120: 00000115000 # 000 eingabe
+0122: 00000000022 # dw 022 ; B
+0124: 00000000024 # dw 024 ; D
+0133: 00007706211 # 211 adr7706
+0134: 00007741000 # 000 kz_rs
+0135: 00000102014 # schleife: 014 kz_tab ; Linksverschiebung
+0136: 00000137004 # 004 *+1
+0137: 00000135004 # 004 schleife
+0140: 00007741000 # ende: 000 kz_rs
+0152: 00000115001 # 001 eingabe ; ZR  löschen und Neuanfang
+0173: 00000140002 # 002 ende ; Fortsetzung nach Eingabe von "Punkt"
+2400: 00004700030 # 030 04700 ; Kanal K0
+2401: 00000100025 # 025 kz_eingabe ; Zeichen 0 bis 7 und Punkt einlesen
+2402: 00007773240 # 240 r1 ; R1 := eingelesene Konstante
+2403: 00000000020 # 020 0000 ; Stopp (AC = R1 = Konstante)
+Tastenfolge:
+H G R

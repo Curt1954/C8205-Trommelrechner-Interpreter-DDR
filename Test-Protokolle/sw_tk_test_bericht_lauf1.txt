@@ -1,0 +1,55 @@
+grafik_sw_tk_test.py SWTK-002, 18.10.2026 06:25:25, Plattform linux, Python 3.11.4  --  ECHTER LAUF
+INFO     Test  -  SWTK-002, Python 3.11.4, Plattform linux, Tk 8.6, ECHTER LAUF
+OK       Fenster: Titel  -  Titel ist 'C 8205 SW-Fenster'
+OK       Fenster: 130 x 36, kein Umbruch
+OK       Fenster: sichtbar
+OK       Fenster: Schrift mit fester Breite
+OK       Fenster: zeigt wirklich 130 Spalten und 36 Zeilen
+OK       Fenster: Lage innerhalb des Bildschirms
+OK       Ausgabe: Text und Tabulator (alle 12 Spalten), <ZV> unsichtbar  -  Zeile 1 ist 'Hallo       x'
+OK       Eingabe ohne Eingabe-Halt: still verworfen, kein Echo
+OK       Eingabe-Halt: Titel "Eingabe erwartet"  -  Titel ist 'C 8205 SW-Fenster - Eingabe erwartet'
+OK       Eingabe-Halt: Fenster fordert den Fokus an
+OK       Eingabe-Halt: kein verirrtes Zeichen angekommen
+OK       Taste 2  -  erwartet ['2'], bekommen ['2']
+FEHLER   Taste A  -  erwartet ['Um. GB', 'A'], bekommen ['a']
+FEHLER   Taste 3  -  erwartet ['Um. KB', '3'], bekommen ['3']
+OK       Taste Enter  -  erwartet ['WRZL'], bekommen ['WRZL']
+OK       Taste Tab  -  erwartet ['TAB'], bekommen ['TAB']
+OK       Taste Leertaste  -  erwartet ['ZR'], bekommen ['ZR']
+FEHLER   Folge 2 A 3 Enter Tab Leertaste: genau die erwarteten K0-Zeichen  -  bekommen ['2', 'a', '3', 'WRZL', 'TAB', 'ZR']
+OK       Kein Echo: getippte Zeichen stehen nicht im Fenster
+OK       Taste ä (nicht im R300-Code)  -  erwartet [], bekommen []
+OK       Taste ö (nicht im R300-Code)  -  erwartet [], bekommen []
+OK       Taste ü (nicht im R300-Code)  -  erwartet [], bekommen []
+OK       Taste ß (nicht im R300-Code)  -  erwartet [], bekommen []
+FEHLER   Taste @ (nicht im R300-Code)  -  erwartet [], bekommen ['q']
+FEHLER   Taste € (nicht im R300-Code)  -  erwartet [], bekommen ['e']
+FEHLER   Taste § (nicht im R300-Code)  -  erwartet [], bekommen ['3']
+OK       Taste ~ mit AltGr (state=0x80)  -  erwartet ['Um. GB', '~'], bekommen ['Um. GB', '~']
+OK       Taste Strg+x (keine Eingabe)  -  erwartet [], bekommen []
+OK       Taste Left (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Taste F1 (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Taste Escape (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Taste BackSpace (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Taste Delete (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Taste Home (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Taste Shift_L (ohne Wirkung)  -  erwartet [], bekommen []
+OK       Kopieren: Markieren und Strg+C legen "Hallo" in die Zwischenablage
+OK       HWCHECK: Titel
+OK       HWCHECK: sichtbar
+OK       HWCHECK: fuenf Zeilen wie hwcheck_zeilen()
+OK       HWCHECK: AC und <<AR>> in Vierergruppen von links
+OK       HWCHECK: Aktualisierung (AC 0, AR 0040)
+OK       HWCHECK: X wirkt nicht, Fenster bleibt
+OK       HWCHECK: SW-Fenster behaelt den Eingabe-Halt (Titel)
+WARNUNG  HWCHECK: SW-Fenster behaelt den Fokus  -  Fokus liegt bei .!toplevel2
+OK       HWCHECK: ueberdeckt das SW-Fenster nicht
+OK       HWCHECK: innerhalb des Bildschirms
+OK       Taste 7 (letztes Zeichen vor Programmende)  -  erwartet ['Um. KB', '7'], bekommen ['Um. KB', '7']
+OK       Eingabe erledigt: Titel ohne "Eingabe erwartet"
+OK       Eingabe erledigt: Fokus geht zum Pult zurueck
+OK       X am SW-Fenster: ruft die Schliess-Funktion des Pults (wie Strg+C)
+INFO     Manuell  -  durchgefuehrt (Ergebnis der Sichtpruefung bitte selbst mitteilen)
+
+ERGEBNIS (ECHTER LAUF): 43 OK, 1 WARNUNG, 6 FEHLER

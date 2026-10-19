@@ -1,6 +1,6 @@
 # BAZ-Wirkungstabelle (Cache für den Claude-Interpreter)
 
-Version: 0.03-002
+Version: 0.03-003
 
 Zweck: Für jeden bereits in einem Test aufgetretenen BAZ-Wert (Operationsteil, oktal,
 B-A-Z) wird hier einmalig der Knotenpfad Knoten 10 bis 34 sowie die Wirkungsformel
@@ -14,16 +14,6 @@ Neue BAZ-Werte werden bei Auftreten ergänzt, nichts wird im Voraus vorbefüllt.
 Versionierung: Jede Ergänzung oder Korrektur in dieser Datei ist eine Änderung; sie erhöht den Build in der Zeile
 `Version:` um 1. Hauptversion und Unterversion werden nur auf ausdrückliche Aufforderung des Projektinhabers erhöht
 (`C8205-Versionierung.md`).
-
-Korrektur 04.10.2026: Knoten 77 (zweiter Test der normalen Abbruchbedingung auf der
-X-Zusatzzelle) ist aus dem Knotengraphen entfernt worden (entsprach nicht Abb. 10 der
-Originaldokumentation, Befehlsliste.md 4.1.6 — Bildabgleich). Knoten 76 führt jetzt
-unbedingt zu Knoten 78 (Merker setzen). Betroffene Einträge unten (BAZ 544, BAZ 744)
-sind entsprechend angepasst; die Zellenzahlen (15) ändern sich dadurch nicht, nur der
-beschriebene Pfad.
-
-Hinweis 08.10.2026: Die Trommel des Python-Interpreters ist seit 07.10.2026 persistent (Python_Interpreter.md, Abschnitt 8.5). Angaben über nicht beschriebene Zellen
-(„Vorbelegung 0“) gelten daher für eine leere Trommel. Knotenpfade und Formeln sind davon nicht berührt.
 
 ## Feststehender Rahmen (für JEDEN Befehl gleich, unabhängig vom BAZ - NICHT cachebar)
 

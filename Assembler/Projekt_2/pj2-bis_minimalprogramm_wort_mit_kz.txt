@@ -1,0 +1,22 @@
+Unterprogramm Kennzeicheneingabe
+
+; Zugelassene Zeichen:  0 1 2 3 4 5 6 7 8 9 B D + <ZR> / : <BM> . <TAB>
+;
+; Auf Grund der beschränkten Hardware prüft das Programm nicht, ob andere Zeichen als zu zugelassenen eingegeben
+; werden. Falls das der Fall ist, kommt es zu einer Fehlreaktion.
+; Der Bediener des Programmes ist in der Pflicht, nur zulässige Eingaben vorzunehmen.
+
+1)  Eingabe des ersten Zeichen
+      wenn 1.KZ !=   ZR / <BM> + 0 1 2 dann Neustart
+      sonst speichern der des Ziffernwertes 0 1 2 auf kz1_wert  in der Form 000 ... 01
+
+2)  Eingabe des 2. Zeichens
+      wenn 2.KZ != 0 1 2 3 4 5 6 7 8 9 dann übergehen und neue Eingabe 2.KZ durchführen
+      sonst speichern der des Ziffernwertes 0 .. 9 auf kz2_wert  in der Form 000 ... 011
+
+3)
+      wenn 1.KZ == .  oder 0 war, dann sprung zu kz0
+
+      wenn 1.KZ == 1  war, dann sprung zu kz1
+      wenn 1.KZ == 2  war, dann sprung zu kz2
+

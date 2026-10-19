@@ -1,0 +1,12 @@
+Trommeldatei:
+#DOK-0001 ST R ohne vorherigen Stopp: ST ist wirkungslos.
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005020
+
+Tastenfolge:
+ST R
+
+Prüfungen:
+BZ=0001 AC=00000000000 AR=0005 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+0000: 00000005020

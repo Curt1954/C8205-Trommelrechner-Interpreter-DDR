@@ -1,0 +1,12 @@
+Trommeldatei:
+#DOK-0001 Flag/Lampe BS und Schalter BS sind getrennt: BS+ stellt nur den Schalter ein (Flag BS bleibt 0); erst der bedingte Stopp 060 bei eingerastetem Schalter setzt das Flag BS := 1 (Bedienpult_mit_Schaltern.md, Abschnitt Selektoren).
+#DOK-0002 Nach H G BS+ R wird Zelle 0000 (060, bedingter Stopp) entnommen: BZ = 0001, BS = 1, US = 0 (R loescht US).
+#PROT STUFE=2
+0000: 00000000060 # 060 bedingter Stopp
+
+Tastenfolge:
+H G BS+ R
+
+Prüfungen:
+BZ=0001 AC=00000000000 AR=0000 FE=0 FUE=0 BS=1 US=0 E=0 A=0 V1=0 V2=0
+0000: 00000000060

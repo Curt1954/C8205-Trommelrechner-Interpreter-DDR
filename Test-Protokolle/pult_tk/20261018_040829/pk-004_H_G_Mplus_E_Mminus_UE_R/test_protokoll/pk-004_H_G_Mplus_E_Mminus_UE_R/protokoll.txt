@@ -1,0 +1,42 @@
+Test pk-004_H_G_Mplus_E_Mminus_UE_R
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0001: 00000010020
+  7777: 00000000555
+  #DOK-0001 H G M+ E M- Ue R: E unter M, Ue stellt 7777 240 ein, R transportiert AC nach 7777.
+  #TROMMEL=LEER (Trommel vor dem Test geleert: alle 4096 Zellen = 0; danach die Zeilen von Trommeldatei:)
+  #PROT STUFE=2
+Tastenfolge: H G M+ E M- Ü R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  M gedrueckt halten: OR := OR ODER 025 (BR = AR 025)
+  E  : (M gehalten) Befehlsentnahme gesperrt, BZ := 0001, AR := 0001, AC := 00000002000 (BZ+1 im Adressfeld); BR-Adressteil := AR
+  M loslassen: OR-Verknuepfung mit 025 entfaellt fuer Folgeschritte
+  Ue : AR := 7777; OR := OR ODER 240 -> BR = 7777 240 (Transport, aufgestellt, nicht ausgefuehrt)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B bzw. bei Knoten 19 (nach M mit Sprung mit Rueckkehrabsicht bei Knoten 54), wenn BR aufgestellt ist
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=7777 240  (vor Knoten 002)  BZ=0001 AC=00000002000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=0002 AC=00000002000 AR=0010 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+
+== 3. Ergebnispruefung ==
+Ergebnispruefung:
+  BZ: soll=0002 ist=0002 OK
+  AC: soll=00000002000 ist=00000002000 OK
+  AR: soll=0010 ist=0010 OK
+  FE: soll=0 ist=0 OK
+  FUE: soll=0 ist=0 OK
+  BS: soll=0 ist=0 OK
+  US: soll=1 ist=1 OK
+  E: soll=0 ist=0 OK
+  A: soll=0 ist=0 OK
+  V1: soll=0 ist=0 OK
+  V2: soll=0 ist=0 OK
+  0001: soll=00000010020 ist=00000010020 OK
+  7777: soll=00000002000 ist=00000002000 OK
+Test wahr

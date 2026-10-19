@@ -212,7 +212,10 @@ int is_error_abs = 0;
 int printHell = 0;
 
 // Pragma ";#; LEITADRESSE xx": Kennzeichen, das im Objektcode (.obj) und im Listing (STDOUT, .dmp) anstelle von 01 ausgegeben wird.
-// Standard 01, erlaubt sind 01 bis 09.
+// Standard 01, erlaubt sind 00 bis 09.
+// Wert 00: Der Code wird so ausgegeben, wie ihn der Assembler erzeugt hat, mit dem Kennzeichen 00 statt 01
+// (bereits absolut codiertes Programm). Die Kennzeichenzeile "21 0000 <zahl>" fuer den Operanden von `start`
+// (Hauptleitadresse, "Leitbefehl") wird dann nicht in den Objektcode und nicht in das Listing geschrieben.
 int leitadresseKennzeichen = 1;
 int leitadressePragmaGesetzt = 0;   // 1, wenn das Pragma im Quelltext angegeben war
 
@@ -230,6 +233,7 @@ typedef struct {
     int address;
     unsigned int relativAdresse;
     char orig_operation[MAX_SYMBOL_LENGTH]; 
+    int verwendet;   // 1 = Symbol wurde in einem Operanden/Ausdruck nachgeschlagen (fuer -WARN=SYM)
 } Symbol;
 Symbol symbolTable[MAX_SYMBOLS];
 int symbolCount = 0, literalCount = 0;
@@ -362,6 +366,7 @@ void addSymbol(char *symbol, int address, int relativAdresse, char *operation, c
 
     strcpy(symbolTable[symbolCount].symbol, symbol);
     symbolTable[symbolCount].address = address;
+    symbolTable[symbolCount].verwendet = 0;
     if ( strstr(operand,";") != 0) {
        strcpy(symbolTable[symbolCount].orig_operation , "");
     } else {
@@ -670,9 +675,10 @@ static int gleichOhneGrossKlein(const char *a, const char *b) {
 // Pragma   ;#; LEITADRESSE xx
 //   - steht als Kommentarzeile im Quelltext und muss VOR `start` stehen,
 //   - darf keinmal oder genau einmal vorkommen (Standard ohne Pragma: 01),
-//   - xx ist zweistellig und liegt zwischen 01 und 09.
+//   - xx ist zweistellig und liegt zwischen 00 und 09.
 // Wirkung: Alle Befehle und Konstanten, die im Objektcode (.obj) bisher mit dem Kennzeichen 01 erzeugt
 // wurden, erhalten stattdessen den Wert xx (siehe schreibeObjZeile).
+// Bei xx = 00 entfaellt ausserdem die Kennzeichenzeile "21 0000 <zahl>" des start-Operanden (siehe pass3).
 // Liefert 1, wenn die Zeile ein LEITADRESSE-Pragma ist (auch ein fehlerhaftes), sonst 0.
 static int verarbeiteLeitadressePragma(const char *zeile, int zeilennr, int startGesehen) {
     const char *p = zeile;
@@ -704,16 +710,27 @@ static int verarbeiteLeitadressePragma(const char *zeile, int zeilennr, int star
     }
     leitadressePragmaGesetzt = 1;
 
-    // Wert: genau zwei Ziffern 01 ... 09; danach nur noch Leerraum oder ein Kommentar (;).
+    // Wert: genau zwei Ziffern 00 ... 09; danach nur noch Leerraum oder ein Kommentar (;).
     int wertOk = isdigit((unsigned char)p[0]) && isdigit((unsigned char)p[1])
                  && (p[2] == '\0' || p[2] == ' ' || p[2] == '\t' || p[2] == ';' || p[2] == '\r' || p[2] == '\n');
     int wert = wertOk ? (p[0] - '0') * 10 + (p[1] - '0') : 0;
-    if (!wertOk || wert < 1 || wert > 9) {
-        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE erwartet einen zweistelligen Wert von 01 bis 09 (z. B. ;#; LEITADRESSE 02).", zeilennr);
+    if (!wertOk || wert < 0 || wert > 9) {
+        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE erwartet einen zweistelligen Wert von 00 bis 09 (z. B. ;#; LEITADRESSE 02).", zeilennr);
         is_error = 1;
         return 1;
     }
     leitadresseKennzeichen = wert;
+    return 1;
+}
+
+// Blockkommentar: Eine Zeile, die ab Spalte 1 genau ``` enthaelt (danach nur Leerraum), eroeffnet bzw.
+// beendet einen Blockkommentar. Alles dazwischen (und die beiden ```-Zeilen selbst) wird wie ein
+// Kommentar ueberlesen und erzeugt keine Programmzeile.
+static int istBlockkommentarGrenze(const char *s) {
+    if (strncmp(s, "```", 3) != 0) return 0;
+    for (s += 3; *s; s++) {
+        if (*s != ' ' && *s != '\t' && *s != '\r' && *s != '\n') return 0;
+    }
     return 1;
 }
 
@@ -728,6 +745,8 @@ void ladeAssemblerZeilen(const char *inputFileName) {
     int zeilennr = 0;
     int vorigeZeileOffen = 0;   // 1 = vorige fgets-Teilzeile hatte kein Zeilenende (Zeile laenger als Puffer)
     int startGesehen = 0;       // 1, sobald die Anweisung `start` gelesen wurde (Pragma LEITADRESSE muss davor stehen)
+    int imBlockkommentar = 0;   // 1 = zwischen zwei ```-Zeilen
+    int blockkommentarStart = 0; // Quelltextzeile, in der der offene Blockkommentar begann
     while (fgets(line, sizeof(line), inputFile)) {
         int hatZeilenende = (strchr(line, '\n') != NULL);
 
@@ -736,6 +755,17 @@ void ladeAssemblerZeilen(const char *inputFileName) {
             continue;
         }
         zeilennr++;
+
+        // Blockkommentar (```-Zeilen und alles dazwischen) - auch zu lange Zeilen darin sind kein Fehler
+        int istGrenze = istBlockkommentarGrenze(line);
+        if (istGrenze || imBlockkommentar) {
+            if (!hatZeilenende && !feof(inputFile)) vorigeZeileOffen = 1;
+            if (istGrenze) {
+                imBlockkommentar = !imBlockkommentar;
+                if (imBlockkommentar) blockkommentarStart = zeilennr;
+            }
+            continue;
+        }
 
         if (*line == '\0' || strcmp(line, "\n") == 0) {
             continue;
@@ -766,6 +796,11 @@ void ladeAssemblerZeilen(const char *inputFileName) {
         }
     }
     fclose(inputFile); 
+
+    if (imBlockkommentar) {
+        PRINT_FEHLER("Zeile %d der Quelldatei: Der Blockkommentar (```) wird bis zum Dateiende nicht geschlossen.", blockkommentarStart);
+        is_error = 1;
+    }
 
     //printAssemblerzeilenArray() ;
 }
@@ -1797,7 +1832,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
             }
 
             // Label des Makroaufrufs: Hat die erste erzeugte Anweisung kein eigenes Label, entfaellt die
-            // equ-Zeile und die erste Anweisung erhaelt das Label des Aufrufs. (Nicht bei equ/abs/start/end,
+            // equ-Zeile und die erste Anweisung erhaelt das Label des Aufrufs. (Nicht bei equ/spa/abs/start/end,
             // dort wuerde das Label sonst einen anderen Wert als die Adresse bekommen.)
             if (equIndex >= 0) {
                 int erste = -1;
@@ -1808,6 +1843,7 @@ lineElements* loeseMacroAuf(macroDefinitionen *macros, int *macroCount, char *ak
                 }
                 if (erste >= 0 && result[erste].sp1[0] == '\0' && result[erste].sp2[0] != '\0' &&
                     strncmp(result[erste].sp2, "equ", 3) != 0 &&
+                    strcmp(result[erste].sp2, "spa") != 0 &&
                     strcmp(result[erste].sp2, "abs") != 0 &&
                     strcmp(result[erste].sp2, "start") != 0 &&
                     strcmp(result[erste].sp2, "end") != 0) {
@@ -2759,12 +2795,12 @@ int macroIfAufloesen(lineElements *ergebnis, int *imIf, int * inBedingung) {
 int isKeywordMatch(const char *token) {
     static const char *keywords[] = {
         "start", "equ", "abs", "end", "dw", "da", "dt",
-        "dto", "dtm", "dz", "dbn", "db", "equ10", "equ40", "equ100"
+        "dto", "dtm", "dz", "dbn", "db", "equ10", "equ40", "equ100", "spa"
     };
     if (!token) return 1;  // Falls token NULL ist, nicht zutreffend
 
     // Schrittweise Prüfung der Schlüsselwörter
-    int keyword_count = 15;
+    int keyword_count = (int)(sizeof(keywords) / sizeof(keywords[0]));
     for (size_t i = 0; i < keyword_count; i++) {
         if (strcmp(token, keywords[i]) == 0) {
             return 0;  // Treffer
@@ -2857,6 +2893,52 @@ static int pruefeDbOperand(const char *operation, const char *operand, long *wer
     return 1;
 }
 
+// spa (Definition Absolute Sektoradresse):  [<symbol>] spa <oktalzahl> | <dezimalzahl>   (00 ... 77 oktal)
+// Prueft den Operanden: oktalzahl = fuehrende 0, nur Ziffern 0-7; dezimalzahl = [+] Ziffer 1-9, danach
+// Ziffern 0-9. Der Wert muss im Bereich 0 ... 077 (= 63 dezimal) liegen, weil er die rechten beiden
+// Oktalziffern der Adresse ersetzt. Symbole und Ausdruecke sind nicht zulaessig.
+// Rueckgabe 1 = gueltig (Wert in *wert), 0 = ungueltig (Text in meldung).
+static int pruefeSpaOperand(const char *operand, long *wert, char *meldung, size_t groesse) {
+    const char *p = (operand != NULL) ? operand : "";
+    if (*p == '\0') {
+        snprintf(meldung, groesse, "spa: Operand fehlt (erwartet wird eine Zahl von 00 bis 77 oktal).");
+        return 0;
+    }
+    int oktal = (p[0] == '0');
+    const char *q = p;
+    if (!oktal && *q == '+') q++;
+    int gueltig = (*q != '\0');
+    if (oktal) {
+        for (; *q; q++) if (*q < '0' || *q > '7') { gueltig = 0; break; }
+    } else {
+        if (*q < '1' || *q > '9') gueltig = 0;
+        for (; gueltig && *q; q++) if (*q < '0' || *q > '9') gueltig = 0;
+    }
+    if (!gueltig) {
+        snprintf(meldung, groesse,
+                 "spa: Operand \"%s\" ist keine gültige Zahl (Oktalzahl mit führender 0 oder Dezimalzahl).",
+                 operand);
+        return 0;
+    }
+    errno = 0;
+    long v = strtol(p, NULL, oktal ? 8 : 10);
+    if (errno == ERANGE || v < 0 || v > 077) {
+        snprintf(meldung, groesse,
+                 "spa: Operand \"%s\" liegt außerhalb des Bereichs 00 bis 77 oktal (0 bis 63 dezimal).",
+                 operand);
+        return 0;
+    }
+    *wert = v;
+    return 1;
+}
+
+// spa verhaelt sich wie ein equ mit einer Adresse, bei der die rechten beiden Oktalziffern des aktuellen
+// Befehlszaehlers durch den Operanden ersetzt sind (Beispiel: Zaehler 0256, spa 020 ==> equ 0220).
+// Der Wert kann dabei kleiner sein als der Zaehler (0277 ==> 0220); der Zaehler wird dann zurueckgesetzt.
+static unsigned int spaAdresse(unsigned int befehlszaehler, long wert) {
+    return (befehlszaehler & ~077u) | ((unsigned int)wert & 077u);
+}
+
 // Baut aus den Zeilenelementen den Text der Quellzeile fuer Fehlermeldungen (Pass 1 hat keine
 // fertige Zeile; frueher erschien dort "in Zeile: ``").
 static void baueMeldeZeile(char *ziel, size_t groesse, const lineElements *z) {
@@ -2914,11 +2996,38 @@ void pass1(char *symbolLogFile) {
             is_error1 = 1;
         }
 
+        // dw: Der Operand ist ein <werteausdruck> (Doku 3.3.3). Ein Literal (#... oder @...) ist eine
+        // relative Adresse und damit kein zulaessiger Operand von dw; Adressen schreibt man mit da.
+        // Zulaessig bleiben paarweise Differenzen von Adressen, auch mehrere (dw ende-anfang, dw a-b+c-d,
+        // auch mit Literalsymbolen wie dw l0002-l0001); ein einzelnes Literalsymbol (dw l0001) meldet
+        // Pass 3 als relativ.
+        if ( strcmp(lineAsmAufgeloest[i].sp2, "dw") == 0 &&
+             (lineAsmAufgeloest[i].sp3[0] == '#' || lineAsmAufgeloest[i].sp3[0] == '@') ) {
+            baueMeldeZeile(line, sizeof(line), &lineAsmAufgeloest[i]);
+            printAdressError(lineAsmAufgeloest[i].sp3, "Operand", "ist ein Literal und damit eine relative Adresse; dw erwartet einen <werteausdruck> (Adressen mit da schreiben)", line);
+            MELDE_FEHLER_P1("Operand %s ist bei dw nicht zulaessig: ein Literal ist eine relative Adresse (Adressen mit da schreiben).", lineAsmAufgeloest[i].sp3);
+            is_error1 = 1;
+        }
+
+        // spa: Der Operand ist eine Zahl von 00 bis 77 oktal. Ein Literal (#... oder @...) ist eine Adresse
+        // bzw. ein Wort im Literalbereich und damit kein zulaessiger Operand.
+        if ( strcmp(lineAsmAufgeloest[i].sp2, "spa") == 0 &&
+             (lineAsmAufgeloest[i].sp3[0] == '#' || lineAsmAufgeloest[i].sp3[0] == '@') ) {
+            baueMeldeZeile(line, sizeof(line), &lineAsmAufgeloest[i]);
+            printAdressError(lineAsmAufgeloest[i].sp3, "Operand", "ist ein Literal; spa erwartet eine Zahl von 00 bis 77 oktal", line);
+            MELDE_FEHLER_P1("Operand %s ist bei spa nicht zulaessig: erwartet wird eine Zahl von 00 bis 77 oktal.", lineAsmAufgeloest[i].sp3);
+            is_error1 = 1;
+        }
+
         // irgendwo ein Literal enthalten ?
         // Nicht bei dt/dto/dtm: Dort ist der Operand ein Text; ein '#' innerhalb des Textes ist ein
         // Textzeichen, ein fuehrendes '#' wird oben als Fehler gemeldet (dt # schrieb frueher "l0001"),
         // ein '@' wird von der Zeichenpruefung in Pass 3 gemeldet.
+        // Nicht bei dw: Ein Literal als Operand von dw wird oben als Fehler gemeldet.
+        // Nicht bei spa: Ein Literal als Operand von spa wird oben als Fehler gemeldet.
         if ( !istTextAnweisung(lineAsmAufgeloest[i].sp2) &&
+             strcmp(lineAsmAufgeloest[i].sp2, "dw") != 0 &&
+             strcmp(lineAsmAufgeloest[i].sp2, "spa") != 0 &&
              (lineAsmAufgeloest[i].sp3[0] == '#' || lineAsmAufgeloest[i].sp3[0] == '@')) {
             char oldName[256]="";
             char literalValue[256];
@@ -3323,6 +3432,23 @@ void pass2(char *symbolLogFile, char *symFileName) {
             }
         }
 
+        // spa: wie equ, aber der Wert ist der Befehlszaehler mit ersetzten rechten beiden Oktalziffern.
+        // Das Label erhaelt die so berechnete Adresse (wie bei equ *).
+        if (strcmp(operation, "spa") == 0) {
+            long spaWert = 0;
+            if ( pruefeSpaOperand(operand, &spaWert, message, sizeof(message)) ) {
+                unsigned int address = spaAdresse(programCounter, spaWert);
+                programCounter = address;
+                if ( isValidLabel(label) ) {
+                    addSymbol(label, address, relativAdresse, operation, operand, 15, i);
+                }
+                relativAdresse = programCounter;
+            } else {
+                is_error2 = 1;
+                MELDE_FEHLER_P2(i, message );
+            }
+        }
+
         if (operation && strcmp(operation, "abs") == 0) {
             if (operand) {
                 raAdr=relativAdresse;
@@ -3610,6 +3736,7 @@ void pass2(char *symbolLogFile, char *symFileName) {
         int getSymbolAddress(char *token) {
             for (int i = 0; i < symbolCount; i++) {
                 if (strcmp(symbolTable[i].symbol, token) == 0) {
+                    symbolTable[i].verwendet = 1;  // Verwendung in einem Ausdruck (-WARN=SYM)
                     return symbolTable[i].address; // Rückgabe der Adresse des Symbols
                 }
             }
@@ -3678,28 +3805,11 @@ void pass2(char *symbolLogFile, char *symFileName) {
 
     resolveSymbols();
 
-    // `dw <literal>` in einer Zeile OHNE Label (Doku 3.3: "Speichert die <adresse> von
-    // <literalsymbol> auf dem aktuellen <speicherplatz>").
-    //
-    // resolveSymbols() ersetzt den Literalnamen im Operanden (z. B. "l0001") nur dann durch die
-    // Adresse des Literals, wenn die dw-Zeile ein Label hat, denn der "spaete Symbol"-Eintrag
-    // haengt an addSymbol(label, ...). Ohne Label blieb "l0001" im Operanden stehen, und Pass 3
-    // meldete "Operand l0001 ist ungueltig" (rc 16), obwohl `dw #5` und `dw @a` zulaessig sind.
-    //
-    // Hier wird derselbe Ersatztext (12 Oktalziffern, keine Hauptleitadresse) nachgetragen, den
-    // resolveSymbols() bei einer Zeile mit Label erzeugt. Ersetzt werden nur echte Literalnamen
-    // aus der Literaltabelle. Andere Symbole im Operanden von dw (`dw a`, `dw a-b`, `dw x1+1`) bleiben
-    // unveraendert stehen und werden in Pass 3 nach den Regeln von Doku 3.3 ausgewertet (evaluateValue).
-    for (int li = 0; li < lineCountAsmAufgeloest; li++) {
-        if (strcmp(lineAsmAufgeloest[li].sp2, "dw") != 0) continue;
-        if (!isLiteralInTable(lineAsmAufgeloest[li].sp3)) continue;
-        for (int si = 0; si < symbolCount; si++) {
-            if (strcmp(symbolTable[si].symbol, lineAsmAufgeloest[li].sp3) == 0) {
-                sprintf(lineAsmAufgeloest[li].sp3, "%012o", (unsigned int)symbolTable[si].address);
-                break;
-            }
-        }
-    }
+    // Der Operand von dw ist ein <werteausdruck> (Doku 3.3.3); Symbole darin, auch Literalsymbole
+    // (l0001), bleiben stehen und werden in Pass 3 nach den Regeln von Doku 3.3.3 ausgewertet
+    // (evaluateValue): eine einzelne Adresse ist relativ und damit ein Fehler, paarweise Differenzen
+    // von Adressen (auch mehrfach) sind zulaessig. Frueher wurde hier ein einzelnes Literalsymbol durch seine Adresse
+    // ersetzt; dw #5 und dw @a ergaben dadurch ohne Meldung die Adresse der Literalzelle.
 
     fprintf(symbolLog, "Symboltabelle\n\n");
     fprintf(symbolLog, "Symbol                             | RelAddr |    Adresse      | original Operation\n");
@@ -3745,6 +3855,7 @@ static const char *evaluateValueGrund = NULL;
 static int sucheSymbolFuerWert(const char *name, long long *wert, int *absolut) {
     for (int i = 0; i < symbolCount; i++) {
         if (strcmp(symbolTable[i].symbol, name) == 0) {
+            symbolTable[i].verwendet = 1;   // Verwendung in einem Ausdruck (-WARN=SYM)
             *wert = (long long)(symbolTable[i].address & ~BITMASK);
             *absolut = sucheInAbsTabelle(name) ? 1 : 0;
             return 1;
@@ -3756,7 +3867,8 @@ static int sucheSymbolFuerWert(const char *name, long long *wert, int *absolut) 
 // Wertet den <werteausdruck> von dw aus (Doku 3.3).
 //   Zahlen:    Oktalzahl (fuehrende 0) oder Dezimalzahl.
 //   Symbole:   abs-Symbole sind erlaubt. Relative Symbole (Marken, equ-Symbole) sind nur erlaubt, wenn sich ihre
-//              Verschiebung aufhebt: die Differenz zweier symbolischer Adressen ist absolut und zulaessig.
+//              Verschiebung aufhebt: paarweise Differenzen symbolischer Adressen, auch mehrfach (a-b+c-d),
+//              sind absolut und zulaessig.
 //              Eine einzelne symbolische Adresse (Ergebnis relativ) ist nicht zulaessig; Adressen schreibt man mit da.
 //   Rechnen:   * und / vor + und -, links nach rechts. Relative Symbole duerfen nicht multipliziert oder dividiert werden.
 // Jedes Symbol wird mit seinem Verschiebungsgrad gefuehrt: abs-Symbole und Zahlen 0, relative Symbole +1;
@@ -3892,7 +4004,7 @@ long long int evaluateValue(char *operand, int *errorFlag) {
 
     // Ergebnis relativ (z. B. eine einzelne symbolische Adresse, "a+1", "a+b"): nicht zulaessig.
     if (totalGrad != 0) {
-        evaluateValueGrund = "Ergebnis ist relativ; Adressen mit da schreiben, erlaubt ist nur die Differenz zweier Adressen";
+        evaluateValueGrund = "Ergebnis ist relativ; Adressen mit da schreiben, erlaubt sind nur paarweise Differenzen von Adressen";
         *errorFlag = 1;
         return 0;
     }
@@ -3903,6 +4015,7 @@ long long int evaluateValue(char *operand, int *errorFlag) {
 int getSymbolAddress(char *operand) {
     for (int i = 0; i < symbolCount; i++) {
         if (strcmp(symbolTable[i].symbol, operand) == 0) {
+            symbolTable[i].verwendet = 1;   // Verwendung in einem Operanden (-WARN=SYM)
             return symbolTable[i].address;
         }
     }
@@ -4118,9 +4231,10 @@ unsigned int evaluateAddress(char *operand, char *line, int *errorFlag, int *raA
 
 
 // Prueft den <adressausdruck> von da (und von @-Literalen, die als da-Zeile erzeugt werden) gemaess
-// Doku 3.4: kein Vorzeichen (negative Adressen gibt es nicht), hoechstens ein Symbol, keine fehlenden
-// Operanden (z. B. "5-" oder "x+*2"). Der Wertebereich 00000 bis 07777 wird nach der Auswertung
-// geprueft. Eine Sternadresse (*) wird von sternadresseBearbeiten geprueft.
+// Doku 3.2 (<adressausdruck>): kein Vorzeichen (negative Adressen gibt es nicht), keine fehlenden
+// Operanden (z. B. "5-" oder "x+*2"). Die Zahl der Symbole ist nicht begrenzt (die Doku nennt seit der
+// erneuerten .odt keine Obergrenze mehr, vgl. 3.3.9: Ausdruck mit abs-Symbol). Der Wertebereich
+// 00000 bis 07777 wird nach der Auswertung geprueft. Eine Sternadresse (*) wird von sternadresseBearbeiten geprueft.
 // Rueckgabe 1 = in Ordnung, 0 = Fehler (Text in meldung).
 static int pruefeAdressausdruck(const char *operand, char *meldung, size_t groesse) {
     const char *p = (operand != NULL) ? operand : "";
@@ -4134,7 +4248,6 @@ static int pruefeAdressausdruck(const char *operand, char *meldung, size_t groes
         snprintf(meldung, groesse, "Der Adressausdruck darf nicht mit einem Vorzeichen beginnen (Adressen sind 00000 bis 07777).");
         return 0;
     }
-    int symbole = 0;
     for (;;) {
         char token[MAX_LINE_LENGTH];
         int n = 0;
@@ -4148,17 +4261,12 @@ static int pruefeAdressausdruck(const char *operand, char *meldung, size_t groes
             snprintf(meldung, groesse, "Im Adressausdruck fehlt ein Operand (zwei Operatoren hintereinander oder Operator am Ende).");
             return 0;
         }
-        if (isSymbol(token)) symbole++;
         if (*p == '\0') break;
         p++;                       // Operator ueberspringen
         if (*p == '\0') {
             snprintf(meldung, groesse, "Im Adressausdruck fehlt ein Operand (zwei Operatoren hintereinander oder Operator am Ende).");
             return 0;
         }
-    }
-    if (symbole > 1) {
-        snprintf(meldung, groesse, "Der Adressausdruck enthält mehr als ein Symbol (höchstens ein Symbol ist erlaubt).");
-        return 0;
     }
     return 1;
 }
@@ -4926,7 +5034,8 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
  
         if (strlen(operation) > 0) {
             if (strcmp(operation, "start") == 0) {
-                if ( startAdresse != 0) {
+                // Bei LEITADRESSE 00 (absolut codiertes Programm) wird kein Leitbefehl (Hauptleitadresse) vorangestellt.
+                if ( startAdresse != 0 && leitadresseKennzeichen != 0) {
                     sprintf(buffer, "      21 0000 %04o", startAdresse);
                     schreibeObjZeile(machineCodeFile, buffer);
                     copyAndIncrementLineElementsX(i,buffer);
@@ -4955,6 +5064,33 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 } else {
                     printHell = 1;
                     is_error3=1;
+                }
+
+            } else if (strcmp(operation, "spa") == 0) {
+                // Wirkt wie equ <adresse>: Die rechten beiden Oktalziffern des Befehlszaehlers werden durch den
+                // Operanden ersetzt. Objektcode: Kennzeichenzeile 20 0000 <adresse>; im Listing und in der .mqo
+                // steht statt des Operanden die berechnete Adresse (wie bei equ).
+                long spaWert = 0;
+                char spaMeldung[512];
+                if ( pruefeSpaOperand(operand, &spaWert, spaMeldung, sizeof(spaMeldung)) ) {
+                    relativadresse = (int)spaAdresse((unsigned int)programCounter, spaWert);
+                    sprintf(buffer, "      20 0000 %04o", relativadresse);
+                    schreibeObjZeile(machineCodeFile, buffer);
+                    snprintf(lineAsmAufgeloest[i].sp3, sizeof(lineAsmAufgeloest[i].sp3), "%05o", relativadresse);
+                    sprintf(line, formatString,
+                            lineAsmAufgeloest[i].sp1,
+                            lineAsmAufgeloest[i].sp2,
+                            lineAsmAufgeloest[i].sp3,
+                            lineAsmAufgeloest[i].sp4);
+                    line[strcspn(line, "\r")] = '\0';
+                    removeNewlines(line);
+                    fprintf(hilfsFile,"%s\n", line);
+                    copyAndIncrementLineElementsX(i,buffer);
+                    programCounter = relativadresse;
+                } else {
+                    outAdressError(operand, "Operand", "ist ungültig (spa erwartet eine Zahl von 00 bis 77 oktal)");
+                    printHell = 1;
+                    is_error3 = 1;
                 }
 
             } else if (strcmp(operation, "abs") == 0) {
@@ -5218,9 +5354,10 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
             }
         }
 
-        // Belegungspruefung: equ/start setzen nur den Zaehler, abs/end/db belegen keine Zelle.
+        // Belegungspruefung: equ/spa/start setzen nur den Zaehler, abs/end/db belegen keine Zelle.
         if ( programCounter > pcVorher
              && strstr(operation, "equ") == NULL
+             && strcmp(operation, "spa") != 0
              && strcmp(operation, "start") != 0
              && strcmp(operation, "abs") != 0
              && strcmp(operation, "end") != 0
@@ -5243,7 +5380,132 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
 // ------------------------------------------
 
 void printUsage(const char *programName) {
-    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei\n", programName);
+    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-WARN=SYM]\n", programName);
+    printf("  -WARN=SYM  Warnt vor Symbolen, die definiert, aber nirgends verwendet werden.\n");
+}
+
+// ------------------------------------------
+// Warnoption -WARN=SYM: unbenutzte Symbole melden
+// ------------------------------------------
+
+static int warnSym = 0;   // 1 = Aufruf mit -WARN=SYM
+extern char inputFileName[1024];   // wird weiter unten definiert
+
+// Vergleicht die ersten n Zeichen ohne Beruecksichtigung der Gross-/Kleinschreibung.
+static int beginntOhneGrossKlein(const char *text, const char *praefix) {
+    while (*praefix) {
+        if (toupper((unsigned char)*text) != toupper((unsigned char)*praefix)) return 0;
+        text++; praefix++;
+    }
+    return 1;
+}
+
+// Wertet alle Parameter der Form -WARN=<liste> aus. <liste> sind durch Komma getrennte Schluesselwoerter
+// (Gross-/Kleinschreibung egal). Bisher gibt es nur SYM.
+static void verarbeiteWarnOptionen(int argc, char *argv[]) {
+    for (int i = 1; i < argc; i++) {
+        if (argv[i] == NULL || !beginntOhneGrossKlein(argv[i], "-WARN=")) continue;
+        char liste[256];
+        strncpy(liste, argv[i] + 6, sizeof(liste) - 1);
+        liste[sizeof(liste) - 1] = '\0';
+        for (char *wort = strtok(liste, ","); wort != NULL; wort = strtok(NULL, ",")) {
+            if (gleichOhneGrossKlein(wort, "SYM")) {
+                warnSym = 1;
+            } else {
+                PRINT_WARNUNG("Unbekannter Wert '%s' bei -WARN= (erlaubt: SYM).", wort);
+            }
+        }
+    }
+}
+
+// Vom Assembler selbst erzeugte Symbole sind keine Benutzersymbole und werden nicht gemeldet:
+//   - Literalsymbole (l0001, l0002, ...) aus #- und @-Literalen,
+//   - Makro-Labels (ML0001 + dreibuchstabige Kennung, z. B. ML0004MTA), die aus Makroexpansionen stammen.
+static int istErzeugtesSymbol(const char *name) {
+    if (isLiteralInTable(name)) return 1;
+    if (strlen(name) == 9 && strncmp(name, "ML", 2) == 0) {
+        int ok = 1;
+        for (int k = 2; k < 6; k++) if (!isdigit((unsigned char)name[k])) ok = 0;
+        for (int k = 6; k < 9; k++) if (!isupper((unsigned char)name[k])) ok = 0;
+        if (ok) return 1;
+    }
+    return 0;
+}
+
+// Sucht die Zeile im Quelltext, in der das Symbol als Label (erstes Wort in Spalte 1) definiert wird.
+// Rueckgabe: Zeilennummer (ab 1) oder 0, wenn nicht gefunden (z. B. Label stammt aus einem Makro).
+static int findeDefinitionszeile(const char *name) {
+    FILE *f = fopen(inputFileName, "r");
+    if (!f) return 0;
+    char zeile[2048];
+    int nr = 0, gefunden = 0;
+    size_t len = strlen(name);
+    while (fgets(zeile, sizeof(zeile), f)) {
+        nr++;
+        if (zeile[0] == ' ' || zeile[0] == '\t' || zeile[0] == ';' || zeile[0] == '#' ||
+            zeile[0] == '\n' || zeile[0] == '\r' || zeile[0] == '\0') continue;
+        if (strncmp(zeile, name, len) == 0 &&
+            (zeile[len] == ':' || zeile[len] == ' ' || zeile[len] == '\t' || zeile[len] == '\n' || zeile[len] == '\r' || zeile[len] == '\0')) {
+            gefunden = 1;
+            break;
+        }
+    }
+    fclose(f);
+    return gefunden ? nr : 0;
+}
+
+typedef struct {
+    int zeile;      // Definitionszeile im Quelltext, 0 = unbekannt
+    int index;      // Index in symbolTable
+} UnbenutztesSymbol;
+
+static int vergleicheUnbenutzte(const void *a, const void *b) {
+    const UnbenutztesSymbol *x = (const UnbenutztesSymbol *)a;
+    const UnbenutztesSymbol *y = (const UnbenutztesSymbol *)b;
+    // bekannte Zeilen zuerst in Quelltextreihenfolge, unbekannte danach nach Wert
+    if ((x->zeile == 0) != (y->zeile == 0)) return (x->zeile == 0) ? 1 : -1;
+    if (x->zeile != y->zeile) return x->zeile - y->zeile;
+    int ax = symbolTable[x->index].address & ~BITMASK;
+    int ay = symbolTable[y->index].address & ~BITMASK;
+    return ax - ay;
+}
+
+// Wird nach erfolgreichem Pass 3 aufgerufen (alle Operanden sind dann ausgewertet): meldet jedes Symbol,
+// das definiert, aber in keinem Operanden und keinem Ausdruck verwendet wurde.
+// Als Verwendung zaehlt auch das Vorkommen im Ausdruck eines anderen Symbols (z. B. a: equ b+1 verwendet b).
+static void pruefeUnbenutzteSymbole(void) {
+    static UnbenutztesSymbol liste[MAX_SYMBOLS];
+    int anzahl = 0;
+    for (int i = 0; i < symbolCount; i++) {
+        if (symbolTable[i].verwendet) continue;
+        if (istErzeugtesSymbol(symbolTable[i].symbol)) continue;
+        liste[anzahl].index = i;
+        liste[anzahl].zeile = findeDefinitionszeile(symbolTable[i].symbol);
+        anzahl++;
+    }
+    qsort(liste, anzahl, sizeof(liste[0]), vergleicheUnbenutzte);
+
+    fflush(stdout);   // stdout (gepuffert) und stderr (Warnungen) sollen auch bei Umleitung in der richtigen Reihenfolge erscheinen
+    printf("Pruefung auf unbenutzte Symbole (-WARN=SYM)\n");
+    fflush(stdout);
+    const char *quelle = strrchr(inputFileName, '/');
+    quelle = quelle ? quelle + 1 : inputFileName;
+    for (int k = 0; k < anzahl; k++) {
+        const Symbol *sym = &symbolTable[liste[k].index];
+        if (liste[k].zeile > 0) {
+            PRINT_WARNUNG("Symbol '%s' (%04o, %s Zeile %d) ist definiert, wird aber nie verwendet.",
+                          sym->symbol, (unsigned)(sym->address & ~BITMASK), quelle, liste[k].zeile);
+        } else {
+            PRINT_WARNUNG("Symbol '%s' (%04o) ist definiert, wird aber nie verwendet.",
+                          sym->symbol, (unsigned)(sym->address & ~BITMASK));
+        }
+    }
+    if (anzahl == 0) {
+        printf("Keine unbenutzten Symbole.\n");
+    } else {
+        printf(anzahl == 1 ? "1 unbenutztes Symbol.\n" : "%d unbenutzte Symbole.\n", anzahl);
+    }
+    printf("\n");
 }
 void greetings() {
     printf("C8205 Assembler C82aas Version 1.00\n");
@@ -5288,6 +5550,7 @@ int main(int argc, char *argv[]) {
     }
 
     greetings();
+    verarbeiteWarnOptionen(argc, argv);
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0) { 
             printUsage(argv[0]);
@@ -5399,6 +5662,10 @@ int main(int argc, char *argv[]) {
             return RC_FEHLER;
         }
         if (is_error == 0) {
+            if (warnSym) {
+                printf("\n");
+                pruefeUnbenutzteSymbole();
+            }
             printf("\n");
             printf("Ausgabe als Minimalprogramm-Objektdatei nach: %s\n", machineCodeFileName);
             printf("Ausgabe der formatierten Speicherbelegung nach: %s\n", dmpFileName);

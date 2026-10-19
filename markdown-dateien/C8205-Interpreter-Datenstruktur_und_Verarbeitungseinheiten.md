@@ -1,6 +1,6 @@
 # ** Datenstrukturen **
 
-Version: 0.03-002
+Version: 0.03-003
 
 Namensbereiche: Flags, Register, Felder des Befehlswortes sowie die Knoten und
    Konnektoren der Knotentabelle sind getrennte Beschreibungsbereiche. Innerhalb
@@ -142,11 +142,13 @@ Der Rechner selbst ist Hardware. Er wird vom Menschen bedient und arbeitet Befeh
 die räumlich konzentriert am sogenannten Bedienpult angeordnet waren. Im Bedienpult befinden sich Lampen,
 die den aktuellen Zustand aller Flags anzeigen, sowie Schalter, mit denen ein Mensch diese Flags setzen
 oder löschen kann. Der Rechner reagiert als elektronische Hardware auf den Zustand der Flags; ein Mensch
-kann den Rechner also über die Schalter beeinflussen. Beispiel: Wird der Schalter BS gesetzt, kann der
-Rechner das auswerten, wenn ein entsprechender Befehl es abtestet. Dass BS gesetzt ist, wird im Flag BS
-gespeichert und in der Lampe BS angezeigt. Schalter und Flag desselben Namens (z.B. BS) sind also keine
+kann den Rechner also über die Schalter beeinflussen. Beispiel: Wird der Schalter SP gesetzt, kann der
+Rechner das auswerten, wenn ein entsprechender Befehl es abtestet. Dass SP gesetzt ist, wird im Flag SP
+gespeichert und in der Lampe SP angezeigt. Schalter und Flag desselben Namens (z.B. SP) sind also keine
 zwei verschiedenen Dinge, sondern zwei Seiten derselben Sache: der Schalter ist die Handlung, das Flag
-der gespeicherte Zustand, die Lampe seine Anzeige.
+der gespeicherte Zustand, die Lampe seine Anzeige. Ausnahme ist BS: Der Schalter BS ist nur die Bedingung
+des Befehls "Bedingter Stopp"; das Flag BS wird erst gesetzt, wenn dieser Befehl bei eingerastetem Schalter
+tatsächlich stoppt (s. Flag-Tabelle).
 
 Ein Flag ist ein elektronischer Speicher für den Wert 0 oder 1. Ein Flag setzt seinen Wert nicht selbst,
 sondern wird vom Rechenwerk (RW) oder vom Menschen mittels Schalter mit 0 oder 1 belegt; wer zuletzt

@@ -727,7 +727,7 @@ class Beispiele:
         """Ein Aufruf; liefert (Rückkehrcode, Ausgabe mit gekürzten Pfaden)."""
         if isinstance(tests, str):
             tests = [tests]
-        cmd = [sys.executable, self.interp, '--mdverz', self.md, '--trommel', trommel or self.trommel,
+        cmd = [sys.executable, self.interp, '--MODUS=TEST', '--mdverz', self.md, '--trommel', trommel or self.trommel,
                '--out', os.path.join(self.tmp, out)] + list(extra) + list(tests)
         r = subprocess.run(cmd, cwd=self.tmp, capture_output=True, text=True, stdin=subprocess.DEVNULL)
         text = (r.stdout + r.stderr).replace(self.tmp + '/', '')
@@ -765,7 +765,7 @@ class Beispiele:
 
     def roh(self, args):
         """Aufruf ohne die Vorgaben von lauf() (kein --mdverz/--trommel/--out); liefert (rc, letzte Meldung, Gesamtausgabe)."""
-        cmd = [sys.executable, self.interp] + list(args)
+        cmd = [sys.executable, self.interp, '--MODUS=TEST'] + list(args)
         r = subprocess.run(cmd, cwd=self.tmp, capture_output=True, text=True, stdin=subprocess.DEVNULL)
         text = (r.stdout + r.stderr).replace(self.tmp + '/', '').replace(self.tmp, '.').strip('\n')
         return r.returncode, text
@@ -1167,7 +1167,7 @@ def kurzanleitung(S):
         'fehlerhaft, 2 ungültiger Aufruf). Knotenzeilen im Protokoll erscheinen mit `--knotentest` und '
         '`#PROT STUFE=2` (Kapitel 8).'])
     S += code('$ python3 erzeuge_leere_trommel.py                  # leere Trommel (alle 4096 Zellen 0)\n'
-              '$ python3 c8205_interp.py Tests/0015-030.txt\n'
+              '$ python3 c8205_interp.py --MODUS=TEST Tests/0015-030.txt\n'
               '$ ./c8205_interpreter.sh 0015-030.txt        # Linux/macOS, Protokoll: Test-Protokolle/0015-030.log\n'
               'C:\\> c8205_interpreter.bat 0015-030.txt      # Windows\n'
               '$ ./compute_all_tests.sh                     # Sammellauf über Tests/*.txt (11.1)',
@@ -1327,7 +1327,7 @@ def kap3(S, ex):
     zl = zeilen(out)
     S += [P('Im Beispiel startet `H G R` bei Adresse 0000; dort steht ein Sprung zum Programmanfang. Der echte Lauf '
             'dieses Testauftrags endet mit `Test wahr` (Rückkehrcode %d):' % rc)]
-    S += code('$ python3 c8205_interp.py Tests/asm_0001_bsp_5_16.txt\n' +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST Tests/asm_0001_bsp_5_16.txt\n' +
               kurz(out, zl[:1], [zl[ab(zl, 'Ende:')]], zl[ab(zl, 'Ergebnispruefung'):ab(zl, 'Ergebnispruefung') + 1] +
                    ['Test wahr']))
     S += [P('Die Knotenzahl der Endzeile ist fassungsabhängig (Hinweis in 8.2).', 'cap')]
@@ -1367,7 +1367,7 @@ def kap3(S, ex):
     S += [P('Der Lauf dieses Tests (`Handbuch-Tests/sw-zeile.txt`: drei Unterprogramme geben je ein Zeichen aus) '
             'schreibt die Zeichen A B C nach `SW-Ausgabe/sw-ausgabe.txt`; am Terminal erscheint nur die Diagnose, keine '
             'Schreibwerk-Zeichen:')]
-    S += code('$ python3 c8205_interp.py Handbuch-Tests/sw-zeile.txt\n' +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/sw-zeile.txt\n' +
               kurz(out, zl[:4], ['… (Speicherzeilen 2012 bis 2027) …'],
                    [zl[ab(zl, 'Ende:')]], ['Test wahr']) + '\n\n$ cat SW-Ausgabe/sw-ausgabe.txt\n' + ausg)
     S += note('hinweis', 'Die Ausgabe ist `ABC` oder `abc`: Die Zeichenlage KB/GB des Schreibwerks wird beim Start '
@@ -1413,7 +1413,7 @@ def kap3_6(S, ex):
     S += [P('Echtes Beispiel `Tests/ac-001_AC_vorbelegt.txt` (die `#DOK`-Texte sind gekürzt): Der AC startet mit 100 '
             '(oktal), die Addition ohne Löschen ergibt 145 (Rückkehrcode %d):' % rc)]
     S += code(kompakt(ex.text('Tests/ac-001_AC_vorbelegt.txt')) +
-              '\n\n$ python3 c8205_interp.py Tests/ac-001_AC_vorbelegt.txt\n' +
+              '\n\n$ python3 c8205_interp.py --MODUS=TEST Tests/ac-001_AC_vorbelegt.txt\n' +
               kurz(out, zl[:1], [zl[ab(zl, 'Ende:')]], ['Test wahr']))
     ex.leere_trommel()
     rc, out = ex.lauf('Tests/acbz-002_BZ_vorbelegt_M_E.txt')
@@ -1422,7 +1422,7 @@ def kap3_6(S, ex):
             'BZ auf 0011, `R` entnimmt den ersten Befehl der Zelle 0011 (Stopp), daher endet der Lauf mit BZ=0012 '
             '(Rückkehrcode %d):' % rc)]
     S += code(kompakt(ex.text('Tests/acbz-002_BZ_vorbelegt_M_E.txt')) +
-              '\n\n$ python3 c8205_interp.py Tests/acbz-002_BZ_vorbelegt_M_E.txt\n' +
+              '\n\n$ python3 c8205_interp.py --MODUS=TEST Tests/acbz-002_BZ_vorbelegt_M_E.txt\n' +
               kurz(out, zl[:1], [zl[ab(zl, 'Ende:')]], ['Test wahr']))
     S += [P('Weitere Tests: `ac-001`, `bz-001_BZ_vorbelegt_G` (`#BZ=` zusammen mit `G`), `acbz-001`, `acbz-002` und '
             '`acbz-003_AC_Ue_E_Transport` in `Tests/`.', 'cap')]
@@ -1489,10 +1489,10 @@ def kap3_5(S, ex):
     S += [P('Echtes Beispiel: `bsp_seite_42_025-sw-ausgabe` prüft die Zellen 2024 bis 2027 auf 0, ohne sie zu '
             'belegen. Auf leerer Trommel ist er `Test wahr` (Rückkehrcode %d); nach `bsp_seite_40`, das 2024 bis 2026 '
             'belegt, ist er `Test falsch` (Rückkehrcode %d):' % (rc1, rc2))]
-    S += code('$ python3 erzeuge_leere_trommel.py\n$ python3 c8205_interp.py Tests/bsp_seite_42_025-sw-ausgabe.test\n'
+    S += code('$ python3 erzeuge_leere_trommel.py\n$ python3 c8205_interp.py --MODUS=TEST Tests/bsp_seite_42_025-sw-ausgabe.test\n'
               '…\nTest wahr                                   # Rückkehrcode %d\n\n'
-              '$ python3 erzeuge_leere_trommel.py\n$ python3 c8205_interp.py Tests/bsp_seite_40.test\n'
-              '$ python3 c8205_interp.py Tests/bsp_seite_42_025-sw-ausgabe.test\n…\n%s\n…\nTest falsch                                  '
+              '$ python3 erzeuge_leere_trommel.py\n$ python3 c8205_interp.py --MODUS=TEST Tests/bsp_seite_40.test\n'
+              '$ python3 c8205_interp.py --MODUS=TEST Tests/bsp_seite_42_025-sw-ausgabe.test\n…\n%s\n…\nTest falsch                                  '
               '# Rückkehrcode %d' % (rc1, '\n'.join(fehl), rc2))
     S += [P('**Claude-Interpreter.** Er hat keine Trommeldatei. Er legt nur die Zeilen des Trommelabschnitts an; '
             'Zellen, die der Test nicht nennt, gelten als 0, entsprechend einem Python-Lauf auf leerer Trommel. Für die '
@@ -1516,7 +1516,7 @@ def kap4(S, ex):
     S += tbl([
         ['Schritt', 'Aktion', 'Wirkung auf Register und Flags'],
         ['1', 'Schalter H-R → „H“', 'Flag H := 1'],
-        ['2', 'Taste „G“', 'alle Flags außer H, T, BS und SP werden gelöscht, danach US := 1; BR := „0000 000“ '
+        ['2', 'Taste „G“', 'alle Flags außer H, T und SP werden gelöscht (auch BS), danach US := 1; BR := „0000 000“ '
                            '(unbedingter Sprung nach Speicherplatz 0000, AR := 0000, OR := 000); K0 angewählt, SW nicht '
                            'gedrückt → Flag T := 1; **BZ und AC bleiben unverändert** (G hat keinen Einfluss auf den '
                            'Befehlszähler). ⟨BZ⟩ := 0 ist erst das Ergebnis der Ausführung des von G aufgestellten '
@@ -1536,7 +1536,7 @@ def kap4(S, ex):
     S += tbl([
         ['Schritt', 'Aktion', 'Wirkung auf Register und Flags'],
         ['1', 'H-R → „H“', 'Flag H := 1'],
-        ['2', 'Taste „G“', 'alle Flags außer H, T, BS, SP := 0; BR := „0000 000“; K0 angewählt, T := 1; BZ und AC '
+        ['2', 'Taste „G“', 'alle Flags außer H, T, SP := 0 (auch BS); BR := „0000 000“; K0 angewählt, T := 1; BZ und AC '
                            'bleiben unverändert (der Sprung nach 0000 des aufgestellten BR findet hier nicht statt, '
                            'weil `M+ E … E M-` folgt, 4.1)'],
         ['3', '„M“ gedrückt halten', 'OR := OR ∨ 025 → BR := „0000 025“ (Sprung mit Rückkehrabsicht, Adresse 0000)'],
@@ -1593,8 +1593,9 @@ def kap4(S, ex):
          'G (OR = 000) dagegen 240. US entsteht in einer Tastenfolge durch G und wird durch ST oder R gelöscht; ohne '
          'vorheriges G steht der Rechner zu Beginn nicht im Stopp.'],
         ['BS, SP',
-         'einrastende Schalter. BS=1/SP=1 setzen das gleichnamige Flag auf 1, BS=0/SP=0 auf 0; mehr geschieht nicht. '
-         'Da die Schalter mechanisch einrasten, lässt G sie unverändert (wie H). Nicht an H gebunden und in jeder '
+         'einrastende Schalter. SP=1/SP=0 setzen das Flag SP auf 1 bzw. 0; mehr geschieht nicht. BS=1/BS=0 legen nur '
+         'die Schalterstellung BS fest, das Flag BS wird erst 1, wenn ein bedingter Stopp wirksam wird. '
+         'Da die Schalter mechanisch einrasten, lässt G sie unverändert (wie H); das Flag BS löscht G. Nicht an H gebunden und in jeder '
          'Reihenfolge zu den anderen Tasten zulässig.'],
         ['E (ohne M)',
          'Phase IV und I, dann Phase II und III, danach Halt (Halt-Punkt = Eintritt in Knoten 19). Nur bei gesetztem H '
@@ -1634,7 +1635,7 @@ def kap4(S, ex):
             'unberührt. Sie dienen der Illustration, sie gehören nicht zum Teststart.')]
     S += tbl([
         ['Fall', 'Folge', 'Wirkung'],
-        ['1', '`H G`', 'Flags außer H, T, BS, SP := 0 (damit auch FÜ, FE gelöscht), US := 1; BR := „0000 000“; K0, '
+        ['1', '`H G`', 'Flags außer H, T, SP := 0 (damit auch FÜ, FE, BS gelöscht), US := 1; BR := „0000 000“; K0, '
                        'T := 1; BZ unverändert. Ohne R bleibt der Automat im Halt – das Programm ist unterbrochen.'],
         ['2', '`ST`', 'nur im Stopp (BS oder US) wirksam: OR := OR ∨ 240, AR bleibt, US := 0; BR aufgestellt, Start bei '
                       'Knoten 19 durch E oder R. H bleibt unberührt.'],
@@ -1724,7 +1725,7 @@ def kap4_6(S, ex):
     S += [P('Formfehler: Ein Wert, der keine Oktalzahl mit 1 bis 4 Ziffern ist (hier `#STARTE 19`), lässt den Test nicht '
             'starten (Rückkehrcode %d):' % rc3)]
     S += code(ex.text('Handbuch-Tests/starte-formfehler.txt') +
-              '\n\n$ python3 c8205_interp.py Handbuch-Tests/starte-formfehler.txt\n' + out3)
+              '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/starte-formfehler.txt\n' + out3)
 
 
 def kap4_7(S, ex):
@@ -1782,7 +1783,7 @@ def kap4_7(S, ex):
     S += [P('Echtes Beispiel 2, Ende (`Tests/int-003_Ue_E.txt`, Rückkehrcode %d): Die letzte Taste ist `E`, nicht `R`; '
             'der Test endet an der Unterbrechungsstelle. Der AC wurde nach 7777 transportiert; die `Prüfungen:` gelten '
             'für diesen Zustand:' % rc2)]
-    S += code(ex.text('Tests/int-003_Ue_E.txt') + '\n\n$ python3 c8205_interp.py Tests/int-003_Ue_E.txt\n' +
+    S += code(ex.text('Tests/int-003_Ue_E.txt') + '\n\n$ python3 c8205_interp.py --MODUS=TEST Tests/int-003_Ue_E.txt\n' +
               kurz(out2, z2[:1], [z2[ab(z2, 'Ende:')]], z2[ab(z2, 'Ergebnispruefung'):ab(z2, 'Ergebnispruefung') + 2],
                    ['Test wahr']))
     S += [P('In `Tests/` liegen dazu `int-001_weiter` und `int-003_Ue_E`.', 'cap')]
@@ -1833,8 +1834,8 @@ def kap5(S, ex):
     zw, zf = zeilen(ow), zeilen(of)
     S += [P('Beispiel: derselbe Lauf, einmal mit richtigem und einmal mit falschem Sollwert (`BZ=0003` statt '
             '`BZ=0004`; `Handbuch-Tests/pruef-wahr.txt` und `pruef-falsch.txt`):')]
-    S += code('$ python3 c8205_interp.py Handbuch-Tests/pruef-wahr.txt\n' + ow + '\n\n'
-              '$ python3 c8205_interp.py Handbuch-Tests/pruef-falsch.txt\n' +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/pruef-wahr.txt\n' + ow + '\n\n'
+              '$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/pruef-falsch.txt\n' +
               '\n'.join(zf[:ab(zf, 'Ende:') + 1] + zf[ab(zf, 'Ergebnispruefung'):ab(zf, 'Ergebnispruefung') + 3]) +
               '\n… (übrige Zeilen wie oben, alle OK)\n' + zf[-1])
     S += [P('Der Interpreter meldet das Ergebnis auch als Rückkehrcode an das Betriebssystem; er bezieht sich immer auf '
@@ -1914,7 +1915,7 @@ def kap5(S, ex):
             '`00110001`, `00110010` und `00100011`. Ende der Testdatei:')]
     S += code('Prüfungen:\nBZ=2014 AC=00002012000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0\n2012: 00000001164\n'
               '...\n2022: 00000000777\n--pruefe-stanzer1 Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt')
-    S += code('$ python3 c8205_interp.py --stanzer1 Stanzer1 Tests/bsp_seite_42_025_stanzer.test\n' +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST --stanzer1 Stanzer1 Tests/bsp_seite_42_025_stanzer.test\n' +
               kurz(os_, zs[:4], ['… (Speicherzeilen 2012 bis 2027) …'], [zs[ab(zs, 'Ende:')]],
                    [zs[ab(zs, 'Ergebnispruefung')], zs[ab(zs, 'BZ:')], '… (übrige Zeilen alle OK)',
                     zs[ab(zs, 'Stanzer 1:')], 'Test wahr']) + '\n\n$ cat Stanzer1/stanzer-ausgabe.txt\n' + st_ausg)
@@ -1967,12 +1968,12 @@ def kap5_5(S, ex):
     if umgesetzt:
         fehl = [l for l in zl if l.rstrip().endswith('FEHLER')]
         S += [P('Das Ergebnis ist `Test falsch`, der Rückkehrcode bleibt %d, dahinter steht der Vermerk:' % rc)]
-        S += code('$ python3 c8205_interp.py Handbuch-Tests/pruef-erwartet-falsch.txt\n' +
+        S += code('$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/pruef-erwartet-falsch.txt\n' +
                   kurz(out, zl[:1], [zl[ab(zl, 'Ende:')]], fehl, zl[ab(zl, 'Test falsch'):]))
     else:
         S += [P('Mit der aktuellen Fassung des Interpreters (%s) endet derselbe Lauf so (Rückkehrcode %d):'
                 % (interp_version(ex.proj), rc))]
-        S += code('$ python3 c8205_interp.py Handbuch-Tests/pruef-erwartet-falsch.txt\n' + out)
+        S += code('$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/pruef-erwartet-falsch.txt\n' + out)
         S += note('achtung', 'Abweichung Regelwerk ↔ Interpreter (Fassung %s): Die Kopfzeile `Prüfungen: False` steht im '
                   'Regelwerk (Ergänzung 10.10.2026) und wird von den Skripten erkannt; der Python-Interpreter dieser '
                   'Fassung meldet sie dagegen als Formfehler und startet den Test nicht. Wer `Prüfungen: False` '
@@ -2019,13 +2020,13 @@ def kap6(S, ex):
     rc, out = ex.lauf('Handbuch-Tests/formfehler.txt')
     S += [P('Beispiel 1: Eine Testdatei mit drei Fehlern in der Trommeldatei (`Handbuch-Tests/formfehler.txt`). Der '
             'Interpreter nennt alle Zeilenfehler auf einmal, startet nicht und liefert den Rückkehrcode %d:' % rc)]
-    S += code(ex.hbtext('formfehler.txt') + '\n\n$ python3 c8205_interp.py Handbuch-Tests/formfehler.txt\n' + out +
+    S += code(ex.hbtext('formfehler.txt') + '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/formfehler.txt\n' + out +
               '\nRückkehrcode: %d' % rc)
     S += [P('Die Tastenfolge dieser Datei ist ebenfalls ungültig (`M-loslassen` ohne vorheriges '
             '`M-gedrückt-halten`). Sie wird erst bewertet, wenn die Trommeldatei formal in Ordnung ist; nach Korrektur '
             'der Zeilen meldet der Interpreter sie als nächstes:')]
     rc, out = ex.lauf('Handbuch-Tests/tastenfehler.txt')
-    S += code(ex.hbtext('tastenfehler.txt') + '\n\n$ python3 c8205_interp.py Handbuch-Tests/tastenfehler.txt\n' + out +
+    S += code(ex.hbtext('tastenfehler.txt') + '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/tastenfehler.txt\n' + out +
               '\nRückkehrcode: %d' % rc)
     with open(os.path.join(ex.tmp, 'Handbuch-Tests', 'interrupt-formfehler.txt'), 'w', encoding='utf-8') as f:
         f.write('Trommeldatei:\n#INTERRUPT H R          # Fehler: vor der ersten Befehlszeile\n0000: 00000000020\n'
@@ -2039,18 +2040,18 @@ def kap6(S, ex):
             '`Tests/`, weil `compute_all_tests.sh` den Rückkehrcode 16 als Fehlschlag melden würde). Der Interpreter '
             'meldet eine Zeile je Fehler (Rückkehrcode %d):' % rc)]
     S += code(ex.text('Handbuch-Tests/interrupt-formfehler.txt') +
-              '\n\n$ python3 c8205_interp.py Handbuch-Tests/interrupt-formfehler.txt\n' + out)
+              '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/interrupt-formfehler.txt\n' + out)
     with open(os.path.join(ex.tmp, 'Handbuch-Tests', 'swterm-zeile.txt'), 'w', encoding='utf-8') as f:
         f.write('Trommeldatei:\n--SW-TERMINAL\n0000: 00000000020\n\nTastenfolge:\nH G R\n')
     rc, out = ex.lauf('Handbuch-Tests/swterm-zeile.txt')
     S += [P('Auch `--SW-TERMINAL` als Zeile der Testdatei ist ein Formfehler; der Schalter gilt nur auf der Kommandozeile '
             '(9.2, Rückkehrcode %d):' % rc)]
     S += code(ex.text('Handbuch-Tests/swterm-zeile.txt') +
-              '\n\n$ python3 c8205_interp.py Handbuch-Tests/swterm-zeile.txt\n' + out)
+              '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/swterm-zeile.txt\n' + out)
     rc, out = ex.lauf('Tests/gibtsnicht.txt')
     out = re.sub(r'\(aktuelles Verzeichnis: [^)]*\)', '(aktuelles Verzeichnis: …/c8205)', out)
     S += [P('Auch ein Aufruf mit nicht vorhandener Testdatei meldet das laut und startet nichts (Rückkehrcode %d):' % rc)]
-    S += code('$ python3 c8205_interp.py Tests/gibtsnicht.txt\n' + out)
+    S += code('$ python3 c8205_interp.py --MODUS=TEST Tests/gibtsnicht.txt\n' + out)
     # Trommeldatei fehlerhaft (echter Lauf mit einer beschädigten Kopie)
     tz = open(ex.trommel, encoding='utf-8').read().split('\n')
     tz[2] = '0002 00000000000'
@@ -2061,7 +2062,7 @@ def kap6(S, ex):
             'fehlt der Doppelpunkt). Der Interpreter prüft sie einmal je Aufruf, nennt die Fehler (höchstens 50) und '
             'führt keinen Test aus (Rückkehrcode %d). Abhilfe: leere Trommel mit `erzeuge_leere_trommel.py` neu '
             'erzeugen (3.5).' % rc)]
-    S += code('$ python3 c8205_interp.py --trommel trommel_kaputt.txt Handbuch-Tests/vorlage.txt\n' + out +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST --trommel trommel_kaputt.txt Handbuch-Tests/vorlage.txt\n' + out +
               '\nRückkehrcode: %d' % rc)
     S += note('achtung', 'Abweichung Regelwerk ↔ Interpreter (Fassung 07.10.2026): Das Regelwerk (Durchführung eines '
               'Tests, Abschnitt 5) lässt `#SPEI` nur zu einem `#DOK` gleicher Nummer zu. Der Python-Interpreter prüft das '
@@ -2070,7 +2071,7 @@ def kap6(S, ex):
     rc, out = ex.lauf('Handbuch-Tests/spei-ohne-dok.txt')
     S += [P('Echter Lauf zu dieser Abweichung (`Handbuch-Tests/spei-ohne-dok.txt`: Befehl 164 mit Adresse 0007, '
             '`#SPEI-0007`, aber kein `#DOK-0007`; Rückkehrcode %d, weil kein `Prüfungen:`-Abschnitt vorhanden ist):' % rc)]
-    S += code(ex.hbtext('spei-ohne-dok.txt') + '\n\n$ python3 c8205_interp.py Handbuch-Tests/spei-ohne-dok.txt\n' + out)
+    S += code(ex.hbtext('spei-ohne-dok.txt') + '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/spei-ohne-dok.txt\n' + out)
     S += note('hinweis', 'Grundsatz „laut scheitern“ (gilt ebenso später bei der Abarbeitung des Knotengraphen): Ergibt '
               'sich eine Unklarheit, ein Widerspruch oder eine fehlende Festlegung, wird das laut gemeldet und der Test '
               'angehalten, statt eigenmächtig eine Annahme zu treffen. Das gilt unabhängig davon, ob '
@@ -2108,7 +2109,7 @@ def kap7(S, ex):
     S += [P('Beispiel mit `#SPUR`: Der Test (`Handbuch-Tests/spur.txt`) hält bei Befehl 164 (Adresse 0020) und gibt die '
             'Spur der Zelle 4001 aus. Die Zellen erscheinen in der Reihenfolge der Trommel, nicht aufsteigend (vgl. '
             'Tabelle in der Rechnerbeschreibung, Kapitel 6.1):')]
-    S += code(ex.hbtext('spur.txt') + '\n\n$ python3 c8205_interp.py Handbuch-Tests/spur.txt\n' +
+    S += code(ex.hbtext('spur.txt') + '\n\n$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/spur.txt\n' +
               '\n'.join(zl[:i0 + 8] + ['… (25 weitere Zellen, alle 0, in Trommelreihenfolge) …', zl[ab(zl, 'Ende:')]]))
     S += [P('Zelle für Zelle: 4000, 4015, 4032, 4007, 4024, 4001, … – das ist die Spalte „logische Sektoradresse“ der '
             'physischen Reihenfolge (Interleaving, Schritt +05 oktal).')]
@@ -2157,7 +2158,7 @@ def kap8(S, ex):
         auszug.pop()
     S += [P('Zum Lesen ein echter Protokollauszug (Beispiel A aus Abschnitt 4.1: Laden, Addieren, Stopp; '
             '`Handbuch-Tests/bspA.txt`, die Marke `#PROT STUFE=2` und `--knotentest` waren gesetzt):')]
-    S += code('$ python3 c8205_interp.py --knotentest --NO-TERMOUT --out bspA.log Handbuch-Tests/bspA.txt\n' +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST --knotentest --NO-TERMOUT --out bspA.log Handbuch-Tests/bspA.txt\n' +
               '\n'.join(auszug))
     S += note('achtung', 'Die Überschrift „Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0)“ im '
               'Protokoll stammt noch aus der Zeit vor der persistenten Trommel und trifft seit 07.10.2026 nicht mehr '
@@ -2242,7 +2243,7 @@ def kap9(S, ex):
             '(`00000001`). Die Irrung wird übersprungen; der AC erhält den Inhalt der Zelle 0001 (Eingabeadresse 01 mit '
             'Adreßteil 0000 verknüpft):')]
     S += code('\n'.join(lbz) + '\n…\n\n$ cat virtuelle_Geraete/Leser1/lb-001_irrung_zeichen_dann_1.txt\n' + streifen +
-              '\n\n$ python3 c8205_interp.py Tests/lb-001_Irrung_Zeichen_uebersprungen.txt\n' +
+              '\n\n$ python3 c8205_interp.py --MODUS=TEST Tests/lb-001_Irrung_Zeichen_uebersprungen.txt\n' +
               kurz(out, zl[:1], [zl[ab(zl, 'Ende:')]], ['Test wahr']))
     S += [P('Rückkehrcode %d. BZ=2003, AC=00000000001, kein Fehler bei Eingabe (FE=0).' % rc)]
     S += h2('9.2 Schreibwerk')
@@ -2428,15 +2429,15 @@ def kap10_3(S, ex):
     o2 = o2  # Pfad bleibt relativ
     S += [P('Echte Läufe mit fehlenden Voraussetzungen: ein leeres Regelwerk-Verzeichnis (hier `leer/`) und eine '
             'nicht vorhandene Trommeldatei:')]
-    S += code('$ python3 c8205_interp.py --mdverz leer Tests/0015-030.txt\n' + o1.split('\n')[-1] +
-              '\nRückkehrcode: %d\n\n$ python3 c8205_interp.py --trommel trommel_fehlt.txt Tests/0015-030.txt\n' % rc1 +
+    S += code('$ python3 c8205_interp.py --MODUS=TEST --mdverz leer Tests/0015-030.txt\n' + o1.split('\n')[-1] +
+              '\nRückkehrcode: %d\n\n$ python3 c8205_interp.py --MODUS=TEST --trommel trommel_fehlt.txt Tests/0015-030.txt\n' % rc1 +
               o2.strip('\n') + '\nRückkehrcode: %d' % rc2)
     S += [P('**Probelauf**, wenn alles vorhanden ist (leere Trommel erzeugen, dann ein Test mit Ausgabe auf dem '
             'Terminal; erwartet wird `Jahr 1972`, `Test wahr`, Rückkehrcode 0):')]
     ex.leere_trommel()
     rc3, o3 = ex.lauf('Tests/0015-030.txt')
     z3 = zeilen(o3)
-    S += code('$ python3 erzeuge_leere_trommel.py\n$ python3 c8205_interp.py Tests/0015-030.txt\n' +
+    S += code('$ python3 erzeuge_leere_trommel.py\n$ python3 c8205_interp.py --MODUS=TEST Tests/0015-030.txt\n' +
               kurz(o3, z3[:3], [z3[ab(z3, 'Ende:')]], ['Test wahr']) + '\nRückkehrcode: %d' % rc3)
 
 
@@ -2448,12 +2449,23 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
                                    'Sortierung'),
             ('bsp_', 'bsp_…', 'Beispielprogramme (Abschnittsnummer im Namen, z. B. bsp_6_1_4_division), darunter Tests mit '
                               'Leser, Stanzer und Schreibwerk; einzelne als .test-Datei direkt aus dem Assembler'),
+            ('bs-', 'bs-…', 'Schalter BS und Flag BS getrennt: bedingter Stopp nur bei eingerastetem Schalter (bs-001), '
+                            'Schalter ohne Stopp ohne Wirkung (bs-002)'),
+            ('bdpt1', 'bdpt1.test', 'Bedienpult mit Peripherie (Test bdpt1)'),
+            ('k1_', 'k1_…', 'Leser und Stanzer an K1 (k1_leser_stanzer)'),
+            ('r300_', 'r300_…', 'R300-Eingabe: alle Zeichen mit Computertaste über SW einlesen und als Echo ausgeben '
+                                '(r300_eingabe, RE-001); dazu Klickspur und Sollfolge'),
+            ('sw_', 'sw_…', 'Eingabe über das Schreibwerk SW (sw_eingabe, sw_eingabe_k2, sw_eingabe_lage, '
+                            'sw_eingabe_leser_stanzer, sw_zwei_ziffern)'),
             ('betrag', 'betrag.test', 'Betragsbildung (z = -|a+b| + |-b+c| + |-c+d|, erwartet z = 1)'),
             ('lb-', 'lb-…', 'Lochband: Irrung Zeichen übersprungen (lb-001), ohne Irrung (lb-002), Paritätsfehler (lb-003)'),
             ('pj2-', 'pj2-…', 'Programmbeispiele: ggT nach Euklid, Maximum von drei Zahlen (vier Fälle), Vertauschung '
                               'zweier Zahlenfelder; dazu das Minimalprogramm des BIS als .test-Datei'),
             ('pj2-bis', 'pj2-bis_…', 'Tests der BIS-Bausteine (11.4): Befehlsdruck, Adressendruck, Adresseneingabe, Druck '
                                      'von BZ und AC; setzen das Minimalprogramm auf der Trommel voraus'),
+            ('sN-', 's1-R1 bis s4-spur', 'Vorzeichenbit und X-Abbruch beim verkürzten Gruppen-Transport (s1-R1: Rechtsverschiebung, '
+                                         's2-R2: Linksverschiebung, s3-neg: AC schon vor der ersten Zelle negativ); '
+                                         's4-spur: Ausgabe einer ganzen Spur mit `#SPUR` (3.2)'),
             ('sp-', 'sp-…', 'Sprungbefehle (unbedingt, zyklisch, bedingt, mit Rückkehrabsicht; Schalter SP = 0 und SP = 1)'),
             ('tk-', 'tk-…', 'Tastenfolgen (Tabelle unten): jeder Test belegt eine Festlegung aus 4.3 bis 4.5'),
             ('ac/bz', 'ac-…, bz-…, acbz-…', 'Anfangswerte `#AC=` und `#BZ=` (3.6): AC vorbelegt, BZ vorbelegt mit `G`, '
@@ -2461,6 +2473,8 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
             ('int-', 'int-…', 'Unterbrechung mit `#INTERRUPT` (4.7): Fortsetzung mit `H R`, Ende mit `G Ü E`'),
             ('st-', 'st-…', 'Makro `#STARTE` (4.6): `#STARTE 4`, Gegenprobe mit ausgeschriebener Tastenfolge, '
                             '`#STARTE 12` (oktal) und `#STARTE 1000` zusammen mit der Druckroutine bzw. dem Minimalprogramm'),
+            ('trommel-', 'trommel-…', 'Makro `#TROMMEL=` (2g): Trommel vor dem Test geleert (`LEER`); der Test belegt zwei Zellen selbst '
+                                      'und prüft, dass drei weitere 0 sind (auch auf verschmutzter Trommel `Test wahr`)'),
             ('wr-', 'wr-…', 'Lochbandeingabe von WR (Wagenrücklauf) über Leser 1 (wr-001)'),
             ('ziffern', 'ziffern_…', 'Ziffer 0 bis 3 über K0 aus Datei (`--k0`) einlesen und auswerten, Ausgabe auf dem '
                                      'Schreibwerk; vier Eingaben (0 bis 3) und eine Folge nicht auswertbarer Ziffern '
@@ -2476,7 +2490,11 @@ def familie(n):
         return 'pj2-bis'
     if n.startswith(('ac-', 'acbz-', 'bz-')):
         return 'ac/bz'
-    for p in ('asm_', 'bsp_', 'int-', 'lb-', 'pj2-', 'sp-', 'st-', 'tk-', 'wr-', 'ziffern'):
+    if re.match(r's\d-', n):
+        return 'sN-'
+    if n == 'bdpt1.test':
+        return 'bdpt1'
+    for p in ('asm_', 'bs-', 'bsp_', 'int-', 'k1_', 'lb-', 'pj2-', 'r300_', 'sp-', 'st-', 'sw_', 'tk-', 'trommel-', 'wr-', 'ziffern'):
         if n.startswith(p):
             return p
     raise ValueError('Testfamilie unbekannt: ' + n)
@@ -2578,7 +2596,7 @@ def kap11(S, ex, gl, stand):
               '  case $t in *-ausgabe.txt|*_erwartet.txt) continue;; esac\n'
               '  python3 erzeuge_leere_trommel.py                 # leere Trommel für jeden Test\n'
               '  # Tests mit Voraussetzung: vorher das Minimalprogramm laden (BIS-Tests, st-004) bzw. die Druckroutine (st-005)\n'
-              '  python3 c8205_interp.py --NO-TERMOUT --stanzer1 virtuelle_Geraete/Stanzer1/ "$t" > /dev/null\n'
+              '  python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT --stanzer1 virtuelle_Geraete/Stanzer1/ "$t" > /dev/null\n'
               '  echo "$? $(basename $t)"\n'
               'done | awk \'{print $1}\' | sort | uniq -c\n' + zaehl)
     if not abweichend:
@@ -2662,8 +2680,8 @@ def kap11_4(S, ex):
             'Die `#DOK`-Texte sind gekürzt:')]
     S += code(kompakt(ex.text('Tests/pj2-bis_befehlsdruck.txt')))
     S += code('$ python3 erzeuge_leere_trommel.py\n'
-              '$ python3 c8205_interp.py Tests/pj2-bis_minimalprogramm.test          # Schritt 1 (Rückkehrcode %d: keine Prüfung)\n' % rc1 +
-              '$ python3 c8205_interp.py Tests/pj2-bis_befehlsdruck.txt               # Schritt 2\n' +
+              '$ python3 c8205_interp.py --MODUS=TEST Tests/pj2-bis_minimalprogramm.test          # Schritt 1 (Rückkehrcode %d: keine Prüfung)\n' % rc1 +
+              '$ python3 c8205_interp.py --MODUS=TEST Tests/pj2-bis_befehlsdruck.txt               # Schritt 2\n' +
               kurz(out2, z2[:1], [z2[ab(z2, 'Ende:')]],
                    [z2[ab(z2, 'Ergebnispruefung')], '… (übrige Zeilen alle OK)'] +
                    [l for l in z2 if l.strip().startswith('Schreibwerk:')] + ['Test wahr']) +
@@ -2737,7 +2755,7 @@ def kap12(S, ex):
             'aus Kapitel 5; bei Stufe 2 entsteht das Protokoll nach `Test-Protokolle/<Testname>/protokoll.txt`.')]
     S += code(ex.hbtext('vorlage.txt'))
     S += [P('Der echte Lauf der Vorlage (Rückkehrcode %d):' % rc)]
-    S += code('$ python3 c8205_interp.py Handbuch-Tests/vorlage.txt\n' + out)
+    S += code('$ python3 c8205_interp.py --MODUS=TEST Handbuch-Tests/vorlage.txt\n' + out)
 
 
 def anhang(S):

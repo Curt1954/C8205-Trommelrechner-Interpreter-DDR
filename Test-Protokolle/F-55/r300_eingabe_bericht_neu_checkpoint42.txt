@@ -1,0 +1,13 @@
+Auswertung des Laufs r300_eingabe  (RLA-001)
+Log: /mnt/user-data/uploads/r300_eingabe_debug.log   Tipps: 97   Tokens am Rechner: 91   Sollfolge: 92 Token
+
+[OK] Fokus: bei 97 von 97 Tipps lag der Fokus im SW-Text
+[BEFUND] Wiedergabe-Taste = angekommene Taste: 96 von 97
+         Tipp Nr 33: erzeugt grave: kein Tastenereignis im SW-Fenster angekommen   (Wiedergabe-Artefakt; Gravis = Tottaste dead_grave der deutschen Belegung, kein Tastencode fuer grave, Dok. 09 5b/F-56; echte Tastatur im Handbetrieb pruefen)
+[OK] Zweite Eingabe nach einem Umschaltzeichen (Rueckgabe folgt) beim Rechner angekommen: 2 von 2
+[OK] Blockierte Tasten (kein 011 aktiv): 0
+[OK] Spur ab 3000: 91 von 91 Worten passen zum gelieferten Token; Zelle nach der Spur 00000000000
+[OK] Anzeige im Fenster = angenommene Zeichen = Tokens am Rechner (ohne Umschaltzeichen): 89 Zeichen, erwartet 89
+[OK] Zeichen ohne R300-Code verworfen: ['EuroSign', 'adiaeresis', 'at', 'odiaeresis', 'section', 'ssharp', 'udiaeresis']
+
+Ergebnis: 1 Befund(e)

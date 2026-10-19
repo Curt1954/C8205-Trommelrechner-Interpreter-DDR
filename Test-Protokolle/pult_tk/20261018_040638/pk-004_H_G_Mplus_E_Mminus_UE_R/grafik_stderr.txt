@@ -1,0 +1,3 @@
+Debug-Log wird geschrieben: /home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040638/pk-004_H_G_Mplus_E_Mminus_UE_R/debug.log
+
+ABBRUCH durch den Benutzer (Fenster geschlossen oder Strg+C)

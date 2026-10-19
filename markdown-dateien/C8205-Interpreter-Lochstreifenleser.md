@@ -1,14 +1,15 @@
 # Lochstreifenleser
 
-Version: 0.03-002
+Version: 0.03-007
 
 Hardwarebeschreibung des Lochstreifenlesers 303 am Rechner C 8205.
 
 Die Zeichenkode-Tabellen (Zeichenkode des Lochbands) stehen in der Datei
 "C8205-Interpreter-Kodetabellen.md", Abschnitt 1; dorthin wird an
 den entsprechenden Stellen verwiesen. Die vollständige Kanaltabelle (K0–K3)
-und die Bedienelemente sollen später in einer eigenen Datei zum Bedienpult
-stehen; bis dahin steht hier nur, was zum Verständnis des Lesers nötig ist.
+und die Bedienelemente stehen in der Datei
+"C8205-Interpreter-Bedienpult_mit_Schaltern.md"; hier steht nur, was zum
+Verständnis des Lesers nötig ist.
 
 
 ## Inhaltsverzeichnis
@@ -17,7 +18,20 @@ stehen; bis dahin steht hier nur, was zum Verständnis des Lesers nötig ist.
 - [A3 Geschwindigkeit](#a3-geschwindigkeit)
 - [A4 Lochbandkode (Tabelle 1)](#a4-lochbandkode-tabelle-1)
 - [A5 Anschluss an den Rechner](#a5-anschluss-an-den-rechner)
+- [A5a Beispiel: Lochband kopieren (Leser 1 nach Stanzer 1)](#a5a-beispiel-lochband-kopieren-leser-1-nach-stanzer-1)
 - [A6 Namenskollisionen](#a6-namenskollisionen)
+- Lochstreifenstanzer:
+  - [B0 Überblick](#b0-überblick)
+  - [B3 Geschwindigkeit](#b3-geschwindigkeit)
+  - [B4 Kode](#b4-kode)
+  - [B5 Anschluss an den Rechner / Ablauf einer Zeichenausgabe](#b5-anschluss-an-den-rechner--ablauf-einer-zeichenausgabe)
+  - [B6 Namenskollisionen](#b6-namenskollisionen)
+- Schreibwerk (Ausgabe):
+  - [C0 Überblick](#c0-überblick)
+  - [C1 Kanal und Sperrwirkung des Schalters "SW"/"T-SW"](#c1-kanal-und-sperrwirkung-des-schalters-swt-sw)
+  - [C2 KB/GB-Gedächtnis bei der Ausgabe](#c2-kbgb-gedächtnis-bei-der-ausgabe)
+  - [C3 Ablauf einer Zeichenausgabe](#c3-ablauf-einer-zeichenausgabe)
+  - [C4 Tastatur des Schreibwerks (Eingabe)](#c4-tastatur-des-schreibwerks-eingabe)
 
 Hinweis zur Nummerierung: Die Abschnittsnummern A1, A2 sowie B1 und B2 sind in diesem Dokument nicht vorhanden (die
 Gliederung springt von A0 auf A3 bzw. von B0 auf B3).
@@ -41,9 +55,10 @@ Fehler — ein Fehler in den einzugebenden Daten; er kann bei Ausgabe nicht
 auftreten. Alle anderen Fehler bei Ein- und Ausgabe sind physische Fehler
 (Fehler der Geräteelektronik) und werden nicht in Flags des Rechners
 abgebildet. Eine Zeile mit gerader Zahl gelochter Spuren (kein gültiges
-Zeichen, s. A4; z. B. "Irrung Zeichen") ist ein solcher logischer Fehler in
-den Daten: Flag FE wird gesetzt und der Rechner stoppt. Ausgenommen sind
-Zeilen ohne Datenlochung (Vorspann), die der Leser überliest (s. A4).
+Zeichen, s. A4) ist ein solcher logischer Fehler in den Daten: Flag FE wird
+gesetzt und der Rechner stoppt. Ausgenommen sind Zeilen ohne Datenlochung
+(Vorspann), die der Leser überliest, sowie "Irrung Zeichen", das er
+überspringt (s. A4).
 
 ## A3 Geschwindigkeit
 
@@ -53,7 +68,7 @@ Metallbürsten).
 
 ## A4 Lochbandkode (Tabelle 1)
 
-Die Tabelle 1 selbst (54 Zeilen mit Lochbildern), die Spaltenbedeutungen,
+Die Tabelle 1 selbst (55 Zeilen mit Lochbildern), die Spaltenbedeutungen,
 die Konsistenzprüfung, die Sonderzeilen und die Auffälligkeiten stehen in
 der Datei "C8205-Interpreter-Kodetabellen.md", Abschnitt 1. Die
 E/A-Befehle gehören sowohl zum Rechner als auch zum Leser bzw. Stanzer;
@@ -108,8 +123,8 @@ ihre Wirkung im Rahmen des Befehlsablaufs wird hier nicht behandelt.
 
 **Kanäle und Geräte:** Die vollständige Kanaltabelle (K0–K3, manuelle
 Anwahl, programmierte Anwahlverschlüsselung, alle angeschlossenen Geräte)
-soll später in einer eigenen Datei zum Bedienpult stehen; hier nur die für
-den Leser nötigen Fakten: Leser 1 hängt an Kanal K1, Leser 2 an Kanal K2,
+steht in der Datei "C8205-Interpreter-Bedienpult_mit_Schaltern.md",
+Abschnitt "Kanalauswahltasten"; hier nur die für den Leser nötigen Fakten: Leser 1 hängt an Kanal K1, Leser 2 an Kanal K2,
 Stanzer 1 hängt an Kanal K1. Kanal K3 ist beim C 8205 "frei" (kein Gerät
 zugeordnet). K0 ist Tastatur- bzw. Schreibwerk-Eingabe (kein
 Lochstreifenleser).
@@ -153,6 +168,16 @@ wurde (Zeichenlage rechnerweit, Anfang KB, s. A4).
   der Streifen mittendrin stehen.
 
 
+## A5a Beispiel: Lochband kopieren (Leser 1 nach Stanzer 1)
+
+Das Programm `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` (aus `sw_eingabe_lage.asm`) kopiert ein Lochband.
+
+- **Eingabe:** erster Befehl `ANWAHL LSL1` (4600, Leser 1); das Programm liest Zeichen für Zeichen und speichert sie.
+- **Bandende:** `:` in KB (Code 15) beendet die Eingabe. Dieses Zeichen wird **nicht** gestanzt. Dasselbe Bit-Muster (`00001101`) steht als `(` in GB als gewöhnliches Zeichen auf dem Band; nach `Um. GB` speichert das Programm Code 15 als normales Zeichen und deutet ihn nur in KB als Ende.
+- **Ausgabe:** `ANWAHL LSS1` (4600, Stanzer 1). Ein Umschalten auf KB vor der Ausgabe gibt es nicht, damit das Band genau das enthält, was gelesen wurde. Am Ende steht der Stopp.
+- **Test:** `python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test` (Zeilen `--leser1 virtuelle_Geraete/Leser1/lb_kopie_quelle.txt`, `--stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt`, Tasten `H G R`). Testband: `Hallo Welt 123 (ok)!:` (29 Zeilen); gestanzt werden 28 Zeilen (Quelle ohne das Endzeichen). Ein anderes Band: nur die `--leser1`-Zeile ändern; das Band muss mit `:` in KB enden.
+- **GRAFIK:** dasselbe Programm läuft im Modus GRAFIK mit `--leser1` und `--stanzer1` (vom Projektinhaber am 19.10.2026 geprüft: gleiche 28 Zeilen); Leser- und Stanzerton nach `C8205-Interpreter-GRAFIK_Beschreibung.md` §6.3 und §6.4 (S4-09, S4-10). Die Hörprüfung steht aus.
+
 ## A6 Namenskollisionen
 
 Es werden Namensgleichheiten dokumentiert, nicht aufgelöst.
@@ -179,6 +204,10 @@ Es werden Namensgleichheiten dokumentiert, nicht aufgelöst.
 
 
 ---
+
+## A7 Töne und Haltzeit im Modus GRAFIK
+
+**GRAFIK:** Im Modus GRAFIK klingt der Leser: Jedes Zeichen, das K1 oder K2 liefert, löst den Leserton aus (Einzelschritt, bei dichter Folge Dauergeräusch, danach Auslaufen; Lesetempo 130 Zeichen/s). Die reine Rechnerzeit bis zum nächsten Halt, auch bis zum E/A-Halt an einem Eingabebefehl, zeigt der Hardware-Check. Einzelheiten: `C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitte 6.3 und 8.3.
 
 # Lochstreifenstanzer
 
@@ -238,11 +267,11 @@ als bei den zwei Lesern.
 **Motorsteuerung:** Der Stanzermotor läuft nicht dauerhaft, sondern läuft
 automatisch an, sobald ein Zeichen ausgegeben werden soll, und schaltet
 nach einer Abschaltverzögerung automatisch wieder ab, wenn keine weiteren
-Zeichen folgen (Wert der Verzögerung soll später in der Datei "C8205-Interpreter-Bedienpult_mit_Schaltern.md"
-stehen). Bei kleinen Ausgabelücken würde das zu ständigem Ein-/Ausschalten
+Zeichen folgen (Abschaltverzögerung 3 Sekunden, s. Datei "C8205-Interpreter-Bedienpult_mit_Schaltern.md",
+Abschnitt "Schalter LS und Stellung SW"). Bei kleinen Ausgabelücken würde das zu ständigem Ein-/Ausschalten
 führen; dem wirkt der Schalter "LS" entgegen (eingerastet: Motor läuft
-dauerhaft weiter) — Details sollen später in der Datei "C8205-Interpreter-Bedienpult_mit_Schaltern.md" stehen,
-hier nur referenziert.
+dauerhaft weiter) — Details stehen in der Datei "C8205-Interpreter-Bedienpult_mit_Schaltern.md",
+Abschnitt "Schalter LS und Stellung SW", hier nur referenziert.
 
 **Vorspann:** Ein Vorspann von ca. 5 cm sollte gestanzt werden, damit der
 fertige Lochstreifen gut in einen Leser eingelegt werden kann.
@@ -342,12 +371,13 @@ Leser und Stanzer werden physische Fehler nicht in Flags abgebildet.
 
 Die Tastatur des Schreibwerks ist die Eingabeseite des Schreibwerks (s. A5). Abbildung 1 zeigt ihre Tasten. Bei den Tasten mit
 zwei Zeichen steht oben das Zeichen der Großbuchstabenlage, unten das der Kleinbuchstabenlage; „KB“ und „GB“ schalten die
-Lage um (s. A4). Die Taste mit zwei Kreisen ist unbenutzt und nicht eingabefähig. Die Taste mit £ (oben) und $ (unten),
-dem Pfundzeichen, ist eingabefähig.
+Lage um (s. A4). Die Taste mit zwei Kreisen ist der Eingabetaster der Blockmarke BM am Schreibwerk; sie ist eingabefähig
+und liefert das Zeichen BM (Kodetabellen, Abschnitt 1.4, Zeile 53, mit Sprung-Umstellung). Die Taste mit £ (oben) und $
+(unten), dem Pfundzeichen, ist eingabefähig.
 
 ![Tastatur des Schreibwerks](abbildungen/C8205-Abb-Tastatur_Schreibwerk.png)
 
-*Abbildung 1: Tastatur des Schreibwerks (neu gezeichnet nach Abb. 14 „Schreibwerktastatur“ und der Zeichnung „Tastatur des Schreibwerkes“ der Originalunterlagen). Grau: Taste ohne Funktion*
+*Abbildung 1: Tastatur des Schreibwerks (neu gezeichnet nach Abb. 14 „Schreibwerktastatur“ und der Zeichnung „Tastatur des Schreibwerkes“ der Originalunterlagen). Taste mit zwei Kreisen: Eingabetaster der Blockmarke BM*
 
 Die Beschriftungen der Zeichnung und die Bezeichnungen der Bedienelemente in Abb. 13 „Schreibwerk“ der Originalunterlagen
 (Nummer in Klammern) entsprechen einander so:

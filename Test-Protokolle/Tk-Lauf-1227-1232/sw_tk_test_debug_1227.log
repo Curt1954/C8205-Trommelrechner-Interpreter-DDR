@@ -1,0 +1,62 @@
+    0.000 [MainThread  ] START    SWTK-003, Python 3.11.4, linux, Aufruf: ['testscripte/grafik_sw_tk_test.py', '--manuell', '--DEBUGLOG']
+    0.405 [MainThread  ] SWAUS    'Hallo'
+    0.405 [MainThread  ] SWAUS    '\t'
+    0.405 [MainThread  ] SWAUS    'x'
+    0.405 [MainThread  ] SWAUS    '<ZV>'
+    0.405 [MainThread  ] SWAUS    '\n'
+    0.650 [MainThread  ] SW       Taste char='x' keysym=x -> blockiert
+    1.023 [MainThread  ] SW       Eingabe erwartet: Fokus angefordert
+    1.027 [MainThread  ] SW       Taste char='2' keysym=2 -> geliefert
+    1.027 [Thread-2 (_l] K0       Rechner uebernimmt Token '2' (Quelle SW)
+    1.049 [MainThread  ] SWAUS    '2'
+    1.227 [MainThread  ] SW       Taste char='A' keysym=A -> folgt
+    1.227 [Thread-2 (_l] K0       Rechner uebernimmt Token 'Um. GB' (Quelle SW)
+    1.356 [MainThread  ] SW       zweite Eingabe beim Loslassen -> geliefert
+    1.356 [Thread-2 (_l] K0       Rechner uebernimmt Token 'A' (Quelle SW)
+    1.367 [MainThread  ] SWAUS    'A'
+    1.381 [MainThread  ] SW       Taste char='3' keysym=3 -> folgt
+    1.381 [Thread-2 (_l] K0       Rechner uebernimmt Token 'Um. KB' (Quelle SW)
+    1.511 [MainThread  ] SW       zweite Eingabe beim Loslassen -> geliefert
+    1.511 [Thread-2 (_l] K0       Rechner uebernimmt Token '3' (Quelle SW)
+    1.534 [MainThread  ] SWAUS    '3'
+    1.537 [MainThread  ] SW       Taste char='\r' keysym=Return -> geliefert
+    1.537 [Thread-2 (_l] K0       Rechner uebernimmt Token 'WRZL' (Quelle SW)
+    1.569 [MainThread  ] SWAUS    '\n'
+    1.690 [MainThread  ] SW       Taste char='\t' keysym=Tab -> geliefert
+    1.690 [Thread-2 (_l] K0       Rechner uebernimmt Token 'TAB' (Quelle SW)
+    1.701 [MainThread  ] SWAUS    '\t'
+    1.835 [MainThread  ] SW       Taste char=' ' keysym=space -> geliefert
+    1.835 [Thread-2 (_l] K0       Rechner uebernimmt Token 'ZR' (Quelle SW)
+    1.867 [MainThread  ] SWAUS    ' '
+    2.085 [MainThread  ] SW       Taste char='ä' keysym=adiaeresis -> verworfen
+    2.532 [MainThread  ] SW       Taste char='ö' keysym=odiaeresis -> verworfen
+    2.990 [MainThread  ] SW       Taste char='ü' keysym=udiaeresis -> verworfen
+    3.437 [MainThread  ] SW       Taste char='ß' keysym=ssharp -> verworfen
+    3.886 [MainThread  ] SW       Taste char='@' keysym=at -> verworfen
+    4.345 [MainThread  ] SW       Taste char='€' keysym=EuroSign -> verworfen
+    4.795 [MainThread  ] SW       Taste char='§' keysym=section -> verworfen
+    5.251 [MainThread  ] SW       Taste char='~' keysym=asciitilde -> folgt
+    5.251 [Thread-2 (_l] K0       Rechner uebernimmt Token 'Um. GB' (Quelle SW)
+    5.372 [MainThread  ] SW       zweite Eingabe beim Loslassen -> geliefert
+    5.372 [Thread-2 (_l] K0       Rechner uebernimmt Token '~' (Quelle SW)
+    5.372 [MainThread  ] SWAUS    '~'
+    5.847 [MainThread  ] SW       Taste ignoriert char='' keysym=Left state=0x0
+    6.307 [MainThread  ] SW       Taste ignoriert char='' keysym=F1 state=0x0
+    6.763 [MainThread  ] SW       Taste ignoriert char='\x1b' keysym=Escape state=0x0
+    7.222 [MainThread  ] SW       Taste ignoriert char='\x08' keysym=BackSpace state=0x0
+    7.727 [MainThread  ] SW       Taste char='\x7f' keysym=Delete -> verworfen
+    8.177 [MainThread  ] SW       Taste ignoriert char='' keysym=Home state=0x0
+   10.117 [MainThread  ] SW       Taste char='7' keysym=7 -> folgt
+   10.117 [Thread-2 (_l] K0       Rechner uebernimmt Token 'Um. KB' (Quelle SW)
+   10.238 [MainThread  ] SW       zweite Eingabe beim Loslassen -> geliefert
+   10.238 [Thread-2 (_l] K0       Rechner uebernimmt Token '7' (Quelle SW)
+   10.249 [MainThread  ] SWAUS    '7'
+   10.677 [MainThread  ] SW       Eingabe erledigt: Fokus zum Pult
+   14.294 [MainThread  ] SWAUS    'Spaltenlineal: 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345\n'
+   14.294 [MainThread  ] SWAUS    '0         1         2         3         4         5         6         7         8         9         10        11        12        13\n'
+   14.295 [MainThread  ] SW       Eingabe erwartet: Fokus angefordert
+   28.459 [MainThread  ] SW       Taste char='*' keysym=asterisk -> folgt
+   28.459 [Thread-4 (_l] K0       Rechner uebernimmt Token 'Um. GB' (Quelle SW)
+   29.611 [MainThread  ] SW       Taste char="'" keysym=apostrophe -> blockiert
+   29.611 [MainThread  ] SWAUS    '*'
+   29.611 [Thread-4 (_l] K0       Rechner uebernimmt Token '*' (Quelle SW)

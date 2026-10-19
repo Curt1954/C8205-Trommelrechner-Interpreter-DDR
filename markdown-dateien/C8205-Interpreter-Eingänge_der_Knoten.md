@@ -1,6 +1,6 @@
 # ** Knotendefinition **
 #
-# Version: 0.03-001
+# Version: 0.03-002
 #
 # Zeilenformat:
 # Knotennummer; Eingänge...; Typ; Text; Ausgänge
@@ -104,8 +104,7 @@
 27;  1;              Anweisung;        $ANWEISUNG-004; 26(2)
 28;  1;              Test;             $ANWEISUNG-020; 31(1 falsch) | 30(1 wahr)
 29;  -;              Konnektor;        2; 57(1)
-# Ergänzung 03.10.2026: Knoten 30 ist der Halt wegen Überlauf (Test in Knoten 28) und wurde bei der Änderung vom 02.10.2026
-# übersehen. Jetzt ANWEISUNG-046 wie in den Knoten 46, 58 und 66 (vorher ANWEISUNG-030, das Flag US setzt).
+# Knoten 30: Halt wegen Überlauf (Test in Knoten 28), ANWEISUNG-046 wie in den Knoten 46, 58 und 66.
 30;  1;              Anweisung;        $ANWEISUNG-046; ---
 # Zustand bei Eintritt in Phase IV: BZ=b+1, AR=a, OR=ω*, AC=R₋₁ bzw. gelöscht (L=1). Gilt auch für die Knoten 61 und 67.
 31;  1;              Phasenzuordnung;  Beginn Phase IV; 32(1)

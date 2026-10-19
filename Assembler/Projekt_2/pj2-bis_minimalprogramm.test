@@ -97,14 +97,14 @@ Trommeldatei:
 0253: 00007773240 # 240 r1
 0254: 00007743000 # 000 ad_rs ; Rueckkehr (Zelle ad_rs wird als Befehl ausgefuehrt)
 0262: 00000331000 # eingabewortkz: 000 kz_anf ; Eingabe eines Wortes mit Kennzeichen (Ansprungzelle 262): Sprung zum Code ab kz_anf (Spur 0332)
-0263: 00000000020 # eingabeprogst: 020 0 ; STUB Eingabe eines Programmstueckes (263)
+0263: 00000500000 # eingabeprogst: 000 ps_anf ; Eingabe eines Programmstueckes (Ansprungzelle 263): Sprung zum Code ab ps_anf (0500)
 0264: 00007756240 # ae_anf: 240 ae_rs ; Rueckkehrbefehl sichern (Arbeitszelle 7756)
 0265: 00000256211 # 211 ae_z0 ; Zaehleranfang: 7 Einsen
 0266: 00007760240 # 240 ae_z ; Zaehler setzen (Arbeitszelle 7760)
-0267: 00000400211 # 211 ae_tab ; AC := 0 (Zelle ae_tab, Ziffer 0, enthaelt 0)
+0267: 00000700211 # 211 ae_tab ; AC := 0 (Zelle ae_tab, Ziffer 0, enthaelt 0)
 0270: 00007757240 # 240 ae_sv ; Konstante := 0 (Arbeitszelle 7757)
-0271: 00000400010 # ae_loop: 010 ae_tab ; Eingabe-Halt: Ziffer lesen, AC := AC + d * 0100; ZR oder Punkt: Sprung in die Tabelle
-0272: 00000410330 # 330 ae_pois ; Vergleich AC mit 2 hoch 30: ab dort Ziffer 8 oder 9
+0271: 00000700010 # ae_loop: 010 ae_tab ; Eingabe-Halt: Ziffer lesen, AC := AC + d * 0100; ZR oder Punkt: Sprung in die Tabelle
+0272: 00000710330 # 330 ae_pois ; Vergleich AC mit 2 hoch 30: ab dort Ziffer 8 oder 9
 0273: 00000257150 # 150 ae_halt ; AC >= 2 hoch 30: Ziffer 8 oder 9, HALT
 0274: 00000275006 # 006 ae_v2 ; Linksverschiebung (zyklisch) 1 von 3
 0275: 00000277006 # ae_v2: 006 ae_v3 ; 2 von 3
@@ -115,7 +115,7 @@ Trommeldatei:
 0316: 00000264000 # adresseneingabe: 000 ae_anf ; Adresseneingabe (Ansprungzelle 316): Sprung zum Code ab ae_anf (Spur 0260)
 0256: 77400000000 # ae_z0: dw 077400000000 ; Zaehleranfang der Adresseneingabe: 7 Einsen (8 Ziffern)
 0257: 00000000020 # ae_halt: 020 0 ; HALT: Ziffer 8 oder 9 (keine Oktalziffer)
-0260: 00000400011 # ae_ign: 011 ae_tab ; ab der 9. Ziffer: Zeichen lesen, AC loeschen (Ziffer wird verworfen); ZR/Punkt wie oben
+0260: 00000700011 # ae_ign: 011 ae_tab ; ab der 9. Ziffer: Zeichen lesen, AC loeschen (Ziffer wird verworfen); ZR/Punkt wie oben
 0261: 00000260000 # 000 ae_ign ; naechstes Zeichen
 0300: 00007757240 # ae_zt: 240 ae_sv ; Konstante sichern (Arbeitszelle 7757)
 0301: 00007760311 # 311 ae_z ; AC := Zaehler; Vergleicher 3, falls Zaehler = 0
@@ -135,7 +135,7 @@ Trommeldatei:
 0341: 00000313210 # 210 c_unit ; naechste Zelle (eine Adresseneinheit)
 0342: 00007705240 # 240 kz_xw ; kz_xw := Transportbefehl fuer die Zelle der Ziffer d (AC bleibt)
 0343: 00000315330 # 330 c_xend ; Vergleich mit dem Befehl fuer die Zelle 10
-0344: 00000350150 # 150 kz_k1l ; AC >= Befehl fuer Zelle 10: Ziffern 0 bis 9 fertig, K1 lesen
+0344: 00000556150 # 150 ps_k1 ; AC >= Befehl fuer Zelle 10: Ziffern 0 bis 9 fertig; weiter ueber ps_k1 (Programmstueck-Eingabe) nach kz_k1l (K1 lesen)
 0345: 00000312200 # 200 c_msk ; AC := d * 01000 (die unteren 6 Bit der Adresse, 7600 hat dort Nullen)
 0346: 00000321220 # 220 c_zehn ; AC := (d - 10) * 01000: Ziffernzellen negativ, ungueltige Zellen null
 0347: 00007705000 # 000 kz_xw ; Ausfuehrung des Transportbefehls in der Arbeitszelle, danach 000 kz_g (Zelle kz_xr)
@@ -143,8 +143,8 @@ Trommeldatei:
 0351: 00007603330 # 330 kz_tab+3 ; Vergleich mit der Zelle der Ziffer 3 (-7 Adresseinheiten)
 0352: 00000000150 # 150 0 ; AC >= Zelle 3 (null, 3 bis 9 oder Buchstabe): kein K1 = 0, 1, 2: Sprung nach 0000
 0353: 00000321210 # 210 c_zehn ; AC := K1 * 01000
-0354: 00007701240 # 240 kz_k1 ; K1 * 01000 merken (Arbeitszelle 7701)
-0355: 00007600011 # 011 kz_tab ; K2 lesen
+0354: 00000600000 # 000 kz_h2 ; K1 * 01000 merken (Arbeitszelle 7701), Punkt-Zelle fuer "0." setzen (kz_h2, Befehl 240 kz_k1 steht dort), weiter mit kz_k2l
+0355: 00007600011 # kz_k2l: 011 kz_tab ; K2 lesen
 0356: 00000000050 # 050 0 ; AC >= 0 (Zelle null): keine Ziffer, Sprung nach 0000
 0357: 00000321210 # 210 c_zehn ; AC := K2 * 01000
 0360: 00007702240 # 240 kz_k2 ; K2 * 01000 merken (Arbeitszelle 7702)
@@ -192,11 +192,11 @@ Trommeldatei:
 0212: 00000215000 # 000 kz_lp
 0215: 00000322210 # kz_lp: 210 c_la ; AC := Transportbefehl auf die Leitadressenzelle
 0216: 00007705240 # 240 kz_xw ; Transportbefehl 240 la_tab+K2-1 in die Arbeitszelle (7705)
-0217: 00000412211 # 211 ae_zr ; AC := Sprung 000 kz_neu (Zelle ae_zr wird nur gelesen)
+0217: 00000541211 # 211 c_psla ; AC := Sprung 000 ps_la
 0220: 00000223000 # 000 kz_lq ; weiter auf 0223 (0221 und 0222 gehoeren der Einsen-Spur)
-0223: 00007706240 # kz_lq: 240 kz_xr ; Folgezelle von kz_xw := 000 kz_neu (Arbeitszelle 7706)
+0223: 00007706240 # kz_lq: 240 kz_xr ; Folgezelle von kz_xw := 000 ps_la (Arbeitszelle 7706)
 0224: 00000316025 # 025 adresseneingabe ; Adresse einlesen (AC = Adresse in t3 bis t10); ZR bricht nach kz_neu ab
-0225: 00007705000 # 000 kz_xw ; Leitadressenzelle K2 := Adresse (Befehl in kz_xw), danach 000 kz_neu: neues K1, keine Rueckkehr
+0225: 00007705000 # 000 kz_xw ; Leitadressenzelle K2 := Adresse (Befehl in kz_xw), danach 000 ps_la und weiter nach kz_neu: neues K1, keine Rueckkehr
 0304: 00000002000 # c_two: dw 02000 ; 2 Adresseinheiten (Vergleichswert K1 = 2; ersetzt den frueheren Fehlersprung c_err)
 0305: 00007577240 # c_x0: 240 kz_tab-1 ; Anfangswert des Transportbefehls in kz_xw (eine Zelle vor Ziffer 0)
 0312: 00000077000 # c_msk: dw 077000 ; Maske fuer die unteren 6 Adressbit
@@ -206,18 +206,94 @@ Trommeldatei:
 0320: 00000340000 # c_xr: 000 kz_g ; Folgezelle kz_xr der Schleife kz_g: Ruecksprung zur Schleife
 0321: 00000012000 # c_zehn: dw 012000 ; 10 Adresseneinheiten
 0322: 00007724240 # c_la: 240 la_tab ; Transportbefehl auf la_tab; Adressteil + K2 * 01000
-0400: 00000000000 # ae_tab: dw 0 ; Ziffer 0
-0401: 00000000100 # dw 0100 ; Ziffer 1 (1 * 0100)
-0402: 00000000200 # dw 0200 ; Ziffer 2
-0403: 00000000300 # dw 0300 ; Ziffer 3
-0404: 00000000400 # dw 0400 ; Ziffer 4
-0405: 00000000500 # dw 0500 ; Ziffer 5
-0406: 00000000600 # dw 0600 ; Ziffer 6
-0407: 00000000700 # dw 0700 ; Ziffer 7
-0410: 10000000000 # ae_pois: dw 010000000000 ; Ziffer 8: 2 hoch 30, Haltmarke (keine Oktalziffer)
-0411: 10000000000 # dw 010000000000 ; Ziffer 9: 2 hoch 30, Haltmarke
-0412: 00000332000 # ae_zr: 000 kz_neu ; ZR (Offset 012): Sprung zum Neustart der Kennzeicheneingabe (neues K1); auch Konstante fuer kz_xr (kz_lq)
-0433: 00007757211 # 211 ae_sv ; Punkt (Offset 033): AC := Konstante
-0434: 00007756000 # 000 ae_rs ; Rueckkehr zum Aufrufer, AC = Konstante
+0700: 00000000000 # ae_tab: dw 0 ; Ziffer 0
+0701: 00000000100 # dw 0100 ; Ziffer 1 (1 * 0100)
+0702: 00000000200 # dw 0200 ; Ziffer 2
+0703: 00000000300 # dw 0300 ; Ziffer 3
+0704: 00000000400 # dw 0400 ; Ziffer 4
+0705: 00000000500 # dw 0500 ; Ziffer 5
+0706: 00000000600 # dw 0600 ; Ziffer 6
+0707: 00000000700 # dw 0700 ; Ziffer 7
+0710: 10000000000 # ae_pois: dw 010000000000 ; Ziffer 8: 2 hoch 30, Haltmarke (keine Oktalziffer)
+0711: 10000000000 # dw 010000000000 ; Ziffer 9: 2 hoch 30, Haltmarke
+0712: 00000332000 # ae_zr: 000 kz_neu ; ZR (Offset 012): Sprung zum Neustart der Kennzeicheneingabe (neues K1); auch Konstante fuer kz_xr (kz_lq)
+0733: 00007757211 # 211 ae_sv ; Punkt (Offset 033): AC := Konstante
+0734: 00007756000 # 000 ae_rs ; Rueckkehr zum Aufrufer, AC = Konstante
+0500: 00007763240 # ps_anf: 240 ps_rs ; Rueckkehrbefehl des Aufrufers sichern (Arbeitszelle 7763)
+0501: 00000537211 # 211 c_psr ; AC := Sprung 000 ps_ret
+0502: 00007700240 # 240 kz_rs ; Rueckkehr der Kennzeicheneingabe := Schleife ps_ret
+0503: 00000540211 # 211 c_psi ; AC := Sprung 000 ps_nx
+0504: 00007762240 # 240 ps_ab1 ; Folgezelle des Abspeicherbefehls (Arbeitszelle 7762)
+0505: 00000313211 # 211 c_unit ; AC := 1 * 01000
+0506: 00007702240 # 240 kz_k2 ; K2 := 1: wie nach Eingabe einer Hauptleitadresse
+0507: 00000510000 # 000 ps_la
+0510: 00007702211 # ps_la: 211 kz_k2 ; AC := K2 * 01000
+0511: 00000304330 # 330 c_two ; Vergleich mit 2 * 01000
+0512: 00000332150 # 150 kz_neu ; K2 >= 2: der Abspeicherbefehl bleibt, neues K1
+0513: 00000313220 # 220 c_unit ; AC := (K2 - 1) * 01000: K2 = 1 gibt 0, K2 = 0 negativ
+0514: 00000522040 # 040 ps_rel ; K2 = 0: mit Relativadresse
+0515: 00007724211 # 211 la_tab ; K2 = 1: AC := Hauptleitadresse
+0516: 00000574200 # ps_bau: 200 c_amsk ; AC := a1 a2 a3 a4 (t3 bis t6)
+0517: 00000575210 # 210 c_240 ; AC := Abspeicherbefehl a1 a2 a3 a4 240
+0520: 00007761240 # 240 ps_ab ; Abspeicherbefehl (Arbeitszelle 7761)
+0521: 00000332000 # 000 kz_neu ; neues K1
+0522: 00007724211 # ps_rel: 211 la_tab ; AC := Hauptleitadresse
+0523: 00007735210 # 210 la_tab+011 ; AC := Hauptleit- plus Relativadresse (Zelle 7735)
+0524: 00000516000 # 000 ps_bau
+0525: 00007765240 # ps_ret: 240 ps_w ; Wort merken (Arbeitszelle 7765)
+0526: 00007701211 # 211 kz_k1 ; AC := K1 * 01000
+0527: 00000313330 # 330 c_unit ; Vergleich mit 1 * 01000
+0530: 00000543170 # 170 ps_sof ; K1 = 1: Sofortbefehl
+0531: 00007765211 # 211 ps_w ; K1 = 0: AC := Wort
+0532: 00007761000 # 000 ps_ab ; Abspeicherbefehl a1 a2 a3 a4 240 ausfuehren, danach Folgezelle ps_ab1 = 000 ps_nx
+0533: 00007761211 # ps_nx: 211 ps_ab ; Adresse des Abspeicherbefehls um eine Einheit erhoehen
+0534: 00000313210 # 210 c_unit
+0535: 00007761240 # 240 ps_ab
+0536: 00000332000 # 000 kz_neu ; neues K1
+0537: 00000525000 # c_psr: 000 ps_ret ; Konstante: Rueckkehrbefehl der Programmstueck-Eingabe (zugleich Kennung der Betriebsart)
+0540: 00000533000 # c_psi: 000 ps_nx ; Konstante: Folgezelle ps_ab1 des Abspeicherbefehls
+0541: 00000510000 # c_psla: 000 ps_la ; Konstante: Folgezelle kz_xr nach der Eingabe einer Hilfsadresse (kz_lq)
+0542: 00000576000 # c_sz: 000 ps_end ; Konstante: Tabellenzelle von ":" (Sprung nach ps_end)
+0543: 00007640441 # ps_sof: 441 nullspur ; Nullspur 7640 bis 7677 := 0 (loescht den AC): die in ps_pt gesetzte Zelle von KB entfernen (Festlegung F1)
+0544: 00000573211 # 211 c_psus ; AC := Sprung 000 ps_us
+0545: 00007706240 # 240 kz_xr ; Folgezelle von kz_xw (Arbeitszelle 7706)
+0546: 00007765211 # 211 ps_w ; AC := Sofortbefehl
+0547: 00007705240 # 240 kz_xw ; Sofortzelle (Arbeitszelle 7705)
+0550: 00007705000 # 000 kz_xw ; Sofortbefehl ausfuehren
+0551: 00000000020 # ps_us: 020 0 ; US: der Sofortbefehl war kein Sprungbefehl
+0552: 00007705211 # 211 kz_xw ; Starttaste: Sofortbefehl
+0553: 00000313210 # 210 c_unit ; Adresse um eine Einheit erhoehen
+0554: 00007705240 # 240 kz_xw
+0555: 00007705000 # 000 kz_xw ; ausfuehren, danach ueber kz_xr wieder ps_us (Zustand US)
+0556: 00007700211 # ps_k1: 211 kz_rs ; Rueckkehrbefehl der Kennzeicheneingabe
+0557: 00000537330 # 330 c_psr ; = 000 ps_ret: Betriebsart Programmstueck-Eingabe?
+0560: 00000562170 # 170 ps_pt ; ja: Tabellenzellen anpassen
+0561: 00000350000 # 000 kz_k1l ; nein: unveraendert, K1 lesen
+0562: 00000542211 # ps_pt: 211 c_sz ; AC := Sprung 000 ps_end (Rueckkehr zum Aufrufer)
+0563: 00007615240 # 240 kz_tab+015 ; ":" (Eingabeadresse 015): Schlusszeichen
+0564: 00007672240 # 240 kz_tab+072 ; BM (Eingabeadresse 072, Sprung-Umstellung ja): Schlusszeichen (Nullspur Position 2, von keiner Kette durchlaufen); ZV liest die Zelle als Datum (Fehler, 0000)
+0565: 00000712211 # 211 ae_zr ; AC := Sprung 000 kz_neu
+0566: 00007612240 # 240 kz_tab+012 ; ZR: Neustart (neues K1)
+0567: 00007632240 # 240 kz_tab+032 ; WR (Satzmarke / WRZL, Eingabeadresse 032): Neustart
+0570: 00007637240 # 240 kz_tab+037 ; Um. GB (Eingabeadresse 037): Neustart
+0571: 00007657240 # 240 kz_tab+057 ; Um. KB (Eingabeadresse 057, Nullspur Position 13): Neustart
+0572: 00000350000 # 000 kz_k1l ; K1 lesen
+0573: 00000551000 # c_psus: 000 ps_us ; Folgezelle kz_xr des Sofortbefehls: Sprung zum Stopp
+0574: 00007777000 # c_amsk: dw 07777000 ; Maske fuer a1 a2 a3 a4 (Oktalstellen t3 bis t6)
+0575: 00000000240 # c_240: dw 0240 ; Operationsteil 240 (Transportbefehl) fuer den Abspeicherbefehl
+0576: 00007640441 # ps_end: 441 nullspur ; Nullspur 7640 bis 7677 := 0 (Festlegung F1)
+0577: 00007763000 # 000 ps_rs ; Rueckkehr zum Aufrufer (Zelle ps_rs wird als Befehl 000 x ausgefuehrt)
+0600: 00007701240 # kz_h2: 240 kz_k1 ; K1 * 01000 merken (verdraengter Befehl, Arbeitszelle 7701)
+0601: 00000613211 # 211 c_p0 ; AC := Sprung 000 kz_p0
+0602: 00007633240 # 240 kz_tab+033 ; Tabellenzelle des Punktes: "0." moeglich
+0603: 00000355000 # 000 kz_k2l ; weiter: K2 lesen
+0604: 00007701311 # kz_p0: 311 kz_k1 ; AC := K1 * 01000, Vergleicher 3 falls K1 = 0
+0605: 00000607170 # 170 kz_p0b ; K1 = 0
+0606: 00000000000 # 000 0 ; K1 = 1 oder 2: unzulaessig, Sprung nach 0000
+0607: 00007640211 # kz_p0b: 211 kz_tab+040 ; AC := 0 (Nullspur)
+0610: 00007702240 # 240 kz_k2 ; K2 := 0
+0611: 00007703240 # 240 kz_kw ; Wortsumme := 0
+0612: 00000177000 # 000 kz_wend ; Wortende wie nach 0 0 .
+0613: 00000604000 # c_p0: 000 kz_p0 ; Konstante: Tabellenzelle des Punktes vor der ersten Wortziffer
 Tastenfolge:
 H G R

@@ -1,0 +1,14 @@
+Trommeldatei:
+#PROT STUFE=2
+0000: 00003000211 # 211 Laden
+#INTERRUPT H # letzte Taste H: der Test endet hier im Halt
+0001: 00003001210 # 210 Addieren (wird nicht mehr ausgeführt)
+0002: 00000000020 # 020 Stopp
+3000: 00000000100
+3001: 00000000045
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+BZ=0001 AC=00000000100 AR=3000 FE=0 FUE=0 BS=0 US=0 E=0 A=0 V1=0 V2=0

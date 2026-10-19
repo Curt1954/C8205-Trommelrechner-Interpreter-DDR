@@ -1,0 +1,68 @@
+Protokoll VM-001 (grafik_sw_vormerkung_s3_13.py), Checkpoint 31, 18.10.2026, Arbeitsrechner Linux, Python 3.12.3, kein Tkinter
+Zeit (UTC): 04:44:25
+
+=== 1. Projektstand (Programmcode unveraendert): python3 -I testscripte/grafik_sw_vormerkung_s3_13.py
+test_kontrolle_ohne_kanalwechsel (__main__.Vormerkung.test_kontrolle_ohne_kanalwechsel) ... ok
+test_s3_13_zeichen_ueberlebt_echo_k2 (__main__.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2) ... expected failure
+test_s3_13b_keine_vormerkung_nach_programmende (__main__.Vormerkung.test_s3_13b_keine_vormerkung_nach_programmende) ... expected failure
+
+----------------------------------------------------------------------
+Ran 3 tests in 3.462s
+
+OK (expected failures=2)
+
+=== 2. Dieselbe Datei OHNE expectedFailure (zeigt die Fehlergruende)
+test_kontrolle_ohne_kanalwechsel (__main__.Vormerkung.test_kontrolle_ohne_kanalwechsel) ... ok
+test_s3_13_zeichen_ueberlebt_echo_k2 (__main__.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2) ... FAIL
+test_s3_13b_keine_vormerkung_nach_programmende (__main__.Vormerkung.test_s3_13b_keine_vormerkung_nach_programmende) ... FAIL
+
+======================================================================
+FAIL: test_s3_13_zeichen_ueberlebt_echo_k2 (__main__.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+AssertionError: False is not true : S3-13 verletzt: Zeichen A ging verloren, Rechner bekam nur ['Um. GB']
+
+======================================================================
+FAIL: test_s3_13b_keine_vormerkung_nach_programmende (__main__.Vormerkung.test_s3_13b_keine_vormerkung_nach_programmende)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+AssertionError: True is not false : B-6: nach Programmende bleibt die Vormerkung stehen, das Fenster fordert weiter den Fokus
+
+----------------------------------------------------------------------
+Ran 3 tests in 3.462s
+
+FAILED (failures=2)
+
+=== 3. Wegwerfkopie mit Vorschlag A (liefern() prueft nur den Schalter SW; NICHT im Paket)
+-- grafik_sw_vormerkung_s3_13
+UNEXPECTED SUCCESS: test_s3_13_zeichen_ueberlebt_echo_k2 (__main__.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2)
+Ran 3 tests in 0.469s
+FAILED (expected failures=1, unexpected successes=1)
+-- grafik_sw_tests
+Ran 37 tests in 0.174s
+OK
+-- grafik_sw_ende_zu_ende
+Ran 15 tests in 2.967s
+OK
+-- grafik_sw_pult_test
+Ran 5 tests in 0.372s
+OK
+-- grafik_pult_tests
+FAIL: test_kep (__main__.KepUeberPult.test_kep)
+Ran 65 tests in 4.179s
+FAILED (failures=1)
+
+=== 4. Projektstand, uebrige Logiktests
+-- grafik_sw_tests
+Ran 37 tests in 0.175s
+OK
+-- grafik_sw_ende_zu_ende
+Ran 15 tests in 3.019s
+OK
+-- grafik_sw_pult_test
+Ran 5 tests in 0.358s
+OK
+-- grafik_pult_tests
+FAIL: test_kep (__main__.KepUeberPult.test_kep)
+Ran 65 tests in 4.239s
+FAILED (failures=1)

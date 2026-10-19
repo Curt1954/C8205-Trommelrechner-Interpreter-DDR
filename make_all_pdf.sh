@@ -8,6 +8,8 @@ arr=(
   erzeuge_einstieg_pdf.py
   erzeuge_einzelbefehlsliste_pdf.py
   erzeuge_gestaltungsrichtlinie_pdf.py
+  erzeuge_grafik_beschreibung_pdf.py
+  erzeuge_grafik_pruefverfahren_pdf.py
   erzeuge_knoten_pdfs.py
   erzeuge_knotentabellen_pdf.py
   erzeuge_kodetabellen_pdf.py

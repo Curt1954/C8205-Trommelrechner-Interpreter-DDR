@@ -1,11 +1,11 @@
 ** Objektdatei-Ausdrucke der Beispielprogramme (Vorgabebilder) **
 
-Version: 0.03-001
+Version: 0.03-002
 
 Entwurf vom 07.10.2026 (ergänzt nach dem Assemblerlauf), noch nicht geprüft. Dieses Dokument erklärt, wie die in den Büchern abgedruckten
 Beispielprogramme zu lesen sind und wie man daraus einen Testauftrag macht. Es wiederholt nichts aus den
 Teildokumenten, sondern verweist auf sie (Assemblerdokumentation, "C8205-Interpreter-Durchführung_eines_Tests.md").
-Quellen: Erläuterung des Projektinhabers (07.10.2026), Assemblerdokumentation Abschnitte 3.7 bis 3.9 und 5.2,
+Quellen: Erläuterung des Projektinhabers (07.10.2026), Assemblerdokumentation Abschnitte 3.3.7 bis 3.3.9 und 5.2,
 Beispiel "Ermittlung des Maximums von drei Zahlen" mit den daraus entstandenen Tests. Was nicht belegt ist, steht
 unter "Offene Punkte" (Abschnitt 6).
 
@@ -42,17 +42,17 @@ Kontrolle für die Prüfwerte (z. B. `AC=0` nach einem Stopp mit Löschen).
 
 | K1K2 | Wirkung beim Laden | Beleg |
 |---|---|---|
-| `00` | keine Änderung: Adreßteil gilt absolut (z. B. Register R2 = 7776, feste Stoppnummer) | Projektinhaber; Assemblerdoku 3.9 (`abs`-Symbole: K1K2=00); `dw`-Datenworte ebenfalls 00 |
-| `01` | Programmladeadresse wird zum Adreßteil addiert (Sprungziele, Adressen im Programm) | Projektinhaber; Assemblerdoku 3.3/3.4 ("1. Hauptleitadresse") |
+| `00` | keine Änderung: Adreßteil gilt absolut (z. B. Register R2 = 7776, feste Stoppnummer) | Projektinhaber; Assemblerdoku 3.3.9 (`abs`-Symbole: K1K2=00); `dw`-Datenworte ebenfalls 00 |
+| `01` | Programmladeadresse wird zum Adreßteil addiert (Sprungziele, Adressen im Programm) | Projektinhaber; Assemblerdoku 3.3.3/3.3.4 ("1. Hauptleitadresse") |
 | `02` | eine zweite Ladeadresse (Datenladeadresse) wird zum Adreßteil addiert; ab ihr liegen die Daten, im Beispiel a, b, c | Projektinhaber |
-| `20` | Kennzeichen "Relativadresse setzen" (aus `equ`), keine Befehlszeile | Assemblerdoku 3.8 (KZ=20) |
+| `20` | Kennzeichen "Relativadresse setzen" (aus `equ`), keine Befehlszeile | Assemblerdoku 3.3.8 (KZ=20) |
 
 Der Assembler erzeugt nur `00`, `01` und `20`. Ein Kennzeichen `02` kommt nur in den Vorgabebildern vor
 (Abschnitt 6, Punkt 2).
 
 **Wichtig beim Nachbauen mit dem Assembler:** Ein Zahlenoperand (z. B. `240 07776`) ergibt K1K2=**01**, nicht 00, und
 würde beim Laden um die Programmladeadresse verschoben. Ein Befehl mit K1K2=**00** (feste Adresse wie R2 = 7776 oder
-eine Stoppnummer) entsteht in unserem Assembler **nur über ein `abs`-Symbol** (Assemblerdokumentation 3.9):
+eine Stoppnummer) entsteht in unserem Assembler **nur über ein `abs`-Symbol** (Assemblerdokumentation 3.3.9):
 `r2: abs 07776` und dann `240 r2` ergibt `00 7776 240.`. Die `abs`-Definitionen stehen hinter `end`.
 
 Formen der Zeile (Beispiele aus Assemblerdokumentation 5.2): `01 0007 000.` (Kennzeichen, Adreßteil, BAZ),

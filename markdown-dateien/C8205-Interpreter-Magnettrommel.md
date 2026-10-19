@@ -1,6 +1,6 @@
 ** Magnettrommel (Speicher) **
 
-Version: 0.03-001
+Version: 0.03-003
 
 Der gesamte Speicher liegt magnetisch auf einer Trommel, organisiert in Zellen (Maschinenworten).
 
@@ -88,9 +88,10 @@ der Befehlsausführung selbst.
 Schützt innerhalb der Spuren 0000 bis 1740 (oktal) bestimmte, auswählbare Gruppen von Bahnen gegen
 irrtümliches Überschreiben. Der Befehlsablauf wird dadurch nicht beeinflusst – reine
 Schreibschutz-Funktion, keine Auswirkung auf die Befehlsverarbeitung selbst. Die Schalter befinden
-sich physisch an der Rückseite der Tastatur-Anzeige-Einheit; für die Testdefinition gehören sie zum Bedienpult
-(Bezeichnungen `BSP_0001` … `BSP_1000`, s. Dokument "C8205-Interpreter-Bedienpult_mit_Schaltern.md"). Im
-Grundzustand sind alle sechs AUS, es besteht keine Sperre.
+sich physisch an der Rückseite der Tastatur-Anzeige-Einheit (hinter dem Rechner-Bedienpult); ihre Funktion wird
+zusammen mit der Magnettrommel ausgeführt. Im Interpreter werden sie nicht grafisch dargestellt, sondern über den
+Aufrufparameter `--BASP` gesetzt (Abschnitt „Nachbildung im Interpreter"). Im Grundzustand sind alle sechs AUS, es
+besteht keine Sperre.
 
 Sechs Einzelschalter, jeder mit seiner oktalen Kennzeichnung, die angibt, welchen Adreßbereich/-kanal er
 sperren kann: 0001, 0040, 0100, 0200, 0400, 1000. Der erste dieser sechs (Kennzeichnung 0001) trägt als
@@ -115,3 +116,15 @@ Der Python-Interpreter bildet den Speicher als persistente Textdatei nach (Vorga
 geordnet nach der **logischen** Adresse `0000` bis `7777` (nicht nach der physischen Reihenfolge der Sektoren, Abschnitt „Speichernumerierung / Interleaving“). Zeitverhalten (Wortzeit, Wartezeit,
 Zugriffszeit) wird nicht nachgebildet, alle Zeiten sind 0; die Formeln der zeitoptimalen Folgeadresse sind nur eine Layout-Hilfe. Der Inhalt bleibt über Tests und Aufrufe hinweg erhalten. Format,
 Prüfung, Überlagerung durch die Testzeilen und Zurücksetzen: `C8205-Interpreter-Python_Interpreter.md`, Abschnitt 8.5, und `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2c.
+
+**Bahnsperrenschalter (Ergänzung 14.10.2026):** Die sechs Schalter werden nicht grafisch dargestellt, sondern durch den
+Aufrufparameter `--BASP=abcdef` des Interpreters gesetzt (nur auf der Kommandozeile): sechs Ziffern `0`/`1` (1 = EIN) in der
+Reihenfolge a = Hauptschalter (0001), b = Zusatzschalter 0040, c = 0100, d = 0200, e = 0400, f = 1000. Vorgabe `000000` (alle AUS,
+keine Sperre). Beispiel: `--BASP=111000` setzt den Hauptschalter und die Zusatzschalter 0040 und 0100 auf EIN, die übrigen auf AUS
+(nach der Regel oben wären dann die Bahnen 0 bis 3, also die Adressen 0000 bis 0177, gesperrt). **Stand:** Der Interpreter prüft und
+speichert den Parameter und nennt ihn bei einem Wert ungleich `000000` auf dem Bildschirm und im Protokoll. Die Wirkung, das
+Unterdrücken von Schreibzugriffen auf gesperrte Bahnen, ist noch nicht umgesetzt. Aufruf und Schalter: `C8205-Interpreter-Python_Interpreter.md`, Abschnitt 5.1.
+
+## Echte Trommel im Modus GRAFIK
+
+**GRAFIK:** Die Nachbildung oben (Trommeldatei, rechnerische Wartezeit) gehört zum Modus TEST. Im Modus GRAFIK bildet ein C-Modul die drehende Trommel nach: Lese- und Schreibaufträge werden nur bedient, wenn die Zelle unter dem Kopf liegt. Die Trommeldatei ist für beide Modi dieselbe. Aufbau, Takt, Bahnsperre `--BASP` und Rückkehrcode 16 bei nicht ladbarem Modul: `C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitt 7.

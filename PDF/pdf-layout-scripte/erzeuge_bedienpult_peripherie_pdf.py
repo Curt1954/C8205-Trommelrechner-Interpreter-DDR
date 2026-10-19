@@ -1282,11 +1282,12 @@ def story():
     s += h2('11.2 Tastatur des Schreibwerks (Eingabe)')
     s.append(P('Die Tastatur des Schreibwerks ist die Eingabeseite des Schreibwerks. Bei den Tasten mit zwei Zeichen steht oben '
                'das Zeichen der Großbuchstabenlage, unten das der Kleinbuchstabenlage; „KB“ und „GB“ schalten die Lage um. '
-               'Die Taste mit zwei Kreisen ist unbenutzt und nicht eingabefähig. Die Taste mit £ (oben) und $ (unten), dem '
-               'Pfundzeichen, ist eingabefähig.'))
+               'Die Taste mit zwei Kreisen ist der Eingabetaster der Blockmarke BM am Schreibwerk; sie ist eingabefähig und liefert '
+               'das Zeichen BM (Kodetabellen, Abschnitt 1.4, Zeile 53, mit Sprung-Umstellung). Die Taste mit £ (oben) und $ '
+               '(unten), dem Pfundzeichen, ist eingabefähig.'))
     s += L.bild(os.path.join(ABB_DIR[0], 'C8205-Abb-Tastatur_Schreibwerk.png'),
                 'Abbildung 5: Tastatur des Schreibwerks (neu gezeichnet nach Abb. 14 „Schreibwerktastatur“ und der Zeichnung '
-                '„Tastatur des Schreibwerkes“ der Originalunterlagen). Grau: Taste ohne Funktion', max_hoehe=250)
+                '„Tastatur des Schreibwerkes“ der Originalunterlagen). Taste mit zwei Kreisen: Eingabetaster der Blockmarke BM', max_hoehe=250)
     s.append(P('Die Beschriftungen der Zeichnung und die Bezeichnungen der Bedienelemente in Abb. 13 „Schreibwerk“ der '
                'Originalunterlagen (Nummer in Klammern) entsprechen einander so:'))
     s += tbl([['Taste', 'Bezeichnung in der Zeichnung', 'Bezeichnung in Abb. 13'],

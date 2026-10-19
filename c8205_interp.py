@@ -3,15 +3,15 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
-Version: 0.03-009
+Version: 0.03-017
 (Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
 REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
 Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
 
-Aufruf:  python3 c8205_interp.py [--mdverz VERZ] [--out VERZ|DATEI.log]
+Aufruf:  python3 c8205_interp.py [--MODUS TEST|GRAFIK] [--mdverz VERZ] [--out VERZ|DATEI.log]
          [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
          [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL] [--zwischenablage auto|tk|system]
-         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] TEST.txt [TEST2.txt ...]
+         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] TEST.txt [TEST2.txt ...]
          python3 c8205_interp.py --version      (zeigt die Versionsnummer und endet)
          (--leser1, --leser2, --stanzer1, --sw-ausgabe und --k0 duerfen auch als Zeile in der Testdatei stehen; die Kommandozeile hat Vorrang)
          (--SW-TERMINAL: Schreibwerk-Ausgabe zusaetzlich im Fenster "SW Ausgabe"; das Fenster bleibt auch nach dem Testende offen, bis es mit X
@@ -30,6 +30,41 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
   * Befehlszeilenschalter --knotentest (Standard: aus): nur wenn gesetzt, enthalten die Knotenprotokolle
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
+
+Aenderung 18.10.2026 (Version 0.03-016): Schalterstellung SW dauerhaft (m.sw_schalter; Befund B-1 aus GRAFIK-Checkpoint 22). Der Anwahlbefehl K0 (a028) waehlt T oder SW
+  nach der Schalterstellung SW im Moment der Anwahl, nicht mehr nach dem Flag SW; die Anwahlbefehle K1, K2, K3 loeschen T und SW, nicht die Schalterstellung
+  (Bedienpult_mit_Schaltern.md, Kanalanwahl: "er beruecksichtigt den Schalterstatus SW analog"). Vorher wartete ein Programm, das mit K2 ausgibt und danach mit K0 liest
+  (z. B. ziffern), bei gedrueckter Taste SW auf T statt auf SW. tastenfolge() fuehrt m.sw_schalter bei SW=1/SW=0 mit (Beginn jeder Tastenfolge: 0, wie bisher die lokale
+  Variable). Pult-Tasten K0 und G sowie die Testdateien sind unveraendert wirksam; neu ist nur, dass der Anwahlbefehl im Programm den Schalter sieht.
+Aenderung 17.10.2026 (Version 0.03-015): E unter gehaltenem M erhoeht AR (Bedienpult_mit_Schaltern.md, Taste E; Handbuch). Die Lampenreihe AR ist der Adressteil des BR (m.adr);
+  bisher blieb m.adr unter M auf dem alten Wert stehen, waehrend m.AR (und BZ) um 1 stiegen. Jetzt gilt nach jedem E unter M m.adr := m.AR; die BR-Zeile der Protokolle und die
+  Zeile 'ST : ... BR = ...' zeigen damit den erhoehten Adressteil. Aendert nur Protokolltext (BR-Zeilen in Testprotokollen mit M ... E), kein Testergebnis; GRAFIK (c8205_grafik.py
+  G2-011) zieht gleich, damit die Gleichwertigkeit (Vergleich von m.adr) erhalten bleibt.
+
+Aenderung 17.10.2026 (Version 0.03-014): Schalter BS und Flag BS getrennt (Bedienpult_mit_Schaltern.md, Abschnitt "Selektoren"; Datenstruktur-Dokument): Die Tastenfolge-Token
+  BS+/BS=1 und BS-/BS=0 setzen nur die Schalterstellung (neu: Machine.bs_schalter), NICHT das Flag BS; Test t031 (Knoten 43) liest die Schalterstellung. Das Flag BS (= Lampe BS)
+  wird erst durch den wirksamen bedingten Stopp (ANWEISUNG-045) 1 und durch G, ST und R wieder 0 (G loescht es jetzt auch; der Schalter bleibt eingerastet). ST ist nur bei
+  US oder Flag BS wirksam (vorher: schon bei eingerastetem Schalter). Folge fuer Testdateien: Nach BS+ ohne wirksamen bedingten Stopp steht BS=0 (vorher BS=1); keine Testdatei des Pakets war betroffen.
+
+Aenderung 14.10.2026 (Version 0.03-013): Neuer Aufrufparameter --BASP=abcdef (6 Ziffern 0/1) fuer die sechs Bahnsperrenschalter der Magnettrommel
+  (Magnettrommel.md, Abschnitte Bahnsperrenschalter und Nachbildung im Interpreter). a = Hauptschalter (EIN-AUS, Kennzeichnung 0001), b bis f = Zusatzschalter
+  0040, 0100, 0200, 0400, 1000; 1 = EIN, 0 = AUS (Vorgabe 000000). NUR DER PARAMETER: Der Wert wird geprueft und in BASP_TEXT gespeichert; die WIRKUNG
+  (Schreibsperre der Trommel) ist noch NICHT umgesetzt. Bei einem Wert ungleich 000000 nennen Bildschirm und Protokoll den Parameter mit diesem Hinweis.
+  Nur Kommandozeile (nicht als Zeile in der Testdatei).
+
+Aenderung 13.10.2026 (Version 0.03-012): TABELLE1 Zeile 20: Klbuch-Beschriftung "i †" zu "i" geaendert (Projektinhaber; wie Kodetabellen Tabelle 1). Folge: NAMEN
+  enthaelt den Namen "I†" nicht mehr; K0 findet das Zeichen weiterhin als Einzelzeichen "i" ueber den ASCII-Wert (Eingabe 31).
+
+Aenderung 13.10.2026 (Version 0.03-011): Neue Testmarke #TROMMEL=LEER bzw. #TROMMEL=MP (Durchfuehrung_eines_Tests.md, Abschnitt 2g): Vor dem Test wird die
+  Trommel komplett neu gesetzt - LEER: alle 4096 Zellen = 0; MP: Abbild des Minimalprogramms aus virtuelle_Geraete/Trommelvorlagen/MP.txt (Format wie
+  trommel.txt; fehlt die Vorlage, startet der Test nicht, rc 16). Danach folgt wie bisher die Ueberlagerung mit dem Abschnitt Trommeldatei: der Testdatei.
+  Ohne die Marke bleibt die Trommel unveraendert. Steht die Marke im ERSTEN Test des Aufrufs und fehlt die Trommeldatei oder ist sie formal fehlerhaft,
+  wird sie neu angelegt (statt rc 16). Protokoll (Ausgangsbedingungen) und Bildschirm nennen die Marke.
+
+Aenderung 13.10.2026 (Version 0.03-010): Wartet der Rechner auf eine Eingabe ueber K0 (T oder SW) und ist KEINE Umleitung gesetzt (kein --k0), so steht
+  das Terminal bisher scheinbar still. Jetzt erscheint beim ERSTEN solchen Warten eines Tests einmal die Zeile "--- Achtung: Terminaleingaben erforderlich ...";
+  nicht vor jedem Eingabe-Halt. Nur wenn stdin ein Terminal ist (bei Eingabe ueber Pipe/Datei wartet niemand); die Zeile geht auf stderr und
+  erscheint auch mit --NO-TERMOUT (sie ist keine Ergebnisausgabe).
 
 Aenderung 12.10.2026 (Version 0.03-009): TABELLE1 um die Zeile 55 (WR, Wagenruecklauf ohne Zeilenschaltung) erweitert (Kodetabellen 1.4, Tabelle 2):
   Eingabeadresse 052 (Lochbild v 8 2, 01001010, ungerade Parität), Ausgabe-Adresse 112x, Sprung-Umstellung nein, ASCII 13/13. Der Lochbandleser nimmt WR jetzt an
@@ -137,6 +172,10 @@ Aenderung 07.10.2026: Trommel materialisiert. Die Trommel ist jetzt eine persist
   beim Teststart, uebertraegt die Adresse:Wert-Zeilen der Testdatei initial auf die Trommel und
   schreibt jede Zelländerung eines Befehls unmittelbar als Zeilenupdate in die Datei. Neue Klasse
   Trommel und Funktion pruefe_trommeldatei; Machine.rd/Machine.wr arbeiten ueber die Trommel.
+Aenderung 19.10.2026 (Version 0.03-017, Stufe 5): Neuer Schalter --MODUS TEST|GRAFIK (Gross-/Kleinschreibung gleich; Standard GRAFIK, auch --modus).
+  GRAFIK: main() uebergibt die Kommandozeile an c8205_grafik.hauptprogramm (Pult- und SW-Fenster, Toene); Testdateien entfallen dort.
+  TEST: das bisherige Verhalten, unveraendert (alle Aufrufer mit Testdatei brauchen jetzt --MODUS=TEST; c8205_interpreter.sh/.bat setzen es).
+  --version und -h/--help bleiben in jedem Modus die des Interpreters. Ein unbekannter Modus endet mit Meldung und Code 2.
 """
 import argparse
 import difflib
@@ -147,7 +186,7 @@ import subprocess
 import sys
 import time
 
-VERSION = '0.03-009'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
+VERSION = '0.03-017'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
@@ -155,6 +194,11 @@ MASK12 = 0xFFF
 TROMMEL_ZEILE_LAENGE = 18
 TROMMEL_ADR_ANZAHL = 4096
 TROMMEL_ZEILE_RE = re.compile(r'^([0-7]{4}): ([0-7]{11})\n$')
+PROJEKTVERZ = os.path.dirname(os.path.abspath(__file__))
+# #TROMMEL=<Name>: LEER ist eingebaut (alle Zellen 0); die uebrigen Namen brauchen ein Trommelabbild (Format wie trommel.txt) unter
+# virtuelle_Geraete/Trommelvorlagen/<Name>.txt. Name -> Beschreibung (fuer Meldungen).
+TROMMEL_VORLAGEN = {'MP': 'Minimalprogramm'}
+TROMMEL_MARKEN = ('LEER',) + tuple(TROMMEL_VORLAGEN)
 
 PHYS_LOG = [0o00,0o15,0o32,0o07,0o24,0o01,0o16,0o33,
             0o10,0o25,0o02,0o17,0o34,0o11,0o26,0o03,
@@ -181,7 +225,7 @@ TABELLE1 = [
     (17, 't', 'T', '163', 84, 116, 51, False),
     (18, 'z', 'Z', '171', 90, 122, 57, False),
     (19, 'u', 'U', '144', 85, 117, 52, False),
-    (20, 'i †', 'I', '051', 73, 105, 25, False),
+    (20, 'i', 'I', '051', 73, 105, 25, False),
     (21, 'o', 'O', '106', 79, 111, 38, False),
     (22, 'p', 'P', '127', 80, 112, 39, False),
     (23, ':', '(', '015', 40, 58, 13, True),
@@ -320,6 +364,42 @@ def pruefe_trommeldatei(pfad):
     return fehler
 
 
+def trommelvorlage_pfad(name):
+    return os.path.join(PROJEKTVERZ, 'virtuelle_Geraete', 'Trommelvorlagen', name + '.txt')
+
+
+def lies_trommelabbild(pfad):
+    """Liest eine formal geprueftes Trommelabbild (4096 Zeilen) als dict Adresse -> Wert."""
+    mem = {}
+    with open(pfad, encoding='utf-8', newline='') as fh:
+        for z in fh:
+            m = TROMMEL_ZEILE_RE.match(z)
+            if m:
+                mem[int(m.group(1), 8)] = int(m.group(2), 8)
+    return mem
+
+
+def schreibe_leere_trommeldatei(pfad):
+    """Legt die Trommeldatei neu an (4096 Zeilen, alle Zellen 0); ein fehlender Ordner wird angelegt."""
+    ordner = os.path.dirname(os.path.abspath(pfad))
+    os.makedirs(ordner, exist_ok=True)
+    with open(pfad, 'w', encoding='utf-8', newline='') as fh:
+        for adr in range(TROMMEL_ADR_ANZAHL):
+            fh.write(f'{adr:04o}: {0:011o}\n')
+
+
+def vorab_trommel(test):
+    """Formale Pruefung der Testmarke #TROMMEL: Fuer Vorlagen (MP) muss das Trommelabbild vorhanden und formal gueltig sein."""
+    name = test.trommel_vor
+    if name not in TROMMEL_VORLAGEN:
+        return []
+    pfad = trommelvorlage_pfad(name)
+    if not os.path.isfile(pfad):
+        return [f'#TROMMEL={name}: Trommelvorlage ({TROMMEL_VORLAGEN[name]}) nicht gefunden: {pfad}']
+    fe = pruefe_trommeldatei(pfad)
+    return [f'#TROMMEL={name}: Trommelvorlage {pfad} formal fehlerhaft: {x}' for x in fe[:5]]
+
+
 class Trommel:
     def __init__(self, pfad):
         self.pfad = pfad
@@ -353,6 +433,18 @@ class Trommel:
         try:
             self.datei.seek(pos)
             self.datei.write(zeile)
+        except OSError as e:
+            raise KonfigFehler(f'Trommeldatei nicht beschreibbar: {self.pfad} ({e.strerror})')
+
+    def setze_inhalt(self, werte):
+        """Gesamte Trommel neu setzen (#TROMMEL=...): werte = dict Adresse -> Wert, Zellen ohne Eintrag = 0; die Datei wird komplett neu geschrieben."""
+        self.mem = dict(werte)
+        text = ''.join(f'{a:04o}: {self.mem.get(a, 0):011o}\n' for a in range(TROMMEL_ADR_ANZAHL))
+        try:
+            self.datei.seek(0)
+            self.datei.write(text)
+            self.datei.truncate()
+            self.datei.flush()
         except OSError as e:
             raise KonfigFehler(f'Trommeldatei nicht beschreibbar: {self.pfad} ({e.strerror})')
 
@@ -424,6 +516,7 @@ class Test:
         self.interrupts = []
         self.starte = None
         self.starte_nr = None
+        self.trommel_vor = None      # None | 'LEER' | 'MP': Trommel vor dem Test neu setzen (#TROMMEL=...)
         self._letzte_adr = None
         self._offen = []
         self.zeilen = []
@@ -523,6 +616,20 @@ class Test:
                 continue
             if re.match(r'#STARTE', s, re.I):
                 self.fehler.append(f'Zeile {nr}: fehlerhafte Testmarke #STARTE: {s!r}')
+                continue
+            if re.match(r'#TROMMEL(\s|=|$)', s, re.I):
+                if modus == 'pruefungen':
+                    self.fehler.append(f'Zeile {nr}: #TROMMEL ist im Abschnitt Pruefungen: nicht zulaessig')
+                    continue
+                m = re.fullmatch(r'#TROMMEL\s*=\s*(\S+)\s*(?:#.*)?', s, re.I)
+                if not m:
+                    self.fehler.append(f'Zeile {nr}: fehlerhafte Testmarke #TROMMEL: {s!r} (erwartet: #TROMMEL=' + ' oder #TROMMEL='.join(TROMMEL_MARKEN) + ')')
+                elif self.trommel_vor is not None:
+                    self.fehler.append(f'Zeile {nr}: #TROMMEL mehrfach')
+                elif m.group(1).upper() not in TROMMEL_MARKEN:
+                    self.fehler.append(f'Zeile {nr}: #TROMMEL={m.group(1)} ungueltig (' + ', '.join(TROMMEL_MARKEN) + ' erwartet)')
+                else:
+                    self.trommel_vor = m.group(1).upper()
                 continue
             if re.match(r'#INTERRUPT(\s|$)', s, re.I):
                 if modus != 'trommel':
@@ -649,6 +756,13 @@ class Test:
             self.fehler.append('Tastenfolge fehlt')
 
 
+def basp_text():
+    """Hinweiszeile zum Aufrufparameter --BASP fuer Bildschirm und Protokoll (leer bei der Vorgabe 000000)."""
+    if BASP_TEXT == '000000':
+        return ''
+    return f'Aufrufparameter --BASP={BASP_TEXT} (Bahnsperrenschalter) gesetzt; die Wirkung (Schreibsperre der Trommel) ist noch nicht umgesetzt'
+
+
 class Machine:
     FLAGS = ['E', 'A', 'T', 'SW', 'K1', 'K2', 'K3', 'FE', 'FUE', 'BS', 'US', 'V1', 'V2', 'H', 'SP']
 
@@ -656,6 +770,9 @@ class Machine:
         self.trommel = trommel
         self.AC = self.BZ = self.AR = self.OR = self.adr = 0
         self.fl = {k: 0 for k in self.FLAGS}
+        self.bs_schalter = 0      # Schalterstellung BS (eingerastet = 1); NICHT das Flag fl['BS'] (= Lampe BS: bedingter Stopp wirksam)
+        self.kanal_wechsel = 0    # G4-007: Zaehler echter Kanalwechsel (a028); nur GRAFIK liest ihn (Puffer des SW-Fensters)
+        self.sw_schalter = 0      # Schalterstellung SW (gedrueckt = 1); NICHT das Flag fl['SW'] (Unterkanal Schreibwerk von K0): Kanalanwahl K1..K3 loescht T/SW, nicht den Schalter
         self.x_merker = 0
         self.x_fetch = False
         self.x_sek = 0
@@ -743,7 +860,7 @@ def t018(m): return (m.B <= 1 and m.A in (0, 4, 5, 7)) or (m.B == 0 and m.A == 6
 def t019(m): return m.B == 3
 def t020(m): return bool(m.fl['FUE'])
 def t023(m): return m.B >= 4
-def t031(m): return bool(m.fl['BS'])
+def t031(m): return bool(m.bs_schalter)      # bedingter Stopp nur bei eingerastetem Schalter BS
 def t034(m): return m.B == 3
 def t036(m): return m.B <= 1 and m.A == 0
 def t038(m): return m.B == 2
@@ -903,10 +1020,12 @@ def sw_zeichen(m, zeile):
 
 
 ROT = '\033[31m'
+GELB = '\033[33m'
 RESET = '\033[0m'
 GERAETE = {'leser1': None, 'leser2': None, 'stanzer1': None, 'sw_ausgabe': None, 'k0': None,
            'pruefe_stanzer1': None, 'pruefe_sw_ausgabe': None}
 NO_TERMOUT = False
+BASP_TEXT = '000000'   # --BASP: Hauptschalter, dann Zusatzschalter 0040, 0100, 0200, 0400, 1000 (1 = EIN); Wirkung noch nicht umgesetzt
 SW_FENSTER = None      # --SW-TERMINAL: SwFenster-Objekt, sonst None
 POLL_SEKUNDEN = 0.5
 
@@ -918,6 +1037,19 @@ def tp(*a, **k):
 
 def vp(*a, **k):
     print(*a, **k)
+
+
+def terminal_hinweis(m):
+    """Einmal je Test: Der Rechner wartet auf Zeichen vom Terminal (K0 ohne Umleitung). Auch mit --NO-TERMOUT sichtbar."""
+    if not m.sw_zeilenanfang:
+        sys.stdout.write('\n')
+        m.sw_zeilenanfang = True
+    sys.stdout.flush()
+    text = '--- Achtung: Terminaleingaben erforderlich (K0 ohne Umleitung --k0); Abbruch mit Strg+C ---'
+    if sys.stderr.isatty() and 'NO_COLOR' not in os.environ:
+        text = GELB + text + RESET
+    sys.stderr.write(text + '\n')
+    sys.stderr.flush()
 
 
 def rot(m, text):
@@ -1055,6 +1187,7 @@ def k0_zeile(tok, lage):
 class K0Quelle:
     def __init__(self, pfad=None):
         self.tast = pfad is None
+        self.hinweis_gezeigt = False        # Terminal-Hinweis (terminal_hinweis) nur einmal je Test
         self.pfad = pfad
         self.stapel = None if self.tast else _Stapel(pfad, 'K0-Eingabe-Pfad nicht gefunden')
         self.zeilen = None
@@ -1426,12 +1559,15 @@ def a028(m):
         if kanal is None:
             m.fl['A'] = 1
             raise Stub(f'Anwahlbefehl {octs(a,4)}: a2 < 4 nicht definiert; Flag A bleibt gesetzt')
+        vorher = (m.fl['K1'], m.fl['K2'], m.fl['K3'], m.fl['SW'])
         for k in (1, 2, 3):
             m.fl[f'K{k}'] = 1 if k == kanal else 0
         if kanal == 0:
-            m.fl['T'], m.fl['SW'] = (0, 1) if m.fl['SW'] else (1, 0)
+            m.fl['T'], m.fl['SW'] = (0, 1) if m.sw_schalter else (1, 0)    # Schalterstellung SW im Moment der Anwahl (nicht das durch K1..K3 geloeschte Flag)
         else:
             m.fl['T'] = m.fl['SW'] = 0
+        if (m.fl['K1'], m.fl['K2'], m.fl['K3'], m.fl['SW']) != vorher:
+            m.kanal_wechsel += 1        # G4-007: Zaehler echter Kanalwechsel (die erneute Anwahl desselben Kanals zaehlt nicht); der Puffer des SW-Fensters wird dabei verworfen
         return
 
 
@@ -1508,6 +1644,9 @@ def a032(m):
         modus = 'Schreibwerk (SW)' if m.fl['SW'] else 'Pult-Tastatur (T)'
         if m.k0 is None:
             m.k0 = K0Quelle(None)
+        if m.k0.tast and not m.k0.hinweis_gezeigt and sys.stdin.isatty():
+            m.k0.hinweis_gezeigt = True
+            terminal_hinweis(m)
         while True:
             try:
                 tok = m.k0.naechstes()
@@ -1613,6 +1752,7 @@ def tastenfolge(m, tokens, run_e=None):
     e_unter_m = 0
     or_basis = m.OR
     sw_gedrueckt = False
+    m.sw_schalter = 0
     toks = list(tokens)
 
     def or_neu():
@@ -1625,7 +1765,7 @@ def tastenfolge(m, tokens, run_e=None):
             eff.append('H  : Schalter H-R -> "H", Flag H := 1')
         elif u == 'G':
             for k in m.fl:
-                if k not in ('H', 'T', 'BS', 'SP'):
+                if k not in ('H', 'T', 'SP'):     # das Flag BS wird geloescht, der Schalter BS (m.bs_schalter) bleibt eingerastet
                     m.fl[k] = 0
             m.fl['T'], m.fl['SW'] = (0, 1) if sw_gedrueckt else (1, 0)
             m.AR = 0
@@ -1643,10 +1783,12 @@ def tastenfolge(m, tokens, run_e=None):
                        + '; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)')
         elif u.startswith('SW') and (u.find('DRUECK') >= 0 or u in ('SW=1', 'SW+')):
             sw_gedrueckt = True
+            m.sw_schalter = 1
             m.fl['SW'], m.fl['T'] = 1, 0
             eff.append('SW gedrueckt: Schalter SW -> Flag SW := 1, T := 0')
         elif u.startswith('SW') and ('LOS' in u or u in ('SW=0', 'SW-')):
             sw_gedrueckt = False
+            m.sw_schalter = 0
             m.fl['SW'], m.fl['T'] = 0, 1
             eff.append('SW geloest (Stellung T): Flag SW := 0, T := 1')
         elif u == 'M' or (u.startswith('M') and (any(w in u for w in ('DRUECK', 'HALT')) or u == 'M+')) \
@@ -1683,8 +1825,12 @@ def tastenfolge(m, tokens, run_e=None):
         elif u[:2] in ('BS', 'SP') and len(u) > 2 and (u[2:] in ('=1', '+', '=0', '-') or any(w in u for w in ('DRUECK', 'LOS'))):
             name = u[:2]
             press = u[2:] in ('=1', '+') or 'DRUECK' in u
-            m.fl[name] = 1 if press else 0
-            eff.append(f'{name} : Schalter {name} ' + ('gedrueckt (eingerastet) -> ' if press else 'geloest -> ') + f'Flag {name} := {m.fl[name]}')
+            if name == 'BS':
+                m.bs_schalter = 1 if press else 0       # nur die Schalterstellung; das Flag BS wird erst durch einen wirksamen bedingten Stopp 1
+                eff.append('BS : Schalter BS ' + ('gedrueckt (eingerastet)' if press else 'geloest') + f' -> Schalterstellung {m.bs_schalter}, Flag BS unveraendert ({m.fl["BS"]})')
+            else:
+                m.fl[name] = 1 if press else 0
+                eff.append(f'{name} : Schalter {name} ' + ('gedrueckt (eingerastet) -> ' if press else 'geloest -> ') + f'Flag {name} := {m.fl[name]}')
         elif u == 'ST':
             if not (m.fl['US'] or m.fl['BS']):
                 eff.append('ST : elektronisch verriegelt, Rechner steht weder im bedingten noch im unbedingten Stopp -> keine Wirkung')
@@ -1692,6 +1838,7 @@ def tastenfolge(m, tokens, run_e=None):
                 or_basis |= 0o240
                 or_neu()
                 m.fl['US'] = 0
+                m.fl['BS'] = 0
                 m.br_aufgestellt = True
                 eff.append(f'ST : (US oder BS) OR := OR ODER 240 -> BR = {octs(m.adr,4)} {octs(m.OR,3)}, AR unveraendert; US := 0 (aufgestellt, nicht ausgefuehrt)')
         elif u == 'UE':
@@ -1717,11 +1864,12 @@ def tastenfolge(m, tokens, run_e=None):
                 m.BZ = (m.BZ + 1) & MASK12
                 m.AR = m.BZ
                 m.AC = ((m.BZ + 1) & MASK12) << 9
+            m.adr = m.AR            # Lampenreihe AR = Adressteil des BR zeigt das erhoehte AR (0.03-015)
             m.vor_phase2 = True
             m.br_tasten_m = False
             e_unter_m += 1
             eff.append(f'E  : (M gehalten) Befehlsentnahme gesperrt, BZ := {octs(m.BZ,4)}, AR := {octs(m.AR,4)}, '
-                       f'AC := {octs(m.AC,11)} (BZ+1 im Adressfeld)')
+                       f'AC := {octs(m.AC,11)} (BZ+1 im Adressfeld); BR-Adressteil := AR')
         elif u == 'E':
             if run_e is None:
                 ok = False
@@ -1752,6 +1900,7 @@ def tastenfolge(m, tokens, run_e=None):
                 eff.append('?? : R bei noch gedruecktem M (M muss vorher losgelassen werden)')
             m.fl['H'] = 0
             m.fl['US'] = 0
+            m.fl['BS'] = 0
             if m.bz_g and m.OR == 0:
                 m.BZ = 0
                 m.bz_g = False
@@ -1775,6 +1924,10 @@ def tastenfolge(m, tokens, run_e=None):
 
 
 def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=False):
+    if test.trommel_vor == 'LEER':
+        trommel.setze_inhalt({})
+    elif test.trommel_vor in TROMMEL_VORLAGEN:
+        trommel.setze_inhalt(lies_trommelabbild(trommelvorlage_pfad(test.trommel_vor)))
     trommel.uebertrage_aus_testdatei(test.mem)
 
     m = Machine(trommel)
@@ -1932,6 +2085,12 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
         kopf.append(f'  #AC={octs(test.ac_init,11)}')
     if test.bz_init is not None:
         kopf.append(f'  #BZ={octs(test.bz_init,4)}')
+    if test.trommel_vor == 'LEER':
+        kopf.append('  #TROMMEL=LEER (Trommel vor dem Test geleert: alle 4096 Zellen = 0; danach die Zeilen von Trommeldatei:)')
+    elif test.trommel_vor in TROMMEL_VORLAGEN:
+        kopf.append(f'  #TROMMEL={test.trommel_vor} (Trommel vor dem Test mit dem Abbild "{TROMMEL_VORLAGEN[test.trommel_vor]}" belegt; danach die Zeilen von Trommeldatei:)')
+    if basp_text():
+        kopf.append('  ' + basp_text())
     for ir in test.interrupts:
         kopf.append(f'  #INTERRUPT nach Befehl {octs(ir["nach"],4)}: ' + ' '.join(ir['tokens']))
     kopf.append(f'  #PROT STUFE={stufe}')
@@ -2154,11 +2313,38 @@ def vorab_geraete(test):
     return fehler
 
 
+def _modus_aus_argv(argv):
+    """Stufe 5: Wert von --MODUS/--modus (--MODUS=X oder --MODUS X); der letzte gewinnt. Ohne Angabe GRAFIK."""
+    modus = 'GRAFIK'
+    for i, a in enumerate(argv):
+        if a in ('--MODUS', '--modus') and i + 1 < len(argv):
+            modus = argv[i + 1]
+        elif a.startswith(('--MODUS=', '--modus=')):
+            modus = a.split('=', 1)[1]
+    return modus
+
+
 def main():
-    global NO_TERMOUT, SW_FENSTER
+    global NO_TERMOUT, SW_FENSTER, BASP_TEXT
     here = os.path.dirname(os.path.abspath(__file__))
+    modus = _modus_aus_argv(sys.argv[1:]).upper()
+    if modus not in ('TEST', 'GRAFIK'):
+        print(f'FEHLER: unbekannter Modus {modus!r} (erlaubt: TEST, GRAFIK)', file=sys.stderr)
+        sys.exit(2)
+    if modus == 'GRAFIK' and not {'--version', '-h', '--help'} & set(sys.argv[1:]):
+        import warnings
+        warnings.filterwarnings('ignore', category=ResourceWarning)     # harmlose Warnungen aus diesem Modul (wie c8205_grafik.sh)
+        av = sys.argv[1:]
+        if any(a.endswith(('.txt', '.test')) and not a.startswith('-') and os.path.isfile(a) and not (i > 0 and av[i - 1].startswith('--') and '=' not in av[i - 1])
+               for i, a in enumerate(av)):
+            print('Hinweis: Testdateien werden im Modus GRAFIK ignoriert; fuer Testlaeufe --MODUS=TEST angeben.', file=sys.stderr)
+        import c8205_grafik
+        sys.exit(c8205_grafik.hauptprogramm(av))
     ap = argparse.ArgumentParser()
     ap.add_argument('tests', nargs='+')
+    ap.add_argument('--MODUS', '--modus', dest='modus', default='GRAFIK', metavar='TEST|GRAFIK',
+                    help='Betriebsart (Standard GRAFIK: Pult- und SW-Fenster, Toene, ohne Testdatei; TEST: Testlauf mit Testdatei, alle Zeiten 0). '
+                    'Testlaeufe brauchen --MODUS=TEST')
     ap.add_argument('--version', action='version', version='%(prog)s ' + VERSION,
                     help='zeigt die Versionsnummer (Form y.xx-zzz) und beendet das Programm')
     ap.add_argument('--mdverz', default=os.path.join(here, 'markdown-dateien'), metavar='VERZ',
@@ -2196,6 +2382,10 @@ def main():
                     'Ende des Tests offen, bis es mit X geschlossen wird; Text mit der Maus markieren und kopieren '
                     '(Maus loslassen, Strg+C, Strg+Einfg, Kontextmenue) (Standard: aus; '
                     'nur Kommandozeile, nicht in der Testdatei)')
+    ap.add_argument('--BASP', '--basp', metavar='abcdef', dest='basp', default='000000',
+                    help='Bahnsperrenschalter der Magnettrommel: sechs Ziffern 0/1 (1 = EIN); a = Hauptschalter (EIN-AUS), '
+                    'b bis f = Zusatzschalter 0040, 0100, 0200, 0400, 1000 (Standard: 000000). Der Parameter wird nur geprueft '
+                    'und gespeichert; die Wirkung (Schreibsperre) ist noch nicht umgesetzt (nur Kommandozeile, nicht in der Testdatei)')
     ap.add_argument('--zwischenablage', choices=['auto', 'tk', 'system'], default='auto', metavar='auto|tk|system',
                     help='Kopierverfahren des Fensters "SW Ausgabe" (nur mit --SW-TERMINAL): auto = zuerst Systemprogramm '
                     '(Windows: Win32-API; Linux: wl-copy, xsel, xclip; macOS: pbcopy), dann Tk; tk = nur Tk-Zwischenablage; '
@@ -2203,6 +2393,9 @@ def main():
     args = ap.parse_args()
     if args.k0 and not args.k0.startswith('datei='):
         ap.error("--k0: 'datei=PFAD' erwartet (ohne --k0 wird vom Terminal gelesen; 'tastatur' entfaellt)")
+    if not re.fullmatch(r'[01]{6}', args.basp):
+        ap.error("--BASP: sechs Ziffern 0/1 erwartet (z. B. --BASP=111000), erhalten: %r" % args.basp)
+    BASP_TEXT = args.basp
     NO_TERMOUT = args.no_termout
     SW_FENSTER = SwFenster(args.zwischenablage) if args.sw_terminal else None
     GERAETE.update(leser1=args.leser1, leser2=args.leser2, stanzer1=args.stanzer1,
@@ -2235,6 +2428,21 @@ def main():
         tp('WARNUNG: nicht implementierte ANWEISUNG-Nummern:', nichtimpl)
 
     trommel_fehler = pruefe_trommeldatei(args.trommel)
+    if trommel_fehler and args.tests:
+        # Fehlende oder fehlerhafte Trommeldatei: Steht #TROMMEL=LEER (oder eine gueltige Vorlage) im ERSTEN Test, ist ihr alter Inhalt
+        # ohne Belang; sie wird dann neu angelegt (alle Zellen 0).
+        g0 = finde_testdatei(args.tests[0], here)
+        if isinstance(g0, str):
+            t0 = Test(g0)
+            if t0.trommel_vor == 'LEER' or (t0.trommel_vor in TROMMEL_VORLAGEN and not vorab_trommel(t0)):
+                try:
+                    schreibe_leere_trommeldatei(args.trommel)
+                except OSError as e:
+                    vp(f'\nFEHLER: Trommeldatei \"{args.trommel}\" kann nicht angelegt werden: {e.strerror}')
+                    sys.exit(16)
+                tp(f'Hinweis: Trommeldatei {args.trommel} fehlte oder war formal fehlerhaft; sie wurde neu angelegt (alle Zellen 0), '
+                   f'weil der erste Test #TROMMEL={t0.trommel_vor} enthaelt.')
+                trommel_fehler = []
     if trommel_fehler:
         vp(f'\nFEHLER: Trommeldatei "{args.trommel}" ist formal fehlerhaft - Test(s) starten nicht:')
         for f in trommel_fehler[:50]:
@@ -2271,13 +2479,19 @@ def main():
             tp(f'\n=== Test {t.name} (#PROT STUFE={t.stufe}) ===')
             for h in t.hinweise:
                 tp(h)
-            vorab = list(t.fehler) + vorab_geraete(t)
+            vorab = list(t.fehler) + vorab_geraete(t) + vorab_trommel(t)
             if vorab:
                 vp('FORMALE PRUEFUNG NEGATIV - Test startet nicht, Klaerung erforderlich:')
                 for f in vorab:
                     vp('  -', f)
                 rc = 16
                 continue
+            if t.trommel_vor == 'LEER':
+                tp('Trommel: vor dem Test geleert (#TROMMEL=LEER)')
+            elif t.trommel_vor in TROMMEL_VORLAGEN:
+                tp(f'Trommel: vor dem Test mit dem Abbild "{TROMMEL_VORLAGEN[t.trommel_vor]}" belegt (#TROMMEL={t.trommel_vor})')
+            if basp_text():
+                tp(basp_text())
             if SW_FENSTER is not None:
                 SW_FENSTER.oeffne()
             try:

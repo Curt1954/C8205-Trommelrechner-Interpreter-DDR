@@ -56,7 +56,7 @@ for %%f in ("%file%") do set "prot_file=%%~nf.log"
 
 rem Vorgaben zuerst, dann die vom Benutzer uebergebenen Schalter; bei doppelter
 rem Angabe (z. B. --out, --mdverz) gilt der spaeter genannte, also der vom Benutzer.
-python c8205_interp.py --mdverz .\markdown-dateien --out "Test-Protokolle\%prot_file%" "%file%" %rest%
+python c8205_interp.py --MODUS=TEST --mdverz .\markdown-dateien --out "Test-Protokolle\%prot_file%" "%file%" %rest%
 
 endlocal & exit /b %ERRORLEVEL%
 

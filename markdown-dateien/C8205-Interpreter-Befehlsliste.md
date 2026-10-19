@@ -1,6 +1,6 @@
 ### Befehlslisten ###
 
-Version: 0.03-001
+Version: 0.03-003
 
 Maschinenbefehle, kurz auch nur Befehle genannt, werden bezüglich des Operationsteiles
 BAZ bitweise dekodiert. Das ist die Grundlage der folgenden generischen Befehlsbeschreibung.
@@ -20,7 +20,7 @@ weitgehend selbständige Bedeutung haben:
 - **Z** = Operationszusatz — setzt sich zusammen aus dem Paar **R**
   (Resultatbehandlung) und dem **Löschbit L**.
 
-(Bedeutung von A im Detail: *noch offen, folgt später.* Bedeutung von
+(Bedeutung von A im Detail: s. Abschnitt 4.3 und "Einzelbefehlsübersicht" unten. Bedeutung von
 Z im Detail: s. Abschnitt 4.2 unten.)
 
 # Befehlstyp
@@ -125,6 +125,8 @@ eine zusätzliche Abbruchbedingung (X-Bedingung).
   erfüllter Bedingung), so wird dieser Befehlszählerinhalt nicht
   ausgewertet. Wird kein Sprung ausgeführt, so wird der nunmehr folgende
   Befehl aus Zelle b+2 entnommen.
+
+*Ausführliches Beispiel zum GX-Befehl (Befehl 520): s. „Beispiel: Befehl 520“ am Ende der Einzelbefehlsübersicht.*
 
 **4.1.7. Wiederholungsbefehl (W-Befehl) (B=6)**
 Charakterisiert durch B = 6. Der Wiederholungsbefehl wirkt wie ein
@@ -323,6 +325,8 @@ dreistellige Oktalzahlen, gelesen als B-A-Z (Befehlstyp-Operationsart-
 Operationszusatz). Mehrere Codes in einer
 Zeile = laut Original identische Wirkung trotz unterschiedlicher
 Bit-Repräsentation.*
+
+*Ein Befehl dieser Liste ist ausführlich durchgerechnet: Nr. 234, Code 520 (GX-Subtraktion), s. „Beispiel: Befehl 520“ am Ende dieses Abschnitts.*
 
 | Nr. | Code(s) (oktal, B-A-Z) | Original-Beschreibung |
 |---|---|---|
@@ -698,3 +702,139 @@ Bit-Repräsentation.*
 | 370 | 775 | WX-R-Operation mit Löschen, mit Linksverschiebung |
 | 371 | 776 | WX-Befehl bedingte Speicherlöschung ohne Löschen, mit zyklischer Linksverschiebung |
 | 372 | 777 | WX-R-Operation mit Löschen, mit zyklischer Linksverschiebung |
+
+# Beispiel: Befehl 520 (GX-Subtraktion), ausführlich erläutert
+
+**Lesehilfe, nicht Wortlaut der Quelle** (Stand 18.10.2026). An einem einzigen Befehl wird gezeigt, wie die Angaben dieser
+Datei zusammenwirken: Dekodierung nach B-A-Z (4.1, 4.2), Wirkung auf die Zellen einer Spur (4.1.5, 4.1.6), X-Abbruch mit
+Zusatzzelle, Befehlsentnahme nach dem Abbruch und Lage der Sektoren auf der Trommel (`C8205-Interpreter-Magnettrommel.md`,
+Abschnitt „Speichernumerierung / Interleaving“). Die Zahlen des Ablaufbeispiels stammen aus Läufen des Python-Interpreters
+(Protokollstufe 2) mit dem Baustein „Triadendruck“ des Minimalprogramms
+(`Assembler/Projekt_2/pj2-bis_minimalprogramm_v2_triadendruck.asm`). Alle Zahlen sind oktal, sofern nicht „dezimal“ dasteht.
+
+**1. Dekodierung des Operationsteils 520**
+
+Der Operationsteil wird als Triadenfolge B-A-Z gelesen (Nr. 234 der Liste oben):
+
+| Triade | Wert | Bedeutung |
+|---|---|---|
+| B | 5 | Verkürzter Gruppenbefehl (GX-Befehl), 4.1.6 |
+| A | 2 | Operationsart Subtraktion: ⟨AC⟩ := ⟨AC⟩ − ⟨a⟩ (wie beim Einzelbefehl 220) |
+| Z | 0 | R = 0 und L = 0: keine Resultatbehandlung, kein Löschen |
+
+Dieselbe Operation (A = 2, Z = 0) gibt es in allen Befehlstypen. Sie unterscheiden sich nur darin, auf wie viele Zellen die
+Subtraktion angewendet wird und wann sie endet:
+
+| Code | Befehl | Zellen, auf die die Subtraktion wirkt |
+|---|---|---|
+| 220 | Einzel-Subtraktion | nur die Zelle a |
+| 420 | G-Subtraktion | alle 32 Zellen der Spur, zu der a gehört |
+| 520 | GX-Subtraktion | wie 420, aber vorzeitiger Abbruch, sobald der AC negativ ist (X-Bedingung) |
+
+Bei 520 entscheidet also der Inhalt des AC, nach wie vielen Zellen der Befehl endet. Im Beispiel unten steht der Befehl
+`7721 520` mit dem Adreßteil a = 7721. Dessen Spur umfasst die 32 Adressen 7700 bis 7737; die Sektornummer von a ist 21,
+nämlich die letzten fünf Bit der Adresse (Spur z₁₂–z₁₈, Sektor z₁₉–z₂₃).
+
+**2. Wirkung im Einzelnen**
+
+- Die Phasen I bis III laufen einmal, Phase IV läuft für jede bearbeitete Zelle c der Spur: ⟨AC⟩ := ⟨AC⟩ − ⟨c⟩ (4.1.5).
+- Die Zellen werden in der Reihenfolge ihrer geometrischen Anordnung auf der Trommel bearbeitet, beginnend mit der Zelle a.
+  Von einer Zelle zur nächsten wächst die logische Sektoradresse um 15 (modulo 40), weil physisch benachbarte Sektoren
+  durchgehend um +15 verschiedene logische Adressen haben (Magnettrommel, Interleaving).
+- **X-Bedingung:** Ist nach Operation und Resultatbehandlung einer Zelle der AC negativ, wird die Operation noch mit genau
+  einer weiteren Zelle ausgeführt (**Zusatzzelle**); der negative AC wird also noch weiterverarbeitet. Danach folgt der
+  Abbruch. Bei R = 0 ist z₀ das Vorzeichen; negative Zahlen sind Zweierkomplemente mit 33 Bit.
+- **Normale Abbruchbedingung:** Alle 32 Zellen sind bearbeitet (eine Trommelumdrehung). Sie hat Vorrang, wenn beide
+  Bedingungen in derselben Zelle erfüllt werden (4.1.6).
+
+**3. Durchgerechnetes Beispiel: Spur mit lauter Einsen, AC = 2**
+
+Annahme: Alle Zellen der Spur 7700–7737 enthalten das Wort 1, ⟨AC⟩ = 2, der Befehl `7721 520` steht in Zelle b. „Position“
+ist die physische Sektorposition auf der Trommel (Tabelle in der Magnettrommel-Datei), „Sektor“ die zugehörige logische
+Sektornummer:
+
+| Schritt | Position | Sektor | Zelle | AC vorher → nachher | Bemerkung |
+|---|---|---|---|---|---|
+| 1 | 25 | 21 | 7721 | 2 → 1 | Startzelle a |
+| 2 | 26 | 36 | 7736 | 1 → 0 | |
+| 3 | 27 | 13 | 7713 | 0 → −1 | AC negativ: X-Bedingung erfüllt |
+| 4 | 30 | 30 | 7730 | −1 → −2 | Zusatzzelle, danach Abbruch |
+
+Der AC endet bei −2, das ist 77777777776 (33 Bit, Zweierkomplement), unabhängig vom Anfangswert d. Von AC = d aus sind d + 1
+Subtraktionen nötig, bis der AC negativ wird, dazu kommt die Zusatzzelle; insgesamt werden also d + 2 Zellen bearbeitet.
+Wie weit der Befehl kommt, hängt damit allein von d ab.
+
+**4. Befehlsentnahme nach dem Abbruch**
+
+Nach dem X-Abbruch wird der nächste Befehl ohne Wartezeit entnommen (4.1.6). Zwei Angaben legen die Zelle fest:
+
+- **Spur:** Sie kommt aus dem Befehlszähler. Stand der GX-Befehl in Zelle b, so ist BZ = b + 1, und die Spur ist die von b + 1.
+- **Sektor:** Er ergibt sich aus der Lage der Trommel in der zweiten Wortzeit nach dem Abbruch. Der Interpreter rechnet:
+  Sektor der Zusatzzelle plus 2 physische Schritte (je +15).
+
+Der entnommene Befehl muss deshalb **nicht** in Zelle b + 1 stehen. BZ bleibt b + 1; nach Phase III des entnommenen Befehls
+ist BZ = b + 2. Ist der entnommene Befehl kein Sprung, geht es in Zelle b + 2 weiter. Zelle b + 1 wird übersprungen.
+
+Für die Spur mit lauter Einsen und der Startposition p₀ folgt: Die Zusatzzelle liegt auf Position p₀ + d + 1, der entnommene
+Befehl auf Position p₀ + d + 3. Mit p₀ = 25 (Sektor 21) ist das die Position 30 + d.
+
+**5. Anwendung: Auswahl eines von acht Druckbefehlen (Triadendruck)**
+
+Der Triadendruck (Zellen 0100 bis 0137) druckt die 11 Oktalziffern eines Wortes nacheinander. Je Ziffer d (0 bis 7) muss einer
+von acht Ausgabebefehlen `030 <Zeichen>` ausgeführt werden, ohne dass ein Sprungbefehl auf ihn zeigt. Die Auswahl trifft der
+Befehl 520 in Zelle 0107 (b = 0107, also BZ = 0110 und damit die Spur 0100–0137).
+
+Vorbereitung: `7724 440` (G-Transport, B = 4, A = 4) schreibt den AC = 1 in alle 32 Zellen der Spur 7700–7737. Die Zelle 7720
+überschreibt anschließend ein `240`-Befehl mit dem Ziffernzähler; sie liegt auf Position 20 und käme erst als 28. Zelle an
+die Reihe, wird also nie erreicht. In jedem Durchlauf holt `7777 217` das Wort aus Zelle 7777; die Befehle 217, 006 und 006
+drehen es insgesamt um 3 Bit (eine Oktalstelle) zyklisch nach links, `7777 240` speichert es zurück, und `0117 200` blendet
+die unterste Triade aus. Im AC steht dann die Ziffer d. Der Startsektor des 520 ist 21 (Position 25), also gilt Abschnitt 4
+mit p₀ = 25:
+
+| Ziffer d | Position | Sektor | Zelle | Inhalt (Adreßteil Operationsteil) | gedrucktes Zeichen |
+|---|---|---|---|---|---|
+| 0 | 30 | 30 | 0130 | 0200 030 | 0 |
+| 1 | 31 | 05 | 0105 | 0010 030 | 1 |
+| 2 | 32 | 22 | 0122 | 0020 030 | 2 |
+| 3 | 33 | 37 | 0137 | 0230 030 | 3 |
+| 4 | 34 | 14 | 0114 | 0040 030 | 4 |
+| 5 | 35 | 31 | 0131 | 0250 030 | 5 |
+| 6 | 36 | 06 | 0106 | 0260 030 | 6 |
+| 7 | 37 | 23 | 0123 | 0070 030 | 7 |
+
+Der Operationsteil 030 ist der Ausgabe-Halt (Ausgabe eines Zeichens), der Adreßteil die Ausgabeadresse des Zeichens
+(Kodetabellen, Tabelle 1). Die Sektoren 30, 05, 22, 37, 14, 31, 06, 23 sind genau die Zeile der Positionen 30 bis 37 in der
+Interleaving-Tabelle der Magnettrommel; als Formel: Sektor = (30 + d · 15) mod 40.
+
+**Protokollierter Durchlauf für die Ziffer 0** (Wort 0000 0000 100, dezimal 64; erste Ziffer von links). Die Spalte „AC danach“
+zeigt den Akkumulator nach der Ausführung des Befehls:
+
+| Zelle | Befehl | AC danach | Wirkung |
+|---|---|---|---|
+| 0103 | 7777 217 | 00000000200 | AC := ⟨7777⟩ = 100, zyklisch 1 Bit nach links |
+| 0104 | 0115 006 | 00000000400 | Sprung nach 0115, AC zyklisch 1 Bit nach links |
+| 0115 | 0124 006 | 00000001000 | Sprung nach 0124, AC zyklisch 1 Bit nach links |
+| 0124 | 7777 240 | 00000001000 | ⟨7777⟩ := ⟨AC⟩ (Wort um 3 Bit gedreht) |
+| 0125 | 0117 200 | 00000000000 | AC := AC ∧ 7: unterste Triade, hier d = 0 |
+| 0126 | 0107 000 | 00000000000 | Sprung nach 0107 |
+| 0107 | 7721 520 | 77777777776 | GX-Subtraktion über die Spur 7700–7737, AC = −2 |
+| (0130) | 0200 030 | 77777777776 | entnommener Befehl: druckt „0“; danach BZ = 0111 |
+| 0111 | 7720 311 | | weiter in der Ziffernzählung, nicht mehr Teil des Beispiels |
+
+Die Zelle 0110 steht zwischen den Zeilen 0107 und 0111, wird aber nie ausgeführt: Dort liegt die Konstante 77740000000, die
+nur als Datenwort dient.
+
+**6. Prüfung und Folgerungen**
+
+- **Prüfung:** Läufe mit den Wörtern 64 (dezimal), 01234567012 und 76543210765 drucken die Wörter richtig. Für jede Ziffer 0
+  bis 7 zeigt das Protokoll: AC nach dem 520 = 77777777776, nächster ausgeführter Befehl = die Zelle aus der Tabelle oben,
+  BZ danach = 0111 (= b + 2).
+- **Wert → Zeit → Sektor:** Der AC-Wert wirkt wie ein Index in die Spur von b + 1. Damit ist eine Mehrfachverzweigung ohne
+  Sprungbefehle möglich; die Zielbefehle liegen verstreut auf ihren Sektoren.
+- **Sektoren sind Teil des Programms:** Wird das Programm verschoben, darf sich nur die Spur ändern. Die Sektoren der
+  Zielbefehle müssen erhalten bleiben, sonst druckt der Befehl eine falsche Ziffer.
+- **Zelle b + 1 wird übersprungen** und kann Daten enthalten (hier die Konstante in 0110).
+- **Der Wert d geht verloren** (AC = −2 nach dem Befehl). Wird er danach noch gebraucht, muss er vorher gesichert werden.
+- **Gültigkeitsbereich:** Der beschriebene Ablauf gilt für Spuren mit lauter Einsen und 0 ≤ d ≤ 30. Wird der AC erst in
+  der letzten Zelle der Spur (der 32.) negativ (d = 31) oder innerhalb der Spur gar nicht (d > 31), gilt die normale
+  Abbruchbedingung (Vorrang, 4.1.6), und die Entnahme erfolgt wie beim G-Befehl.

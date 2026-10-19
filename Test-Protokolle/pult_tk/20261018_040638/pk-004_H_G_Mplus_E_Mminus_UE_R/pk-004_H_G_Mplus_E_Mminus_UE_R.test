@@ -1,0 +1,14 @@
+Trommeldatei:
+#DOK-0001 H G M+ E M- Ue R: E unter M, Ue stellt 7777 240 ein, R transportiert AC nach 7777.
+#PROT STUFE=2
+#TROMMEL=LEER
+0001: 00000010020
+7777: 00000000555
+
+Tastenfolge:
+H G M+ E M- Ü R
+
+Prüfungen:
+BZ=0002 AC=00000002000 AR=0010 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+0001: 00000010020
+7777: 00000002000

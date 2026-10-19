@@ -1,6 +1,6 @@
 ** Bedienpult mit Schaltern **
 
-Version: 0.03-002
+Version: 0.03-010
 
 Im physischen Bedienpult des Rechners C8205 sind sowohl Schalter, Eingabetasten und Lampen,
 die die Flag-Zustände anzeigen, lokalisiert.
@@ -50,6 +50,23 @@ Zeichnung erklärt die Begriffe „Rollensperre“ und „Entriegelung“ nicht.
 ![Tastatur des Bedienpults](abbildungen/C8205-Abb-Tastatur_Bedienpult.png)
 
 *Abbildung 3: Tastatur des Bedienpults mit den Tastengruppen (neu gezeichnet nach der Zeichnung „Tastatur des C 8205“ und dem Foto)*
+
+
+## Rollensperre und Entriegelung
+
+**Stand der Quellen:** Die Zeichnung „Tastatur des C 8205“ weist die Gruppen aus, erklärt die Begriffe aber nicht (siehe oben). Die folgende Erklärung stammt vom Projektinhaber (15.10.2026).
+
+**Rollensperre** bedeutet einfach nur **Sperren**:
+- Die **Taste R** (Rechnen) löst die Rollensperre aus. Solange sie besteht, kann **keine andere Taste der Gruppen mit Rollensperre** bedient werden (E, M, G, Ü sowie die Schalter T und SW der Zeichnung, siehe aber den Hinweis unten).
+- **Nur H** kann die Rollensperre aufheben.
+- R **verriegelt gleichzeitig die Eingabetasten** (die Gruppe „Entriegelung und Rollensperre“: B, +, 1, 3, 5, 7, 9, „.“, „:“, D, −, 0, 2, 4, 6, 8, „,“, ZR, IS, IB und WM).
+- Das erklärt die Aussage unten bei „H-R“, dass E, M, G, Ü und SW nur bei Stellung H betätigbar sind.
+
+**Nicht betroffen** von der Rollensperre sind die Kanalwahltasten K0 bis K3 sowie ST, BS, SP und LS.
+
+**Entriegelung (Entscheidung des Projektinhabers, 15.10.2026):** Die von R verriegelten Eingabetasten werden durch einen **aufgestellten Eingabe-Halt-Befehl** entriegelt, auch bei Stellung R. Zeichen lassen sich also auch im laufenden Programm eingeben, sobald es auf eine Eingabe wartet. Ohne Eingabe-Halt bleiben die Eingabetasten verriegelt. Die weiteren Bedingungen (Kanal K0, Schalter T) stehen im Abschnitt „Eingabetasten“ unten.
+
+**Zu klären:** Der Projektinhaber nannte SW unter den nicht betroffenen Bedienelementen. Die Zeichnung führt „T und SW“ als Schalter mit Rollensperre, und der Abschnitt „H-R“ sagt, SW lasse sich nur bei Stellung H betätigen. Ob die Umschalttaste T-SW von der Rollensperre betroffen ist, ist offen.
 
 
 ## Netzschalter
@@ -137,7 +154,7 @@ Zeitlich (Originaldokumentation 4.3.2.2): Mit dem Niederdrücken der Taste finde
 Operationsumstellungsbedingung statt; mit dem Loslassen beginnt die Fortsetzung der Befehlsschleife mit der
 disjunktiven Übernahme des Zeichens ins Adreßregister. Die Sonderzeichen "Irrung Zeichen" und "Transportloch im Vorspann"
 entfallen bei Tastatur- und Schreibwerkeingabe.
-Die Verschlüsselung der einzelnen Tasten steht in den (später zu besprechenden) Codetabellen.
+Die Verschlüsselung der einzelnen Tasten steht in `C8205-Interpreter-Kodetabellen.md` (Tabelle 1, R300-Code).
 
 Sonderbedeutung einzelner Tasten:
   - **ZR** – Zwischenraum, identisch mit Leerzeichen
@@ -161,6 +178,8 @@ Besonderheit K0: Diese Taste hat kein eigenes Flag, sondern die zwei Subflags "T
 Flag T. Anstelle der Tasten kann die Kanalanwahl auch per Befehl erfolgen; er berücksichtigt den
 Schalterstatus SW analog.
 
+**Ab Interpreter 0.03-016 (18.10.2026):** Der Anwahlbefehl für K0 liest die **dauerhafte Schalterstellung SW** (gedrückt = Schreibwerkeingabe, sonst Tastatur) im Moment der Anwahl, nicht mehr das Flag SW. Dadurch bleibt die Eingabe vom Schreibwerk auch dann erreichbar, wenn zwischendurch ein anderer Kanal (z. B. K2 für eine Ausgabe) angewählt war und das Flag zurückgesetzt wurde. Beschreibung und Messung: `C8205-Versionierung.md` (Abschnitt 10.2).
+
 | Taste | Anwahlverschlüsselung (programmiert) | Gerät |
 |-------|---------------------------------------|-------|
 | K0    | 4700 030 | Tastatureingabe* / Schreibwerkeingabe* |
@@ -171,10 +190,13 @@ Schalterstatus SW analog.
 
 ## Selektoren: Schalter "SP" und "BS"
 
-SP und BS sind einrastende Schalter: Gedrückt bleiben sie eingerastet, bis ein Mensch sie löst; das gleichnamige
-Flag ist 1, solange der Schalter eingerastet ist, und 0, wenn er gelöst ist. Die Taste "G" kann eingerastete
-Schalter mechanisch nicht bedienen und ändert deshalb die Flags SP und BS nicht (ebenso wenig H). Zur Definition
-einer Tastenfolge genügt: Schalter gedrückt → Flag := 1, Schalter gelöst → Flag := 0.
+SP und BS sind einrastende Schalter: Gedrückt bleiben sie eingerastet, bis ein Mensch sie löst. Das Flag SP ist 1,
+solange der Schalter SP eingerastet ist, und 0, wenn er gelöst ist. Das Flag BS ist dagegen nicht der
+Schalterzustand: Es wird erst 1, wenn ein programmierter "Bedingter Stopp" bei eingerastetem Schalter BS
+tatsächlich wirksam wird. Die Taste "G" kann eingerastete Schalter mechanisch nicht bedienen und ändert deshalb
+den Schalter SP und den Schalter BS nicht (ebenso wenig H); das Flag BS löscht sie. Zur Definition einer
+Tastenfolge genügt: Schalter SP gedrückt → Flag SP := 1, gelöst → Flag SP := 0; Schalter BS gedrückt bzw. gelöst
+legt nur die Schalterstellung BS fest, nicht das Flag BS.
 
 Die Selektoren umfassen die Schalter "SP" und "BS". Ihre Stellungen werden als Bedingungen für die
 Befehle "Bedingter Sprung mit Rückkehrabsicht" (SP) und "Bedingter Stopp" (BS) interpretiert; die
@@ -216,17 +238,19 @@ Zeilenende. Groß-/Kleinschreibung ist gleichgültig. Die Wirkungen sind die der
 |---|---|
 | `H` | Schalter H-R auf "H": Flag H := 1 |
 | `R` | Schalter H-R auf "R": Flag H := 0; zusätzlich US := 0. Der Befehlsablauf beginnt (Startpunkte: s. unten) |
-| `G` | Generallöschen (nur bei H): alle Flags außer H, T, BS und SP := 0 (BS und SP sind eingerastete Schalter, G kann sie mechanisch nicht lösen); AR := 0000, OR := 000 (BR = "0000 000"); K0 wird angewählt (T := 1, bei gedrücktem Schalter SW: SW := 1); BZ und AC bleiben unverändert (G setzt BZ nicht; durch den aufgestellten BR 0000 000 kommt es zum Sprung nach 0000 und damit zu BZ := 0000, sobald `R` oder `E` ohne `M` ihn ausführt; folgt `M+ E … E M-`, entfällt der Sprung. Anfangswerte von AC und BZ kann ein Test über die Testmarken `#AC=` und `#BZ=` vorgeben, `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2); danach US := 1 (wird durch ST oder R wieder gelöscht) |
+| `G` | Generallöschen (nur bei H): alle Flags außer H, T und SP := 0 (SP ist ein eingerasteter Schalter, G kann ihn mechanisch nicht lösen; das Flag BS wird gelöscht, der Schalter BS bleibt eingerastet); AR := 0000, OR := 000 (BR = "0000 000"); K0 wird angewählt (T := 1, bei gedrücktem Schalter SW: SW := 1); BZ und AC bleiben unverändert (G setzt BZ nicht; durch den aufgestellten BR 0000 000 kommt es zum Sprung nach 0000 und damit zu BZ := 0000, sobald `R` oder `E` ohne `M` ihn ausführt; folgt `M+ E … E M-`, entfällt der Sprung. Anfangswerte von AC und BZ kann ein Test über die Testmarken `#AC=` und `#BZ=` vorgeben, `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2); danach US := 1 (wird durch ST oder R wieder gelöscht) |
 | `M+` (auch `M-drücken`, `M-gedrückt-halten`) | M gedrückt halten (nur bei H): OR := OR ∨ 025 |
 | `M-` (auch `M-loslassen`) | M loslassen. Wurde unter gehaltenem M kein E betätigt, bleibt BR = ⟨AR⟩ 025 aufgestellt. Wurde mindestens ein E betätigt, entfällt der Beitrag 025 im OR (übrige Anteile, z. B. von Ü, bleiben) |
 | `M` | Antippen, gleichbedeutend mit `M+` und sofort danach `M-` |
-| `E` | Einzelschritt (nur bei H). Ohne M: Phase IV und I, dann Phase II und III, danach Halt (Halt-Punkt vor Knoten 19). Steht der Automat nach einem E unter M vor Phase II, beginnt E bei Phase II. Unter gehaltenem M: Phase II entfällt; BZ := BZ+1, AR := BZ, der AC enthält im Adressfeld den Wert BZ+1 (übrige Stellen 0) |
+| `E` | Einzelschritt (nur bei H). Ohne M: Phase IV und I, dann Phase II und III, danach Halt (Halt-Punkt vor Knoten 19). Steht der Automat nach einem E unter M vor Phase II, beginnt E bei Phase II. Niederdrücken und Loslassen sind getrennt: Niederdrücken = Phase IV und I (Halt vor Phase II), Loslassen = Phase II und III. Am Pult (GRAFIK) sind das die Token `E+` und `E-`; `E` ist der kurze Anschlag (beides sofort), TEST kennt nur `E`. Unter M erhöht schon das Niederdrücken BZ und AR (Lampenreihe AR zeigt AR, TEST und GRAFIK seit 0.03-015/G2-011), das Loslassen bleibt wirkungslos. Unter gehaltenem M: Phase II entfällt; BZ := BZ+1, AR := BZ, der AC enthält im Adressfeld den Wert BZ+1 (übrige Stellen 0) |
 | `Ü` | Übertrag (nur bei H, sonst ohne Wirkung): AR := 7777, OR := OR ∨ 240; BR ist aufgestellt und noch nicht ausgeführt |
 | `ST` | Start (nicht an H gebunden, aber nur bei US oder BS wirksam, sonst ohne Wirkung): OR := OR ∨ 240, AR unverändert, US := 0; BR ist aufgestellt und noch nicht ausgeführt |
 | `SW=1` (auch `SW+`, `SW-drücken`) | Schalter SW gedrückt: Flag SW := 1, T := 0 |
 | `SW=0` (auch `SW-`, `SW-loslassen`) | Schalter SW gelöst: Flag SW := 0, T := 1 |
-| `BS=1`, `SP=1` (auch `BS+`, `SP+`) | Selektorschalter gedrückt und eingerastet: gleichnamiges Flag := 1 |
-| `BS=0`, `SP=0` (auch `BS-`, `SP-`) | Selektorschalter gelöst: gleichnamiges Flag := 0 |
+| `SP=1` (auch `SP+`) | Selektorschalter SP gedrückt und eingerastet: Flag SP := 1 |
+| `SP=0` (auch `SP-`) | Selektorschalter SP gelöst: Flag SP := 0 |
+| `BS=1` (auch `BS+`) | Selektorschalter BS gedrückt und eingerastet: nur die Schalterstellung BS, das Flag BS wird davon nicht gesetzt |
+| `BS=0` (auch `BS-`) | Selektorschalter BS gelöst: nur die Schalterstellung BS, das Flag BS wird davon nicht geändert |
 | `K0` … `K3` | Kanalauswahltaste: Flag des gewählten Kanals := 1, die Flags der anderen drei Kanäle := 0 (K0: T oder SW je nach Schalter SW) |
 
 Hinweise:
@@ -329,6 +353,8 @@ Befehlszählerstand im Adressteil des Befehlsregisters sichtbar gemacht werden.
 2. Ansprung eines beliebigen Speicherplatzes n: a) Schalter "H-R" → "H"; b) Taste "G"; c) Taste "M"
    gedrückt halten; d) Taste "E" n-mal anschlagen; e) Taste "M" loslassen; f) Schalter "H-R" → "R".
 
+(Hinweis, Ergänzung 18.10.2026: In der Originaldokumentation (Seitenabbild) steht bei Nr. 2 im Schritt a) die Stellung „R“. Hier ist „H“ gedruckt, weil G, M und E nur bei Schalter „H-R“ in Stellung „H“ wirken; erst Schritt f) schaltet auf „R“. „R“ in a) ist demnach ein Druckfehler der Vorlage.)
+
 ### 4.5 Hinweise zum "Kleinen Eingabeprogramm"
 Ermöglicht die Eingabe von Befehlen, Zahlen und Hilfsadressen über ein einfaches Leseprogramm (liegt auf
 Spur 0, wird über Speicherplatz "0002" angesprungen, bei gesetztem Sperrschalter gegen Überschreiben
@@ -340,3 +366,7 @@ als Befehl auf Speicherplatz "7723" (Leitbefehl); "." führt den Leitbefehl aus 
 "a1 a2 a3 a4 240" wird das zuvor aufgebaute Wort nach Zelle a1 a2 a3 a4 abgespeichert) und erhöht
 dessen Adresse um 1, sofern kein Sprungbefehl vorliegt. "ZR" löscht die im Akkumulator aufgebaute
 Information, solange noch kein Schlusszeichen gegeben wurde.
+
+## Das Pult im Modus GRAFIK
+
+**GRAFIK:** Im Modus GRAFIK steht das Pult als festes Fenster (1148 × 860 Pixel) auf dem Bildschirm; Tasten, Schalter und Selektoren werden mit der Maus bedient (Taste halten, Umschalt+Klick, E+ und E-), die Lampen zeigen die Flags. Die Schalterwirkungen dieses Dokuments gelten unverändert; hinzu kommen Sperren bei Stellung R, der Netzschalter mit Netzablauf und die Computertastatur als zweiter Weg zu den Tasten. Das Schreibwerk hat ein eigenes Fenster. Einzelheiten: `C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitte 3 bis 5; Prüfung am echten Fenster: `C8205-Interpreter-GRAFIK_Pruefverfahren.md`.

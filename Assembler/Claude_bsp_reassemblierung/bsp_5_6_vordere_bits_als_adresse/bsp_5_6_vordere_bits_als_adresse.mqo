@@ -1,0 +1,11 @@
+               000            m2001          ; Sprung zum Programmbeginn der Aufgabe in Zelle 2001
+               equ            02001          
+m2001:         211            d3000          ; <AC>:=a1a2a3a4 xxxx xxx
+               642            d3004          ; <AC>:=0000 a1a2a3a4 xxx (W-Befehl bis Sektor 23)
+               251            0              ; <AC>:=<a1a2a3a4>
+               164            00001          ; DEBUG Nr. 0001
+               020            0              ; unbedingter Stop
+               equ            03000          
+d3000:         dw             040002461357   ; a1a2a3a4 = 4000, xxxx xxx = 2461357
+               equ            04000          
+               dw             01234567012    ; Zelle, auf die a1a2a3a4 zeigt

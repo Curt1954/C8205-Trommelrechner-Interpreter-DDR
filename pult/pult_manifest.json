@@ -1,0 +1,763 @@
+{
+ "bild": "bild/c8205_bedienpult.png",
+ "breite": 1148,
+ "hoehe": 860,
+ "lampen_gross": {
+  "E": {
+   "cx": 159,
+   "cy": 145
+  },
+  "A": {
+   "cx": 220,
+   "cy": 145
+  },
+  "T": {
+   "cx": 280,
+   "cy": 145
+  },
+  "SW": {
+   "cx": 341,
+   "cy": 146
+  },
+  "K1": {
+   "cx": 401,
+   "cy": 146
+  },
+  "K2": {
+   "cx": 461,
+   "cy": 147
+  },
+  "K3": {
+   "cx": 521,
+   "cy": 147
+  },
+  "FE": {
+   "cx": 581,
+   "cy": 148
+  },
+  "FUE": {
+   "cx": 641,
+   "cy": 148
+  },
+  "BS": {
+   "cx": 700,
+   "cy": 148
+  },
+  "US": {
+   "cx": 760,
+   "cy": 148
+  },
+  "R": {
+   "cx": 819,
+   "cy": 149
+  },
+  "H": {
+   "cx": 878,
+   "cy": 149
+  },
+  "B": {
+   "cx": 937,
+   "cy": 149
+  },
+  "N": {
+   "cx": 997,
+   "cy": 150
+  }
+ },
+ "lampen_ar": [
+  {
+   "bit": 11,
+   "cx": 149,
+   "cy": 211
+  },
+  {
+   "bit": 10,
+   "cx": 183,
+   "cy": 211
+  },
+  {
+   "bit": 9,
+   "cx": 217,
+   "cy": 211
+  },
+  {
+   "bit": 8,
+   "cx": 252,
+   "cy": 211
+  },
+  {
+   "bit": 7,
+   "cx": 286,
+   "cy": 211
+  },
+  {
+   "bit": 6,
+   "cx": 320,
+   "cy": 211
+  },
+  {
+   "bit": 5,
+   "cx": 354,
+   "cy": 212
+  },
+  {
+   "bit": 4,
+   "cx": 389,
+   "cy": 212
+  },
+  {
+   "bit": 3,
+   "cx": 423,
+   "cy": 212
+  },
+  {
+   "bit": 2,
+   "cx": 457,
+   "cy": 212
+  },
+  {
+   "bit": 1,
+   "cx": 491,
+   "cy": 212
+  },
+  {
+   "bit": 0,
+   "cx": 526,
+   "cy": 213
+  }
+ ],
+ "lampen_or": [
+  {
+   "bit": 8,
+   "cx": 560,
+   "cy": 213
+  },
+  {
+   "bit": 7,
+   "cx": 594,
+   "cy": 213
+  },
+  {
+   "bit": 6,
+   "cx": 628,
+   "cy": 213
+  },
+  {
+   "bit": 5,
+   "cx": 663,
+   "cy": 213
+  },
+  {
+   "bit": 4,
+   "cx": 697,
+   "cy": 213
+  },
+  {
+   "bit": 3,
+   "cx": 731,
+   "cy": 214
+  },
+  {
+   "bit": 2,
+   "cx": 765,
+   "cy": 214
+  },
+  {
+   "bit": 1,
+   "cx": 800,
+   "cy": 214
+  },
+  {
+   "bit": 0,
+   "cx": 834,
+   "cy": 214
+  }
+ ],
+ "lampen_v": {
+  "V1": {
+   "cx": 897,
+   "cy": 215
+  },
+  "V2": {
+   "cx": 931,
+   "cy": 214
+  }
+ },
+ "schluessel": {
+  "cx": 997,
+  "cy": 216,
+  "r": 29
+ },
+ "tasten": {
+  "UE": {
+   "label": "Ü",
+   "quelle": "vorhanden",
+   "dunkel": "taste_UE_dunkel.png",
+   "hell": "taste_UE_hell.png",
+   "x": 262,
+   "y": 650,
+   "w": 49,
+   "h": 54,
+   "x_hell": 262,
+   "y_hell": 650,
+   "w_hell": 49,
+   "h_hell": 54,
+   "lage": "geschaetzt (Treffer unsicher)"
+  },
+  "B": {
+   "label": "B",
+   "quelle": "vorhanden",
+   "dunkel": "taste_B_dunkel.png",
+   "hell": "taste_B_hell.png",
+   "x": 440,
+   "y": 595,
+   "w": 51,
+   "h": 53,
+   "x_hell": 440,
+   "y_hell": 595,
+   "w_hell": 51,
+   "h_hell": 53,
+   "lage": "gemessen"
+  },
+  "BS": {
+   "label": "BS",
+   "quelle": "vorhanden, gedrueckt ersetzt (Original zeigte ein E)",
+   "dunkel": "taste_BS_dunkel.png",
+   "hell": "taste_BS_hell.png",
+   "x": 650,
+   "y": 308,
+   "w": 51,
+   "h": 49,
+   "x_hell": 650,
+   "y_hell": 308,
+   "w_hell": 51,
+   "h_hell": 48,
+   "lage": "gemessen"
+  },
+  "DOPPELPUNKT": {
+   "label": ":",
+   "quelle": "vorhanden",
+   "dunkel": "taste_DOPPELPUNKT_dunkel.png",
+   "hell": "taste_DOPPELPUNKT_hell.png",
+   "x": 835,
+   "y": 596,
+   "w": 46,
+   "h": 57,
+   "x_hell": 835,
+   "y_hell": 596,
+   "w_hell": 46,
+   "h_hell": 57,
+   "lage": "gemessen"
+  },
+  "E": {
+   "label": "E",
+   "quelle": "vorhanden",
+   "dunkel": "taste_E_dunkel.png",
+   "hell": "taste_E_hell.png",
+   "x": 193,
+   "y": 596,
+   "w": 48,
+   "h": 54,
+   "x_hell": 199,
+   "y_hell": 596,
+   "w_hell": 41,
+   "h_hell": 46,
+   "lage": "gemessen"
+  },
+  "G": {
+   "label": "G",
+   "quelle": "vorhanden",
+   "dunkel": "taste_G_dunkel.png",
+   "hell": "taste_G_hell.png",
+   "x": 212,
+   "y": 650,
+   "w": 48,
+   "h": 54,
+   "x_hell": 212,
+   "y_hell": 650,
+   "w_hell": 48,
+   "h_hell": 54,
+   "lage": "geschaetzt (Treffer unsicher)"
+  },
+  "H": {
+   "label": "H",
+   "quelle": "vorhanden",
+   "dunkel": "taste_H_dunkel.png",
+   "hell": "taste_H_hell.png",
+   "x": 139,
+   "y": 603,
+   "w": 54,
+   "h": 54,
+   "x_hell": 139,
+   "y_hell": 603,
+   "w_hell": 54,
+   "h_hell": 54,
+   "lage": "geschaetzt (Treffer unsicher)"
+  },
+  "IB": {
+   "label": "IB",
+   "quelle": "vorhanden",
+   "dunkel": "taste_IB_dunkel.png",
+   "hell": "taste_IB_hell.png",
+   "x": 955,
+   "y": 600,
+   "w": 54,
+   "h": 54,
+   "x_hell": 955,
+   "y_hell": 600,
+   "w_hell": 54,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "IS": {
+   "label": "IS",
+   "quelle": "vorhanden",
+   "dunkel": "taste_IS_dunkel.png",
+   "hell": "taste_IS_hell.png",
+   "x": 903,
+   "y": 600,
+   "w": 51,
+   "h": 54,
+   "x_hell": 903,
+   "y_hell": 600,
+   "w_hell": 51,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "K0": {
+   "label": "K0",
+   "quelle": "vorhanden",
+   "dunkel": "taste_K0_dunkel.png",
+   "hell": "taste_K0_hell.png",
+   "x": 188,
+   "y": 303,
+   "w": 54,
+   "h": 49,
+   "x_hell": 188,
+   "y_hell": 303,
+   "w_hell": 54,
+   "h_hell": 49,
+   "lage": "gemessen"
+  },
+  "K1": {
+   "label": "K1",
+   "quelle": "vorhanden",
+   "dunkel": "taste_K1_dunkel.png",
+   "hell": "taste_K1_hell.png",
+   "x": 210,
+   "y": 349,
+   "w": 48,
+   "h": 48,
+   "x_hell": 210,
+   "y_hell": 349,
+   "w_hell": 48,
+   "h_hell": 48,
+   "lage": "gemessen"
+  },
+  "K2": {
+   "label": "K2",
+   "quelle": "vorhanden",
+   "dunkel": "taste_K2_dunkel.png",
+   "hell": "taste_K2_hell.png",
+   "x": 301,
+   "y": 304,
+   "w": 53,
+   "h": 49,
+   "x_hell": 301,
+   "y_hell": 304,
+   "w_hell": 53,
+   "h_hell": 49,
+   "lage": "gemessen"
+  },
+  "K3": {
+   "label": "K3",
+   "quelle": "vorhanden",
+   "dunkel": "taste_K3_dunkel.png",
+   "hell": "taste_K3_hell.png",
+   "x": 322,
+   "y": 350,
+   "w": 48,
+   "h": 46,
+   "x_hell": 322,
+   "y_hell": 350,
+   "w_hell": 48,
+   "h_hell": 46,
+   "lage": "gemessen"
+  },
+  "LS": {
+   "label": "LS",
+   "quelle": "vorhanden",
+   "dunkel": "taste_LS_dunkel.png",
+   "hell": "taste_LS_hell.png",
+   "x": 769,
+   "y": 310,
+   "w": 51,
+   "h": 48,
+   "x_hell": 769,
+   "y_hell": 310,
+   "w_hell": 51,
+   "h_hell": 48,
+   "lage": "gemessen"
+  },
+  "M": {
+   "label": "M",
+   "quelle": "vorhanden",
+   "dunkel": "taste_M_dunkel.png",
+   "hell": "taste_M_hell.png",
+   "x": 243,
+   "y": 596,
+   "w": 48,
+   "h": 54,
+   "x_hell": 243,
+   "y_hell": 596,
+   "w_hell": 48,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "PLUS": {
+   "label": "+",
+   "quelle": "vorhanden",
+   "dunkel": "taste_PLUS_dunkel.png",
+   "hell": "taste_PLUS_hell.png",
+   "x": 492,
+   "y": 596,
+   "w": 45,
+   "h": 54,
+   "x_hell": 492,
+   "y_hell": 596,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "PUNKT": {
+   "label": ".",
+   "quelle": "vorhanden",
+   "dunkel": "taste_PUNKT_dunkel.png",
+   "hell": "taste_PUNKT_hell.png",
+   "x": 787,
+   "y": 596,
+   "w": 48,
+   "h": 57,
+   "x_hell": 787,
+   "y_hell": 596,
+   "w_hell": 48,
+   "h_hell": 57,
+   "lage": "gemessen"
+  },
+  "R": {
+   "label": "R",
+   "quelle": "vorhanden",
+   "dunkel": "taste_R_dunkel.png",
+   "hell": "taste_R_hell.png",
+   "x": 156,
+   "y": 652,
+   "w": 54,
+   "h": 53,
+   "x_hell": 156,
+   "y_hell": 652,
+   "w_hell": 51,
+   "h_hell": 53,
+   "lage": "gemessen"
+  },
+  "SP": {
+   "label": "SP",
+   "quelle": "vorhanden",
+   "dunkel": "taste_SP_dunkel.png",
+   "hell": "taste_SP_hell.png",
+   "x": 532,
+   "y": 312,
+   "w": 49,
+   "h": 45,
+   "x_hell": 532,
+   "y_hell": 312,
+   "w_hell": 49,
+   "h_hell": 45,
+   "lage": "gemessen"
+  },
+  "ST": {
+   "label": "ST",
+   "quelle": "vorhanden",
+   "dunkel": "taste_ST_dunkel.png",
+   "hell": "taste_ST_hell.png",
+   "x": 940,
+   "y": 655,
+   "w": 48,
+   "h": 56,
+   "x_hell": 940,
+   "y_hell": 655,
+   "w_hell": 48,
+   "h_hell": 56,
+   "lage": "gemessen"
+  },
+  "SW_umschalt": {
+   "label": "SW_umschalt",
+   "quelle": "vorhanden",
+   "dunkel": "taste_SW_umschalt_dunkel.png",
+   "hell": "taste_SW_umschalt_hell.png",
+   "x": 887,
+   "y": 311,
+   "w": 53,
+   "h": 49,
+   "x_hell": 887,
+   "y_hell": 311,
+   "w_hell": 53,
+   "h_hell": 49,
+   "lage": "gemessen"
+  },
+  "SW": {
+   "label": "SW",
+   "quelle": "vorhanden",
+   "dunkel": "taste_SW_dunkel.png",
+   "hell": "taste_SW_hell.png",
+   "x": 313,
+   "y": 651,
+   "w": 45,
+   "h": 54,
+   "x_hell": 313,
+   "y_hell": 651,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "T": {
+   "label": "T",
+   "quelle": "vorhanden",
+   "dunkel": "taste_T_dunkel.png",
+   "hell": "taste_T_hell.png",
+   "x": 293,
+   "y": 603,
+   "w": 48,
+   "h": 54,
+   "x_hell": 293,
+   "y_hell": 603,
+   "w_hell": 48,
+   "h_hell": 54,
+   "lage": "geschaetzt (Treffer unsicher)"
+  },
+  "WM": {
+   "label": "WM",
+   "quelle": "vorhanden",
+   "dunkel": "taste_WM_dunkel.png",
+   "hell": "taste_WM_hell.png",
+   "x": 895,
+   "y": 650,
+   "w": 40,
+   "h": 57,
+   "x_hell": 895,
+   "y_hell": 650,
+   "w_hell": 40,
+   "h_hell": 57,
+   "lage": "geschaetzt (Treffer unsicher)"
+  },
+  "1": {
+   "label": "1",
+   "quelle": "vorhanden",
+   "dunkel": "taste_1_dunkel.png",
+   "hell": "taste_1_hell.png",
+   "x": 541,
+   "y": 595,
+   "w": 48,
+   "h": 53,
+   "x_hell": 541,
+   "y_hell": 595,
+   "w_hell": 48,
+   "h_hell": 53,
+   "lage": "gemessen"
+  },
+  "3": {
+   "label": "3",
+   "quelle": "vorhanden",
+   "dunkel": "taste_3_dunkel.png",
+   "hell": "taste_3_hell.png",
+   "x": 592,
+   "y": 595,
+   "w": 43,
+   "h": 53,
+   "x_hell": 592,
+   "y_hell": 595,
+   "w_hell": 43,
+   "h_hell": 53,
+   "lage": "gemessen"
+  },
+  "5": {
+   "label": "5",
+   "quelle": "vorhanden",
+   "dunkel": "taste_5_dunkel.png",
+   "hell": "taste_5_hell.png",
+   "x": 640,
+   "y": 596,
+   "w": 45,
+   "h": 54,
+   "x_hell": 640,
+   "y_hell": 596,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "7": {
+   "label": "7",
+   "quelle": "vorhanden",
+   "dunkel": "taste_7_dunkel.png",
+   "hell": "taste_7_hell.png",
+   "x": 688,
+   "y": 595,
+   "w": 49,
+   "h": 56,
+   "x_hell": 688,
+   "y_hell": 595,
+   "w_hell": 49,
+   "h_hell": 56,
+   "lage": "gemessen"
+  },
+  "9": {
+   "label": "9",
+   "quelle": "vorhanden",
+   "dunkel": "taste_9_dunkel.png",
+   "hell": "taste_9_hell.png",
+   "x": 736,
+   "y": 595,
+   "w": 48,
+   "h": 56,
+   "x_hell": 736,
+   "y_hell": 595,
+   "w_hell": 48,
+   "h_hell": 56,
+   "lage": "gemessen"
+  },
+  "0": {
+   "label": "0",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_0_dunkel.png",
+   "hell": "taste_0_hell.png",
+   "x": 516,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 516,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "2": {
+   "label": "2",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_2_dunkel.png",
+   "hell": "taste_2_hell.png",
+   "x": 568,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 568,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "4": {
+   "label": "4",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_4_dunkel.png",
+   "hell": "taste_4_hell.png",
+   "x": 616,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 616,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "6": {
+   "label": "6",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_6_dunkel.png",
+   "hell": "taste_6_hell.png",
+   "x": 667,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 667,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "8": {
+   "label": "8",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_8_dunkel.png",
+   "hell": "taste_8_hell.png",
+   "x": 714,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 714,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "MINUS": {
+   "label": "-",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_MINUS_dunkel.png",
+   "hell": "taste_MINUS_hell.png",
+   "x": 468,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 468,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "KOMMA": {
+   "label": ",",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_KOMMA_dunkel.png",
+   "hell": "taste_KOMMA_hell.png",
+   "x": 766,
+   "y": 648,
+   "w": 45,
+   "h": 54,
+   "x_hell": 766,
+   "y_hell": 648,
+   "w_hell": 45,
+   "h_hell": 54,
+   "lage": "gemessen"
+  },
+  "D": {
+   "label": "D",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_D_dunkel.png",
+   "hell": "taste_D_hell.png",
+   "x": 414,
+   "y": 649,
+   "w": 51,
+   "h": 53,
+   "x_hell": 414,
+   "y_hell": 649,
+   "w_hell": 51,
+   "h_hell": 53,
+   "lage": "gemessen"
+  },
+  "ZR": {
+   "label": "ZR",
+   "quelle": "ergaenzt",
+   "dunkel": "taste_ZR_dunkel.png",
+   "hell": "taste_ZR_hell.png",
+   "x": 811,
+   "y": 649,
+   "w": 51,
+   "h": 53,
+   "x_hell": 811,
+   "y_hell": 649,
+   "w_hell": 51,
+   "h_hell": 53,
+   "lage": "gemessen"
+  }
+ }
+}

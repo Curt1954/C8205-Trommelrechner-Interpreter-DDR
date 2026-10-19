@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.03-007
+Version: 0.03-012
 
 [Deutsch](README.md) | **English**
 
@@ -43,6 +43,10 @@ as regression tests.
 | Path | Contents |
 |---|---|
 | `c8205_interp.py` | Python interpreter |
+| `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik_*.py` | GRAFIK mode: panel window, typewriter window, sounds (mixer, typewriter, reader, punch, computer) |
+| `c-module/` | C modules: drum, track lock, interrupt, sound mixer `tonmisch`; extension module in `c-module/python/` |
+| `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
+| `testscripte/` | checks and test scripts, e.g. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
 | `c8205_befehlssweep.py` | Completeness test over all 512 operation codes |
 | `c8205_interpreter.sh`, `c8205_interpreter.bat` | Wrappers: run a test and write the log to `Test-Protokolle/` |
 | `compute_all_tests.sh` | runs the interpreter for all test definitions in `Tests/` |
@@ -109,7 +113,7 @@ The complete directory description is in `markdown-dateien/C8205-Projektstruktur
 Python 3 is required. No additional packages are needed.
 
 ```
-python3 c8205_interp.py Tests/0015-030.txt
+python3 c8205_interp.py --MODUS=TEST Tests/0015-030.txt
 ```
 
 The test runs the program, prints the characters of the output instructions to the terminal (expected:
@@ -128,6 +132,31 @@ Run all test definitions in `Tests/` at once:
 
 All switches (devices, log depth, file checks) and error messages are described in
 `markdown-dateien/C8205-Interpreter-Python_Interpreter.md` (German).
+
+## Quick start: GRAFIK mode with panel, typewriter window and sounds (stage 4)
+
+Besides batch mode (`c8205_interp.py`, no windows, no sound) there is GRAFIK mode: control-panel window, typewriter (SW)
+window and all sounds (computer, typewriter, paper-tape reader, tape punch).
+
+```
+python3 c8205_grafik.py                    # with sound (Linux: needs paplay, pw-cat, aplay or ffplay)
+python3 c8205_grafik.py --STUMM            # no sound, no start-up delay
+python3 c8205_grafik.py --TON=5955         # volume per group: panel, SW, reader, punch (0 = mute, 5 = default)
+python3 c8205_grafik.py --leser1 virtuelle_Geraete/Leser1/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
+```
+
+- Typewriter: **80 ms writing time per character (70 to 90 ms), character sound 100 ms**, tab 400 ms, carriage return 360 ms.
+  With the SW selector latched there is no output, no sound and no waiting.
+- Punch: about 50 characters per second; continuous punching below 50 ms spacing, off after 5 s without a character.
+- Without a playback program, start-up without `--STUMM` ends with return code 16.
+- The mixer is the C module `c-module/tonmisch.c` (linked into the extension module `c8205_trommel`; build with
+  `cd c-module/python && python3 setup.py build_ext --inplace`). Without the built module the Python mixer is used.
+- **Status:** stage 4 is written and logic-tested on Linux; the listening test, a complete hand run of all acceptance cases
+  and Windows (`winmm`) are still open. Details (German): `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (description) and `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (testing, open points).
+- `ton/sw_ton.py` stays as a stand-alone test harness for the sounds (`ton/SW_Ton_Beschreibung.md`, German).
+
+Copy-tape example: `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` reads from reader 1 (`ANWAHL LSL1`) and punches to punch 1
+(`ANWAHL LSS1`); `:` in KB (code 15) ends the input and is not punched. Batch test: `python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test`.
 
 ## Quick start: Claude interpreter (without Python)
 
@@ -191,6 +220,8 @@ All PDFs are in German.
 | `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Operating `c8205_interp.py`: call, switches, devices |
 | `C8205-Testhandbuch_A4.pdf` | Quick guide "Test starten" (Claude and Python interpreter), writing tests and reading logs |
 | `C8205-Durchfuehrung_eines_Tests_A4.pdf` | The test format in the wording of the source |
+| `C8205-GRAFIK_Beschreibung_A4.pdf` | The GRAFIK interpreter: purpose, windows, devices, sounds, call, limits (in the wording of the source) |
+| `C8205-GRAFIK_Pruefverfahren_A4.pdf` | Test procedure for the GRAFIK interpreter: runs, tests, acceptance |
 | `C8205-Knotengraph_A4.pdf` | The node graph as a diagram, split into A4 tiles |
 | `C8205-Knotentabellen_A4.pdf` | Node table and variable table T2 in the wording of the sources |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generic instruction description and overview of all 512 operation codes |
@@ -222,3 +253,7 @@ remain with their respective owners.
 
 The rule set was reconstructed from original documentation of the machine (among others the programming manual and
 the original documentation). The documents cite them section by section.
+
+## Change: interpreter 0.03-016 (18 Oct 2026)
+
+The K0 selection command evaluates the persistent position of the SW switch (input from the typewriter window in GRAFIK mode). Description (German): `C8205-Versionierung.md` (Abschnitt 10.2); manuals (German): `C8205-Interpreter-Bedienpult_mit_Schaltern.md`, `C8205-Interpreter-Python_Interpreter.md`. The PDFs under `PDF/` have not been regenerated yet.

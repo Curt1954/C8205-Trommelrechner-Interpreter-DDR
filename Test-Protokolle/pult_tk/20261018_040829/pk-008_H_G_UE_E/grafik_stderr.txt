@@ -1,0 +1,1 @@
+Debug-Log wird geschrieben: /home/shared_folder_1/scan/fertig/neu/Test-Protokolle/pult_tk/20261018_040829/pk-008_H_G_UE_E/debug.log

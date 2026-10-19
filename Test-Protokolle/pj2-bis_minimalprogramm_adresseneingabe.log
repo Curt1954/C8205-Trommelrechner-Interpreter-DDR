@@ -1,0 +1,50 @@
+Test pj2-bis_minimalprogramm_adresseneingabe
+
+== 1. Ausgangsbedingungen ==
+Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00002400000
+  0156: 00007741240
+  0157: 00000200001
+  0200: 00000240014
+  0201: 00000202004
+  0202: 00000200004
+  0203: 00007741000
+  0240: 00000000000
+  0241: 00000000100
+  0242: 00000000200
+  0243: 00000000300
+  0244: 00000000400
+  0245: 00000000500
+  0246: 00000000600
+  0247: 00000000700
+  0252: 00000200001
+  0273: 00000203002
+  2400: 00004700030
+  2401: 00000156025
+  2402: 00007773240
+  2403: 00000000020
+  #DOK-0001 
+  #SPEI-0001 0000-0000
+  #PROT STUFE=2
+Tastenfolge: H G R
+  H  : Schalter H-R -> "H", Flag H := 1
+  G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)
+  R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
+  Nicht spezifizierte Register (AC, ...) starten mit 0.
+
+== 2. Zustaende des Knotenautomaten ==
+  BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2400 000  (vor Knoten 007)  BZ=0001 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=4700 030  (vor Knoten 002)  BZ=2401 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0156 005  (vor Knoten 007)  BZ=2402 AC=00002402000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7741 240  (vor Knoten 002)  BZ=0157 AC=00002402000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0200 001  (vor Knoten 007)  BZ=0160 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0240 004  (vor Knoten 007)  BZ=0201 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=0203 002  (vor Knoten 007)  BZ=0274 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7741 000  (vor Knoten 007)  BZ=0204 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=2402 000  (vor Knoten 007)  BZ=7742 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+  BR=7773 240  (vor Knoten 002)  BZ=2403 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
+
+== Ende ==
+Unbedingter Stop (US:=1)
+BZ=2404 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

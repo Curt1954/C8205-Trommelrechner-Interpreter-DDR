@@ -1,6 +1,6 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
-Version: 0.03-002
+Version: 0.03-003
 
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
@@ -140,7 +140,7 @@ Diese vier Phasen entsprechen den "Phasenzuordnung"-Knoten der Ablaufbeschreibun
 31/61/67 für Beginn Phase I–IV, siehe Dokument "C8205-Interpreter-Eingänge_der_Knoten.md").
 
 **Interpretative Abarbeitung:** Der Python-Interpreter (Abschnitt 6.1) rechnet mit Wortzeit und Wartezeit
-= 0; die Trommeldrehung wird nicht nachgebildet. Die Zeitangaben dieses Abschnitts und des Abschnitts 5
+= 0; die Trommeldrehung wird nicht nachgebildet (Ausnahme: die Befehlsentnahme nach einem X-Abbruch, Abschnitt 4.1). Die Zeitangaben dieses Abschnitts und des Abschnitts 5
 beschreiben die Hardware, nicht den Interpreter.
 
 
@@ -323,7 +323,7 @@ als in 5.5 (dort ca. 2⅔ Umdrehungen); diese Angabe ist hier nicht nachgerechne
   optimal erreichbar. Sonst entscheidet man je Befehl zwischen Wartezeit und Umweg über einen Sprung.
 - Ein Sprung hat sein wartefreies Ziel bei +24. Jedes andere Ziel kostet Wartezeit.
 
-**Hinweis zum Interpreter.** Der Python-Interpreter rechnet mit Wortzeit und Wartezeit = 0 (Abschnitt 4);
+**Hinweis zum Interpreter.** Der Python-Interpreter rechnet mit Wortzeit und Wartezeit = 0 (Abschnitt 4; Ausnahme: die Befehlsentnahme nach X-Abbruch, Abschnitt 4.1);
 die Zeitangaben dieses Abschnitts beschreiben die Hardware. Um sie am Interpreter zu prüfen, müsste dieser
 die Trommelposition (Wortzeitzähler mod 32 und Reihenfolge der Magnettrommel-Datei) mitführen.
 
@@ -334,10 +334,11 @@ die Trommelposition (Wortzeitzähler mod 32 und Reihenfolge der Magnettrommel-Da
 
 Der Interpreter (`c8205_interp.py`) führt Programme des C 8205 interpretativ aus: Er läuft den
 Knotengraphen des Befehlsablaufs (Phasen I bis IV) ab und bildet Register, Flags, Trommelspeicher und
-Peripherie nach (alle Zeiten = 0). Testaufträge liegen in `Tests/`, Protokolle in `Test-Protokolle/`, der Trommelspeicher als persistente Datei in `virtuelle_Geraete/Trommel/` (er behält seinen Inhalt über Tests hinweg). Der
+Peripherie nach (alle Zeiten = 0, bis auf die Befehlsentnahme nach X-Abbruch, Abschnitt 4.1). Testaufträge liegen in `Tests/`, Protokolle in `Test-Protokolle/`, der Trommelspeicher als persistente Datei in `virtuelle_Geraete/Trommel/` (er behält seinen Inhalt über Tests hinweg). Der
 Vollständigkeitstest `c8205_befehlssweep.py` prüft alle 512 Operationscodes gegen den Knotengraphen.
-Einzelheiten: "C8205-Interpreter-Python_Interpreter.md" (Bedienung, Schalter, Geräte) und
-"C8205-Interpreter-Durchführung_eines_Tests.md" (Testdatei, Tastenfolge, Protokoll).
+Einzelheiten: "C8205-Interpreter-Python_Interpreter.md" (Bedienung, Schalter, Geräte),
+"C8205-Interpreter-Durchführung_eines_Tests.md" (Testdatei, Tastenfolge, Protokoll) und
+"C8205-Interpreter-Lochstreifen-Hilfsprogramme.md" (Hilfsprogramme für virtuelle Lochstreifen).
 
 ### 6.2 Assembler
 
@@ -389,8 +390,10 @@ Einzelheiten stehen nicht hier, sondern in "C8205-Interpreter-BIS.md"; Einordnun
 **Interpreter und Tests**
 - Python-Interpreter (Aufbau, Aufruf, Schalter, Geräte, Protokoll): "C8205-Interpreter-Python_Interpreter.md".
 - Testdurchführung (Testdatei, Tastenfolge, Ergebnisprüfung): "C8205-Interpreter-Durchführung_eines_Tests.md".
+- Lochstreifen-Hilfsprogramme (Anzeige, Eingabe und Umwandlung virtueller Lochstreifen): "C8205-Interpreter-Lochstreifen-Hilfsprogramme.md".
 - Cache der BAZ-Wirkungen (für den Claude-Interpreter; der Python-Interpreter liest ihn nicht): "baz-wirkungstabelle.md".
 - Einführung in das Gesamtprojekt für Außenstehende: "C8205-Interpreter-Projektueberblick.md".
+- Einstieg für Neueinsteiger (Lesereihenfolge, wo man bei einer Frage weiterliest): "C8205-Einstieg_fuer_Neueinsteiger.md".
 - Dokumentenlandkarte (alle .md-Dateien mit ihrer Rolle): "C8205-Interpreter-Projektueberblick.md", Abschnitt 6.
 
 **Assembler**
@@ -412,8 +415,3 @@ Einzelheiten stehen nicht hier, sondern in "C8205-Interpreter-BIS.md"; Einordnun
 ## 8. Offene Punkte
 
 Keine offenen Punkte.
-
-**Erledigt:**
-
-- **Lesegeschwindigkeit:** Die Lochbandleser lesen 130 Zeichen/s (Standardleser, "C8205-Interpreter-Lochstreifenleser.md",
-  Abschnitt A3). Die Angabe "bis 150 Zeichen/s" der Übersichtsgrafik war falsch.

@@ -1,0 +1,10 @@
+               000            m3000          ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+               equ            03000          
+m3000:         211            d3006          ; 3006 211 ; <AC>:=x
+               440            d7700          ; 7700 440 ; Transport von x auf alle Zellen einer Spur
+               472            d7700          ; 7700 472 ; Bildung der Teilprodukte P(i)=x(i)*x fuer i=32,...,1
+               211            d3007          ; 3007 211 ; <AC>:=2^-1 (Rundung des Resultats)
+               412            d7700          ; 7700 412 ; <AC>:=x*x, Summierung der Teilprodukte
+               020            03000          ; 3000 020 ; unbedingter Stopp
+d3006:         dw             035762104535   ; x
+d3007:         dw             020000000000   ; Konstante 2000 0000 000 (= 2^-1)

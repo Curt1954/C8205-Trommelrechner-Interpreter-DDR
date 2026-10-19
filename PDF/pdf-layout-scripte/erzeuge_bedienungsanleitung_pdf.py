@@ -1401,15 +1401,15 @@ def kap3(lab):
                'wirkt daher nur, solange keine Taste `G` davor kommt, z. B. bei der Tastenfolge '
                '`H M-drücken E M-loslassen R`. Das erste Beispiel startet mit AC = 100 und addiert die Zelle 3000 (45):'))
     s += lab.dateien([('Tests/ac-start.txt', T_AC)])
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/ac-start.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/ac-start.txt')], erwarte=[4])
     s.append(P('Das zweite Beispiel hat keine Taste `G`: `#BZ=0010` setzt den Befehlszähler, das `E` unter gehaltenem `M` zählt '
                'auf 0011 und der Ablauf beginnt dort:'))
     s += lab.dateien([('Tests/bz-start.txt', T_BZ)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/bz-start.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/bz-start.txt')], erwarte=[4])
     s.append(P('Ein ungültiger Wert (falsche Stellenzahl, Ziffer 8 oder 9, leerer Wert) oder eine doppelte Marke ist ein Fehler '
                'der formalen Prüfung (Abschnitt 3.5). Beispiel: In `Tests/ac-doppelt.txt` steht `#AC=` zweimal.'))
     s += lab.dateien([('Tests/ac-doppelt.txt', T_AC2)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/ac-doppelt.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/ac-doppelt.txt')], erwarte=[16])
 
     s.append(kopf3('Das Makro `#STARTE n`'))
     s.append(P('`#STARTE n` ersetzt die Tastenfolge zum Ansprung des Speicherplatzes `n` (Muster aus Abschnitt 3.3). `n` ist eine '
@@ -1420,7 +1420,7 @@ def kap3(lab):
                'sind mit dem Makro verträglich. Im Protokoll erscheinen lange `E`-Folgen unter gehaltenem `M` gekürzt; die '
                'Rechnung ist davon nicht berührt.'))
     s += lab.dateien([('Tests/start-4.txt', T_STARTE)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/start-4.txt')], erwarte=[0])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/start-4.txt')], erwarte=[0])
     s += note('achtung', '`#STARTE 0` ergibt die Folge `H G M+ M- R`, also ein Antippen von `M` ohne `E`. Das ist kein schlichter '
                          'Start bei 0000, sondern ein aufgestellter Sprung mit Rückkehrabsicht nach 0000. Für einen Start bei '
                          '0000 dient `H G R`.')
@@ -1435,11 +1435,11 @@ def kap3(lab):
                'Zustand. Die Zeile ist keine Speicherzelle und kein Sprungziel. Im ersten Beispiel läuft das Programm nach der '
                'Unterbrechung weiter:'))
     s += lab.dateien([('Tests/int-weiter.txt', T_INT1)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/int-weiter.txt')], erwarte=[0])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/int-weiter.txt')], erwarte=[0])
     s.append(P('Im zweiten Beispiel transportiert die Unterbrechung den AC nach Zelle 7777 (`H G Ü E`); die letzte Taste ist `E`, '
                'der Test endet daher im Halt, und die Prüfung gilt für den Zustand danach:'))
     s += lab.dateien([('Tests/int-transport.txt', T_INT2)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/int-transport.txt')], erwarte=[0])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/int-transport.txt')], erwarte=[0])
     s += note('achtung', 'Ohne vorheriges `G` ist das OR der Operationsteil des letzten Befehls: `H Ü E` ergibt nach einem '
                          'Ladebefehl 211 die Operation 251, nicht 240. Für den reinen Transport nach 7777 ist `H G Ü E` nötig. '
                          'Formfehler (Beispiel in Kapitel 7): `#INTERRUPT` vor der ersten oder hinter der letzten Befehlszeile, '
@@ -1488,18 +1488,18 @@ def kap3(lab):
     s.append(P('Muster: Sprung nach Speicherplatz n. Mit `H G M+ E … E M- R` (n-mal `E`) beginnt der Ablauf bei Adresse n; kürzer '
                'schreibt man `#STARTE n` (Abschnitt 3.2). Beispiel n = 4, das Programm steht ab Adresse 0004:'))
     s += lab.dateien([('Tests/sprung-n.txt', T_SPRUNG)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/sprung-n.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/sprung-n.txt')], erwarte=[4])
     s.append(P('Der Ablauf hat bei Adresse 0004 begonnen und dort gehalten (BZ=0005). Der AC enthält – wie bei der Taste `M` '
                'üblich – im Adressfeld die um 1 erhöhte Adresse (`…05000`). Rückkehrcode 4: Der Test enthält keine Prüfung '
                '(Abschnitt 4.4).'))
     s.append(P('Tastenfolge im Halt. Endet die Tastenfolge ohne `R`, startet der Rechner nicht; der Lauf endet sofort mit dem Grund '
                '„Halt (Schalter H)“ und dem Rückkehrcode 4. Beispiel: Tastenfolge `H G`.'))
     s += lab.dateien([('Tests/halt-ende.txt', T_HALT)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/halt-ende.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/halt-ende.txt')], erwarte=[4])
     s.append(P('Auch `H G Ü E` endet im Halt: `Ü` stellt den Transport-Befehl auf, `E` (ohne `M`) führt genau einen Schritt aus '
                '(Einzelschritt) und hält wieder.'))
     s += lab.dateien([('Tests/ue-e.txt', T_UEE)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/ue-e.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/ue-e.txt')], erwarte=[4])
 
     # ---- 3.4
     s += h2('3.4 Prüfungen (optional)')
@@ -1520,13 +1520,13 @@ BZ=0004 AC=00000000145 US=1
                'der Test selbst nennt, oder starten Sie auf leerer Trommel (Abschnitt 3.7). Dateiprüfung ohne Gerät ist ein '
                'formaler Fehler:'))
     s += lab.dateien([('Tests/pruefe-ohne.txt', T_PRUEFE_OHNE)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/pruefe-ohne.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/pruefe-ohne.txt')], erwarte=[16])
     s += note('hinweis', 'Bricht der Lauf vorher ab (Stub, Gerätefehler), wird nicht geprüft; die Ausgabe lautet dann '
                          '„Ergebnisprüfung: nicht durchgeführt“, und der Test gilt nicht automatisch als „falsch“. Ein leerer '
                          'Abschnitt `Prüfungen:` gilt als fehlender.')
     # Prüfungen: False -- in der Quelle „Durchführung eines Tests“ (3a.5) beschrieben; hier wird geprüft, ob der Interpreter es kennt
     lab.dateien([('Tests/pruef-false.txt', T_FALSE)], neu=True, zeigen=False)
-    probe, _ = lab.ausgabe(cmd('python3 c8205_interp.py Tests/pruef-false.txt'))
+    probe, _ = lab.ausgabe(cmd('python3 c8205_interp.py --MODUS=TEST Tests/pruef-false.txt'))
     if "ungueltiges Element 'False'" not in probe:
         sys.exit('FEHLER: Der Interpreter kennt „Prüfungen: False“ jetzt. Abschnitt 3.4 der Anleitung (Achtung-Kasten) und '
                  'Anhang B anpassen, dann Skript ändern.\n' + probe)
@@ -1535,7 +1535,7 @@ BZ=0004 AC=00000000145 US=1
                          'nicht, sondern endet mit Rückkehrcode 16. Schreiben Sie bis dahin `Prüfungen:` ohne Zusatz und rechnen '
                          'Sie mit `Test falsch` (Rückkehrcode 6).')
     s += lab.dateien([('Tests/pruef-false.txt', T_FALSE)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/pruef-false.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/pruef-false.txt')], erwarte=[16])
 
     # ---- 3.5
     s += h2('3.5 Formale Prüfung vor dem Start')
@@ -1546,7 +1546,7 @@ BZ=0004 AC=00000000145 US=1
                'einer Unstimmigkeit startet der Test nicht (Rückkehrcode 16) und wird nicht eigenmächtig korrigiert. Die '
                'Trommeldatei wird nicht je Test, sondern einmal vor dem ersten Test des Aufrufs geprüft (Abschnitt 3.7).'))
     s += lab.dateien([('Tests/formal.txt', T_FORMAL)], neu=True)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/formal.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/formal.txt')], erwarte=[16])
     s.append(P('Zeile 3 hat nur neun statt elf Stellen im Wert; Adresse 0001 kommt zweimal mit verschiedenen Werten vor.'))
 
     # ---- 3.6
@@ -1577,7 +1577,7 @@ BZ=0004 AC=00000000145 US=1
                'Zeile `--sw-ausgabe SW-Ausgabe` steht bei den Testmarken. Das Terminal zeigt nur die Endzeile, die Zeichen '
                'stehen in der Datei:'))
     s += lab.dateien([('Tests/sw-zeile.txt', T_SWZEILE)], neu=True)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/sw-zeile.txt'), 'cat SW-Ausgabe/sw-ausgabe.txt'], erwarte=[4, None])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/sw-zeile.txt'), 'cat SW-Ausgabe/sw-ausgabe.txt'], erwarte=[4, None])
 
     # ---- 3.7
     s += h2('3.7 Die Trommel zwischen den Tests')
@@ -1769,16 +1769,20 @@ H G R
 def kap4(lab):
     s = h1('4 Interpreter starten')
     s += h2('4.1 Kommandozeile')
-    s += L.code("""python3 c8205_interp.py [--mdverz VERZ] [--trommel PFAD] [--out VERZ|DATEI.log]
+    s += L.code("""python3 c8205_interp.py --MODUS=TEST [--mdverz VERZ] [--trommel PFAD] [--out VERZ|DATEI.log]
         [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
         [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL]
         [--zwischenablage auto|tk|system]
-        [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI]  TEST.txt [TEST2.txt ...]
+        [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef]  TEST.txt [TEST2.txt ...]
 python3 c8205_interp.py --version""")
     s += tbl([['Schalter', 'Wirkung', 'Vorgabe'],
               ['`TEST.txt`', 'Testdatei(en). Ist der Pfad nicht vorhanden, wird der Dateiname unterhalb des aktuellen Ordners und '
                              'des Skript-Ordners gesucht (Groß-/Kleinschreibung egal). Bei mehreren Treffern werden sie aufgelistet '
                              'und der Test startet nicht.', '–'],
+              ['`--MODUS TEST|GRAFIK`', 'Betriebsart (auch `--modus`, `--MODUS=X`; Groß-/Kleinschreibung gleich; der letzte Wert gewinnt). '
+                                        'Ohne Angabe startet GRAFIK (Pult- und SW-Fenster). Testläufe mit Testdatei brauchen `--MODUS=TEST`; '
+                                        'eine Testdatei im Modus GRAFIK wird ignoriert und mit Hinweis auf stderr gemeldet. Unbekannter Wert: '
+                                        'Rückkehrcode 2. Die Wrapper setzen `--MODUS=TEST`.', '`GRAFIK`'],
               ['`--mdverz VERZ`', 'Verzeichnis mit den beiden Regelwerk-Dateien `C8205-Interpreter-Eingänge_der_Knoten.md` '
                                   '(Knotengraph) und `C8205-Interpreter-Beschreibung_der_Knoten.md` (Variablentabelle T2); fehlt eine, '
                                   'bricht der Start ab (Rückkehrcode 2).', '`markdown-dateien/` neben dem Skript'],
@@ -1820,6 +1824,14 @@ python3 c8205_interp.py --version""")
                                                     'Tk; `tk` nutzt nur die Tk-Zwischenablage; `system` nur Systemprogramm bzw. '
                                                     'Win32-API. Gedacht für Umgebungen mit eigenem Zwischenablage-Abgleich (z. B. '
                                                     'virtuelle Maschinen).', '`auto`'],
+              ['`--BASP abcdef`, `--basp abcdef`', 'Bahnsperrenschalter der Magnettrommel: sechs Ziffern `0`/`1` (1 = EIN); '
+                                                   'a = Hauptschalter, b bis f = Zusatzschalter 0040, 0100, 0200, 0400, 1000. '
+                                                   'Auch in der Form `--BASP=abcdef`, z. B. `--BASP=111000`. Jede andere Eingabe '
+                                                   'wird mit der Kurzhilfe abgelehnt (Rückkehrcode 2). Bei einem Wert ungleich '
+                                                   '`000000` nennt der Interpreter den Parameter am Bildschirm und im '
+                                                   'Protokollkopf. **Die Wirkung (Schreibsperre der Trommel) ist noch nicht '
+                                                   'umgesetzt:** der Wert wird nur geprüft und gespeichert. Nur auf der '
+                                                   'Kommandozeile, nicht in der Testdatei.', '`000000` (alle aus)'],
               ['`--version`', 'Gibt die Versionsnummer des Interpreters (Form `y.xx-zzz`) aus und endet mit Rückkehrcode 0, ohne '
                               'einen Test auszuführen; eine Testdatei ist nicht anzugeben.', '–'],
               ['`-h`, `--help`', 'Hilfetext mit allen Schaltern.', '–']],
@@ -1835,19 +1847,19 @@ python3 c8205_interp.py --version""")
     s += lab.sitzung([cmd('python3 c8205_interp.py --version')], erwarte=[0])
     s.append(P('Fehlerhafte Aufrufe zeigen die Kurzhilfe und enden mit Rückkehrcode 2:'))
     s += lab.dateien([('Tests/a.txt', T_STOP), ('Tests/b.txt', T_STOP)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py --out ergebnis.log Tests/a.txt Tests/b.txt')], erwarte=[2])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --out ergebnis.log Tests/a.txt Tests/b.txt')], erwarte=[2])
     s.append(P('Liegen die Regelwerk-Dateien nicht in `markdown-dateien/`, geben Sie das Verzeichnis mit '
                '`--mdverz ./markdown-dateien` an; der Wrapper tut das schon (Abschnitt 4.3).'))
 
     s += h2('4.2 Mehrere Tests, Protokollort')
     s += bullets([
-        'Mehrere Testdateien hintereinander: `python3 c8205_interp.py Tests/a.txt Tests/b.txt`. Dann nur `--out` ohne '
+        'Mehrere Testdateien hintereinander: `python3 c8205_interp.py --MODUS=TEST Tests/a.txt Tests/b.txt`. Dann nur `--out` ohne '
         'Dateiendung benutzen. Die Tests laufen nacheinander auf derselben Trommel (Abschnitt 3.7).',
         '`--out Test-Protokolle/t1.log` mit mehreren Tests wird abgelehnt (Beispiel oben, Rückkehrcode 2). Dasselbe gilt für '
         '`--pruefe-stanzer1` und `--pruefe-sw-ausgabe`.',
         'Eine Protokolldatei entsteht nur bei `#PROT STUFE=2`; bei Stufe 0 oder 1 erscheint bei angegebenem `--out` ein Hinweis.'])
     s += lab.dateien([('Tests/kurz2.txt', T_STOP2)], neu=False, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py --out ergebnis Tests/kurz2.txt', 'ls ergebnis/kurz2'], erwarte=[4, 0])
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --out ergebnis Tests/kurz2.txt', 'ls ergebnis/kurz2'], erwarte=[4, 0])
 
     s += h2('4.3 Wrapper')
     s.append(P('Der Wrapper nimmt eine Testdatei entgegen, leitet sie an den Interpreter und schreibt das Protokoll nach '
@@ -1865,7 +1877,7 @@ $ ./c8205_interpreter.sh Tests/x.txt --trommel andere/trommel.txt
 $ ./c8205_interpreter.sh Tests/x.txt --mdverz ./markdown-dateien
 
 # Kern des Linux-Wrappers:
-python3 c8205_interp.py --mdverz ./markdown-dateien --out "Test-Protokolle/$prot_file" "$file" "${rest[@]}\"""")
+python3 c8205_interp.py --MODUS=TEST --mdverz ./markdown-dateien --out "Test-Protokolle/$prot_file" "$file" "${rest[@]}\"""")
     s += note('hinweis', 'Die Vorgaben des Wrappers (`--mdverz`, `--out`) stehen vor den weitergereichten Schaltern; bei doppelter '
                          'Angabe gilt der zuletzt genannte, ein eigenes `--out` überschreibt also die Vorgabe. Die Wrapper erkennen '
                          'Schalter mit eigenem Wertargument (`--out`, `--trommel`, `--stanzer1`, `--sw-ausgabe`, '
@@ -1944,9 +1956,9 @@ def kap5(lab):
                'dort `--zwischenablage system` oder `tk`.'))
     s.append(P('Beispiele (die Fenster selbst lassen sich hier nicht abbilden; im Fenster steht `Jahr 1972`, das Terminal zeigt '
                'weiter die Zeilen des Interpreters):'))
-    s += L.code("""$ python3 c8205_interp.py --SW-TERMINAL Tests/0015-030.txt
-$ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.txt
-$ python3 c8205_interp.py --SW-TERMINAL --sw-ausgabe virtuelle_Geraete/SW-Ausgabe Tests/0015-030.txt""")
+    s += L.code("""$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL Tests/0015-030.txt
+$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --zwischenablage system Tests/0015-030.txt
+$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --sw-ausgabe virtuelle_Geraete/SW-Ausgabe Tests/0015-030.txt""")
 
     s += h2('5.2 Lochstreifenleser (K1, K2)')
     s.append(P('`--leser1` und `--leser2` nehmen eine **Datei** (ein Streifen) oder einen **Ordner** (Streifen in '
@@ -1991,7 +2003,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --sw-ausgabe virtuelle_Geraete/SW-Ausgab
                'bestimmt, welche Spalte zuerst durchsucht wird. Nur bei Terminal-Eingabe ohne weitere Zeichen (z. B. '
                'geschlossenes stdin) endet der Lauf mit `EINGABE_ENDE`:'))
     s += lab.dateien([('Tests/k0-ziffer.txt', T_K0)], neu=True, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/k0-ziffer.txt < /dev/null')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/k0-ziffer.txt < /dev/null')], erwarte=[4])
     s.append(P('**Echo im Fenster.** Mit `--SW-TERMINAL` erscheint jedes **angenommene** K0-Zeichen (T oder SW; vom Terminal oder '
                'aus `--k0 datei=PFAD`) zusätzlich als Echo in Dunkelgelb im Fenster „SW Ausgabe“; die Ausgaben des Rechners stehen '
                'dort in der Standardfarbe, so lassen sich Eingabe und Ausgabe unterscheiden. Das Echo zeigt das Zeichen wie das '
@@ -2044,7 +2056,7 @@ def kap6(lab):
     s.append(P('Beispiel für den Endgrund „Halt wegen Überlauf“: Der Test addiert zweimal 1 zu 37777777777, der größten positiven '
                'Zahl; nach dem Überlauf hält der Rechner, es ist weder US noch BS gesetzt, nur FUE=1.'))
     s += lab.dateien([('Tests/ueberlauf.txt', T_UEBERLAUF)], neu=True, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/ueberlauf.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/ueberlauf.txt')], erwarte=[4])
 
     s += h2('6.3 Diagnose bei Befehl 164')
     s.append(P('Der Leerbefehl 164 löst die Diagnose aus, wenn für seine Adresse `xxxx` Testmarken definiert sind. Reihenfolge: '
@@ -2055,7 +2067,7 @@ def kap6(lab):
                'Zellen der Spur in der Reihenfolge aus, in der sie unter dem Kopf der Trommel vorbeilaufen (die Adressen springen: '
                '4000, 4015, 4032, 4007 …, nicht 4000, 4001, 4002 …); im Beispiel steht in der Zelle 4001 der Wert 7:'))
     s += lab.dateien([('Tests/spur-demo.txt', T_SPUR)], neu=True, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py Tests/spur-demo.txt'], erwarte=[4])
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST Tests/spur-demo.txt'], erwarte=[4])
     s += note('achtung', 'Die Leer-Befehle 164 und 166 laufen ohne Resultatbehandlung: Das Z-Feld erzeugt keine Verschiebung des AC.')
 
     s += h2('6.4 Knotenprotokoll und Protokolldatei')
@@ -2063,7 +2075,7 @@ def kap6(lab):
                'wenn Sie mit `--knotentest` aufrufen. Ohne den Schalter entfallen die Zeilen `Kxxx …`; erhalten bleiben die '
                '`BR=`-Zeilen (vor Knoten 2 und 7), die Diagnose sowie Fehler- und Stub-Meldungen.'))
     s += lab.dateien([('Tests/kurz.txt', T_KURZ)], neu=True, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py --knotentest Tests/kurz.txt'], zeilen=15,
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --knotentest Tests/kurz.txt'], zeilen=15,
                      caption='Auszug: die ersten 15 Zeilen der Ausgabe.')
     s += tbl([['Zeile', 'Lesart'],
               ['`Kxxx ANW nnn BZ=… AR=… AC=…`', 'Knoten xxx, Typ Anweisung (ANW), ANWEISUNG-nnn; danach BZ, AR und AC, jeweils oktal'],
@@ -2078,7 +2090,7 @@ def kap6(lab):
                'Knotenautomaten ==`, `== Ende ==` und, falls der Test Prüfungen enthält, `== 3. Ergebnispruefung ==`. Beispiel '
                'einer Tastenfolge mit vielen Token (aus Abschnitt 8.2):'))
     s += lab.dateien([('Tests/tf-demo.txt', T_TFDEMO)], neu=True, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py --out Test-Protokolle/tf-demo.log Tests/tf-demo.txt',
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --out Test-Protokolle/tf-demo.log Tests/tf-demo.txt',
                       'cat Test-Protokolle/tf-demo.log'], erwarte=[4, None])
     log = lab.lies('Test-Protokolle/tf-demo.log')
     global PROTOKOLLKOPF_ALT
@@ -2090,7 +2102,7 @@ def kap6(lab):
                              'Zellen des Trommelabschnitts.')
     s.append(P('Zeilen für `#AC=` und `#BZ=` erscheinen, wenn die Marken gesetzt sind:'))
     s += lab.dateien([('Tests/ac-log.txt', T_ACLOG)], neu=False, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py --out Test-Protokolle/ac-log.log Tests/ac-log.txt',
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --out Test-Protokolle/ac-log.log Tests/ac-log.txt',
                       'cat Test-Protokolle/ac-log.log'], erwarte=[4, None])
 
     s += h2('6.5 Ergebnisprüfung')
@@ -2098,7 +2110,7 @@ def kap6(lab):
                'Wert Soll und Ist mit OK oder FEHLER, danach `Test wahr` oder `Test falsch`. Sie erscheint unabhängig von '
                '`#PROT STUFE`; bei `STUFE=2` steht dasselbe als Abschnitt `== 3. Ergebnispruefung ==` am Ende der Protokolldatei.'))
     s += lab.dateien([('Tests/pruef-falsch.txt', T_PFALSCH)], neu=True, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/pruef-falsch.txt')], erwarte=[6])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/pruef-falsch.txt')], erwarte=[6])
     s.append(P('`Test wahr` gibt es nur, wenn alle angegebenen Prüfungen übereinstimmen. Hier stimmt BZ nicht (soll 0003, ist 0004); '
                'der AC stimmt. Rückkehrcode 6 (Abschnitt 4.4). Beispiel mit Erfolg: Abschnitt 8.4.'))
     s.append(kopf3('Dateiprüfungen'))
@@ -2116,7 +2128,7 @@ def kap6(lab):
     s.append(P('Beispiel: Der Stanzer-Test aus Abschnitt 8.3 gegen eine Soll-Datei, die in der letzten Zeile abweicht:'))
     lab.dateien([('Tests/stanzer-pruefe.txt', T_STANZER_PR), ('Tests/soll.txt', SOLL), ('Tests/soll-falsch.txt', SOLL_FALSCH)],
                 neu=True, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py --pruefe-stanzer1 soll-falsch.txt Tests/stanzer-pruefe.txt')], erwarte=[6])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --pruefe-stanzer1 soll-falsch.txt Tests/stanzer-pruefe.txt')], erwarte=[6])
     s.append(P('Der Rückkehrcode folgt dem Gesamtergebnis (0 oder 6). Mit `--NO-TERMOUT` entfällt die Bildschirmausgabe; das '
                'Ergebnis steht dann bei `#PROT STUFE=2` in der Protokolldatei und im Rückkehrcode.'))
     return s
@@ -2214,65 +2226,65 @@ def kap7(lab):
     s.append(P('**Gerät nicht angegeben.** Der Test aus Abschnitt 8.3 liest von Leser 1; ohne `--leser1` endet er mit der roten '
                'Meldung, Rückkehrcode 8:'))
     s += lab.dateien([('Tests/leser-ziffer.txt', T_LESER), ('Tests/stanzer-zeichen.txt', T_STANZER)], neu=True, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/leser-ziffer.txt')], erwarte=[8])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/leser-ziffer.txt')], erwarte=[8])
     s.append(P('Entsprechend für den Stanzer (Test `stanzer-zeichen.txt`, Abschnitt 8.3) ohne `--stanzer1`; der Ausgabebefehl steht '
                'aufgestellt (A=1):'))
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/stanzer-zeichen.txt')], erwarte=[8])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/stanzer-zeichen.txt')], erwarte=[8])
     s.append(P('**Zeichen an der Pult-Tastatur nicht eingebbar.** Die Datei `band/k0b.txt` enthält das Zeichen `B`; der Test '
                'benutzt die Pult-Tastatur (T), an der `B` keinen Code hat:'))
     lab.dateien([('Tests/k0-ziffer.txt', T_K0)], neu=False, zeigen=False)
     lab.schreibe('band/k0b.txt', 'B\n')
-    s += lab.sitzung([cmd('python3 c8205_interp.py --k0 datei=band/k0b.txt Tests/k0-ziffer.txt')], erwarte=[8])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --k0 datei=band/k0b.txt Tests/k0-ziffer.txt')], erwarte=[8])
     s.append(P('**Stub: Ausgabe ohne angewähltes Gerät.** Das Programm gibt die Ziffer 5 aus, ohne vorher einen Kanal anzuwählen. '
                'Nach dem Original hält der Rechner mit Flag A; der Interpreter meldet das als Stub und lässt A = 1:'))
     s += lab.dateien([('Tests/stub-ausgabe.txt', T_STUB)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/stub-ausgabe.txt')], erwarte=[8])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/stub-ausgabe.txt')], erwarte=[8])
     s.append(P('**Tastenfolge ungültig.** Hier fehlt vor `M-` ein `M+` (Test `tf-m.txt`, Tastenfolge `H G M- R`):'))
     s += lab.dateien([('Tests/tf-m.txt', T_TFM)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/tf-m.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/tf-m.txt')], erwarte=[16])
     s.append(P('**Programm ohne Stopp (Endlosschleife).** Das Programm lädt eine Zahl und läuft dann in die leere Zelle 0001 (Wert 0). '
                'Ein Befehl mit dem Wert 0 ist der unbedingte Sprung nach Adresse 0000: Das Programm beginnt von vorn und endet nie. '
                'Nach über zwei Millionen Knoten bricht der Interpreter ab.'))
     s += lab.dateien([('Tests/endlos.txt', T_ENDLOS)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/endlos.txt')], erwarte=[8])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/endlos.txt')], erwarte=[8])
     s.append(P('**Geräte-Zeile ohne Wert.** Die Testdatei enthält in Zeile 3 die Zeile `--stanzer1` ohne Pfad:'))
     s += lab.dateien([('Tests/geraet-leer.txt', T_GERAET_LEER)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/geraet-leer.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/geraet-leer.txt')], erwarte=[16])
     s.append(P('**Schalter als Zeile der Testdatei.** `--SW-TERMINAL` gilt nur auf der Kommandozeile:'))
     s += lab.dateien([('Tests/sw-term-zeile.txt', T_STOP.replace('#PROT STUFE=0\n', '#PROT STUFE=0\n--SW-TERMINAL\n'))],
                      neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/sw-term-zeile.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/sw-term-zeile.txt')], erwarte=[16])
     s.append(P('**Unterbrechung an falscher Stelle.** Die Zeile `#INTERRUPT` steht vor der ersten Befehlszeile (Test `int-fehler.txt`):'))
     s += lab.dateien([('Tests/int-fehler.txt', T_INTF)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/int-fehler.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/int-fehler.txt')], erwarte=[16])
     s.append(P('**Testdatei nicht gefunden.**'))
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/gibtsnicht.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/gibtsnicht.txt')], erwarte=[16])
     s.append(P('**Pfad der K0-Eingabe nicht vorhanden.** Ein nicht vorhandener `--leser1`-, `--leser2`- oder `--k0`-Pfad wird schon '
                'vor dem Start gemeldet, auch wenn er als Zeile der Testdatei steht:'))
     lab.dateien([('Tests/a.txt', T_STOP)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py --k0 datei=band/gibtsnicht.txt Tests/a.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --k0 datei=band/gibtsnicht.txt Tests/a.txt')], erwarte=[16])
     s.append(P('**Kein Ausgabefenster möglich.** Ohne grafische Oberfläche (hier: `DISPLAY` nicht gesetzt) oder ohne `tkinter` läuft '
                'der Test trotz `--SW-TERMINAL` weiter, nur ohne Fenster:'))
-    s += lab.sitzung([cmd('python3 c8205_interp.py --SW-TERMINAL Tests/a.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL Tests/a.txt')], erwarte=[4])
     s.append(P('**Vorab-Meldungen bleiben sichtbar.** Mit `--NO-TERMOUT` entfällt die Kopfzeile `=== Test … ===`, die Meldung der '
                'formalen Prüfung bleibt:'))
     lab.dateien([('Tests/formal.txt', T_FORMAL)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py --NO-TERMOUT Tests/formal.txt')], erwarte=[16])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT Tests/formal.txt')], erwarte=[16])
     s.append(P('**Regelwerk-Dateien fehlen.** Ein Verzeichnis ohne die beiden `.md`-Dateien ergibt Rückkehrcode 2; mit dem richtigen '
                '`--mdverz` läuft derselbe Test:'))
-    s += lab.sitzung(['mkdir -p leer', cmd('python3 c8205_interp.py --mdverz leer Tests/a.txt'),
-                      cmd('python3 c8205_interp.py --mdverz ./markdown-dateien Tests/a.txt')], erwarte=[None, 2, 4])
+    s += lab.sitzung(['mkdir -p leer', cmd('python3 c8205_interp.py --MODUS=TEST --mdverz leer Tests/a.txt'),
+                      cmd('python3 c8205_interp.py --MODUS=TEST --mdverz ./markdown-dateien Tests/a.txt')], erwarte=[None, 2, 4])
     s.append(P('**Trommeldatei fehlt.** Der Interpreter legt sie nie selbst an; er meldet es vor dem ersten Test, auch mit '
                '`--NO-TERMOUT`:'))
-    s += lab.sitzung(['rm -f virtuelle_Geraete/Trommel/trommel.txt', cmd('python3 c8205_interp.py Tests/a.txt'),
-                      cmd('python3 c8205_interp.py --NO-TERMOUT Tests/a.txt')], erwarte=[None, 16, 16])
+    s += lab.sitzung(['rm -f virtuelle_Geraete/Trommel/trommel.txt', cmd('python3 c8205_interp.py --MODUS=TEST Tests/a.txt'),
+                      cmd('python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT Tests/a.txt')], erwarte=[None, 16, 16])
     s.append(P('**Trommeldatei fehlerhaft.** Hier ist die Datei auf 100 Zeilen gekürzt:'))
     s += lab.sitzung(['python3 erzeuge_leere_trommel.py', 'mkdir -p trommeln',
                       'head -n 100 virtuelle_Geraete/Trommel/trommel.txt > trommeln/kurz.txt',
-                      cmd('python3 c8205_interp.py --trommel trommeln/kurz.txt Tests/a.txt')], erwarte=[None, None, None, 16])
+                      cmd('python3 c8205_interp.py --MODUS=TEST --trommel trommeln/kurz.txt Tests/a.txt')], erwarte=[None, None, None, 16])
     s.append(P('**Trommeldatei mit CRLF-Zeilenenden.** Die Datei wurde nachträglich mit Windows-Zeilenenden versehen:'))
     s += lab.sitzung(['python3 erzeuge_leere_trommel.py --aus trommeln/crlf.txt', "sed -i 's/$/\\r/' trommeln/crlf.txt",
-                      cmd('python3 c8205_interp.py --trommel trommeln/crlf.txt Tests/a.txt')], erwarte=[None, None, 16])
+                      cmd('python3 c8205_interp.py --MODUS=TEST --trommel trommeln/crlf.txt Tests/a.txt')], erwarte=[None, None, 16])
     return s
 
 
@@ -2293,7 +2305,7 @@ def kap8(lab):
                '`#PROT STUFE=2`. Mit `--sw-ausgabe` erscheint der Text nicht am Terminal, sondern in '
                '`SW-Ausgabe/sw-ausgabe.txt`; mit `--NO-TERMOUT` zusätzlich keine Zeile des Interpreters:'))
     lab.dateien([('Tests/0015-030.txt', T_0015)], neu=True, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py --NO-TERMOUT --sw-ausgabe SW-Ausgabe Tests/0015-030.txt',
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT --sw-ausgabe SW-Ausgabe Tests/0015-030.txt',
                       'cat SW-Ausgabe/sw-ausgabe.txt'])
     s.append(P('Die Testdatei kann das Gerät selbst mitbringen und die Ausgabedatei gleich prüfen. `Tests/sw-zeile.txt` (Abschnitt 3.6) '
                'stellt `Um. KB` voran, damit das Ergebnis nicht von der zufälligen Zeichenlage abhängt; danach folgen die Ziffer 5 '
@@ -2301,12 +2313,12 @@ def kap8(lab):
                'Testdatei, Inhalt `5.`) bewertet der Test die Ausgabe selbst; dasselbe leistet der Schalter beim Aufruf:'))
     s += lab.dateien([('Tests/sw-pruefe.txt', T_SWPRUEFE), ('Tests/sw-soll.txt', T_SOLL_SW)], neu=True)
     lab.schreibe('Tests/sw-zeile.txt', T_SWZEILE)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/sw-pruefe.txt'),
-                      cmd('python3 c8205_interp.py --pruefe-sw-ausgabe sw-soll.txt Tests/sw-zeile.txt')], erwarte=[0, 0])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/sw-pruefe.txt'),
+                      cmd('python3 c8205_interp.py --MODUS=TEST --pruefe-sw-ausgabe sw-soll.txt Tests/sw-zeile.txt')], erwarte=[0, 0])
     s.append(P('Mit dem Ausgabefenster (`--SW-TERMINAL`, wahlweise mit `--zwischenablage`) erscheint dieselbe Ausgabe zusätzlich in '
                'einem eigenen Fenster:'))
-    s += L.code("""$ python3 c8205_interp.py --SW-TERMINAL Tests/0015-030.txt
-$ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.txt""")
+    s += L.code("""$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL Tests/0015-030.txt
+$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --zwischenablage system Tests/0015-030.txt""")
     s.append(P('Im Fenster „SW Ausgabe“ steht `Jahr 1972`. Das Terminal zeigt wie zuvor die Zeilen des Interpreters (ohne '
                '`--sw-ausgabe` auch die dunkelgelbe Ausgabe). Mit `--sw-ausgabe virtuelle_Geraete/SW-Ausgabe` geht dieselbe Ausgabe '
                'zusätzlich in die Datei `sw-ausgabe.txt`.'))
@@ -2318,7 +2330,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
                '`R`. Das Programm besteht nur aus einem Stopp-Befehl; wichtig ist das Protokoll (Stufe 2), das die Wirkung jedes '
                'Tokens zeigt (Abschnitt 6.4).'))
     s += lab.dateien([('Tests/tf-demo.txt', T_TFDEMO)], neu=True)
-    s += lab.sitzung(['python3 c8205_interp.py --out Test-Protokolle/tf-demo.log Tests/tf-demo.txt'], erwarte=[4])
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --out Test-Protokolle/tf-demo.log Tests/tf-demo.txt'], erwarte=[4])
     s.append(P('Das Protokoll zeigt: `ST` wirkt hier, weil `G` zuvor US gesetzt hat (Verriegelung). Durch `Ü` und `ST` steht BR=7777 240 '
                'aufgestellt; `R` startet deshalb bei Knoten 19, führt den Transport aus und hält danach.'))
     s.append(kopf3('Kanaltasten K0 bis K3'))
@@ -2326,7 +2338,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
                'was jede Taste einstellt. Ein im Programm ausgeführter Anwahlbefehl (`4400`…`4700 030`) übersteuert die Einstellung '
                'später.'))
     s += lab.dateien([('Tests/kanal-demo.txt', T_KANAL)], neu=False)
-    s += lab.sitzung(['python3 c8205_interp.py --out Test-Protokolle/kanal-demo.log Tests/kanal-demo.txt',
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --out Test-Protokolle/kanal-demo.log Tests/kanal-demo.txt',
                       'cat Test-Protokolle/kanal-demo.log'], erwarte=[4, None])
 
     # ---- 8.3
@@ -2338,22 +2350,22 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
                'verknüpft; der AC erhält den **Inhalt** der Zelle 0005, nicht die Zahl 5.'))
     s += lab.dateien([('Tests/leser-ziffer.txt', T_LESER), ('band/band5.txt', '\n00010101\n')], neu=True)
     lab.schreibe('band/band5i.txt', '\n11111111\n00010101\n')
-    s += lab.sitzung([cmd('python3 c8205_interp.py --leser1 band/band5.txt Tests/leser-ziffer.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --leser1 band/band5.txt Tests/leser-ziffer.txt')], erwarte=[4])
     s.append(P('Der AC enthält den Inhalt 42 der Zelle 0005. Ohne `--leser1` endet derselbe Test mit der Fehlermeldung aus Kapitel 7. '
                'Steht vor der Ziffer die Zeile `11111111` („Irrung Zeichen“, `band/band5i.txt`), ist das Ergebnis dasselbe: Die Zeile '
                'wird übersprungen.'))
-    s += lab.sitzung([cmd('python3 c8205_interp.py --leser1 band/band5i.txt Tests/leser-ziffer.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --leser1 band/band5i.txt Tests/leser-ziffer.txt')], erwarte=[4])
     s.append(P('Mit dem Zeichen `:` (Zeile `00001101`) und dem Eingabe-Halt `0001: 00000000010` springt das Programm statt zu addieren '
                'nach 0015 (Sprung-Umstellung „ja“). Mit der Anwahl `4500 030` statt `4600 030` und `--leser2` liest derselbe Test '
                'von Leser 2:'))
     lab.dateien([('Tests/leser2-ziffer.txt', T_LESER2)], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py --leser2 band/band5.txt Tests/leser2-ziffer.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --leser2 band/band5.txt Tests/leser2-ziffer.txt')], erwarte=[4])
 
     s.append(kopf3('Stanzer: Zeichen 5 und Punkt'))
     s.append(P('Programm: `0000: 00004600030` (K1 anwählen), `0001: 00000250030` (Ausgabe der Ziffer 5, Ausgabe-Adresse `025x`), '
                '`0002: 00000730030` (Ausgabe des Punktes, `073x`), `0003: 00000000020`.'))
     lab.dateien([('Tests/stanzer-zeichen.txt', T_STANZER)], neu=False, zeigen=False)
-    s += lab.sitzung(['python3 c8205_interp.py --stanzer1 out/band.txt Tests/stanzer-zeichen.txt', 'cat out/band.txt'],
+    s += lab.sitzung(['python3 c8205_interp.py --MODUS=TEST --stanzer1 out/band.txt Tests/stanzer-zeichen.txt', 'cat out/band.txt'],
                      erwarte=[4, None])
     s.append(P('Die Datei `out/band.txt` enthält die Zeilen `00010101` und `00111011`. Der Ordner `out/` muss nicht existieren; er '
                'wird angelegt. Ohne `--stanzer1` endet der Test mit der roten Fehlermeldung aus Kapitel 7.'))
@@ -2362,7 +2374,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
                'Testdatei bringt Gerät und Prüfung mit; die Soll-Datei `soll.txt` liegt neben der Testdatei und enthält die Zeilen '
                '`00010101` und `00111011`:'))
     s += lab.dateien([('Tests/stanzer-pruefe.txt', T_STANZER_PR), ('Tests/soll.txt', SOLL)], neu=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/stanzer-pruefe.txt')], erwarte=[0])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/stanzer-pruefe.txt')], erwarte=[0])
     s.append(P('Abweichender Inhalt, fehlende Soll-Datei oder fehlende Ist-Datei ergibt `Test falsch` (Rückkehrcode 6; Beispiel mit '
                '`diff` in Abschnitt 6.5). Für die Schreibwerk-Datei gilt dasselbe mit `--sw-ausgabe` und `--pruefe-sw-ausgabe` '
                '(Abschnitt 8.1).'))
@@ -2370,7 +2382,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
     s.append(P('Programm: `0000: 00004700030` (K0 anwählen), `0001: 00000000011` (Eingabe-Halt mit Löschen), `0002: 00000000020`, dazu '
                'die Konstante `0007: 00000000007`. Die Datei `band/k0.txt` enthält eine Zeile `7`.'))
     lab.dateien([('Tests/k0-ziffer.txt', T_K0), ('band/k0.txt', '7\n')], neu=False, zeigen=False)
-    s += lab.sitzung([cmd('python3 c8205_interp.py --k0 datei=band/k0.txt Tests/k0-ziffer.txt')], erwarte=[4])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST --k0 datei=band/k0.txt Tests/k0-ziffer.txt')], erwarte=[4])
     s.append(P('Der AC enthält den Inhalt der Zelle 0007. Mit `SW=1` vor `G` (Schreibwerk statt Tastatur) ist auch das Zeichen `B` '
                'eingebbar; an der Pult-Tastatur nicht (Kapitel 7).'))
 
@@ -2386,7 +2398,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
                          'bearbeiteten Zelle plus zwei Wortzeiten (hier 4016: Sektor 16 + 32 = 50, modulo 40 = 10, oktal). Der Befehl '
                          'muss also nicht in Zelle b+1 stehen. Steht er dort, findet der Interpreter in 0010 den Wert 0, also den '
                          'Sprung nach 0000, und das Programm läuft endlos. Danach läuft das Programm bei 0003 weiter.')
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/s1-R1.txt')], erwarte=[4],
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/s1-R1.txt')], erwarte=[4],
                      kuerze=[('4003: ', '4015: ', '… (4003 bis 4015: jeweils 00000000000) …', r': 00000000000$'),
                              ('4020: ', '4037: ', '… (4020 bis 4037: jeweils 00000000000) …', r': 00000000000$')],
                      caption='Speicherzeilen gekürzt (die Adressen laufen oktal).')
@@ -2397,7 +2409,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
     s.append(P('Test mit Prüfungen: Der folgende Test lädt eine Zahl, addiert eine zweite und prüft Register, Flags und zwei '
                'Speicherzellen (ein Beispiel mit `Test falsch` steht in Abschnitt 6.5):'))
     s += lab.dateien([('Tests/pruef-wahr.txt', T_PWAHR)], neu=True)
-    s += lab.sitzung([cmd('python3 c8205_interp.py Tests/pruef-wahr.txt')], erwarte=[0])
+    s += lab.sitzung([cmd('python3 c8205_interp.py --MODUS=TEST Tests/pruef-wahr.txt')], erwarte=[0])
     s.append(P('Rückkehrcode 0 (`Test wahr`). Dieselbe Testdatei ohne Prüfungen ergäbe 4.'))
 
     # ---- 8.5
@@ -2407,7 +2419,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
                'dasselbe. Eine zweite, leere Trommel liegt unter `trommeln/leer.txt` und wird mit `--trommel` gewählt; mit dem Pfad '
                'der Standard-Trommel ergibt `--trommel` dasselbe wie der Aufruf ohne den Schalter.'))
     s += lab.dateien([('Tests/trommel-a.txt', T_TROMMEL_A), ('Tests/trommel-b.txt', T_TROMMEL_B)], neu=True)
-    PY = 'python3 c8205_interp.py'
+    PY = 'python3 c8205_interp.py --MODUS=TEST'
     s += lab.sitzung(['python3 erzeuge_leere_trommel.py', cmd(PY + ' Tests/trommel-b.txt'), cmd(PY + ' Tests/trommel-a.txt'),
                       cmd(PY + ' Tests/trommel-b.txt'), 'python3 erzeuge_leere_trommel.py',
                       cmd(PY + ' Tests/trommel-a.txt Tests/trommel-b.txt'),
@@ -2425,7 +2437,7 @@ $ python3 c8205_interp.py --SW-TERMINAL --zwischenablage system Tests/0015-030.t
 def kap9():
     s = [PageBreak(), Marke('kurz_anfang')]
     s += h1('9 Kurzreferenz')
-    s += L.code("""python3 c8205_interp.py [Schalter] TEST.txt [TEST2.txt ...]
+    s += L.code("""python3 c8205_interp.py --MODUS=TEST [Schalter] TEST.txt [TEST2.txt ...]
 ./c8205_interpreter.sh TEST.txt [Schalter]       # Protokoll nach Test-Protokolle/TEST.log""")
     s += tbl([['Schalter', 'Wirkung (Standard)'],
               ['`--trommel P`', 'Trommeldatei, bleibt über Tests und Aufrufe erhalten (`virtuelle_Geraete/Trommel/trommel.txt`); '

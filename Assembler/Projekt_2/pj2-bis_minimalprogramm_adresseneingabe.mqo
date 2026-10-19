@@ -1,0 +1,27 @@
+                  000               haupt             ; Zelle 0000: Sprung zum Hauptprogramm
+                  equ               00156              
+adresseneingabe:  240               ae_rs             ; Rueckkehrbefehl sichern auf Arbeitszelle
+                  001               schleife          
+                  equ100            00200                 
+schleife:         014               ae_tab            ; Linksverschiebung
+                  004               *+1               
+                  004               schleife          
+ende:             000               ae_rs             
+                  spa               00240             
+ae_tab:           dw                0                 ; Ziffer 0
+                  dw                0100              ; Ziffer 1 (1 * 0100)
+                  dw                0200              ; Ziffer 2
+x3:               dw                0300              ; Ziffer 3
+                  dw                0400              ; Ziffer 4
+                  dw                0500              ; Ziffer 5
+                  dw                0600              ; Ziffer 6
+                  dw                0700              ; Ziffer 7
+                  spa               00252             
+                  001               schleife          ; ZR  löschen und Neuanfang
+                  spa               00273             
+                  002               ende              ; Fortsetzung nach Eingabe von "Punkt"
+haupt:            equ               02400             
+                  030               04700             ; Kanal K0
+                  025               adresseneingabe   ; Zeichen 0 bis 7 und Punkt einlesen
+                  240               r1                ; R1 := eingelesene Konstante
+                  020               0000              ; Stopp (AC = R1 = Konstante)

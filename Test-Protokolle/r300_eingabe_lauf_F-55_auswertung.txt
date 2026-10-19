@@ -1,0 +1,32 @@
+Protokoll: echter Lauf r300_eingabe, Wiederholung F-55 (18.10.2026)
+Rechner des Projektinhabers: Linux 6.2, Python 3.11.4, Tk, deutsche Tastatur
+Aufruf: c8205_grafik.py --STUMM --netz-schnell --HWCHECK --BASP 000000 --trommel r300_eingabe_trommel_nach_lauf.txt
+        --WIEDERGABE Tests/r300_eingabe_klickspur.txt --DEBUGLOG r300_eingabe_debug.log
+Stand des Codes: grafik_sw_fenster.py G3-006 (120 ms Haltezeit, AltGr state=0x80)
+Quelle: Test-Protokolle/F-55/r300_eingabe_debug.log (613 Zeilen), r300_eingabe_bericht.txt
+
+Ergebnis des Berichts: 1 Befund
+  Spur ab 3000                         91 von 91, Zelle danach leer          OK
+  Anzeige = angenommen = Tokens        89 von 89                             OK
+  blockierte Tasten                    0                                     OK
+  zweite Eingabe (folgt)               2 von 2 (Tipp less 24,827 s,
+                                       Tipp a 43,728 s; Loslassen nach
+                                       121 ms bzw. 123 ms)                   OK
+  verworfen (kein R300-Zeichen)        adiaeresis odiaeresis udiaeresis
+                                       ssharp at EuroSign section (7)        OK
+  Fokus im SW-Text                     97 von 97                             OK
+  Wiedergabe-Taste = angekommene       96 von 97                             BEFUND
+    Tipp 37 grave: kein Tastenereignis im SW-Fenster angekommen
+
+Beurteilung
+- AltGr: bracketleft, bracketright, asciitilde kamen als [ ] ~ an (das SW stand schon auf GB, daher ohne Umschaltzeichen),
+  at und EuroSign wurden als solche erkannt und verworfen. state=0x80 wirkt auf diesem X11.
+- Haltezeit: 120 ms reichen; der Rechner war nach dem Umschaltzeichen wieder bei 011 (A-2 erfuellt).
+- Fokus: der Verlust aus F-54 (33,9 s) trat nicht wieder auf; weiter beobachten.
+- Gravis: auf der deutschen Belegung gibt es kein Zeichen "grave" auf einer Taste, nur die Tottaste
+  Umschalt+Akut (dead_grave). event_generate(keysym='grave') findet keinen Tastencode -> kein Ereignis.
+  WIEDERGABE-ARTEFAKT, kein Fehler des SW-Fensters. Verhalten bei echtem Tastendruck unbekannt -> F-56.
+- Folge: Die Sollfolge (92 Token) enthaelt den Gravis; ein Wiedergabelauf endet bis zur Klaerung mit 1 Befund.
+
+Nicht geprueft: Handlauf der Handliste (Gravis, [ ] ~ #, Schnelltipp a A a A, Kopieren) -> F-56.
+Hinweis: r300_eingabe_trommel_nach_lauf.txt (73 KB) liegt nicht bei; Inhalt der Trommel war nicht Gegenstand der Pruefung.

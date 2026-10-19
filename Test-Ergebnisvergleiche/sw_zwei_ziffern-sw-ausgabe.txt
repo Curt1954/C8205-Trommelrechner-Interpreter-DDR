@@ -1,0 +1,4 @@
+Erste Ziffer 0-3:
+Erste: 2
+Zweite Ziffer 0-3:
+Zweite: 3

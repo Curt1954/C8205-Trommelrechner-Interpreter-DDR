@@ -1,0 +1,42 @@
+VM-002, Checkpoint 32, 18.10.2026 04:58 UTC, Python 3.12.3
+== Heutiger Code (B)
+test_kontrolle_ohne_kanalwechsel (__main__.Vormerkung.test_kontrolle_ohne_kanalwechsel) ... ok
+test_s3_13_zeichen_ueberlebt_echo_k2 (__main__.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2) ... expected failure
+test_s3_13b_keine_vormerkung_nach_programmende (__main__.Vormerkung.test_s3_13b_keine_vormerkung_nach_programmende) ... expected failure
+test_vormerkung_verfaellt_bei_losgelassenem_schalter (__main__.Vormerkung.test_vormerkung_verfaellt_bei_losgelassenem_schalter) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.571s
+
+OK (expected failures=2)
+
+== Vorschlag A, Variante A_flag (Wegwerfkopie, nicht im Paket)
+test_kontrolle_ohne_kanalwechsel (grafik_sw_vormerkung_s3_13.Vormerkung.test_kontrolle_ohne_kanalwechsel) ... ok
+test_s3_13_zeichen_ueberlebt_echo_k2 (grafik_sw_vormerkung_s3_13.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2) ... expected failure
+test_s3_13b_keine_vormerkung_nach_programmende (grafik_sw_vormerkung_s3_13.Vormerkung.test_s3_13b_keine_vormerkung_nach_programmende) ... expected failure
+test_vormerkung_verfaellt_bei_losgelassenem_schalter (grafik_sw_vormerkung_s3_13.Vormerkung.test_vormerkung_verfaellt_bei_losgelassenem_schalter) ... ok
+OK (expected failures=2)
+
+== Vorschlag A, Variante A_schalter (Wegwerfkopie, nicht im Paket)
+test_kontrolle_ohne_kanalwechsel (grafik_sw_vormerkung_s3_13.Vormerkung.test_kontrolle_ohne_kanalwechsel) ... ok
+test_s3_13_zeichen_ueberlebt_echo_k2 (grafik_sw_vormerkung_s3_13.Vormerkung.test_s3_13_zeichen_ueberlebt_echo_k2) ... unexpected success
+test_s3_13b_keine_vormerkung_nach_programmende (grafik_sw_vormerkung_s3_13.Vormerkung.test_s3_13b_keine_vormerkung_nach_programmende) ... expected failure
+test_vormerkung_verfaellt_bei_losgelassenem_schalter (grafik_sw_vormerkung_s3_13.Vormerkung.test_vormerkung_verfaellt_bei_losgelassenem_schalter) ... ok
+FAILED (expected failures=1, unexpected successes=1)
+
+== Probe test_in_beiden_zeichenlagen (ziffern_2, SW auf GB), erst B, dann A (m.sw_schalter)
+True KB
+(40, 'annehmen', 'Um. KB', True)
+(40, 'tippen', '2', 'vorgemerkt', 'KB', 'vorgemerkt=', ['2'])
+(45, 'B: liefern entfernt vorgemerkt', (0, 1, 0, 0))
+(71, 'annehmen', '2', True)
+(71, 'tippen', '2', 'geliefert', 'KB', 'vorgemerkt=', [])
+True KB
+(47, 'annehmen', 'Um. KB', True)
+(47, 'tippen', '2', 'vorgemerkt', 'KB', 'vorgemerkt=', ['2'])
+(77, 'annehmen', '2', True)
+(77, 'liefere vorgemerkt')
+(78, 'annehmen', '2', True)
+(78, 'tippen', '2', 'geliefert', 'KB', 'vorgemerkt=', [])
+
+== Suiten mit A (m.sw_schalter): grafik_sw_tests 37 OK, ende_zu_ende 15 OK, pult_test 5 OK, grafik_pult_tests 65 Tests / 1 Fehler (test_kep, wie bisher)

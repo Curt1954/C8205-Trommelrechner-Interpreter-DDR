@@ -1,6 +1,6 @@
 # ** Variablentabelle T2 **
 #
-# Version: 0.03-001
+# Version: 0.03-002
 #
 # Variablenname;  Beschreibung der Anweisung oder des Tests;  Behandlungsart
 #
@@ -13,7 +13,6 @@
 #        Bestätigt für ANWEISUNG-003 (Koinzidenz), ANWEISUNG-004 (Zeitablauf),
 #        und ANWEISUNG-031 (Schalterzustand BS). Der Schalter SP wird nicht in einer eigenen Anweisung getestet, sondern als Flag SP in ANWEISUNG-009 ausgewertet.
 #   ZST  End-Zustand, den der Knotenautomat erreicht. Von hier aus geht es nicht weiter, der Knotenautomat hält an. Die Fortsetzung nach einem Stopp hängt von der Bedienung ab (Programmieranleitung 2.2.3) und ist im Knotenautomaten nicht abgebildet.
-#   V    allgemein formuliert, braucht noch Detailklärung, bevor sie als Befehl abfragbar ist
 # Bekannte Lücken in der Nummerierung
 #  ANWEISUNG-039 existiert nicht
 #

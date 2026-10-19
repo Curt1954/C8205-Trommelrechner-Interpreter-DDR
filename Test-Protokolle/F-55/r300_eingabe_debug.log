@@ -1,0 +1,613 @@
+    0.001 [MainThread  ] START    Grafik G3-001, Debuglog DL-003, Python 3.11.4, Linux-6.2.0-27-generic-x86_64-with-glibc2.37, Aufruf: ['c8205_grafik.py', '--STUMM', '--netz-schnell', '--HWCHECK', '--BASP', '000000', '--trommel', 'r300_eingabe_trommel_nach_lauf.txt', '--WIEDERGABE', 'Tests/r300_eingabe_klickspur.txt', '--DEBUGLOG', 'r300_eingabe_debug.log']
+    0.126 [MainThread  ] WIEDERGABE beginnt: 102 Ereignisse, Dauer 48.650 s
+    0.126 [MainThread  ] FOKUS    FocusIn .!toplevel
+    0.126 [MainThread  ] FOKUS    FocusOut .!toplevel
+    0.127 [MainThread  ] FOKUS    FocusIn .
+    0.127 [MainThread  ] FOKUS    FocusIn .!canvas
+    0.127 [MainThread  ] KLICK    Pult-Klick NETZ: WIRKT | netz=hochlauf stellung=H eingabe_erwartet=False halter=[]
+    0.127 [MainThread  ] WIEDERGABE 1/102 t=0.000 klick NETZ: wirkt=1 (aufgezeichnet 1)
+    0.138 [MainThread  ] FOKUS    FocusOut .!canvas
+    0.138 [MainThread  ] FOKUS    FocusOut .
+    0.138 [MainThread  ] FOKUS    FocusIn .!toplevel2
+    1.120 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['H', 'K0', 'T'] halter=[] maus_gehalten=[] | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.126 [MainThread  ] TOKEN    an den Rechner: SW=1
+    1.126 [MainThread  ] RECHNER  Taste SW=1 vorgemerkt (thread_modus=True) | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.126 [MainThread  ] KLICK    Pult-Klick SW: WIRKT | netz=betrieb stellung=H eingabe_erwartet=False halter=[]
+    1.126 [MainThread  ] WIEDERGABE 2/102 t=1.000 klick SW: wirkt=1 (aufgezeichnet 1)
+    1.131 [rechner     ] RECHNER  Ausfuehrung Taste SW=1 beginnt | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=1 SW=0 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.131 [rechner     ] RECHNER  Ausfuehrung Taste SW=1 endet | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.727 [MainThread  ] TOKEN    an den Rechner: G
+    1.727 [MainThread  ] RECHNER  Taste G vorgemerkt (thread_modus=True) | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.727 [MainThread  ] KLICK    Pult-Klick G: WIRKT | netz=betrieb stellung=H eingabe_erwartet=False halter=[]
+    1.727 [MainThread  ] WIEDERGABE 3/102 t=1.600 klick G: wirkt=1 (aufgezeichnet 1)
+    1.731 [rechner     ] RECHNER  Ausfuehrung Taste G beginnt | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    1.731 [rechner     ] RECHNER  Ausfuehrung Taste G endet | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.121 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['H', 'K0', 'SW'] halter=[] maus_gehalten=[] | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.326 [MainThread  ] TOKEN    an den Rechner: R
+    2.326 [MainThread  ] RECHNER  Taste R vorgemerkt (thread_modus=True) | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.326 [MainThread  ] KLICK    Pult-Klick R: WIRKT | netz=betrieb stellung=R eingabe_erwartet=False halter=[]
+    2.326 [MainThread  ] WIEDERGABE 4/102 t=2.200 klick R: wirkt=1 (aufgezeichnet 1)
+    2.330 [rechner     ] RECHNER  Ausfuehrung Taste R beginnt | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=1 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=1 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.330 [rechner     ] RECHNER  Ausfuehrung Taste R endet | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=0 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=True start=True halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.330 [rechner     ] RECHNER  Lauf beginnt (R) | BZ=0000 BR=0000 000 AR=0000 AC=00000000000 H=0 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=False schritt=False start=True halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    2.335 [MainThread  ] SWAUS    'R'
+    2.335 [MainThread  ] SWAUS    '3'
+    2.335 [MainThread  ] SWAUS    '0'
+    2.335 [MainThread  ] SWAUS    '0'
+    2.361 [MainThread  ] SWAUS    ' '
+    2.361 [MainThread  ] SWAUS    'E'
+    2.361 [MainThread  ] SWAUS    'i'
+    2.361 [MainThread  ] SWAUS    'n'
+    2.361 [MainThread  ] SWAUS    'g'
+    2.361 [MainThread  ] SWAUS    'a'
+    2.361 [MainThread  ] SWAUS    'b'
+    2.361 [MainThread  ] SWAUS    'e'
+    2.361 [MainThread  ] SWAUS    ','
+    2.361 [MainThread  ] SWAUS    ' '
+    2.361 [MainThread  ] SWAUS    'd'
+    2.361 [MainThread  ] SWAUS    'i'
+    2.361 [MainThread  ] SWAUS    'e'
+    2.361 [MainThread  ] SWAUS    ' '
+    2.361 [MainThread  ] SWAUS    'A'
+    2.361 [MainThread  ] SWAUS    'n'
+    2.361 [MainThread  ] SWAUS    'z'
+    2.361 [MainThread  ] SWAUS    'e'
+    2.361 [MainThread  ] SWAUS    'i'
+    2.361 [MainThread  ] SWAUS    'g'
+    2.361 [MainThread  ] SWAUS    'e'
+    2.361 [MainThread  ] SWAUS    ' '
+    2.361 [MainThread  ] SWAUS    'j'
+    2.361 [MainThread  ] SWAUS    'e'
+    2.361 [MainThread  ] SWAUS    'd'
+    2.361 [MainThread  ] SWAUS    'e'
+    2.362 [MainThread  ] SWAUS    'r'
+    2.362 [MainThread  ] SWAUS    ' '
+    2.362 [MainThread  ] SWAUS    'T'
+    2.362 [MainThread  ] SWAUS    'a'
+    2.362 [MainThread  ] SWAUS    's'
+    2.362 [MainThread  ] SWAUS    't'
+    2.362 [MainThread  ] SWAUS    'e'
+    2.362 [MainThread  ] SWAUS    ' '
+    2.362 [MainThread  ] SWAUS    'm'
+    2.362 [MainThread  ] SWAUS    'a'
+    2.362 [MainThread  ] SWAUS    'c'
+    2.362 [MainThread  ] SWAUS    'h'
+    2.362 [MainThread  ] SWAUS    't'
+    2.362 [MainThread  ] SWAUS    ' '
+    2.362 [MainThread  ] SWAUS    'd'
+    2.362 [MainThread  ] SWAUS    'a'
+    2.362 [MainThread  ] SWAUS    's'
+    2.362 [MainThread  ] SWAUS    ' '
+    2.388 [MainThread  ] SWAUS    'F'
+    2.388 [MainThread  ] SWAUS    'e'
+    2.388 [MainThread  ] SWAUS    'n'
+    2.388 [MainThread  ] SWAUS    's'
+    2.388 [MainThread  ] SWAUS    't'
+    2.388 [MainThread  ] SWAUS    'e'
+    2.388 [MainThread  ] SWAUS    'r'
+    2.388 [MainThread  ] SWAUS    '\n'
+    2.389 [MainThread  ] SW       Eingabe erwartet: Fokus angefordert
+    2.389 [MainThread  ] FOKUS    FocusOut .!toplevel2
+    2.389 [MainThread  ] FOKUS    FocusIn .!toplevel
+    2.389 [MainThread  ] FOKUS    FocusIn .!toplevel.!text
+    3.121 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    4.121 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    4.127 [MainThread  ] SW       tipp 1: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=None
+    4.127 [MainThread  ] SW       Taste char='1' keysym=1 -> geliefert
+    4.127 [rechner     ] K0       Rechner uebernimmt Token '1' (Quelle SW)
+    4.128 [MainThread  ] WIEDERGABE 5/102 t=4.000 tipp 1: gegeben=1
+    4.134 [MainThread  ] SWAUS    '1'
+    4.576 [MainThread  ] SW       tipp 2: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    4.577 [MainThread  ] SW       Taste char='2' keysym=2 -> geliefert
+    4.577 [rechner     ] K0       Rechner uebernimmt Token '2' (Quelle SW)
+    4.577 [MainThread  ] WIEDERGABE 6/102 t=4.450 tipp 2: gegeben=1
+    4.591 [MainThread  ] SWAUS    '2'
+    5.027 [MainThread  ] SW       tipp 3: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    5.027 [MainThread  ] SW       Taste char='3' keysym=3 -> geliefert
+    5.027 [rechner     ] K0       Rechner uebernimmt Token '3' (Quelle SW)
+    5.027 [MainThread  ] WIEDERGABE 7/102 t=4.900 tipp 3: gegeben=1
+    5.041 [MainThread  ] SWAUS    '3'
+    5.121 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    5.476 [MainThread  ] SW       tipp 4: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    5.477 [MainThread  ] SW       Taste char='4' keysym=4 -> geliefert
+    5.477 [rechner     ] K0       Rechner uebernimmt Token '4' (Quelle SW)
+    5.477 [MainThread  ] WIEDERGABE 8/102 t=5.350 tipp 4: gegeben=1
+    5.494 [MainThread  ] SWAUS    '4'
+    5.926 [MainThread  ] SW       tipp 5: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    5.927 [MainThread  ] SW       Taste char='5' keysym=5 -> geliefert
+    5.927 [rechner     ] K0       Rechner uebernimmt Token '5' (Quelle SW)
+    5.927 [MainThread  ] WIEDERGABE 9/102 t=5.800 tipp 5: gegeben=1
+    5.945 [MainThread  ] SWAUS    '5'
+    6.122 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    6.377 [MainThread  ] SW       tipp 6: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    6.377 [MainThread  ] SW       Taste char='6' keysym=6 -> geliefert
+    6.377 [rechner     ] K0       Rechner uebernimmt Token '6' (Quelle SW)
+    6.377 [MainThread  ] WIEDERGABE 10/102 t=6.250 tipp 6: gegeben=1
+    6.382 [MainThread  ] SWAUS    '6'
+    6.826 [MainThread  ] SW       tipp 7: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    6.827 [MainThread  ] SW       Taste char='7' keysym=7 -> geliefert
+    6.827 [rechner     ] K0       Rechner uebernimmt Token '7' (Quelle SW)
+    6.827 [MainThread  ] WIEDERGABE 11/102 t=6.700 tipp 7: gegeben=1
+    6.846 [MainThread  ] SWAUS    '7'
+    7.122 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    7.276 [MainThread  ] SW       tipp 8: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    7.277 [MainThread  ] SW       Taste char='8' keysym=8 -> geliefert
+    7.277 [rechner     ] K0       Rechner uebernimmt Token '8' (Quelle SW)
+    7.277 [MainThread  ] WIEDERGABE 12/102 t=7.150 tipp 8: gegeben=1
+    7.283 [MainThread  ] SWAUS    '8'
+    7.726 [MainThread  ] SW       tipp 9: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    7.727 [MainThread  ] SW       Taste char='9' keysym=9 -> geliefert
+    7.727 [MainThread  ] WIEDERGABE 13/102 t=7.600 tipp 9: gegeben=1
+    7.727 [rechner     ] K0       Rechner uebernimmt Token '9' (Quelle SW)
+    7.734 [MainThread  ] SWAUS    '9'
+    8.122 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    8.176 [MainThread  ] SW       tipp 0: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    8.176 [MainThread  ] SW       Taste char='0' keysym=0 -> geliefert
+    8.177 [rechner     ] K0       Rechner uebernimmt Token '0' (Quelle SW)
+    8.177 [MainThread  ] WIEDERGABE 14/102 t=8.050 tipp 0: gegeben=1
+    8.198 [MainThread  ] SWAUS    '0'
+    8.626 [MainThread  ] SW       tipp percent: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    8.627 [MainThread  ] SW       Taste char='%' keysym=percent -> geliefert
+    8.627 [rechner     ] K0       Rechner uebernimmt Token '%' (Quelle SW)
+    8.627 [MainThread  ] WIEDERGABE 15/102 t=8.500 tipp percent: gegeben=1
+    8.630 [MainThread  ] SWAUS    '%'
+    9.076 [MainThread  ] SW       tipp q: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    9.077 [MainThread  ] SW       Taste char='q' keysym=q -> geliefert
+    9.077 [rechner     ] K0       Rechner uebernimmt Token 'q' (Quelle SW)
+    9.077 [MainThread  ] WIEDERGABE 16/102 t=8.950 tipp q: gegeben=1
+    9.098 [MainThread  ] SWAUS    'q'
+    9.123 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+    9.526 [MainThread  ] SW       tipp w: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    9.526 [MainThread  ] SW       Taste char='w' keysym=w -> geliefert
+    9.527 [MainThread  ] WIEDERGABE 17/102 t=9.400 tipp w: gegeben=1
+    9.527 [rechner     ] K0       Rechner uebernimmt Token 'w' (Quelle SW)
+    9.532 [MainThread  ] SWAUS    'w'
+    9.977 [MainThread  ] SW       tipp e: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+    9.977 [MainThread  ] SW       Taste char='e' keysym=e -> geliefert
+    9.977 [MainThread  ] WIEDERGABE 18/102 t=9.850 tipp e: gegeben=1
+    9.977 [rechner     ] K0       Rechner uebernimmt Token 'e' (Quelle SW)
+   10.000 [MainThread  ] SWAUS    'e'
+   10.123 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   10.426 [MainThread  ] SW       tipp r: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   10.427 [MainThread  ] SW       Taste char='r' keysym=r -> geliefert
+   10.427 [rechner     ] K0       Rechner uebernimmt Token 'r' (Quelle SW)
+   10.427 [MainThread  ] WIEDERGABE 19/102 t=10.300 tipp r: gegeben=1
+   10.435 [MainThread  ] SWAUS    'r'
+   10.876 [MainThread  ] SW       tipp t: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   10.877 [MainThread  ] SW       Taste char='t' keysym=t -> geliefert
+   10.877 [rechner     ] K0       Rechner uebernimmt Token 't' (Quelle SW)
+   10.877 [MainThread  ] WIEDERGABE 20/102 t=10.750 tipp t: gegeben=1
+   10.896 [MainThread  ] SWAUS    't'
+   11.123 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   11.326 [MainThread  ] SW       tipp z: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   11.326 [MainThread  ] SW       Taste char='z' keysym=z -> geliefert
+   11.326 [rechner     ] K0       Rechner uebernimmt Token 'z' (Quelle SW)
+   11.327 [MainThread  ] WIEDERGABE 21/102 t=11.200 tipp z: gegeben=1
+   11.350 [MainThread  ] SWAUS    'z'
+   11.776 [MainThread  ] SW       tipp u: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   11.776 [MainThread  ] SW       Taste char='u' keysym=u -> geliefert
+   11.777 [MainThread  ] WIEDERGABE 22/102 t=11.650 tipp u: gegeben=1
+   11.777 [rechner     ] K0       Rechner uebernimmt Token 'u' (Quelle SW)
+   11.798 [MainThread  ] SWAUS    'u'
+   12.123 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   12.227 [MainThread  ] SW       tipp i: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   12.227 [MainThread  ] SW       Taste char='i' keysym=i -> geliefert
+   12.227 [rechner     ] K0       Rechner uebernimmt Token 'i' (Quelle SW)
+   12.227 [MainThread  ] WIEDERGABE 23/102 t=12.100 tipp i: gegeben=1
+   12.234 [MainThread  ] SWAUS    'i'
+   12.677 [MainThread  ] SW       tipp o: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   12.677 [MainThread  ] SW       Taste char='o' keysym=o -> geliefert
+   12.677 [rechner     ] K0       Rechner uebernimmt Token 'o' (Quelle SW)
+   12.677 [MainThread  ] WIEDERGABE 24/102 t=12.550 tipp o: gegeben=1
+   12.698 [MainThread  ] SWAUS    'o'
+   13.124 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   13.126 [MainThread  ] SW       tipp p: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   13.127 [MainThread  ] SW       Taste char='p' keysym=p -> geliefert
+   13.127 [rechner     ] K0       Rechner uebernimmt Token 'p' (Quelle SW)
+   13.127 [MainThread  ] WIEDERGABE 25/102 t=13.000 tipp p: gegeben=1
+   13.145 [MainThread  ] SWAUS    'p'
+   13.576 [MainThread  ] SW       tipp colon: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   13.577 [MainThread  ] SW       Taste char=':' keysym=colon -> geliefert
+   13.577 [MainThread  ] WIEDERGABE 26/102 t=13.450 tipp colon: gegeben=1
+   13.577 [rechner     ] K0       Rechner uebernimmt Token ':' (Quelle SW)
+   13.601 [MainThread  ] SWAUS    ':'
+   14.030 [MainThread  ] SW       tipp plus: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   14.030 [MainThread  ] SW       Taste char='+' keysym=plus -> geliefert
+   14.030 [rechner     ] K0       Rechner uebernimmt Token '+' (Quelle SW)
+   14.030 [MainThread  ] WIEDERGABE 27/102 t=13.900 tipp plus: gegeben=1
+   14.039 [MainThread  ] SWAUS    '+'
+   14.124 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   14.478 [MainThread  ] SW       tipp a: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   14.478 [MainThread  ] SW       Taste char='a' keysym=a -> geliefert
+   14.478 [MainThread  ] WIEDERGABE 28/102 t=14.350 tipp a: gegeben=1
+   14.478 [rechner     ] K0       Rechner uebernimmt Token 'a' (Quelle SW)
+   14.503 [MainThread  ] SWAUS    'a'
+   14.931 [MainThread  ] SW       tipp s: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   14.931 [MainThread  ] SW       Taste char='s' keysym=s -> geliefert
+   14.931 [rechner     ] K0       Rechner uebernimmt Token 's' (Quelle SW)
+   14.931 [MainThread  ] WIEDERGABE 29/102 t=14.800 tipp s: gegeben=1
+   14.956 [MainThread  ] SWAUS    's'
+   15.124 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   15.379 [MainThread  ] SW       tipp d: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   15.379 [MainThread  ] SW       Taste char='d' keysym=d -> geliefert
+   15.379 [MainThread  ] WIEDERGABE 30/102 t=15.250 tipp d: gegeben=1
+   15.379 [rechner     ] K0       Rechner uebernimmt Token 'd' (Quelle SW)
+   15.392 [MainThread  ] SWAUS    'd'
+   15.831 [MainThread  ] SW       tipp f: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   15.831 [MainThread  ] SW       Taste char='f' keysym=f -> geliefert
+   15.831 [rechner     ] K0       Rechner uebernimmt Token 'f' (Quelle SW)
+   15.831 [MainThread  ] WIEDERGABE 31/102 t=15.700 tipp f: gegeben=1
+   15.841 [MainThread  ] SWAUS    'f'
+   16.125 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   16.282 [MainThread  ] SW       tipp g: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   16.282 [MainThread  ] SW       Taste char='g' keysym=g -> geliefert
+   16.282 [rechner     ] K0       Rechner uebernimmt Token 'g' (Quelle SW)
+   16.282 [MainThread  ] WIEDERGABE 32/102 t=16.150 tipp g: gegeben=1
+   16.307 [MainThread  ] SWAUS    'g'
+   16.732 [MainThread  ] SW       tipp h: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   16.732 [MainThread  ] SW       Taste char='h' keysym=h -> geliefert
+   16.732 [MainThread  ] WIEDERGABE 33/102 t=16.600 tipp h: gegeben=1
+   16.732 [rechner     ] K0       Rechner uebernimmt Token 'h' (Quelle SW)
+   16.745 [MainThread  ] SWAUS    'h'
+   17.125 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   17.184 [MainThread  ] SW       tipp j: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   17.184 [MainThread  ] SW       Taste char='j' keysym=j -> geliefert
+   17.184 [rechner     ] K0       Rechner uebernimmt Token 'j' (Quelle SW)
+   17.185 [MainThread  ] WIEDERGABE 34/102 t=17.050 tipp j: gegeben=1
+   17.185 [MainThread  ] SWAUS    'j'
+   17.634 [MainThread  ] SW       tipp k: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   17.634 [MainThread  ] SW       Taste char='k' keysym=k -> geliefert
+   17.634 [rechner     ] K0       Rechner uebernimmt Token 'k' (Quelle SW)
+   17.634 [MainThread  ] WIEDERGABE 35/102 t=17.500 tipp k: gegeben=1
+   17.645 [MainThread  ] SWAUS    'k'
+   18.084 [MainThread  ] SW       tipp l: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   18.084 [MainThread  ] SW       Taste char='l' keysym=l -> geliefert
+   18.084 [rechner     ] K0       Rechner uebernimmt Token 'l' (Quelle SW)
+   18.084 [MainThread  ] WIEDERGABE 36/102 t=17.950 tipp l: gegeben=1
+   18.084 [MainThread  ] SWAUS    'l'
+   18.125 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   18.533 [MainThread  ] SW       tipp grave: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   18.533 [MainThread  ] WIEDERGABE 37/102 t=18.400 tipp grave: gegeben=1
+   18.984 [MainThread  ] SW       tipp slash: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   18.984 [MainThread  ] SW       Taste char='/' keysym=slash -> geliefert
+   18.984 [MainThread  ] WIEDERGABE 38/102 t=18.850 tipp slash: gegeben=1
+   18.985 [rechner     ] K0       Rechner uebernimmt Token '/' (Quelle SW)
+   18.993 [MainThread  ] SWAUS    '/'
+   19.125 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   19.434 [MainThread  ] SW       tipp y: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   19.435 [MainThread  ] SW       Taste char='y' keysym=y -> geliefert
+   19.435 [MainThread  ] WIEDERGABE 39/102 t=19.300 tipp y: gegeben=1
+   19.435 [rechner     ] K0       Rechner uebernimmt Token 'y' (Quelle SW)
+   19.445 [MainThread  ] SWAUS    'y'
+   19.877 [MainThread  ] SW       tipp x: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   19.877 [MainThread  ] SW       Taste char='x' keysym=x -> geliefert
+   19.877 [rechner     ] K0       Rechner uebernimmt Token 'x' (Quelle SW)
+   19.878 [MainThread  ] WIEDERGABE 40/102 t=19.750 tipp x: gegeben=1
+   19.897 [MainThread  ] SWAUS    'x'
+   20.126 [wache       ] STATUS   takt_alter=0.00s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   20.326 [MainThread  ] SW       tipp c: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   20.327 [MainThread  ] SW       Taste char='c' keysym=c -> geliefert
+   20.327 [MainThread  ] WIEDERGABE 41/102 t=20.200 tipp c: gegeben=1
+   20.327 [rechner     ] K0       Rechner uebernimmt Token 'c' (Quelle SW)
+   20.341 [MainThread  ] SWAUS    'c'
+   20.776 [MainThread  ] SW       tipp v: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   20.777 [MainThread  ] SW       Taste char='v' keysym=v -> geliefert
+   20.777 [rechner     ] K0       Rechner uebernimmt Token 'v' (Quelle SW)
+   20.777 [MainThread  ] WIEDERGABE 42/102 t=20.650 tipp v: gegeben=1
+   20.791 [MainThread  ] SWAUS    'v'
+   21.126 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   21.227 [MainThread  ] SW       tipp b: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   21.227 [MainThread  ] SW       Taste char='b' keysym=b -> geliefert
+   21.227 [rechner     ] K0       Rechner uebernimmt Token 'b' (Quelle SW)
+   21.227 [MainThread  ] WIEDERGABE 43/102 t=21.100 tipp b: gegeben=1
+   21.249 [MainThread  ] SWAUS    'b'
+   21.676 [MainThread  ] SW       tipp n: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   21.677 [MainThread  ] SW       Taste char='n' keysym=n -> geliefert
+   21.677 [rechner     ] K0       Rechner uebernimmt Token 'n' (Quelle SW)
+   21.677 [MainThread  ] WIEDERGABE 44/102 t=21.550 tipp n: gegeben=1
+   21.693 [MainThread  ] SWAUS    'n'
+   22.126 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   22.126 [MainThread  ] SW       tipp m: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   22.127 [MainThread  ] SW       Taste char='m' keysym=m -> geliefert
+   22.127 [rechner     ] K0       Rechner uebernimmt Token 'm' (Quelle SW)
+   22.127 [MainThread  ] WIEDERGABE 45/102 t=22.000 tipp m: gegeben=1
+   22.146 [MainThread  ] SWAUS    'm'
+   22.576 [MainThread  ] SW       tipp comma: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   22.577 [MainThread  ] SW       Taste char=',' keysym=comma -> geliefert
+   22.577 [rechner     ] K0       Rechner uebernimmt Token ',' (Quelle SW)
+   22.577 [MainThread  ] WIEDERGABE 46/102 t=22.450 tipp comma: gegeben=1
+   22.596 [MainThread  ] SWAUS    ','
+   23.026 [MainThread  ] SW       tipp period: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   23.027 [MainThread  ] SW       Taste char='.' keysym=period -> geliefert
+   23.027 [rechner     ] K0       Rechner uebernimmt Token '.' (Quelle SW)
+   23.027 [MainThread  ] WIEDERGABE 47/102 t=22.900 tipp period: gegeben=1
+   23.032 [MainThread  ] SWAUS    '.'
+   23.126 [wache       ] STATUS   takt_alter=0.00s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   23.476 [MainThread  ] SW       tipp minus: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   23.477 [MainThread  ] SW       Taste char='-' keysym=minus -> geliefert
+   23.477 [rechner     ] K0       Rechner uebernimmt Token '-' (Quelle SW)
+   23.477 [MainThread  ] WIEDERGABE 48/102 t=23.350 tipp minus: gegeben=1
+   23.499 [MainThread  ] SWAUS    '-'
+   23.926 [MainThread  ] SW       tipp Tab: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   23.926 [MainThread  ] SW       Taste char='\t' keysym=Tab -> geliefert
+   23.927 [rechner     ] K0       Rechner uebernimmt Token 'TAB' (Quelle SW)
+   23.927 [MainThread  ] WIEDERGABE 49/102 t=23.800 tipp Tab: gegeben=1
+   23.936 [MainThread  ] SWAUS    '\t'
+   24.127 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   24.376 [MainThread  ] SW       tipp space: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   24.377 [MainThread  ] SW       Taste char=' ' keysym=space -> geliefert
+   24.377 [MainThread  ] WIEDERGABE 50/102 t=24.250 tipp space: gegeben=1
+   24.377 [rechner     ] K0       Rechner uebernimmt Token 'ZR' (Quelle SW)
+   24.401 [MainThread  ] SWAUS    ' '
+   24.826 [MainThread  ] SW       tipp less: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   24.827 [MainThread  ] SW       Taste char='<' keysym=less -> folgt
+   24.827 [rechner     ] K0       Rechner uebernimmt Token 'Um. GB' (Quelle SW)
+   24.827 [MainThread  ] WIEDERGABE 51/102 t=24.700 tipp less: gegeben=1
+   24.948 [MainThread  ] SW       zweite Eingabe beim Loslassen -> geliefert
+   24.948 [rechner     ] K0       Rechner uebernimmt Token '<' (Quelle SW)
+   24.963 [MainThread  ] SWAUS    '<'
+   25.127 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   25.276 [MainThread  ] SW       tipp quotedbl: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   25.277 [MainThread  ] SW       Taste char='"' keysym=quotedbl -> geliefert
+   25.277 [rechner     ] K0       Rechner uebernimmt Token '"' (Quelle SW)
+   25.277 [MainThread  ] WIEDERGABE 52/102 t=25.150 tipp quotedbl: gegeben=1
+   25.307 [MainThread  ] SWAUS    '"'
+   25.726 [MainThread  ] SW       tipp bracketleft: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   25.727 [MainThread  ] SW       Taste char='[' keysym=bracketleft -> geliefert
+   25.727 [rechner     ] K0       Rechner uebernimmt Token '[' (Quelle SW)
+   25.727 [MainThread  ] WIEDERGABE 53/102 t=25.600 tipp bracketleft: gegeben=1
+   25.743 [MainThread  ] SWAUS    '['
+   26.127 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   26.176 [MainThread  ] SW       tipp greater: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   26.177 [MainThread  ] SW       Taste char='>' keysym=greater -> geliefert
+   26.177 [rechner     ] K0       Rechner uebernimmt Token '>' (Quelle SW)
+   26.177 [MainThread  ] WIEDERGABE 54/102 t=26.050 tipp greater: gegeben=1
+   26.209 [MainThread  ] SWAUS    '>'
+   26.626 [MainThread  ] SW       tipp apostrophe: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   26.627 [MainThread  ] SW       Taste char="'" keysym=apostrophe -> geliefert
+   26.627 [rechner     ] K0       Rechner uebernimmt Token "'" (Quelle SW)
+   26.627 [MainThread  ] WIEDERGABE 55/102 t=26.500 tipp apostrophe: gegeben=1
+   26.646 [MainThread  ] SWAUS    "'"
+   27.076 [MainThread  ] SW       tipp asciitilde: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   27.077 [MainThread  ] SW       Taste char='~' keysym=asciitilde -> geliefert
+   27.077 [rechner     ] K0       Rechner uebernimmt Token '~' (Quelle SW)
+   27.077 [MainThread  ] WIEDERGABE 56/102 t=26.950 tipp asciitilde: gegeben=1
+   27.084 [MainThread  ] SWAUS    '~'
+   27.127 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   27.526 [MainThread  ] SW       tipp bracketright: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   27.526 [MainThread  ] SW       Taste char=']' keysym=bracketright -> geliefert
+   27.527 [MainThread  ] WIEDERGABE 57/102 t=27.400 tipp bracketright: gegeben=1
+   27.527 [rechner     ] K0       Rechner uebernimmt Token ']' (Quelle SW)
+   27.547 [MainThread  ] SWAUS    ']'
+   27.976 [MainThread  ] SW       tipp numbersign: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   27.977 [MainThread  ] SW       Taste char='#' keysym=numbersign -> geliefert
+   27.977 [rechner     ] K0       Rechner uebernimmt Token '#' (Quelle SW)
+   27.977 [MainThread  ] WIEDERGABE 58/102 t=27.850 tipp numbersign: gegeben=1
+   27.983 [MainThread  ] SWAUS    '#'
+   28.128 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   28.427 [MainThread  ] SW       tipp asterisk: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   28.427 [MainThread  ] SW       Taste char='*' keysym=asterisk -> geliefert
+   28.427 [rechner     ] K0       Rechner uebernimmt Token '*' (Quelle SW)
+   28.427 [MainThread  ] WIEDERGABE 59/102 t=28.300 tipp asterisk: gegeben=1
+   28.452 [MainThread  ] SWAUS    '*'
+   28.881 [MainThread  ] SW       tipp Q: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   28.881 [MainThread  ] SW       Taste char='Q' keysym=Q -> geliefert
+   28.881 [rechner     ] K0       Rechner uebernimmt Token 'Q' (Quelle SW)
+   28.881 [MainThread  ] WIEDERGABE 60/102 t=28.750 tipp Q: gegeben=1
+   28.889 [MainThread  ] SWAUS    'Q'
+   29.128 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   29.331 [MainThread  ] SW       tipp W: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   29.332 [MainThread  ] SW       Taste char='W' keysym=W -> geliefert
+   29.332 [MainThread  ] WIEDERGABE 61/102 t=29.200 tipp W: gegeben=1
+   29.332 [rechner     ] K0       Rechner uebernimmt Token 'W' (Quelle SW)
+   29.356 [MainThread  ] SWAUS    'W'
+   29.780 [MainThread  ] SW       tipp E: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   29.780 [MainThread  ] SW       Taste char='E' keysym=E -> geliefert
+   29.780 [rechner     ] K0       Rechner uebernimmt Token 'E' (Quelle SW)
+   29.780 [MainThread  ] WIEDERGABE 62/102 t=29.650 tipp E: gegeben=1
+   29.791 [MainThread  ] SWAUS    'E'
+   30.128 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   30.235 [MainThread  ] SW       tipp R: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   30.235 [MainThread  ] SW       Taste char='R' keysym=R -> geliefert
+   30.236 [rechner     ] K0       Rechner uebernimmt Token 'R' (Quelle SW)
+   30.236 [MainThread  ] WIEDERGABE 63/102 t=30.100 tipp R: gegeben=1
+   30.260 [MainThread  ] SWAUS    'R'
+   30.683 [MainThread  ] SW       tipp T: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   30.683 [MainThread  ] SW       Taste char='T' keysym=T -> geliefert
+   30.683 [rechner     ] K0       Rechner uebernimmt Token 'T' (Quelle SW)
+   30.683 [MainThread  ] WIEDERGABE 64/102 t=30.550 tipp T: gegeben=1
+   30.684 [MainThread  ] SWAUS    'T'
+   31.129 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   31.133 [MainThread  ] SW       tipp Z: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   31.133 [MainThread  ] SW       Taste char='Z' keysym=Z -> geliefert
+   31.133 [MainThread  ] WIEDERGABE 65/102 t=31.000 tipp Z: gegeben=1
+   31.133 [rechner     ] K0       Rechner uebernimmt Token 'Z' (Quelle SW)
+   31.142 [MainThread  ] SWAUS    'Z'
+   31.582 [MainThread  ] SW       tipp U: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   31.583 [MainThread  ] SW       Taste char='U' keysym=U -> geliefert
+   31.583 [MainThread  ] WIEDERGABE 66/102 t=31.450 tipp U: gegeben=1
+   31.583 [rechner     ] K0       Rechner uebernimmt Token 'U' (Quelle SW)
+   31.607 [MainThread  ] SWAUS    'U'
+   32.033 [MainThread  ] SW       tipp I: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   32.033 [MainThread  ] SW       Taste char='I' keysym=I -> geliefert
+   32.033 [rechner     ] K0       Rechner uebernimmt Token 'I' (Quelle SW)
+   32.033 [MainThread  ] WIEDERGABE 67/102 t=31.900 tipp I: gegeben=1
+   32.041 [MainThread  ] SWAUS    'I'
+   32.129 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   32.484 [MainThread  ] SW       tipp O: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   32.484 [MainThread  ] SW       Taste char='O' keysym=O -> geliefert
+   32.485 [rechner     ] K0       Rechner uebernimmt Token 'O' (Quelle SW)
+   32.485 [MainThread  ] WIEDERGABE 68/102 t=32.350 tipp O: gegeben=1
+   32.485 [MainThread  ] SWAUS    'O'
+   32.933 [MainThread  ] SW       tipp P: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   32.933 [MainThread  ] SW       Taste char='P' keysym=P -> geliefert
+   32.933 [rechner     ] K0       Rechner uebernimmt Token 'P' (Quelle SW)
+   32.934 [MainThread  ] WIEDERGABE 69/102 t=32.800 tipp P: gegeben=1
+   32.944 [MainThread  ] SWAUS    'P'
+   33.129 [wache       ] STATUS   takt_alter=0.00s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   33.376 [MainThread  ] SW       tipp parenleft: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   33.377 [MainThread  ] SW       Taste char='(' keysym=parenleft -> geliefert
+   33.377 [rechner     ] K0       Rechner uebernimmt Token '(' (Quelle SW)
+   33.377 [MainThread  ] WIEDERGABE 70/102 t=33.250 tipp parenleft: gegeben=1
+   33.380 [MainThread  ] SWAUS    '('
+   33.826 [MainThread  ] SW       tipp equal: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   33.827 [MainThread  ] SW       Taste char='=' keysym=equal -> geliefert
+   33.827 [rechner     ] K0       Rechner uebernimmt Token '=' (Quelle SW)
+   33.827 [MainThread  ] WIEDERGABE 71/102 t=33.700 tipp equal: gegeben=1
+   33.839 [MainThread  ] SWAUS    '='
+   34.129 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   34.276 [MainThread  ] SW       tipp A: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   34.277 [MainThread  ] SW       Taste char='A' keysym=A -> geliefert
+   34.277 [rechner     ] K0       Rechner uebernimmt Token 'A' (Quelle SW)
+   34.277 [MainThread  ] WIEDERGABE 72/102 t=34.150 tipp A: gegeben=1
+   34.301 [MainThread  ] SWAUS    'A'
+   34.726 [MainThread  ] SW       tipp S: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   34.727 [MainThread  ] SW       Taste char='S' keysym=S -> geliefert
+   34.727 [rechner     ] K0       Rechner uebernimmt Token 'S' (Quelle SW)
+   34.727 [MainThread  ] WIEDERGABE 73/102 t=34.600 tipp S: gegeben=1
+   34.736 [MainThread  ] SWAUS    'S'
+   35.130 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   35.176 [MainThread  ] SW       tipp D: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   35.177 [MainThread  ] SW       Taste char='D' keysym=D -> geliefert
+   35.177 [rechner     ] K0       Rechner uebernimmt Token 'D' (Quelle SW)
+   35.177 [MainThread  ] WIEDERGABE 74/102 t=35.050 tipp D: gegeben=1
+   35.201 [MainThread  ] SWAUS    'D'
+   35.626 [MainThread  ] SW       tipp F: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   35.627 [MainThread  ] SW       Taste char='F' keysym=F -> geliefert
+   35.627 [rechner     ] K0       Rechner uebernimmt Token 'F' (Quelle SW)
+   35.627 [MainThread  ] WIEDERGABE 75/102 t=35.500 tipp F: gegeben=1
+   35.641 [MainThread  ] SWAUS    'F'
+   36.077 [MainThread  ] SW       tipp G: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   36.077 [MainThread  ] SW       Taste char='G' keysym=G -> geliefert
+   36.077 [rechner     ] K0       Rechner uebernimmt Token 'G' (Quelle SW)
+   36.077 [MainThread  ] WIEDERGABE 76/102 t=35.950 tipp G: gegeben=1
+   36.109 [MainThread  ] SWAUS    'G'
+   36.130 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   36.527 [MainThread  ] SW       tipp H: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   36.527 [MainThread  ] SW       Taste char='H' keysym=H -> geliefert
+   36.527 [rechner     ] K0       Rechner uebernimmt Token 'H' (Quelle SW)
+   36.527 [MainThread  ] WIEDERGABE 77/102 t=36.400 tipp H: gegeben=1
+   36.544 [MainThread  ] SWAUS    'H'
+   36.977 [MainThread  ] SW       tipp J: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   36.977 [MainThread  ] SW       Taste char='J' keysym=J -> geliefert
+   36.977 [rechner     ] K0       Rechner uebernimmt Token 'J' (Quelle SW)
+   36.977 [MainThread  ] WIEDERGABE 78/102 t=36.850 tipp J: gegeben=1
+   36.979 [MainThread  ] SWAUS    'J'
+   37.130 [wache       ] STATUS   takt_alter=0.00s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   37.426 [MainThread  ] SW       tipp K: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   37.427 [MainThread  ] SW       Taste char='K' keysym=K -> geliefert
+   37.427 [rechner     ] K0       Rechner uebernimmt Token 'K' (Quelle SW)
+   37.427 [MainThread  ] WIEDERGABE 79/102 t=37.300 tipp K: gegeben=1
+   37.429 [MainThread  ] SWAUS    'K'
+   37.876 [MainThread  ] SW       tipp L: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   37.877 [MainThread  ] SW       Taste char='L' keysym=L -> geliefert
+   37.877 [rechner     ] K0       Rechner uebernimmt Token 'L' (Quelle SW)
+   37.877 [MainThread  ] WIEDERGABE 80/102 t=37.750 tipp L: gegeben=1
+   37.883 [MainThread  ] SWAUS    'L'
+   38.131 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   38.326 [MainThread  ] SW       tipp semicolon: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   38.327 [MainThread  ] SW       Taste char=';' keysym=semicolon -> geliefert
+   38.327 [rechner     ] K0       Rechner uebernimmt Token ';' (Quelle SW)
+   38.327 [MainThread  ] WIEDERGABE 81/102 t=38.200 tipp semicolon: gegeben=1
+   38.347 [MainThread  ] SWAUS    ';'
+   38.776 [MainThread  ] SW       tipp parenright: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   38.777 [MainThread  ] SW       Taste char=')' keysym=parenright -> geliefert
+   38.777 [rechner     ] K0       Rechner uebernimmt Token ')' (Quelle SW)
+   38.777 [MainThread  ] WIEDERGABE 82/102 t=38.650 tipp parenright: gegeben=1
+   38.784 [MainThread  ] SWAUS    ')'
+   39.131 [wache       ] STATUS   takt_alter=0.00s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   39.226 [MainThread  ] SW       tipp Return: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   39.226 [MainThread  ] SW       Taste char='\r' keysym=Return -> geliefert
+   39.227 [rechner     ] K0       Rechner uebernimmt Token 'WRZL' (Quelle SW)
+   39.227 [MainThread  ] WIEDERGABE 83/102 t=39.100 tipp Return: gegeben=1
+   39.248 [MainThread  ] SWAUS    '\n'
+   39.676 [MainThread  ] SW       tipp Y: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   39.677 [MainThread  ] SW       Taste char='Y' keysym=Y -> geliefert
+   39.677 [rechner     ] K0       Rechner uebernimmt Token 'Y' (Quelle SW)
+   39.677 [MainThread  ] WIEDERGABE 84/102 t=39.550 tipp Y: gegeben=1
+   39.699 [MainThread  ] SWAUS    'Y'
+   40.126 [MainThread  ] SW       tipp X: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   40.126 [MainThread  ] SW       Taste char='X' keysym=X -> geliefert
+   40.127 [rechner     ] K0       Rechner uebernimmt Token 'X' (Quelle SW)
+   40.127 [MainThread  ] WIEDERGABE 85/102 t=40.000 tipp X: gegeben=1
+   40.132 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0110 BR=3120 240 AR=3120 AC=00001470030 H=0 E=0 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   40.133 [MainThread  ] SWAUS    'X'
+   40.576 [MainThread  ] SW       tipp C: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   40.577 [MainThread  ] SW       Taste char='C' keysym=C -> geliefert
+   40.577 [rechner     ] K0       Rechner uebernimmt Token 'C' (Quelle SW)
+   40.577 [MainThread  ] WIEDERGABE 86/102 t=40.450 tipp C: gegeben=1
+   40.598 [MainThread  ] SWAUS    'C'
+   41.026 [MainThread  ] SW       tipp V: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   41.027 [MainThread  ] SW       Taste char='V' keysym=V -> geliefert
+   41.027 [rechner     ] K0       Rechner uebernimmt Token 'V' (Quelle SW)
+   41.027 [MainThread  ] WIEDERGABE 87/102 t=40.900 tipp V: gegeben=1
+   41.032 [MainThread  ] SWAUS    'V'
+   41.132 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   41.476 [MainThread  ] SW       tipp B: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   41.476 [MainThread  ] SW       Taste char='B' keysym=B -> geliefert
+   41.477 [MainThread  ] WIEDERGABE 88/102 t=41.350 tipp B: gegeben=1
+   41.477 [rechner     ] K0       Rechner uebernimmt Token 'B' (Quelle SW)
+   41.499 [MainThread  ] SWAUS    'B'
+   41.927 [MainThread  ] SW       tipp N: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   41.927 [MainThread  ] SW       Taste char='N' keysym=N -> geliefert
+   41.927 [MainThread  ] WIEDERGABE 89/102 t=41.800 tipp N: gegeben=1
+   41.927 [rechner     ] K0       Rechner uebernimmt Token 'N' (Quelle SW)
+   41.935 [MainThread  ] SWAUS    'N'
+   42.132 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   42.376 [MainThread  ] SW       tipp M: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   42.376 [MainThread  ] SW       Taste char='M' keysym=M -> geliefert
+   42.377 [rechner     ] K0       Rechner uebernimmt Token 'M' (Quelle SW)
+   42.377 [MainThread  ] WIEDERGABE 90/102 t=42.250 tipp M: gegeben=1
+   42.400 [MainThread  ] SWAUS    'M'
+   42.826 [MainThread  ] SW       tipp question: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   42.826 [MainThread  ] SW       Taste char='?' keysym=question -> geliefert
+   42.827 [rechner     ] K0       Rechner uebernimmt Token '?' (Quelle SW)
+   42.827 [MainThread  ] WIEDERGABE 91/102 t=42.700 tipp question: gegeben=1
+   42.832 [MainThread  ] SWAUS    '?'
+   43.132 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   43.276 [MainThread  ] SW       tipp exclam: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   43.276 [MainThread  ] SW       Taste char='!' keysym=exclam -> geliefert
+   43.277 [rechner     ] K0       Rechner uebernimmt Token '!' (Quelle SW)
+   43.277 [MainThread  ] WIEDERGABE 92/102 t=43.150 tipp exclam: gegeben=1
+   43.298 [MainThread  ] SWAUS    '!'
+   43.727 [MainThread  ] SW       tipp a: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=GB
+   43.728 [MainThread  ] SW       Taste char='a' keysym=a -> folgt
+   43.728 [rechner     ] K0       Rechner uebernimmt Token 'Um. KB' (Quelle SW)
+   43.728 [MainThread  ] WIEDERGABE 93/102 t=43.600 tipp a: gegeben=1
+   43.851 [MainThread  ] SW       zweite Eingabe beim Loslassen -> geliefert
+   43.851 [rechner     ] K0       Rechner uebernimmt Token 'a' (Quelle SW)
+   43.876 [MainThread  ] SWAUS    'a'
+   44.133 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   44.176 [MainThread  ] SW       tipp 1: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   44.177 [MainThread  ] SW       Taste char='1' keysym=1 -> geliefert
+   44.177 [rechner     ] K0       Rechner uebernimmt Token '1' (Quelle SW)
+   44.177 [MainThread  ] WIEDERGABE 94/102 t=44.050 tipp 1: gegeben=1
+   44.201 [MainThread  ] SWAUS    '1'
+   44.629 [MainThread  ] SW       tipp adiaeresis: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   44.629 [MainThread  ] SW       Taste char='ä' keysym=adiaeresis -> verworfen
+   44.629 [MainThread  ] WIEDERGABE 95/102 t=44.500 tipp adiaeresis: gegeben=1
+   45.082 [MainThread  ] SW       tipp odiaeresis: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   45.082 [MainThread  ] SW       Taste char='ö' keysym=odiaeresis -> verworfen
+   45.082 [MainThread  ] WIEDERGABE 96/102 t=44.950 tipp odiaeresis: gegeben=1
+   45.133 [wache       ] STATUS   takt_alter=0.02s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   45.530 [MainThread  ] SW       tipp udiaeresis: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   45.531 [MainThread  ] SW       Taste char='ü' keysym=udiaeresis -> verworfen
+   45.531 [MainThread  ] WIEDERGABE 97/102 t=45.400 tipp udiaeresis: gegeben=1
+   45.982 [MainThread  ] SW       tipp ssharp: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   45.982 [MainThread  ] SW       Taste char='ß' keysym=ssharp -> verworfen
+   45.983 [MainThread  ] WIEDERGABE 98/102 t=45.850 tipp ssharp: gegeben=1
+   46.133 [wache       ] STATUS   takt_alter=0.04s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   46.433 [MainThread  ] SW       tipp at: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   46.433 [MainThread  ] SW       Taste char='@' keysym=at -> verworfen
+   46.434 [MainThread  ] WIEDERGABE 99/102 t=46.300 tipp at: gegeben=1
+   46.884 [MainThread  ] SW       tipp EuroSign: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   46.885 [MainThread  ] SW       Taste char='€' keysym=EuroSign -> verworfen
+   46.885 [MainThread  ] WIEDERGABE 100/102 t=46.750 tipp EuroSign: gegeben=1
+   47.134 [wache       ] STATUS   takt_alter=0.01s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   47.336 [MainThread  ] SW       tipp section: Fokus auf SW-Text=True (focus_get=.!toplevel.!text), Eingabe erwartet=True, zweite Eingabe ausstehend=False, Lage SW=KB
+   47.336 [MainThread  ] SW       Taste char='§' keysym=section -> verworfen
+   47.336 [MainThread  ] WIEDERGABE 101/102 t=47.200 tipp section: gegeben=1
+   48.134 [wache       ] STATUS   takt_alter=0.03s rechner_thread=lebt netz=betrieb rastet=['K0', 'R', 'SW'] halter=[] maus_gehalten=[] | BZ=0107 BR=0400 011 AR=0400 AC=00000000000 H=0 E=1 A=0 T=0 SW=1 K1=0 K2=0 K3=0 US=0 BS=0 FE=0 FUE=0 BS-Schalter=0 | laeuft=True schritt=False start=False halted=False mhalt=False warteschlange=[] eingabe_erwartet=False
+   48.776 [MainThread  ] KLICK    Pult-Klick NETZ: WIRKT | netz=auslauf stellung=R eingabe_erwartet=False halter=[]
+   48.777 [MainThread  ] WIEDERGABE 102/102 t=48.650 klick NETZ: wirkt=1 (aufgezeichnet 1)
+   48.777 [MainThread  ] WIEDERGABE Ende: 102 Ereignisse, 0 Abweichung(en) der Wirkung
