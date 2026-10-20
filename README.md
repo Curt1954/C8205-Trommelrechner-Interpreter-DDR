@@ -1,6 +1,6 @@
 # C 8205 – Simulation eines DDR-Kleinrechners von 1968
 
-Version: 0.95-001
+Version: 0.95-002
 
 **Deutsch** | [English](README.en.md)
 
@@ -46,15 +46,15 @@ sich Läufe als Regressionstests wiederholen.
 | `c-module/` | C-Module: Trommel, Bahnsperre, Unterbrechung, Tonmischer `tonmisch`; Erweiterungsmodul in `c-module/python/` |
 | `ton/` | Klänge (`sw_toene/`, `toene_rechner_stanzer/`, Netzgeräusche), Testrahmen `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | Prüfungen und Testskripte, u. a. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
-| `c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes |
+| `Hilfsprogramme/c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes |
 | `c8205_interpreter.sh`, `c8205_interpreter.bat` | Wrapper: starten einen Test und schreiben das Protokoll nach `Test-Protokolle/` |
-| `compute_all_tests.sh` | führt den Interpreter für alle Testdefinitionen in `Tests/` aus |
-| `c8205_bis_test.sh` | Wrapper für Tests der BIS-Bausteine: lädt zuerst das Minimalprogramm (`Tests/pj2-bis_minimalprogramm.test`), dann die angegebene Testdatei |
-| `test_bis.sh` | führt alle BIS-Tests nacheinander aus (leere Trommel, Minimalprogramm, dann jeder Test `pj2-bis_*`) |
-| `test.sh` | ältere Fassung von `test_bis.sh` (ohne den Test `pj2-bis_druck_bz_ac`) |
-| `erzeuge_leere_trommel.py` | erzeugt die leere Trommeldatei `Trommel/trommel.txt` (setzt auch eine benutzte Trommel zurück) |
-| `c8205_lochstreifen_anzeige.py` | Hilfsprogramm: schreibt einen virtuellen Lochstreifen als Klartext in einem Fenster aus |
-| `c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben in einem Fenster |
+| `testscripte/compute_all_tests.sh` | führt den Interpreter für alle Testdefinitionen in `Tests/` aus |
+| `testscripte/c8205_bis_test.sh` | Wrapper für Tests der BIS-Bausteine: lädt zuerst das Minimalprogramm (`Tests/pj2-bis_minimalprogramm.test`), dann die angegebene Testdatei |
+| `testscripte/test_bis.sh` | führt alle BIS-Tests nacheinander aus (leere Trommel, Minimalprogramm, dann jeder Test `pj2-bis_*`) |
+| `testscripte/test.sh` | ältere Fassung von `test_bis.sh` (ohne den Test `pj2-bis_druck_bz_ac`) |
+| `testscripte/erzeuge_leere_trommel.py` | erzeugt die leere Trommeldatei `Trommel/trommel.txt` (setzt auch eine benutzte Trommel zurück) |
+| `Hilfsprogramme/c8205_lochstreifen_anzeige.py` | Hilfsprogramm: schreibt einen virtuellen Lochstreifen als Klartext in einem Fenster aus |
+| `Hilfsprogramme/c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben in einem Fenster |
 | `markdown-dateien/` | Regelwerk und Projektbeschreibung (.md); der Interpreter liest den Knotengraphen von hier |
 | `PDF/` | Lesefassungen der Dokumente (A4) |
 | `Tests/` | Testaufträge (meist `.txt`; die Endung ist frei, der Assembler erzeugt `.test`) |
@@ -72,15 +72,11 @@ Verkürzte Übersicht (Unterordner der Protokolle und der Beispielprojekte sind 
 ```
 C8205/
 ├── c8205_interp.py                 Python-Interpreter
-├── c8205_befehlssweep.py           Vollständigkeitstest (512 Operationscodes)
 ├── c8205_interpreter.sh / .bat     Wrapper mit Protokolldatei
-├── compute_all_tests.sh            alle Testdefinitionen in Tests/ ausführen
-├── c8205_bis_test.sh               Wrapper für BIS-Tests (lädt zuerst das Minimalprogramm)
-├── test_bis.sh                     alle BIS-Tests nacheinander ausführen
-├── test.sh                         ältere Fassung von test_bis.sh
-├── erzeuge_leere_trommel.py        leere Trommeldatei erzeugen
-├── c8205_lochstreifen_anzeige.py   Lochstreifen als Klartext anzeigen (Hilfsprogramm)
-├── c8205_lochstreifen_eingabe.py   Lochstreifen aus Tastatureingaben erzeugen (Hilfsprogramm)
+├── Hilfsprogramme/                 c8205_befehlssweep.py (Vollständigkeitstest, 512 Operationscodes),
+│                                   c8205_lochstreifen_anzeige.py / _eingabe.py / _umwandlung.py
+├── testscripte/                    compute_all_tests.sh, c8205_bis_test.sh, test_bis.sh, test.sh,
+│                                   erzeuge_leere_trommel.py, grafik_*-Prüfungen
 ├── markdown-dateien/               Regelwerk und Projektbeschreibung (.md)
 ├── PDF/                            Lesefassungen (A4)
 ├── Tests/                          Testaufträge (.txt oder .test)
@@ -131,7 +127,7 @@ c8205_interpreter.bat 0015-030.txt       # Windows
 Alle Testdefinitionen in `Tests/` auf einmal ausführen:
 
 ```
-./compute_all_tests.sh
+./testscripte/compute_all_tests.sh
 ```
 
 Alle Schalter (Geräte, Protokolltiefe, Dateiprüfungen) und Fehlermeldungen beschreibt
@@ -236,7 +232,7 @@ können deshalb einen älteren Stand haben (der Stand steht im Dokument). Maßge
 
 Der Interpreter meldet jede Stelle, bei der das Regelwerk unklar ist oder zu der noch keine Umsetzung vorliegt,
 bewusst als **Stub** und bricht mit einer Meldung ab, statt zu raten („laut scheitern“). Das ist gewollt und kein
-Fehler. Ob für jeden der 512 Operationscodes eine Umsetzung vorhanden ist, prüft `c8205_befehlssweep.py`.
+Fehler. Ob für jeden der 512 Operationscodes eine Umsetzung vorhanden ist, prüft `Hilfsprogramme/c8205_befehlssweep.py`.
 
 ## Versionsnummern
 

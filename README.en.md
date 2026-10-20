@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.95-001
+Version: 0.95-002
 
 [Deutsch](README.md) | **English**
 
@@ -47,15 +47,15 @@ as regression tests.
 | `c-module/` | C modules: drum, track lock, interrupt, sound mixer `tonmisch`; extension module in `c-module/python/` |
 | `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | checks and test scripts, e.g. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
-| `c8205_befehlssweep.py` | Completeness test over all 512 operation codes |
+| `Hilfsprogramme/c8205_befehlssweep.py` | Completeness test over all 512 operation codes |
 | `c8205_interpreter.sh`, `c8205_interpreter.bat` | Wrappers: run a test and write the log to `Test-Protokolle/` |
-| `compute_all_tests.sh` | runs the interpreter for all test definitions in `Tests/` |
-| `c8205_bis_test.sh` | Wrapper for tests of the BIS building blocks: first loads the minimal program (`Tests/pj2-bis_minimalprogramm.test`), then the given test file |
-| `test_bis.sh` | runs all BIS tests one after another (empty drum, minimal program, then each `pj2-bis_*` test) |
-| `test.sh` | older version of `test_bis.sh` (without the test `pj2-bis_druck_bz_ac`) |
-| `erzeuge_leere_trommel.py` | creates the empty drum file `Trommel/trommel.txt` (also resets a used drum) |
-| `c8205_lochstreifen_anzeige.py` | helper program: displays a virtual punched tape as plain text in a window |
-| `c8205_lochstreifen_eingabe.py` | helper program: creates a virtual punched tape from keyboard input in a window |
+| `testscripte/compute_all_tests.sh` | runs the interpreter for all test definitions in `Tests/` |
+| `testscripte/c8205_bis_test.sh` | Wrapper for tests of the BIS building blocks: first loads the minimal program (`Tests/pj2-bis_minimalprogramm.test`), then the given test file |
+| `testscripte/test_bis.sh` | runs all BIS tests one after another (empty drum, minimal program, then each `pj2-bis_*` test) |
+| `testscripte/test.sh` | older version of `test_bis.sh` (without the test `pj2-bis_druck_bz_ac`) |
+| `testscripte/erzeuge_leere_trommel.py` | creates the empty drum file `Trommel/trommel.txt` (also resets a used drum) |
+| `Hilfsprogramme/c8205_lochstreifen_anzeige.py` | helper program: displays a virtual punched tape as plain text in a window |
+| `Hilfsprogramme/c8205_lochstreifen_eingabe.py` | helper program: creates a virtual punched tape from keyboard input in a window |
 | `markdown-dateien/` | Rule set and project description (.md); the interpreter reads the node graph from here |
 | `PDF/` | Readable versions of the documents (A4) |
 | `Tests/` | Test orders (mostly `.txt`; the extension is free, the assembler produces `.test`) |
@@ -73,15 +73,11 @@ Abridged overview (subfolders of the logs and of the example projects are not li
 ```
 C8205/
 ├── c8205_interp.py                 Python interpreter
-├── c8205_befehlssweep.py           Completeness test (512 operation codes)
 ├── c8205_interpreter.sh / .bat     Wrappers with log file
-├── compute_all_tests.sh            run all test definitions in Tests/
-├── c8205_bis_test.sh               Wrapper for BIS tests (loads the minimal program first)
-├── test_bis.sh                     run all BIS tests one after another
-├── test.sh                         older version of test_bis.sh
-├── erzeuge_leere_trommel.py        create an empty drum file
-├── c8205_lochstreifen_anzeige.py   show a punched tape as plain text (helper program)
-├── c8205_lochstreifen_eingabe.py   create a punched tape from keyboard input (helper program)
+├── Hilfsprogramme/                 c8205_befehlssweep.py (completeness test, 512 operation codes),
+│                                   c8205_lochstreifen_anzeige.py / _eingabe.py / _umwandlung.py
+├── testscripte/                    compute_all_tests.sh, c8205_bis_test.sh, test_bis.sh, test.sh,
+│                                   erzeuge_leere_trommel.py, grafik_* checks
 ├── markdown-dateien/               Rule set and project description (.md)
 ├── PDF/                            Readable versions (A4)
 ├── Tests/                          Test orders (.txt or .test)
@@ -132,7 +128,7 @@ c8205_interpreter.bat 0015-030.txt       # Windows
 Run all test definitions in `Tests/` at once:
 
 ```
-./compute_all_tests.sh
+./testscripte/compute_all_tests.sh
 ```
 
 All switches (devices, log depth, file checks) and error messages are described in
@@ -237,7 +233,7 @@ All PDFs are in German.
 
 The interpreter deliberately reports every point where the rule set is unclear or where no implementation exists
 yet as a **stub** and stops with a message instead of guessing ("fail loudly"). This is intended and not a defect.
-`c8205_befehlssweep.py` checks whether an implementation exists for each of the 512 operation codes.
+`Hilfsprogramme/c8205_befehlssweep.py` checks whether an implementation exists for each of the 512 operation codes.
 
 ## Version numbers
 
