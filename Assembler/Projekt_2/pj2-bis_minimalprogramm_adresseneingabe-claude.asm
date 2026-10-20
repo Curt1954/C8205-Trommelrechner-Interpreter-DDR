@@ -13,7 +13,7 @@
 ;   Hauptprogramm   02400
 ;   Eingabetabelle  Spur 0700 (64 Zellen, muss auf einer durch 64 teilbaren Adresse beginnen)
 ;
-; Test: #STARTE 2400 und --leser1 <Lochstreifen>, z. B. virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_8stellig.txt.
+; Test: #STARTE 2400 und --leser1 <Lochstreifen>, z. B. Test-virtuelleGeraete/Leser1/pj2-bis_adresseneingabe_8stellig.txt.
 ; Zelle 0000 springt nach 2400.
 ;
 ; Zeichen:

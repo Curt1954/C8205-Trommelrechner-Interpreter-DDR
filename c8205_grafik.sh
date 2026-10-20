@@ -12,7 +12,7 @@
 #   ./c8205_grafik.sh --entwickler-k0 DATEI --entwickler-tasten "..."   K0-Zeichen (eines je Zeile) vorab eingeben
 # Ausgabe: Zustand am Ende des Laufs (BZ, AC, AR, Flags), Schreibwerk-Text, Trommelstatistik.
 #
-# ACHTUNG: Die Trommeldatei (virtuelle_Geraete/Trommel/trommel.txt) ist der Speicher des Rechners. Programme veraendern sie.
+# ACHTUNG: Die Trommeldatei (Trommel/trommel.txt) ist der Speicher des Rechners. Programme veraendern sie.
 #          Wer die Ausgangsbelegung behalten will, sichert die Datei vorher oder startet mit  --trommel EIGENE_KOPIE.txt
 #          (neben der Trommeldatei liegt die Schalterdatei der Bahnsperren, z. B. trommel.basp; oder --BASP 000000).
 #

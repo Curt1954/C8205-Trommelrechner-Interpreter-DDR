@@ -8,7 +8,7 @@ rem Alle Schalter gehen unveraendert an c8205_grafik.py; Hilfe: c8205_grafik.bat
 rem Rueckgabewert = der von c8205_grafik.py (0 = normal, 8 = Abbruch mit Strg+C, 16 = Start nicht moeglich).
 rem Gleichwertig ist: python c8205_interp.py [Schalter ...]   (ohne --MODUS startet GRAFIK).
 rem
-rem ACHTUNG: Die Trommeldatei (virtuelle_Geraete\Trommel\trommel.txt) ist der Speicher des Rechners. Programme veraendern sie.
+rem ACHTUNG: Die Trommeldatei (Trommel\trommel.txt) ist der Speicher des Rechners. Programme veraendern sie.
 rem          Wer die Ausgangsbelegung behalten will, sichert die Datei vorher oder startet mit  --trommel EIGENE_KOPIE.txt
 rem
 rem NICHT GETESTET unter Windows (nach c8205_grafik.sh und c8205_interpreter.bat gebaut, Stand 19.10.2026).

@@ -283,7 +283,7 @@ class Realer_Rechner(unittest.TestCase):
             self.skipTest(f'Kern nicht ladbar: {e}')
         import shutil, tempfile, threading, time
         d = tempfile.mkdtemp()
-        troms = os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'); kopie = os.path.join(d, 'trommel.txt'); shutil.copy(troms, kopie)
+        troms = os.path.join(PROJ, 'Trommel', 'trommel.txt'); kopie = os.path.join(d, 'trommel.txt'); shutil.copy(troms, kopie)
         graph = G.lade_graph(os.path.join(PROJ, 'markdown-dateien')); tr = GrafikTrommel(kopie)
         r = G.Rechner(graph, tr, pult_modus=True)
         s = PultSteuerung(PULT, r, hochlauf_s=0.01, auslauf_s=0.01)
@@ -319,7 +319,7 @@ class KepUeberPult(unittest.TestCase):
             self.skipTest(f'Kern nicht ladbar: {e}')
         import shutil, tempfile, threading, time
         d = tempfile.mkdtemp(); kopie = os.path.join(d, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), kopie)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), kopie)
         # G4-018: Das KEP-Programm steht nicht auf der mitgelieferten Trommel, sondern in Tests/bsp_5_18_kep.txt (Zeilen ab 0000, wie dort
         # beim TEST-Lauf in die Trommel geschrieben). Es wird in die KOPIE geschrieben; die gemeinsame trommel.txt bleibt unberuehrt.
         import c8205_interp as I
@@ -335,7 +335,7 @@ class KepUeberPult(unittest.TestCase):
         tr = GrafikTrommel(kopie); r = G.Rechner(G.lade_graph(os.path.join(PROJ, 'markdown-dateien')), tr, pult_modus=True)
         s = PultSteuerung(PULT, r, hochlauf_s=0.01, auslauf_s=0.01, tastenzeit_s=0.0)
         name = {'.': 'PUNKT', ':': 'DOPPELPUNKT', 'ZR': 'ZR'}
-        toks = [z.strip() for z in open(os.path.join(PROJ, 'virtuelle_Geraete', 'T-SW-Eingabe', 'kep_eingabe.txt'), encoding='utf-8') if z.strip() and not z.startswith('#')]
+        toks = [z.strip() for z in open(os.path.join(PROJ, 'Test-virtuelleGeraete', 'T-SW-Eingabe', 'kep_eingabe.txt'), encoding='utf-8') if z.strip() and not z.startswith('#')]
         stop = threading.Event()
         def lauf():
             try:
@@ -392,7 +392,7 @@ class HwCheck(unittest.TestCase):
             self.skipTest(f'Kern nicht ladbar: {e}')
         import shutil, tempfile
         d = tempfile.mkdtemp(); kopie = os.path.join(d, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), kopie)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), kopie)
         tr = GrafikTrommel(kopie)
         try:
             erwartet = {}
@@ -501,7 +501,7 @@ class EUnterM(unittest.TestCase):
             self.skipTest(f'Kern nicht ladbar: {e}')
         import shutil, tempfile
         d = tempfile.mkdtemp(); kopie = os.path.join(d, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), kopie)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), kopie)
         tr = GrafikTrommel(kopie)
         self.addCleanup(lambda: (tr.schliessen(), shutil.rmtree(d, ignore_errors=True)))
         return G.Rechner(G.lade_graph(os.path.join(PROJ, 'markdown-dateien')), tr, pult_modus=pult_modus)
@@ -785,7 +785,7 @@ class Klickspur(unittest.TestCase):
             self.skipTest(f'Kern nicht ladbar: {e}')
         import shutil, tempfile, threading, time, grafik_debuglog as DL
         d = tempfile.mkdtemp(); graph = G.lade_graph(os.path.join(PROJ, 'markdown-dateien'))
-        troms = os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt')
+        troms = os.path.join(PROJ, 'Trommel', 'trommel.txt')
         def lauf_start():
             os.makedirs(os.path.join(d, str(len(geraete))), exist_ok=True)
             kopie = os.path.join(d, str(len(geraete)), 'trommel.txt'); shutil.copy(troms, kopie)
@@ -835,7 +835,7 @@ class BsLampe(unittest.TestCase):
             self.skipTest(f'Kern nicht ladbar: {e}')
         import shutil, tempfile
         d = tempfile.mkdtemp(); kopie = os.path.join(d, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), kopie)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), kopie)
         tr = GrafikTrommel(kopie)
         try:
             r = G.Rechner(G.lade_graph(os.path.join(PROJ, 'markdown-dateien')), tr, pult_modus=True)

@@ -1,6 +1,6 @@
 # C 8205 – Simulation eines DDR-Kleinrechners von 1968
 
-Version: 0.03-012
+Version: 0.95-001
 
 **Deutsch** | [English](README.en.md)
 
@@ -52,7 +52,7 @@ sich Läufe als Regressionstests wiederholen.
 | `c8205_bis_test.sh` | Wrapper für Tests der BIS-Bausteine: lädt zuerst das Minimalprogramm (`Tests/pj2-bis_minimalprogramm.test`), dann die angegebene Testdatei |
 | `test_bis.sh` | führt alle BIS-Tests nacheinander aus (leere Trommel, Minimalprogramm, dann jeder Test `pj2-bis_*`) |
 | `test.sh` | ältere Fassung von `test_bis.sh` (ohne den Test `pj2-bis_druck_bz_ac`) |
-| `erzeuge_leere_trommel.py` | erzeugt die leere Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` (setzt auch eine benutzte Trommel zurück) |
+| `erzeuge_leere_trommel.py` | erzeugt die leere Trommeldatei `Trommel/trommel.txt` (setzt auch eine benutzte Trommel zurück) |
 | `c8205_lochstreifen_anzeige.py` | Hilfsprogramm: schreibt einen virtuellen Lochstreifen als Klartext in einem Fenster aus |
 | `c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben in einem Fenster |
 | `markdown-dateien/` | Regelwerk und Projektbeschreibung (.md); der Interpreter liest den Knotengraphen von hier |
@@ -60,7 +60,9 @@ sich Läufe als Regressionstests wiederholen.
 | `Tests/` | Testaufträge (meist `.txt`; die Endung ist frei, der Assembler erzeugt `.test`) |
 | `Test-Ergebnisvergleiche/` | Soll-Dateien der Dateiprüfungen (Namen auf `-ausgabe.txt` oder `_erwartet.txt`) |
 | `Test-Protokolle/` | Protokolle (`.log`) der Läufe |
-| `virtuelle_Geraete/` | Ablage für virtuelle Geräte (Lochstreifenleser, Stanzer, Schreibwerk, Tastatureingabe, Trommel) |
+| `Test-virtuelleGeraete/` | Virtuelle Geräte des TEST-Interpreters (Lochstreifenleser, Stanzer, Schreibwerk-Ausgabe, Tastatureingabe) |
+| `virtuelle_Geraete/` | Virtuelle Geräte des GRAFIK-Interpreters (`Leser1/`, `Leser2/`, `Stanzer1/`) |
+| `Trommel/` | Die Trommeldatei `trommel.txt`, gemeinsam für beide Interpreter |
 | `CSV/` | Übersichtstabelle aller Tests (`test_tabelle.py` erzeugt `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` öffnet sie in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Teilprojekt BIS (derzeit nur Dokumentation) |
 | `Assembler/` | Assembler `c82ass` mit Quellcode, Binaries, Beispielen und Dokumentation |
@@ -86,12 +88,15 @@ C8205/
 ├── Test-Protokolle/                Protokolle der Läufe (.log)
 ├── CSV/                            Übersichtstabelle aller Tests (test_tabelle.py)
 ├── Bausteininterpretiersystem BIS/ Teilprojekt BIS (derzeit nur Dokumentation)
-├── virtuelle_Geraete/
-│   ├── Leser1/, Leser2/            Lochstreifen-Eingabe
+├── Trommel/                        Trommeldatei trommel.txt (gemeinsam für TEST und GRAFIK)
+├── Test-virtuelleGeraete/          virtuelle Geräte des TEST-Interpreters
+│   ├── Leser1/, Leser1_02/, Leser2/   Lochstreifen-Eingabe
 │   ├── Stanzer1/                   Stanzer-Ausgabe
 │   ├── SW-Ausgabe/                 Schreibwerk-Ausgabe
-│   ├── T-SW-Eingabe/               Tastatur-/Schreibwerk-Eingabe (Kanal K0)
-│   └── Trommel/                    Trommeldatei trommel.txt
+│   └── T-SW-Eingabe/               Tastatur-/Schreibwerk-Eingabe (Kanal K0)
+├── virtuelle_Geraete/              virtuelle Geräte des GRAFIK-Interpreters
+│   ├── Leser1/, Leser2/            Lochstreifen-Eingabe
+│   └── Stanzer1/                   Stanzer-Ausgabe
 └── Assembler/
     ├── c82ass.sh                   Assembler ausführen
     ├── asm_alle.sh                 alle .asm-Dateien unter einem Ordner assemblieren (meldet nur Fehler)
@@ -141,7 +146,7 @@ Schreibwerk-Fenster und alle Töne (Rechner, Schreibwerk, Lochstreifenleser, Loc
 python3 c8205_grafik.py                    # mit Tönen (Linux: braucht paplay, pw-cat, aplay oder ffplay)
 python3 c8205_grafik.py --STUMM            # ohne Töne und ohne Hochlaufwartezeit
 python3 c8205_grafik.py --TON=5955         # Lautstärke je Gruppe: Pult SW LL LS (0 = stumm, 5 = Voreinstellung)
-python3 c8205_grafik.py --leser1 virtuelle_Geraete/Leser1/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
+python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
 ```
 
 - Schreibwerk: **80 ms Schreibwerkzeit je Zeichen (70 bis 90 ms), Zeichenklang 100 ms**, Tabulator 400 ms, Wagenrücklauf 360 ms.

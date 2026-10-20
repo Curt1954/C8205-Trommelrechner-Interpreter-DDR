@@ -1,7 +1,7 @@
 Trommeldatei:
 #DOK-0001 Zwei Ziffern ueber SW einlesen, zwischen den Eingaben Anwahlbefehl K2 (Ausgabe); Eingabe: 2, 3
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe/sw_zwei_ziffern.txt
---k0 datei=virtuelle_Geraete/T-SW-Eingabe/sw_zwei_ziffern.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/sw_zwei_ziffern.txt
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/sw_zwei_ziffern.txt
 #PROT STUFE=2
 0000: 00004500030 # beginn: 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
 0001: 00000570030 # dtm \Erste Ziffer 0-3:\

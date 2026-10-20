@@ -1,6 +1,6 @@
 Trommeldatei:
 #DOK-0003 Prüfung der Sprung-Umstellung aller Zeichen des R 300-Codes (Streifen r300_alle_zeichen.txt, "/" am Ende), Leser 2
---leser2 virtuelle_Geraete/Leser2/r300_alle_zeichen.txt
+--leser2 Test-virtuelleGeraete/Leser2/r300_alle_zeichen.txt
 #PROT STUFE=2
 
 # Zweck: Der Test macht die Spalte "Sprung-Umstellung" der Tabelle 1 prüfbar. Der Eingabebefehl 011 3000 wählt die Zelle 3000 v Eingabeadresse.

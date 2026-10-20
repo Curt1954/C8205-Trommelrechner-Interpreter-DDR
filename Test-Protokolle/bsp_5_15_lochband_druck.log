@@ -142,5 +142,5 @@ Ergebnispruefung:
   V2: soll=0 ist=0 OK
   3021: soll=00000000020 ist=00000000020 OK
   3061: soll=00000000020 ist=00000000020 OK
-  Schreibwerk: soll=Test-Ergebnisvergleiche/bsp_5_15_lochband_druck-sw-ausgabe.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/bsp_5_15_lochband_druck-sw-ausgabe.txt ist=Test-virtuelleGeraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

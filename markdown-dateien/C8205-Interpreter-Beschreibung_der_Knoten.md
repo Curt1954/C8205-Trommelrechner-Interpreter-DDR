@@ -1,6 +1,6 @@
 # ** Variablentabelle T2 **
 #
-# Version: 0.03-002
+# Version: 0.95-001
 #
 # Variablenname;  Beschreibung der Anweisung oder des Tests;  Behandlungsart
 #

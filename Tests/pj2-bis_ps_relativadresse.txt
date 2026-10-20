@@ -2,7 +2,7 @@ Trommeldatei:
 #DOK-0001 BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; Hauptleitadresse 2000 vorbesetzt, Relativadresse 2 0 1 0 . vor dem Wort: das Wort 5 landet in 2010 (Summe aus Hauptleit- und Relativadresse)
 #PROT STUFE=2
 #STARTE 1000
---leser1 virtuelle_Geraete/Leser1/pj2-bis_ps_relativadresse.txt
+--leser1 Test-virtuelleGeraete/Leser1/pj2-bis_ps_relativadresse.txt
 
 # Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0613 und 0700 bis 0777 werden nicht belegt)
 1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen

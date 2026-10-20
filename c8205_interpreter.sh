@@ -1,7 +1,7 @@
 #!/bin/bash
 # Aufruf: ./c8205_interpreter.sh [Schalter ...] TESTDATEI [Schalter ...]
 # Beispiel: ./c8205_interpreter.sh --NO-TERMOUT Tests/x.txt --knotentest
-#           ./c8205_interpreter.sh Tests/x.txt --leser1 virtuelle_Geraete/Leser1
+#           ./c8205_interpreter.sh Tests/x.txt --leser1 Test-virtuelleGeraete/Leser1
 # Die Testdatei darf an beliebiger Stelle stehen; Schalter mit eigenem
 # Wertargument (z. B. "--out DATEI") werden dabei erkannt, damit ihr Wert
 # nicht versehentlich als Testdatei gilt.

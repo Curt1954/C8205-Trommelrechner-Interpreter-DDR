@@ -1,11 +1,13 @@
 ** Assemblerdokumentation (durchsuchbare Ableitung) **
 
-Version: 1.00-008
+Version: 1.00-009
 
 Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-005 (per `extract-text`), gedacht
 zum Durchsuchen und Zitieren. **Maßgeblich bleibt die .odt** (siehe `C8205-Projektstruktur.md`,
 Abschnitte 1 und 3); bei Widersprüchen gilt die .odt. Diese Ableitung wird nicht automatisch
 aktualisiert, wenn die .odt sich ändert.
+
+Stand 20.10.2026 (Ableitung nachgeführt nach der .odt vom 20.10.2026): Die .odt beschreibt jetzt die Schalter `-o` und `-t` sowie `-h`, `--help` und `--version` mit der vollständigen Usage-Ausgabe (Abschnitt 2), den Vorspann der `.test`-Datei aus dem Quelltext (3.1), das Symbol allein auf einer Zeile (3.2) und das Label allein vor `start` (3.3.7). `-WARN=SYS` ist in `-WARN=SYM` berichtigt, denn der Assembler kennt nur `SYM`. Abschnitt 6.3 hält die zugehörigen Änderungen an `ca82ass.c` fest. Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist nicht nachgeführt.
 
 Stand 19.10.2026 (Ableitung neu abgeglichen mit der .odt vom 16.10.2026, Entscheidung des Projektinhabers: OP-23 „aus der .odt ableiten“): Der Satz zu `node.js` ist entfallen (steht in der .odt nicht mehr); `-WARN=SYS` (1.1) und die Anweisung `spa` (neuer Abschnitt 3.3.10, damit „Ende des verschieblichen Teils“ = 3.3.11 und „Pragma LEITADRESSE“ = 3.3.12) sind aus der .odt übernommen. **Die .odt verweist an mehreren Stellen auf „3.3.11“ für das Pragma, obwohl dort 3.3.12 steht; diese Ableitung führt die richtigen Verweise (3.3.12).** Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist nicht geändert und nennt `node.js` noch.
 
@@ -103,7 +105,22 @@ die Parameter einfach mit veränderten Werten wieder angegeben werden.
 ```
 $ c82ass.sh -h
 C8205 Assembler C82aas Version 1.00
-Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei
+Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-WARN=SYM]
+       ./_Linux/c82ass -h | --help | --version
+
+  -p Projektverzeichnis  Verzeichnis mit dem Quelltext; dorthin werden auch die Ausgabedateien
+                         (.log .obj .mqo .sym .dmp .test) geschrieben. Ohne -p gilt der zuletzt
+                         benutzte Wert aus der Datei 'projekdetails' im aktuellen Verzeichnis.
+  -s Quellcode-Datei     Assembler-Quelltext im Projektverzeichnis; die Endung .asm darf entfallen.
+                         Ohne -s gilt ebenfalls der zuletzt benutzte Wert aus 'projekdetails'.
+  -o Pfad | Datei        Ablageort der .obj-Datei statt des Projektverzeichnisses. Verzeichnis
+                         (existiert, oder endet auf / bzw. \): Dateiname aus -s mit Endung .obj.
+                         Sonst Dateiname mit oder ohne Pfad (relativ zum aktuellen Verzeichnis),
+                         unveraendert uebernommen. Das Verzeichnis muss existieren.
+  -t Pfad | Datei        wie -o, aber fuer die .test-Datei (Endung .test).
+  -WARN=SYM              Warnt vor Symbolen, die definiert, aber nirgends verwendet werden.
+  -h, --help             Diese Hilfe ausgeben.
+  --version              Die Versionsnummer ausgeben (steht auch in der ersten Ausgabezeile).
 ```
 
 Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint daher `./_Linux/c82ass`. `c82ass.sh` ruft
@@ -113,6 +130,18 @@ Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint dahe
 - `-p` nennt das Verzeichnis, in dem die `.asm`-Datei **direkt** liegt (z. B. `Projekt_1/bsp_5.16`). Unterverzeichnisse
   werden nicht durchsucht; ein Pfadanteil bei `-s` wird abgeschnitten.
 - Hat der Name bei `-s` keine Endung aus genau drei Zeichen, wird `.asm` angehängt (`bsp_5_16` wird zu `bsp_5_16.asm`).
+- `-o` und `-t` legen fest, wo die Objektdatei (`.obj`) bzw. die Testdatei (`.test`) abgelegt wird. Ohne diese Schalter liegen beide im
+  Projektverzeichnis; der Dateiname wird aus `-s` gebildet. Ist ein Schalter angegeben, gilt statt des Standardorts der angegebene Pfad.
+  Der Wert ist entweder ein Verzeichnis (es existiert bereits, oder der Wert endet auf `/` bzw. `\`) – dann wird der Dateiname aus `-s`
+  gebildet (Name der Quellcode-Datei ohne `.asm`, dazu `.obj` bzw. `.test`) – oder ein Dateiname, mit oder ohne Pfad. Ein Dateiname wird
+  unverändert übernommen (eine fehlende Endung wird nicht ergänzt); ohne Pfadanteil gilt er relativ zum aktuellen Verzeichnis, nicht zum
+  Projektverzeichnis.
+- Das Verzeichnis muss existieren; der Assembler legt es nicht an. Ein nicht vorhandenes Verzeichnis, ein Schalter ohne Wert (auch wenn der
+  nächste Parameter mit `-` beginnt) und ein zu langer Pfad sind Fehler (Rückgabecode 16). `-o` und `-t` gelten nur für den einen Aufruf und
+  werden nicht in `projekdetails` gespeichert; die übrigen Ausgabedateien (`.log`, `.mqo`, `.sym`, `.dmp`) bleiben im Projektverzeichnis.
+  Beispiel: `$ c82ass.sh -p Projekt_1/bsp_5.16 -s bsp_5_16 -o ausgabe/ -t tests/bsp_5_16_neu.test`
+- `-h` und `--help` geben den Usage-Text aus, `--version` nur die Versionszeile „C8205 Assembler C82aas Version 1.00“. Beide enden ohne
+  Assemblerlauf mit Rückgabecode 0.
 - `projekdetails` enthält die Zeilen `-p <Verzeichnis>` und `-s <Datei>`; fehlt einer der Parameter im Aufruf, wird der
   gespeicherte Wert benutzt. Beim Wechsel des Projektverzeichnisses wird die bisherige Datei als
   `projekdetails.<altes Projekt>` gesichert (Schrägstriche im Namen werden zu `_`, z. B. `projekdetails.Projekt_1_bsp_5.16`)
@@ -120,7 +149,9 @@ Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint dahe
 - Rückgabecode: 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch). Parameter ab einem Argument, das mit `>` beginnt,
   werden ignoriert.
 - Unbekannte Optionen (z. B. `-x`) werden ohne Meldung ignoriert; der Lauf verwendet dann die gespeicherten Parameter.
-- `-WARN=SYS` meldet unbenutzte Symbole.
+- `-WARN=SYM` meldet Symbole, die definiert, aber nirgends verwendet werden (vom Assembler erzeugte Symbole wie Literalsymbole und
+  Makro-Labels werden nicht gemeldet). Mehrere Werte werden durch Komma getrennt (bisher gibt es nur `SYM`); Groß-/Kleinschreibung ist
+  egal, ein unbekannter Wert ergibt eine Warnung. Über `c82ass.sh` darf auch `--WARN=SYM` geschrieben werden.
 
 
 ## 3. Der Assembler c82ass
@@ -185,12 +216,44 @@ Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`
 | `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet. Gegenüber dem Quelltext fehlen `start`, `end`, Makrodefinitionen, reine Kommentarzeilen und `abs`-Anweisungen; Makroaufrufe sind durch ihre Ersetzung ersetzt, `equ`-Operanden aufgelöst, und die Literale stehen am Ende als `dw`-Zeilen (`l0001 dw 5`) |
 | `.obj` | mit `c82load` ladefähiger Objektcode K1K2; das Kennzeichen 01 kann mit dem Pragma `LEITADRESSE` durch 00 oder 02 … 09 ersetzt werden (siehe 3.3.12); bei 00 entfällt außerdem die Kennzeichenzeile `21 0000 <zahl>` |
 | `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen. Je Zeile `<symbol>,<adresse>` (vierstellig oktal, in Quelltextreihenfolge, einschließlich Literalsymbolen wie `l0001`) |
-| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (`Trommeldatei:`, `#DOK-0001`, `#SPEI-0001 0000-0000`, `#PROT STUFE=2`) und Fuß (`Tastenfolge:`, `H G R`), die für den jeweiligen Fall ergänzt bzw. erweitert werden müssen. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
+| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (Abschnitt `Trommeldatei:`) und Fuß (Abschnitt `Tastenfolge:` mit `H G R`). Der Kopf besteht aus den Vorspannzeilen des Quelltextes (siehe unten); enthält der Quelltext keine, erzeugt der Assembler als Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000` und `#PROT STUFE=2`. Kopf und Fuß müssen für den jeweiligen Fall ergänzt bzw. erweitert werden. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
+
+**Vorspann der `.test`-Datei:** Der Abschnitt `Trommeldatei:` kann im Quelltext vorgegeben werden. Dazu stehen die gewünschten Zeilen als
+Kommentarzeilen im Quelltext: Das erste Zeichen außer Leerraum ist ein Semikolon, danach folgt (auch nach Leerraum) eine Testmarke. Der
+Assembler übernimmt jede solche Zeile ohne das führende Semikolon und den Leerraum dahinter in der Reihenfolge des Quelltextes in die
+`.test`-Datei. Als Testmarken werden erkannt: `#DOK-xxxx`, `#SPEI-xxxx`, `#SPUR-xxxx`, `#PROT`, `#AC`, `#BZ`, `#STARTE`, `#TROMMEL` sowie die
+Geräteschalter `--leser1`, `--leser2`, `--stanzer1`, `--sw-ausgabe` und `--k0` (Bedeutung: `C8205-Interpreter-Durchführung_eines_Tests.md`,
+Abschnitte 2, 2b, 2e und 2g).
+
+Die Zeilen dürfen an beliebiger Stelle des Quelltextes stehen, üblicherweise am Anfang. Davor erzeugt der Assembler nur die Zeile
+`Trommeldatei:`. Enthält der Quelltext keine einzige solche Zeile, erzeugt er stattdessen die Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000`
+und `#PROT STUFE=2`. Steht `#STARTE` im Vorspann, ersetzt es die Tastenfolge; der Assembler erzeugt dann keinen Abschnitt `Tastenfolge:`.
+
+Andere Kommentarzeilen werden nicht übernommen, insbesondere nicht `--pruefe-…` (gehört in den Abschnitt `Prüfungen:`), `#INTERRUPT`
+(muss zwischen zwei Befehlszeilen der Trommeldatei stehen) und das Pragma `;#; LEITADRESSE` (3.3.12). Beispiel (im Quelltext):
+
+```
+;#DOK-0001 Druck von BZ und AC
+; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+;#PROT STUFE=2
+```
+
+ergibt in der `.test`-Datei:
+
+```
+Trommeldatei:
+#DOK-0001 Druck von BZ und AC
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+#PROT STUFE=2
+0000: ... (die Zeilen aus dem Quelltext)
+Tastenfolge:
+H G R
+```
 
 Vor jedem Lauf löscht der Assembler die Dateien `.log`, `.obj`, `.mqo`, `.sym`, `.test` und `.dmp` des
 Projekts und erzeugt sie neu. Die früher genannten Endungen `.mqt` (modifizierter
 Quelltext) und `.l82` (Objektcode für den `C8205Simulator`) erzeugt der aktuelle Assembler nicht mehr.
-Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an.
+Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an. Mit `-o` bzw. `-t` (Abschnitt 2) wird statt der `.obj`- bzw. `.test`-Datei im Projektverzeichnis die dort angegebene Datei gelöscht und neu erzeugt; eine ältere Datei im Projektverzeichnis bleibt unberührt.
 
 ### 3.2 Sprachdefinition
 
@@ -245,6 +308,10 @@ Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an.
 <befehl>             ::= [<symbol>] <trenner><operationscode> [<trenner><operand>]
                           [<trenner><kommentar>]
                           Alle Befehle müssen auf einer Zeile stehen; eine Zeile darf höchstens 255 Zeichen lang sein.
+                          Ein <symbol> darf auch allein auf einer Zeile stehen (ohne <operationscode>). Die Zeile belegt keinen
+                          Speicher; das Symbol erhält die Adresse der nächsten Zeile, die Speicher belegt, und der Befehlszähler
+                          bleibt unverändert. Mehrere solche Symbole in Folge erhalten dieselbe Adresse. Vor start ist das ein
+                          Fehler, wie ein Symbol auf der start-Zeile selbst.
 <operationscode>     ::= <maschinenbefehl> | <assembleranweisung>
 <assembleranweisung> ::= start | end | db | dbn | dw | da | dt | dto | dtm | dz | equ | equ10 | equ40 | equ100 | abs
 <maschinenbefehl>    ::= <oktalziffer><oktalziffer><oktalziffer>
@@ -371,7 +438,7 @@ Adressstellen. Zum `<adressausdruck>` wird die 1. Hauptleitadresse addiert.
 start  [<zahl>]
 ```
 - Nur als 1. Anweisung im `<quelltext>` zulässig, und nur einmal; ein Label vor `start` ist ein Fehler. Der Operand
-  muss eine Konstante sein. Der Befehlszähler beginnt unabhängig vom Operanden bei 0. Eine Maschinencodeausgabe erfolgt
+  muss eine Konstante sein. Der Befehlszähler beginnt unabhängig vom Operanden bei 0. Dasselbe gilt für ein Label allein auf einer Zeile vor `start`. Eine Maschinencodeausgabe erfolgt
   nicht; mit Operand wird im Objektcode die Kennzeichenzeile `21 0000 <zahl>` ausgegeben.
 - Ist `<zahl>` angegeben, wird die 1. Leitadresse in den „Lochstreifen" ausgegeben. Es wird dann durch
   `c82load` auf diese 1. Leitadresse + Ladeadresse geladen. Die Ladeadresse existiert dabei nur beim
@@ -891,3 +958,18 @@ beschrieben ist, und wie der Quelltext `ca82ass.c` an die erneuerte .odt angepas
 |---|---|---|---|
 | 1 | `<adressausdruck>` (3.2) bei `da` und `@`-Literalen | Die Prüfung „höchstens ein Symbol“ entfällt. Ausdrücke mit mehreren Symbolen, z. B. `da marke+absx`, werden angenommen. | Die Auswertung ist unverändert (Summe bzw. Differenz der Werte; K1K2=00, sobald ein `abs`-Symbol vorkommt, sonst 01, vgl. 3.3.9). Die Differenz zweier Marken (`da a-b`) wird dabei weiterhin mit der Leitadresse verschoben; dazu sagt die .odt nichts. Offen: festlegen, ob das gewollt ist. |
 | 2 | `<werteausdruck>` bei `dw` (3.2, 3.3.3) | Mehrere Differenzen (`dw a-b+c-d`) konnte der Assembler schon auswerten. Geändert sind nur Kommentare und der Fehlertext: „erlaubt sind nur paarweise Differenzen von Adressen“. | – |
+
+### 6.3 Änderungen vom 20.10.2026 (Symbol allein auf der Zeile, Vorspann, Usage, `-o`/`-t`)
+
+Hier wurde die .odt dem geänderten Assembler angepasst, nicht umgekehrt. Die Änderungen stehen alle in `ca82ass.c`. Geprüft mit einem aus
+dem Quelltext gebauten Linux-Binary: Alle 134 vorhandenen `.asm`-Dateien der Projektstruktur liefern mit der alten und der neuen Fassung
+dieselben `.obj`-, `.sym`-, `.log`-, `.dmp`- und `.mqo`-Dateien; bei den `.test`-Dateien ändert sich nur der Kopf (Nr. 2). Das Windows-Binary
+ist neu zu erzeugen (`make_c82ass.bat`).
+
+| Nr. | Stelle | Änderung in c82ass | Anmerkung |
+|---|---|---|---|
+| 1 | Zeile mit Symbol, aber ohne Operationscode (3.2, 3.3.7) | Pass 2 erhöhte den Befehlszähler auch für ein Symbol allein auf der Zeile, obwohl die Zeile kein Wort belegt. Alle folgenden Symbolwerte (`.sym`, `.log`) und damit Operanden, die auf sie verweisen, waren um 1 zu hoch; die Adressen im Listing stimmten. Jetzt erhält das Symbol die Adresse der nächsten Zeile, die Speicher belegt, und der Zähler bleibt unverändert. Vor `start` meldet der Assembler jetzt „Ein Label: … vor start ist nicht zulaessig.“ (vorher kam dort nur die irreführende Meldung, `start` fehle als erste Anweisung). | In den vorhandenen Quelltexten kommt das Muster nicht vor, deshalb ändert sich dort nichts. Tests: `Projekt_1/marke-allein` und `Projekt_1/marke-allein-vor-start` (Negativtest, endet mit Rückgabecode 16). |
+| 2 | Kopf der `.test`-Datei (3.1) | Vorspannzeilen aus Kommentarzeilen des Quelltextes (Marken: siehe 3.1) ersetzen den bisher immer erzeugten Platzhalter-Kopf. Ohne Vorspannzeile entsteht weiterhin der Platzhalter. Mit `#STARTE` entfällt der Abschnitt `Tastenfolge:`. | `--pruefe-…`, `#INTERRUPT` und das Pragma `;#; LEITADRESSE` werden nicht übernommen. Bei 95 der 134 vorhandenen Quelltexte ändert sich dadurch der Kopf der `.test`-Datei, der übrige Teil der Datei nicht. Tests: `Projekt_1/test-vorspann`, `test-vorspann-standard`, `test-vorspann-starte`. |
+| 3 | Aufruf: `-h`, `--help`, `--version` (2) | `-h` gibt die vollständige Usage aus (bisher nur `-p`, `-s` und `-WARN=SYM`), `--help` ist neu, `--version` gibt nur die Versionszeile aus und endet mit Rückgabecode 0. | `--version` wurde bisher wie eine unbekannte Option ignoriert (der Lauf verwendete die gespeicherten Parameter). |
+| 4 | Schalter `-o` und `-t` (2) | Eigener Ablageort für `.obj` bzw. `.test` (Verzeichnis oder Dateiname, Regeln in Abschnitt 2). | Nicht in `projekdetails` gespeichert; `.log`, `.mqo`, `.sym` und `.dmp` bleiben im Projektverzeichnis. |
+| 5 | `-WARN=SYS` (2) | Kein Code geändert: Der Assembler kennt nur `SYM`. | `SYS` stand fälschlich in der .odt und in der Ableitung; beide sind berichtigt. |

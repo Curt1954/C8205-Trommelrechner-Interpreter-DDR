@@ -1,7 +1,7 @@
 
 Trommeldatei:
 #DOK-0001 Ausgabe von WR (Ausgabe-Adresse 112) auf dem Schreibwerk: Der Interpreter schreibt <WR>
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #PROT STUFE=2
 
 0000: 00002000000 # 000 go

@@ -1,7 +1,7 @@
 Trommeldatei:
 #DOK-0001 Ziffer 0-3 einlesen und auswerten, Eingabe: 2
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe/ziffern_2.txt
---k0 datei=virtuelle_Geraete/T-SW-Eingabe/ziffern_2.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/ziffern_2.txt
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/ziffern_2.txt
 #PROT STUFE=2
 0000: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
 0001: 00000570030 # dtm \Geben Sie eine Ziffer von 0-3 ein\

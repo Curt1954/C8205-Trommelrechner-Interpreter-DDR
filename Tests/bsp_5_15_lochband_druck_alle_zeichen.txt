@@ -1,7 +1,7 @@
 Trommeldatei:
 #DOK-0002 Abdruck aller Zeichen des R 300-Codes (Streifen r300_alle_zeichen.txt, "/" am Ende) mit dem Eingabeprogramm 5.15, Leser 2 -> Schreibwerk
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
---leser2 virtuelle_Geraete/Leser2/r300_alle_zeichen.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
+--leser2 Test-virtuelleGeraete/Leser2/r300_alle_zeichen.txt
 #PROT STUFE=2
 
 # Aufbau: Wie im Buchprogramm 5.15 liest die Eingabe (3102) ein Zeichen und wählt die Zelle 3000 v Eingabeadresse (Zellen 3000-3077).

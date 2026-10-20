@@ -37,9 +37,9 @@ from grafik_trommel import GrafikTrommel, GrafikAbbruch
 from grafik_k0 import K0Warteschlange
 from grafik_geraete import GrafikLeser, GrafikStanzer, pruefe_verschieden
 from grafik_debuglog import log
-from grafik_haltzeit import HaltZeit, FEHLER, EA
+from grafik_haltzeit import HaltZeit, FEHLER, EA, SCHRITT, SCHRITT_ENDE
 
-VERSION_GRAFIK = 'G4-003'
+VERSION_GRAFIK = 'G4-004'      # G4-004 (20.10.2026): Haltzeit auch im Einzelschritt E (HZ-004)
 SPUR_STANDARD = 'c8205_pult_klickspur.txt'
 RC_OK, RC_ABBRUCH, RC_START = 0, 8, 16
 
@@ -306,6 +306,12 @@ class Rechner:
             return f'E  : Einzelschritt endet im Stopp: {m.halt_grund}'
         return f'E  : Einzelschritt (Phase IV, I, II, III), Halt vor Knoten 019; {z}'
 
+    def _schritt_start(self, gemessen):
+        """HZ-004: Beginn der Zeitmessung eines Einzelschritts (einmal je Tastendruck, auch bei E = E+ und E- zusammen)."""
+        if not gemessen:
+            self.haltuhr.start(SCHRITT)
+        return True
+
     def _e_taste(self, u, eff):
         """Taste E. 'E+' = Niederdruecken (Phase IV und I), 'E-' = Loslassen (Phase II und III), 'E' = beides sofort (kurzer Anschlag).
         Wirksam nur bei Schalter H. Unter gehaltenem M entfaellt Phase II: das Niederdruecken erhoeht BZ und AR (wie bisher), das Loslassen
@@ -313,6 +319,7 @@ class Rechner:
         m = self.m
         pre = {'E': 'E  :', 'E+': 'E+ :', 'E-': 'E- :'}[u]
         zeile = None
+        gem = gest = False                     # HZ-004: Zeitmessung des Einzelschritts laeuft / Schritt endete im Stopp
         if u in ('E', 'E+'):
             if self.e_gedrueckt:
                 eff.append('?? : E gedrueckt, obwohl E bereits gedrueckt ist')
@@ -347,7 +354,9 @@ class Rechner:
                 if m.vor_phase2:
                     zeile = f'{pre} Automat steht schon vor Phase II -> beim Niederdruecken nichts freizugeben'
                 else:
+                    gem = self._schritt_start(gem)
                     gestoppt, z = self.run_e_nieder()
+                    gest = gest or gestoppt
                     zeile = (f'{pre} Einzelschritt endet im Stopp: {m.halt_grund}' if gestoppt
                              else f'{pre} E niedergedrueckt: Phase IV und I, Halt vor Phase II (Knoten 008); {z}')
         if u in ('E', 'E-'):
@@ -366,7 +375,9 @@ class Rechner:
                 if u == 'E-':
                     zeile = f'{pre} Automat steht im Stopp ({m.halt_grund}) -> keine weitere Ausfuehrung'
             elif m.vor_phase2:
+                gem = self._schritt_start(gem)
                 gestoppt, z = self.run_e_los()
+                gest = gest or gestoppt
                 if gestoppt:
                     zeile = f'{pre} Einzelschritt endet im Stopp: {m.halt_grund}'
                 elif u == 'E':
@@ -375,6 +386,8 @@ class Rechner:
                     zeile = f'{pre} E losgelassen: Phase II und III, Halt vor Knoten 019; {z}'
             elif u == 'E-':
                 zeile = f'{pre} kein Schritt offen (Phase II steht nicht aus) -> keine Wirkung'
+        if gem and not gest:
+            self.haltuhr.halt(SCHRITT_ENDE)    # HZ-004: Schritt beendet, der Rechner steht wieder (Halt vor Phase II bzw. vor Knoten 19)
         if zeile is not None:
             eff.append(zeile)
         return True
@@ -1043,7 +1056,7 @@ def hauptprogramm(argv=None):
     ap = argparse.ArgumentParser(prog='c8205_grafik.py', description='C 8205, Modus GRAFIK, Stufe 1 (Kern und Trommel, ohne Fenster und Ton)')
     ap.add_argument('--MODUS', '--modus', dest='modus', default='GRAFIK')
     ap.add_argument('--mdverz', default=os.path.join(here, 'markdown-dateien'))
-    ap.add_argument('--trommel', default=os.path.join(here, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'))
+    ap.add_argument('--trommel', default=os.path.join(here, 'Trommel', 'trommel.txt'))
     ap.add_argument('--leser1')
     ap.add_argument('--leser2')
     ap.add_argument('--stanzer1')

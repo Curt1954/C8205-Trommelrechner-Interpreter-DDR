@@ -348,5 +348,5 @@ Ergebnispruefung:
   FUE: soll=0 ist=0 OK
   0001: soll=00000150000 ist=00000150000 OK
   7777: soll=00000012345 ist=00000012345 OK
-  Schreibwerk: soll=Test-Ergebnisvergleiche/st-004_STARTE_1000_druck_interrupt_neu_erwartet.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/st-004_STARTE_1000_druck_interrupt_neu_erwartet.txt ist=Test-virtuelleGeraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

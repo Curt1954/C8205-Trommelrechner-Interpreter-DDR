@@ -20,7 +20,7 @@ for z in open('Tests/r300_eingabe_klickspur.txt', encoding='utf-8'):
 PY
   SPUR=r300_eingabe_klickspur_langsam.txt
 fi
-cp virtuelle_Geraete/Trommel/trommel_r300_eingabe.txt r300_eingabe_trommel_nach_lauf.txt || exit 2
+cp Trommel/trommel_r300_eingabe.txt r300_eingabe_trommel_nach_lauf.txt || exit 2
 python3 c8205_grafik.py --STUMM --netz-schnell --HWCHECK --BASP 000000 --trommel r300_eingabe_trommel_nach_lauf.txt \
   --WIEDERGABE "$SPUR" --DEBUGLOG r300_eingabe_debug.log
 echo "Rueckgabewert $?  -  Debug-Log: r300_eingabe_debug.log"

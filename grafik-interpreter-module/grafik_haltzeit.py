@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_haltzeit.py - Zeitmessung Start -> Halt und Halt -> Halt fuer die Zeile "Haltzeit" des HW-Check-Fensters (--HWCHECK). Kein Tkinter.
-Version: HZ-003 (19.10.2026; HZ-001 Wunsch des Projektinhabers; HZ-003: Anzeige zeigt nur die reine Rechnerzeit, ohne Wartezeit im Halt)
+Version: HZ-004 (20.10.2026; HZ-001 Wunsch des Projektinhabers; HZ-003: Anzeige zeigt nur die reine Rechnerzeit, ohne Wartezeit im Halt; HZ-004: auch der Einzelschritt (E) wird gemessen)
 
 Gemessen wird die Zeit in Millisekunden
   * zwischen dem Start (Taste R wirkt) und dem folgenden Halt, und
@@ -11,6 +11,8 @@ Als Halt zaehlt:
   'Fehler'   Fehler bei Eingabe (FE), Geraetefehler, Fehler im Knotenablauf (m.halted wird True)
   'E/A-Halt' der Rechner wartet an einem Eingabebefehl auf ein Zeichen (K0-Warteschlange) oder auf eine Lochbanddatei (Leser)
 Nicht als Halt zaehlt die Taste H (Unterbrechung durch das Pult).
+HZ-004: Einzelschritt (Taste E, E+/E-): Die Zeit eines Schrittes (ein Durchlauf der Befehlsschleife) von E bis zum Halt danach, Anzeige 'E -> Halt';
+endet der Schritt in einem Stopp/Fehler, steht dort 'E -> Stopp' bzw. 'E -> Fehler'. Vorher blieb die Zeile im Einzelschritt bei '---.- ms'.
 Zusaetzlich wird die reine Laufzeit gefuehrt (vom letzten Start oder von der letzten Fortsetzung nach einem E/A-Halt bis zum Halt):
 Feld ms_lauf, im Debug-Log (Marke HALT) und fuer eine spaetere Anzeige; das Fenster zeigt die Zeit zwischen den Halts.
 
@@ -21,10 +23,11 @@ import time
 
 from grafik_debuglog import log
 
-VERSION_HALTZEIT = 'HZ-003'
+VERSION_HALTZEIT = 'HZ-004'
 NUR_LAUF = True        # HZ-003 (Projektinhaber 19.10.2026): die Anzeige nennt nur die reine Rechnerzeit seit Start bzw. Fortsetzung; False: Zeit zwischen den Halts mit Wartezeit (HZ-001)
 STOPP, FEHLER, EA = 'Stopp', 'Fehler', 'E/A-Halt'
 START = 'R'
+SCHRITT, SCHRITT_ENDE = 'E', 'Halt'      # HZ-004: Bezugspunkt und Ende eines Einzelschritts (Anzeige 'E -> Halt')
 
 
 def art_aus_grund(grund):
@@ -63,12 +66,12 @@ class HaltZeit:
             ms, von, bis, ms_lauf, nr = self.stand
             self.stand = (ms, von if von is not None else art, bis if bis is not None else art, ms_lauf, nr)
 
-    def start(self):
-        """Taste R wirkt: neuer Bezugspunkt."""
+    def start(self, name=START):
+        """Taste R wirkt (name 'R') bzw. ein Einzelschritt beginnt (name 'E', HZ-004): neuer Bezugspunkt."""
         t = self.zeit()
         with self._lock:
             self._aufloesen()
-            self._bezug = (t, START)
+            self._bezug = (t, name)
             self._lauf_ab = t
 
     def weiter(self):

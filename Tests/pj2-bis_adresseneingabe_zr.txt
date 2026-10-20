@@ -2,7 +2,7 @@ Trommeldatei:
 #DOK-0001 BIS-Test Adresseneingabe (Ansprung 0316); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Eingabe 1 ZR 0 0 5 .: ZR bricht die Adresseneingabe ab (Sprung nach kz_neu); die neu gestartete Kennzeicheneingabe liest K1=0, K2=0 und das Wort 5
 #PROT STUFE=2
 #STARTE 1000
---leser1 virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_zr.txt
+--leser1 Test-virtuelleGeraete/Leser1/pj2-bis_adresseneingabe_zr.txt
 # Arbeitszelle kz_rs (Rueckkehrbefehl der Kennzeicheneingabe): Rueckkehr in die Stoppzelle 1010
 7700: 00001010000  # 000 1010 ; kz_rs: Rueckkehr nach 1010
 

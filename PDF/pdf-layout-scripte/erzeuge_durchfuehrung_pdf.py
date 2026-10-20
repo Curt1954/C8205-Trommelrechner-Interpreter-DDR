@@ -1182,6 +1182,7 @@ HIER = os.path.dirname(os.path.abspath(__file__))
 import pdflib as L
 import md2pdf as M
 from reportlab.platypus import Paragraph, CondPageBreak
+from reportlab.lib import colors
 
 # ------------------------------------------------------------------ Deckblattdaten (PDF.md 4.6)
 QUELLE_NAME = 'C8205-Interpreter-Durchführung_eines_Tests.md'
@@ -1237,6 +1238,70 @@ def _merge_intros_mit_ueberleitung(story):
 M.merge_intros = _merge_intros_mit_ueberleitung
 
 
+# ------------------------------------------------------------------ Gruene Hinterlegung bestimmter Abschnitte
+# Die Arbeitsablaeufe (Beispiel 1 und 2) sind leicht gruen hinterlegt, damit man sie im Dokument findet.
+# Gewaehlt werden sie ueber den Anfang ihrer Ueberschrift (Abschnittsnummer); die Hinterlegung gilt vom
+# Abschnitt bis zur naechsten Ueberschrift gleicher oder hoeherer Ebene mit anderer Nummer.
+GRUENE_ABSCHNITTE = ('2h.', '2i.')
+GRUEN_BG = colors.HexColor('#E8F5E9')
+_BasisDoc = M.Doc
+
+
+class GruenDoc(_BasisDoc):
+    """Zeichnet hinter die Flussbloecke der gruenen Abschnitte ein Band. Zweistufig: Der erste Lauf
+    merkt sich je Seite die senkrechten Bereiche (afterFlowable), der zweite zeichnet sie beim
+    Seitenbeginn hinter den Text. Das Layout aendert sich dadurch nicht."""
+    vorgabe = {}        # Ergebnis des ersten Laufs: {Seite: [(unten, oben), ...]}
+    ergebnis = {}
+
+    def __init__(self, fn):
+        _BasisDoc.__init__(self, fn)
+        self.pageTemplates[0].onPage = self._hinterlegen
+        self._an = None                 # Ebene der gruenen Ueberschrift, solange aktiv
+        self._seite = None
+        self._unten = None
+        GruenDoc.ergebnis = {}
+
+    def build(self, flowables, *args, **kw):
+        GruenDoc.ergebnis = {}          # multiBuild ruft build je Durchlauf auf: nur der letzte zaehlt
+        self._an = None
+        self._seite = None
+        self._unten = None
+        return _BasisDoc.build(self, flowables, *args, **kw)
+
+    def _hinterlegen(self, canv, doc):
+        for unten, oben in GruenDoc.vorgabe.get(doc.page, ()):
+            canv.saveState()
+            canv.setFillColor(GRUEN_BG)
+            canv.rect(L.M, unten, L.FRAME_W, oben - unten, stroke=0, fill=1)
+            canv.restoreState()
+
+    def afterFlowable(self, fl):
+        _BasisDoc.afterFlowable(self, fl)
+        if isinstance(fl, M.MHead):
+            if fl.toc_text.startswith(GRUENE_ABSCHNITTE):
+                if self._an is None:
+                    self._an = fl.toc_level
+            elif self._an is not None and fl.toc_level <= self._an:
+                self._an = None
+        fr = self.frame
+        if fr is None:                  # unmittelbar nach einem Seitenumbruch
+            return
+        unten = fr._y
+        oben = self._unten if self._seite == self.page else fr._y1 + fr._height
+        self._seite, self._unten = self.page, unten
+        if self._an is None or oben <= unten:
+            return
+        baender = GruenDoc.ergebnis.setdefault(self.page, [])
+        if baender and abs(baender[-1][0] - oben) < 0.01:          # lueckenlos anschliessend: verlaengern
+            baender[-1] = (unten, baender[-1][1])
+        else:
+            baender.append((unten, oben))
+
+
+M.Doc = GruenDoc
+
+
 # ------------------------------------------------------------------ Quelle suchen
 def finde_quelle(wurzel):
     """Quelldatei im Ordner markdown-dateien/. Info-ZIP-unzip ohne UTF-8-Namen legt 'ü' als '#U00fc' ab."""
@@ -1270,7 +1335,16 @@ def main():
     a = ap.parse_args()
     ziel = a.ziel or os.path.join(wurzel, 'PDF', PDF_NAME)
     src = a.quelle or finde_quelle(wurzel)
-    n = M.convert(src, ziel, TITEL, UNTERTITEL, ART, BEREICH, a.stand, quelle_name=QUELLE_NAME)
+    probe = ziel + '.lauf1.tmp'                      # Lauf 1: Bereiche der gruenen Abschnitte ermitteln
+    GruenDoc.vorgabe = {}
+    try:
+        M.convert(src, probe, TITEL, UNTERTITEL, ART, BEREICH, a.stand, quelle_name=QUELLE_NAME)
+    finally:
+        if os.path.exists(probe):
+            os.remove(probe)
+    GruenDoc.vorgabe = dict(GruenDoc.ergebnis)
+    del M.NOTES[:]
+    n = M.convert(src, ziel, TITEL, UNTERTITEL, ART, BEREICH, a.stand, quelle_name=QUELLE_NAME)   # Lauf 2
     print('Abschnitte:', n)
     for x in M.NOTES:
         print('HINWEIS:', x)

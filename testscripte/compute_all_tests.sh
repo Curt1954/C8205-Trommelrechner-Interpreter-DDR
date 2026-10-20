@@ -9,7 +9,7 @@ cd "$HIER/.." || exit 1
 # --leser1 / --leser2 / --sw-ausgabe / --k0 in den Testdateien selbst. Hier wird nur der Stanzer 1 für alle Läufe
 # global vorgegeben; ein Schalter der Kommandozeile hat Vorrang vor der Zeile der Testdatei.
 
-L1=virtuelle_Geraete/Leser1
+L1=Test-virtuelleGeraete/Leser1
 
 # Testdatei mit der Kopfzeile "Prüfungen: False" (Test soll bewusst "Test falsch" ergeben, rc 6)?
 # Ohne Pfad wird die Datei auch in Tests/ gesucht, wie es der Interpreter tut.
@@ -22,7 +22,7 @@ erwartet_falsch() {
 # Einen Lauf ausführen und den Rückkehrcode melden: lauf TESTDATEI [weitere Schalter]
 lauf() {
     local dat=$1; shift
-    ./c8205_interpreter.sh "$dat" --NO-TERMOUT --stanzer1 virtuelle_Geraete/Stanzer1/ "$@"
+    ./c8205_interpreter.sh "$dat" --NO-TERMOUT --stanzer1 Test-virtuelleGeraete/Stanzer1/ "$@"
     local rc=$?
     case $rc in
         0|4) ;;

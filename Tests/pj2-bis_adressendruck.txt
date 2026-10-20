@@ -2,7 +2,7 @@ Trommeldatei:
 #DOK-0001 BIS-Test Adressendruck (Ansprung 0100); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh)
 #PROT STUFE=2
 #STARTE 1000
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 
 # Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0337 werden nicht belegt)
 1000: 00001010211  # 211 1010 ; AC := Testwort

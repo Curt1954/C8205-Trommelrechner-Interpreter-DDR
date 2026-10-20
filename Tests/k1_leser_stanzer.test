@@ -2,8 +2,8 @@ Trommeldatei:
 #DOK-0001
 #SPEI-0001 0000-0000
 #PROT STUFE=2
---leser1 virtuelle_Geraete/Leser1_02/lb_kopie_quelle.txt
---stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
+--leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
+--stanzer1 Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt
 0000: 00002000000 # beginn: 000 anfang ; Zelle 0000: Sprung nach 02000
 2000: 00004600030 # anfang: 030 04600 ; 4600 oder K1 oder LSL1 oder LSS1
 2001: 00002014211 # 211 anfbef ; i := 0 (auch bei Neustart)

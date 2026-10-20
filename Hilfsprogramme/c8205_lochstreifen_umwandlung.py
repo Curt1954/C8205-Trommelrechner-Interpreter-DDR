@@ -8,13 +8,14 @@ Wandelt eine Textdatei in einen binaer codierten virtuellen R300-Lochstreifen um
 (--IN-TXT).
 
 Aufruf:
-    python3 c8205_lochstreifen_umwandlung.py --STANZER AUSGABE --LESER EINGABE [--IN-BIN | --IN-TXT]
+    python3 c8205_lochstreifen_umwandlung.py --LS-STANZER AUSGABE --LS-LESER EINGABE [--IN-BIN | --IN-TXT]
 
-    --LESER    Pflicht. Eingabe: bei --IN-BIN die Textdatei, bei --IN-TXT der Lochstreifen
-               (jeweils auch ein Verzeichnis mit Dateien).
-    --STANZER  Pflicht. Ausgabe: bei --IN-BIN der Lochstreifen, bei --IN-TXT die Textdatei.
-               Datei, oder Verzeichnis (dann VERZ/stanzer-ausgabe.txt).
-    Beide muessen angegeben werden.
+    --LS-LESER   Pflicht. Eingabe: bei --IN-BIN die Textdatei, bei --IN-TXT der Lochstreifen
+                 (jeweils auch ein Verzeichnis mit Dateien).
+    --LS-STANZER Pflicht. Ausgabe: bei --IN-BIN der Lochstreifen, bei --IN-TXT die Textdatei.
+                 Datei, oder Verzeichnis (dann VERZ/stanzer-ausgabe.txt).
+    Beide muessen angegeben werden. (Die frueheren Schreibweisen --LESER/--STANZER werden
+    weiterhin angenommen.)
     --IN-BIN   Text -> binaer codierter R300-Lochstreifen (Vorgabe).
     --IN-TXT   binaer codierter R300-Lochstreifen -> Text (Umkehrung).
 
@@ -41,7 +42,7 @@ import argparse
 import os
 import sys
 
-VERSION = '1.1'
+VERSION = '1.2'
 
 # Kodetabelle 1 (R300), Zeilen 1-49 mit Zeichen: (Klbuch-Zeichen, Gbuch-Zeichen, Ausgabe-Adresse oktal).
 # Identisch zu TABELLE1 in c8205_interp.py (Spalten 1, 2, 3). Die Zeichenlage-unabhaengigen Zeilen
@@ -188,13 +189,13 @@ def eingabedateien(pfad, ausgabe):
                          if os.path.isfile(os.path.join(pfad, f)) and not f.startswith('.'))
         dateien = [f for f in dateien if not gleich(f, ausgabe)]
         if not dateien:
-            raise Fehler(f'LESER {pfad}: keine Textdatei gefunden')
+            raise Fehler(f'LS-LESER {pfad}: keine Textdatei gefunden')
         return dateien
     if os.path.isfile(pfad):
         if gleich(pfad, ausgabe):
-            raise Fehler('LESER und STANZER sind dieselbe Datei')
+            raise Fehler('LS-LESER und LS-STANZER sind dieselbe Datei')
         return [pfad]
-    raise Fehler(f'LESER nicht gefunden: {pfad}')
+    raise Fehler(f'LS-LESER nicht gefunden: {pfad}')
 
 
 def lese(dateien):
@@ -203,7 +204,7 @@ def lese(dateien):
             with open(f, encoding='utf-8-sig', errors='replace', newline='') as fh:
                 yield os.path.basename(f), fh.read()
         except OSError as e:
-            raise Fehler(f'LESER {f}: {e.strerror or e}')
+            raise Fehler(f'LS-LESER {f}: {e.strerror or e}')
 
 
 def schreibe_text(pfad, text):
@@ -212,7 +213,7 @@ def schreibe_text(pfad, text):
         with open(pfad, 'w', encoding='utf-8', newline='\n') as fh:
             fh.write(text)
     except OSError as e:
-        raise Fehler(f'STANZER {pfad}: {e.strerror or e}')
+        raise Fehler(f'LS-STANZER {pfad}: {e.strerror or e}')
 
 
 def schreibe(pfad, lochbilder):
@@ -221,7 +222,7 @@ def schreibe(pfad, lochbilder):
         with open(pfad, 'w', encoding='ascii', newline='\n') as fh:
             fh.write(''.join(format(lb, '08b') + '\n' for lb in lochbilder))
     except OSError as e:
-        raise Fehler(f'STANZER {pfad}: {e.strerror or e}')
+        raise Fehler(f'LS-STANZER {pfad}: {e.strerror or e}')
 
 
 def beschreibe(z):
@@ -241,9 +242,9 @@ def main(argv=None):
     p = argparse.ArgumentParser(
         prog='c8205_lochstreifen_umwandlung.py', allow_abbrev=False,
         description='Wandelt eine Textdatei in einen binaer codierten R300-Lochstreifen um.')
-    p.add_argument('--STANZER', '--stanzer', dest='stanzer', metavar='PFAD',
+    p.add_argument('--LS-STANZER', '--ls-stanzer', '--STANZER', '--stanzer', dest='stanzer', metavar='PFAD',
                    help='Pflicht. Zu erzeugender Lochstreifen (Datei oder Verzeichnis)')
-    p.add_argument('--LESER', '--leser', dest='leser', metavar='PFAD',
+    p.add_argument('--LS-LESER', '--ls-leser', '--LESER', '--leser', dest='leser', metavar='PFAD',
                    help='Pflicht. Textdatei (oder Verzeichnis mit Textdateien)')
     p.add_argument('--IN-BIN', '--in-bin', dest='in_bin', action='store_true',
                    help='Text -> binär codierter R300-Lochstreifen (Vorgabe)')
@@ -252,8 +253,8 @@ def main(argv=None):
     p.add_argument('--version', action='version', version=f'%(prog)s {VERSION}')
     a = p.parse_args(argv)
     if not a.stanzer or not a.leser:
-        fehlt = [n for n, w in (('--STANZER', a.stanzer), ('--LESER', a.leser)) if not w]
-        print('Fehler: --STANZER und --LESER müssen beide angegeben werden '
+        fehlt = [n for n, w in (('--LS-STANZER', a.stanzer), ('--LS-LESER', a.leser)) if not w]
+        print('Fehler: --LS-STANZER und --LS-LESER müssen beide angegeben werden '
               f'(es fehlt: {", ".join(fehlt)}).', file=sys.stderr)
         p.print_usage(sys.stderr)
         return 2

@@ -27,7 +27,7 @@ class PultLauf:
         self.dir = tempfile.mkdtemp(); self.alt = os.getcwd(); os.chdir(self.dir)
         t = I.Test(os.path.join(PROJ, 'Tests', 'sw_zwei_ziffern.test')); assert not t.fehler, t.fehler
         pfad = os.path.join(self.dir, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), pfad)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), pfad)
         mem = {}
         with open(pfad, encoding='utf-8', newline='') as fh:
             for z in fh:

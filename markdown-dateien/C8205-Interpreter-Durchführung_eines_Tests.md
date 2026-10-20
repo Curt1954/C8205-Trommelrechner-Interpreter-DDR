@@ -1,6 +1,6 @@
 ** Durchführung eines Tests **
 
-Version: 0.03-013
+Version: 0.95-001
 
 ## 1. Einordnung und Testvoraussetzungen
 
@@ -99,10 +99,10 @@ Neues fest, sondern verweist auf die Abschnitte, in denen die Einzelheiten stehe
 
 1. **Voraussetzung:** Python 3 (nur Standardbibliothek). Im Projektordner liegen `c8205_interp.py` und daneben
    `markdown-dateien/`; der Interpreter liest daraus `C8205-Interpreter-Eingänge_der_Knoten.md` und
-   `C8205-Interpreter-Beschreibung_der_Knoten.md` (anderer Ort: Schalter `--mdverz`). Außerdem muss die Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` vorhanden sein
+   `C8205-Interpreter-Beschreibung_der_Knoten.md` (anderer Ort: Schalter `--mdverz`). Außerdem muss die Trommeldatei `Trommel/trommel.txt` vorhanden sein
    (leer erzeugen: `python3 testscripte/erzeuge_leere_trommel.py`; anderer Ort: Schalter `--trommel`; Abschnitt 2c).
 2. **Testdatei ablegen** in `Tests/` (die Endung ist frei; der Assembler erzeugt `.test`). Geräte werden per Schalter
-   oder Zeile zugeordnet (Abschnitt 2b); Dateien dafür liegen üblicherweise unter `virtuelle_Geraete/`.
+   oder Zeile zugeordnet (Abschnitt 2b); Dateien dafür liegen üblicherweise unter `Test-virtuelleGeraete/`.
 3. **Starten**, direkt oder mit dem Wrapper, der das Protokoll nach `Test-Protokolle/` schreibt:
 
    ```
@@ -120,6 +120,8 @@ Neues fest, sondern verweist auf die Abschnitte, in denen die Einzelheiten stehe
    Code 6 bei einem Test mit `Prüfungen: False` werten die Skripte als wahr, Abschnitt 3a.5). Knotenzeilen
    erscheinen im Protokoll mit `--knotentest` und `#PROT STUFE=2` (Abschnitt 8). Alle Schalter, Geräte und
    Fehlermeldungen: `C8205-Interpreter-Python_Interpreter.md`.
+
+**GRAFIK:** Tests dieses Dokuments laufen im Modus TEST (`--MODUS=TEST`). Die Prüfung des Modus GRAFIK (Logiktests, Tk-Tests, Handläufe, Hörprüfung) steht in `C8205-Interpreter-GRAFIK_Pruefverfahren.md`.
 
 ## 2. Schritt 1 jedes Tests: die Trommeldatei
 
@@ -390,7 +392,7 @@ H G R
 **Begriffe.** „Trommeldatei“ steht im Projekt für zwei verschiedene Dinge, die nicht zu verwechseln sind:
 
 - der **Abschnitt `Trommeldatei:` einer Testdatei** (Abschnitt 2): die `Adresse: Wert`-Zeilen und Testmarken des Tests. Er heißt hier auch „Trommelabschnitt“;
-- die **Trommeldatei `trommel.txt`** des Python-Interpreters (Vorgabe `virtuelle_Geraete/Trommel/trommel.txt`, Schalter `--trommel`): der ganze Speicher mit 4096 Zeilen.
+- die **Trommeldatei `trommel.txt`** des Python-Interpreters (Vorgabe `Trommel/trommel.txt`, Schalter `--trommel`): der ganze Speicher mit 4096 Zeilen.
 
 Das Schlüsselwort `Trommeldatei:` in der Testdatei bleibt unverändert.
 
@@ -598,7 +600,7 @@ erwartet wird die Schreibwerk-Ausgabe `4567`. R1 bleibt unverändert, weil das U
 Der AC enthält am Ende das zurückgeholte R1 (der AC nach einer Ausgabe ist belanglos). Der Code des Adressendrucks liegt auf Spur 0240 (Zellen 0240 bis 0255), die Ansprungzelle 0100 enthält den Sprung dorthin.
 Geprüft am 08.10.2026 auf leerer Trommel mit `c8205_bis_test.sh`: `Test wahr`; der Test `pj2-bis_befehlsdruck` bleibt mit dem erweiterten Minimalprogramm `Test wahr`.
 
-**Beispiele `pj2-bis_adresseneingabe_*.txt`** (Ansprungzelle 0316; je Test eine Lochstreifendatei `virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_<Name>.txt` und, wo gedruckt wird, eine Soll-Datei `..._erwartet.txt`):
+**Beispiele `pj2-bis_adresseneingabe_*.txt`** (Ansprungzelle 0316; je Test eine Lochstreifendatei `Test-virtuelleGeraete/Leser1/pj2-bis_adresseneingabe_<Name>.txt` und, wo gedruckt wird, eine Soll-Datei `..._erwartet.txt`):
 Das Hauptprogramm ab 1000 wählt Kanal K1 an (`030 4600`), ruft die Adresseneingabe (`025 0316`), speichert den AC nach R1 und druckt ihn mit dem Adressendruck (`030 4500`, `025 0100`).
 Die Soll-Dateien der BIS-Tests liegen in `Test-Ergebnisvergleiche/` und werden in der Testdatei mit diesem Pfad genannt (`--pruefe-sw-ausgabe Test-Ergebnisvergleiche/<Name>_erwartet.txt`, Pfad relativ zum Arbeitsverzeichnis).
 Die Lochstreifendateien enthalten die Zeichen im R 300-Code, eine Zeile je Zeichen im Format `w v u p 8 4 2 1` (6.2.4); Lochbilder: 0 = `00010000`, 1 = `00000001`, 2 = `00000010`, 3 = `00010011`, 4 = `00000100`, 5 = `00010101`, 6 = `00010110`, 7 = `00000111`, Punkt = `00111011`, Zwischenraum (ZR) = `00011010`.
@@ -639,7 +641,7 @@ seinen Anfangszustand selbst. Er ist dann von der Vorgeschichte und von der Reih
 | Wert | Wirkung vor dem Test |
 | --- | --- |
 | `LEER` | Alle 4096 Zellen der Trommel werden 0. |
-| `MP` | Die Trommel wird mit dem Abbild des Minimalprogramms belegt (Trommelvorlage `virtuelle_Geraete/Trommelvorlagen/MP.txt`, Format wie die Trommeldatei, 2c). |
+| `MP` | Die Trommel wird mit dem Abbild des Minimalprogramms belegt (Trommelvorlage `Trommel/Trommelvorlagen/MP.txt`, Format wie die Trommeldatei, 2c). |
 
 **Ohne die Marke bleibt die Trommel unverändert** (2c); alle bisherigen Tests laufen wie vorher.
 
@@ -674,6 +676,215 @@ aus `asm_druck_tastenfolge.txt`; die Druckroutine ist ein bewusst vereinfachter 
 sofern ihm das Abbild vorliegt; sonst startet der Test nicht (Grundsatz „laut scheitern“, Abschnitt 5).
 
 **Beispiel:** `Tests/trommel-001_leer.txt` belegt zwei Zellen selbst und prüft, dass drei weitere Zellen 0 sind. Er ist auch auf einer verschmutzten Trommel `Test wahr`.
+
+## 2h. Beispiel 1: Ein Programm über Lochstreifen auf die Trommel laden und in TEST und GRAFIK ausführen (Ergänzung 20.10.2026)
+
+Dieser Abschnitt führt einen Test durch, dessen Programm **nicht** in den Zeilen der Trommeldatei steht, sondern von einem Lochstreifen in die Trommel geladen wird. Er verbindet die Testdatei (Abschnitt 2 und 2b), die Hilfsprogramme für Lochstreifen (`C8205-Interpreter-Lochstreifen-Hilfsprogramme.md`), den TEST-Interpreter und den GRAFIK-Interpreter. Als Beispiel dient `Tests/k1_leser_stanzer.test`: Das Programm liest von Leser 1 Zeichen bis zum Zeichen `:` und stanzt sie auf Stanzer 1 (Lochstreifen kopieren). Im Beispiel enthält der Streifen den Text `Hallo Welt 123 (ok)!:`.
+
+**Warum dieser Umweg.** Ein Programm gelangt bisher nur über den Test auf die Trommel; ein Minimalprogramm, das die Objektkode-Lochstreifendateien des Assemblers direkt laden kann, gibt es noch nicht. Der Lauf mit dem TEST-Interpreter lädt das Programm nach den Zeilen des Abschnitts `Trommeldatei:` auf die Trommel (2c) und prüft zugleich das Ergebnis. Die Trommel (`Trommel/trommel.txt`) benutzen TEST- und GRAFIK-Interpreter gemeinsam; das Programm steht danach auch für GRAFIK bereit.
+
+**Die Geräte.** Der TEST-Interpreter benutzt die Geräteordner unter `Test-virtuelleGeraete/`, der GRAFIK-Interpreter die unter `virtuelle_Geraete/`. Die beiden Ordner sind getrennt, ein Lochstreifen muss also in beide gelegt werden (Schritt 6).
+
+### 2h.1 Schritt für Schritt
+
+**1. Testdatei definieren** und nach `Tests/` legen. Die Geräte-Zeilen (2b) nennen den Lochstreifen, den der Leser liefert, und die Datei, in die der Stanzer schreibt:
+
+```
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+--leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
+--stanzer1 Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt
+0000: 00002000000 # beginn: 000 anfang ; Zelle 0000: Sprung nach 02000
+2000: 00004600030 # anfang: 030 04600 ; 4600 oder K1 oder LSL1 oder LSS1
+...
+```
+
+Der Stanzer-Ausgabe wird in der Testdatei eine Soll-Datei zugeordnet (`Test-Ergebnisvergleiche/k1_leser_stanzer-stanzer-ausgabe.txt`, Abschnitt 3b); der Test prüft am Ende, ob der Stanzer dieselben Zeichen ausgegeben hat.
+
+**2. Den Lochstreifen erzeugen, den der Leser im Test liefern soll.** Er muss als binär codierter R300-Lochstreifen in der Datei liegen, die die Zeile `--leser1` nennt: `Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt`. Format: je Lochungszeile 8 Ziffern 0/1 (Hilfsprogramme, Abschnitt 2). Für `Hallo Welt 123 (ok)!:` sind das 29 Zeilen, beginnend mit
+
+```
+00101111
+00111000
+01001111
+00110001
+...
+```
+
+Es gibt drei Wege; sie führen zu derselben Datei.
+
+*Weg A: Klartext, dann Umwandlung (empfohlen).* Der Text steht in einer gewöhnlichen Textdatei, z. B. `lb_kopie_quelle.text` (nur die Zeile `Hallo Welt 123 (ok)!:`). Die Umwandlung stanzt daraus den Lochstreifen; `--ls-leser` nennt die Textdatei, `--ls-stanzer` den zu erzeugenden Lochstreifen:
+
+```
+$ python3 Hilfsprogramme/c8205_lochstreifen_umwandlung.py --ls-leser lb_kopie_quelle.text \
+      --ls-stanzer Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --in-bin
+```
+
+*Weg B: Eingabefenster.* Der Text wird im Fenster des Eingabe-Hilfsprogramms getippt; jedes Zeichen wird sofort als Lochungszeile in die genannte Datei geschrieben. Das Programm erzeugt also **sofort den binären Lochstreifen**; eine Umwandlung entfällt:
+
+```
+$ python3 Hilfsprogramme/c8205_lochstreifen_eingabe.py \
+      --ls-stanzer Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
+```
+
+Beenden mit **X**; es gibt kein Speichern, die Datei ist immer auf dem Stand des Fensters (Hilfsprogramme, Abschnitt 4.2).
+
+*Weg C: von Hand.* Die Datei mit den Lochungszeilen (8 Ziffern je Zeile) in einem Texteditor schreiben und nach `Test-virtuelleGeraete/Leser1_02/` legen.
+
+**3. Lochstreifen kontrollieren.** Die Anzeige schreibt den Streifen als Klartext aus:
+
+```
+$ python3 Hilfsprogramme/c8205_lochstreifen_anzeige.py \
+      --ls-leser Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --text
+Hallo Welt 123 (ok)!:
+```
+
+Ohne `--text` erscheint die Ausgabe in einem Fenster.
+
+**4. Der Leser des TEST-Interpreters ist damit belegt.** Der Ort steht in der Zeile `--leser1` der Testdatei; es ist nichts weiter einzulegen:
+
+```
+$ ls Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
+Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
+```
+
+**5. Den TEST-Interpreter ausführen.** Der Lauf schreibt das Programm aus der Testdatei auf die Trommel, führt es aus und gibt das Ergebnis gemäß den Prüfungen der Testdatei (3a) und der Dateiprüfung des Stanzers (3b) aus:
+
+```
+$ python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test
+
+=== Test k1_leser_stanzer (#PROT STUFE=2) ===
+Ende: Unbedingter Stop (US:=1) | Knoten: 6137 | BZ=4035 AC=00000000020 AR=0000 | FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+Ergebnispruefung:
+  BZ: soll=4035 ist=4035 OK
+  AC: soll=00000000020 ist=00000000020 OK
+  ...
+  Stanzer 1: soll=Test-Ergebnisvergleiche/k1_leser_stanzer-stanzer-ausgabe.txt ist=Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt OK
+Test wahr
+Protokolldatei: Test-Protokolle/k1_leser_stanzer/protokoll.txt
+```
+
+Das Programm steht jetzt auf der gemeinsamen Trommel `Trommel/trommel.txt`. Der Stanzer hat den Text nach `Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt` kopiert.
+
+**6. Für den GRAFIK-Interpreter den Lochstreifen in dessen Leser legen.** Der Leser der GRAFIK-Umgebung ist ein Ordner mit nachrückenden Lochstreifendateien (`virtuelle_Geraete/Leser1/`, siehe GRAFIK-Beschreibung); der Streifen aus der Testumgebung wird dorthin kopiert:
+
+```
+$ cp Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt virtuelle_Geraete/Leser1/
+```
+
+**7. Das Programm im GRAFIK-Interpreter ausführen.** Das Programm liegt auf der Trommel und beginnt bei Adresse 0000. Es kopiert von Leser nach Stanzer, deshalb werden beide Geräte angegeben:
+
+```
+$ ./c8205_grafik.sh --leser1 virtuelle_Geraete/Leser1 --stanzer1 virtuelle_Geraete/Stanzer1 --HWCHECK
+```
+
+Am Pult: den Schlüsselschalter (Netzschalter) anklicken, wenn der Rechner bereit ist; auf **R** schalten, dann wird der Lochstreifen kopiert. Zum Beenden den Schlüsselschalter wieder anklicken.
+
+Nach dem Lauf ist die gelesene Datei `lb_kopie_quelle.txt` aus `virtuelle_Geraete/Leser1/` verschwunden und liegt in `virtuelle_Geraete/Leser1/LOCHSTREIFENKORB/`. Der Stanzer schreibt die kopierten Lochungszeilen in `virtuelle_Geraete/Stanzer1/stanzer.ls` fort (Ansicht mit der Anzeige: `--ls-leser virtuelle_Geraete/Stanzer1/stanzer.ls`).
+
+### 2h.2 Hinweise
+
+- Das Verfahren ist für jedes Programm gleich, das über Lochstreifen Daten verarbeitet: Testdatei mit `--leser1`/`--leser2`/`--stanzer1`, Streifen im Leser des TEST-Interpreters, Testlauf, danach Streifen in den Ordner des GRAFIK-Lesers kopieren.
+- Der TEST-Interpreter verbraucht den Streifen nicht: Die Datei in `Test-virtuelleGeraete/Leser1_02/` bleibt erhalten und kann für weitere Läufe benutzt werden. Der GRAFIK-Interpreter verschiebt gelesene Dateien dagegen in den `LOCHSTREIFENKORB`; für einen weiteren Lauf muss man die Datei von dort zurückkopieren.
+
+## 2i. Beispiel 2: Ein Assemblerprogramm anlegen, assemblieren und im GRAFIK-Interpreter ausführen (Ergänzung 20.10.2026)
+
+Der zweite Arbeitsablauf geht vom Quelltext aus: Ein Assemblerprogramm wird angelegt, assembliert, mit dem TEST-Interpreter auf die Trommel geladen und im GRAFIK-Interpreter bedient. Als Beispiel dient `namen_raten`, ein Ratespiel über das Schreibwerk (SW): Das Programm wählt einen von fünf Namen mit je 7 Buchstaben, nennt den 1. Buchstaben, und der Benutzer tippt die übrigen Buchstaben am SW. Ein Punkt beendet das Programm.
+
+Anders als in Beispiel 1 (2h) braucht dieses Programm keinen Lochstreifen. Der TEST-Interpreter dient wieder nur dazu, das Programm auf die gemeinsame Trommel (`Trommel/trommel.txt`) zu laden (Grund und Einschränkung wie in 2h); die eigentliche Ausführung geschieht im GRAFIK-Interpreter.
+
+### 2i.1 Schritt für Schritt
+
+Die Pfade gelten vom Projektordner aus (dort, wo `c8205_interp.py` liegt).
+
+**1. Assembler-Projekt anlegen.** Die Quelltexte liegen unter `Assembler/`, je Projekt ein Ordner:
+
+```
+$ cd Assembler
+$ mkdir -p ./Projekt_1
+```
+
+**2. Unterprojekt anlegen (optional).** Je Programm ein eigener Ordner im Projekt; in ihm entstehen auch die Ausgabedateien des Assemblers:
+
+```
+$ mkdir -p ./Projekt_1/namen_raten
+```
+
+**3. Assembler-Quelltext erfassen** mit einem Editor Ihrer Wahl, hier `code`:
+
+```
+$ code ./Projekt_1/namen_raten/namen_raten.asm
+```
+
+**4. Assemblieren und die Testanforderungsdatei erzeugen.** Der Aufruf geschieht im Ordner `Assembler/`. `-p` nennt das Projektverzeichnis, `-s` den Quelltext darin, `-t` den Ordner, in den die Testanforderungsdatei geschrieben wird (hier `Tests/` des Projekts); `-WARN=SYM` meldet unbenutzte Symbole:
+
+```
+$ ./c82ass.sh -WARN=SYM -p Projekt_1/namen_raten -s namen_raten.asm -t ../Tests
+...
+Pruefung auf unbenutzte Symbole (-WARN=SYM)
+Warnung:  Symbol 'beginn' (0000, namen_raten.asm Zeile 33) ist definiert, wird aber nie verwendet.
+1 unbenutztes Symbol.
+
+
+Ausgabe als Minimalprogramm-Objektdatei nach: Projekt_1/namen_raten/namen_raten.obj
+Ausgabe der formatierten Speicherbelegung nach: Projekt_1/namen_raten/namen_raten.dmp
+Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: ../Tests/namen_raten.test
+```
+
+Die Warnung ist hier harmlos: Die Marke `beginn` bezeichnet die Zelle 0000 und wird von keinem Befehl angesprungen. Ob die Testanforderungsdatei richtig liegt, zeigt
+
+```
+$ ls ../Tests/namen_raten.test
+../Tests/namen_raten.test
+```
+
+(Zur Testanforderungsdatei aus einem Assemblerlauf siehe Abschnitt 2a.)
+
+**5. TEST-Interpreter starten, um das Programm auf die Trommel zu laden.** Im Projektordner:
+
+```
+$ cd ..
+$ python3 c8205_interp.py --MODUS=TEST Tests/namen_raten.test
+
+=== Test namen_raten (#PROT STUFE=2) ===
+Rate mal, welchen Namen ich mir gemerkt habe.
+Mit der Eingabe eines Punktes beendest du das Programm.
+1. Buchstabe ist:  S
+--- Achtung: Terminaleingaben erforderlich (K0 ohne Umleitung --k0); Abbruch mit Strg+C ---
+```
+
+Der Interpreter wartet nun im Terminal, weil das Programm Eingaben über das Schreibwerk verlangt. Diese Eingaben müssen im TEST-Interpreter **nicht** nachgestellt werden: Manuelle Eingaben mit zufälligem Charakter (das Programm wählt den Namen zufällig) lassen sich in einem Test nicht sinnvoll vorgeben, und der Lauf dient hier nur dem Laden des Programms. Die Trommel ist zu diesem Zeitpunkt bereits beschrieben. Der Lauf wird deshalb mit **Strg+C** abgebrochen.
+
+**6. GRAFIK-Interpreter starten und das Programm anspringen.** Das Programm steht auf der gemeinsamen Trommel und beginnt bei Adresse 0000. Es braucht keine Geräte-Schalter; `--HWCHECK` blendet das zusätzliche Fenster mit den Registern ein:
+
+```
+$ ./c8205_grafik.sh --HWCHECK
+```
+
+Am Pult: den Rechner mit dem Schlüsselschalter (Netzschalter) einschalten; bei gedrückter Taste **H** die Wippe **T-SW** von T auf **SW** stellen (die Eingaben kommen damit aus dem SW-Fenster) und dann **R** drücken. Das Programm läuft an. Die Eingabe der Buchstaben erfolgt im SW-Fenster; ein Beispiel für die Ausgabe:
+
+```
+Rate mal, welchen Namen ich mir gemerkt habe.
+Mit der Eingabe eines Punktes beendest du das Programm.
+1. Buchstabe ist:  M
+   Falsch, noch ein Versuch.
+   Du musst deine Fantasie viel mehr schulen.
+...
+```
+
+Der erste Buchstabe wechselt von Spiel zu Spiel, weil das Programm den Namen zufällig wählt. Ein Punkt beendet das Programm.
+
+### 2i.2 Unterschied zu Beispiel 1
+
+| | Beispiel 1 (2h) | Beispiel 2 (2i) |
+| --- | --- | --- |
+| Programm | `k1_leser_stanzer`: von Hand in der Testdatei geschrieben | `namen_raten`: Assemblerquelltext, vom Assembler übersetzt |
+| Testdatei | von Hand erstellt | vom Assembler erzeugt (`-t`, 2a) |
+| Lochstreifen | ja: Leser und Stanzer | nein: Ein- und Ausgabe über das Schreibwerk (SW) |
+| TEST-Interpreter | lädt das Programm und prüft das Ergebnis | lädt das Programm; der Lauf wird abgebrochen |
+| GRAFIK-Interpreter | mit `--leser1` und `--stanzer1`, Schlüsselschalter und R | ohne Geräte-Schalter, bedient wird am Pult und im SW-Fenster |
 
 ## 3. Schritt 2 jedes Tests: die Tastenfolge zur Definition des Ausgangszustands
 
@@ -981,7 +1192,7 @@ Ebenso lässt sich eine Stanzer-Prüfung vollständig in der Testdatei beschreib
   Soll-Datei mit anderem Namen in `Tests/`, würde das Skript sie als Test starten (Rückkehrcode 16, weil Tastenfolge und
   Zeilenformat fehlen).
 - **Ist-Datei** ist die vom Lauf erzeugte Ausgabedatei des jeweiligen Geräts (6.3.1, 6.3.2), z. B.
-  `virtuelle_Geraete/Stanzer1/stanzer-ausgabe.txt`. Maßgeblich ist nur eine Datei, die **dieser Lauf** angelegt hat:
+  `Test-virtuelleGeraete/Stanzer1/stanzer-ausgabe.txt`. Maßgeblich ist nur eine Datei, die **dieser Lauf** angelegt hat:
   eine aus einem früheren Lauf übrig gebliebene Datei gilt als nicht vorhanden, wenn der Lauf selbst keine Ausgabe
   auf dem Gerät vorgenommen hat.
 
@@ -1031,10 +1242,10 @@ BZ=2014 AC=00002012000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 Aufruf:
 
 ```
-./c8205_interpreter.sh --NO-TERMOUT --stanzer1 virtuelle_Geraete/Stanzer1/ bsp_seite_42_025_stanzer.test
+./c8205_interpreter.sh --NO-TERMOUT --stanzer1 Test-virtuelleGeraete/Stanzer1/ bsp_seite_42_025_stanzer.test
 ```
 
-Der Test stanzt drei Zeichen nach `virtuelle_Geraete/Stanzer1/stanzer-ausgabe.txt`. Verglichen wird diese Datei mit
+Der Test stanzt drei Zeichen nach `Test-virtuelleGeraete/Stanzer1/stanzer-ausgabe.txt`. Verglichen wird diese Datei mit
 `Test-Ergebnisvergleiche/bsp_seite_42_025_stanzer-stanzer-ausgabe.txt`. Ist die Datei mit den Soll-Zeilen
 `00110001`, `00110010`, `00100011` identisch und stimmen auch die `Prüfungen:` des Tests, endet der Lauf mit `Test wahr`
 (Rückkehrcode 0), sonst mit `Test falsch` (Rückkehrcode 6).
@@ -1169,7 +1380,7 @@ Zu prüfen ist dabei insbesondere:
 - **`#STARTE` (Ergänzung 09.10.2026, Abschnitt 2e):** Wert nicht leer, 1 bis 4 Oktalziffern, höchstens einmal, nicht im Abschnitt `Prüfungen:`,
   keine zusätzliche Tastenfolge; ein Test mit `#STARTE` braucht keinen Abschnitt `Tastenfolge:`.
 - **`#TROMMEL=` (Ergänzung 13.10.2026, Abschnitt 2g):** Wert `LEER` oder `MP`, höchstens einmal, nicht im Abschnitt `Prüfungen:`; bei `MP` muss die Trommelvorlage
-  `virtuelle_Geraete/Trommelvorlagen/MP.txt` vorhanden und formal gültig sein (Format wie die Trommeldatei, 2c). Fehlt die Marke, ist das gültig (die Trommel bleibt unverändert).
+  `Trommel/Trommelvorlagen/MP.txt` vorhanden und formal gültig sein (Format wie die Trommeldatei, 2c). Fehlt die Marke, ist das gültig (die Trommel bleibt unverändert).
 - **`#INTERRUPT` (Ergänzung 08.10.2026, Abschnitt 2d):** nur im Abschnitt `Trommeldatei:`, zwischen zwei Befehlszeilen, höchstens einmal je
   Befehlszeile; erste Taste `H`, nur bekannte Tasten, zulässige M-Folge, mindestens eine Taste.
 - **Tastenfolge:** Sie definiert, wie in Abschnitt 3 beschrieben, den Ausgangszustand des Rechners vor

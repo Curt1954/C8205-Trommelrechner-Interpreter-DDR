@@ -1,7 +1,7 @@
 
 Trommeldatei:
 #DOK-0001 Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp
---leser1 virtuelle_Geraete/Leser1/lb-001_irrung_zeichen_dann_1.txt
+--leser1 Test-virtuelleGeraete/Leser1/lb-001_irrung_zeichen_dann_1.txt
 #PROT STUFE=2
 
 0000: 00002000000 # 000 go

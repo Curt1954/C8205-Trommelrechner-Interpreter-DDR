@@ -1,6 +1,6 @@
 # Testübersicht
 
-Version: 0.01-004
+Version: 0.95-001
 
 Übersicht aller Testdateien in `Tests/`, erzeugt von `test_tabelle.py`. Die Spalte „Inhalt des Tests“ nennt die erste `#DOK`-Zeile der Testdatei (höchstens 140 Zeichen; haben mehrere Tests denselben Text, sind weitere `#DOK`-Zeilen angehängt); fehlt sie, steht die Tastenfolge in eckigen Klammern oder ein Hinweis in runden Klammern.
 

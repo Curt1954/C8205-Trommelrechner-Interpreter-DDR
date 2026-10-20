@@ -1,6 +1,6 @@
 ; bsp_5_18_kep.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_18_kep.txt
 ; #DOK-0001 Kleines Eingabeprogramm KEP (Programmieranleitung 5.18, Abb. 27), Eingabe im R 300-Code ueber K0
-; --k0 datei=virtuelle_Geraete/T-SW-Eingabe/kep_eingabe.txt
+; --k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/kep_eingabe.txt
 ; #SPEI-0001 3000-3004
 ; #SPEI-0001 7723-7724
 ; #PROT STUFE=2

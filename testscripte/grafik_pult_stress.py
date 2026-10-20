@@ -11,7 +11,7 @@ from grafik_pult import PultSteuerung, BETRIEB
 def main(dauer=20, seed=1):
     rnd = random.Random(seed)
     d = tempfile.mkdtemp(); kopie = os.path.join(d, 'trommel.txt')
-    shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), kopie)
+    shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), kopie)
     tr = GrafikTrommel(kopie); r = G.Rechner(G.lade_graph(os.path.join(PROJ, 'markdown-dateien')), tr, pult_modus=True)
     s = PultSteuerung(os.path.join(PROJ, 'pult'), r, hochlauf_s=0.01, auslauf_s=0.01, tastenzeit_s=0.05)
     stop = threading.Event()

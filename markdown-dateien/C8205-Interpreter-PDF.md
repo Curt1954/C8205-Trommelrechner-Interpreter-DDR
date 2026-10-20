@@ -1,6 +1,6 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
-Version: 0.03-013
+Version: 0.95-001
 
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,

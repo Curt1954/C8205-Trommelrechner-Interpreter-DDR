@@ -704,9 +704,9 @@ class Beispiele:
         self.interp = os.path.join(self.proj, 'c8205_interp.py')
         self.md = os.path.join(self.proj, 'markdown-dateien')
         self.tmp = tempfile.mkdtemp(prefix='testhandbuch_')
-        # Arbeitsordner: Kopien von Tests/, virtuelle_Geraete/ und den Beispieltests; Ausgaben der Tests
+        # Arbeitsordner: Kopien von Tests/, Test-virtuelleGeraete/ und den Beispieltests; Ausgaben der Tests
         # (Stanzer, Schreibwerk) landen so in den Kopien, das Projekt bleibt unverändert.
-        for name in ('Tests', 'virtuelle_Geraete', 'Test-Ergebnisvergleiche'):
+        for name in ('Tests', 'Test-virtuelleGeraete', 'Test-Ergebnisvergleiche'):
             quelle = os.path.join(self.proj, name)
             if os.path.isdir(quelle):                      # Soll-Dateien der Dateiprüfungen (3b)
                 shutil.copytree(quelle, os.path.join(self.tmp, name))
@@ -1155,10 +1155,10 @@ def kurzanleitung(S):
         '**Voraussetzung**: Python 3, sonst nichts (nur Standardbibliothek). Im Projektordner liegen `c8205_interp.py` '
         'und daneben `markdown-dateien/`; der Interpreter liest daraus `Eingänge_der_Knoten.md` und '
         '`Beschreibung_der_Knoten.md` (anderer Ort: Schalter `--mdverz`). Außerdem muss die Trommeldatei '
-        '`virtuelle_Geraete/Trommel/trommel.txt` vorhanden sein; leer erzeugen mit `python3 erzeuge_leere_trommel.py` '
+        '`Trommel/trommel.txt` vorhanden sein; leer erzeugen mit `python3 erzeuge_leere_trommel.py` '
         '(anderer Ort: Schalter `--trommel`; 3.5). Die vollständige Aufstellung aller Dateien und Pfade steht in 10.3.',
         '**Testdatei ablegen**: in `Tests/` (die Endung ist frei, der Assembler erzeugt `.test`). Geräte ordnen Sie per '
-        'Schalter oder Zeile zu (3.4); Dateien dafür liegen üblicherweise unter `virtuelle_Geraete/`.',
+        'Schalter oder Zeile zu (3.4); Dateien dafür liegen üblicherweise unter `Test-virtuelleGeraete/`.',
         '**Starten**: direkt oder mit dem Wrapper, der das Protokoll nach `Test-Protokolle/` schreibt. Die Trommel '
         'behält ihren Inhalt von Test zu Test und von Aufruf zu Aufruf; für einen Lauf auf leerer Trommel vorher '
         '`python3 erzeuge_leere_trommel.py` aufrufen (3.5).',
@@ -1433,7 +1433,7 @@ def kap3_5(S, ex):
     S += [P('„Trommeldatei“ steht im Projekt für zwei verschiedene Dinge, die nicht zu verwechseln sind: den '
             '**Abschnitt** `Trommeldatei:` **einer Testdatei** (die `Adresse: Wert`-Zeilen und Testmarken des Tests; hier '
             'auch „Trommelabschnitt“) und die **Datei** `trommel.txt` des Python-Interpreters (Vorgabe '
-            '`virtuelle_Geraete/Trommel/trommel.txt`, Schalter `--trommel`): der ganze Speicher mit 4096 Zeilen. Das '
+            '`Trommel/trommel.txt`, Schalter `--trommel`): der ganze Speicher mit 4096 Zeilen. Das '
             'Schlüsselwort `Trommeldatei:` in der Testdatei bleibt unverändert.')]
     S += [P('Regeln für den Python-Interpreter (Einzelheiten, Meldungen und Schalter: Bedienungsanleitung bzw. '
             '`Python_Interpreter.md`, Abschnitt 8.5):')]
@@ -2234,7 +2234,7 @@ def kap9(S, ex):
         'Ergänzung 04.10.2026).'])
     lb = open(os.path.join(ex.tmp, 'Tests', 'lb-001_Irrung_Zeichen_uebersprungen.txt'), encoding='utf-8').read()
     lbz = [l for l in lb.split('\n') if l.strip()][:8]
-    streifen = open(os.path.join(ex.tmp, 'virtuelle_Geraete', 'Leser1', 'lb-001_irrung_zeichen_dann_1.txt'),
+    streifen = open(os.path.join(ex.tmp, 'Test-virtuelleGeraete', 'Leser1', 'lb-001_irrung_zeichen_dann_1.txt'),
                     encoding='utf-8').read().strip()
     rc, out = ex.lauf('Tests/lb-001_Irrung_Zeichen_uebersprungen.txt')
     zl = zeilen(out)
@@ -2242,7 +2242,7 @@ def kap9(S, ex):
             'Zeichen. Der Streifen (`--leser1`-Zeile der Testdatei) enthält erst die Irrung `11111111`, dann die Ziffer 1 '
             '(`00000001`). Die Irrung wird übersprungen; der AC erhält den Inhalt der Zelle 0001 (Eingabeadresse 01 mit '
             'Adreßteil 0000 verknüpft):')]
-    S += code('\n'.join(lbz) + '\n…\n\n$ cat virtuelle_Geraete/Leser1/lb-001_irrung_zeichen_dann_1.txt\n' + streifen +
+    S += code('\n'.join(lbz) + '\n…\n\n$ cat Test-virtuelleGeraete/Leser1/lb-001_irrung_zeichen_dann_1.txt\n' + streifen +
               '\n\n$ python3 c8205_interp.py --MODUS=TEST Tests/lb-001_Irrung_Zeichen_uebersprungen.txt\n' +
               kurz(out, zl[:1], [zl[ab(zl, 'Ende:')]], ['Test wahr']))
     S += [P('Rückkehrcode %d. BZ=2003, AC=00000000001, kein Fehler bei Eingabe (FE=0).' % rc)]
@@ -2334,9 +2334,8 @@ def kap10_3(S, ex):
               '  markdown-dateien/\n'
               '    C8205-Interpreter-Eingänge_der_Knoten.md       Knotengraph\n'
               '    C8205-Interpreter-Beschreibung_der_Knoten.md   Variablentabelle T2\n'
-              '  virtuelle_Geraete/\n'
-              '    Trommel/\n'
-              '      trommel.txt                     4096 Zeilen, les- und beschreibbar\n'
+              '  Trommel/\n'
+              '    trommel.txt                       4096 Zeilen, les- und beschreibbar\n'
               '  Tests/\n'
               '    <Testdatei>                       oder ein beliebiger Pfad zur Testdatei')
     S += [P('**Immer nötig**', 'body')]
@@ -2352,7 +2351,7 @@ def kap10_3(S, ex):
         ['`C8205-Interpreter-Beschreibung_der_Knoten.md`',
          'Variablentabelle T2 (Bedeutung der ANWEISUNG-nnn), im selben Verzeichnis',
          '„error: Knotenbeschreibung nicht gefunden: …“, Rückkehrcode 2'],
-        ['`virtuelle_Geraete/Trommel/trommel.txt`',
+        ['`Trommel/trommel.txt`',
          'die persistente Trommel (3.5): genau 4096 Zeilen, les- und beschreibbar. Der Interpreter legt sie nie an; '
          'erzeugen mit `python3 erzeuge_leere_trommel.py`. Anderer Ort: `--trommel PFAD` (nur Kommandozeile)',
          '„FEHLER: Trommeldatei … ist formal fehlerhaft“ bzw. „… kann nicht geoeffnet werden“; kein Test startet, '
@@ -2378,22 +2377,22 @@ def kap10_3(S, ex):
         ['Gerät', 'Zuordnung und übliche Ablage', 'Wenn es fehlt'],
         ['Leser 1 / Leser 2 (K1 / K2)',
          '`--leser1 PFAD`, `--leser2 PFAD` (Schalter oder Zeile der Testdatei, 3.4); Lochstreifendatei mit je einer '
-         'Zeile aus acht Zeichen 0/1; Ablage `virtuelle_Geraete/Leser1/`, `Leser2/`',
+         'Zeile aus acht Zeichen 0/1; Ablage `Test-virtuelleGeraete/Leser1/`, `Leser2/`',
          'Zuordnung fehlt, das Programm liest: rote Fehlermeldung, der Test endet (Rückkehrcode 8). Pfad nicht '
          'vorhanden: Vorab-Prüfung, Rückkehrcode 16'],
         ['Eingabe K0 aus Datei',
          '`--k0 datei=PFAD` (Schalter oder Zeile); Ordner oder Datei mit einem Zeichen oder Namen je Zeile; Ablage '
-         '`virtuelle_Geraete/T-SW-Eingabe/`',
+         '`Test-virtuelleGeraete/T-SW-Eingabe/`',
          'ohne Zuordnung: Eingabe vom Terminal (interaktiv). Pfad nicht vorhanden: Vorab-Prüfung, Rückkehrcode 16'],
         ['Stanzer 1 (K1)',
-         '`--stanzer1 PFAD` (Schalter oder Zeile); Ablage `virtuelle_Geraete/Stanzer1/`. Das Ziel wird angelegt: ein '
+         '`--stanzer1 PFAD` (Schalter oder Zeile); Ablage `Test-virtuelleGeraete/Stanzer1/`. Das Ziel wird angelegt: ein '
          'vorhandener Ordner oder ein Pfad mit `/` am Ende wird Ordner (darin `stanzer-ausgabe.txt`), ein neuer Pfad '
          'ohne `/` die Ausgabedatei selbst',
          'Zuordnung fehlt, das Programm stanzt: rote Fehlermeldung, der Test endet (Rückkehrcode 8); es gibt keinen '
          'Terminal-Ausweg'],
         ['Schreibwerk (K2)',
          '`--sw-ausgabe PFAD` (Schalter oder Zeile): Ordner, darin `sw-ausgabe.txt`, wird angelegt; Ablage '
-         '`virtuelle_Geraete/SW-Ausgabe/`',
+         '`Test-virtuelleGeraete/SW-Ausgabe/`',
          'ohne Zuordnung: Ausgabe am Terminal (Dunkelgelb), kein Fehler'],
         ['Soll-Dateien der Dateiprüfungen',
          '`--pruefe-stanzer1 DATEI`, `--pruefe-sw-ausgabe DATEI` (5.4); ein Name ohne Ordner liegt im Verzeichnis der '
@@ -2412,7 +2411,7 @@ def kap10_3(S, ex):
                                                              '`./markdown-dateien` und `Test-Protokolle/` relativ zum '
                                                              'aktuellen Ordner auf'],
         ['`compute_all_tests.sh`', 'Sammellauf (11.1); braucht den Wrapper, `Tests/`, `Test-Ergebnisvergleiche/`, '
-                                   '`virtuelle_Geraete/Stanzer1/` und `erzeuge_leere_trommel.py`'],
+                                   '`Test-virtuelleGeraete/Stanzer1/` und `erzeuge_leere_trommel.py`'],
         ['`c8205_bis_test.sh`, `test_bis.sh`, `test.sh`', 'Tests der BIS-Bausteine (11.4): erst das Minimalprogramm laden, '
                                                           'dann den eigentlichen Test; `test_bis.sh` und `test.sh` rufen '
                                                           'den Wrapper für jeden Test auf'],
@@ -2458,6 +2457,7 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
             ('sw_', 'sw_…', 'Eingabe über das Schreibwerk SW (sw_eingabe, sw_eingabe_k2, sw_eingabe_lage, '
                             'sw_eingabe_leser_stanzer, sw_zwei_ziffern)'),
             ('betrag', 'betrag.test', 'Betragsbildung (z = -|a+b| + |-b+c| + |-c+d|, erwartet z = 1)'),
+            ('namen_raten', 'namen_raten.test', 'Programmbeispiel Namen raten (Assembler-Projekt 1, `Assembler/Projekt_1/namen_raten`)'),
             ('lb-', 'lb-…', 'Lochband: Irrung Zeichen übersprungen (lb-001), ohne Irrung (lb-002), Paritätsfehler (lb-003)'),
             ('pj2-', 'pj2-…', 'Programmbeispiele: ggT nach Euklid, Maximum von drei Zahlen (vier Fälle), Vertauschung '
                               'zweier Zahlenfelder; dazu das Minimalprogramm des BIS als .test-Datei'),
@@ -2494,6 +2494,8 @@ def familie(n):
         return 'sN-'
     if n == 'bdpt1.test':
         return 'bdpt1'
+    if n == 'namen_raten.test':
+        return 'namen_raten'
     for p in ('asm_', 'bs-', 'bsp_', 'int-', 'k1_', 'lb-', 'pj2-', 'r300_', 'sp-', 'st-', 'sw_', 'tk-', 'trommel-', 'wr-', 'ziffern'):
         if n.startswith(p):
             return p
@@ -2534,7 +2536,7 @@ def gesamtlauf(ex):
     Druckroutine) erhalten diese durch einen vorgeschalteten Lauf, ohne dass die Trommel dazwischen zurückgesetzt wird."""
     txt, tst = testliste(os.path.join(ex.tmp, 'Tests'))
     res = {}
-    zusatz = ['--NO-TERMOUT', '--stanzer1', 'virtuelle_Geraete/Stanzer1/']
+    zusatz = ['--NO-TERMOUT', '--stanzer1', 'Test-virtuelleGeraete/Stanzer1/']
     for modus in ('reset', 'dirty'):
         ex.leere_trommel()
         codes = []
@@ -2596,7 +2598,7 @@ def kap11(S, ex, gl, stand):
               '  case $t in *-ausgabe.txt|*_erwartet.txt) continue;; esac\n'
               '  python3 erzeuge_leere_trommel.py                 # leere Trommel für jeden Test\n'
               '  # Tests mit Voraussetzung: vorher das Minimalprogramm laden (BIS-Tests, st-004) bzw. die Druckroutine (st-005)\n'
-              '  python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT --stanzer1 virtuelle_Geraete/Stanzer1/ "$t" > /dev/null\n'
+              '  python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT --stanzer1 Test-virtuelleGeraete/Stanzer1/ "$t" > /dev/null\n'
               '  echo "$? $(basename $t)"\n'
               'done | awk \'{print $1}\' | sort | uniq -c\n' + zaehl)
     if not abweichend:
@@ -2698,7 +2700,7 @@ def kap11_4(S, ex):
         rows.append([f[len('pj2-bis_'):-4], m.group(1), m.group(2), str(rc)])
         assert rc == 0 and 'Test wahr' in out, f
     S += tbl(rows, wd(3.6, 1.2, 2.6, 1.6), first_bold=True)
-    S += [P('**Eingaben der Adresseneingabe.** Je Test eine Lochstreifendatei `virtuelle_Geraete/Leser1/'
+    S += [P('**Eingaben der Adresseneingabe.** Je Test eine Lochstreifendatei `Test-virtuelleGeraete/Leser1/'
             'pj2-bis_adresseneingabe_<Name>.txt` (Ansprungzelle 0316) mit den Zeichen im R-300-Code, eine Zeile je Zeichen '
             'im Format `w v u p 8 4 2 1` (9.1). Das Hauptprogramm ab 1000 wählt K1 an, ruft die Adresseneingabe, speichert '
             'den AC nach R1 und druckt ihn mit dem Adressendruck (`030 4500`, `025 0100`); es werden nur die mittleren '

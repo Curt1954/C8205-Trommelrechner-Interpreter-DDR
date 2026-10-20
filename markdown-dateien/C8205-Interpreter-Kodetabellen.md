@@ -1,6 +1,6 @@
 # Kodetabellen
 
-Version: 0.03-006
+Version: 0.95-001
 
 Die Zeichenkode-Tabellen des C 8205: R 300-Lochstreifenkode (Tabelle 1) und externer R 300-Code (Tabelle 2).
 

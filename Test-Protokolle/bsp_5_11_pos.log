@@ -49,5 +49,5 @@ Ergebnispruefung:
   V1: soll=0 ist=0 OK
   V2: soll=0 ist=0 OK
   3000: soll=00000000005 ist=00000000005 OK
-  Schreibwerk: soll=Test-Ergebnisvergleiche/bsp_5_11_pos-sw-ausgabe.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/bsp_5_11_pos-sw-ausgabe.txt ist=Test-virtuelleGeraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

@@ -15,7 +15,7 @@ class Modus(unittest.TestCase):
         os.mkdir(os.path.join(d, 'stub')); open(os.path.join(d, 'stub', 'tkinter.py'), 'w').close()
         os.mkdir(os.path.join(d, 'leer'))
         self.tr = os.path.join(d, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), self.tr)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), self.tr)
         self.env = dict(os.environ, PYTHONPATH=os.path.join(d, 'stub'), PATH=os.path.join(d, 'leer'), C8205_FENSTERLAGE='aus', PYTHONDONTWRITEBYTECODE='1')
 
     def tearDown(self):

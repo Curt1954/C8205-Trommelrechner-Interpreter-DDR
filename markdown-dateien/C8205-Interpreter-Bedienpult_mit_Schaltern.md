@@ -1,6 +1,6 @@
 ** Bedienpult mit Schaltern **
 
-Version: 0.03-010
+Version: 0.95-001
 
 Im physischen Bedienpult des Rechners C8205 sind sowohl Schalter, Eingabetasten und Lampen,
 die die Flag-Zustände anzeigen, lokalisiert.

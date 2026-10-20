@@ -1,6 +1,6 @@
 ; bsp_5_17_oktaldruck.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_17_oktaldruck.txt
 ; #DOK-0001 Oktaldruck (Programmieranleitung 5.17, Abb. 26): Inhalt der Zelle 7777 in Triadenschreibweise drucken, <7777> = 70123456701
-; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 ; #SPEI-0001 3020-3020
 ; #SPEI-0001 7777-7777
 ; #PROT STUFE=2

@@ -3,7 +3,7 @@ Trommeldatei:
 #PROT STUFE=2
 #AC=01234567012   # AC des unterbrochenen Programms
 #BZ=1005          # BZ des unterbrochenen Programms: Adresse des naechsten Befehls (b)
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 
 # Der unterbrochene Befehl b: ein Stopp. Die Zelle 0001 (Sprung nach druck) gehoert dem Minimalprogramm und wird nicht belegt.
 1005: 00000000020  # 020 0 ; Befehl b: Stopp (Fortsetzung des Programms nach dem Druck)

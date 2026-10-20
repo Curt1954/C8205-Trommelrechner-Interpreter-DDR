@@ -2,7 +2,7 @@ Trommeldatei:
 #DOK-0001 BIS-Test Adresseneingabe (Ansprung 0316); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Eingabe 9: auch als erstes Zeichen ist die 9 ein HALT (Gleichheit im Vergleich 330)
 #PROT STUFE=2
 #STARTE 1000
---leser1 virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_ziffer9_erste.txt
+--leser1 Test-virtuelleGeraete/Leser1/pj2-bis_adresseneingabe_ziffer9_erste.txt
 
 # Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0337 werden nicht belegt)
 1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen

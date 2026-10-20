@@ -38,7 +38,7 @@ class Lauf:
         self.t = I.Test(os.path.join(PROJ, 'Tests', name + '.test'))
         assert not self.t.fehler, self.t.fehler
         pfad = os.path.join(self.dir, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), pfad)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), pfad)
         if self.t.trommel_vor == 'LEER':
             I.schreibe_leere_trommeldatei(pfad)
         mem = {}

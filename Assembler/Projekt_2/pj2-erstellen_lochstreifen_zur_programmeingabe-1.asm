@@ -2,7 +2,7 @@
 ; Gibt den Text "Alles Ok" auf dem Schreibwerk (SW) aus und beendet sich (Stopp).
 ;
 ; Zweck: Das Programm ist die Vorlage fuer den Lochstreifen lochstreifen_zur_programmeingabe-1.txt
-; (virtuelle_Geraete/Leser1/). Der Streifen beginnt mit dem Kennzeichen 20 5000. (Relativadresse 5000)
+; (Test-virtuelleGeraete/Leser1/). Der Streifen beginnt mit dem Kennzeichen 20 5000. (Relativadresse 5000)
 ; und enthaelt danach alle Zeilen der Objektdatei dieses Programms (ohne Adress-Spalte).
 ;
 ; Das Programm ist lageunabhaengig: Es enthaelt keinen Sprung und keinen Zugriff auf eigene Zellen.

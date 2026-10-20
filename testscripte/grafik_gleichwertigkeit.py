@@ -87,7 +87,7 @@ def kind(art, testname, arbeitsverz, ausgabe):
     for k in ('leser1', 'leser2', 'stanzer1', 'sw_ausgabe', 'k0'):
         I.GERAETE[k] = t.geraete.get(k)
     if I.dateipruefungen(t).get('pruefe_stanzer1') and not I.GERAETE['stanzer1']:
-        I.GERAETE['stanzer1'] = os.path.join(arbeitsverz, 'virtuelle_Geraete', 'Stanzer1')    # Ersatz fuer das fehlende --stanzer1
+        I.GERAETE['stanzer1'] = os.path.join(arbeitsverz, 'Test-virtuelleGeraete', 'Stanzer1')    # Ersatz fuer das fehlende --stanzer1
     vorab = list(I.vorab_geraete(t)) + list(I.vorab_trommel(t))
     if vorab:
         ergebnis.update(uebersprungen='Vorab-Pruefung negativ: ' + '; '.join(vorab[:3]))
@@ -251,9 +251,9 @@ def minimal_trommel():
     with _MINIMAL_LOCK:
         if _MINIMAL['pfad'] is None:
             d = tempfile.mkdtemp(prefix='c8205_minimal_')
-            shutil.copyfile(os.path.join(PROJEKT, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), os.path.join(d, 'trommel.txt'))
+            shutil.copyfile(os.path.join(PROJEKT, 'Trommel', 'trommel.txt'), os.path.join(d, 'trommel.txt'))
             os.symlink(os.path.join(PROJEKT, 'Tests'), os.path.join(d, 'Tests'))
-            shutil.copytree(os.path.join(PROJEKT, 'virtuelle_Geraete'), os.path.join(d, 'virtuelle_Geraete'))
+            shutil.copytree(os.path.join(PROJEKT, 'Test-virtuelleGeraete'), os.path.join(d, 'Test-virtuelleGeraete'))
             try:                                       # derselbe Kindprozess wie ein Test (schreibt keine Protokolle ins Projekt)
                 subprocess.run([sys.executable, '-I', os.path.abspath(__file__), '--kind', 'test', 'pj2-bis_minimalprogramm.test', d,
                                 os.path.join(d, 'ergebnis.json')],
@@ -279,10 +279,10 @@ def alle_kinder_beenden():
 def starte_kind(art, testname, zeit):
     arbeit = tempfile.mkdtemp(prefix=f'c8205_{art}_')
     try:
-        shutil.copytree(os.path.join(PROJEKT, 'virtuelle_Geraete'), os.path.join(arbeit, 'virtuelle_Geraete'))
+        shutil.copytree(os.path.join(PROJEKT, 'Test-virtuelleGeraete'), os.path.join(arbeit, 'Test-virtuelleGeraete'))
         os.symlink(os.path.join(PROJEKT, 'Tests'), os.path.join(arbeit, 'Tests'))
         start = minimal_trommel() if braucht_minimalprogramm(testname) else None
-        shutil.copyfile(start or os.path.join(PROJEKT, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), os.path.join(arbeit, 'trommel.txt'))
+        shutil.copyfile(start or os.path.join(PROJEKT, 'Trommel', 'trommel.txt'), os.path.join(arbeit, 'trommel.txt'))
         out = os.path.join(arbeit, 'ergebnis.json')
         print(f'  ... starte {art:6s} {testname}', file=sys.stderr, flush=True)
         # Ausgabe in Dateien statt Pipes und eigene Prozessgruppe: bei Zeitueberschreitung wird die ganze Gruppe beendet; ein Enkelprozess,

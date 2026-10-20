@@ -1,6 +1,6 @@
 # BAZ-Wirkungstabelle (Cache für den Claude-Interpreter)
 
-Version: 0.03-003
+Version: 0.95-001
 
 Zweck: Für jeden bereits in einem Test aufgetretenen BAZ-Wert (Operationsteil, oktal,
 B-A-Z) wird hier einmalig der Knotenpfad Knoten 10 bis 34 sowie die Wirkungsformel

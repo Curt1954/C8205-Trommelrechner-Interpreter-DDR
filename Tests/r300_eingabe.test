@@ -1,8 +1,8 @@
 Trommeldatei:
 #DOK-0001 R300-Eingabe: alle Zeichen mit Computertaste ueber SW einlesen und als Echo ausgeben (RE-001)
 #TROMMEL=LEER
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe/r300_eingabe.txt
---k0 datei=virtuelle_Geraete/T-SW-Eingabe/r300_eingabe.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/r300_eingabe.txt
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/r300_eingabe.txt
 #PROT STUFE=2
 0000: 00000001000 # beginn: 000 anfang ; Zelle 0000: Sprung zum Programmanfang
 0001: 00004500030 # anfang: 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output

@@ -1,6 +1,6 @@
 # Python-Interpreter für den C 8205 (`c8205_interp.py`)
 
-Version: 0.03-014
+Version: 0.95-001
 
 Stand: 14.10.2026 (Sollwerte der Referenzläufe in 13.5 auf den aktuellen Stand gebracht; Aufrufparameter `--BASP` für die Bahnsperrenschalter, nur der Parameter; zuvor 13.10.2026: Testmarke `#TROMMEL=LEER` / `#TROMMEL=MP`; zuvor 10.10.2026: Fenster „SW Ausgabe“ bleibt immer offen, Kopieren mit der Maus, Schalter `--zwischenablage`; zuvor 09.10.2026: Versionsnummer, Schalter `--version`; zuvor 08.10.2026: Trommel als persistente Datei, Schalter `--trommel`; zuvor 04.10.2026: Geräte-Zeilen in der Testdatei auch für Leser und Stanzer). Diese Datei beschreibt den Python-Interpreter, seine Bedienung und alles, was zur Erzeugung
 einer menschenzentrierten Bedienungsanleitung (PDF) erforderlich ist. Die Regeln des Rechners selbst stehen
@@ -30,7 +30,7 @@ einer menschenzentrierten Bedienungsanleitung (PDF) erforderlich ist. Die Regeln
 Der Interpreter führt Programme des Rechners C 8205 **interpretativ** aus: Er läuft den Knotengraphen des
 Befehlsablaufs (Phasen I bis IV) ab und bildet Register, Flags, Trommelspeicher und Peripherie nach. Alle
 Zeiten (Wortzeit, Wartezeit auf die Trommel) sind 0; die Trommeldrehung wird nicht nachgebildet. Die Trommel
-selbst ist eine **persistente Textdatei** (`virtuelle_Geraete/Trommel/trommel.txt`, Abschnitt 8.5): Ihr Inhalt
+selbst ist eine **persistente Textdatei** (`Trommel/trommel.txt`, Abschnitt 8.5): Ihr Inhalt
 bleibt über Tests und Aufrufe hinweg erhalten.
 
 Er dient dazu,
@@ -53,7 +53,7 @@ Der Interpreter wird **nicht** aus den Regelwerk-Dateien erzeugt, sondern liest 
 | Funktionen je ANWEISUNG | handgeschrieben in `c8205_interp.py` (`a001`, `a021`, `t002` …) | Wirkung auf Register, Flags, Speicher |
 | Kodetabelle (Tabelle 1) | **in das Skript eingebettet** (`TABELLE1`), erzeugt aus `C8205-Interpreter-Kodetabellen.md`, Abschnitt 1.4 | Zeichen, Lochbilder, Ein-/Ausgabe-Adressen |
 | Geräte | handgeschrieben (`Leser`, `Stanzer`, `K0Quelle`, `sw_schreibe`) | Peripherie |
-| Trommel | Klasse `Trommel` in `c8205_interp.py`; Datei `virtuelle_Geraete/Trommel/trommel.txt` (Schalter `--trommel`) | Speicher: 4096 Zellen, jeder Lese- und Schreibzugriff eines Befehls läuft über die Klasse (Abschnitt 8.5) |
+| Trommel | Klasse `Trommel` in `c8205_interp.py`; Datei `Trommel/trommel.txt` (Schalter `--trommel`) | Speicher: 4096 Zellen, jeder Lese- und Schreibzugriff eines Befehls läuft über die Klasse (Abschnitt 8.5) |
 
 Die Funktionen tragen die Nummer der ANWEISUNG (`a` = Anweisung, `t` = Test). Ändert sich der Graph oder T2, muss
 nur das Skript angepasst werden, wenn eine ANWEISUNG neu ist oder anders wirkt. Fehlt zu einer ANWEISUNG eine
@@ -72,7 +72,7 @@ Ergebnis ausgeben. Register und Flags beginnen bei jedem Test neu, die Trommel n
   erfolgt automatisch anhand des laufenden Betriebssystems).
 - **Verzeichnis `markdown-dateien/` neben `c8205_interp.py`** (Vorgabe für `--mdverz`, Abschnitt 5.1):
   enthält `C8205-Interpreter-Eingänge_der_Knoten.md` und `C8205-Interpreter-Beschreibung_der_Knoten.md`.
-- **Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` neben `c8205_interp.py`** (Vorgabe für `--trommel`, Abschnitt 5.1): genau
+- **Trommeldatei `Trommel/trommel.txt` neben `c8205_interp.py`** (Vorgabe für `--trommel`, Abschnitt 5.1): genau
   4096 Zeilen, les- und beschreibbar. Der Interpreter legt sie nie selbst an. Eine leere Trommel erzeugt
   `python3 testscripte/erzeuge_leere_trommel.py` (Abschnitt 8.5).
 - Optional der Wrapper `c8205_interpreter.sh` (Linux/macOS) bzw. `c8205_interpreter.bat` (Windows, Abschnitt 5.2), der
@@ -123,7 +123,7 @@ python3 c8205_interp.py --version
 | `TEST.txt` | Testdatei(en) (Abschnitt 6). Ist der Pfad nicht vorhanden, wird der Dateiname unterhalb des aktuellen Ordners und des Skript-Ordners gesucht (Groß-/Kleinschreibung egal). Bei mehreren Treffern werden sie aufgelistet und der Test startet nicht. | – |
 | `--MODUS TEST\|GRAFIK` | Betriebsart (auch `--modus`, `--MODUS=X`; Groß-/Kleinschreibung gleich; der letzte Wert gewinnt). **Ohne Angabe startet GRAFIK** (Pult- und SW-Fenster). Testläufe mit Testdatei brauchen `--MODUS=TEST`; eine Testdatei im Modus GRAFIK wird ignoriert und mit Hinweis auf `stderr` gemeldet. Unbekannter Wert: Rückkehrcode 2. `--version` und `--help` gelten in jedem Modus. Die Wrapper (Abschnitt 5.2) setzen `--MODUS=TEST`. | `GRAFIK` |
 | `--mdverz VERZ` | Verzeichnis mit den beiden Regelwerk-Dateien `C8205-Interpreter-Eingänge_der_Knoten.md` (Knotengraph) und `C8205-Interpreter-Beschreibung_der_Knoten.md` (Variablentabelle T2); fehlt eine der beiden darin, bricht der Start mit Fehlermeldung ab. Ersetzt die früheren getrennten Schalter `--graph`/`--t2`. | `markdown-dateien/` neben dem Skript |
-| `--trommel PFAD` | Trommeldatei, der persistente Speicher des Interpreters: 4096 Zeilen `aaaa: ttttttttttt` (Abschnitt 8.5). Sie wird einmal vor dem ersten Test formal geprüft und zum Lesen und Schreiben geöffnet; fehlt sie oder ist sie fehlerhaft, startet kein Test (Rückkehrcode 16). Der Schalter gilt für den ganzen Aufruf und ist **nur auf der Kommandozeile** möglich, nicht als Zeile der Testdatei. | `virtuelle_Geraete/Trommel/trommel.txt` neben dem Skript |
+| `--trommel PFAD` | Trommeldatei, der persistente Speicher des Interpreters: 4096 Zeilen `aaaa: ttttttttttt` (Abschnitt 8.5). Sie wird einmal vor dem ersten Test formal geprüft und zum Lesen und Schreiben geöffnet; fehlt sie oder ist sie fehlerhaft, startet kein Test (Rückkehrcode 16). Der Schalter gilt für den ganzen Aufruf und ist **nur auf der Kommandozeile** möglich, nicht als Zeile der Testdatei. | `Trommel/trommel.txt` neben dem Skript |
 | `--out …` | Mit Dateiendung (z. B. `Protokolle/t1.log`): Protokoll genau in diese Datei (Ordner werden angelegt; nur mit **einem** Test). Ohne Endung: Ordner, Protokoll dann in `ORDNER/<Testname>/protokoll.txt`. | `Test-Protokolle/` im Skript-Ordner |
 | `--leser1 PFAD`, `--leser2 PFAD` | Lochstreifen (Datei oder Verzeichnis) für Leser 1 (Kanal K1) bzw. 2 (K2); alternativ als Zeile `--leser1 PFAD` bzw. `--leser2 PFAD` in der Testdatei (Abschnitt 6, der Schalter hat Vorrang) | nicht angegeben → keine Eingabe auf K1/K2 möglich |
 | `--stanzer1 PFAD` | Ausgabedatei/-verzeichnis des Stanzers 1 (Kanal K1); alternativ als Zeile `--stanzer1 PFAD` in der Testdatei (Abschnitt 6, der Schalter hat Vorrang) | nicht angegeben → keine Ausgabe auf K1 möglich (auch nicht am Terminal) |
@@ -152,7 +152,7 @@ endet mit Rückkehrcode 0:
 
 ```
 $ python3 c8205_interp.py --version
-c8205_interp.py 0.03-001
+c8205_interp.py 0.95-001
 ```
 
 Die Nummer hat die Form `y.xx-zzz` (Hauptversion, Unterversion, Build); Aufbau und Regeln stehen in
@@ -186,7 +186,7 @@ und reicht **alle weiteren Argumente unverändert an den Interpreter weiter**. D
 Abschnitt 5.1 über den Wrapper verfügbar, z. B.:
 
 ```
-./c8205_interpreter.sh Tests/x.txt --leser1 virtuelle_Geraete/Leser1
+./c8205_interpreter.sh Tests/x.txt --leser1 Test-virtuelleGeraete/Leser1
 ./c8205_interpreter.sh Tests/x.txt --leser1 band5.txt --knotentest
 ```
 
@@ -200,12 +200,12 @@ Regeln:
 - Der Rückkehrcode des Interpreters wird vom Wrapper unverändert weitergegeben.
 - Schalter mit eigenem Wertargument (`--out`, `--stanzer1`, `--sw-ausgabe`, `--pruefe-stanzer1`, `--pruefe-sw-ausgabe` u. a.) erkennt der
   Linux-Wrapper; der Wert gilt nie als Testdatei. Beispiel:
-  `./c8205_interpreter.sh --NO-TERMOUT --stanzer1 virtuelle_Geraete/Stanzer1/ x.test --pruefe-stanzer1 x-stanzer-ausgabe.txt`
+  `./c8205_interpreter.sh --NO-TERMOUT --stanzer1 Test-virtuelleGeraete/Stanzer1/ x.test --pruefe-stanzer1 x-stanzer-ausgabe.txt`
 - **Windows (`.bat`):** Werte mit Gleichheitszeichen müssen in Anführungszeichen stehen, weil die Eingabeaufforderung
   `=` als Trennzeichen behandelt: `c8205_interpreter.bat Tests\x.txt --k0 "datei=band\k0"`. Pfade mit Leerzeichen
   ebenfalls in Anführungszeichen setzen.
 - Es wird weiterhin **eine** Testdatei je Aufruf verarbeitet (das Protokoll heißt nach dieser Datei).
-- **Trommel:** Der Wrapper übergibt `--trommel` nicht; es gilt die Vorgabe `virtuelle_Geraete/Trommel/trommel.txt` neben dem Skript
+- **Trommel:** Der Wrapper übergibt `--trommel` nicht; es gilt die Vorgabe `Trommel/trommel.txt` neben dem Skript
   (unabhängig vom aktuellen Ordner). Eine andere Trommeldatei steht wie jeder weitere Schalter hinter der Testdatei:
   `./c8205_interpreter.sh Tests/x.txt --trommel andere/trommel.txt`. Der Wrapper setzt die Trommel **nicht** zurück; jeder Aufruf
   beginnt mit dem Trommelstand, den der vorige Lauf hinterlassen hat (Abschnitt 8.5).
@@ -240,7 +240,7 @@ Ein Wert besteht aus 4 Oktalstellen „beliebig“ und 7 Stellen Befehl (4 Adres
 | `#AC=ooooooooooo` | Anfangswert des Akkumulators, 11 Oktalziffern (Ergänzung 08.10.2026; höchstens einmal). Wird vor der Tastenfolge gesetzt. Fehlt die Marke, startet der AC mit 0. |
 | `#BZ=oooo` | Anfangswert des Befehlszählers, 4 Oktalziffern (Ergänzung 08.10.2026; höchstens einmal). Wird vor der ersten Taste und vor jedem Befehl gesetzt (Anfangszustand); eine danach abgearbeitete Taste `G` setzt BZ nicht (sie stellt BR auf 0000 000); BZ := 0 entsteht erst durch die Ausführung dieses Sprungs (`R` oder `E` ohne `M`). Fehlt die Marke, startet BZ mit 0. |
 | `#INTERRUPT H <Tasten>` | Unterbricht den sequentiellen Programmlauf (BZ := BZ+1) nach dem Befehl der davorstehenden Zeile und bedient die angegebene Tastenfolge (Ergänzung 08.10.2026; nur ZWISCHEN zwei Befehlszeilen, höchstens einmal je Befehlszeile, mehrfach in der Datei zulässig). Erste Taste `H`; endet die Folge mit `R` oder `ST`, läuft das Programm weiter, sonst endet der Test im Halt. Einzelheiten: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2d. |
-| `#TROMMEL=LEER` / `#TROMMEL=MP` | Setzt die Trommel VOR dem Test neu (Ergänzung 13.10.2026): `LEER` = alle 4096 Zellen 0; `MP` = Abbild des Minimalprogramms aus `virtuelle_Geraete/Trommelvorlagen/MP.txt` (Format wie die Trommeldatei; fehlt die Vorlage, startet der Test nicht, Rückkehrcode 16). Danach überlagern die Zeilen von `Trommeldatei:`. Höchstens einmal; nicht im Abschnitt `Prüfungen:`; ohne die Marke bleibt die Trommel unverändert. Steht sie im ersten Test des Aufrufs und fehlt die Trommeldatei oder ist sie fehlerhaft, wird diese neu angelegt (Abschnitt 8.5; Durchführung, Abschnitt 2g). |
+| `#TROMMEL=LEER` / `#TROMMEL=MP` | Setzt die Trommel VOR dem Test neu (Ergänzung 13.10.2026): `LEER` = alle 4096 Zellen 0; `MP` = Abbild des Minimalprogramms aus `Trommel/Trommelvorlagen/MP.txt` (Format wie die Trommeldatei; fehlt die Vorlage, startet der Test nicht, Rückkehrcode 16). Danach überlagern die Zeilen von `Trommeldatei:`. Höchstens einmal; nicht im Abschnitt `Prüfungen:`; ohne die Marke bleibt die Trommel unverändert. Steht sie im ersten Test des Aufrufs und fehlt die Trommeldatei oder ist sie fehlerhaft, wird diese neu angelegt (Abschnitt 8.5; Durchführung, Abschnitt 2g). |
 | `#STARTE n` | Makro für die Tastenfolge `H G M+ E … E M- R` (n Anschläge `E`, Ansprung des Speicherplatzes n; Ergänzung 09.10.2026). `n`: Oktalzahl mit 1 bis 4 Ziffern, nicht leer; höchstens einmal; ersetzt die Tastenfolge (daneben keine Tasten). Einzelheiten: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2e. |
 
 Beide Marken `#AC=` und `#BZ=` stehen im Abschnitt `Trommeldatei:` (vor der Tastenfolge), sind voneinander unabhängig und einzeln oder zusammen zulässig. Ein ungültiger Wert (falsche Stellenzahl, Ziffer 8 oder 9, leerer Wert) oder eine doppelte Marke ist ein Fehler der formalen Prüfung (Rückkehrcode 16, der Test startet nicht). Einzelheiten und Beispiel: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2.
@@ -455,7 +455,7 @@ erscheinen nicht. Ohne den Schalter gibt es kein Echo; der Standardfall bleibt �
 
 ### 8.5 Die Trommel (persistente Datei, Änderung 07.10.2026)
 
-Die Trommel ist **keine Datei je Test**, sondern eine dauerhafte Textdatei (Vorgabe `virtuelle_Geraete/Trommel/trommel.txt`, Schalter `--trommel`).
+Die Trommel ist **keine Datei je Test**, sondern eine dauerhafte Textdatei (Vorgabe `Trommel/trommel.txt`, Schalter `--trommel`).
 Sie hält ihren Inhalt über Tests und Aufrufe hinweg. Der Abschnitt `Trommeldatei:` einer Testdatei (Abschnitt 6) ist davon zu unterscheiden:
 Er nennt nur die Zellen, die der Test vor dem Start auf die Trommel schreibt.
 
@@ -476,10 +476,10 @@ Er nennt nur die Zellen, die der Test vor dem Start auf die Trommel schreibt.
   Bei hartem Abbruch des Prozesses (z. B. `kill`) kann die zuletzt geschriebene Zelle in der Datei fehlen.
 - **Nach dem Test:** Der Endzustand der Trommel bleibt stehen und ist der Anfangszustand des nächsten Tests, auch wenn ein Aufruf mehrere Testdateien nacheinander
   abarbeitet. Dasselbe gilt für `#SPEI`, `#SPUR` und die Speicherprüfzeilen in `Prüfungen:`: Sie lesen den aktuellen Trommelstand, auch mit Resten früherer Tests.
-- **Leere Trommel erzeugen und zurücksetzen:** `python3 testscripte/erzeuge_leere_trommel.py [--aus PFAD]` schreibt alle 4096 Zeilen mit `00000000000` (Vorgabe: `virtuelle_Geraete/Trommel/trommel.txt`
+- **Leere Trommel erzeugen und zurücksetzen:** `python3 testscripte/erzeuge_leere_trommel.py [--aus PFAD]` schreibt alle 4096 Zeilen mit `00000000000` (Vorgabe: `Trommel/trommel.txt`
   neben dem Skript; fehlende Ordner werden angelegt; eine vorhandene Datei wird ohne Rückfrage überschrieben). Der Interpreter setzt die Trommel von sich aus **nie** zurück und legt die
   Datei **nie** an. Einzige Ausnahme ist die Testmarke `#TROMMEL=LEER` bzw. `#TROMMEL=MP` (nächster Punkt).
-- **Testmarke `#TROMMEL=LEER` / `#TROMMEL=MP` (Ergänzung 13.10.2026):** Vor dem Test wird die Trommel komplett neu gesetzt und die Datei vollständig neu geschrieben: `LEER` = alle Zellen 0, `MP` = Abbild aus `virtuelle_Geraete/Trommelvorlagen/MP.txt`. Danach überlagern die Zeilen des Abschnitts `Trommeldatei:` (Reihenfolge zwingend). Fehlt die Marke, bleibt die Trommel unverändert. Steht die Marke im **ersten** Test eines Aufrufs und fehlt die Trommeldatei oder ist sie formal fehlerhaft, legt der Interpreter sie neu an (alle Zellen 0, fehlende Ordner werden angelegt) und meldet das in einer Hinweiszeile, statt mit Rückkehrcode 16 zu enden. Bildschirm: `Trommel: vor dem Test geleert (#TROMMEL=LEER)`; Protokoll: Zeile bei den Ausgangsbedingungen. Der bisherige Inhalt geht ohne Rückfrage verloren; für Tests, die einen Arbeitsstand nicht zerstören dürfen, eine eigene Datei mit `--trommel` verwenden. Einzelheiten: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2g.
+- **Testmarke `#TROMMEL=LEER` / `#TROMMEL=MP` (Ergänzung 13.10.2026):** Vor dem Test wird die Trommel komplett neu gesetzt und die Datei vollständig neu geschrieben: `LEER` = alle Zellen 0, `MP` = Abbild aus `Trommel/Trommelvorlagen/MP.txt`. Danach überlagern die Zeilen des Abschnitts `Trommeldatei:` (Reihenfolge zwingend). Fehlt die Marke, bleibt die Trommel unverändert. Steht die Marke im **ersten** Test eines Aufrufs und fehlt die Trommeldatei oder ist sie formal fehlerhaft, legt der Interpreter sie neu an (alle Zellen 0, fehlende Ordner werden angelegt) und meldet das in einer Hinweiszeile, statt mit Rückkehrcode 16 zu enden. Bildschirm: `Trommel: vor dem Test geleert (#TROMMEL=LEER)`; Protokoll: Zeile bei den Ausgangsbedingungen. Der bisherige Inhalt geht ohne Rückfrage verloren; für Tests, die einen Arbeitsstand nicht zerstören dürfen, eine eigene Datei mit `--trommel` verwenden. Einzelheiten: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2g.
 - **Folge für Tests und Sollwerte:** Ein Lauf ist nur dann unabhängig von seiner Vorgeschichte, wenn der Test alle Zellen, die er liest oder prüft, selbst nennt oder wenn vorher eine leere Trommel
   erzeugt wird. Beispiel: Der Test `bsp_seite_42_025-sw-ausgabe` erwartet in `Prüfungen:` die Zellen `2024` bis `2027` mit Wert 0, belegt sie aber nicht selbst. Auf leerer Trommel ist er
   `Test wahr`; läuft er nach `bsp_seite_40` (das `2024` bis `2026` mit Daten belegt), ist er `Test falsch`. Für Regressionsläufe (13.5) und für den Vergleich mit dem Claude-Interpreter
@@ -628,7 +628,7 @@ Fehler zu Geräten erscheinen **in Rot** auf dem Terminal (Standardfehlerausgabe
 - ANWEISUNG-029 stellt nach dem Sichern der Rückkehradresse die Operation auf A=0 (unbedingter Sprung) um, wie in ANWEISUNG-013 beschrieben (Ergänzung 02.10.2026). Vorher blieb das Sprungziel bei Sprüngen mit Rückkehrabsicht (024 bis 027, 124 bis 127) ungenutzt, weil Phase I danach die Folgeadresse BZ holte.
 - Stopp-Zustände (Ergänzung 02.10.2026): ANWEISUNG-030 (Knoten 45) setzt nur US. Der bedingte Stopp bei gesetztem Schalter BS läuft über den neuen Knoten 79 mit ANWEISUNG-045 (Flag BS:=1). Der Halt wegen Überlauf (Knoten 46, 58, 66) verwendet die neue ANWEISUNG-046 und setzt weder US noch BS; angezeigt wird nur FÜ. Vorher war das in `c8205_interp.py` über `came_from` innerhalb von ANWEISUNG-030 unterschieden, in der Knotentabelle aber nicht abgebildet.
 - Ausgabe-Halt (Ergänzung 04.10.2026, Abgleich mit der Originaldokumentation 4.3.2.5): neue Knoten 80 (Test ANWEISUNG-020, Überlauf vorhanden) und 81 (Halt wegen Überlauf, ANWEISUNG-046) hinter Knoten 23, vorher führte Knoten 23 direkt zu Phase I. Schreibwerk-Ausgabe über sechs Bits, Stub bei fehlendem Ausgabegerät (Abschnitt 8).
-- Lochbandeingabe (Ergänzung 04.10.2026, Abgleich mit der Originaldokumentation 4.3.2.2, Abb. 16): „Irrung Zeichen“ wird übersprungen (kein FE, kein Stopp, nicht ins AR); vorher löste es FE und Halt aus. Abschnitt 8.2. Tests `lb-001`, `lb-002`, `lb-003` mit den Streifendateien `lb-001_…`, `lb-002_…`, `lb-003_…` in `virtuelle_Geraete/Leser1/` (Aufruf z. B. `--leser1 virtuelle_Geraete/Leser1/lb-001_irrung_zeichen_dann_1.txt`).
+- Lochbandeingabe (Ergänzung 04.10.2026, Abgleich mit der Originaldokumentation 4.3.2.2, Abb. 16): „Irrung Zeichen“ wird übersprungen (kein FE, kein Stopp, nicht ins AR); vorher löste es FE und Halt aus. Abschnitt 8.2. Tests `lb-001`, `lb-002`, `lb-003` mit den Streifendateien `lb-001_…`, `lb-002_…`, `lb-003_…` in `Test-virtuelleGeraete/Leser1/` (Aufruf z. B. `--leser1 Test-virtuelleGeraete/Leser1/lb-001_irrung_zeichen_dann_1.txt`).
 - Eingabe-Lesebefehl (Ergänzung 04.10.2026 (2), Abgleich mit dem Kleinen Eingabeprogramm, Kodetabellen 1.8): Bei Ziffern und Buchstaben addiert der umgestellte Lesebefehl den **Inhalt der Zelle** `a ODER Eingabeadresse` zum AC, nicht die Eingabeadresse. Abschnitte 8.2 und 13.2 angepasst. Die Tests `lb-001` und `lb-002` enthalten dafür die Konstante `0001: 00000000001` (Sollwert AC=…1 bleibt).
 - Tasten nach Stopp (Ergänzung 04.10.2026 (3), Abgleich mit der Originaldokumentation 4.3.2.3, Abb. 19): Nach `M` (ohne E) beginnt der Ablauf bei einem Sprung mit Rückkehrabsicht in BR nicht mehr bei Knoten 19, sondern bei Knoten 54. Vorher lief über Knoten 40 die Sprungoperation `⟨AC⟩ := Vr⟨BZ⟩ ∨ ⟨AC⟩` ab, obwohl Phase III schon abgelaufen ist (Original: nur Resultatbehandlung). Bedienpult-Dokument, Abschnitt „Fortsetzung nach einem Stopp“, beschreibt `ST`, `Ü` (Operation 26Z nach einem Stop-Befehl) und `M`. Tests `tk-001` bis `tk-008` (Tastenkombinationen, Wirkung auf BZ und AC).
 
@@ -715,7 +715,7 @@ Starten Sie den Test:
 $ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL Tests/0015-030.txt
 ```
 
-Im Fenster „SW Ausgabe“ steht `Jahr 1972`. Das Terminal zeigt wie zuvor die Zeilen des Interpreters (ohne `--sw-ausgabe` auch die Dunkelgelb-Ausgabe). Mit `--sw-ausgabe virtuelle_Geraete/SW-Ausgabe` geht dieselbe Ausgabe zusätzlich in die Datei `sw-ausgabe.txt`.
+Im Fenster „SW Ausgabe“ steht `Jahr 1972`. Das Terminal zeigt wie zuvor die Zeilen des Interpreters (ohne `--sw-ausgabe` auch die Dunkelgelb-Ausgabe). Mit `--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe` geht dieselbe Ausgabe zusätzlich in die Datei `sw-ausgabe.txt`.
 
 ### 13.2 Ziffer vom Lochstreifen lesen
 

@@ -536,7 +536,7 @@ class StartOhneAbspielprogramm(unittest.TestCase):
             os.mkdir(os.path.join(t, 'stub')); open(os.path.join(t, 'stub', 'tkinter.py'), 'w').close()
             os.mkdir(os.path.join(t, 'leer'))
             tr = os.path.join(t, 'trommel.txt')
-            shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'), tr)
+            shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), tr)
             env = dict(os.environ, PYTHONPATH=os.path.join(t, 'stub'), PATH=os.path.join(t, 'leer'), C8205_FENSTERLAGE='aus', PYTHONDONTWRITEBYTECODE='1')
             p = subprocess.run([sys.executable, os.path.join(PROJ, 'c8205_grafik.py'), '--trommel', tr, *args], env=env, cwd=t,
                                capture_output=True, text=True, timeout=60)

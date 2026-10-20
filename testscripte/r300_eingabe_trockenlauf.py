@@ -40,7 +40,7 @@ def main():
     os.chdir(tmp)
     try:
         pfad = os.path.join(tmp, 'trommel.txt')
-        shutil.copy(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel_r300_eingabe.txt'), pfad)
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel_r300_eingabe.txt'), pfad)
         tr = GrafikTrommel(pfad)
         r = G.Rechner(G.lade_graph(os.path.join(PROJ, 'markdown-dateien')), tr, pult_modus=True)
         s = PultSteuerung(PULT, r, hochlauf_s=0.01, auslauf_s=0.01, tastenzeit_s=0.0)

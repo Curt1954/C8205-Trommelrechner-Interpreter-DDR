@@ -2,8 +2,8 @@ Trommeldatei:
 #DOK-0001 BIS-Test Adresseneingabe (Ansprung 0316); Voraussetzung: Minimalprogramm auf der Trommel (c8205_bis_test.sh); Eingabe 12345670.
 #PROT STUFE=2
 #STARTE 1000
---leser1 virtuelle_Geraete/Leser1/pj2-bis_adresseneingabe_8stellig.txt
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--leser1 Test-virtuelleGeraete/Leser1/pj2-bis_adresseneingabe_8stellig.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 
 # Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0337 werden nicht belegt)
 1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen

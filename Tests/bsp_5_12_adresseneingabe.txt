@@ -6,7 +6,7 @@ Trommeldatei:
 #SPEI-0001 3040-3047
 #SPEI-0001 3052-3052
 #SPEI-0001 3073-3073
---leser1 virtuelle_Geraete/Leser1/bsp_5_12_lochstreifen.txt
+--leser1 Test-virtuelleGeraete/Leser1/bsp_5_12_lochstreifen.txt
 #PROT STUFE=2
 
 # Startstück (nicht Teil des Buchprogramms): Anwahl K1 (Leser 1), dann Sprung zum Programmanfang 3052

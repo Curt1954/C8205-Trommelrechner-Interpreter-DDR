@@ -1,19 +1,20 @@
 # C8205-Lochstreifen-Hilfsprogramme
 
-Version: 0.03-005
+Version: 0.95-001
 
-Dokumentversion s. oben; **Programmversion 1.9** für Anzeige und Eingabe (Stand 10.10.2026), **Programmversion 1.1** für die Umwandlung (Stand 11.10.2026). Die Programme tragen ihre eigene Versionsnummer (`--version`), unabhängig vom Schema `y.xx-zzz` der Dateien (`C8205-Versionierung.md`, Abschnitt 2).
+Dokumentversion s. oben; **Programmversion 1.9** für Anzeige und Eingabe (Stand 10.10.2026), **Programmversion 1.2** für die Umwandlung (Stand 20.10.2026). Die Programme tragen ihre eigene Versionsnummer (`--version`), unabhängig vom Schema `y.xx-zzz` der Dateien (`C8205-Versionierung.md`, Abschnitt 2).
 
 | Programm | Datei | Version |
 |---|---|---|
 | Lochstreifen ausschreiben (Anzeige) | `c8205_lochstreifen_anzeige.py` | 1.9 |
 | Lochstreifen erzeugen (Eingabe) | `c8205_lochstreifen_eingabe.py` | 1.9 |
-| Textdatei in Lochstreifen umwandeln und umgekehrt (Umwandlung) | `c8205_lochstreifen_umwandlung.py` | 1.1 |
+| Textdatei in Lochstreifen umwandeln und umgekehrt (Umwandlung) | `c8205_lochstreifen_umwandlung.py` | 1.2 |
 
 Die Versionsnummer lässt sich mit `--version` abfragen.
 
 **Änderungen**
 
+- **Umwandlung 1.2**: Die Schalter heißen jetzt `--LS-LESER` und `--LS-STANZER` (bisher `--LESER` und `--STANZER`), wie bei Anzeige und Eingabe. Die früheren Schreibweisen werden weiterhin angenommen. Die Fehlermeldungen nennen die neuen Namen (Abschnitte 3.4 und 4.3).
 - **Umwandlung 1.1**: Neue Schalter `--IN-BIN` (Vorgabe) und `--IN-TXT` wählen die Richtung. `--IN-TXT` wandelt einen binär codierten Lochstreifen in eine Textdatei zurück (Abschnitte 3.4 und 4.3).
 - **Umwandlung 1.0**: Erste Fassung des dritten Hilfsprogramms (Abschnitte 3.4 und 4.3). Wandelt eine Textdatei ohne Fenster und ohne Tastatureingabe in einen virtuellen Lochstreifen um; unter Linux und Windows lauffähig, nur Python-Standardbibliothek (kein Tkinter).
 
@@ -97,18 +98,18 @@ Nur die **Eingabe** kann außerdem einfügen: Strg+V oder Umschalt+Einfg stanzt 
 
 ### 3.4 Umwandlung (`c8205_lochstreifen_umwandlung.py`)
 
-Die Umwandlung arbeitet in zwei Richtungen, gewählt mit `--IN-BIN` (Vorgabe) oder `--IN-TXT`. Beide Schalter zusammen sind ein Fehler (Rückgabewert 2). `--LESER` ist immer die **Eingabe**, `--STANZER` immer die **Ausgabe**; was darin liegt, hängt von der Richtung ab:
+Die Umwandlung arbeitet in zwei Richtungen, gewählt mit `--IN-BIN` (Vorgabe) oder `--IN-TXT`. Beide Schalter zusammen sind ein Fehler (Rückgabewert 2). `--LS-LESER` ist immer die **Eingabe**, `--LS-STANZER` immer die **Ausgabe**; was darin liegt, hängt von der Richtung ab:
 
 | | `--IN-BIN` (Vorgabe) | `--IN-TXT` |
 |---|---|---|
 | Richtung | Text → binär codierter R300-Lochstreifen | binär codierter R300-Lochstreifen → Text |
-| `--LESER` | Textdatei | Lochstreifen |
-| `--STANZER` | Lochstreifen | Textdatei |
+| `--LS-LESER` | Textdatei | Lochstreifen |
+| `--LS-STANZER` | Lochstreifen | Textdatei |
 
 Die Punkte 1 bis 8 beschreiben `--IN-BIN`; die Rückrichtung steht danach unter „`--IN-TXT`“.
 
-1. **Eingang (`--LESER`)**: eine Textdatei. Ist `--LESER` ein Verzeichnis, werden alle Dateien ohne führenden Punkt in Namensreihenfolge hintereinander umgewandelt (wie bei der Anzeige und beim Leser des Interpreters; die Zeichenlage läuft über die Dateigrenze weiter). Die Datei wird als UTF-8 gelesen (eine UTF-8-Markierung am Dateianfang, BOM, wird entfernt).
-2. **Ausgang (`--STANZER`)**: der zu erzeugende Lochstreifen, Datei oder Verzeichnis (dann `VERZ/stanzer-ausgabe.txt`, wie beim Stanzer des Interpreters). Eine vorhandene Datei wird überschrieben, fehlende Ordner werden angelegt. Liegt die Ausgabedatei im `--LESER`-Verzeichnis, wird sie nicht als Eingabe gelesen; sind beide dieselbe Datei, bricht das Programm ab.
+1. **Eingang (`--LS-LESER`)**: eine Textdatei. Ist `--LS-LESER` ein Verzeichnis, werden alle Dateien ohne führenden Punkt in Namensreihenfolge hintereinander umgewandelt (wie bei der Anzeige und beim Leser des Interpreters; die Zeichenlage läuft über die Dateigrenze weiter). Die Datei wird als UTF-8 gelesen (eine UTF-8-Markierung am Dateianfang, BOM, wird entfernt).
+2. **Ausgang (`--LS-STANZER`)**: der zu erzeugende Lochstreifen, Datei oder Verzeichnis (dann `VERZ/stanzer-ausgabe.txt`, wie beim Stanzer des Interpreters). Eine vorhandene Datei wird überschrieben, fehlende Ordner werden angelegt. Liegt die Ausgabedatei im `--LS-LESER`-Verzeichnis, wird sie nicht als Eingabe gelesen; sind beide dieselbe Datei, bricht das Programm ab.
 3. **Beide Angaben sind Pflicht.** Fehlt eine, meldet das Programm den Fehler und beendet sich mit Rückgabewert 2; es wird nichts geschrieben.
 4. **Nur R300-Zeichen**: Verarbeitet werden nur Zeichen der Kodetabelle 1 (Spalte „Ausgabe-Adresse“, siehe `C8205-Interpreter-Kodetabellen.md`). Jedes andere Zeichen (z. B. `ä`, `@`, `{`, `$`, Steuerzeichen) wird **übersprungen**, also nicht gestanzt und nicht ersetzt; das Programm meldet auf der Fehlerausgabe, welche Zeichen es waren, wie oft und wo zuerst (Datei, Zeile). Der Rückgabewert bleibt dann 0.
 5. **Zeichenlage**: Im Text steht keine Lage. Sie folgt aus dem Zeichen. Klbuch (KB): Ziffern `0`–`9`, Kleinbuchstaben `a`–`z` (ohne `ä ö ü ß`) sowie `% : + / , . -` und der Gravis (Akzent `` ` ``). Gbuch (GB): Großbuchstaben `A`–`Z` sowie `< " ≈ [ > ' ≋ ~ ] # * ( = ; ) ? ! △`. Das Programm stanzt `Um. KB` bzw. `Um. GB` selbst, sobald ein Zeichen die andere Lage braucht. Die Anfangslage ist KB, am Anfang wird also nur vor einem Gbuch-Zeichen `Um. GB` gestanzt (wie bei der Eingabe). Beispiel: `Hallo 1` ergibt `Um. GB`, `H`, `Um. KB`, `a`, `l`, `l`, `o`, Leertaste, `1`.
@@ -118,7 +119,7 @@ Die Punkte 1 bis 8 beschreiben `--IN-BIN`; die Rückrichtung steht danach unter 
 
 **`--IN-TXT` (Lochstreifen → Text)** arbeitet wie die Anzeige, schreibt aber in eine Textdatei (UTF-8, Zeilenende `\n`):
 
-- `--LESER` ist ein Lochstreifen (Datei oder Verzeichnis, Format nach Abschnitt 2); die Zeichenlage läuft über Dateigrenzen weiter, Anfangslage KB.
+- `--LS-LESER` ist ein Lochstreifen (Datei oder Verzeichnis, Format nach Abschnitt 2); die Zeichenlage läuft über Dateigrenzen weiter, Anfangslage KB.
 - `Um. KB`/`Um. GB` erscheinen nicht, sie schalten nur die Lage. `Irrung Zeichen` löscht das letzte Zeichen der aktuellen Zeile, `Irrung Satz` die ganze bisherige Zeile; ein schon abgeschlossenes Zeilenende wird nie zurückgenommen.
 - SatzMarke/WRZL ergibt ein Zeilenende, Tabulator einen Tabulator, Leertaste/ZR ein Leerzeichen; die Zeichen `≈ ≋ △` erscheinen als Unicode-Zeichen.
 - Zeilen ohne Datenlochung (`00000000`, Vorspann) werden stillschweigend übersprungen. Ungültige Zeilen (keine 8 Zeichen `0`/`1`), Zeilen mit gerader Lochzahl (Paritätsfehler, außer `Irrung Zeichen`), unbekannte Lochungen und `Transport (Relikt)` werden übersprungen und als Warnung gemeldet (höchstens 10 einzeln).
@@ -193,35 +194,46 @@ Tasten im Eingabefenster:
 
 Tippbare Sonderzeichen: Klbuch-Lage `% / + : . , -`, der Gravis `` ` `` sowie Ziffern; Gbuch-Lage `< " [ > ' ~ ] # * ( = ; ) ? !` und die Glyphen `≈ ≋ △`.
 
+**Eingabe beenden und speichern.** Es gibt kein „Speichern“ und keine eigene Beenden-Taste: Jedes gestanzte Zeichen wird **sofort** in die Lochstreifendatei geschrieben und gleich übergeben, die Datei ist also zu jedem Zeitpunkt auf dem Stand des Fensters. Beendet wird so:
+
+1. **Fenstermodus (Vorgabe):** Das Fenster mit **X** schließen. Dabei wird die Datei ordentlich geschlossen, im Terminal erscheint `Lochstreifen: <Pfad>`. Das Programm endet erst mit dem Schließen des Fensters.
+2. **Mit `--text`:** Ende mit **Strg+D** (Windows: **Strg+Z**, dann Enter). Danach wird die Datei geschlossen und der Pfad ausgegeben.
+3. Wurde das Programm im Terminal gestartet und lässt sich nicht regulär beenden, bricht **Strg+C** im Terminal es ab; die bis dahin gestanzten Zeilen stehen bereits in der Datei.
+
+Vor dem Beenden beachten:
+
+- Soll der Streifen mit einem Zeilenende (SatzMarke/WRZL) enden, vorher **Enter** drücken; ein Zeilenende wird nur auf Tastendruck gestanzt.
+- Die Datei wird beim **Start** neu angelegt: eine vorhandene Datei gleichen Namens wird überschrieben. Einen fertigen Streifen daher nicht erneut mit demselben `--LS-STANZER`-Pfad starten, sondern vorher sichern oder einen anderen Pfad wählen.
+
 ### 4.3 Umwandlung
 
 ```
-python3 c8205_lochstreifen_umwandlung.py --STANZER PFAD --LESER PFAD [--IN-BIN | --IN-TXT] [--version]
+python3 c8205_lochstreifen_umwandlung.py --LS-STANZER PFAD --LS-LESER PFAD [--IN-BIN | --IN-TXT] [--version]
 ```
 
 | Option | Bedeutung |
 |---|---|
-| `--STANZER PFAD` | **Pflicht.** Ausgabe: bei `--IN-BIN` der zu erzeugende Lochstreifen, bei `--IN-TXT` die zu erzeugende Textdatei. Datei, oder Verzeichnis (bzw. Pfad mit `/` am Ende): dann `VERZ/stanzer-ausgabe.txt` |
-| `--LESER PFAD` | **Pflicht.** Eingabe: bei `--IN-BIN` die Textdatei, bei `--IN-TXT` der Lochstreifen (jeweils auch ein Verzeichnis mit Dateien) |
+| `--LS-STANZER PFAD` | **Pflicht.** Ausgabe: bei `--IN-BIN` der zu erzeugende Lochstreifen, bei `--IN-TXT` die zu erzeugende Textdatei. Datei, oder Verzeichnis (bzw. Pfad mit `/` am Ende): dann `VERZ/stanzer-ausgabe.txt` |
+| `--LS-LESER PFAD` | **Pflicht.** Eingabe: bei `--IN-BIN` die Textdatei, bei `--IN-TXT` der Lochstreifen (jeweils auch ein Verzeichnis mit Dateien) |
 | `--IN-BIN` | Text → binär codierter R300-Lochstreifen. **Vorgabe**, darf entfallen |
 | `--IN-TXT` | Umkehrung: binär codierter R300-Lochstreifen → Text. Nicht zusammen mit `--IN-BIN` |
 | `--version` | Versionsnummer ausgeben |
 | `-h`, `--help` | Hilfe ausgeben |
 
-`--STANZER` und `--LESER` müssen **beide** angegeben werden. Die Schreibweise mit Kleinbuchstaben (`--stanzer`, `--leser`, `--in-bin`, `--in-txt`) wird ebenfalls angenommen; Abkürzungen der Optionen nicht.
+`--LS-STANZER` und `--LS-LESER` müssen **beide** angegeben werden. Die Schreibweise mit Kleinbuchstaben (`--ls-stanzer`, `--ls-leser`, `--in-bin`, `--in-txt`) wird ebenfalls angenommen, ebenso die früheren Namen `--LESER`/`--STANZER` (und `--leser`/`--stanzer`); Abkürzungen der Optionen nicht.
 
 Beispiele:
 
 ```
-python3 c8205_lochstreifen_umwandlung.py --STANZER band.txt --LESER programm_text.txt
-python3 c8205_lochstreifen_umwandlung.py --STANZER virtuelle_Geraete/Leser1/ --LESER hallo.txt
-python3 c8205_lochstreifen_umwandlung.py --IN-TXT --LESER band.txt --STANZER band_klartext.txt
+python3 c8205_lochstreifen_umwandlung.py --LS-STANZER band.txt --LS-LESER programm_text.txt
+python3 c8205_lochstreifen_umwandlung.py --LS-STANZER virtuelle_Geraete/Leser1/ --LS-LESER hallo.txt
+python3 c8205_lochstreifen_umwandlung.py --IN-TXT --LS-LESER band.txt --LS-STANZER band_klartext.txt
 ```
 
 Unter Windows ggf. `py` oder `python` statt `python3` verwenden:
 
 ```
-py c8205_lochstreifen_umwandlung.py --STANZER band.txt --LESER programm_text.txt
+py c8205_lochstreifen_umwandlung.py --LS-STANZER band.txt --LS-LESER programm_text.txt
 ```
 
 Beispiel: Die Textdatei enthält die Zeichen `a1 X` und einen Zeilenumbruch. Das Programm schreibt (Erklärung jeweils rechts, sie steht nicht in der Datei):
@@ -237,14 +249,15 @@ Beispiel: Die Textdatei enthält die Zeichen `a1 X` und einen Zeilenumbruch. Das
 
 Mit `--IN-TXT` oder der Anzeige lässt sich das Ergebnis prüfen: `python3 c8205_lochstreifen_anzeige.py --LS-LESER band.txt --text`.
 
-Meldungen: Am Ende steht eine Zusammenfassung auf der Standardausgabe (Zahl der Lochungszeilen, Zeichen, Umschaltungen, übersprungenen Zeichen). Bei `--IN-BIN` werden übersprungene Zeichen und eine leere Ausgabe als `Warnung:` auf der Fehlerausgabe gemeldet (höchstens 10 verschiedene Zeichen einzeln), bei `--IN-TXT` übersprungene Lochungszeilen. Rückgabewert 0 = in Ordnung (auch mit Warnungen), 2 = Aufruf-, Lese- oder Schreibfehler (fehlende Option, `--LESER` nicht gefunden, gleiche Datei für Ein- und Ausgabe, Schreibfehler).
+Meldungen: Am Ende steht eine Zusammenfassung auf der Standardausgabe (Zahl der Lochungszeilen, Zeichen, Umschaltungen, übersprungenen Zeichen). Bei `--IN-BIN` werden übersprungene Zeichen und eine leere Ausgabe als `Warnung:` auf der Fehlerausgabe gemeldet (höchstens 10 verschiedene Zeichen einzeln), bei `--IN-TXT` übersprungene Lochungszeilen. Rückgabewert 0 = in Ordnung (auch mit Warnungen), 2 = Aufruf-, Lese- oder Schreibfehler (fehlende Option, `--LS-LESER` nicht gefunden, gleiche Datei für Ein- und Ausgabe, Schreibfehler).
 
 ### 4.4 Typischer Ablauf
 
 1. Programm mit dem Interpreter ausführen, der über `--stanzer1 band.txt` einen Lochstreifen schreibt.
 2. Mit der Anzeige ansehen: `--LS-LESER band.txt`.
 3. Oder mit der Eingabe einen Lochstreifen erzeugen und dem Interpreter mit `--leser1 eingabe.txt` übergeben.
-4. Oder einen fertigen Text mit der Umwandlung in einen Lochstreifen verwandeln (`--LESER text.txt --STANZER band.txt`) und dem Interpreter mit `--leser1 band.txt` übergeben.
+4. Oder einen fertigen Text mit der Umwandlung in einen Lochstreifen verwandeln (`--LS-LESER text.txt --LS-STANZER band.txt`) und dem Interpreter mit `--leser1 band.txt` übergeben.
+5. Ein vollständiges Beispiel (Lochstreifen erzeugen, im TEST-Interpreter ein Programm auf die Trommel laden, danach im GRAFIK-Interpreter ausführen) steht in `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2h.
 
 ## 5. Technische Voraussetzungen (Installation siehe 5a)
 
@@ -312,5 +325,5 @@ Zu prüfen, sobald ein Windows-Rechner verfügbar ist:
 2. Dasselbe mit Strg+C, Strg+Einfg und dem Kontextmenü.
 3. Im Eingabefenster `@`, `{`, `}`, `[`, `]`, `\`, `~`, `|` per AltGr tippen (soweit im R300-Kode vorhanden, sonst Signalton) und prüfen, dass sie nicht als Steuerbefehl wirken.
 4. Bei Problemen mit `--debug` starten und die Ausgabe auswerten; dort steht, ob das Kopieren per `Win32` oder per `Tk` lief.
-5. Umwandlung: `py c8205_lochstreifen_umwandlung.py --STANZER band.txt --LESER text.txt` mit einer Textdatei mit Windows-Zeilenenden (`\r\n`) ausführen und prüfen, dass `band.txt` je Zeilenende genau eine SatzMarke (`10111010`) enthält, keine Leerzeilen und keine Reste von `\r`.
+5. Umwandlung: `py c8205_lochstreifen_umwandlung.py --LS-STANZER band.txt --LS-LESER text.txt` mit einer Textdatei mit Windows-Zeilenenden (`\r\n`) ausführen und prüfen, dass `band.txt` je Zeilenende genau eine SatzMarke (`10111010`) enthält, keine Leerzeilen und keine Reste von `\r`.
 6. Umwandlung `--IN-TXT`: Lochstreifen mit `--IN-BIN` erzeugen und mit `--IN-TXT` zurückwandeln; die Textdatei muss (bis auf `\r`) dem Original entsprechen.

@@ -1231,7 +1231,7 @@ def kap1():
     s.append(P('Der Interpreter führt Programme des Rechners C 8205 interpretativ aus. Er läuft den Knotengraphen des '
                'Befehlsablaufs (Phasen I bis IV) ab und bildet Register, Flags, Trommelspeicher und Peripherie nach. Alle Zeiten '
                '(Wortzeit, Wartezeit auf die Trommel) sind 0; die Trommeldrehung wird nicht nachgebildet. Die Trommel selbst ist '
-               'eine persistente Textdatei (`virtuelle_Geraete/Trommel/trommel.txt`): Ihr Inhalt bleibt über Tests und Aufrufe '
+               'eine persistente Textdatei (`Trommel/trommel.txt`): Ihr Inhalt bleibt über Tests und Aufrufe '
                'hinweg erhalten (Abschnitt 3.7).'))
     s.append(P('Sie benutzen den Interpreter, um'))
     s += bullets(['Testprogramme des C 8205 nachvollziehbar durchzurechnen (auf Wunsch Knoten für Knoten protokolliert),',
@@ -1275,7 +1275,7 @@ def kap2(lab):
         'Verzeichnis `markdown-dateien/` neben `c8205_interp.py` (Vorgabe für `--mdverz`) mit '
         '`C8205-Interpreter-Eingänge_der_Knoten.md` (Knotengraph) und `C8205-Interpreter-Beschreibung_der_Knoten.md` '
         '(Variablentabelle T2). Der Interpreter liest beide bei jedem Start; fehlt eine, endet der Aufruf mit Rückkehrcode 2.',
-        'Die Trommeldatei `virtuelle_Geraete/Trommel/trommel.txt` neben `c8205_interp.py` (Vorgabe für `--trommel`): genau '
+        'Die Trommeldatei `Trommel/trommel.txt` neben `c8205_interp.py` (Vorgabe für `--trommel`): genau '
         '4096 Zeilen, les- und beschreibbar. Der Interpreter legt sie nie selbst an; Abschnitt 2.3 zeigt, wie Sie sie erzeugen.',
         'Optional der Wrapper `c8205_interpreter.sh` (Linux/macOS) bzw. `c8205_interpreter.bat` (Windows), ebenfalls im Ordner '
         'des Skripts.',
@@ -1293,15 +1293,15 @@ def kap2(lab):
   markdown-dateien/        Regelwerk (u. a. Eingänge_der_Knoten.md, Beschreibung_der_Knoten.md)
   Tests/                   Testdateien (.txt)
   Test-Protokolle/         Protokolle (.log), vom Wrapper angelegt
-  virtuelle_Geraete/
-    Trommel/trommel.txt    die Trommel: immer benutzt (4096 Zeilen)
+  Trommel/trommel.txt      die Trommel: immer benutzt (4096 Zeilen)
+  Test-virtuelleGeraete/
     Leser1/ Leser2/ Stanzer1/ SW-Ausgabe/ T-SW-Eingabe/
                            Ablage für virtuelle Geräte (NICHT automatisch benutzt)""")
     s += note('hinweis', 'Die Ordner `Leser1/`, `Leser2/`, `Stanzer1/`, `SW-Ausgabe/` und `T-SW-Eingabe/` unter '
-                         '`virtuelle_Geraete/` werden nicht automatisch benutzt. Sie wirken nur, wenn Sie den Schalter beim Aufruf '
-                         'angeben (auch beim Wrapper: `./c8205_interpreter.sh Tests/x.txt --leser1 virtuelle_Geraete/Leser1`, '
+                         '`Test-virtuelleGeraete/` werden nicht automatisch benutzt. Sie wirken nur, wenn Sie den Schalter beim Aufruf '
+                         'angeben (auch beim Wrapper: `./c8205_interpreter.sh Tests/x.txt --leser1 Test-virtuelleGeraete/Leser1`, '
                          'Abschnitt 4.3) oder wenn die Testdatei den Pfad als Geräte-Zeile selbst mitbringt (Abschnitt 3.6). Die '
-                         'einzige Datei unter `virtuelle_Geraete/`, die der Interpreter immer benutzt, ist `Trommel/trommel.txt`.')
+                         'einzige Datei, die der Interpreter immer benutzt, ist `Trommel/trommel.txt`.')
     s += h2('2.3 Die Trommeldatei erzeugen')
     s.append(P('Der Interpreter braucht bei jedem Aufruf die Trommeldatei, seinen Speicher. Er legt sie nie selbst an und setzt '
                'sie nie zurück. Erzeugen Sie sie einmal und immer dann neu, wenn Sie eine leere Trommel brauchen '
@@ -1309,10 +1309,10 @@ def kap2(lab):
     lab.neu()
     s.append(Spacer(1, 1))
     s += lab.sitzung(['python3 erzeuge_leere_trommel.py',
-                      'wc -l virtuelle_Geraete/Trommel/trommel.txt',
-                      'head -n 3 virtuelle_Geraete/Trommel/trommel.txt',
+                      'wc -l Trommel/trommel.txt',
+                      'head -n 3 Trommel/trommel.txt',
                       'python3 erzeuge_leere_trommel.py --aus trommeln/leer.txt',
-                      'cmp virtuelle_Geraete/Trommel/trommel.txt trommeln/leer.txt && echo gleich'])
+                      'cmp Trommel/trommel.txt trommeln/leer.txt && echo gleich'])
     s.append(P('Das Skript schreibt 4096 Zeilen `aaaa: ttttttttttt` mit dem Wert `00000000000` (Adressen 0000 bis 7777, oktal, '
                'Zeilenende LF) und überschreibt eine vorhandene Datei ohne Rückfrage. Mit `--aus PFAD` entsteht die Datei an '
                'anderer Stelle; fehlende Ordner werden angelegt. Das Skript gibt nichts aus; im Beispiel prüfen `wc` und `head` '
@@ -1326,7 +1326,7 @@ def kap2(lab):
     s += lab.dateien([('Tests/0015-030.txt', T_0015)])
     s.append(P('Starten Sie den Test mit dem Wrapper:'))
     s += lab.sitzung(['./c8205_interpreter.sh Tests/0015-030.txt',
-                      'grep -E "^(0001|7240|7256):" virtuelle_Geraete/Trommel/trommel.txt'], erwarte=[4, None])
+                      'grep -E "^(0001|7240|7256):" Trommel/trommel.txt'], erwarte=[4, None])
     s.append(P('Das Programm hat den Text „Jahr 1972“ ausgegeben (dunkelgelb; die Leerzeile davor ist ein Zeilenumbruch des '
                'Programms) und mit einem unbedingten Stopp gehalten. Die Zeile „Ende: …“ fasst den Endzustand zusammen '
                '(Kapitel 6). Das ausführliche Protokoll liegt in `Test-Protokolle/0015-030.log`. Die Zellen des Trommelabschnitts '
@@ -1582,7 +1582,7 @@ BZ=0004 AC=00000000145 US=1
     # ---- 3.7
     s += h2('3.7 Die Trommel zwischen den Tests')
     s.append(P('Die Trommel ist keine Datei je Test, sondern eine dauerhafte Textdatei (Vorgabe '
-               '`virtuelle_Geraete/Trommel/trommel.txt`, Schalter `--trommel`). Sie hält ihren Inhalt über Tests und Aufrufe '
+               '`Trommel/trommel.txt`, Schalter `--trommel`). Sie hält ihren Inhalt über Tests und Aufrufe '
                'hinweg. Der Trommelabschnitt einer Testdatei ist davon zu unterscheiden: Er nennt nur die Zellen, die der Test '
                'vor dem Start auf die Trommel schreibt.'))
     s += bullets([
@@ -1789,7 +1789,7 @@ python3 c8205_interp.py --version""")
               ['`--trommel PFAD`', 'Die Trommeldatei (4096 Zeilen `aaaa: ttttttttttt`, LF), der persistente Speicher. Sie wird '
                                    'einmal vor dem ersten Test geprüft; ist sie fehlerhaft oder fehlt sie, startet kein Test '
                                    '(Rückkehrcode 16). Nur auf der Kommandozeile, nicht als Zeile der Testdatei. Standardpfad: '
-                                   '`virtuelle_Geraete/Trommel/trommel.txt` neben dem Skript.', 'Standard-Trommel'],
+                                   '`Trommel/trommel.txt` neben dem Skript.', 'Standard-Trommel'],
               ['`--out …`', 'Mit Dateiendung (z. B. `Test-Protokolle/t1.log`): Protokoll genau in diese Datei (Ordner werden '
                             'angelegt; nur mit einem Test). Ohne Endung: Ordner, Protokoll dann in `ORDNER/<Testname>/protokoll.txt`.',
                '`Test-Protokolle/`'],
@@ -1871,7 +1871,7 @@ python3 c8205_interp.py --version""")
 > c8205_interpreter.bat Tests\\0015-030.txt                              # Windows
 
 # mit zusätzlichen Schaltern:
-$ ./c8205_interpreter.sh Tests/x.txt --leser1 virtuelle_Geraete/Leser1
+$ ./c8205_interpreter.sh Tests/x.txt --leser1 Test-virtuelleGeraete/Leser1
 $ ./c8205_interpreter.sh Tests/x.txt --leser1 band5.txt --knotentest
 $ ./c8205_interpreter.sh Tests/x.txt --trommel andere/trommel.txt
 $ ./c8205_interpreter.sh Tests/x.txt --mdverz ./markdown-dateien
@@ -1958,7 +1958,7 @@ def kap5(lab):
                'weiter die Zeilen des Interpreters):'))
     s += L.code("""$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL Tests/0015-030.txt
 $ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --zwischenablage system Tests/0015-030.txt
-$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --sw-ausgabe virtuelle_Geraete/SW-Ausgabe Tests/0015-030.txt""")
+$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe Tests/0015-030.txt""")
 
     s += h2('5.2 Lochstreifenleser (K1, K2)')
     s.append(P('`--leser1` und `--leser2` nehmen eine **Datei** (ein Streifen) oder einen **Ordner** (Streifen in '
@@ -2276,11 +2276,11 @@ def kap7(lab):
                       cmd('python3 c8205_interp.py --MODUS=TEST --mdverz ./markdown-dateien Tests/a.txt')], erwarte=[None, 2, 4])
     s.append(P('**Trommeldatei fehlt.** Der Interpreter legt sie nie selbst an; er meldet es vor dem ersten Test, auch mit '
                '`--NO-TERMOUT`:'))
-    s += lab.sitzung(['rm -f virtuelle_Geraete/Trommel/trommel.txt', cmd('python3 c8205_interp.py --MODUS=TEST Tests/a.txt'),
+    s += lab.sitzung(['rm -f Trommel/trommel.txt', cmd('python3 c8205_interp.py --MODUS=TEST Tests/a.txt'),
                       cmd('python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT Tests/a.txt')], erwarte=[None, 16, 16])
     s.append(P('**Trommeldatei fehlerhaft.** Hier ist die Datei auf 100 Zeilen gekürzt:'))
     s += lab.sitzung(['python3 erzeuge_leere_trommel.py', 'mkdir -p trommeln',
-                      'head -n 100 virtuelle_Geraete/Trommel/trommel.txt > trommeln/kurz.txt',
+                      'head -n 100 Trommel/trommel.txt > trommeln/kurz.txt',
                       cmd('python3 c8205_interp.py --MODUS=TEST --trommel trommeln/kurz.txt Tests/a.txt')], erwarte=[None, None, None, 16])
     s.append(P('**Trommeldatei mit CRLF-Zeilenenden.** Die Datei wurde nachträglich mit Windows-Zeilenenden versehen:'))
     s += lab.sitzung(['python3 erzeuge_leere_trommel.py --aus trommeln/crlf.txt', "sed -i 's/$/\\r/' trommeln/crlf.txt",
@@ -2320,7 +2320,7 @@ def kap8(lab):
     s += L.code("""$ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL Tests/0015-030.txt
 $ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --zwischenablage system Tests/0015-030.txt""")
     s.append(P('Im Fenster „SW Ausgabe“ steht `Jahr 1972`. Das Terminal zeigt wie zuvor die Zeilen des Interpreters (ohne '
-               '`--sw-ausgabe` auch die dunkelgelbe Ausgabe). Mit `--sw-ausgabe virtuelle_Geraete/SW-Ausgabe` geht dieselbe Ausgabe '
+               '`--sw-ausgabe` auch die dunkelgelbe Ausgabe). Mit `--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe` geht dieselbe Ausgabe '
                'zusätzlich in die Datei `sw-ausgabe.txt`.'))
     s += note('hinweis', FENSTER_HINWEIS)
 
@@ -2425,7 +2425,7 @@ $ python3 c8205_interp.py --MODUS=TEST --SW-TERMINAL --zwischenablage system Tes
                       cmd(PY + ' Tests/trommel-a.txt Tests/trommel-b.txt'),
                       'python3 erzeuge_leere_trommel.py --aus trommeln/leer.txt',
                       cmd(PY + ' --trommel trommeln/leer.txt Tests/trommel-b.txt'),
-                      cmd(PY + ' --trommel virtuelle_Geraete/Trommel/trommel.txt Tests/trommel-b.txt')],
+                      cmd(PY + ' --trommel Trommel/trommel.txt Tests/trommel-b.txt')],
                      erwarte=[None, 6, 4, 0, None, 0, None, 6, 0])
     s.append(P('Die letzte Zeile zeigt: `--trommel` mit dem Pfad der Standard-Trommel ergibt dasselbe wie der Aufruf ohne den '
                'Schalter. Der Wrapper übergibt `--trommel` nicht; eine andere Trommel steht hinter der Testdatei: '
@@ -2440,7 +2440,7 @@ def kap9():
     s += L.code("""python3 c8205_interp.py --MODUS=TEST [Schalter] TEST.txt [TEST2.txt ...]
 ./c8205_interpreter.sh TEST.txt [Schalter]       # Protokoll nach Test-Protokolle/TEST.log""")
     s += tbl([['Schalter', 'Wirkung (Standard)'],
-              ['`--trommel P`', 'Trommeldatei, bleibt über Tests und Aufrufe erhalten (`virtuelle_Geraete/Trommel/trommel.txt`); '
+              ['`--trommel P`', 'Trommeldatei, bleibt über Tests und Aufrufe erhalten (`Trommel/trommel.txt`); '
                                 'leer erzeugen: `python3 erzeuge_leere_trommel.py [--aus PFAD]`'],
               ['`--mdverz V` · `--out V|F.log`', 'Regelwerk-Ordner (`markdown-dateien/`) · Protokoll in Ordner `V/<Test>/protokoll.txt` '
                                                  'oder Datei `F.log` (nur 1 Test); `Test-Protokolle/`'],

@@ -1,6 +1,6 @@
 Trommeldatei:
 #DOK-0001 Druck von BZ und AC (Zelle 0001) mit Treiber: AC = Rueckkehrbefehl 0000 3007 000 (b = 3004), 7777 = 70123456701. Erwartet: BZ 00003004000 AC 70123456701, danach Fortsetzung bei 3004 (Stopp) mit dem AC.
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #PROT STUFE=2
 0001: 00000150000 # 000 druck ; Zelle 0001: Sprung zum Druck von BZ und AC
 0040: 00000320025 # haupt: 025 kzeingabe ; Aufruf Unterprogramm Kennzeicheneingabe

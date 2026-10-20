@@ -246,5 +246,5 @@ Ergebnispruefung:
   E: soll=0 ist=0 OK
   A: soll=0 ist=0 OK
   7773: soll=70123456701 ist=70123456701 OK
-  Schreibwerk: soll=Test-Ergebnisvergleiche/okt_erwartet.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/okt_erwartet.txt ist=Test-virtuelleGeraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

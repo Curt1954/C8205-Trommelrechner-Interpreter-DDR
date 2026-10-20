@@ -8,10 +8,10 @@ Format je Zeile: 'aaaa: ttttttttttt\n' (4 Oktalziffern Adresse, ': ', 11 Oktalzi
 
 Aufruf:
     python3 testscripte/erzeuge_leere_trommel.py
-    python3 testscripte/erzeuge_leere_trommel.py --aus virtuelle_Geraete/Trommel/trommel.txt
+    python3 testscripte/erzeuge_leere_trommel.py --aus Trommel/trommel.txt
 
 Ohne Schalter gilt die Vorgabe:
-    --aus virtuelle_Geraete/Trommel/trommel.txt   (im Projektverzeichnis, eine Ebene ueber testscripte/)
+    --aus Trommel/trommel.txt   (im Projektverzeichnis, eine Ebene ueber testscripte/)
 """
 import argparse
 import os
@@ -23,8 +23,8 @@ ADR_MAX = 0o7777          # letzte Adresse (4095 dezimal); 4096 Zellen insgesamt
 def main():
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # Projektverzeichnis; das Skript liegt in testscripte/
     ap = argparse.ArgumentParser(description='Trommeldatei mit Nullen erzeugen (4096 Zeilen).')
-    ap.add_argument('--aus', default=os.path.join(here, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'),
-                    help='Zieldatei; Vorgabe: virtuelle_Geraete/Trommel/trommel.txt im Projektverzeichnis')
+    ap.add_argument('--aus', default=os.path.join(here, 'Trommel', 'trommel.txt'),
+                    help='Zieldatei; Vorgabe: Trommel/trommel.txt im Projektverzeichnis')
     args = ap.parse_args()
 
     zielordner = os.path.dirname(os.path.abspath(args.aus))

@@ -26,7 +26,7 @@
  * - Datei: 4096 Zeilen "aaaa: ttttttttttt\n" (18 Byte, LF), aaaa = logische
  *   12-Bit-Adresse (4 Oktalziffern), t = 11 Oktalziffern Zellinhalt.
  *   Das ist das Format der Interpreter-Trommeldatei
- *   (virtuelle_Geraete/Trommel/trommel.txt, TROMMEL_ZEILE_LAENGE = 18).
+ *   (Trommel/trommel.txt, TROMMEL_ZEILE_LAENGE = 18).
  *   (Vorher: "oooo wwwwwwwwwww", 17 Byte — inkompatibel zum Interpreter.)
  * - Die Bahnsperrenschalter (bahnsperre.h) werden im Schreibpfad geprüft,
  *   der Zugriff verbraucht aber auch bei Sperre seine Wartezeit

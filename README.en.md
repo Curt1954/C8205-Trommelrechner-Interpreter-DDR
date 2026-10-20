@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.03-012
+Version: 0.95-001
 
 [Deutsch](README.md) | **English**
 
@@ -53,7 +53,7 @@ as regression tests.
 | `c8205_bis_test.sh` | Wrapper for tests of the BIS building blocks: first loads the minimal program (`Tests/pj2-bis_minimalprogramm.test`), then the given test file |
 | `test_bis.sh` | runs all BIS tests one after another (empty drum, minimal program, then each `pj2-bis_*` test) |
 | `test.sh` | older version of `test_bis.sh` (without the test `pj2-bis_druck_bz_ac`) |
-| `erzeuge_leere_trommel.py` | creates the empty drum file `virtuelle_Geraete/Trommel/trommel.txt` (also resets a used drum) |
+| `erzeuge_leere_trommel.py` | creates the empty drum file `Trommel/trommel.txt` (also resets a used drum) |
 | `c8205_lochstreifen_anzeige.py` | helper program: displays a virtual punched tape as plain text in a window |
 | `c8205_lochstreifen_eingabe.py` | helper program: creates a virtual punched tape from keyboard input in a window |
 | `markdown-dateien/` | Rule set and project description (.md); the interpreter reads the node graph from here |
@@ -61,7 +61,9 @@ as regression tests.
 | `Tests/` | Test orders (mostly `.txt`; the extension is free, the assembler produces `.test`) |
 | `Test-Ergebnisvergleiche/` | Expected-result files for file checks (names ending in `-ausgabe.txt` or `_erwartet.txt`) |
 | `Test-Protokolle/` | Logs (`.log`) of the runs |
-| `virtuelle_Geraete/` | Storage for virtual devices (punched tape reader, punch, typewriter unit, keyboard input, drum) |
+| `Test-virtuelleGeraete/` | Virtual devices of the TEST interpreter (punched tape readers, punch, typewriter unit output, keyboard input) |
+| `virtuelle_Geraete/` | Virtual devices of the GRAFIK interpreter (`Leser1/`, `Leser2/`, `Stanzer1/`) |
+| `Trommel/` | The drum file `trommel.txt`, shared by both interpreters |
 | `CSV/` | Overview table of all tests (`test_tabelle.py` produces `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` opens it in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Sub-project BIS (documentation only for now) |
 | `Assembler/` | Assembler `c82ass` with source code, binaries, examples and documentation |
@@ -87,12 +89,15 @@ C8205/
 ├── Test-Protokolle/                Logs of the runs (.log)
 ├── CSV/                            Overview table of all tests (test_tabelle.py)
 ├── Bausteininterpretiersystem BIS/ Sub-project BIS (documentation only for now)
-├── virtuelle_Geraete/
-│   ├── Leser1/, Leser2/            Punched tape input
+├── Trommel/                        Drum file trommel.txt (shared by TEST and GRAFIK)
+├── Test-virtuelleGeraete/          virtual devices of the TEST interpreter
+│   ├── Leser1/, Leser1_02/, Leser2/   Punched tape input
 │   ├── Stanzer1/                   Punch output
 │   ├── SW-Ausgabe/                 Typewriter unit output
-│   ├── T-SW-Eingabe/               Keyboard / typewriter unit input (channel K0)
-│   └── Trommel/                    Drum file trommel.txt
+│   └── T-SW-Eingabe/               Keyboard / typewriter unit input (channel K0)
+├── virtuelle_Geraete/              virtual devices of the GRAFIK interpreter
+│   ├── Leser1/, Leser2/            Punched tape input
+│   └── Stanzer1/                   Punch output
 └── Assembler/
     ├── c82ass.sh                   Run the assembler
     ├── asm_alle.sh                 assemble all .asm files under a folder (reports errors only)
@@ -142,7 +147,7 @@ window and all sounds (computer, typewriter, paper-tape reader, tape punch).
 python3 c8205_grafik.py                    # with sound (Linux: needs paplay, pw-cat, aplay or ffplay)
 python3 c8205_grafik.py --STUMM            # no sound, no start-up delay
 python3 c8205_grafik.py --TON=5955         # volume per group: panel, SW, reader, punch (0 = mute, 5 = default)
-python3 c8205_grafik.py --leser1 virtuelle_Geraete/Leser1/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
+python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
 ```
 
 - Typewriter: **80 ms writing time per character (70 to 90 ms), character sound 100 ms**, tab 400 ms, carriage return 360 ms.

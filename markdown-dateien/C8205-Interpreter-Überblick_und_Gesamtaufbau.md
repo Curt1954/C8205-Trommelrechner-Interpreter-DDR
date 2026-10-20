@@ -1,6 +1,6 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
-Version: 0.03-003
+Version: 0.95-001
 
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
@@ -334,11 +334,13 @@ die Trommelposition (Wortzeitzähler mod 32 und Reihenfolge der Magnettrommel-Da
 
 Der Interpreter (`c8205_interp.py`) führt Programme des C 8205 interpretativ aus: Er läuft den
 Knotengraphen des Befehlsablaufs (Phasen I bis IV) ab und bildet Register, Flags, Trommelspeicher und
-Peripherie nach (alle Zeiten = 0, bis auf die Befehlsentnahme nach X-Abbruch, Abschnitt 4.1). Testaufträge liegen in `Tests/`, Protokolle in `Test-Protokolle/`, der Trommelspeicher als persistente Datei in `virtuelle_Geraete/Trommel/` (er behält seinen Inhalt über Tests hinweg). Der
+Peripherie nach (alle Zeiten = 0, bis auf die Befehlsentnahme nach X-Abbruch, Abschnitt 4.1). Testaufträge liegen in `Tests/`, Protokolle in `Test-Protokolle/`, der Trommelspeicher als persistente Datei in `Trommel/` (er behält seinen Inhalt über Tests hinweg). Der
 Vollständigkeitstest `c8205_befehlssweep.py` prüft alle 512 Operationscodes gegen den Knotengraphen.
 Einzelheiten: "C8205-Interpreter-Python_Interpreter.md" (Bedienung, Schalter, Geräte),
 "C8205-Interpreter-Durchführung_eines_Tests.md" (Testdatei, Tastenfolge, Protokoll) und
 "C8205-Interpreter-Lochstreifen-Hilfsprogramme.md" (Hilfsprogramme für virtuelle Lochstreifen).
+
+**GRAFIK:** Der Interpreter hat zwei Betriebsarten, TEST (Stapelbetrieb) und GRAFIK (Pult- und Schreibwerk-Fenster, Töne, echte Trommel). Die Regeln des Rechners sind für beide gleich; Beschreibung: `C8205-Interpreter-GRAFIK_Beschreibung.md`.
 
 ### 6.2 Assembler
 

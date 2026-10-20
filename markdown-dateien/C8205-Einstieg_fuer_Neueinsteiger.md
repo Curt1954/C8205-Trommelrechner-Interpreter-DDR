@@ -1,6 +1,6 @@
 # Einstieg in das C 8205-Projekt
 
-Version: 0.01-003
+Version: 0.95-001
 
 **Zweck dieses Dokuments (Orientierung für neue Leser):** Dieses Dokument richtet sich an Leser, die das C-8205-Projekt zum ersten Mal sehen. Es erklärt nicht alle technischen Einzelheiten des Rechners. Stattdessen zeigt es, **was im Projekt enthalten ist, in welcher Reihenfolge man die Dokumentation lesen sollte und wo man bei einer konkreten Frage weiterliest.**
 
@@ -209,7 +209,7 @@ Wenn du eine bestimmte Frage hast, gehe direkt zu dem passenden Dokument. Alle D
 |---|---|
 | Was ist das Gesamtprojekt? | `C8205-Interpreter-Projektueberblick.md` |
 | Wie ist das Projekt aufgebaut? | `C8205-Projektstruktur.md` |
-| Was liegt in `Tests/`, `Test-Protokolle/` und `virtuelle_Geraete/`? | `C8205-Projektstruktur.md` |
+| Was liegt in `Tests/`, `Test-Protokolle/`, `Test-virtuelleGeraete/`, `virtuelle_Geraete/` und `Trommel/`? | `C8205-Projektstruktur.md` |
 | Wie funktioniert der Rechner grundsätzlich? | `C8205-Interpreter-Überblick_und_Gesamtaufbau.md` |
 | Welche Register gibt es? | `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md` |
 | Welche Befehle gibt es? | `C8205-Interpreter-Befehlsliste.md` |
@@ -319,7 +319,9 @@ Wo die Teile eines Tests liegen:
 | `Tests/` | Testaufträge (meist `.txt`; der Assembler erzeugt `.test`) |
 | `Test-Ergebnisvergleiche/` | Soll-Dateien (Namen auf `-ausgabe.txt` oder `_erwartet.txt`), mit denen Tests ihre Ausgabe vergleichen |
 | `Test-Protokolle/` | Protokolle (`.log`) der Interpreterläufe |
-| `virtuelle_Geraete/` | die virtuellen Geräte, je ein Unterordner: `Leser1/`, `Leser2/`, `Stanzer1/`, `SW-Ausgabe/`, `T-SW-Eingabe/`, `Trommel/` |
+| `Test-virtuelleGeraete/` | die virtuellen Geräte des TEST-Interpreters, je ein Unterordner: `Leser1/`, `Leser1_02/`, `Leser2/`, `Stanzer1/`, `SW-Ausgabe/`, `T-SW-Eingabe/` |
+| `virtuelle_Geraete/` | die virtuellen Geräte des GRAFIK-Interpreters: `Leser1/`, `Leser2/`, `Stanzer1/` |
+| `Trommel/` | die gemeinsame Trommel (`trommel.txt`) für TEST und GRAFIK |
 
 ## 10. Rekonstruktion und historische Sicherheit
 

@@ -1,6 +1,6 @@
 # ** Datenstrukturen **
 
-Version: 0.03-003
+Version: 0.95-001
 
 Namensbereiche: Flags, Register, Felder des Befehlswortes sowie die Knoten und
    Konnektoren der Knotentabelle sind getrennte Beschreibungsbereiche. Innerhalb

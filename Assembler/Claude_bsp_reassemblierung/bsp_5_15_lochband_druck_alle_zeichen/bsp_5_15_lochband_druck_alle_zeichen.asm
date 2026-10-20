@@ -1,8 +1,8 @@
 ; bsp_5_15_lochband_druck_alle_zeichen.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_15_lochband_druck_alle_zeichen.txt
 ; #DOK-0002 Abdruck aller Zeichen des R 300-Codes (Streifen r300_alle_zeichen.txt, "/" am Ende) mit dem Eingabeprogramm 5.15, Leser 2 ->
 ;   Schreibwerk
-; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
-; --leser2 virtuelle_Geraete/Leser2/r300_alle_zeichen.txt
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
+; --leser2 Test-virtuelleGeraete/Leser2/r300_alle_zeichen.txt
 ; #PROT STUFE=2
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.

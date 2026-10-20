@@ -3,7 +3,7 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
-Version: 0.03-017
+Version: 0.95-001
 (Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
 REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
 Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
@@ -31,6 +31,8 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
 
+Aenderung 20.10.2026 (Version 0.95-001): Unterversion auf Aufforderung des Projektinhabers von 03 auf 95 gesetzt (Build wieder 001, Regel der
+  Versionierung). Nur die Versionsangaben (Kopfzeile, Konstante VERSION); der Programmablauf ist unveraendert.
 Aenderung 18.10.2026 (Version 0.03-016): Schalterstellung SW dauerhaft (m.sw_schalter; Befund B-1 aus GRAFIK-Checkpoint 22). Der Anwahlbefehl K0 (a028) waehlt T oder SW
   nach der Schalterstellung SW im Moment der Anwahl, nicht mehr nach dem Flag SW; die Anwahlbefehle K1, K2, K3 loeschen T und SW, nicht die Schalterstellung
   (Bedienpult_mit_Schaltern.md, Kanalanwahl: "er beruecksichtigt den Schalterstatus SW analog"). Vorher wartete ein Programm, das mit K2 ausgibt und danach mit K0 liest
@@ -56,7 +58,7 @@ Aenderung 13.10.2026 (Version 0.03-012): TABELLE1 Zeile 20: Klbuch-Beschriftung 
   enthaelt den Namen "I†" nicht mehr; K0 findet das Zeichen weiterhin als Einzelzeichen "i" ueber den ASCII-Wert (Eingabe 31).
 
 Aenderung 13.10.2026 (Version 0.03-011): Neue Testmarke #TROMMEL=LEER bzw. #TROMMEL=MP (Durchfuehrung_eines_Tests.md, Abschnitt 2g): Vor dem Test wird die
-  Trommel komplett neu gesetzt - LEER: alle 4096 Zellen = 0; MP: Abbild des Minimalprogramms aus virtuelle_Geraete/Trommelvorlagen/MP.txt (Format wie
+  Trommel komplett neu gesetzt - LEER: alle 4096 Zellen = 0; MP: Abbild des Minimalprogramms aus Trommel/Trommelvorlagen/MP.txt (Format wie
   trommel.txt; fehlt die Vorlage, startet der Test nicht, rc 16). Danach folgt wie bisher die Ueberlagerung mit dem Abschnitt Trommeldatei: der Testdatei.
   Ohne die Marke bleibt die Trommel unveraendert. Steht die Marke im ERSTEN Test des Aufrufs und fehlt die Trommeldatei oder ist sie formal fehlerhaft,
   wird sie neu angelegt (statt rc 16). Protokoll (Ausgangsbedingungen) und Bildschirm nennen die Marke.
@@ -168,7 +170,7 @@ Aenderung 03.10.2026 (2): ANWEISUNG-017 geaendert (T2: "Wenn der Ausgabebefehl k
   angewaehlten Kanal ausgegeben ..."): die Zeichenausgabe (SW/Stanzer) steht jetzt in a017 (Knoten 23); a028 (Knoten 39) waehlt nur noch
   den Kanal bei Anwahlbefehlen. Verhalten nach aussen unveraendert.
 Aenderung 07.10.2026: Trommel materialisiert. Die Trommel ist jetzt eine persistente Textdatei
-  (virtuelle_Geraete/Trommel/trommel.txt, 4096 Zeilen aaaa: ttttttttttt). Der Interpreter liest sie
+  (Trommel/trommel.txt, 4096 Zeilen aaaa: ttttttttttt). Der Interpreter liest sie
   beim Teststart, uebertraegt die Adresse:Wert-Zeilen der Testdatei initial auf die Trommel und
   schreibt jede Zelländerung eines Befehls unmittelbar als Zeilenupdate in die Datei. Neue Klasse
   Trommel und Funktion pruefe_trommeldatei; Machine.rd/Machine.wr arbeiten ueber die Trommel.
@@ -186,7 +188,7 @@ import subprocess
 import sys
 import time
 
-VERSION = '0.03-017'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
+VERSION = '0.95-001'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
@@ -196,7 +198,7 @@ TROMMEL_ADR_ANZAHL = 4096
 TROMMEL_ZEILE_RE = re.compile(r'^([0-7]{4}): ([0-7]{11})\n$')
 PROJEKTVERZ = os.path.dirname(os.path.abspath(__file__))
 # #TROMMEL=<Name>: LEER ist eingebaut (alle Zellen 0); die uebrigen Namen brauchen ein Trommelabbild (Format wie trommel.txt) unter
-# virtuelle_Geraete/Trommelvorlagen/<Name>.txt. Name -> Beschreibung (fuer Meldungen).
+# Trommel/Trommelvorlagen/<Name>.txt. Name -> Beschreibung (fuer Meldungen).
 TROMMEL_VORLAGEN = {'MP': 'Minimalprogramm'}
 TROMMEL_MARKEN = ('LEER',) + tuple(TROMMEL_VORLAGEN)
 
@@ -365,7 +367,7 @@ def pruefe_trommeldatei(pfad):
 
 
 def trommelvorlage_pfad(name):
-    return os.path.join(PROJEKTVERZ, 'virtuelle_Geraete', 'Trommelvorlagen', name + '.txt')
+    return os.path.join(PROJEKTVERZ, 'Trommel', 'Trommelvorlagen', name + '.txt')
 
 
 def lies_trommelabbild(pfad):
@@ -2351,9 +2353,9 @@ def main():
                     help='Verzeichnis mit den beiden .md-Dateien (Knotengraph und Knotenbeschreibung); '
                     'Standard: markdown-dateien/ neben dem Skript')
     ap.add_argument('--trommel', metavar='PFAD',
-                    default=os.path.join(here, 'virtuelle_Geraete', 'Trommel', 'trommel.txt'),
+                    default=os.path.join(here, 'Trommel', 'trommel.txt'),
                     help='Pfad der Trommeldatei (4096 Zeilen "aaaa: ttttttttttt"); '
-                    'Standard: virtuelle_Geraete/Trommel/trommel.txt neben dem Skript')
+                    'Standard: Trommel/trommel.txt neben dem Skript')
     ap.add_argument('--leser1', '--lochbandleser1', metavar='PFAD', help='Lochstreifen fuer Leser 1 (Kanal K1): Datei oder Verzeichnis')
     ap.add_argument('--leser2', '--lochbandleser2', metavar='PFAD', help='Lochstreifen fuer Leser 2 (Kanal K2): Datei oder Verzeichnis')
     ap.add_argument('--stanzer1', '--lochbandstanzer1', metavar='PFAD', help='Ausgabedatei des Stanzers 1 (Kanal K1)')

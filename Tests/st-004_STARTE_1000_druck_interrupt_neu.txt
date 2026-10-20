@@ -1,6 +1,6 @@
 Trommeldatei:
 #DOK-0001 Programmunterbrechung und Druck von BZ und AC ueber das Minimalprogramm (BIS-2.2.12.1). Voraussetzung: Die Trommel enthaelt das Minimalprogramm (pj2-bis_minimalprogramm.test vorher laufen lassen). Der Test setzt und veraendert die Zelle 0001 NICHT; sie wird von der Trommel genommen (000 0150) und in den Pruefungen kontrolliert.
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #SPEI-0001 1000-1010
 #PROT STUFE=2
 #BZ=1003

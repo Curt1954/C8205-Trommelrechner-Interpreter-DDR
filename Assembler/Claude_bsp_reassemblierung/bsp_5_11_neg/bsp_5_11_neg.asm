@@ -1,6 +1,6 @@
 ; bsp_5_11_neg.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_11_neg.txt
 ; #DOK-0001 Angabe des Vorzeichens einer Zahl (Programmieranleitung 5.11), x = -5
-; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 ; #SPEI-0001 3000-3000
 ; #PROT STUFE=2
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole

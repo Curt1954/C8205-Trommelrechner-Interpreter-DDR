@@ -1,6 +1,6 @@
 # Lochstreifenleser
 
-Version: 0.03-007
+Version: 0.95-001
 
 Hardwarebeschreibung des Lochstreifenlesers 303 am Rechner C 8205.
 
@@ -175,7 +175,7 @@ Das Programm `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` (aus `sw_eing
 - **Eingabe:** erster Befehl `ANWAHL LSL1` (4600, Leser 1); das Programm liest Zeichen für Zeichen und speichert sie.
 - **Bandende:** `:` in KB (Code 15) beendet die Eingabe. Dieses Zeichen wird **nicht** gestanzt. Dasselbe Bit-Muster (`00001101`) steht als `(` in GB als gewöhnliches Zeichen auf dem Band; nach `Um. GB` speichert das Programm Code 15 als normales Zeichen und deutet ihn nur in KB als Ende.
 - **Ausgabe:** `ANWAHL LSS1` (4600, Stanzer 1). Ein Umschalten auf KB vor der Ausgabe gibt es nicht, damit das Band genau das enthält, was gelesen wurde. Am Ende steht der Stopp.
-- **Test:** `python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test` (Zeilen `--leser1 virtuelle_Geraete/Leser1/lb_kopie_quelle.txt`, `--stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt`, Tasten `H G R`). Testband: `Hallo Welt 123 (ok)!:` (29 Zeilen); gestanzt werden 28 Zeilen (Quelle ohne das Endzeichen). Ein anderes Band: nur die `--leser1`-Zeile ändern; das Band muss mit `:` in KB enden.
+- **Test:** `python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test` (Zeilen `--leser1 Test-virtuelleGeraete/Leser1/lb_kopie_quelle.txt`, `--stanzer1 Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt`, Tasten `H G R`). Testband: `Hallo Welt 123 (ok)!:` (29 Zeilen); gestanzt werden 28 Zeilen (Quelle ohne das Endzeichen). Ein anderes Band: nur die `--leser1`-Zeile ändern; das Band muss mit `:` in KB enden.
 - **GRAFIK:** dasselbe Programm läuft im Modus GRAFIK mit `--leser1` und `--stanzer1` (vom Projektinhaber am 19.10.2026 geprüft: gleiche 28 Zeilen); Leser- und Stanzerton nach `C8205-Interpreter-GRAFIK_Beschreibung.md` §6.3 und §6.4 (S4-09, S4-10). Die Hörprüfung steht aus.
 
 ## A6 Namenskollisionen

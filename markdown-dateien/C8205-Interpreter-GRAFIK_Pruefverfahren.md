@@ -1,6 +1,6 @@
 # C 8205 – GRAFIK-Interpreter: Prüfverfahren
 
-Version: 0.01-004
+Version: 0.95-001
 
 **Stand 19.10.2026 (Checkpoint G6-009): §1 bis §10 geschrieben, Entwurf, nicht abgenommen.** Das PDF dazu (`C8205-GRAFIK_Pruefverfahren_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Stufe-6-Beschreibung (Dokument 12, fällt nach Abschluss weg). Das Soll (was GRAFIK tun muss) steht in `C8205-Interpreter-GRAFIK_Beschreibung.md`; dieses Dokument sagt, **wie man prüft, dass er es tut**.
 
@@ -179,7 +179,7 @@ python3 testscripte/grafik_pult_tk_test.py --ausgabe ORDNER   Ergebnisordner
 | `<Fall>/debug.log` | Debug-Log des GRAFIK-Laufs (jede Zeile sofort geschrieben, auch bei Absturz lesbar) |
 | `<Fall>/grafik_stdout.txt`, `grafik_stderr.txt` | Konsolenausgabe des Interpreters |
 
-Die gemeinsame Trommel `virtuelle_Geraete/Trommel/trommel.txt` und die Geräteordner des Projekts bleiben unberührt: Jeder Fall läuft auf einer eigenen Kopie mit eigenen, leeren Ordnern `Leser1`, `Leser2`, `Stanzer1`.
+Die gemeinsame Trommel `Trommel/trommel.txt` und die Geräteordner des Projekts bleiben unberührt: Jeder Fall läuft auf einer eigenen Kopie mit eigenen, leeren Ordnern `Leser1`, `Leser2`, `Stanzer1`.
 
 ### 5.4 Die Testfälle (Pilotversuch PTK-001)
 
@@ -320,7 +320,7 @@ Das Eingabeprogramm `r300_eingabe` („alle Zeichen des R300-Codes“, Version R
 
 | Datei | Aufgabe |
 |---|---|
-| `r300_eingabe_erzeugen.py` (RE-001) | erzeugt aus **einer** Quelle (`c8205_interp.TABELLE1`) das Assemblerprogramm, `Tests/r300_eingabe.test`, die K0-Eingabedatei `virtuelle_Geraete/T-SW-Eingabe/r300_eingabe.txt`, die **Klickspur** und die **Sollfolge** (Zeichen, Umschaltzeichen, Code, Spurwort) |
+| `r300_eingabe_erzeugen.py` (RE-001) | erzeugt aus **einer** Quelle (`c8205_interp.TABELLE1`) das Assemblerprogramm, `Tests/r300_eingabe.test`, die K0-Eingabedatei `Test-virtuelleGeraete/T-SW-Eingabe/r300_eingabe.txt`, die **Klickspur** und die **Sollfolge** (Zeichen, Umschaltzeichen, Code, Spurwort) |
 | `r300_eingabe_trockenlauf.py` | Trockenlauf **ohne Tkinter**: Netz, Taste SW, G, R am Pult, getippte Zeichen durch die Logikschicht des SW-Fensters in den echten Rechner-Thread mit der Trommel `trommel_r300_eingabe.txt` |
 | `r300_eingabe_grafik.sh` / `.bat` | GRAFIK mit `--HWCHECK` und `--WIEDERGABE`, rund 50 s; Faktor als Argument (`2` = alle Zeitabstände verdoppeln) |
 | `r300_eingabe_lauf_und_auswertung.sh` / `.bat` | Lauf **und** Auswertung in einem Schritt; Rückgabewert 0 = ohne Befund, 1 = Befund, 2 = Lauf konnte nicht gestartet werden (z. B. kein Tkinter) |
@@ -335,7 +335,7 @@ sh testscripte/r300_eingabe_grafik.sh [F]                 nur der Lauf
 python3 testscripte/r300_eingabe_log_auswerten.py [LOG [TROMMEL_NACH_LAUF [BERICHT]]]
 ```
 
-Der echte Lauf legt die Trommel in eine **Kopie** (`r300_eingabe_trommel_nach_lauf.txt`); `virtuelle_Geraete/Trommel/trommel.txt` bleibt unberührt. Ergebnisdateien: `r300_eingabe_debug.log`, `r300_eingabe_trommel_nach_lauf.txt`, `r300_eingabe_bericht.txt`. **Das Fenster während des Laufs nicht anfassen.**
+Der echte Lauf legt die Trommel in eine **Kopie** (`r300_eingabe_trommel_nach_lauf.txt`); `Trommel/trommel.txt` bleibt unberührt. Ergebnisdateien: `r300_eingabe_debug.log`, `r300_eingabe_trommel_nach_lauf.txt`, `r300_eingabe_bericht.txt`. **Das Fenster während des Laufs nicht anfassen.**
 
 ### 6.3 Was die Auswertung prüft (je Tipp der Klickspur)
 
@@ -560,7 +560,7 @@ Windows-Zeilen in den Berichten tragen „Windows“ und die Python-Version; ein
 | Nr. | Befund | Folge, Einordnung | Kennung |
 |---|---|---|---|
 | B-1 | **`sw_eingabe_leser_stanzer.test`** liefert im Gesamtlauf der Tests auf zurückgesetzter Trommel den Rückkehrcode 8. Ursache **nicht untersucht** | offen; das Testhandbuch nennt die Abweichung im Kasten „Achtung“ | OP-18, G5-009, Dok. 11 |
-| B-2 | **Trommeldatei wird von Testläufen verändert** (sie ist der Speicher des Rechners). Die Skripte dieses Dokuments arbeiten mit eigenen Kopien; im Probelauf vom 19.10.2026 (§10.1) blieb `virtuelle_Geraete/Trommel/trommel.txt` unverändert | für einen reproduzierbaren Lauf vorher sichern oder `--trommel EIGENE_KOPIE` | OP-19 |
+| B-2 | **Trommeldatei wird von Testläufen verändert** (sie ist der Speicher des Rechners). Die Skripte dieses Dokuments arbeiten mit eigenen Kopien; im Probelauf vom 19.10.2026 (§10.1) blieb `Trommel/trommel.txt` unverändert | für einen reproduzierbaren Lauf vorher sichern oder `--trommel EIGENE_KOPIE` | OP-19 |
 | B-3 | **ZIP-Archiv und Umlaut-Dateinamen:** Im ZIP heißen drei Dateien `…Eing#U00e4nge…`, `…#U00dcberblick…`, `…Durchf#U00fchrung…` statt `Eingänge`, `Überblick`, `Durchführung`. Wer das ZIP so entpackt, bekommt in den Blöcken 1 bis 4 `KonfigFehler: Knotendokumentation nicht gefunden: …Eingänge_der_Knoten.md`. **Nach dem Entpacken zurückbenennen** (`#U00e4` → `ä`, `#U00fc` → `ü`, `#U00dc` → `Ü`). Dasselbe Problem: Checkpoint 49 (A-1) musste die Dateien ebenfalls zurückbenennen; O6-1 | kein Fehler des Projekts; Hinweis für jeden, der aus dem ZIP prüft | O6-1, A-1 |
 | B-4 | **Klickspur und Sollfolge der R300-Eingabe fehlen im Archiv** (§6.5). Der echte Lauf und die Auswertung können so nicht starten; Neuerzeugung legt die Dateien in `Tests/` ab, wo die Regressionsschleife sie als Tests zählt (Code 16) | **Entschieden 19.10.2026 (Projektinhaber: „lassen“): so lassen**, Dateien bei Bedarf erzeugen und danach löschen (§6.5); die Skripte bleiben unverändert. Das Gerüst dieses Dokuments nannte „liegen in `Tests/` (G5-009)“; das ist überholt | G5-009, Dok. 11 |
 | B-5 | **Gravis in der Wiedergabe nicht erzeugbar** (Tottaste); Läufe enden mit 92 statt 93 Token und dem Gravis als `[BEKANNT]`. Am echten Fenster tippbar (F-56) | Wiedergabe-Artefakt, kein Fehler; keine Änderung | F-56 |

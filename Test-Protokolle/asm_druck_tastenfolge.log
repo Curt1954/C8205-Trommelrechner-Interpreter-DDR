@@ -411,5 +411,5 @@ Ergebnispruefung:
   A: soll=0 ist=0 OK
   7600: soll=00005000000 ist=00005000000 OK
   7777: soll=10101010101 ist=10101010101 OK
-  Schreibwerk: soll=Test-Ergebnisvergleiche/asm_druck_tastenfolge_erwartet.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/asm_druck_tastenfolge_erwartet.txt ist=Test-virtuelleGeraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

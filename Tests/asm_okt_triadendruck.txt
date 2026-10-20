@@ -1,5 +1,5 @@
 Trommeldatei:
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #DOK-0001 Triadendruck (Zelle 0276) mit GX-Befehl als Ziffernwaehler (Programmieranleitung 5.17): R1 = 70123456701 wird als 11 Oktalziffern gedruckt.
 #SPEI-0001 7773-7773
 #PROT STUFE=2

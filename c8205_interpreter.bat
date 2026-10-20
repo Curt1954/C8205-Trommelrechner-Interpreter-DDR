@@ -3,7 +3,7 @@ setlocal
 
 rem Aufruf: c8205_interpreter.bat [Schalter ...] TESTDATEI [Schalter ...]
 rem Beispiel: c8205_interpreter.bat --NO-TERMOUT Tests\x.txt --knotentest
-rem           c8205_interpreter.bat Tests\x.txt --leser1 virtuelle_Geraete\Leser1
+rem           c8205_interpreter.bat Tests\x.txt --leser1 Test-virtuelleGeraete\Leser1
 rem Die Testdatei darf an beliebiger Stelle stehen; Schalter mit eigenem
 rem Wertargument (z. B. "--out DATEI") werden dabei erkannt, damit ihr Wert
 rem nicht versehentlich als Testdatei gilt.

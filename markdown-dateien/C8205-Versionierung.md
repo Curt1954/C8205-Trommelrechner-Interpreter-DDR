@@ -1,6 +1,6 @@
 ** Versionierung (Wurzeldokument für Versionsnummern) **
 
-Version: 0.03-015
+Version: 0.95-001
 
 Dieses Dokument legt fest, wie die Dateien des Projekts C 8205 versioniert werden: wie eine Versionsnummer aufgebaut
 ist, welche Dateien eine tragen, wo sie steht und wann sie sich ändert. Es beschreibt keine Inhalte der Dateien,
@@ -115,7 +115,7 @@ Ausgangsstand gehören auch die zugehörigen Anpassungen: der Schalter `--versio
 (`C8205-Projektstruktur.md`, `C8205-Interpreter-Projektueberblick.md`, `C8205-Interpreter-Überblick_und_Gesamtaufbau.md`,
 `C8205-Interpreter-Python_Interpreter.md`, `README.md`, `README.en.md`) und die Aufnahme dieser Datei in die Liste der
 Dateien, die der Claude-Interpreter nicht braucht (`C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 1b.1). Sie erhöhen
-keine Nummer. Ab dem nächsten Änderungsschritt gelten die Regeln aus Abschnitt 3.
+keine Nummer. Ab dem nächsten Änderungsschritt gelten die Regeln aus Abschnitt 3. Die Unterversion wurde am 20.10.2026 auf Aufforderung des Projektinhabers auf 0.95 gesetzt (Abschnitt 9); der Ausgangsstand 0.03-001 bleibt als Geschichte stehen.
 
 
 ## 6. Prüfung
@@ -203,6 +203,7 @@ beginnt der Build wieder bei 001 (bei einer neuen Hauptversion auch die Unterver
 | 0.03-010 | 19.10.2026 | Stufe 6 (S6-08): Versionszeilen `0.01-001` für `ton/SW_Ton_Beschreibung.md` und die zwei GRAFIK-Dokumente; Abschnitt 8 nachgeführt. Die Bestandsdokumente `Python_Interpreter` (0.03-013), `Bedienpult_mit_Schaltern` (0.03-009), `Magnettrommel` (0.03-003), `Lochstreifenleser` (0.03-006), `Projektstruktur` (0.03-011), `Projektueberblick` (0.03-007), `Einstieg_fuer_Neueinsteiger` (0.01-003), `Überblick_und_Gesamtaufbau` (0.03-004) und `Durchführung_eines_Tests` (0.03-014) haben einen kurzen GRAFIK-Absatz erhalten. |
 | 0.03-009 | 19.10.2026 | Stufe 6 (S6-03): Builds 0.03-014 bis 0.03-017 des Interpreters mit Inhalt und Prüfung in Abschnitt 10 aufgenommen, darunter 0.03-015 und 0.03-016 aus den Notizen `AENDERUNG_E_unter_M_…` und `AENDERUNG_K0_Anwahl_Schalter_SW_…`, die damit gelöscht werden können; GRAFIK-Module mit eigener Zählung (Abschnitt 2, 8, 10); Stand der Assemblerdokumentation (Abschnitt 2); drei neue offene Punkte in Abschnitt 8. |
 | 0.03-008 | 19.10.2026 | Stand Interpreter nachgeführt: `c8205_interp.py` steht auf **0.03-017** (Stufe 5, Schalter `--MODUS TEST\|GRAFIK`, Standard GRAFIK; Testläufe brauchen `--MODUS=TEST`). Die Builds 0.03-013 bis 0.03-017 sind im Kopf von `c8205_interp.py` (Zeilen „Aenderung …“) beschrieben, nicht in diesem Dokument. Die Wrapper `c8205_interpreter.sh`/`.bat` tragen keine eigene Nummer. |
+| 0.95-001 | 20.10.2026 | Auf Aufforderung des Projektinhabers: Unterversion **0.95** für alle Dateien, die eine Nummer im Schema `y.xx-zzz` tragen, Build jeweils wieder **001** (alle `.md`-Dateien einschließlich dieser Datei und `c8205_interp.py`). Ausgenommen: die Assemblerdokumentation (`C8205_Assembler_Dokumentation.md` bleibt `1.00-009`, `.odt` und `c82ass` unverändert), `C8205-Interpreter-BIS.md` (0.03-003) und `C8205-Interpreter-Objektdatei_Listing.md` (0.03-002) sowie die Dateien mit eigener Zählung (Hilfsprogramme, GRAFIK-Module). Die Verweise im Fließtext auf frühere Nummern (z. B. 0.03-016) bleiben als Historie stehen. |
 
 
 ## 10. Versionsstand des Interpreters (Builds 0.03-013 bis 0.03-017) und der GRAFIK-Module
@@ -234,12 +235,12 @@ Später (Stufe 3 bis 5) ist der Gesamtlauf `grafik_alle_tests.sh` mit 18 von 18 
 
 | Modul | Version | Modul | Version |
 |---|---|---|---|
-| `c8205_grafik.py` | Kopf `G2-004` (veraltet), Konstante `VERSION_GRAFIK` = `G4-003` (Abschnitt 8) | `grafik_pult.py`, `grafik_pult_fenster.py` | G2-001 |
+| `c8205_grafik.py` | Kopf `G2-004` (veraltet), Konstante `VERSION_GRAFIK` = `G4-004` (Abschnitt 8) | `grafik_pult.py`, `grafik_pult_fenster.py` | G2-001 |
 | `grafik_geraete.py` | G1-002 | `grafik_ton.py` | G2-002 |
 | `grafik_geraeteton.py`, `grafik_rechnerton.py` | G4-002 | `grafik_schreibwerk.py`, `grafik_tonmisch.py` | G4-001 |
 | `grafik_tonmisch_c.py` | G4-003 | `grafik_sw.py` | G4-007 |
 | `grafik_sw_fenster.py` | G4-008 | `grafik_tastatur.py` | G4-010 |
-| `grafik_hwcheck.py` | HW-004 | `grafik_haltzeit.py` | HZ-003 |
+| `grafik_hwcheck.py` | HW-004 | `grafik_haltzeit.py` | HZ-004 |
 | `grafik_debuglog.py` | DL-003 | `grafik_fensterlage.py` | FL-001 |
 | `grafik_k0.py`, `grafik_trommel.py` | keine `Version:`-Zeile | | |
 

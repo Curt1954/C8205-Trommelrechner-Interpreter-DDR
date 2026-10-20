@@ -5,7 +5,7 @@ r300_eingabe_erzeugen.py - erzeugt das Eingabeprogramm "alle Zeichen des R300-Co
 Aus EINER Quelle (c8205_interp.TABELLE1) entstehen:
   Assembler/Projekt_1/r300_eingabe/r300_eingabe.asm   Quelltext (danach: Assembler/c82ass.sh -p Projekt_1/r300_eingabe -s r300_eingabe)
   Tests/r300_eingabe.test                              TEST-Auftrag (Trommel aus der .test des Assemblers + K0-Datei + Pruefungen)
-  virtuelle_Geraete/T-SW-Eingabe/r300_eingabe.txt      K0-Eingabedatei fuer den TEST-Interpreter (je Zeile ein Zeichen oder Name)
+  Test-virtuelleGeraete/T-SW-Eingabe/r300_eingabe.txt      K0-Eingabedatei fuer den TEST-Interpreter (je Zeile ein Zeichen oder Name)
   Tests/r300_eingabe_klickspur.txt                     Klickspur fuer GRAFIK (--WIEDERGABE): Pult-Klicks UND Tasten im SW-Fenster ("tipp")
   Tests/r300_eingabe_soll.txt                          Sollfolge (Zeichen, Umschaltzeichen, Code, Spur-Wort) zum Vergleich mit dem Debug-Log
 
@@ -219,7 +219,7 @@ def schreibe_rest():
     # In einer K0-Datei beginnt ein Kommentar mit '#': das Zeichen '#' kann der TEST-Interpreter nicht lesen (Code 00 ist aber derselbe wie bei '0').
     soll = [x for x in soll_gr if x[0] != '#']
     # K0-Datei: ein Token je Zeile; Ende: IS (Irrung Satz) -> Stopp
-    p = os.path.join(PROJ, 'virtuelle_Geraete', 'T-SW-Eingabe', NAME + '.txt')
+    p = os.path.join(PROJ, 'Test-virtuelleGeraete', 'T-SW-Eingabe', NAME + '.txt')
     with open(p, 'w', encoding='utf-8', newline='\n') as f:
         for tok, _n, _c, _w in soll:
             f.write(tok + '\n')
@@ -237,8 +237,8 @@ def schreibe_rest():
         zl = f.read().splitlines()
     kopf = ['Trommeldatei:', '#DOK-0001 R300-Eingabe: alle Zeichen mit Computertaste ueber SW einlesen und als Echo ausgeben (RE-001)',
             '#TROMMEL=LEER',
-            f'--sw-ausgabe virtuelle_Geraete/SW-Ausgabe/{NAME}.txt',
-            f'--k0 datei=virtuelle_Geraete/T-SW-Eingabe/{NAME}.txt', '#PROT STUFE=2']
+            f'--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/{NAME}.txt',
+            f'--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/{NAME}.txt', '#PROT STUFE=2']
     koerper = [z for z in zl if z[:1].isdigit()]
     spur = [f'{SPUR + i:04o}: {wort_oktal(w)} # Spur {i + 1}: {tok} ({n})' for i, (tok, n, _c, w) in enumerate(soll)]
     fuss = ['', 'Tastenfolge:', 'H SW=1 G R', '', 'Prüfungen:',
@@ -276,7 +276,7 @@ def klickspur_text():
     """Klickspur fuer GRAFIK: Netz, Taste SW (Schalter SW gedrueckt), G, R; dann alle Tasten im SW-Fenster; Netz aus."""
     z = ['# C8205-Klickspur 1',
          '# fall: r300_eingabe (RE-001): alle Zeichen des R300-Codes mit Computertaste, getippt im SW-Fenster (Ereignisart tipp, ab DL-003)',
-         '# aufruf: siehe testscripte/r300_eingabe_grafik.sh; Trommel: virtuelle_Geraete/Trommel/trommel_r300_eingabe.txt',
+         '# aufruf: siehe testscripte/r300_eingabe_grafik.sh; Trommel: Trommel/trommel_r300_eingabe.txt',
          '# erwartet: Sollfolge in Tests/r300_eingabe_soll.txt; Spur im Speicher ab 3000 (Trommeldatei nach dem Lauf)',
          '    0.000 klick NETZ wirkt=1',
          '    1.000 klick SW wirkt=1',
@@ -314,7 +314,7 @@ def schreibe_gr():
                 break
             if len(zl) > 17 and zl[:4].isdigit() and zl[4:6] == ': ':
                 mem[int(zl[:4], 8)] = int(zl[6:17], 8)
-    with open(os.path.join(PROJ, 'virtuelle_Geraete', 'Trommel', 'trommel_' + NAME + '.txt'), 'w', encoding='utf-8', newline='') as f:
+    with open(os.path.join(PROJ, 'Trommel', 'trommel_' + NAME + '.txt'), 'w', encoding='utf-8', newline='') as f:
         f.write(''.join(f'{a:04o}: {mem.get(a, 0):011o}\n' for a in range(4096)))
     print('geschrieben: Klickspur und Trommel (Programm bei 0000..', f'{max(mem):04o}', ')')
 

@@ -3370,7 +3370,21 @@ void pass2(char *symbolLogFile, char *symFileName) {
         }
 
 
-        if (operation && isKeywordMatch(operation) == 1  /* nicht gefunden */) { 
+        if (operation && operation[0] == '\0') {
+            // Marke allein auf der Zeile (ohne Operation): Die Zeile belegt keinen Speicher.
+            // Die Marke erhaelt die Adresse der naechsten Zeile, die Speicher belegt;
+            // der Befehlszaehler wird NICHT erhoeht (sonst waeren alle folgenden Marken um 1 zu gross).
+            if ( isValidLabel(lineAsmAufgeloestTemp[i].sp1) )  {
+                if ( is_start == 0 ) {
+                    // Doku 3.7: Ein Label vor `start` ist ein Fehler.
+                    is_error2 = 1;
+                    sprintf(message, "Ein Label: \"%s\" vor `start` ist nicht zulaessig.", lineAsmAufgeloestTemp[i].sp1);
+                    MELDE_FEHLER_P2(i, message );
+                } else {
+                    addSymbol(lineAsmAufgeloestTemp[i].sp1, programCounter, relativAdresse, lineAsmAufgeloestTemp[i].sp2, lineAsmAufgeloestTemp[i].sp3,1,i);
+                }
+            }
+        } else if (operation && isKeywordMatch(operation) == 1  /* nicht gefunden */) { 
             if ( isValidLabel(lineAsmAufgeloestTemp[i].sp1) )  {  
                 addSymbol(lineAsmAufgeloestTemp[i].sp1, programCounter, relativAdresse, lineAsmAufgeloestTemp[i].sp2, lineAsmAufgeloestTemp[i].sp3,1,i);
             }
@@ -4788,6 +4802,29 @@ static void belegeAdressen(int von, int bis, int zeile) {
 // Aus sp0 (Spalten 1,3,4) werden alle Ziffern eingesammelt und linksbündig
 // mit Nullen auf 11 Stellen aufgefüllt. Alles ab Spalte 6 (Mnemonic, Operand,
 // Kommentar) wird - falls vorhanden - als "# ..."-Kommentar angehängt.
+extern char inputFileName[1024];   // wird weiter unten definiert
+
+// Testmarken, die im Quelltext als Kommentarzeile (";" + optionaler Leerraum + Marke ...) stehen duerfen und
+// in den Abschnitt "Trommeldatei:" der .test-Datei gehoeren. Marken mit '-' am Ende (#DOK-, #SPEI-, #SPUR-)
+// werden als Praefix erkannt (#DOK-0001 ...), alle anderen muessen als ganzes Wort stehen (Ende, Leerraum
+// oder '=' dahinter). Bewusst NICHT enthalten: --pruefe-... (gehoert in den Abschnitt "Pruefungen:"),
+// #INTERRUPT (muss ZWISCHEN zwei Befehlszeilen stehen, nicht im Vorspann) und das Pragma ";#; LEITADRESSE ...".
+// #STARTE ersetzt die Tastenfolge: Ist es im Vorspann, erzeugt der Assembler keinen Abschnitt "Tastenfolge:".
+static int istTestVorspannText(const char *t) {
+    static const char *marken[] = {
+        "#DOK-", "#SPEI-", "#SPUR-", "#PROT", "#AC", "#BZ", "#STARTE", "#TROMMEL",
+        "--leser1", "--leser2", "--stanzer1", "--sw-ausgabe", "--k0"
+    };
+    for (size_t m = 0; m < sizeof(marken) / sizeof(marken[0]); m++) {
+        size_t n = strlen(marken[m]);
+        if (strncmp(t, marken[m], n) != 0) continue;
+        if (marken[m][n - 1] == '-') return 1;
+        char c = t[n];
+        if (c == '\0' || c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '=') return 1;
+    }
+    return 0;
+}
+
 void erzeugeTestDatei(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgeloest, const char *testFileName) {
     FILE *testFile = fopen(testFileName, "w");
     if (!testFile) {
@@ -4795,11 +4832,42 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgelo
         return;
     }
 
-    // Kopfzeilen (Platzhalter fuer die Testbeschreibung, s. C8205-Interpreter-Durchfuehrung_eines_Tests.md)
+    // Kopfzeilen (s. C8205-Interpreter-Durchfuehrung_eines_Tests.md): Abschnitt "Trommeldatei:".
+    // Stehen im Quelltext Vorspannzeilen (Kommentarzeilen mit #DOK-, #SPEI-, #PROT, --sw-ausgabe ...),
+    // werden genau diese ohne fuehrendes ';' uebernommen. Nur wenn der Quelltext keine einzige solche
+    // Zeile enthaelt, wird der Standard-Vorspann (Platzhalter) erzeugt.
     fprintf(testFile, "Trommeldatei:\n");
-    fprintf(testFile, "#DOK-0001\n");
-    fprintf(testFile, "#SPEI-0001 0000-0000\n");
-    fprintf(testFile, "#PROT STUFE=2\n");
+    int vorspannZeilen = 0;
+    int startezeile = 0;       // #STARTE im Vorspann ersetzt die Tastenfolge
+    FILE *quelle = fopen(inputFileName, "r");
+    if (quelle) {
+        char zeile[2048];
+        while (fgets(zeile, sizeof(zeile), quelle)) {
+            if (strchr(zeile, '\n') == NULL && !feof(quelle)) {
+                // Zeile laenger als der Puffer: Rest ueberlesen, die Zeile ist keine Vorspannzeile
+                int c;
+                while ((c = fgetc(quelle)) != EOF && c != '\n') { }
+                continue;
+            }
+            const char *p = zeile;
+            while (*p == ' ' || *p == '\t') p++;
+            if (*p != ';') continue;                 // nur Kommentarzeilen
+            p++;
+            while (*p == ' ' || *p == '\t') p++;
+            if (!istTestVorspannText(p)) continue;
+            size_t len = strlen(p);
+            while (len > 0 && (p[len-1] == '\n' || p[len-1] == '\r' || p[len-1] == ' ' || p[len-1] == '\t')) len--;
+            fprintf(testFile, "%.*s\n", (int)len, p);
+            vorspannZeilen++;
+            if (strncmp(p, "#STARTE", 7) == 0) startezeile = 1;
+        }
+        fclose(quelle);
+    }
+    if (vorspannZeilen == 0) {
+        fprintf(testFile, "#DOK-0001\n");
+        fprintf(testFile, "#SPEI-0001 0000-0000\n");
+        fprintf(testFile, "#PROT STUFE=2\n");
+    }
 
     for (int i = 0; i < lineCountAsmAufgeloest; i++) {
         const char *sp0 = lineAsmAufgeloest[i].sp0;
@@ -4877,9 +4945,12 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest[], int lineCountAsmAufgelo
         fprintf(testFile, "\n");
     }
 
-    // Fusszeilen (Platzhalter fuer die Tastenfolge)
-    fprintf(testFile, "Tastenfolge:\n");
-    fprintf(testFile, "H G R\n");
+    // Fusszeilen (Platzhalter fuer die Tastenfolge). Mit #STARTE im Vorspann entfaellt der Abschnitt:
+    // #STARTE ersetzt die Tastenfolge vollstaendig, zusaetzliche Tasten waeren ein Formfehler.
+    if (!startezeile) {
+        fprintf(testFile, "Tastenfolge:\n");
+        fprintf(testFile, "H G R\n");
+    }
 
     fclose(testFile);
 }
@@ -5380,8 +5451,22 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
 // ------------------------------------------
 
 void printUsage(const char *programName) {
-    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-WARN=SYM]\n", programName);
-    printf("  -WARN=SYM  Warnt vor Symbolen, die definiert, aber nirgends verwendet werden.\n");
+    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-WARN=SYM]\n", programName);
+    printf("       %s -h | --help | --version\n", programName);
+    printf("\n");
+    printf("  -p Projektverzeichnis  Verzeichnis mit dem Quelltext; dorthin werden auch die Ausgabedateien\n");
+    printf("                         (.log .obj .mqo .sym .dmp .test) geschrieben. Ohne -p gilt der zuletzt\n");
+    printf("                         benutzte Wert aus der Datei 'projekdetails' im aktuellen Verzeichnis.\n");
+    printf("  -s Quellcode-Datei     Assembler-Quelltext im Projektverzeichnis; die Endung .asm darf entfallen.\n");
+    printf("                         Ohne -s gilt ebenfalls der zuletzt benutzte Wert aus 'projekdetails'.\n");
+    printf("  -o Pfad | Datei        Ablageort der .obj-Datei statt des Projektverzeichnisses. Verzeichnis\n");
+    printf("                         (existiert, oder endet auf / bzw. \\): Dateiname aus -s mit Endung .obj.\n");
+    printf("                         Sonst Dateiname mit oder ohne Pfad (relativ zum aktuellen Verzeichnis),\n");
+    printf("                         unveraendert uebernommen. Das Verzeichnis muss existieren.\n");
+    printf("  -t Pfad | Datei        wie -o, aber fuer die .test-Datei (Endung .test).\n");
+    printf("  -WARN=SYM              Warnt vor Symbolen, die definiert, aber nirgends verwendet werden.\n");
+    printf("  -h, --help             Diese Hilfe ausgeben.\n");
+    printf("  --version              Die Versionsnummer ausgeben (steht auch in der ersten Ausgabezeile).\n");
 }
 
 // ------------------------------------------
@@ -5538,6 +5623,70 @@ void ensureFileExtension(char *fileName, const char *defaultExtension, size_t ma
 }
 
 // ----------------------------------------
+// Optionale Ausgabeorte: -o fuer die .obj-Datei, -t fuer die .test-Datei.
+// Ist der Schalter nicht angegeben, bleibt <ziel> unveraendert (Standardort: Projektverzeichnis).
+// Ist er angegeben, gilt statt des Standardorts der angegebene Pfad:
+//   - Verzeichnis (existiert bereits oder endet auf '/' bzw. '\\'): der Dateiname wird aus -s gebildet
+//     (Name der Quellcode-Datei ohne Endung + <endung>);
+//   - sonst Dateiname mit oder ohne Pfad (relativ zum aktuellen Verzeichnis), unveraendert uebernommen.
+// Das Verzeichnis muss existieren; es wird nicht angelegt.
+static void ermittleAusgabeDatei(int argc, char *argv[], const char *schalter, const char *endung,
+                                 const char *quellcodeDatei, char *ziel, size_t zielGroesse) {
+    const char *wert = NULL;
+    for (int i = 1; i < argc; i++) {
+        if (argv[i] != NULL && strcmp(argv[i], schalter) == 0) {
+            if (i + 1 >= argc || argv[i + 1] == NULL || argv[i + 1][0] == '\0' || argv[i + 1][0] == '-') {
+                PRINT_FEHLER("Parameter %s ohne Pfad oder Dateiname.", schalter);
+                PRINT_FEHLER("%s", "Abbruch.");
+                exit(RC_FEHLER);
+            }
+            wert = argv[i + 1];
+            break;
+        }
+    }
+    if (wert == NULL) return;
+
+    size_t laenge = strlen(wert);
+    int endetMitTrenner = (wert[laenge - 1] == '/' || wert[laenge - 1] == '\\');
+    int ergebnis;
+
+    if (endetMitTrenner || isDirectory(wert)) {
+        if (!isDirectory(wert)) {
+            PRINT_FEHLER("Das Verzeichnis '%s' fuer Parameter %s existiert nicht.", wert, schalter);
+            PRINT_FEHLER("%s", "Abbruch.");
+            exit(RC_FEHLER);
+        }
+        const char *punkt = strrchr(quellcodeDatei, '.');
+        int namensLaenge = punkt ? (int)(punkt - quellcodeDatei) : (int)strlen(quellcodeDatei);
+        ergebnis = snprintf(ziel, zielGroesse, "%s%s%.*s%s", wert, endetMitTrenner ? "" : "/",
+                            namensLaenge, quellcodeDatei, endung);
+    } else {
+        const char *sep1 = strrchr(wert, '/');
+        const char *sep2 = strrchr(wert, '\\');
+        const char *sep = (sep1 && sep2) ? (sep1 > sep2 ? sep1 : sep2) : (sep1 ? sep1 : sep2);
+        if (sep != NULL) {
+            char verzeichnis[1024];
+            size_t dl = (size_t)(sep - wert);
+            if (dl == 0) dl = 1;                       // Wurzelverzeichnis "/"
+            if (dl >= sizeof(verzeichnis)) dl = sizeof(verzeichnis) - 1;
+            memcpy(verzeichnis, wert, dl);
+            verzeichnis[dl] = '\0';
+            if (!isDirectory(verzeichnis)) {
+                PRINT_FEHLER("Das Verzeichnis '%s' fuer Parameter %s existiert nicht.", verzeichnis, schalter);
+                PRINT_FEHLER("%s", "Abbruch.");
+                exit(RC_FEHLER);
+            }
+        }
+        ergebnis = snprintf(ziel, zielGroesse, "%s", wert);
+    }
+    if (ergebnis < 0 || (size_t)ergebnis >= zielGroesse) {
+        PRINT_FEHLER("Der Pfad fuer Parameter %s ist zu lang.", schalter);
+        PRINT_FEHLER("%s", "Abbruch.");
+        exit(RC_FEHLER);
+    }
+}
+
+// ----------------------------------------
 
 int main(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
@@ -5552,7 +5701,10 @@ int main(int argc, char *argv[]) {
     greetings();
     verarbeiteWarnOptionen(argc, argv);
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-h") == 0) { 
+        if (strcmp(argv[i], "--version") == 0) {
+            return RC_OK;   // die Versionszeile hat greetings() schon ausgegeben
+        }
+        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) { 
             printUsage(argv[0]);
             return RC_OK;
         }
@@ -5569,6 +5721,10 @@ int main(int argc, char *argv[]) {
     snprintf(symFileName, sizeof(symFileName), "%s/%.*s.sym", projektVerzeichnis, (int)(strrchr(quellcodeDatei, '.') - quellcodeDatei), quellcodeDatei);
     snprintf(testFileName, sizeof(testFileName), "%s/%.*s.test", projektVerzeichnis, (int)(strrchr(quellcodeDatei, '.') - quellcodeDatei), quellcodeDatei);
     snprintf(dmpFileName, sizeof(dmpFileName), "%s/%.*s.dmp", projektVerzeichnis, (int)(strrchr(quellcodeDatei, '.') - quellcodeDatei), quellcodeDatei);
+
+    // Optional: eigener Ablageort fuer .obj (-o) und .test (-t) statt des Projektverzeichnisses
+    ermittleAusgabeDatei(argc, argv, "-o", ".obj",  quellcodeDatei, machineCodeFileName, sizeof(machineCodeFileName));
+    ermittleAusgabeDatei(argc, argv, "-t", ".test", quellcodeDatei, testFileName,        sizeof(testFileName));
 
     ensureFileExtension(inputFileName, ".asm", sizeof(inputFileName));
 

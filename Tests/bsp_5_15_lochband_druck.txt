@@ -1,7 +1,7 @@
 Trommeldatei:
 #DOK-0001 Abdruck numerischer Texte vom Lochband im R 300-Code (Programmieranleitung 5.15), Leser 2 -> Schreibwerk
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
---leser2 virtuelle_Geraete/Leser2/bsp_5_15_lochstreifen.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
+--leser2 Test-virtuelleGeraete/Leser2/bsp_5_15_lochstreifen.txt
 #PROT STUFE=2
 
 # Startstück (nicht Teil des Buchprogramms): Das Schreibwerk muss nach der Aufgabe auf Kleinbuchstaben (KB) stehen;

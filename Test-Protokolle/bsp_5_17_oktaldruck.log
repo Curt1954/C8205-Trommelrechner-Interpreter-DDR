@@ -219,5 +219,5 @@ Ergebnispruefung:
   V2: soll=1 ist=1 OK
   3020: soll=00000000000 ist=00000000000 OK
   7777: soll=70123456701 ist=70123456701 OK
-  Schreibwerk: soll=Test-Ergebnisvergleiche/bsp_5_17_oktaldruck-sw-ausgabe.txt ist=virtuelle_Geraete/SW-Ausgabe/sw-ausgabe.txt OK
+  Schreibwerk: soll=Test-Ergebnisvergleiche/bsp_5_17_oktaldruck-sw-ausgabe.txt ist=Test-virtuelleGeraete/SW-Ausgabe/sw-ausgabe.txt OK
 Test wahr

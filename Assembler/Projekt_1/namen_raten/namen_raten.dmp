@@ -1,0 +1,555 @@
+0000: 01 2000 000    beginn:   000    anfang                                                    ; Zelle 0000: Sprung nach 02000
+      20 0000 2000             equ    02000                                                     
+2000: 00 4500 030    anfang:   030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0570 030              dtm    \Rate mal, welchen Namen ich mir gemerkt habe.\           
+      00 1110 030    ;    
+      00 1170 030    ;    
+      00 0610 030    ;    
+      00 1630 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1240 030    ;    
+      00 0610 030    ;    
+      00 1030 030    ;    
+      00 1530 030    ;    
+      00 0320 030    ;    
+      00 1660 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1050 030    ;    
+      00 1170 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0320 030    ;    
+      00 1240 030    ;    
+      00 0510 030    ;    
+      00 1110 030    ;    
+      00 0320 030    ;    
+      00 0670 030    ;    
+      00 0450 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 1220 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 0700 030    ;    
+      00 0610 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     
+      00 0570 030              dtm    \Mit der Eingabe eines Punktes beendest du das Programm.\ 
+      00 1240 030    ;    
+      00 1170 030    ;    
+      00 0510 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0670 030    ;    
+      00 0610 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1270 030    ;    
+      00 1170 030    ;    
+      00 1440 030    ;    
+      00 1050 030    ;    
+      00 1220 030    ;    
+      00 1630 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0320 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 0640 030    ;    
+      00 1440 030    ;    
+      00 0320 030    ;    
+      00 0640 030    ;    
+      00 0610 030    ;    
+      00 1420 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1270 030    ;    
+      00 1170 030    ;    
+      00 1110 030    ;    
+      00 1060 030    ;    
+      00 0670 030    ;    
+      00 1110 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 1240 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     
+2163: 01 2607 211    lzuf:     211    zufall                                                    ; AC := Eintrag der Zufallsliste (Namensnummer * 8 Zellen, << 9); Befehl wird weitergeschaltet
+2164: 01 2524 040              040    wrap                                                      ; Eintrag < 0: Endmarke, Liste von vorn
+2165: 01 2534 210              210    nbasis                                                    ; AC := "211 namen" + Eintrag = Befehl auf den 1. Buchstaben des gewaehlten Namens
+2166: 01 2174 240              240    l1                                                        
+2167: 01 2527 210              210    eins                                                      ; Adresse + 1: 2. Buchstabe
+2170: 01 2234 240              240    lnam                                                      
+2171: 01 2163 211              211    lzuf                                                      ; Zeiger der Zufallsliste um 1 weiter
+2172: 01 2527 210              210    eins                                                      
+2173: 01 2163 240              240    lzuf                                                      
+2174: 01 2537 211    l1:       211    namen                                                     ; AC := Eingabeadresse des 1. Buchstabens (Befehl wird je Spiel gesetzt)
+2175: 01 2536 210              210    abef                                                      ; AC := "211 atab" + Eingabeadresse = Befehl "211 atab+Eingabeadresse"
+2176: 01 2177 240              240    ba                                                        
+2177: 0              ba:       dw     0                                                         ; wird ausgefuehrt: AC := Ausgabebefehl "030 <Ausgabeadresse>" des Buchstabens
+2200: 01 2231 240              240    aus                                                       
+2201: 00 4500 030              030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 1170 030              dtm    \1. Buchstabe ist:  \                                     
+      00 0010 030    ;    
+      00 0730 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0620 030    ;    
+      00 1170 030    ;    
+      00 1440 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0610 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 0510 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0150 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 0570 030              dz     $ingb                                                     ; Grossbuchstabe
+2231: 0              aus:      dw     0                                                         ; wird zum Ausgabebefehl des 1. Buchstabens
+      00 2720 030              dz     $wrzl                                                     ; Zeilenschaltung
+2233: 00 4700 030              030    04700                                                     ; 4700 oder K0 oder SW1 Input oder KON Input
+2234: 01 2537 211    lnam:     211    namen                                                     ; AC := erwarteter Buchstabe (Eingabeadresse << 9); 0 = Namensende (Befehl wird weitergeschaltet)
+2235: 01 2532 240              240    erw                                                       
+2236: 01 2530 320              320    null                                                      ; Vergleich mit 0 (markierter Einzelbefehl, Vgl 3 bei Gleichheit)
+2237: 01 2426 170              170    gewonnen                                                  ; Vgl 3: Namensende erreicht, alle Buchstaben erraten
+2240: 01 2234 211              211    lnam                                                      
+2241: 01 2527 210              210    eins                                                      
+2242: 01 2234 240              240    lnam                                                      ; Zeiger auf den uebernaechsten Buchstaben
+2243: 01 2531 211              211    minus1                                                    
+2244: 01 2533 240              240    vers                                                      ; vers := -1: 1. Versuch
+2245: 01 3000 011    lesen:    011    ztab                                                      ; Eingabe-Halt mit Loeschen: AC := ztab + Eingabeadresse (Sprung-Zeichen springen)
+2246: 01 2532 320              320    erw                                                       ; getippten Buchstaben mit dem erwarteten vergleichen
+2247: 01 2405 170              170    richtig                                                   ; Vgl 3: gleich
+2250: 01 2533 211    falsch:   211    vers                                                      ; Fehlversuch (auch Sprungziel der Sonderzeichen in ztab)
+2251: 01 2340 040              040    nochmal                                                   ; vers < 0: das war der 1. Versuch
+2252: 00 4500 030              030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0320 030              dtm    \  Du musst deine Fantasie viel mehr schulen.\            
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0640 030    ;    
+      00 1170 030    ;    
+      00 1440 030    ;    
+      00 0320 030    ;    
+      00 1240 030    ;    
+      00 1440 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0460 030    ;    
+      00 1170 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 1630 030    ;    
+      00 0610 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1650 030    ;    
+      00 0510 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 0320 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0700 030    ;    
+      00 1110 030    ;    
+      00 0320 030    ;    
+      00 1420 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1440 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     ; Zeilenende
+      00 2720 030              dz     $wrzl                                                     ; Leerzeile 1
+      00 2720 030              dz     $wrzl                                                     ; Leerzeile 2
+      00 2720 030              dz     $wrzl                                                     ; Leerzeile 3
+2337: 01 2000 000              000    anfang                                                    ; von vorn
+2340: 01 2530 211    nochmal:  211    null                                                      
+2341: 01 2533 240              240    vers                                                      ; vers := 0: 2. Versuch
+2342: 00 4500 030              030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0320 030              dtm    \  Falsch, noch ein Versuch.\                             
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0460 030    ;    
+      00 1170 030    ;    
+      00 0610 030    ;    
+      00 1030 030    ;    
+      00 1420 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1530 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 1060 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0320 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1650 030    ;    
+      00 1170 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 1420 030    ;    
+      00 1440 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     ; Zeilenschaltung
+2403: 00 4700 030              030    04700                                                     ; 4700 oder K0 oder SW1 Input oder KON Input
+2404: 01 2245 000              000    lesen                                                     
+2405: 00 4500 030    richtig:  030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0320 030              dtm    \  Richtig!\                                              
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1110 030    ;    
+      00 1170 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 0510 030    ;    
+      00 0670 030    ;    
+      00 0570 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     ; Zeilenschaltung
+2424: 00 4700 030              030    04700                                                     ; 4700 oder K0 oder SW1 Input oder KON Input
+2425: 01 2234 000              000    lnam                                                      
+2426: 00 4500 030    gewonnen: 030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0320 030              dtm    \  Toll, du bist fantasiebegabt.\                         
+      00 0320 030    ;    
+      00 1630 030    ;    
+      00 1170 030    ;    
+      00 1060 030    ;    
+      00 1030 030    ;    
+      00 1030 030    ;    
+      00 1530 030    ;    
+      00 0320 030    ;    
+      00 0640 030    ;    
+      00 1440 030    ;    
+      00 0320 030    ;    
+      00 0620 030    ;    
+      00 0510 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 0460 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 1630 030    ;    
+      00 0610 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 0450 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 0670 030    ;    
+      00 0610 030    ;    
+      00 0620 030    ;    
+      00 1630 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     ; Zeilenende
+      00 2720 030              dz     $wrzl                                                     ; Leerzeile 1
+      00 2720 030              dz     $wrzl                                                     ; Leerzeile 2
+      00 2720 030              dz     $wrzl                                                     ; Leerzeile 3
+2473: 01 2000 000              000    anfang                                                    ; von vorn
+2474: 00 4500 030    ende:     030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 0320 030              dtm    \  Programm beendet.\                                     
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1270 030    ;    
+      00 1170 030    ;    
+      00 1110 030    ;    
+      00 1060 030    ;    
+      00 0670 030    ;    
+      00 1110 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 1240 030    ;    
+      00 0320 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1630 030    ;    
+      00 0730 030    ;    
+      00 2720 030              dz     $wrzl                                                     
+2523: 01 0000 020              020    0                                                         ; Stopp
+2524: 01 2535 211    wrap:     211    zanf                                                      ; Endmarke der Zufallsliste: Zeiger wieder auf den Anfang ...
+2525: 01 2163 240              240    lzuf                                                      
+2526: 01 2163 000              000    lzuf                                                      ; ... und den Eintrag erneut holen
+2527: 00 00000001000 eins:     dw     01000                                                     ; 1 in den Adressstellen (Adresse << 9)
+2530: 0              null:     dw     0                                                         
+2531: 00 77777777777 minus1:   dw     -1                                                        
+2532: 0              erw:      dw     0                                                         ; erwarteter Buchstabe
+2533: 0              vers:     dw     0                                                         ; -1 = 1. Versuch, 0 = 2. Versuch
+2534: 01 2537 211    nbasis:   211    namen                                                     ; Vorlage: Befehl auf den 1. Buchstaben des 1. Namens
+2535: 01 2607 211    zanf:     211    zufall                                                    ; Vorlage: Anfangswert des Zeigers lzuf
+2536: 01 2650 211    abef:     211    atab                                                      ; Vorlage: Befehl auf den Anfang der Ausgabetabelle atab
+2537: 00 00000044000 namen:    dw     044*01000                                                 ; Name 0, Buchstabe 1: m  (Eingabeadresse 044)
+2540: 00 00000031000           dw     031*01000                                                 ; Name 0, Buchstabe 2: i  (Eingabeadresse 031)
+2541: 00 00000023000           dw     023*01000                                                 ; Name 0, Buchstabe 3: c  (Eingabeadresse 023)
+2542: 00 00000030000           dw     030*01000                                                 ; Name 0, Buchstabe 4: h  (Eingabeadresse 030)
+2543: 00 00000021000           dw     021*01000                                                 ; Name 0, Buchstabe 5: a  (Eingabeadresse 021)
+2544: 00 00000025000           dw     025*01000                                                 ; Name 0, Buchstabe 6: e  (Eingabeadresse 025)
+2545: 00 00000043000           dw     043*01000                                                 ; Name 0, Buchstabe 7: l  (Eingabeadresse 043)
+2546: 0                        dw     0                                                         ; Name 0 (Michael): Endwort
+2547: 00 00000022000           dw     022*01000                                                 ; Name 1, Buchstabe 1: b  (Eingabeadresse 022)
+2550: 00 00000021000           dw     021*01000                                                 ; Name 1, Buchstabe 2: a  (Eingabeadresse 021)
+2551: 00 00000051000           dw     051*01000                                                 ; Name 1, Buchstabe 3: r  (Eingabeadresse 051)
+2552: 00 00000022000           dw     022*01000                                                 ; Name 1, Buchstabe 4: b  (Eingabeadresse 022)
+2553: 00 00000021000           dw     021*01000                                                 ; Name 1, Buchstabe 5: a  (Eingabeadresse 021)
+2554: 00 00000051000           dw     051*01000                                                 ; Name 1, Buchstabe 6: r  (Eingabeadresse 051)
+2555: 00 00000021000           dw     021*01000                                                 ; Name 1, Buchstabe 7: a  (Eingabeadresse 021)
+2556: 0                        dw     0                                                         ; Name 1 (Barbara): Endwort
+2557: 00 00000062000           dw     062*01000                                                 ; Name 2, Buchstabe 1: s  (Eingabeadresse 062)
+2560: 00 00000064000           dw     064*01000                                                 ; Name 2, Buchstabe 2: u  (Eingabeadresse 064)
+2561: 00 00000062000           dw     062*01000                                                 ; Name 2, Buchstabe 3: s  (Eingabeadresse 062)
+2562: 00 00000021000           dw     021*01000                                                 ; Name 2, Buchstabe 4: a  (Eingabeadresse 021)
+2563: 00 00000045000           dw     045*01000                                                 ; Name 2, Buchstabe 5: n  (Eingabeadresse 045)
+2564: 00 00000045000           dw     045*01000                                                 ; Name 2, Buchstabe 6: n  (Eingabeadresse 045)
+2565: 00 00000025000           dw     025*01000                                                 ; Name 2, Buchstabe 7: e  (Eingabeadresse 025)
+2566: 0                        dw     0                                                         ; Name 2 (Susanne): Endwort
+2567: 00 00000021000           dw     021*01000                                                 ; Name 3, Buchstabe 1: a  (Eingabeadresse 021)
+2570: 00 00000045000           dw     045*01000                                                 ; Name 3, Buchstabe 2: n  (Eingabeadresse 045)
+2571: 00 00000024000           dw     024*01000                                                 ; Name 3, Buchstabe 3: d  (Eingabeadresse 024)
+2572: 00 00000051000           dw     051*01000                                                 ; Name 3, Buchstabe 4: r  (Eingabeadresse 051)
+2573: 00 00000025000           dw     025*01000                                                 ; Name 3, Buchstabe 5: e  (Eingabeadresse 025)
+2574: 00 00000021000           dw     021*01000                                                 ; Name 3, Buchstabe 6: a  (Eingabeadresse 021)
+2575: 00 00000062000           dw     062*01000                                                 ; Name 3, Buchstabe 7: s  (Eingabeadresse 062)
+2576: 0                        dw     0                                                         ; Name 3 (Andreas): Endwort
+2577: 00 00000023000           dw     023*01000                                                 ; Name 4, Buchstabe 1: c  (Eingabeadresse 023)
+2600: 00 00000043000           dw     043*01000                                                 ; Name 4, Buchstabe 2: l  (Eingabeadresse 043)
+2601: 00 00000021000           dw     021*01000                                                 ; Name 4, Buchstabe 3: a  (Eingabeadresse 021)
+2602: 00 00000064000           dw     064*01000                                                 ; Name 4, Buchstabe 4: u  (Eingabeadresse 064)
+2603: 00 00000024000           dw     024*01000                                                 ; Name 4, Buchstabe 5: d  (Eingabeadresse 024)
+2604: 00 00000031000           dw     031*01000                                                 ; Name 4, Buchstabe 6: i  (Eingabeadresse 031)
+2605: 00 00000021000           dw     021*01000                                                 ; Name 4, Buchstabe 7: a  (Eingabeadresse 021)
+2606: 0                        dw     0                                                         ; Name 4 (Claudia): Endwort
+2607: 00 00000020000 zufall:   dw     2*010000                                                  ;  0: Name 2 (Susanne)
+2610: 0                        dw     0*010000                                                  ;  1: Name 0 (Michael)
+2611: 00 00000010000           dw     1*010000                                                  ;  2: Name 1 (Barbara)
+2612: 0                        dw     0*010000                                                  ;  3: Name 0 (Rudolph)
+2613: 00 00000010000           dw     1*010000                                                  ;  4: Name 1 (Herbert)
+2614: 00 00000030000           dw     3*010000                                                  ;  5: Name 3 (Andreas)
+2615: 00 00000010000           dw     1*010000                                                  ;  6: Name 1 (Barbara)
+2616: 0                        dw     0*010000                                                  ;  7: Name 0 (Michael)
+2617: 00 00000020000           dw     2*010000                                                  ;  8: Name 2 (Susanne)
+2620: 00 00000040000           dw     4*010000                                                  ;  9: Name 4 (Claudia)
+2621: 0                        dw     0*010000                                                  ; 10: Name 0 (Michael)
+2622: 00 00000020000           dw     2*010000                                                  ; 11: Name 2 (Susanne)
+2623: 00 00000040000           dw     4*010000                                                  ; 12: Name 4 (Claudia)
+2624: 00 00000030000           dw     3*010000                                                  ; 13: Name 3 (Andreas)
+2625: 00 00000040000           dw     4*010000                                                  ; 14: Name 4 (Barbara)
+2626: 00 00000030000           dw     3*010000                                                  ; 15: Name 3 (Marlies)
+2627: 00 00000040000           dw     4*010000                                                  ; 16: Name 4 (Claudia)
+2630: 0                        dw     0*010000                                                  ; 17: Name 0 (Michael)
+2631: 00 00000040000           dw     4*010000                                                  ; 18: Name 4 (Claudia)
+2632: 00 00000020000           dw     2*010000                                                  ; 19: Name 2 (Susanne)
+2633: 00 00000010000           dw     1*010000                                                  ; 20: Name 1 (Barbara)
+2634: 00 00000030000           dw     3*010000                                                  ; 21: Name 3 (Andreas)
+2635: 00 00000040000           dw     4*010000                                                  ; 22: Name 4 (Claudia)
+2636: 00 00000020000           dw     2*010000                                                  ; 23: Name 2 (Susanne)
+2637: 00 00000030000           dw     3*010000                                                  ; 24: Name 3 (Andreas)
+2640: 00 00000010000           dw     1*010000                                                  ; 25: Name 1 (Barbara)
+2641: 00 00000040000           dw     4*010000                                                  ; 26: Name 4 (Claudia)
+2642: 0                        dw     0*010000                                                  ; 27: Name 0 (Michael)
+2643: 00 00000030000           dw     3*010000                                                  ; 28: Name 3 (Andreas)
+2644: 00 00000020000           dw     2*010000                                                  ; 29: Name 2 (Susanne)
+2645: 00 00000010000           dw     1*010000                                                  ; 30: Name 1 (Barbara)
+2646: 0                        dw     0*010000                                                  ; 31: Name 0 (Michael)
+2647: 00 77777777777           dw     -1                                                        ; Endmarke
+2650: 0              atab:     dw     0                                                         ; 00
+2651: 0                        dw     0                                                         ; 01
+2652: 0                        dw     0                                                         ; 02
+2653: 0                        dw     0                                                         ; 03
+2654: 0                        dw     0                                                         ; 04
+2655: 0                        dw     0                                                         ; 05
+2656: 0                        dw     0                                                         ; 06
+2657: 0                        dw     0                                                         ; 07
+2660: 0                        dw     0                                                         ; 10
+2661: 0                        dw     0                                                         ; 11
+2662: 0                        dw     0                                                         ; 12
+2663: 0                        dw     0                                                         ; 13
+2664: 0                        dw     0                                                         ; 14
+2665: 0                        dw     0                                                         ; 15
+2666: 0                        dw     0                                                         ; 16
+2667: 0                        dw     0                                                         ; 17
+2670: 0                        dw     0                                                         ; 20
+2671: 00 00000610030           dw     0610030                                                   ; 21: a
+2672: 00 00000620030           dw     0620030                                                   ; 22: b
+2673: 00 00000430030           dw     0430030                                                   ; 23: c
+2674: 00 00000640030           dw     0640030                                                   ; 24: d
+2675: 00 00000450030           dw     0450030                                                   ; 25: e
+2676: 00 00000460030           dw     0460030                                                   ; 26: f
+2677: 00 00000670030           dw     0670030                                                   ; 27: g
+2700: 00 00000700030           dw     0700030                                                   ; 30: h
+2701: 00 00000510030           dw     0510030                                                   ; 31: i
+2702: 0                        dw     0                                                         ; 32
+2703: 0                        dw     0                                                         ; 33
+2704: 0                        dw     0                                                         ; 34
+2705: 0                        dw     0                                                         ; 35
+2706: 0                        dw     0                                                         ; 36
+2707: 0                        dw     0                                                         ; 37
+2710: 0                        dw     0                                                         ; 40
+2711: 00 00001210030           dw     01210030                                                  ; 41: j
+2712: 00 00001220030           dw     01220030                                                  ; 42: k
+2713: 00 00001030030           dw     01030030                                                  ; 43: l
+2714: 00 00001240030           dw     01240030                                                  ; 44: m
+2715: 00 00001050030           dw     01050030                                                  ; 45: n
+2716: 00 00001060030           dw     01060030                                                  ; 46: o
+2717: 00 00001270030           dw     01270030                                                  ; 47: p
+2720: 00 00001300030           dw     01300030                                                  ; 50: q
+2721: 00 00001110030           dw     01110030                                                  ; 51: r
+2722: 0                        dw     0                                                         ; 52
+2723: 0                        dw     0                                                         ; 53
+2724: 0                        dw     0                                                         ; 54
+2725: 0                        dw     0                                                         ; 55
+2726: 0                        dw     0                                                         ; 56
+2727: 0                        dw     0                                                         ; 57
+2730: 0                        dw     0                                                         ; 60
+2731: 0                        dw     0                                                         ; 61
+2732: 00 00001420030           dw     01420030                                                  ; 62: s
+2733: 00 00001630030           dw     01630030                                                  ; 63: t
+2734: 00 00001440030           dw     01440030                                                  ; 64: u
+2735: 00 00001650030           dw     01650030                                                  ; 65: v
+2736: 00 00001660030           dw     01660030                                                  ; 66: w
+2737: 00 00001470030           dw     01470030                                                  ; 67: x
+2740: 00 00001500030           dw     01500030                                                  ; 70: y
+2741: 00 00001710030           dw     01710030                                                  ; 71: z
+2742: 0                        dw     0                                                         ; 72
+2743: 0                        dw     0                                                         ; 73
+2744: 0                        dw     0                                                         ; 74
+2745: 0                        dw     0                                                         ; 75
+2746: 0                        dw     0                                                         ; 76
+2747: 0                        dw     0                                                         ; 77
+      20 0000 3000             equ100 03000                                                     
+3000: 0              ztab:     dw     0                                                         ; 00: kein Buchstabe (Fehlversuch)
+3001: 0                        dw     0                                                         ; 01: kein Buchstabe (Fehlversuch)
+3002: 0                        dw     0                                                         ; 02: kein Buchstabe (Fehlversuch)
+3003: 0                        dw     0                                                         ; 03: kein Buchstabe (Fehlversuch)
+3004: 0                        dw     0                                                         ; 04: kein Buchstabe (Fehlversuch)
+3005: 0                        dw     0                                                         ; 05: kein Buchstabe (Fehlversuch)
+3006: 0                        dw     0                                                         ; 06: kein Buchstabe (Fehlversuch)
+3007: 0                        dw     0                                                         ; 07: kein Buchstabe (Fehlversuch)
+3010: 0                        dw     0                                                         ; 10: kein Buchstabe (Fehlversuch)
+3011: 0                        dw     0                                                         ; 11: kein Buchstabe (Fehlversuch)
+3012: 01 2250 000              000    falsch                                                    ; 12: Leertaste / ZWR: zaehlt als Fehlversuch
+3013: 0                        dw     0                                                         ; 13: kein Buchstabe (Fehlversuch)
+3014: 0                        dw     0                                                         ; 14: kein Buchstabe (Fehlversuch)
+3015: 01 2250 000              000    falsch                                                    ; 15: : / (          : zaehlt als Fehlversuch
+3016: 01 2250 000              000    falsch                                                    ; 16: Irrung Satz: zaehlt als Fehlversuch
+3017: 0                        dw     0                                                         ; 17: kein Buchstabe (Fehlversuch)
+3020: 0                        dw     0                                                         ; 20: kein Buchstabe (Fehlversuch)
+3021: 00 00000021000           dw     021*01000                                                 ; 21: a
+3022: 00 00000022000           dw     022*01000                                                 ; 22: b
+3023: 00 00000023000           dw     023*01000                                                 ; 23: c
+3024: 00 00000024000           dw     024*01000                                                 ; 24: d
+3025: 00 00000025000           dw     025*01000                                                 ; 25: e
+3026: 00 00000026000           dw     026*01000                                                 ; 26: f
+3027: 00 00000027000           dw     027*01000                                                 ; 27: g
+3030: 00 00000030000           dw     030*01000                                                 ; 30: h
+3031: 00 00000031000           dw     031*01000                                                 ; 31: i
+3032: 01 2250 000              000    falsch                                                    ; 32: SatzMarke / WRZL: zaehlt als Fehlversuch
+3033: 01 2474 000              000    ende                                                      ; 33: . / !          : Punkt beendet das Programm
+3034: 0                        dw     0                                                         ; 34: kein Buchstabe (Fehlversuch)
+3035: 0                        dw     0                                                         ; 35: kein Buchstabe (Fehlversuch)
+3036: 0                        dw     0                                                         ; 36: kein Buchstabe (Fehlversuch)
+3037: 01 2245 000              000    lesen                                                     ; 37: Um. GB: ueberlesen, weiter warten
+3040: 01 2250 000              000    falsch                                                    ; 40: - / Dreieck: zaehlt als Fehlversuch
+3041: 00 00000041000           dw     041*01000                                                 ; 41: j
+3042: 00 00000042000           dw     042*01000                                                 ; 42: k
+3043: 00 00000043000           dw     043*01000                                                 ; 43: l
+3044: 00 00000044000           dw     044*01000                                                 ; 44: m
+3045: 00 00000045000           dw     045*01000                                                 ; 45: n
+3046: 00 00000046000           dw     046*01000                                                 ; 46: o
+3047: 00 00000047000           dw     047*01000                                                 ; 47: p
+3050: 00 00000050000           dw     050*01000                                                 ; 50: q
+3051: 00 00000051000           dw     051*01000                                                 ; 51: r
+3052: 0                        dw     0                                                         ; 52: kein Buchstabe (Fehlversuch)
+3053: 0                        dw     0                                                         ; 53: kein Buchstabe (Fehlversuch)
+3054: 0                        dw     0                                                         ; 54: kein Buchstabe (Fehlversuch)
+3055: 0                        dw     0                                                         ; 55: kein Buchstabe (Fehlversuch)
+3056: 0                        dw     0                                                         ; 56: kein Buchstabe (Fehlversuch)
+3057: 01 2245 000              000    lesen                                                     ; 57: Um. KB: ueberlesen, weiter warten
+3060: 01 2250 000              000    falsch                                                    ; 60: ` / ;          : zaehlt als Fehlversuch
+3061: 0                        dw     0                                                         ; 61: kein Buchstabe (Fehlversuch)
+3062: 00 00000062000           dw     062*01000                                                 ; 62: s
+3063: 00 00000063000           dw     063*01000                                                 ; 63: t
+3064: 00 00000064000           dw     064*01000                                                 ; 64: u
+3065: 00 00000065000           dw     065*01000                                                 ; 65: v
+3066: 00 00000066000           dw     066*01000                                                 ; 66: w
+3067: 00 00000067000           dw     067*01000                                                 ; 67: x
+3070: 00 00000070000           dw     070*01000                                                 ; 70: y
+3071: 00 00000071000           dw     071*01000                                                 ; 71: z
+3072: 01 2250 000              000    falsch                                                    ; 72: BM (ZV hat dieselbe Adresse, aber keine Sprung-Umstellung): Fehlversuch
+3073: 01 2250 000              000    falsch                                                    ; 73: , / ?          : zaehlt als Fehlversuch
+3074: 0                        dw     0                                                         ; 74: kein Buchstabe (Fehlversuch)
+3075: 01 2250 000              000    falsch                                                    ; 75: Tabulator: zaehlt als Fehlversuch
+3076: 0                        dw     0                                                         ; 76: kein Buchstabe (Fehlversuch)
+3077: 0                        dw     0                                                         ; 77: kein Buchstabe (Fehlversuch)

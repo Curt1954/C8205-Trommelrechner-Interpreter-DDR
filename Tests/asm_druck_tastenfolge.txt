@@ -2,7 +2,7 @@ Trommeldatei:
 #DOK-0001 Druck von BZ und AC (Bedienpult 4.2, 4.3): Ein bei 5000 laufendes Programm wird unterbrochen (BZ = 5000, AC = 10101010101).
 #DOK-0002 H G Ue E rettet den AC nach 7777 (BZ = 5001); H G M+ E M- R springt nach Zelle 0001 (druck) mit AC = 5003 im Adressfeld. Erwartet: BZ 00005000000 AC 10101010101, danach Fortsetzung ab 5000 mit dem AC.
 #DOK-0003 5000: Ausgabe eines Zeichens (030 0520), 5001: Stopp 1111. Der Stopp in 5001 zeigt, dass ab 5000 fortgesetzt wurde.
---sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #PROT STUFE=2
 0001: 00000150000 # 000 druck ; Zelle 0001: Sprung zum Druck von BZ und AC
 0040: 00000320025 # haupt: 025 kzeingabe ; Aufruf Unterprogramm Kennzeicheneingabe

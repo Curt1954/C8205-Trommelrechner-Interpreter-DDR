@@ -2,7 +2,7 @@ Trommeldatei:
 #DOK-0001 BIS-Test Programmstueck-Eingabe; Voraussetzung: Minimalprogramm auf der Trommel; Sofortbefehl 211 3000 (kein Sprungbefehl): AC := 5, danach Zustand US im Stopp ps_us (0551, BZ = 0552)
 #PROT STUFE=2
 #STARTE 1000
---leser1 virtuelle_Geraete/Leser1/pj2-bis_ps_sofortbefehl_us.txt
+--leser1 Test-virtuelleGeraete/Leser1/pj2-bis_ps_sofortbefehl_us.txt
 
 # Hauptprogramm (die Zellen des Minimalprogramms 0000 bis 0613 und 0700 bis 0777 werden nicht belegt)
 1000: 00004600030  # 030 4600 ; Kanal K1 (Leser 1) anwaehlen

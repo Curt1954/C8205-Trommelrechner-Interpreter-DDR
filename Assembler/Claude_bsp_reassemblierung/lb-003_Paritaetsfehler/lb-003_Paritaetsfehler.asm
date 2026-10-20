@@ -1,6 +1,6 @@
 ; lb-003_Paritaetsfehler.asm  -  symbolisches Assemblerprogramm zu Testdatei lb-003_Paritaetsfehler.txt
 ; #DOK-0001 Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp
-; --leser1 virtuelle_Geraete/Leser1/lb-003_paritaetsfehler.txt
+; --leser1 Test-virtuelleGeraete/Leser1/lb-003_paritaetsfehler.txt
 ; #PROT STUFE=2
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.

@@ -1,7 +1,7 @@
 ; bsp_5_15_lochband_druck.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_15_lochband_druck.txt
 ; #DOK-0001 Abdruck numerischer Texte vom Lochband im R 300-Code (Programmieranleitung 5.15), Leser 2 -> Schreibwerk
-; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
-; --leser2 virtuelle_Geraete/Leser2/bsp_5_15_lochstreifen.txt
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
+; --leser2 Test-virtuelleGeraete/Leser2/bsp_5_15_lochstreifen.txt
 ; #PROT STUFE=2
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.

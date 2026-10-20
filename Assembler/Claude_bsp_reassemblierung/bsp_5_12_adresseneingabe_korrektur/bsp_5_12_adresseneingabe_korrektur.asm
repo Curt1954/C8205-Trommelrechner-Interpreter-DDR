@@ -7,7 +7,7 @@
 ; #SPEI-0001 3040-3047
 ; #SPEI-0001 3052-3052
 ; #SPEI-0001 3073-3073
-; --leser1 virtuelle_Geraete/Leser1/bsp_5_12_lochstreifen_korrektur.txt
+; --leser1 Test-virtuelleGeraete/Leser1/bsp_5_12_lochstreifen_korrektur.txt
 ; #PROT STUFE=2
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.

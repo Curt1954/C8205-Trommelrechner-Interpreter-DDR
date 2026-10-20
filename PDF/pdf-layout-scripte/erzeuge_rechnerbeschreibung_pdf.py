@@ -1248,7 +1248,7 @@ def story():
                'sperrbar.'))
     s += h2('6.4 Nachbildung im Interpreter: die persistente Trommeldatei')
     s.append(P('Der Python-Interpreter bildet den Speicher als dauerhafte Textdatei nach (Ergänzung vom 07.10.2026; '
-               'Vorgabe `virtuelle_Geraete/Trommel/trommel.txt`, Schalter `--trommel`):'))
+               'Vorgabe `Trommel/trommel.txt`, Schalter `--trommel`):'))
     s += bullets(['**Format:** genau 4096 Zeilen `aaaa: ttttttttttt` (Adresse und Wert oktal), je Zelle eine Zeile, '
                   'geordnet nach der **logischen** Adresse `0000` bis `7777` – nicht nach der physischen Reihenfolge '
                   'der Sektoren aus 6.1.',
