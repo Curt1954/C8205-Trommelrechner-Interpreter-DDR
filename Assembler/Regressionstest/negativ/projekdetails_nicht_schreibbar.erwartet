@@ -1,0 +1,6 @@
+vorher-datei projekdetails -p w/negativ
+vorher-verz temp_projekdetails
+rc 0
+stderr Temp-Datei nicht schreibbar
+anzahl-stderr 1 kann nicht aktualisiert werden
+datei-da obj mqo sym dmp test log

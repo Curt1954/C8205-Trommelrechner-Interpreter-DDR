@@ -1,0 +1,6 @@
+rc 16
+stderr undef_symbol.asm:2: Fehler: Symbol 'nirgends' ist nicht definiert
+stdout nirgends Symbol ist nicht definiert
+datei-weg obj mqo test
+datei-da log sym dmp
+escape-weg

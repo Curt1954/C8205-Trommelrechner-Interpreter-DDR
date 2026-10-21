@@ -960,10 +960,15 @@ def table_block(rows, width, fs=8.5):
            ('TOPPADDING', (0, 0), (-1, -1), 3), ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
            ('LINEBELOW', (0, 0), (-1, -1), 0.4, RULE), ('BOX', (0, 0), (-1, -1), 0.5, RULE),
            ('BACKGROUND', (0, 0), (-1, 0), HEAD_BG)]
-    if len(rows) >= 3:
-        sty.append(('NOSPLIT', (0, len(rows) - 2), (-1, len(rows) - 1)))
     t.setStyle(TableStyle(sty))
     _w, h = t.wrap(width, 2000)
+    if len(rows) >= 3:
+        # Letzte Zeile nie allein auf der Folgeseite (PDF.md 3a.6) - aber nur, wenn Kopfzeile und die beiden
+        # letzten Zeilen bequem auf eine Seite passen. Sonst gaebe es einen LayoutError (Tabelle hoeher als
+        # die Satzflaeche), z. B. bei den langen Zeilen OP-19/OP-20 in GRAFIK_Beschreibung 10.5.
+        _rh = t._rowHeights
+        if _rh[0] + _rh[-2] + _rh[-1] <= 0.8 * (H - 2 * M - HEAD - FOOT):
+            t.setStyle(TableStyle([('NOSPLIT', (0, len(rows) - 2), (-1, len(rows) - 1))]))
     if len(rows) <= 10 and h <= 190:
         kt = KeepTogether([t, Spacer(1, 7)])
         kt._short = True

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_k0.py - Eingabewarteschlange des Kanals K0 im Modus GRAFIK (Stufe 1).
+Version: G5-002  (G5-001: Kennung neu eingefuehrt, fruehere Staende sind im Archiv nicht belegt; G5-002, 21.10.2026: OP-20, naechstes() loescht das Warten beim Verlassen durch eine Ausnahme)
 
 Ersetzt K0Quelle des Interpreters (Terminal oder Datei): In GRAFIK gibt es weder Terminal noch Datei als Quelle.
 Es fuellen zwei Quellen die Warteschlange (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 2.4), Punkt 19):
@@ -53,39 +54,45 @@ class K0Warteschlange:
         quelle = self._quelle()
         gewartet = False
         with self._cv:
-            while True:
-                if self._abbruch:
-                    self._wartet_auf = None
-                    raise GrafikAbbruch('K0-Eingabe abgebrochen')
-                for q in (quelle, None):
-                    if self._q[q]:
+            try:
+                while True:
+                    if self._abbruch:
                         self._wartet_auf = None
-                        tok = self._q[q].popleft()
-                        log('K0', f'Rechner uebernimmt Token {tok!r} (Quelle {quelle})')
-                        if gewartet and self.bei_weiter is not None:
-                            self.bei_weiter()
-                        return tok
-                if self.ende_wenn_leer:
-                    self._wartet_auf = None
-                    return None
-                if not gewartet:
-                    gewartet = True
-                    if self.bei_halt is not None:
-                        self.bei_halt()
-                self._wartet_auf = quelle
-                self._cv.wait(self.takt)
-                hook = self.aufruf_beim_warten
-                if hook is not None:
-                    self._cv.release()
-                    try:
-                        hook()
-                    finally:
-                        self._cv.acquire()
-                # Wahl der Quelle kann sich durch ein Pult-Ereignis (Kanaltaste) geaendert haben
-                neu = self._quelle()
-                if neu != quelle:
-                    quelle = neu
-                    self._wartet_auf = None
+                        raise GrafikAbbruch('K0-Eingabe abgebrochen')
+                    for q in (quelle, None):
+                        if self._q[q]:
+                            self._wartet_auf = None
+                            tok = self._q[q].popleft()
+                            log('K0', f'Rechner uebernimmt Token {tok!r} (Quelle {quelle})')
+                            if gewartet and self.bei_weiter is not None:
+                                self.bei_weiter()
+                            return tok
+                    if self.ende_wenn_leer:
+                        self._wartet_auf = None
+                        return None
+                    if not gewartet:
+                        gewartet = True
+                        if self.bei_halt is not None:
+                            self.bei_halt()
+                    self._wartet_auf = quelle
+                    self._cv.wait(self.takt)
+                    hook = self.aufruf_beim_warten
+                    if hook is not None:
+                        self._cv.release()
+                        try:
+                            hook()
+                        finally:
+                            self._cv.acquire()
+                    # Wahl der Quelle kann sich durch ein Pult-Ereignis (Kanaltaste) geaendert haben
+                    neu = self._quelle()
+                    if neu != quelle:
+                        quelle = neu
+                        self._wartet_auf = None
+            except BaseException:
+                # OP-20 (entschieden 21.10.2026, Variante a): Wird das Warten durch eine Ausnahme verlassen (H, Kanalwechsel, Abbruch), wartet
+                # niemand mehr; sonst bliebe erwartet(...) wahr und ein getipptes Zeichen wuerde angenommen, ohne dass es den Rechner erreicht.
+                self._wartet_auf = None
+                raise
 
     # --- Seite der Fenster -------------------------------------------------------------------------------------
     def erwartet(self, quelle):

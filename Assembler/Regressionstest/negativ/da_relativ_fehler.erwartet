@@ -1,0 +1,10 @@
+rc 16
+stderr da_relativ_fehler.asm:9: Fehler: Operand: "5" ist bei da nicht zulässig
+stderr da_relativ_fehler.asm:10: Fehler: Operand: "a-b" ist bei da nicht zulässig
+stderr da_relativ_fehler.asm:11: Fehler: Operand: "k" ist bei da nicht zulässig
+stderr da_relativ_fehler.asm:12: Fehler: Operand: "k+2" ist bei da nicht zulässig
+stderr da_relativ_fehler.asm:13: Fehler: Operand: "a*2" ist bei da nicht zulässig
+stderr da_relativ_fehler.asm:14: Fehler: Operand: "b-a+k" ist bei da nicht zulässig
+anzahl-stderr 6 ist bei da nicht zulässig
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,32 @@
+0000: 01 2000 000                000 go           
+      20 0000 2000               equ 02000        
+2000: 01 2007 000    go:         000 beginn       
+2001: 01 2027000     aqv:        da  000000002027 ; Adrese der ersten Komponente Quellvektor
+2002: 00 00000005000 dqv:        dw  05000        ; Dimension von qvektor gezählz in Adreßeinheiten
+2003: 01 2100000     azv:        da  000000002100 ; Adresse der ersten Komponente Zielvektor
+2004: 00 00000001000 adreinheit: dw  01000        ; Adresseinheit
+2005: 00 00000000240 spbef:      dw  0240         ; Speicherbefehl
+2006: 20 2007        i:          db  1            ; Arbeitszelle für i
+2007: 01 2006 241    beginn:     241 i            ; I:=0
+2010: 01 2003 210    schleife:   210 azv          ; ac:=(azv+i)
+2011: 01 2005 210                210 spbef        ; ac:=(azv+i)240
+2012: 01 2016 240                240 genbef       ; Arbeitszelle genbef:= (qzv+i) 240
+2013: 01 2006 211                211 i            ; ac:=<i>
+2014: 01 2001 210                210 aqv          ; ac:=qvektor+i
+2015: 00 0000 251                251 0            ; ac:=<qvektor+i>
+2016: 20 2017        genbef:     db  1            ; hier steht der Befehl 240 (qzv+i)  Speichern
+2017: 01 2006 211                211 i            ; ac:=<i>
+2020: 01 2004 210                210 adreinheit   ; ac:=i+1
+2021: 01 2006 240                240 i            ; i:=ac
+2022: 01 2002 330                330 dqv          ; vergleicher 3, falls i == <dqv>
+2023: 01 2025 170                170 halt         ; sprung bei gleich
+2024: 01 2010 000                000 schleife     
+2025: 01 0001 164    halt:       164 0001         ;DEBUG Nr. 0023 aktivieren
+2026: 01 0000 020                020 0            ;halt
+2027: 00 00000000001 qvektor:    dw  1            
+2030: 00 00000000002             dw  2            
+2031: 00 00000000003             dw  3            
+2032: 00 00000000004             dw  4            
+2033: 00 00000000005             dw  5            
+      20 0000 2100               equ 02100        
+2100: 20 2105        zvektor:    db  5            

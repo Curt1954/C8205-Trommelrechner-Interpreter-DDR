@@ -16,13 +16,15 @@ Die Funktion
   (Kodetabellen.md), genau so, wie sw_zeichen() im Interpreter es liefert:
     - ein einzelnes Zeichen als str:   '\\t' (Ascii 9) = Tabulator,
                                        '\\n' (Ascii 10) = WRZL,
-                                       '\\r' (Ascii 13) = WRZL bzw. WR  (beide: WRZL-Klang),
+                                       '\\r' (Ascii 13) = WRZL (nach Vorgabe gilt CR = WRZL),
                                        jedes andere Zeichen = allgemeines Zeichen
-    - ein Name in spitzen Klammern:    '<WRZL>', '<WR>', '<TAB>', '<Tabulator>' wie oben,
+    - ein Name in spitzen Klammern:    '<WRZL>', '<TAB>', '<Tabulator>' wie oben; '<WR>' = WR (eigener Klang),
                                        jeder andere Name ('<Um. KB>', ...) = allgemeines Zeichen
     - der Ascii-Wert als int:          9 = TAB, 10 und 13 = WRZL, alles andere = Zeichen
-  Es gibt drei Klangarten (Stand Stufe 4, 19.10.2026):
-    WRZL     Wagenruecklauf: Schreibwerkzeit und Klang 360 ms (wrzl.wav)
+  Es gibt vier Klangarten (Stand 21.10.2026; WR neu, OP-42):
+    WRZL     Wagenruecklauf mit Zeilenschaltung: Schreibwerkzeit und Klang 360 ms (wrzl.wav)
+    WR       Wagenruecklauf ohne Zeilenschaltung, kommt aus dem Interpreter als '<WR>': Schreibwerkzeit und Klang
+             120 ms (wr.wav = die ersten 120 ms von wrzl.wav, vor dem markanten Ton; erzeugt mit erzeuge_wr_klang.py)
     TAB      Tabulator: nur noch ein Klang, tab_400.wav, 400 ms, gleich fuer jeden Tabulatorweg
     ZEICHEN  allgemeines Zeichen: Schreibwerkzeit SCHREIBWERKZEIT_S = 80 ms, je Zeichen zufaellig
              um +-SCHREIBWERKZEIT_STREUUNG_S (10 ms) veraendert, also 70 bis 90 ms (gleichverteilt).
@@ -37,10 +39,10 @@ Die Funktion
   (der Interpreter "steht" so lange). Rueckgabewert: die Schreibwerkzeit in Sekunden
   (0.0, wenn nichts ausgegeben wurde, z. B. bei leerem String).
 
-  Schreibwerkzeit und Klanglaenge sind getrennt: Bei TAB und WRZL sind beide gleich (400 bzw.
-  360 ms, Laenge der WAV-Datei), bei Zeichen ist die Schreibwerkzeit 70 bis 90 ms, der Klang 100 ms.
+  Schreibwerkzeit und Klanglaenge sind getrennt: Bei TAB, WRZL und WR sind beide gleich (400, 360
+  bzw. 120 ms, Laenge der WAV-Datei), bei Zeichen ist die Schreibwerkzeit 70 bis 90 ms, der Klang 100 ms.
   Wer die Klaenge austauschen will, ersetzt nur die Dateien im Ordner sw_toene/ (zeichen_*.wav
-  beliebig viele, tab_400.wav, wrzl.wav; alle im selben WAV-Format). tab_kurz.wav und tab_lang.wav
+  beliebig viele, tab_400.wav, wrzl.wav, wr.wav; alle im selben WAV-Format). tab_kurz.wav und tab_lang.wav
   liegen als Quelle von tab_400.wav dort, werden aber nicht mehr gespielt.
   In GRAFIK spielt grafik_schreibwerk.py dieselben Zeiten ueber den Mischer (tonmisch); dieses Programm
   bleibt der selbstaendige Testrahmen fuer die Klaenge.
@@ -74,7 +76,8 @@ Testrahmen
   Der String steht in Anfuehrungszeichen. Steuerzeichen koennen echt im String stehen
   oder als Escape geschrieben werden: \\t = TAB, \\r oder \\n = WRZL, \\\\ = Backslash
   (mit --roh werden keine Escapes ausgewertet). CR+LF direkt hintereinander zaehlt als
-  ein WRZL. Jedes Zeichen wird der Reihe nach als Klang ausgegeben.
+  ein WRZL. Die vier Zeichen <WR> zaehlen als ein Zeichen und klingen als WR (120 ms); wie im Interpreter ist
+  das WR ohne Zeilenschaltung, im Gegensatz zu \\r (= WRZL). Jedes Zeichen wird der Reihe nach als Klang ausgegeben.
 
   Leser:    python3 sw_ton.py --ls "1 p300 1 p80 1 1 1 p500 100 p300 1"
             Szenario = Folge von Aufrufen von ls_ton(): n = n Zeichen im Lesertakt (130/s),
@@ -139,7 +142,7 @@ def _lade():
         return _klaenge
     if not os.path.isdir(KLANGORDNER):
         raise FileNotFoundError(f'Klangordner fehlt: {KLANGORDNER}')
-    k = {'ZEICHEN': [], 'TAB': [], 'WRZL': []}
+    k = {'ZEICHEN': [], 'TAB': [], 'WRZL': [], 'WR': []}
     for datei in sorted(os.listdir(KLANGORDNER)):
         if not datei.lower().endswith('.wav'):
             continue
@@ -151,6 +154,8 @@ def _lade():
             k['TAB'].append(_Klang(pfad))
         elif n == 'wrzl.wav':
             k['WRZL'].append(_Klang(pfad))
+        elif n == 'wr.wav':
+            k['WR'].append(_Klang(pfad))
     fehlt = [a for a, v in k.items() if not v]
     if fehlt:
         raise FileNotFoundError(f'Im Klangordner fehlen Klaenge: {", ".join(fehlt)} ({KLANGORDNER})')
@@ -222,12 +227,13 @@ def _lade_ls():
 
 # ------------------------------------------------------------ Zeichen -> Klangart
 
-_NAMEN_WRZL = {'WRZL', 'WR', 'SATZMARKE'}
+_NAMEN_WRZL = {'WRZL', 'SATZMARKE'}
+_NAMEN_WR = {'WR'}
 _NAMEN_TAB = {'TAB', 'TABULATOR'}
 
 
 def klangart(zeichen):
-    """'WRZL', 'TAB' oder 'ZEICHEN' fuer ein Zeichen nach Tabelle 1; None bei leerem String."""
+    """'WRZL', 'WR', 'TAB' oder 'ZEICHEN' fuer ein Zeichen nach Tabelle 1; None bei leerem String."""
     if isinstance(zeichen, int):
         if zeichen == 9:
             return 'TAB'
@@ -248,6 +254,8 @@ def klangart(zeichen):
             return 'TAB'
         if name in _NAMEN_WRZL:
             return 'WRZL'
+        if name in _NAMEN_WR:
+            return 'WR'
         return 'ZEICHEN'
     raise ValueError(f'sw_ton erwartet genau ein Zeichen oder einen Namen in <>, nicht {zeichen!r}')
 
@@ -257,7 +265,7 @@ def _waehle(art):
 
     ZEICHEN: Klang zufaellig (nie zweimal derselbe in Folge), Schreibwerkzeit SCHREIBWERKZEIT_S um zufaellig
     +-SCHREIBWERKZEIT_STREUUNG_S (gleichverteilt), unabhaengig von der Klanglaenge (100 ms).
-    TAB und WRZL: Schreibwerkzeit = Dauer des Klangs (400 bzw. 360 ms)."""
+    TAB, WRZL und WR: Schreibwerkzeit = Dauer des Klangs (400, 360 bzw. 120 ms)."""
     global _letztes_zeichen, _letzte_wahl
     k = _lade()
     if art == 'TAB':
@@ -265,6 +273,9 @@ def _waehle(art):
         _letzte_wahl = (klang, klang.dauer)
     elif art == 'WRZL':
         klang = k['WRZL'][0]
+        _letzte_wahl = (klang, klang.dauer)
+    elif art == 'WR':
+        klang = k['WR'][0]
         _letzte_wahl = (klang, klang.dauer)
     else:
         n = len(k['ZEICHEN'])
@@ -639,7 +650,10 @@ def text_zu_zeichen(text, roh=False):
     if not roh:
         text = re.sub(r'\\([rnt\\])', lambda m: {'r': '\r', 'n': '\n', 't': '\t', '\\': '\\'}[m.group(1)], text)
     text = text.replace('\r\n', '\n').replace('\n\r', '\n')
-    return list(text)
+    zeichen = []
+    for stueck in re.split(r'(<WR>)', text):             # <WR> ist ein Zeichen (WR, Wagenruecklauf ohne Zeilenschaltung, OP-42)
+        zeichen.extend([stueck] if stueck == '<WR>' else list(stueck))
+    return zeichen
 
 
 def _zeigen(nr, ch, art, klang, dauer):
@@ -651,7 +665,7 @@ def main(argv=None):
     global STUMM, SCHREIBWERKZEIT_S, SCHREIBWERKZEIT_STREUUNG_S
     ap = argparse.ArgumentParser(
         description='Testrahmen fuer sw_ton(): setzt einen String in eine Schreibwerk-Tonfolge um.')
-    ap.add_argument('text', nargs='?', help='auszugebender String (in Anfuehrungszeichen); darf TAB und CR (= WRZL) enthalten')
+    ap.add_argument('text', nargs='?', help='auszugebender String (in Anfuehrungszeichen); darf TAB, CR (= WRZL) und <WR> enthalten')
     ap.add_argument('--ls', metavar='SZENARIO', help='statt eines Strings: Lochstreifenleser-Szenario, z. B. "1 p300 1 p80 1 1 1 p500 100" '
                     '(n = n Zeichen im Lesertakt, n@ms = n Zeichen im Abstand ms, pms = Pause bis zum naechsten Zeichen)')
     ap.add_argument('--pause', type=float, default=LS_PAUSE_S * 1000, metavar='MS',

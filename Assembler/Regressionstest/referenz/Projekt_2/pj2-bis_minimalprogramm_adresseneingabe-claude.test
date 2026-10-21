@@ -1,0 +1,45 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002400000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0300: 00007756240 # adresseneingabe: 240 ae_rs ; Rueckkehrbefehl sichern (Arbeitszelle 7756)
+0301: 00000322211 # 211 ae_z0 ; Zaehleranfang: 7 Einsen
+0302: 00007760240 # 240 ae_z ; Zaehler setzen (Arbeitszelle 7760)
+0303: 00000700211 # 211 ae_tab ; AC := 0 (Zelle ae_tab, Ziffer 0, enthaelt 0)
+0304: 00007757240 # 240 ae_sv ; Konstante := 0 (Arbeitszelle 7757)
+0305: 00000700010 # ae_loop: 010 ae_tab ; Eingabe-Halt: Ziffer lesen, AC := AC + d * 0100; Punkt/ZR: Sprung in die Tabelle
+0306: 00000710330 # 330 ae_pois ; Vergleich AC mit 2 hoch 30: ab dort Ziffer 8 oder 9
+0307: 00000323150 # 150 ae_halt ; AC >= 2 hoch 30: Ziffer 8 oder 9, HALT
+0310: 00000311006 # 006 ae_v2 ; Linksverschiebung (zyklisch) 1 von 3
+0311: 00000312006 # ae_v2: 006 ae_v3 ; 2 von 3
+0312: 00000313006 # ae_v3: 006 ae_zt ; 3 von 3
+0313: 00007757240 # ae_zt: 240 ae_sv ; Konstante sichern (Arbeitszelle 7757)
+0314: 00007760311 # 311 ae_z ; AC := Zaehler; Vergleicher 3, falls Zaehler = 0
+0315: 00000324170 # 170 ae_ign ; Zaehler = 0: 8 Ziffern gelesen, weitere Ziffern verwerfen
+0316: 00000317004 # 004 ae_zn ; AC := Zaehler um 1 Bit nach links
+0317: 00007760240 # ae_zn: 240 ae_z ; Zaehler := Vl(Zaehler)
+0320: 00007757211 # 211 ae_sv ; AC := Konstante zurueck
+0321: 00000305000 # 000 ae_loop ; naechstes Zeichen
+0322: 77400000000 # ae_z0: dw 077400000000 ; Zaehleranfang: 7 Einsen (8 Ziffern)
+0323: 00000000020 # ae_halt: 020 0 ; HALT: Ziffer 8 oder 9 (keine Oktalziffer)
+0324: 00000700011 # ae_ign: 011 ae_tab ; ab der 9. Ziffer: Zeichen lesen, AC loeschen (Ziffer wird verworfen); Punkt wie oben
+0325: 00000324000 # 000 ae_ign ; naechstes Zeichen
+0700: 00000000000 # ae_tab: dw 0 ; Ziffer 0
+0701: 00000000100 # dw 0100 ; Ziffer 1 (1 * 0100)
+0702: 00000000200 # dw 0200 ; Ziffer 2
+0703: 00000000300 # dw 0300 ; Ziffer 3
+0704: 00000000400 # dw 0400 ; Ziffer 4
+0705: 00000000500 # dw 0500 ; Ziffer 5
+0706: 00000000600 # dw 0600 ; Ziffer 6
+0707: 00000000700 # dw 0700 ; Ziffer 7
+0710: 10000000000 # ae_pois: dw 010000000000 ; Ziffer 8: 2 hoch 30, Haltmarke (keine Oktalziffer)
+0711: 10000000000 # dw 010000000000 ; Ziffer 9: 2 hoch 30, Haltmarke
+0733: 00007757211 # 211 ae_sv ; Punkt (Offset 033): AC := Konstante
+0734: 00007756000 # 000 ae_rs ; Rueckkehr zum Aufrufer, AC = Konstante
+2400: 00004600030 # 030 04600 ; Kanal K1 (Leser 1) anwaehlen
+2401: 00000300025 # 025 adresseneingabe ; Zeichen 0 bis 7 und Punkt einlesen
+2402: 00007773240 # 240 r1 ; R1 := eingelesene Konstante
+2403: 00000000020 # 020 0000 ; Stopp (AC = R1 = Konstante)
+Tastenfolge:
+H G R

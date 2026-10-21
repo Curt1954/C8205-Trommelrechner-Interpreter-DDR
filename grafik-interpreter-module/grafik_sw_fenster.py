@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_sw_fenster.py - Tk-Schicht des SW-Fensters im Modus GRAFIK (Stufe 3). Nur Standardbibliothek (Tkinter).
-Version: G4-008
+Version: G4-010
 
 Ein Tk-Prozess, zwei Fenster (GRAFIK_Beschreibung §11 (alt: Dok. 04 Punkt 16)): das SW-Fenster ist ein Toplevel des Pult-Fensters.
 Aussehen wie das bisherige Fenster "SW Ausgabe": 130 x 36 Zeichen, Markieren und Kopieren. Jedes angenommene Zeichen der Eingabe wird
@@ -27,7 +27,7 @@ from grafik_debuglog import log
 import grafik_fensterlage as lage
 import grafik_tastatur as TAST
 
-VERSION_SW_FENSTER = 'G4-008'
+VERSION_SW_FENSTER = 'G4-010'
 TITEL = 'C 8205 SW-Fenster'
 TAKT_MS = 10        # G4-007: der Takt gibt auch die Eingaben aus dem Puffer an den Rechner weiter (je 011 eine); 10 ms halten die Verzoegerung klein
 
@@ -43,7 +43,7 @@ class SwFenster:
         self.senke = senke
         self.anzeige = SwAnzeige()
         self.q = queue.Queue()      # Text fuer die Anzeige: Ausgabe des Rechners UND Eingabe (eine Reihenfolge)
-        self.eingabe = SwEingabe(k0, maschine, echo=self._echo_eingabe, rueck=lambda: self.q.put('\b'))      # G4-006: Rücktaste über dieselbe Warteschlange wie Ausgabe und Eingabe
+        self.eingabe = SwEingabe(k0, maschine, echo=self._echo_eingabe, klick=self._klick_eingabe, rueck=lambda: self.q.put('\b'))      # G4-006: Rücktaste über dieselbe Warteschlange wie Ausgabe und Eingabe
         self.bei_schliessen = bei_schliessen
         self.zwischenablage = zwischenablage if zwischenablage in ('auto', 'tk', 'system') else 'auto'
         self.beendet = False
@@ -73,16 +73,22 @@ class SwFenster:
             self.q.put(teil)
         self.senke.hoere(self.q.put)
 
-    def _echo_eingabe(self, text):
-        """Angezeigte Eingabe (U-9, Stufe 4 S4-08): derselbe Klang wie jede Schreibwerkausgabe, keine Schreibwerkzeit, keine Sperre;
-        der Selektor SW wirkt nicht auf sie. Dann wie bisher in die Anzeige-Warteschlange."""
+    def _klick_eingabe(self, text):
+        """Klang der Eingabe (U-9, S4-08; OP-09 Entscheidung 21.10.2026): kommt beim Tastendruck, sobald das Zeichen im Puffer ist, auch wenn der Rechner es
+        noch nicht angenommen hat. Derselbe Klang wie jede Schreibwerkausgabe, keine Schreibwerkzeit, keine Sperre; der Selektor SW wirkt nicht auf ihn."""
         sw = getattr(self.senke, 'schreibwerk', None)
         log('SW', f'Eingabeklang {text!r}: Schreibwerk={sw is not None}, Mischer={getattr(sw, "mischer", None) is not None}')   # G4-005: Spur fuer "kein Klick beim ersten Zeichen"
         if sw is not None:
             try:
                 sw.eingabe(text)
+                m = getattr(sw, 'mischer', None)
+                if m is not None:                       # G4-009 (OP-09): Stimmen im Mischer unmittelbar nach dem Aufruf (0 = der Klang wurde nicht angenommen)
+                    log('SW', f'Eingabeklang {text!r}: Stimmen im Mischer danach: {m.klingt()}')
             except Exception as e:
                 log('FEHLER', f'SW Eingabeklang: {e!r}')
+
+    def _echo_eingabe(self, text):
+        """Angezeigte Eingabe (U-9): erst bei Annahme durch den Rechner, nur Anzeige (der Klang kam schon beim Tastendruck, _klick_eingabe)."""
         self.q.put(text)
 
     # --- Markieren und Kopieren (wie im bisherigen Fenster) --------------------------------------------------------
@@ -160,6 +166,8 @@ class SwFenster:
         erg = self.eingabe.loslassen()                  # Fall (b): Zeichen beim Loslassen der Zeichentaste (jetzt frei; geht an den naechsten 011)
         if erg is not None:
             log('SW', f'zweite Eingabe beim Loslassen -> {erg}')
+        else:                                           # G4-009 (OP-09): auch das Loslassen ohne Lieferung steht im Log (Zeit bis zur Lieferung des ersten Zeichens)
+            log('SW', f'Taste los keysym={keysym}: nichts geliefert (Puffer: {len(self.eingabe.puffer)}, 011 aktiv: {self.eingabe.erwartet()})')
         return None
 
     def _taste(self, ev):
@@ -198,7 +206,7 @@ class SwFenster:
             abstand = min(self.ABSTAND_MAX, max(0.0, jetzt - ab))
         self._letzte_taste = jetzt
         ergebnis = self.eingabe.tippen(zeichen[0], abstand)      # geliefert | folgt | blockiert | verworfen
-        log('SW', f'Taste char={zeichen!r} keysym={keysym} -> {ergebnis} (Puffer: {len(self.eingabe.puffer)})')
+        log('SW', f'Taste char={zeichen!r} keysym={keysym} -> {ergebnis} (Puffer: {len(self.eingabe.puffer)}, 011 aktiv: {self.eingabe.erwartet()})')
         return 'break'
 
     def taste_vom_pult(self, ev):

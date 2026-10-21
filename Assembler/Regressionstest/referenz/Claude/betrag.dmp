@@ -1,0 +1,42 @@
+0000: 01 0012 000            000 haupt  
+0001: 00 00000000005 a:      dw  5      ; Testwerte, bitte anpassen
+0002: 00 00000000003 b:      dw  3      
+0003: 00 00000000007 c:      dw  7      
+0004: 00 00000000002 d:      dw  2      
+0005: 20 0006        z:      db  1      ; Ergebnis
+0006: 20 0007        px:     db  1      ; Parameter x
+0007: 20 0010        py:     db  1      ; Parameter y
+0010: 20 0011        res:    db  1      ; Ergebnis des Unterprogramms
+0011: 20 0012        rueck:  db  1      ; hier steht zur Laufzeit der Rücksprung
+0012: 01 0001 211    haupt:  211 a      ; |a+b|
+0013: 01 0006 240            240 px     
+0014: 01 0002 211            211 b      
+0015: 01 0007 240            240 py     
+0016: 01 0042 025            025 betrag ; Sprung mit Rückkehrabsicht
+0017: 01 0010 221            221 res    ; ac := -|a+b|
+0020: 01 0005 240            240 z      
+0021: 01 0002 221            221 b      ; |-b+c|: x = c, y = -b
+0022: 01 0007 240            240 py     
+0023: 01 0003 211            211 c      
+0024: 01 0006 240            240 px     
+0025: 01 0042 025            025 betrag 
+0026: 01 0005 211            211 z      
+0027: 01 0010 210            210 res    ; z := z + |-b+c|
+0030: 01 0005 240            240 z      
+0031: 01 0003 221            221 c      ; |-c+d|: x = d, y = -c
+0032: 01 0007 240            240 py     
+0033: 01 0004 211            211 d      
+0034: 01 0006 240            240 px     
+0035: 01 0042 025            025 betrag 
+0036: 01 0005 211            211 z      
+0037: 01 0010 210            210 res    ; z := z + |-c+d|
+0040: 01 0005 240            240 z      
+0041: 01 0000 020            020 0      ; Halt, Ergebnis in z
+0042: 01 0011 240    betrag: 240 rueck  ; Rücksprungwort aus AC sichern
+0043: 01 0006 211            211 px     
+0044: 01 0007 210            210 py     ; ac := x+y
+0045: 01 0010 240            240 res    
+0046: 01 0011 050            050 rueck  ; Positivsprung: x+y >= 0, also fertig
+0047: 01 0010 221            221 res    ; sonst ac := 0 - res
+0050: 01 0010 240            240 res    
+0051: 01 0011 000            000 rueck  

@@ -1,0 +1,50 @@
+0000: 01 0052 000            000 haupt        
+0001: 01 0004 000    sort:   000 sstart       ; Nr. 0000  Sprung über Parameter
+      20 0000 0004           equ 00004        
+0004: 00 0043 240    sstart: 240 sruck        ; Nr. 0003  Stellung Rücksprung
+0005: 01 0006 001            001 sinit        ; Nr. 0004  AC := 0, weiter bei sinit
+0006: 00 0044 240    sinit:  240 si           ; Nr. 0005  i := 0
+0007: 01 0047 210            210 eins         ; Nr. 0006  AC := i + 1
+0010: 00 0045 240    skset:  240 sk           ; Nr. 0007  k := i + 1
+0011: 00 0003 210            210 sla          ; Nr. 0010  AC := k + LA
+0012: 01 0051 210            210 sbef         ; Nr. 0011  Aufbau Transportbefehl 240 a(k+1)
+0013: 00 0025 240            240 sb1          ; Nr. 0012  ... nach sb1 (Nr. 0024)
+0014: 00 0000 251            251 0            ; Nr. 0013  AC := a(k+1)
+0015: 00 0046 240            240 sh           ; Nr. 0014  H := a(k+1)
+0016: 00 0044 211            211 si           ; Nr. 0015  AC := i
+0017: 00 0003 210            210 sla          ; Nr. 0016  AC := i + LA
+0020: 01 0051 210            210 sbef         ; Nr. 0017  Aufbau Transportbefehl 240 a(i+1)
+0021: 00 0027 240            240 sb2          ; Nr. 0020  ... nach sb2 (Nr. 0026)
+0022: 00 0000 251            251 0            ; Nr. 0021  AC := a(i+1)
+0023: 00 0046 330            330 sh           ; Nr. 0022  Vergleich a(i+1) mit H
+0024: 01 0030 140            140 sknext       ; Nr. 0023  a(i+1) <= H: nicht tauschen
+      20 0000 0026           equ 00026        
+0026: 00 0046 211            211 sh           ; Nr. 0025  AC := H
+      20 0000 0030           equ 00030        
+0030: 00 0045 211    sknext: 211 sk           ; Nr. 0027  AC := k
+0031: 01 0047 210            210 eins         ; Nr. 0030  AC := k + 1
+0032: 00 0002 330            330 sn           ; Nr. 0031  Vergleich mit n
+0033: 01 0035 170            170 sinext       ; Nr. 0032  k + 1 = n: innere Schleife fertig
+0034: 01 0010 000            000 skset        ; Nr. 0033  sonst k := k + 1
+0035: 00 0044 211    sinext: 211 si           ; Nr. 0034  AC := i
+0036: 01 0050 210            210 zwei         ; Nr. 0035  AC := i + 2
+0037: 00 0002 330            330 sn           ; Nr. 0036  Vergleich mit n
+0040: 00 0043 170            170 sruck        ; Nr. 0037  i + 2 = n: Sortierung beendet, Rücksprung
+0041: 01 0047 220            220 eins         ; Nr. 0040  AC := i + 1
+0042: 01 0006 000            000 sinit        ; Nr. 0041  i := i + 1, weiter bei sinit
+      20 0000 0047           equ 00047        
+0047: 00 00000001000 eins:   dw  01000        ; Nr. 0046  1 Adresseneinheit
+0050: 00 00000002000 zwei:   dw  02000        ; Nr. 0047  2 Adresseneinheiten
+0051: 00 00000000240 sbef:   dw  0240         ; Nr. 0050  Konstante für Befehlsaufbau
+0052: 01 0060 211    haupt:  211 anz          ; n = 4 Namen
+0053: 00 0002 240            240 sn           
+0054: 01 0061 211            211 afeld        ; Anfangsadresse des Feldes
+0055: 00 0003 240            240 sla          
+0056: 01 0001 025            025 sort         ; Sortierung aufrufen
+0057: 01 0000 020            020 0            ; Halt: Feld ist sortiert
+0060: 00 00000004000 anz:    dw  04000        ; 4 Adresseneinheiten
+0061: 01 62000       afeld:  da  000000000062 
+0062: 00 10021054460 feld:   dw  010021054460 ; HABERL
+0063: 00 13371052070         dw  013371052070 ; KOREHN
+0064: 00 13300654600         dw  013300654600 ; KLAUS
+0065: 00 11206050000         dw  011206050000 ; IHLE

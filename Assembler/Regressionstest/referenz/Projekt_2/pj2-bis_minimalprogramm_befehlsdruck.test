@@ -1,0 +1,47 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002000000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0100: 00007741240 # 240 td_rs ; Rueckkehrbefehl sichern
+0101: 00000140000 # 000 vorlauf ; 12 Bit drehen, Einsen-Spur anlegen (Code auf Spur 0140)
+0103: 00007777217 # schleife: 217 adr7777 ; das auszugebende Wort als Uebergabe
+0104: 00000115006 # 006 verschieben
+0105: 00000010030 # dto 1
+0106: 00000260030 # dto 6
+0107: 00007721520 # zu_gx: 520 adr7721
+0110: 77000000000 # konst_7700: dw 077000000000 ; Zaehler: 6 Einsen = 7 Ziffern
+0111: 00007720311 # 311 td_z
+0112: 00007741170 # 170 td_rs
+0113: 00000134004 # 004 zn ; td_z := td_z um 1 Bit nach links
+0114: 00000040030 # dto 4
+0115: 00000124006 # verschieben: 006 speichern_r1
+0117: 00000000007 # konst_7: dw 07 ; Konstante 0000 0000 007 zum Ausblenden
+0122: 00000020030 # dto 2
+0123: 00000070030 # dto 7
+0124: 00007777240 # speichern_r1: 240 adr7777
+0125: 00000117200 # 200 konst_7
+0126: 00000107000 # 000 zu_gx
+0127: 00000000001 # konst_1: dw 01 ; Konstante
+0130: 00000200030 # dto 0
+0131: 00000250030 # dto 5
+0132: 00007724440 # spur_speich: 440 adr7724 ; AC auf Spur speichern
+0133: 00000110211 # 211 konst_7700
+0134: 00007720240 # zn: 240 td_z
+0135: 00000103000 # 000 schleife
+0137: 00000230030 # dto 3
+0140: 00007640441 # vorlauf: 441 nullspur ; Nullspur := 0 (loescht auch den AC)
+0141: 00007777211 # 211 adr7777 ; AC := Wort
+0142: 00007644616 # 616 nz_12 ; 12 Bit zyklisch links: die zu druckenden Ziffern stehen oben
+0143: 00007777240 # 240 adr7777 ; Wort zurueck in die Transportzelle
+0144: 00000127211 # 211 konst_1 ; AC := 1
+0145: 00000132000 # 000 spur_speich ; weiter: Einsen-Spur 7700 ff. anlegen, Zaehler setzen
+2000: 00004500030 # 030 04500
+2001: 00001170030 # dz $inkb
+2002: 00002006211 # 211 beispiel ; Beispielwort, davon wird die Adresse gedruckt
+2003: 00007777240 # 240 adr7777
+2004: 00000100025 # 025 befehlsdruck
+2005: 00000000020 # 020 0000
+2006: 01234567012 # beispiel: dw 01234567012 ; gedruckt werden die unteren 7 Ziffern = 4567012
+Tastenfolge:
+H G R

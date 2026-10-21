@@ -1,0 +1,3 @@
+args -WARN=XYZ
+rc 0
+stderr Unbekannter Wert 'XYZ' bei -WARN= (erlaubt: SYM, SPR, TOT, ALLE).

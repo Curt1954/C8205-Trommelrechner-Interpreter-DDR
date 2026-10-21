@@ -1,0 +1,5 @@
+args -m /gibt/es/nicht.makros
+rc 16
+stderr Makrodatei
+stderr Option -m
+datei-weg obj mqo sym dmp test

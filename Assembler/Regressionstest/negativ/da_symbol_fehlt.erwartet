@@ -1,0 +1,4 @@
+rc 16
+stderr da_symbol_fehlt.asm:2: Fehler: Symbol 'nirgends' ist nicht definiert.
+datei-weg obj mqo test
+escape-weg

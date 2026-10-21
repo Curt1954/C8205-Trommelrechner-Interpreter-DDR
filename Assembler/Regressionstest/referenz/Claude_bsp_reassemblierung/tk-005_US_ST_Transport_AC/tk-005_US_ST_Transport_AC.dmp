@@ -1,0 +1,3 @@
+      20 0000 0001    equ 00001 
+0001: 01 0010 020     020 00010 ; wird durch den Transport mit AC überschrieben
+0002: 01 0020 020     020 00020 ; Stopp 020 mit Adreßteil 0020

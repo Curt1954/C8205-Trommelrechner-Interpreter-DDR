@@ -1,0 +1,14 @@
+
+
+Symboltabelle
+
+Symbol                             | RelAddr |    Adresse      | original Operation
+-----------------------------------| ------- | --------------- | ----------------
+halt                               |   0000  |  000000000015   | 0
+
+
+Adresstabelle
+
+Symbol                             | RelAddr |    Adresse
+-----------------------------------| ------- | ---------------
+halt                               |   0000  | 000000000015

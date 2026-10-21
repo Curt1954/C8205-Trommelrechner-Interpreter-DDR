@@ -1,0 +1,15 @@
+0000: 01 3000 000             000 maximum ; Sprung zum Programmanfang (Zelle 0000)
+      20 0000 3000            equ 03000   
+3000: 01 3020 211    maximum: 211 a       ; M:=a
+3001: 01 3021 330             330 b       ; M>=b ?
+3002: 01 3004 150             150 nachb   ; Sprung, wenn M>=b
+3003: 01 3021 211             211 b       ; M:=b
+3004: 01 3022 330    nachb:   330 c       ; M>=c ?
+3005: 01 3007 150             150 nachc   ; Sprung, wenn M>=c
+3006: 01 3022 211             211 c       ; M:=c
+3007: 00 7776 240    nachc:   240 r2      ; M -> R2 (absolute Adresse, Kennzeichen 00)
+3010: 00 1111 021             021 stoppnr ; Stopp (Adreßteil 1111 absolut)
+      20 0000 3020            equ 03020   
+3020: 00 00000000100 a:       dw  0100    
+3021: 00 00000000300 b:       dw  0300    
+3022: 00 00000000200 c:       dw  0200    

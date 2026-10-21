@@ -1,0 +1,7 @@
+args -WARN=TOT
+rc 0
+stderr warn_tot.asm:3: Warnung: Befehl bei 0001 ist vermutlich nicht erreichbar: er steht hinter dem unbedingten Sprung in Zeile 2 und nichts verweist darauf; ebenso die 2 folgenden Befehle bis 0003.
+anzahl-stderr 1 nicht erreichbar
+stdout Pruefung auf nicht erreichbaren Code (-WARN=TOT)
+stdout 1 Abschnitt mit nicht erreichbarem Code.
+nicht-stdout Sprungziele

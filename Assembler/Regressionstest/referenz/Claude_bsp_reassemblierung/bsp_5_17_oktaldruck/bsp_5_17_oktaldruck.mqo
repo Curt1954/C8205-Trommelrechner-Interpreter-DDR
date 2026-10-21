@@ -1,0 +1,39 @@
+               000            m3100          ; Sprung zum Startstück
+               equ            03100          
+m3100:         030            04500          ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+               030            01170          ; Umschaltung auf KB
+               000            m3000          ; Sprung zum Programmanfang
+               equ            07777          
+d7777:         dw             070123456701   ; Zelle a = 7777, Testwert
+               equ            03000          
+m3000:         030            04500          ; Programmanfang, Anwahl 2
+               211            d3027          ; <AC>:=0000 0000 001
+               000            m3032          ; Sprung nach 3032
+m3003:         217            d7777          ; <AC>:=Vzl2(a), 1. Teil
+               006            m3015          ; <AC>:=Vzl2(a), 2. Teil
+               030            00010          ; Druck "1"
+               030            00260          ; Druck "6"
+m3007:         520            d7721          ; GX-Subtraktion zur Bestimmung der zu druckenden Oktalziffer
+d3010:         dw             077740000000   ; Konstante
+               311            d3020          ; <AC>:=z; Vergleicher 3, falls z=0
+               170            m3036          ; Prüfen, ob z=0
+               004            m3034          ; z:=Vl(z) (im Listing als "z:=z+1" gedruckt, Ablaufplan: z:=Vl(z))
+               030            00040          ; Druck "4"
+m3015:         006            m3024          
+               equ            03017          
+d3017:         dw             07             ; Konstante zum Ausblenden der letzten Triade
+               equ            03022          
+               030            00020          ; Druck "2"
+               030            00070          ; Druck "7"
+m3024:         240            d7777          ; a:=Vzl3(a)
+               200            d3017          ; <AC>:=t
+               000            m3007          
+d3027:         dw             01             ; Konstante
+               030            00200          ; Druck "0"
+               030            00250          ; Druck "5"
+m3032:         440            d7724          
+               211            d3010          ; <AC>:=7774 0000 000
+m3034:         240            d3020          ; <3020>:=z
+               000            m3003          
+m3036:         020            03001          ; unbedingter Stop; Programmende
+               030            00230          ; Druck "3"

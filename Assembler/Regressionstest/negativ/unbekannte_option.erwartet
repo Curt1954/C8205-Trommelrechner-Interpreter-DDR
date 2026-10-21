@@ -1,0 +1,5 @@
+args -x
+rc 16
+stderr Unbekannte Option '-x'
+stdout Usage:
+datei-weg obj mqo sym dmp test log

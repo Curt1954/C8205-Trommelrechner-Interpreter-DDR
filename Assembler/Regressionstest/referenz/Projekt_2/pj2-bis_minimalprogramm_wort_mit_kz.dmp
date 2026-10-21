@@ -1,0 +1,39 @@
+0000: 01 2400 000                000    haupt      ; Zelle 0000: Sprung zum Hauptprogramm
+      20 0000 0100               equ100 00100      
+0100: 00 7741 240    kz_eingabe: 240    kz_rs      ; Rueckkehrbefehl sichern auf Arbeitszelle
+0101: 01 0115 000                000    eingabe    
+0102: 0              kz_tab:     dw     0          ; Ziffer 0
+0103: 00 00000000001             dw     01         ; Ziffer 1
+0104: 00 00000000002             dw     02         ; Ziffer 2
+0105: 00 00000000003             dw     03         ; Ziffer 3
+0106: 00 00000000004             dw     04         ; Ziffer 4
+0107: 00 00000000005             dw     05         ; Ziffer 5
+0110: 00 00000000006             dw     06         ; Ziffer 6
+0111: 00 00000000007             dw     07         ; Ziffer 7
+0112: 00 00000000010             dw     010        ; Ziffer 8
+0113: 00 00000000011             dw     011        ; Ziffer 9
+0114: 01 0115 001                001    eingabe    ; Fortsetzung nach Eingabe von ZW
+0115: 01 0102 010    eingabe:    010    kz_tab     
+0116: 00 7706 644                644    adr7706    
+0117: 00 7706 214                214    adr7706    
+0120: 01 0115 000                000    eingabe    
+      20 0000 0122               spa    00122      
+0122: 00 00000000022             dw     022        ; B
+      20 0000 0124               spa    00124      
+0124: 00 00000000024             dw     024        ; D
+      20 0000 0133               spa    00133      
+0133: 00 7706 211                211    adr7706    
+0134: 00 7741 000                000    kz_rs      
+0135: 01 0102 014    schleife:   014    kz_tab     ; Linksverschiebung
+0136: 01 0137 004                004    *+1        
+0137: 01 0135 004                004    schleife   
+0140: 00 7741 000    ende:       000    kz_rs      
+      20 0000 0152               spa    00152      
+0152: 01 0115 001                001    eingabe    ; ZR  löschen und Neuanfang
+      20 0000 0173               spa    00173      
+0173: 01 0140 002                002    ende       ; Fortsetzung nach Eingabe von "Punkt"
+      20 0000 2400   haupt:      equ    02400      
+2400: 00 4700 030                030    04700      ; Kanal K0
+2401: 01 0100 025                025    kz_eingabe ; Zeichen 0 bis 7 und Punkt einlesen
+2402: 00 7773 240                240    r1         ; R1 := eingelesene Konstante
+2403: 01 0000 020                020    0000       ; Stopp (AC = R1 = Konstante)

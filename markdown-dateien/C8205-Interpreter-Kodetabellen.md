@@ -1,6 +1,6 @@
 # Kodetabellen
 
-Version: 0.95-001
+Version: 0.95-002
 
 Die Zeichenkode-Tabellen des C 8205: R 300-Lochstreifenkode (Tabelle 1) und externer R 300-Code (Tabelle 2).
 
@@ -163,7 +163,7 @@ Dokuments für Zeile 54, s. 1.6.*
 
 *(Zeilennummer "Nr." nur zur Referenz in diesem Dokument, nicht Teil der
 Original-Tabelle. Die Zeilen 52 und 53 (ZV, BM) hat der Projektinhaber am 11.10.2026 ergänzt; die Zeile "Transport" war bis dahin Zeile 52 und ist jetzt Zeile 54. Die Zeile 55 (WR, Wagenrücklauf ohne Zeilenschaltung; Klbuch und Gbuch gleich) wurde am 12.10.2026 vom Projektinhaber ergänzt (Eingabe Adresse 52 = 101010 mit Prüfbit p an Stelle 4 von links: 1001010 = 112 oktal; Sprung-Umstellung nein; Ascii-Wert 13 noch zu bestätigen).
-Abkürzungen: ZV Zeilenvorschub, BM Blockmarke, WRZL Wagenrücklauf und Zeilenschaltung (entspricht CR), ZR Zwischenraum (auch Leertaste).)*
+Abkürzungen: ZV Zeilenvorschub (in der Vorlage von Tabelle 2 "ZL", Zeilenschaltung; dasselbe Zeichen, s. 1.4 Nr. "ZV und BM"), BM Blockmarke, WRZL Wagenrücklauf und Zeilenschaltung (entspricht CR), ZR Zwischenraum (auch Leertaste).)*
 
 ### 1.5 Sprung-Umstellung
 
@@ -208,7 +208,7 @@ dort beschrieben.
   das im Programm so programmiert ist; eine Automatik gibt es nicht. Ein Gerätefehler (FE leuchtet,
   der Rechner stoppt) liegt nur bei einer anderen Zeile mit gerader Lochzahl vor
   (Lochstreifenleser A0 und A4).
-- **"ZV" und "BM" (Zeilen 52 und 53):** Zeilenvorschub und Blockmarke (Ergänzung des Projektinhabers vom 11.10.2026). Beide haben die Eingabeadresse 72 und unterscheiden sich
+- **"ZV" und "BM" (Zeilen 52 und 53):** Zeilenvorschub und Blockmarke (Ergänzung des Projektinhabers vom 11.10.2026). **Bezeichnung:** Dasselbe Zeichen heißt in Tabelle 2 (Zeile 59, Vorlage) "ZL" (Zeilenschaltung; das "ZL" steckt auch in "WRZL" = Wagenrücklauf und Zeilenschaltung). "ZV" und "ZL" sind zwei Namen für ein Zeichen: Zeilenvorschub ohne Wagenrücklauf, Eingabeadresse 72, ohne Sprung-Umstellung. Dieses Dokument verwendet "ZV" für Tabelle 1 und "ZL" nur in Tabelle 2, wo die Vorlage unverändert bleibt; im Programm (Zeichentabelle in `c8205_interp.py`) und in den Testdateien heißt es "ZV". Beide haben die Eingabeadresse 72 und unterscheiden sich
   im Lochbild (ZV v u p 8 2, BM w v u 8 2) und in der Sprung-Umstellung (ZV nein, BM ja). Ein Eingabebefehl springt also bei BM, bei ZV nicht; ein ZV wirkt wie jedes
   Zeichen ohne Sprung-Umstellung (die Tabellenzelle wird als Datum gelesen). Nach den "Bemerkungen zur Eingabe" (BIS-2.2.1a) ist ein ZV zwischen zwei Zahlen im 8-Kanal-Code
   anschließend mit ZR zu löschen. BM ist im R 300-Code Schlusszeichen (BIS-2.2.9). Das Schreibwerk gibt weder ZV noch BM aus; der Stanzer gibt beide aus.
@@ -304,7 +304,7 @@ Was der C 8205 aus Tabelle 2 tatsächlich verarbeitet, steht in Tabelle 1 (Absch
 
 *Lesehilfe: Spalte "Lochbild" = gestanzte Spuren (Reihenfolge w v u p 8 4 2 1). Die Zeilennummer "Nr." ist nur
 eine Referenz dieses Dokuments und nicht Teil der Vorlage. Die Bezeichnungen sind unverändert aus der Vorlage übernommen
-(ZR Zwischenraum, ZL Zeilenschaltung (= ZV in Tabelle 1), WR Wagenrücklauf ohne Zeilenschaltung, IS Irrung Satz, Sm SatzMarke, Bm Blockmarke).*
+(ZR Zwischenraum, ZL Zeilenschaltung (= ZV in Tabelle 1, Zeile 52; Zeilenvorschub ohne Wagenrücklauf, vgl. 1.4), WR Wagenrücklauf ohne Zeilenschaltung, IS Irrung Satz, Sm SatzMarke, Bm Blockmarke).*
 
 | Nr. | Lochbild | Eingabeverschl. | Sprung-Umstellung | KB | GB | Zeichen KB und GB | Ausgabeverschl. | Tab. 1 Nr. |
 |---|---|---|---|---|---|---|---|---|

@@ -1,0 +1,9 @@
+args -WARN=ALLE --xref
+rc 0
+log-da Pruefung auf unbenutzte Symbole (-WARN=SYM)
+log-da Warnung: Symbol 'nie' (0005, warn_log.asm Zeile 7) ist definiert, wird aber nie verwendet.
+log-da Pruefung auf nicht erreichbaren Code (-WARN=TOT)
+log-da warn_log.asm:3: Warnung: Befehl bei 0001 ist vermutlich nicht erreichbar
+log-da Querverweisliste (--xref)
+log-da Adresstabelle
+datei-da log obj

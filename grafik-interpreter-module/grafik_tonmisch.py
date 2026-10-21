@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_tonmisch.py - Mischer fuer die Toene des Modus GRAFIK (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-01 bis S4-03, S4-12).
-Version: G4-001.  Nur Standardbibliothek.
+Version: G4-004.  Nur Standardbibliothek.
 
 STAND (G4-003): Der Mischer der Stufe 4 ist das C-Modul `tonmisch` (c-module/tonmisch.c, statisch in c8205_trommel eingebunden; Python-Huelle
 grafik_tonmisch_c.CMischer).  DIESE Datei bleibt (a) als Rueckfall, wenn das Erweiterungsmodul nicht gebaut ist (c8205_grafik meldet das beim Start),

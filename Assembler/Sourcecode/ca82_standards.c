@@ -1,8 +1,11 @@
-//ca82_standards.c
+//ca82_standards.c - Version 1.00-026 (siehe ca82_version.h)
 #include "ca82_standards.h"
+#include <errno.h>
 
 
 int kommentar = 0;
+FILE *berichtLog = NULL;   // gesetzt, solange die Berichte nach Pass 3 auch ins .log geschrieben werden
+int farbeAktiv = 0;   // 1 = ANSI-Farbcodes ausgeben (wird in main gesetzt)
 Register regs;
 
 
@@ -29,6 +32,19 @@ void printFehler(const char *message) {
 
 void printWarnung(const char *message) {
     fprintf(stderr,"%sWarnung: %s %s\n", _gelb, _normal, message);
+    if (berichtLog) fprintf(berichtLog, "Warnung: %s\n", message);
+}
+
+void berichtPrintf(const char *format, ...) {
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    va_end(ap);
+    if (berichtLog) {
+        va_start(ap, format);
+        vfprintf(berichtLog, format, ap);
+        va_end(ap);
+    }
 }
 
 void printBits(unsigned int num, int bits) {
@@ -168,6 +184,62 @@ void removeParameter(int *argc, char *argv[], const char *kz) {
     }
 }
 
+// Setzt in der Datei 'projekdetails' die Zeile mit dem Kennzeichen auf den neuen Wert (haengt sie an, falls
+// sie fehlt). Existiert 'projekdetails' nicht, geschieht nichts. Es wird in eine Temp-Datei geschrieben und
+// erst bei Erfolg an die Stelle der alten Datei gesetzt; die alte Datei bleibt bei jedem Fehler unveraendert.
+// Rueckgabe 0 = in Ordnung (oder nichts zu tun), -1 = nicht aktualisiert (Warnung ist ausgegeben, der Lauf
+// geht weiter: die Angaben stehen ohnehin in der Kommandozeile).
+static int projektdetailsZeileSetzen(const char *kennzeichen, const char *wert) {
+    static int schonGewarnt = 0;   // je Lauf hoechstens eine Warnung, auch wenn mehrere Zeilen betroffen sind
+    const char *details = "projekdetails";
+    const char *temp = "temp_projekdetails";
+    FILE *file = fopen(details, "r");
+    if (!file) return 0;
+
+    FILE *tempFile = fopen(temp, "w");
+    if (!tempFile) {
+        if (!schonGewarnt) PRINT_WARNUNG("Die Datei '%s' kann nicht aktualisiert werden (Temp-Datei nicht schreibbar: %s); der Lauf wird fortgesetzt.\n", details, strerror(errno));
+        schonGewarnt = 1;
+        fclose(file);
+        return -1;
+    }
+
+    char line[512];
+    int gefunden = 0;
+    size_t kzLen = strlen(kennzeichen);
+    while (fgets(line, sizeof(line), file)) {
+        if (strncmp(line, kennzeichen, kzLen) == 0) {
+            gefunden = 1;
+            fprintf(tempFile, "%s %s\n", kennzeichen, wert);
+        } else {
+            fputs(line, tempFile);
+        }
+    }
+    if (!gefunden) {
+        fprintf(tempFile, "%s %s\n", kennzeichen, wert);
+    }
+    fclose(file);
+
+    int fehler = ferror(tempFile);
+    if (fclose(tempFile) != 0) fehler = 1;
+    if (fehler) {
+        if (!schonGewarnt) PRINT_WARNUNG("Die Datei '%s' wurde nicht aktualisiert (Schreibfehler: %s); der Lauf wird fortgesetzt.\n", details, strerror(errno));
+        schonGewarnt = 1;
+        remove(temp);
+        return -1;
+    }
+#ifdef _WIN32
+    remove(details);   // unter Windows ersetzt rename() eine vorhandene Datei nicht
+#endif
+    if (rename(temp, details) != 0) {
+        if (!schonGewarnt) PRINT_WARNUNG("Die Datei '%s' wurde nicht aktualisiert (%s); der Lauf wird fortgesetzt.\n", details, strerror(errno));
+        schonGewarnt = 1;
+        remove(temp);
+        return -1;
+    }
+    return 0;
+}
+
 void pruefeLadeadresse(int argc, char *argv[], const char *kennzeichen, unsigned int *ladeadresse) {
     char projektdetailsDatei[] = "projekdetails";
     char ladeadresseStr[5] = "0000";
@@ -176,7 +248,7 @@ void pruefeLadeadresse(int argc, char *argv[], const char *kennzeichen, unsigned
     if (file) {
         char line[512];
         while (fgets(line, sizeof(line), file)) {
-            if (strncmp(line, kennzeichen, strlen(kennzeichen)) == 0) {
+            if (strncmp(line, kennzeichen, strlen(kennzeichen)) == 0 && strlen(line) > strlen(kennzeichen) + 1) {
                 strncpy(ladeadresseStr, line + strlen(kennzeichen) + 1, 4);
                 ladeadresseStr[4] = '\0';
                 break;
@@ -196,31 +268,7 @@ void pruefeLadeadresse(int argc, char *argv[], const char *kennzeichen, unsigned
 
     *ladeadresse = strtoul(ladeadresseStr, NULL, 8);
 
-    file = fopen(projektdetailsDatei, "r");
-    FILE *tempFile = fopen("temp_projekdetails", "w");
-
-    if (file && tempFile) {
-        char line[512];
-        int gefunden = 0;
-
-        while (fgets(line, sizeof(line), file)) {
-            if (strncmp(line, kennzeichen, strlen(kennzeichen)) == 0) {
-                gefunden = 1;
-                fprintf(tempFile, "%s %s\n", kennzeichen, ladeadresseStr);
-            } else {
-                fputs(line, tempFile);
-            }
-        }
-
-        if (!gefunden) {
-            fprintf(tempFile, "%s %s\n", kennzeichen, ladeadresseStr);
-        }
-
-        fclose(file);
-        fclose(tempFile);
-        remove(projektdetailsDatei);
-        rename("temp_projekdetails", projektdetailsDatei);
-    }
+    projektdetailsZeileSetzen(kennzeichen, ladeadresseStr);
 
     PRINT_MSG("%sBenutze Ladeadresse %s%s", _normal, _gruen, ladeadresseStr);
 }
@@ -303,43 +351,7 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
 
     if (doesPathExist(vollstaendigerPfad)) {
         PRINT_MSG("%sBenutze für %s%s %sdie Datei: %s%s", _normal, _gruen ,kennzeichen, _normal, _gruen,tempdn);
-        FILE *file = fopen(projektdetailsDatei, "r");
-        FILE *tempFile = fopen("temp_projekdetails", "w");
-        int gefunden = 0;
-        
-        if (file && tempFile) {
-            char line[512];
-        
-#ifndef _WIN32
-            int fd = fileno(tempFile);
-            flock(fd, LOCK_EX);
-#endif
-        
-            while (fgets(line, sizeof(line), file)) {
-                if (strncmp(line, kennzeichen, strlen(kennzeichen)) == 0) {
-                    gefunden = 1;
-                    fprintf(tempFile, "%s %s\n", kennzeichen, tempdn);
-                } else {
-                    fputs(line, tempFile);
-                }
-            }
-        
-            if (!gefunden) {
-                fprintf(tempFile, "%s %s\n", kennzeichen, tempdn);
-            }
-        
-#ifndef _WIN32
-            fsync(fd);
-#endif
-        
-            fclose(file);
-            fclose(tempFile);
-        
-#ifndef _WIN32
-            flock(fd, LOCK_UN);
-#endif
-            rename("temp_projekdetails", projektdetailsDatei);
-        }
+        projektdetailsZeileSetzen(kennzeichen, tempdn);
         return 0;
     } else {
         if (strcmp(kennzeichen, "-u") == 0 || strcmp(kennzeichen, "-y") == 0) {
@@ -413,14 +425,12 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
 
             FILE *file = fopen(projektdetailsDatei, "r+");
             if (file) {
-                char line[512];
+                char line[512] = {0};   // auch bei leerer projekdetails definiert (removeNewline unten)
                 char oldProjekt[512] = {0};
                 int found = 0;
-                long pos = 0;
                 while (fgets(line, sizeof(line), file)) {
                     if (strncmp(line, "-p ", 3) == 0) {
                         found = 1;
-                        pos = ftell(file) - strlen(line);
                         // Speichert das Wort nach "-p" in oldProjekt
                         sscanf(line + 3, "%s", oldProjekt);
                         break;
@@ -429,19 +439,9 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
 
                 removeNewline(line);
                 if (found && strstr(line, oldProjekt) != NULL && strcmp(projektVerzeichnis, oldProjekt) == 0)  {
-                    FILE *tempFile = fopen("temp_projekdetails", "w");
-                    rewind(file);
-                    while (fgets(line, sizeof(line), file)) {
-                        if (strncmp(line, "-p ", 3) == 0) {
-                            fprintf(tempFile, "-p %s\n", projektVerzeichnis);
-                        } else {
-                            fputs(line, tempFile);
-                        }
-                    }
+                    // Gleicher Projektname: nur die -p-Zeile neu schreiben (Fehler sind nicht fatal)
                     fclose(file);
-                    fclose(tempFile);
-                    remove(projektdetailsDatei);
-                    rename("temp_projekdetails", projektdetailsDatei);
+                    projektdetailsZeileSetzen("-p", projektVerzeichnis);
                     file = fopen(projektdetailsDatei, "r+");
                 } else {
                     // Erstelle eine Kopie der Datei mit dem neuen Namen
@@ -460,10 +460,10 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
                 
                     FILE *kopieFile = fopen(neueDateiName, "w");
                     if (kopieFile && file) {
-                        char line[512];
+                        char kopieZeile[512];
                         rewind(file);
-                        while (fgets(line, sizeof(line), file)) {
-                            fputs(line, kopieFile);
+                        while (fgets(kopieZeile, sizeof(kopieZeile), file)) {
+                            fputs(kopieZeile, kopieFile);
                         }
                         fclose(kopieFile);
                     }
@@ -474,10 +474,10 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
                     if ( rc == 1 ) { 
                             // Leere die ursprüngliche Datei
                         file = fopen(projektdetailsDatei, "w");
-                        fprintf(file, "-p %s\n", projektVerzeichnis);
+                        if (file) fprintf(file, "-p %s\n", projektVerzeichnis);
                     } else {  file = fopen(projektdetailsDatei, "r+"); }   
                 }                                
-                fclose(file);
+                if (file) fclose(file);
 
             } else {
                 file = fopen(projektdetailsDatei, "w");
@@ -580,4 +580,37 @@ void ensureFullStructure(const char *verz) {
     }
 }
 
+// Vergleich ohne Beachtung der Gross-/Kleinschreibung (Pragma-Schluesselwort, start, Optionen).
+int gleichOhneGrossKlein(const char *a, const char *b) {
+    while (*a && *b) {
+        if (toupper((unsigned char)*a) != toupper((unsigned char)*b)) return 0;
+        a++; b++;
+    }
+    return *a == '\0' && *b == '\0';
+}
 
+// Vergleicht die ersten n Zeichen ohne Beruecksichtigung der Gross-/Kleinschreibung.
+int beginntOhneGrossKlein(const char *text, const char *praefix) {
+    while (*praefix) {
+        if (toupper((unsigned char)*text) != toupper((unsigned char)*praefix)) return 0;
+        text++; praefix++;
+    }
+    return 1;
+}
+
+
+// Kopiert quelle nach ziel (max. groesse-1 Zeichen) und terminiert immer.
+void strkopiere(char *ziel, size_t groesse, const char *quelle) {
+    if (groesse == 0) return;
+    size_t n = strlen(quelle);
+    if (n >= groesse) n = groesse - 1;
+    memmove(ziel, quelle, n);          // memmove: Quelle darf im Ziel liegen
+    ziel[n] = '\0';
+}
+
+// Haengt quelle an ziel an (Gesamtlaenge max. groesse-1) und terminiert immer.
+void stranhaengen(char *ziel, size_t groesse, const char *quelle) {
+    size_t l = strnlen(ziel, groesse);
+    if (l >= groesse) { if (groesse) ziel[groesse - 1] = '\0'; return; }
+    strkopiere(ziel + l, groesse - l, quelle);
+}

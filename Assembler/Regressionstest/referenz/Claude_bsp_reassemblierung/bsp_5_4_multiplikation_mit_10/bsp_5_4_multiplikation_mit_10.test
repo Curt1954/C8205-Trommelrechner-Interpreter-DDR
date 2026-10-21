@@ -1,0 +1,17 @@
+Trommeldatei:
+#DOK-0001 Multiplikation mit 10 (Programmieranleitung 5.4), a=7 (dezimal), erwartet AC=70 dezimal = 106 oktal
+#DOK-0001 3006 644: <AC>:=2^2*a=4a, <3006>:=a, <3023>:=2a (W-Befehl endet bei Sektor 23); 3006 214: <AC>:=2(4a+a)=10a
+#SPEI-0001 3000-3003
+#SPEI-0001 3006-3006
+#SPEI-0001 3010-3010
+#SPEI-0001 3023-3023
+#PROT STUFE=2
+0000: 00003010211 # 211 d3010 ; <AC>:=a (Vorbereitung: AC muss laut Aufgabe schon a enthalten)
+0001: 00003000000 # 000 m3000 ; Sprung zum Programmbeginn der Aufgabe in Zelle 3000
+3000: 00003006644 # m3000: 644 d3006 ; <AC>:=4a, <3006>:=a, <3023>:=2a
+3001: 00003006214 # 214 d3006 ; <AC>:=2(4a+a)=10a
+3002: 00000001164 # 164 00001 ; DEBUG Nr. 0001
+3003: 00000000020 # 020 0 ; unbedingter Stop
+3010: 00000000007 # d3010: dw 07 ; a = 7
+Tastenfolge:
+H G R

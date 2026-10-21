@@ -1,0 +1,7 @@
+Trommeldatei:
+#DOK-0001 Tastenfolge ST R ohne vorheriges G: Der Rechner steht nicht im Stopp (US = 0, BS = 0), ST ist elektronisch verriegelt und ohne
+#DOK-0002 Der Ablauf beginnt bei Konnektor B mit BZ = 0: Zelle 0000 (Stopp, Adresse 0005) wird entnommen, BZ = 0001, AR = 0005. Zelle 0000
+#PROT STUFE=2
+0000: 00000005020 # 020 00005 ; Stopp 020 mit Adreßteil 0005
+Tastenfolge:
+H G R

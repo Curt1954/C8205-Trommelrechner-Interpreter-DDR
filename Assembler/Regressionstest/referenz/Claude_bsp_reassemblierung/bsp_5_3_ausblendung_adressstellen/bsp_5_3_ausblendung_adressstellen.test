@@ -1,0 +1,17 @@
+Trommeldatei:
+#DOK-0001 Ausblendung der Adressstellen (Programmieranleitung 5.3): Adressteil a des Befehls in Zelle 3000 nach Zelle 3002
+#DOK-0001 Befehl in 3000: beliebige Bits 5252, a=5103, BAZ=523; Konstante in 3001: 0000 7777 000; erwartet <3002> = 0000 5103 000
+#SPEI-0001 3000-3002
+#SPEI-0001 3003-3007
+#PROT STUFE=2
+0000: 00003003000 # m0000: 000 m3003 ; Sprung zum Programmbeginn der Aufgabe in Zelle 3003
+3000: 52525103523 # d3000: dw 052525103523 ; Befehl: beliebige Bits 5252, Adressteil a=5103, BAZ=523
+3001: 00007777000 # m3001: 000 m7777 ; Konstante 0000 7777 000 (Maske fuer den Adressteil)
+3002: 00000000000 # m3002: 000 m0000 ; Ergebniszelle fuer a
+3003: 00003000211 # m3003: 211 d3000 ; <AC>:=a BAZ (ganzes Wort der Zelle 3000)
+3004: 00003001200 # 200 m3001 ; <AC>:=a (Konjunktion mit Maske, Adressteil bleibt)
+3005: 00003002240 # 240 m3002 ; <3002>:=a
+3006: 00000001164 # 164 00001 ; DEBUG Nr. 0001
+3007: 00000000020 # 020 0 ; unbedingter Stop
+Tastenfolge:
+H G R

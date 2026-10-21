@@ -20,6 +20,11 @@ block() {   # block "Name" Befehl...
     sed 's/^/        | /' "$LOG/$ok$((fehler - 1)).log" | tail -40
   fi
 }
+# OP-19 (entschieden 21.10.2026, Variante b): Trommel/trommel.txt und trommel.basp duerfen sich waehrend des Sammellaufs nicht aendern.
+# Stand vor dem ersten Block merken; der letzte Block (unten) vergleicht. Ist der Stand nicht zu merken, zaehlt das als Fehler (ohne Vergleich).
+if ! python3 -I testscripte/grafik_trommel_waechter.py merken "$LOG/trommel_stand.json"; then
+  echo "FEHLER  Trommelwaechter: Stand vor dem Lauf nicht zu merken"; fehler=$((fehler + 1))
+fi
 block "Kern (grafik_kern_tests)"                  python3 testscripte/grafik_kern_tests.py
 block "Geraete (grafik_geraete_tests)"            python3 testscripte/grafik_geraete_tests.py
 block "Checkpoint 4 (Geraetefehler, H, Stanzer)"  python3 testscripte/grafik_checkpoint4_tests.py
@@ -40,6 +45,8 @@ if [ "${1:-}" != "--schnell" ]; then
   block "Gleichwertigkeit TEST/GRAFIK (--alle)"         python3 testscripte/grafik_gleichwertigkeit.py --alle
   block "Gleichwertigkeit mit neuen Geraeten"           python3 testscripte/grafik_gleichwertigkeit.py --neue-geraete
 fi
+block "Trommelwaechter (Selbsttest mit Gegenproben)"  python3 -I testscripte/grafik_trommel_waechter_tests.py
+block "Trommelwaechter (trommel.txt und trommel.basp unveraendert)" python3 -I testscripte/grafik_trommel_waechter.py pruefen "$LOG/trommel_stand.json"
 echo "----"
 echo "Bloecke bestanden: $ok, fehlgeschlagen: $fehler"
 rm -rf "$LOG"

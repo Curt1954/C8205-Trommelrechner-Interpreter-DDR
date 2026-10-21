@@ -1,0 +1,11 @@
+0000: 01 0004 000           000 haupt 
+0001: 0              erg:   dw  0     ; wird vom Unterprogramm auf 1 gesetzt
+0002: 00 00000000001 eins:  dw  1     
+0003: 20 0004        rueck: db  1     ; hier steht zur Laufzeit der Rücksprung
+0004: 01 0007 065    haupt: 065 up    ; Aufruf nur, wenn SP gesetzt
+0005: 01 0001 164           164 0001  
+0006: 01 0000 020           020 0     ; Halt (Rückkehrpunkt bzw. Fortsetzung ohne Aufruf)
+0007: 01 0003 240    up:    240 rueck ; Rücksprungwort aus AC sichern
+0010: 01 0002 211           211 eins  
+0011: 01 0001 240           240 erg   ; erg := 1
+0012: 01 0003 000           000 rueck 

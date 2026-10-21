@@ -1,6 +1,6 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
-Version: 0.95-001
+Version: 0.95-002
 
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,
@@ -367,6 +367,8 @@ ergänzt, bevor das PDF erzeugt wird.
 | `C8205-Assemblerdokumentation_A4.pdf` | Assemblerdokumentation | Cross-Assembler c82ass: Installation, Sprachdefinition, Anweisungen, Makros und Prüfbericht | BESCHREIBUNG | ASSEMBLER |
 | `C8205-Projektstruktur_A4.pdf` | Projektstruktur | Verzeichnisse, Skripte und erzeugte Dateien des Gesamtprojekts: welcher Pfad wofür zuständig ist | RICHTLINIE | GESAMTPROJEKT |
 | `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | PDF-Gestaltungsrichtlinie | Seitenformat, Folgeseiten, Deckblatt, Farben und Kachelung aller PDF-Ausgaben | RICHTLINIE | GESAMTPROJEKT |
+| `C8205-Testuebersicht_A4.pdf` | Testübersicht | Alle Tests mit Inhalt, Geräte- und Vergleichsdateien und zugehörigem ASM-Quelltext | REFERENZ | INTERPRETER |
+| `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | PDF-Gestaltungsrichtlinie | Seitenformat, Folgeseiten, Deckblatt, Farben und Kachelung aller PDF-Ausgaben | RICHTLINIE | GESAMTPROJEKT |
 
 - Bei Kachel-PDFs (`Knotengraph`) steht zusätzlich die Zeile „Layoutraster“ im Angabenblock; Lesereihenfolge, Kurzcodes,
   Konnektoren und die Legenden der Knoten-, Symbol- und Kantentypen stehen auf Seite 2 (4.4).
@@ -502,6 +504,8 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
   `PDF/pdf-layout-scripte/erzeuge_projektstruktur_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` (Quelle: C8205-Interpreter-PDF.md, diese Datei; Wortlaut nach Abschnitt 6a, erzeugt
   mit `PDF/pdf-layout-scripte/md2pdf.py`)
+- `C8205-Testuebersicht_A4.pdf` (Quelle: `CSV/test_tabelle.md`, von `CSV/test_tabelle.py` aus `Tests/` und `Assembler/` erzeugt; Tabelle nach
+  Abschnitt 3a.3, erzeugt mit `CSV/pdf-layout-scripte/erzeuge_testuebersicht_pdf.py`, das weder `md2pdf.py` noch `pdflib` braucht; liegt in `CSV/`)
 
 ## 9. Änderungsprotokoll
 

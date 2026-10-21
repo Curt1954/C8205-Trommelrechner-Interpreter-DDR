@@ -1,0 +1,4 @@
+rc 16
+stderr zeilenfeld_voll.asm: Fehler: Das interne Zeilenfeld ist voll
+datei-weg obj mqo test
+escape-weg

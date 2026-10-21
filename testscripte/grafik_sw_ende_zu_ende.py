@@ -167,10 +167,13 @@ class ZifferEndeZuEnde(unittest.TestCase):
                     l.ausfuehren(zeit=4)
                     self.assertIsNone(l.fehler)
                     self.assertEqual([(a, g) for _, a, g in l.protokoll], [('folgt', 'GB')])      # Um. KB geliefert, die Ziffer folgt
-                    self.assertEqual(l.zweite, ['geliefert'])                                      # zweite Eingabe: 011 war aktiv
+                    # 21.10.2026: ziffern_2 endet nach dem Umschaltzeichen (kein zweites 011); die Ziffer bleibt im Puffer (G4-009, kein Verlust,
+                    # keine Lieferung ohne 011) und wird weder geliefert noch angezeigt. Die alte Erwartung 'geliefert' / Anzeige '2' galt vor dem Puffer.
+                    self.assertEqual(l.zweite, [])
+                    self.assertEqual([e[0] for e in l.sw.puffer], ['2'])
                     self.assertEqual(l.sw.lage, 'KB')
                     self.assertEqual(l.ausgabe(), 'Geben Sie eine Ziffer von 0-3 ein\n')           # Aufforderung einmal; Programm kennt Um. KB nicht
-                    self.assertEqual(l.eingabe_angezeigt(), '2')
+                    self.assertEqual(l.eingabe_angezeigt(), '')
                 finally:
                     l.schliessen()
 

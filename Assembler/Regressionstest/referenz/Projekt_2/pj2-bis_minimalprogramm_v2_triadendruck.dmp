@@ -1,0 +1,46 @@
+0000: 01 2000 000                  000    haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+      20 0000 0100   triadendruck: equ100 00100        
+0100: 00 7741 240                  240    td_rs        ; Rueckkehrbefehl sichern
+0101: 01 0127 211                  211    konst_1      
+0102: 01 0132 000                  000    spur_speich  
+0103: 00 7777 217    schleife:     217    adr7777      ; das auszugebende Wort als Übergabe in R1
+0104: 01 0115 006                  006    verschieben  
+      20 0000 0105                 spa    00105        
+      00 0010 030                  dto    1            
+      00 0260 030                  dto    6            
+0107: 00 7721 520    zu_gx:        520    adr7721      
+0110: 00 77740000000 konst_7774:   dw     077740000000 
+0111: 00 7720 311                  311    td_z         
+0112: 00 7741 170                  170    td_rs        
+0113: 01 0134 004                  004    zn           ; bd_z := bd_z + 1
+      20 0000 0114                 spa    00114        
+      00 0040 030                  dto    4            
+0115: 01 0124 006    verschieben:  006    speichern_r1 
+0116: 20 0117                      db     1            ; ungenutzt
+0117: 00 00000000007 konst_7:      dw     07           ; Konstante 0000 0000 007 zum Ausblenden
+0120: 20 0122                      db     2            ; ungenutzt
+      20 0000 0122                 spa    00122        
+      00 0020 030                  dto    2            
+      00 0070 030                  dto    7            
+0124: 00 7777 240    speichern_r1: 240    adr7777      
+0125: 01 0117 200                  200    konst_7      
+0126: 01 0107 000                  000    zu_gx        
+0127: 00 00000000001 konst_1:      dw     01           ; Konstante
+      20 0000 0130                 spa    00130        
+      00 0200 030                  dto    0            
+      00 0250 030                  dto    5            
+0132: 00 7724 440    spur_speich:  440    adr7724      ; AC auf Spur speichern
+0133: 01 0110 211                  211    konst_7774   
+0134: 00 7720 240    zn:           240    td_z         
+0135: 01 0103 000                  000    schleife     
+0136: 20 0137                      db     1            ; unbenutzt
+      20 0000 0137                 spa    00137        
+      00 0230 030                  dto    3            
+      20 0000 2000   haupt:        equ    02000        
+2000: 00 4500 030                  030    04500        
+      00 1170 030                  dz     $inkb        
+2002: 01 2006 211                  211    l0001        
+2003: 00 7777 240                  240    adr7777      
+2004: 01 0100 025                  025    triadendruck 
+2005: 01 0000 020                  020    0000         
+2006: 00 00000000100 l0001         dw     64           

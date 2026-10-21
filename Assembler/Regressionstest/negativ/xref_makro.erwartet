@@ -1,0 +1,5 @@
+args --xref
+rc 0
+stdout Querverweisliste (--xref)
+stdout 3 5 6
+log-da Querverweisliste (--xref)

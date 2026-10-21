@@ -1,0 +1,22 @@
+Trommeldatei:
+#DOK-0001 Zeitoptimale Programmierung, algebraischer Ausdruck (Programmieranleitung 5.19.1, Aufgabe wie 5.5): a=5, b=3, c=2, positives
+#DOK-0001 Programm 5.19.1 wie im Buch (Zellen 3003, 3006-3011, 3031-3032); Operanden a=<3000>, b=<3001>, c=<3002>; Befehlsfolge: 2a, 2a-b,
+#DOK-0001 erwartet <AC> = 00000000033 (oktal), x = 10a - 5b - 4c
+#SPEI-0001 3000-3002
+#SPEI-0001 3031-3034
+#PROT STUFE=2
+0000: 00003003000 # 000 m3003 ; Sprung zum Programmanfang der Aufgabe
+3000: 00000000005 # d3000: dw 05 ; a
+3001: 00000000003 # d3001: dw 03 ; b
+3002: 00000000002 # d3002: dw 02 ; c
+3003: 00003006000 # m3003: 000 m3006 ; 3006 000 ; Sprung zum Programmstart
+3006: 00003000215 # m3006: 215 d3000 ; 3000 215 ; <AC>:=2a
+3007: 00003001220 # 220 d3001 ; 3001 220 ; <AC>:=2a-b
+3010: 00003002224 # 224 d3002 ; 3002 224 ; <AC>:=2(2a-b-c)
+3011: 00003031000 # 000 m3031 ; 3031 000 ; Sprung
+3031: 00003000214 # m3031: 214 d3000 ; 3000 214 ; <AC>:=2(2(2a-b-c)+a)
+3032: 00003001220 # 220 d3001 ; 3001 220 ; <AC>:=x
+3033: 00000001164 # 164 00001 ; DEBUG Nr. 0001
+3034: 00000000020 # 020 0 ; unbedingter Stopp
+Tastenfolge:
+H G R

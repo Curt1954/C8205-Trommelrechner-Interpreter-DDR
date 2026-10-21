@@ -1,0 +1,11 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000001000 # 000 a1 ; Sprung nach a1 (= b1)
+0001: 00001000011 # b1: 011 01000 ; Befehl mit Marke
+0002: 00000000020 # c1: 020 0
+0003: 00000000123 # d1: dw 0123
+0004: 00000003000 # 000 daten ; Sprung nach daten (= d1)
+Tastenfolge:
+H G R

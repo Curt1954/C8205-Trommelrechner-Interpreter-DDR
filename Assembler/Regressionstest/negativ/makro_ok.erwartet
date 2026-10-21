@@ -1,0 +1,5 @@
+args -m c82ass.makros
+rc 0
+stdout Verarbeite 'c82ass.makros'
+nicht-stderr Fehler
+datei-da obj

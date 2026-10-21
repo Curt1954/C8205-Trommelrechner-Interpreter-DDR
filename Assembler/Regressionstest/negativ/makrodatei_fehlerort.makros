@@ -1,0 +1,10 @@
+; Makrodatei nur fuer den Test makrodatei_fehlerort
+
+GUT:     MACRO
+         dz $ingb
+         MEND
+
+BAD3:    MACRO 1
+         $IF $1 = 1 x
+         dz $ingb
+         MEND

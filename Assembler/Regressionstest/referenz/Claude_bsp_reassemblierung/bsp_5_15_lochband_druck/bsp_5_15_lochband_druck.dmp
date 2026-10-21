@@ -1,0 +1,38 @@
+0000: 01 3100 000    m0000: 000 m3100 ; Sprung zum Startstück
+      20 0000 3100          equ 03100 
+3100: 00 4500 030    m3100: 030 04500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+3101: 00 1170 030           030 01170 ; Umschaltung auf KB
+3102: 01 3014 000           000 m3014 ; Sprung zum Programmanfang
+      20 0000 3000          equ 03000 
+3000: 00 0200 030    m3000: 030 00200 ; Druck "0"
+3001: 00 0010 030           030 00010 ; Druck "1"
+3002: 00 0020 030           030 00020 ; Druck "2"
+3003: 00 0230 030           030 00230 ; Druck "3"
+3004: 00 0040 030           030 00040 ; Druck "4"
+3005: 00 0250 030           030 00250 ; Druck "5"
+3006: 00 0260 030           030 00260 ; Druck "6"
+3007: 00 0070 030           030 00070 ; Druck "7"
+3010: 00 0100 030           030 00100 ; Druck "8"
+3011: 00 0310 030           030 00310 ; Druck "9"
+3012: 00 0320 030           030 00320 ; Zwischenraum
+3013: 01 3015 000           000 m3015 ; Sprung zur Eingabe
+3014: 00 4500 030    m3014: 030 04500 ; Anwahl 2, Programmanfang
+3015: 01 3000 011    m3015: 011 m3000 ; Eingabe eines Zeichens, <AC> := Druckbefehl, falls Umstellung in Addition
+3016: 01 3021 240           240 m3021 ; <3021> := Druckbefehl
+3017: 01 3021 000           000 m3021 ; Sprung zum Druckbefehl
+3020: 00 0400 030           030 00400 ; Druck "+"
+3021: 01 0000 000    m3021: 000 m0000 ; Druckbefehl (wird zur Laufzeit gesetzt)
+3022: 01 3015 000           000 m3015 ; Sprung zur Eingabe
+      20 0000 3032          equ 03032 
+3032: 00 2720 030           030 02720 ; Wagenrücklauf mit Zeilenschaltung
+3033: 01 3015 000           000 m3015 ; Sprung zur Eingabe
+      20 0000 3040          equ 03040 
+3040: 00 1000 030           030 01000 ; Druck "-"
+3041: 01 3015 000           000 m3015 ; Sprung zur Eingabe
+      20 0000 3073          equ 03073 
+3073: 00 1530 030           030 01530 ; Druck ","
+3074: 01 3015 000           000 m3015 ; Sprung zur Eingabe
+3075: 00 1550 030           030 01550 ; Tabulator
+3076: 01 3015 000           000 m3015 ; Sprung zur Eingabe
+      20 0000 3061          equ 03061 
+3061: 01 0000 020           020 0     ; unbedingter Stopp

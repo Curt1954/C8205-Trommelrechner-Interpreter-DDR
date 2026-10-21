@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_tonmisch_c.py - Mischer fuer GRAFIK ueber das C-Modul `tonmisch` (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-01 bis S4-03, S4-12).
-Version: G4-003.  Nur Standardbibliothek; braucht das Erweiterungsmodul c8205_trommel (mit den ton_*-Methoden, c-module/python).
+Version: G4-005.  Nur Standardbibliothek; braucht das Erweiterungsmodul c8205_trommel (mit den ton_*-Methoden, c-module/python).
 
 CMischer hat dieselbe Schnittstelle wie grafik_tonmisch.Mischer (einzel, dauer_an, dauer_pegel, dauer_aus, tor, alles_aus, klingt,
 klingt_schluessel, block, starten, schliessen, takt_haken, haken_fehler, bei_ausfall, ausfall, bloecke_gesendet), damit die

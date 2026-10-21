@@ -47,6 +47,25 @@ class Anzeige(unittest.TestCase):
             a.schreibe(z)
         self.assertEqual(a.zeile_text(0), 'ab'); self.assertEqual(a.pos, 2)        # nichts angezeigt, Position unveraendert
 
+    def test_op14_benannte_zeichen_die_das_schreibwerk_wirklich_ausgibt(self):
+        """OP-14 (S3-07, 21.10.2026): Welche benannten Zeichen kann die Rechnerausgabe ans SW ueberhaupt liefern? Nicht ZV, BM, Irrung Zeichen und
+        Transport (sie stehen nicht in SW_ZEILE, Kodetabellen 1.4: das Schreibwerk gibt sie nicht aus), sondern nur Irrung Satz, die Umschaltzeichen,
+        WR und die drei Zeichen ohne Bildschirmdarstellung. Alle ausser WR bewegen die Schreibposition nicht; WR setzt sie auf 0."""
+        import types
+        import c8205_interp as I
+        benannt = set()
+        for lage in ('KB', 'GB'):
+            m = types.SimpleNamespace(sw_lage=lage)
+            for zeile in I.SW_ZEILE.values():
+                t = I.sw_zeichen(m, zeile)
+                if len(t) > 1:
+                    benannt.add(t)
+        self.assertEqual(benannt, {'<Irrung Satz>', '<Um. GB>', '<Um. KB>', '<WR>', '<\u2248>', '<\u224b>', '<\u25b3>'})
+        for t in sorted(benannt - {'<WR>'}):
+            a = SwAnzeige(); a.schreibe('abc'); a.schreibe(t); a.schreibe('d')
+            self.assertEqual((a.zeile_text(0), a.pos), ('abcd', 4), t)          # keine Anzeige, keine Bewegung
+        a = SwAnzeige(); a.schreibe('abc'); a.schreibe('<WR>'); self.assertEqual(a.pos, 0)
+
     def test_wr_als_benanntes_zeichen_wird_ausgefuehrt(self):
         a = SwAnzeige()
         for z in 'abcdef':
@@ -170,6 +189,14 @@ class Ruecktaste(unittest.TestCase):
         e = SwEingabe(k0, m, echo=lambda t: aus.append(('echo', t)), abstand=0.1, rueck=lambda: aus.append('rueck'))
         self.assertEqual(e.ruecktaste(), 'geloescht')
         self.assertEqual(aus, ['rueck']); self.assertEqual(e.puffer, []); self.assertEqual(list(k0._q['SW']), [])
+    def test_op31_kein_klang_bei_ruecktaste(self):
+        """OP-31 (5. Annahme 'kein Ton', 21.10.2026 bestaetigt): weder beim Loeschen in der Anzeige noch beim Zuruecknehmen eines vorgemerkten Zeichens klingt etwas."""
+        m = FakeMaschine(); k0 = K0Warteschlange(m); aus = []
+        e = SwEingabe(k0, m, echo=lambda t: aus.append(('echo', t)), klick=lambda t: aus.append(('klick', t)), abstand=0.1, rueck=lambda: aus.append('rueck'))
+        e.lage = 'KB'
+        self.assertEqual(e.tippen('A'), 'vorgemerkt'); self.assertEqual(aus, [('klick', 'A')])      # der Tastendruck klingt (OP-09), die Ruecktaste nicht
+        self.assertEqual(e.ruecktaste(), 'zurueckgenommen'); self.assertEqual(e.ruecktaste(), 'geloescht')
+        self.assertEqual(aus, [('klick', 'A'), 'rueck'])
     def test_nimmt_zuerst_ein_vorgemerktes_zeichen_zurueck(self):
         """G4-007: Ein vorgemerktes Zeichen hat den Rechner nie erreicht und war nie angezeigt: die Rücktaste nimmt es (samt Umschaltzeichen) zurück,
         statt in der Anzeige etwas zu löschen. Erst ohne Vorgemerktes löscht sie in der Anzeige."""
@@ -246,6 +273,88 @@ class Anbindung(unittest.TestCase):
             self.assertIsNone(e.zweite)
         finally:
             stop.set(); k0.abbrechen()
+    def test_op09_erstes_zeichen_nach_dem_einschalten_klingt_erst_beim_loslassen(self):
+        """OP-09 (21.10.2026, Befund aus dem Code, am echten Fenster nicht gehoert): Nach dem Einschalten ist die Lage des SW unbestimmt (None).
+        Das erste Zeichen mit bestimmter Lage geht deshalb als Paar (Um. KB, Zeichen) an den Rechner (Regel 18.10.2026, G3-008). Das Umschaltzeichen
+        klingt und erscheint nie (O4-6); das Zeichen selbst wird ohne gehaltene Umschalttaste erst beim LOSLASSEN frei (U-11 Fall b) und klingt erst
+        dann (Anzeige und Klang haengen an der Annahme durch den Rechner). Beim Druecken bleibt es still."""
+        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append); erhalten = []; stop = threading.Event()
+        self._rechner(m, k0, erhalten, stop)
+        try:
+            self.assertIsNone(e.lage)
+            self.assertTrue(self._warte(e.erwartet))
+            self.assertEqual(e.tippen('a'), 'folgt')                         # Druecken: nur das Umschaltzeichen ist beim Rechner
+            self.assertTrue(self._warte(lambda: erhalten == ['Um. KB']))
+            self.assertEqual(echo, [])                                       # kein Klang, keine Anzeige beim Druecken
+            self.assertTrue(self._warte(e.erwartet))
+            self.assertIsNone(e.liefern()); self.assertEqual(echo, []); self.assertEqual([x[0] for x in e.puffer], ['a'])   # ohne Loslassen bleibt das Zeichen im Puffer
+            self.assertEqual(e.loslassen(), 'geliefert')                     # Loslassen: Zeichen frei, ein 011 ist aktiv
+            self.assertEqual(echo, ['a']); self.assertTrue(self._warte(lambda: erhalten == ['Um. KB', 'a']))
+            self.assertEqual(e.lage, 'KB')
+        finally:
+            stop.set(); k0.abbrechen()
+    def test_op09_zweiter_zeichen_ohne_zweiten_011_bleibt_im_puffer(self):
+        """OP-09: Fragt der Rechner nach dem Umschaltzeichen nicht noch einmal (ein einzelner 011), bleibt das erste Zeichen im Puffer: kein Klang,
+        keine Anzeige, auch nach dem Loslassen. Der Puffer haelt es, bis wieder ein 011 aktiv ist."""
+        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append)
+        k0._wartet_auf = 'SW'                                                # genau ein 011
+        self.assertEqual(e.tippen('a'), 'folgt')                             # Um. KB angenommen
+        self.assertEqual(k0.naechstes(), 'Um. KB')                           # der Rechner holt das Umschaltzeichen ab und fragt nicht wieder
+        k0._wartet_auf = None
+        self.assertIsNone(e.loslassen()); self.assertEqual(echo, []); self.assertEqual([x[0] for x in e.puffer], ['a'])
+        k0._wartet_auf = 'SW'                                                # spaeter ein neuer 011
+        self.assertEqual(e.liefern(), 'geliefert'); self.assertEqual(echo, ['a'])
+    # --- OP-09 (Entscheidung 21.10.2026): Klang beim Tastendruck, Anzeige bei Annahme -------------------------------------------------------
+    def _mit_klick(self, **kw):
+        m = FakeMaschine(); k0 = K0Warteschlange(m); ereignis = []
+        e = SwEingabe(k0, m, echo=lambda t: ereignis.append(('anzeige', t)), klick=lambda t: ereignis.append(('klick', t)), **kw)
+        return m, k0, e, ereignis
+    def test_op09_klick_beim_druecken_anzeige_bei_annahme(self):
+        """Der Rechner ist nicht bei einem 011: das Zeichen wartet im Puffer, klingt aber sofort; angezeigt wird es erst bei der Annahme, ohne zweiten Klang."""
+        m, k0, e, ereignis = self._mit_klick(abstand=0.1); e.lage = 'KB'
+        self.assertEqual(e.tippen('a'), 'vorgemerkt')
+        self.assertEqual(ereignis, [('klick', 'a')])                          # Klang sofort, keine Anzeige
+        k0._wartet_auf = 'SW'
+        self.assertEqual(e.liefern(), 'geliefert')
+        self.assertEqual(ereignis, [('klick', 'a'), ('anzeige', 'a')])        # Anzeige bei Annahme, kein zweiter Klang
+    def test_op09_direkte_lieferung_ein_klang_eine_anzeige(self):
+        m, k0, e, ereignis = self._mit_klick(abstand=0.1); e.lage = 'KB'; k0._wartet_auf = 'SW'
+        self.assertEqual(e.tippen('a'), 'geliefert')
+        self.assertEqual(ereignis, [('klick', 'a'), ('anzeige', 'a')])
+    def test_op09_erstes_zeichen_klingt_beim_druecken_nicht_erst_beim_loslassen(self):
+        """Das erste Zeichen nach dem Einschalten geht als Paar (Um. KB, Zeichen). Das Umschaltzeichen klingt nie, das Zeichen klingt beim Druecken;
+        die Anzeige kommt erst nach dem Loslassen und der Annahme durch den Rechner."""
+        m, k0, e, ereignis = self._mit_klick(); erhalten = []; stop = threading.Event()
+        self._rechner(m, k0, erhalten, stop)
+        try:
+            self.assertTrue(self._warte(e.erwartet))
+            self.assertEqual(e.tippen('a'), 'folgt')
+            self.assertEqual(ereignis, [('klick', 'a')])                      # sofort beim Druecken
+            self.assertTrue(self._warte(lambda: erhalten == ['Um. KB']))
+            self.assertTrue(self._warte(e.erwartet))
+            self.assertEqual(e.loslassen(), 'geliefert')
+            self.assertEqual(ereignis, [('klick', 'a'), ('anzeige', 'a')])    # Loslassen: Anzeige, kein zweiter Klang
+        finally:
+            stop.set(); k0.abbrechen()
+    def test_op09_kein_klang_bei_blockiert_voll_verworfen_und_umschaltzeichen(self):
+        m, k0, e, ereignis = self._mit_klick(abstand=0.1); m.fl['SW'] = 0
+        self.assertEqual(e.tippen('a'), 'blockiert'); self.assertEqual(ereignis, [])          # K0/SW nicht angewaehlt
+        m.fl['SW'] = 1; e.lage = 'KB'
+        self.assertEqual(e.tippen('\x01'), 'verworfen'); self.assertEqual(ereignis, [])       # nicht im R300-Code
+        for _ in range(SwEingabe.PUFFER_MAX): e.tippen('a')
+        n = len(ereignis); self.assertEqual(n, SwEingabe.PUFFER_MAX)
+        self.assertEqual(e.tippen('a'), 'voll'); self.assertEqual(len(ereignis), n)           # Taste geht verloren: kein Klang
+        self.assertTrue(all(x == ('klick', 'a') for x in ereignis))
+        m2, k02, e2, ereignis2 = self._mit_klick(abstand=0.1); e2.lage = 'KB'
+        e2.tippen('A'); self.assertEqual(ereignis2, [('klick', 'A')])                         # Paar (Um. GB, A): nur das Zeichen klingt
+    def test_op09_ruecktaste_im_puffer_macht_keinen_weiteren_klang(self):
+        m, k0, e, ereignis = self._mit_klick(abstand=0.1); e.lage = 'KB'
+        e.tippen('a'); self.assertEqual(e.ruecktaste(), 'zurueckgenommen')
+        self.assertEqual(ereignis, [('klick', 'a')]); self.assertEqual(e.puffer, [])
+    def test_op09_ohne_klick_aufruf_bleibt_stumm(self):
+        """Ohne klick-Aufruf (Pruefungen) aendert sich nichts: keine Ausnahme, die Anzeige kommt bei der Annahme."""
+        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append); e.lage = 'KB'; k0._wartet_auf = 'SW'
+        self.assertEqual(e.tippen('a'), 'geliefert'); self.assertEqual(echo, ['a'])
     def test_lage_des_rechners_spielt_keine_rolle(self):
         """Regel 18.10.2026: nur die Lage des SW zaehlt. SW auf KB, Rechner auf GB: eine Ziffer geht allein (ein Eingabezeichen)."""
         m = FakeMaschine(); m.zeichenlage = 'GB'; k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.1); erhalten = []; stop = threading.Event()
@@ -670,6 +779,45 @@ class FensterMitErsatzmodul(unittest.TestCase):
             self.assertEqual(erhalten, ['a'])
         finally:
             stop.set(); k0.abbrechen()
+
+    # --- OP-32: Entprellung des Fokus (0,4 s ohne Eingabeaufforderung, GRAFIK_Beschreibung §5.7) ---------------------------------
+    def _fokus_vorbereiten(self):
+        """SW-Fenster mit steuerbarer Aufforderung (aktiv) und steuerbarer Uhr; liefert (f, pult, uhr, setze_aktiv)."""
+        import grafik_sw_fenster
+        f, senke, k0, m, pult = self._bauen()
+        zustand = {'aktiv': True}; uhr = [100.0]
+        f.eingabe.eingabe_aktiv = lambda: zustand['aktiv']
+        f.w.focus_get = lambda: f.txt if f.txt.focus else None       # echtes Tk liefert das fokussierte Widget; die Attrappe sonst das Fenster selbst
+        orig = grafik_sw_fenster.time.monotonic
+        grafik_sw_fenster.time.monotonic = lambda: uhr[0]
+        self.addCleanup(setattr, grafik_sw_fenster.time, 'monotonic', orig)
+        return f, pult, uhr, lambda a: zustand.__setitem__('aktiv', a)
+
+    def test_fokus_entprellung_bleibt_unter_0_4_s_im_sw_fenster(self):
+        f, pult, uhr, setze = self._fokus_vorbereiten()
+        f._fokus()                                                   # Aufforderung da: Fokus angefordert
+        self.assertTrue(f.txt.focus); self.assertTrue(f._fokus_angefordert)
+        setze(False); f._fokus()                                     # Aufforderung weg: Uhr startet
+        uhr[0] += 0.375; f._fokus()                                  # 0,375 s: noch nicht zurueck
+        self.assertFalse(getattr(pult, 'pult_fokus', False)); self.assertTrue(f._fokus_angefordert)
+
+    def test_fokus_geht_nach_0_4_s_ohne_aufforderung_zum_pult(self):
+        f, pult, uhr, setze = self._fokus_vorbereiten()
+        f._fokus(); setze(False); f._fokus()
+        uhr[0] += 0.5; f._fokus()                                    # Schwelle (0,4 s) ueberschritten
+        self.assertTrue(getattr(pult, 'pult_fokus', False)); self.assertTrue(getattr(pult, 'pult_lift', False))
+        self.assertFalse(f._fokus_angefordert)
+
+    def test_fokus_neue_aufforderung_setzt_die_uhr_zurueck(self):
+        f, pult, uhr, setze = self._fokus_vorbereiten()
+        f._fokus(); setze(False); f._fokus()
+        uhr[0] += 0.25; f._fokus()                                   # Luecke zwischen zwei Eingabe-Halts
+        setze(True); f._fokus()                                      # naechster Eingabe-Halt: Uhr zurueck
+        setze(False); f._fokus()                                     # neue Luecke beginnt
+        uhr[0] += 0.25; f._fokus()                                   # 0,5 s seit der ersten, aber nur 0,25 s seit der letzten Luecke
+        self.assertFalse(getattr(pult, 'pult_fokus', False)); self.assertTrue(f._fokus_angefordert)
+        uhr[0] += 0.25; f._fokus()                                   # insgesamt 0,5 s seit Beginn der letzten Luecke
+        self.assertTrue(getattr(pult, 'pult_fokus', False))
 
     def _rechner_faden(self, k0):
         erhalten = []; stop = threading.Event()

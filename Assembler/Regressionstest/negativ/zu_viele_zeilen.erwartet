@@ -1,0 +1,4 @@
+rc 16
+stderr zu_viele_zeilen.asm:6145: Fehler: Zu viele Zeilen
+datei-weg obj mqo test
+escape-weg

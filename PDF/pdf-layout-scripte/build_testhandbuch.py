@@ -2455,7 +2455,7 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
             ('r300_', 'r300_…', 'R300-Eingabe: alle Zeichen mit Computertaste über SW einlesen und als Echo ausgeben '
                                 '(r300_eingabe, RE-001); dazu Klickspur und Sollfolge'),
             ('sw_', 'sw_…', 'Eingabe über das Schreibwerk SW (sw_eingabe, sw_eingabe_k2, sw_eingabe_lage, '
-                            'sw_eingabe_leser_stanzer, sw_zwei_ziffern)'),
+                            'sw_zwei_ziffern)'),
             ('betrag', 'betrag.test', 'Betragsbildung (z = -|a+b| + |-b+c| + |-c+d|, erwartet z = 1)'),
             ('namen_raten', 'namen_raten.test', 'Programmbeispiel Namen raten (Assembler-Projekt 1, `Assembler/Projekt_1/namen_raten`)'),
             ('lb-', 'lb-…', 'Lochband: Irrung Zeichen übersprungen (lb-001), ohne Irrung (lb-002), Paritätsfehler (lb-003)'),
@@ -2644,9 +2644,9 @@ def kap11(S, ex, gl, stand):
         '`c8205_interpreter.sh`/`.bat`.',
         'Bei einem neuen oder geänderten Befehl zuerst den Claude-Interpreter benutzen (Kapitel 10), dann den Befehl in '
         '`c8205_interp.py` übernehmen, danach alle Referenztests und den Befehlssweep erneut laufen lassen.'])
-    S += code('python3 c8205_befehlssweep.py                # alle 512 Codes, Kurzbericht\n'
-              'python3 c8205_befehlssweep.py --verbose      # jeden Code einzeln\n'
-              'python3 c8205_befehlssweep.py --code 251     # nur ein Code (oktal), im Detail')
+    S += code('python3 testscripte/c8205_befehlssweep.py       # alle 512 Codes, Kurzbericht\n'
+              'python3 testscripte/c8205_befehlssweep.py --verbose # jeden Code einzeln\n'
+              'python3 testscripte/c8205_befehlssweep.py --code 251 # nur ein Code (oktal), im Detail')
     kap11_4(S, ex)
 
 

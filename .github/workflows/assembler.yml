@@ -1,0 +1,18 @@
+# Prueft den Assembler c82ass bei jeder Aenderung (Version 1.00-017):
+# Uebersetzung ohne Warnung, Regressionstest, Regressionstest unter AddressSanitizer/UBSan.
+name: Assembler
+
+on:
+  push:
+    paths: ['Assembler/**', '.github/workflows/assembler.yml']
+  pull_request:
+    paths: ['Assembler/**', '.github/workflows/assembler.yml']
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gesamtpruefung
+        working-directory: Assembler
+        run: Regressionstest/pruefe_alles.sh

@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001 Zahlwort Festkomma vorn: verkuerzte Multiplikation positiver Zahlen (Programmieranleitung 6.1.2), x und a mit voller Stellenzahl
+#DOK-0001 Programm wie im Buch ab Zelle 3000; x=<3007>, a=<3010>, Maske <3011>=3777 7777 777, Arbeitsspur 7700; der Verfahrensfehler ist
+#DOK-0001 erwartet <AC> = x*a = 25761027721 (oktal), Verfahrensfehler stets negativ, kleiner als 2^-27
+#PROT STUFE=2
+0000: 00003000000 # 000 m3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+3000: 00003007211 # m3000: 211 d3007 ; 3007 211 ; <AC>:=x
+3001: 00007700440 # 440 d7700 ; 7700 440 ; Speicherung von x in alle Zellen der Arbeitsspur
+3002: 00003011211 # 211 d3011 ; 3011 211 ; <AC>:=3777 7777 777
+3003: 00007700462 # 462 d7700 ; 7700 462 ; höchste Bits von x als mögliche Teilprodukte ausblenden
+3004: 00003010211 # 211 d3010 ; 3010 211 ; <AC>:=a
+3005: 00007700432 # 432 d7700 ; 7700 432 ; Abbau des Faktors a und gleichzeitig Aufbau des Produkts in AC
+3006: 00003000020 # 020 03000 ; 3000 020 ; unbedingter Stopp
+3007: 35762104535 # d3007: dw 035762104535 ; x
+3010: 27351646213 # d3010: dw 027351646213 ; a
+3011: 37777777777 # d3011: dw 037777777777 ; Maske zur Erzeugung der Teilprodukte
+Tastenfolge:
+H G R

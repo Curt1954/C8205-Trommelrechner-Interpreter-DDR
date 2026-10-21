@@ -208,7 +208,7 @@ class Tasten(unittest.TestCase):
         s, r = betrieb(); r.m.k0.erw = True
         for c in ('1', 'b', 'D', '-', ',', '.', ':', ' '): self.assertTrue(s.tastatur(c, 1), c)
         self.assertEqual(r.m.k0.got, ['1', 'B', 'D', '-', ',', '.', ':', 'ZR'])
-        self.assertFalse(s.tastatur('x', 1)); self.assertFalse(s.tastatur('G', 1))
+        self.assertFalse(s.tastatur('x', 1)); self.assertFalse(s.tastatur('q', 1))      # OP-47: G, H, R, E, M, T, S wirken jetzt (Klasse Op47Buchstaben)
     def test_fokusverlust_laesst_maustaste_los(self):
         s, r = betrieb(); s.klick('M', 1.0); s.klick('SP', 1.0); s.fokus_verloren(5.0)
         self.assertEqual(r.tokens[-1], 'M-'); self.assertTrue(s.taste_gedrueckt('SP'))
@@ -247,6 +247,42 @@ class Beruhigung(unittest.TestCase):
         for i in range(100): m.probe({'x': 1}, t); t += 0.002
         for i in range(100): m.probe({'x': i % 2}, t); t += 0.002                # 50 %: bleibt an
         self.assertEqual(m.kopie()['x'], 1)
+    # --- OP-37: Konstanten und Schwellen der Lampenmittelung (GRAFIK_Beschreibung §3.5) ----------------------------------------
+    def test_konstanten_wie_beschrieben(self):
+        import grafik_pult as P
+        self.assertEqual((P.MITTEL_FENSTER_S, P.MITTEL_AN, P.MITTEL_AUS), (0.04, 0.60, 0.40))
+
+    def _fenster(self, anteil_an, vorher):
+        """Ein Beurteilungsfenster mit 10 Abtastungen (Fenster 1 s, damit die Zeiten exakt sind); anteil_an = Zahl der 'an'-Abtastungen von 10.
+        vorher: Zustand der Lampe vor dem Fenster (0/1)."""
+        from grafik_pult import Mittelung
+        m = Mittelung(fenster=1.0); m.sofort({'x': vorher})
+        zeiten = [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.9375, 1.0]            # die 10. Abtastung schliesst das Fenster
+        for i, t in enumerate(zeiten):
+            m.probe({'x': 1 if i < anteil_an else 0}, t)
+        return m.kopie()['x']
+    def test_schwelle_an_60_prozent(self):
+        self.assertEqual(self._fenster(6, 0), 1)       # genau 60 %: leuchtet
+        self.assertEqual(self._fenster(5, 0), 0)       # 50 % aus dunklem Zustand: bleibt dunkel
+    def test_schwelle_aus_40_prozent(self):
+        self.assertEqual(self._fenster(4, 1), 0)       # genau 40 %: dunkel
+        self.assertEqual(self._fenster(5, 1), 1)       # 50 % aus leuchtendem Zustand: bleibt hell
+    def test_zwischenbereich_behaelt_den_zustand(self):
+        for n in (5,):
+            for vorher in (0, 1):
+                self.assertEqual(self._fenster(n, vorher), vorher)
+    def test_neue_lampe_im_zwischenbereich_startet_dunkel(self):
+        from grafik_pult import Mittelung
+        m = Mittelung(fenster=1.0)                      # keine sofort()-Vorgabe: Lampe unbekannt
+        for i, t in enumerate([0.0, 0.5, 1.0, 1.0625]): m.probe({'x': i % 2}, t)
+        self.assertEqual(m.kopie()['x'], 0)
+    def test_beurteilung_erst_nach_dem_fenster_von_40_ms(self):
+        from grafik_pult import Mittelung
+        m = Mittelung()                                 # Standardfenster 40 ms
+        for i in range(20): m.probe({'a': 1}, i * 0.002)    # bis 38 ms: noch keine Beurteilung
+        self.assertNotIn('a', m.kopie())
+        m.probe({'a': 1}, 0.042)                         # nach 40 ms: beurteilt
+        self.assertEqual(m.kopie()['a'], 1)
     def test_sofort_bei_halt(self):
         from grafik_pult import Mittelung
         m = Mittelung(); m.sofort({'x': 1}); self.assertEqual(m.kopie()['x'], 1); m.sofort({'x': 0}); self.assertEqual(m.kopie()['x'], 0)
@@ -385,6 +421,34 @@ class HwCheck(unittest.TestCase):
         self.assertEqual(hwcheck_zeilen(m)[2][1], '177 37')
         m.trommel = types.SimpleNamespace()                      # kein Einblick: Platzhalter, kein Fehler
         self.assertEqual(hwcheck_zeilen(m)[4][1], '---- ---- ---')
+    def test_op15_anzeige_vor_dem_einschalten(self):
+        """OP-15 (c): Vor dem Einschalten des Pults (frische Maschine, Trommel schon angelegt) zeigen BZ, BR, Spur Sektor und AC Null;
+        <<AR>> zeigt den Inhalt der Zelle 0000 aus der Trommel (nicht Null). Haltzeit ohne Messung."""
+        try:
+            from grafik_trommel import GrafikTrommel
+            import c8205_interp as I
+        except Exception as e:
+            self.skipTest(f'Kern nicht ladbar: {e}')
+        import shutil, tempfile
+        from grafik_hwcheck import hwcheck_zeilen
+        d = tempfile.mkdtemp(); kopie = os.path.join(d, 'trommel.txt')
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), kopie)
+        tr = GrafikTrommel(kopie, basp='000000')
+        try:
+            erwartet0 = None
+            for z in open(kopie, encoding='utf-8'):
+                if ':' in z and not z.startswith('#'):
+                    a, w = z.split(':')[:2]
+                    if int(a, 8) == 0: erwartet0 = int(w.split()[0], 8)
+            self.assertIsNotNone(erwartet0)
+            z = hwcheck_zeilen(I.Machine(tr))
+            self.assertEqual([w for n, w in z[:4]], ['0000', '0000 000', '000 00', '0000 0000 000'])
+            self.assertEqual(z[4][0], '<<AR>>  AR=0000')
+            self.assertEqual(z[4][1], f'{erwartet0 >> 21 & 0o7777:04o} {erwartet0 >> 9 & 0o7777:04o} {erwartet0 & 0o777:03o}')
+            self.assertNotIn('-', z[4][1])
+            self.assertEqual(z[5], ('Haltzeit', '     ---.- ms'))
+        finally:
+            tr.schliessen(); shutil.rmtree(d, ignore_errors=True)
     def test_einblick_ohne_nebenwirkung(self):
         try:
             from grafik_trommel import GrafikTrommel
@@ -448,6 +512,18 @@ class HwCheck(unittest.TestCase):
         t[0] = 20.5; u.weiter(); t[0] = 20.585; u.halt(HZ.EA)                             # 485 ms Halt -> Halt, davon 85 ms Rechnen
         self.assertEqual(HZ.zeile(u.lesen()), '      85.0 ms  E/A-Halt -> E/A-Halt')
         self.assertEqual(HZ.zeile(u.lesen(), nur_lauf=False), '     485.0 ms  E/A-Halt -> E/A-Halt')
+    def test_haltzeit_einzelschritt(self):
+        """HZ-004: ein Einzelschritt (E) wird gemessen: 'E -> Halt'; endet er im Stopp, steht dort 'E -> Stopp'; R misst weiter ab dem Start."""
+        import grafik_haltzeit as HZ
+        t = [30.0]
+        u = HZ.HaltZeit(zeit=lambda: t[0]); g = ['']; u.grund_fn = lambda: g[0]
+        self.assertEqual(HZ.zeile(u.lesen()), '     ---.- ms')
+        u.start(HZ.SCHRITT); t[0] = 30.0005; u.halt(HZ.SCHRITT_ENDE)
+        self.assertEqual(HZ.zeile(u.lesen()), '       0.5 ms  E -> Halt')
+        u.start(HZ.SCHRITT); t[0] = 30.002; g[0] = 'Unbedingter Stop (US:=1)'; u.halt(None)
+        self.assertEqual(HZ.zeile(u.lesen()), '       1.5 ms  E -> Stopp')
+        u.start(); t[0] = 30.102; u.halt(HZ.EA)
+        self.assertEqual(HZ.zeile(u.lesen()), '     100.0 ms  R -> E/A-Halt')
     def test_haltzeit_im_rechner(self):
         """Der echte Rechner meldet Start (R) und Halt (m.halted von False auf True) der HaltZeit; ein erneutes Setzen zaehlt nicht."""
         import c8205_grafik as G
@@ -628,14 +704,86 @@ class EGetrennt(unittest.TestCase):
         self.assertEqual(z_a, self._zustand(b))
 
     def test_G_bei_gehaltenem_E(self):
-        """G bei niedergedrueckter Taste E loescht wie bisher; das Loslassen fuehrt dann keinen Schritt mehr aus."""
+        """OP-11 (Handbuch 4.1 Nr. 2): G bei niedergedrueckter Taste E loescht NUR den Ueberlauf; BR, AR, BZ, AC, Kanal und die uebrigen Flags
+        bleiben, das Loslassen von E verlaeuft danach wie ueblich (Phase II und III)."""
         r = self._rechner(); m = r.m
-        self._folge(r, ['H', 'G', 'E', 'E+', 'G'])
-        self.assertEqual((m.adr, m.OR, m.AR), (0, 0, 0))
+        self._folge(r, ['H', 'G', 'E', 'E+'])                    # Befehl 0100 211 im BR, E+ ist gelaufen (Phase IV und I), E gehalten
+        m.fl['FUE'] = 1                                          # Ueberlauf von Hand gesetzt (der Halt ist unten getrennt geprueft)
+        vor = self._zustand(r)
+        flags_vor = {k: v for k, v in m.fl.items() if k != 'FUE'}
+        zeile = r.taste('G')
+        self.assertIn('nur der Ueberlauf', zeile)
+        self.assertEqual(m.fl['FUE'], 0)
+        nach = self._zustand(r)
+        self.assertEqual(nach[:5], vor[:5])                      # BZ, AR, AC, OR, adr unveraendert
+        self.assertEqual({k: v for k, v in m.fl.items() if k != 'FUE'}, flags_vor)
+        self.assertTrue(r.e_gedrueckt and m.vor_phase2)          # E bleibt gehalten, der Automat steht weiter vor Phase II
+        zeile = r.taste('E-')                                    # Loslassen wie ueblich: Phase II und III
+        self.assertFalse(r.e_gedrueckt); self.assertIn('Phase II und III', zeile)
+        self.assertEqual((m.BZ, m.AR), (0o2, 0o101))
+
+    def test_G_bei_gehaltenem_E_ohne_Ueberlauf_loescht_nichts(self):
+        """OP-11: auch ohne Ueberlauf loescht G bei gehaltenem E nichts ausser FUE (Handbuch: nur der Ueberlauf wird geloescht)."""
+        r = self._rechner(); m = r.m
+        self._folge(r, ['H', 'G', 'E', 'E+'])
+        vor = self._zustand(r)
+        r.taste('G')
+        self.assertEqual(self._zustand(r), vor)
+        self.assertEqual(m.fl['US'], 1)                          # US aus dem G davor bleibt, kein neues Generallöschen
+
+    def test_G_ohne_gehaltenes_E_loescht_wie_bisher(self):
+        """OP-11: ohne gehaltenes E gilt das volle Generallöschen unverändert (BR := 0000 000, US := 1)."""
+        r = self._rechner(); m = r.m
+        self._folge(r, ['H', 'G', 'E', 'E'])
+        self.assertNotEqual((m.adr, m.OR), (0, 0))
+        r.taste('G')
+        self.assertEqual((m.adr, m.OR, m.AR, m.fl['US']), (0, 0, 0, 1))
+
+    def _ueberlauf_halt_rechner(self):
+        """Programm: 3000 -> AC, Addition 1 (Ueberlauf), Laden 3002; der Befehl danach wird wegen Ueberlauf nicht ausgefuehrt."""
+        z = {0: _z(0o3000, 0o211), 1: _z(0o3001, 0o210), 2: _z(0o3002, 0o211), 3: _z(0o3000, 0o211),
+             0o3000: 0o37777777777, 0o3001: 1, 0o3002: 5}
+        r = self._rechner(zellen=z)
+        self._folge(r, ['H', 'G', 'E', 'E', 'E'])
+        self.assertEqual(r.m.fl['FUE'], 1)
+        return r
+
+    def test_G_bei_gehaltenem_E_im_Halt_wegen_Ueberlauf(self):
+        """OP-11: Der Zustand 'FUE gesetzt und E gehalten' entsteht, wenn E+ im Halt wegen Ueberlauf (Knoten 28 -> 30) stehen bleibt.
+        G loescht dann nur FUE und hebt den Halt auf; E- setzt Phase IV und I fort (Befehl 3002 211 laedt 5) und durchlaeuft Phase II und III."""
+        r = self._ueberlauf_halt_rechner(); m = r.m
+        r.taste('E+')
+        self.assertTrue(m.halted); self.assertIn('Ueberlauf', m.halt_grund); self.assertTrue(r.e_gedrueckt); self.assertEqual(r.e_ue_test, 28)
         vor = self._zustand(r)[:5]
+        zeile = r.taste('G')
+        self.assertIn('Halt wegen Ueberlauf ist aufgehoben', zeile)
+        self.assertEqual((m.fl['FUE'], m.halted), (0, False))
+        self.assertEqual(self._zustand(r)[:5], vor)              # BR, AR, BZ, AC bleiben
         zeile = r.taste('E-')
-        self.assertEqual(self._zustand(r)[:5], vor); self.assertFalse(r.e_gedrueckt)
-        self.assertIn('kein Schritt offen', zeile)
+        self.assertIn('Phase IV und I fortgesetzt', zeile)
+        self.assertFalse(r.e_gedrueckt); self.assertFalse(m.halted)
+        self.assertEqual((m.BZ, m.AR, m.adr, m.OR), (0o4, 0o3000, 0o3000, 0o211))     # Befehl 0003 steht jetzt im BR
+        r.taste('E')                                             # der geladene Wert 5 kam in den AC: naechster Schritt fuehrt 3000 211 aus
+        self.assertEqual(m.AC, 0o37777777777)
+
+    def test_E_Halt_wegen_Ueberlauf_ohne_G_bleibt(self):
+        """OP-11: Ohne G bleibt der Halt wegen Ueberlauf auch beim Loslassen von E (wie bisher); G nach dem Loslassen ist das volle Generallöschen."""
+        r = self._ueberlauf_halt_rechner(); m = r.m
+        r.taste('E+'); zeile = r.taste('E-')
+        self.assertIn('Stopp', zeile); self.assertTrue(m.halted); self.assertEqual(m.fl['FUE'], 1)
+        r.taste('G')
+        self.assertEqual((m.fl['FUE'], m.adr, m.OR), (0, 0, 0))
+        self.assertIsNone(r.e_aufsatz)
+
+    def test_G_bei_gehaltenem_E_im_Halt_US_hebt_den_Halt_nicht_auf(self):
+        """OP-11: Ein anderer Halt (hier US) bleibt bei G mit gehaltenem E bestehen; nur der Ueberlauf wird geloescht."""
+        z = {0: _z(0o0000, 0o020), 0o0100: 0o1234}                 # Befehl 020 = unbedingter Stopp 1. Art
+        r = self._rechner(zellen=z); m = r.m
+        self._folge(r, ['H', 'G', 'E', 'E'])
+        r.taste('E+')
+        if m.halted:
+            r.taste('G')
+            self.assertTrue(m.halted); self.assertIsNone(r.e_aufsatz)
 
     def test_unzulaessige_folgen(self):
         r = self._rechner(); self._folge(r, ['H', 'G'])
@@ -655,17 +803,162 @@ class EGetrennt(unittest.TestCase):
         self.assertEqual(self._zustand(r)[:5], vor[:5]); self.assertFalse(r.e_gedrueckt)
 
     def test_lampenreihe_waehrend_E_gehalten(self):
-        """Pult mit echtem Rechner: Beim Halten von E zeigt die Lampenreihe AR/OR den alten Befehl, nach dem Loslassen den neuen."""
+        """OP-10: Pult mit echtem Rechner: Bei E+ ohne M zeigt die Lampenreihe AR, solange E gehalten ist, den BZ; nach dem Loslassen den Adressteil des neuen BR."""
         r = self._rechner()
         s = PultSteuerung(PULT, r, hochlauf_s=0.0, auslauf_s=0.0, tastenzeit_s=0.0)
         s.netz_klick(0.0); s.tick(1.0)
         self.assertEqual(s.netz, BETRIEB)
         self._folge(r, ['H', 'G', 'E'])
         self.assertEqual(s.lampen()[1], 0o0100)
-        s.klick('E', 2.0)                                       # Niederdruecken
-        self.assertEqual(s.lampen()[1], 0o0100); self.assertEqual(r.m.AC, 0o1234)
+        s.klick('E', 2.0)                                       # Niederdruecken ohne M
+        self.assertEqual(s.lampen()[1], r.m.BZ & 0o7777); self.assertEqual(s.lampen()[1], 0o0101)     # BZ in den AR-Lampen
+        self.assertEqual(r.m.adr, 0o0100); self.assertEqual(r.m.AC, 0o1234)                          # das BR-Register selbst bleibt
         s.loslassen('E', 3.0)                                   # Loslassen
         self.assertEqual(s.lampen()[1], 0o0101)
+
+    def test_lampenreihe_E_unter_M_zeigt_erhoehtes_AR(self):
+        """OP-10: Bei E+ mit gehaltenem M erhoeht E das AR und die Lampenreihe AR zeigt es; auch waehrend E gehalten ist."""
+        r = self._rechner()
+        s = PultSteuerung(PULT, r, hochlauf_s=0.0, auslauf_s=0.0, tastenzeit_s=0.0)
+        s.netz_klick(0.0); s.tick(1.0)
+        self._folge(r, ['H', 'G', 'M+'])
+        r.taste('E+')                                            # erstes E nach G unter M: BZ := 1, AR := 1
+        self.assertEqual((r.m.BZ, r.m.AR), (1, 1)); self.assertEqual(s.lampen()[1], 0o1)
+        r.taste('E-'); r.taste('E+')
+        self.assertEqual((r.m.BZ, r.m.AR), (2, 2)); self.assertEqual(s.lampen()[1], 0o2)
+
+    def test_lampenreihe_ohne_E_zeigt_BR_Adressteil(self):
+        """OP-10: Ohne gehaltenes E zeigt die Lampenreihe AR den Adressteil des BR (Grundzustand)."""
+        r = self._rechner()
+        s = PultSteuerung(PULT, r, hochlauf_s=0.0, auslauf_s=0.0, tastenzeit_s=0.0)
+        s.netz_klick(0.0); s.tick(1.0)
+        self._folge(r, ['H', 'G', 'E', 'E'])
+        self.assertEqual(s.lampen()[1], r.m.adr & 0o7777); self.assertFalse(r.e_gedrueckt)
+
+
+class K0AbbruchBeimWarten(unittest.TestCase):
+    """OP-20 (entschieden 21.10.2026, Variante a): Verlaesst K0Warteschlange.naechstes() das Warten durch eine Ausnahme (H, Kanalwechsel, Abbruch),
+    wartet niemand mehr: erwartet() ist falsch, annehmen() verwirft das Zeichen."""
+    def _k0(self, hook):
+        from grafik_k0 import K0Warteschlange
+        m = types.SimpleNamespace(fl={'SW': 0, 'T': 1})
+        return K0Warteschlange(maschine=m, aufruf_beim_warten=hook, takt=0.01)
+
+    def _warten_bis_ausnahme(self, ausnahme):
+        n = []
+        def hook():
+            n.append(1)
+            if len(n) == 3: raise ausnahme
+        k0 = self._k0(hook)
+        self.assertRaises(type(ausnahme), k0.naechstes)
+        return k0
+
+    def test_wartet_nicht_mehr_nach_ausnahme_aus_dem_haken(self):
+        class H(Exception): pass
+        k0 = self._warten_bis_ausnahme(H())
+        self.assertFalse(k0.erwartet('T')); self.assertFalse(k0.offen('T'))
+        self.assertFalse(k0.annehmen('T', '1'))
+        self.assertEqual(list(k0._q['T']), [])                      # das Zeichen ging nicht verloren in den Vorrat
+
+    def test_waehrend_des_wartens_wartet_er_noch(self):
+        """Gegenprobe zur Aussage oben: solange gewartet wird, ist erwartet() wahr und annehmen() nimmt an."""
+        import threading
+        k0 = self._k0(None); erg = []
+        t = threading.Thread(target=lambda: erg.append(k0.naechstes()), daemon=True); t.start()
+        t0 = time.time()
+        while not k0.erwartet('T') and time.time() - t0 < 2: time.sleep(0.005)
+        self.assertTrue(k0.erwartet('T')); self.assertTrue(k0.annehmen('T', '7'))
+        t.join(2); self.assertEqual(erg, ['7']); self.assertFalse(k0.erwartet('T'))
+
+    def test_abbruch_loescht_das_warten(self):
+        from grafik_trommel import GrafikAbbruch
+        k0 = self._k0(None); k0._abbruch = True
+        self.assertRaises(GrafikAbbruch, k0.naechstes)
+        self.assertFalse(k0.erwartet('T'))
+
+
+class EImEingabeHaltAbgebrochen(unittest.TestCase):
+    """OP-20 (entschieden 21.10.2026, Variante a): Ein E-Schritt im Eingabe-Halt, abgebrochen durch H, laesst die Taste E nicht tot zurueck und
+    K0 nicht im Zustand 'wartet'. Nachstellung wie testscripte/grafik_e_im_eingabe_halt_probe.py (KEP-Programm, Rechner-Thread wie im Fenster)."""
+    def setUp(self):
+        try:
+            import c8205_grafik as G
+            import c8205_interp as I
+            from grafik_trommel import GrafikTrommel
+        except Exception as e:
+            self.skipTest(f'Kern nicht ladbar: {e}')
+        import shutil, tempfile, threading
+        d = tempfile.mkdtemp(); k = os.path.join(d, 'trommel.txt')
+        shutil.copy(os.path.join(PROJ, 'Trommel', 'trommel.txt'), k)
+        kep = I.Test(os.path.join(PROJ, 'Tests', 'bsp_5_18_kep.txt')); mem = {}
+        with open(k, encoding='utf-8', newline='') as fh:
+            for z in fh:
+                mm = I.TROMMEL_ZEILE_RE.match(z); mem[int(mm.group(1), 8)] = int(mm.group(2), 8)
+        mem.update({a & I.MASK12: w & I.MASK33 for a, w in kep.mem.items()})
+        with open(k, 'w', encoding='utf-8', newline='') as fh:
+            fh.write(''.join(f'{a:04o}: {mem.get(a, 0):011o}\n' for a in range(4096)))
+        self.tr = GrafikTrommel(k)
+        self.r = r = G.Rechner(G.lade_graph(os.path.join(PROJ, 'markdown-dateien')), self.tr, pult_modus=True)
+        r.thread_modus = True; self.stop = threading.Event()
+        threading.Thread(target=G.rechner_schleife, args=(r, self.stop), daemon=True).start()
+        def ende():
+            self.stop.set(); r.abbrechen(); self.tr.schliessen(); shutil.rmtree(d, ignore_errors=True)
+        self.addCleanup(ende)
+        r.pult_taste('H'); r.pult_taste('SW=0'); time.sleep(0.1)
+
+    def _warte(self, f, t=3.0):
+        t0 = time.time()
+        while time.time() - t0 < t:
+            if f(): return True
+            time.sleep(0.01)
+        return False
+
+    def _eingabe_halt(self):
+        r = self.r
+        r.pult_taste('G'); time.sleep(0.1)
+        for _ in range(6):
+            r.pult_taste('E'); time.sleep(0.12)
+        r.pult_taste('E')
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T')), 'Eingabe-Halt nicht erreicht')
+
+    def _nach_h(self):
+        self._eingabe_halt(); r = self.r
+        r.pult_taste('H')
+        self.assertTrue(self._warte(lambda: not r.m.k0.erwartet('T')), 'K0 wartet nach H weiter')
+        time.sleep(0.2)
+
+    def test_k0_wartet_nach_h_nicht_mehr(self):
+        self._nach_h(); k0 = self.r.m.k0
+        self.assertFalse(k0.erwartet('T')); self.assertFalse(k0.annehmen('T', '1'))
+        self.assertEqual(list(k0._q['T']), [])
+
+    def test_taste_e_ist_nach_h_nicht_tot(self):
+        self._nach_h(); r = self.r
+        self.assertFalse(r.e_gedrueckt); self.assertFalse(r.e_nieder_unter_m)
+
+    def test_e_nach_h_fuehrt_den_befehl_wieder_in_den_eingabe_halt(self):
+        self._nach_h(); r = self.r
+        r.pult_taste('E')
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T')), 'E nach H bleibt ohne Wirkung (Taste E tot)')
+        self.assertTrue(r.m.k0.annehmen('T', '1'))                  # das Zeichen erreicht den Rechner
+        self.assertTrue(self._warte(lambda: not r.m.k0.erwartet('T') and r.m.AC == 0o40000000000))
+        self.assertFalse(r.e_gedrueckt)
+
+    def test_r_nach_h_setzt_fort_und_nimmt_das_zeichen(self):
+        self._nach_h(); r = self.r
+        r.pult_taste('R')
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T')), 'R setzt den Befehl nicht fort')
+        self.assertTrue(r.m.k0.annehmen('T', '1'))
+        self.assertTrue(self._warte(lambda: r.m.AC == 1), 'Zeichen nicht uebernommen')
+
+    def test_h_im_r_lauf_laesst_k0_nicht_wartend(self):
+        r = self.r
+        r.pult_taste('G'); time.sleep(0.1); r.pult_taste('R')
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T'), 5), 'R-Lauf erreicht den Eingabe-Halt nicht')
+        r.pult_taste('H')
+        self.assertTrue(self._warte(lambda: not r.m.k0.erwartet('T')), 'K0 wartet nach H im R-Lauf weiter')
+        self.assertFalse(r.laeuft); self.assertFalse(r.m.k0.annehmen('T', '1'))
+        self.assertEqual(list(r.m.k0._q['T']), [])
 
 
 class DebugLog(unittest.TestCase):
@@ -909,6 +1202,251 @@ class FensterMitErsatzmodul(unittest.TestCase):
         tk_after(f)()                                                           # after-Rueckruf: NETZ-Klick und G (G noch gesperrt: Hochlauf)
         self.assertEqual(s.netz, HOCHLAUF); self.assertTrue(f.wiedergabe.fertig)
         f._maus_druecken(ev_m); self.assertEqual(s.netz, AUSLAUF)              # nach der Wiedergabe wirkt die Maus wieder
+
+
+KANAL_ALLE = ('K0', 'K1', 'K2', 'K3')
+
+
+class Op16Maus(unittest.TestCase):
+    """OP-16 (21.10.2026): Regeln der Mausbedienung aus GRAFIK_Beschreibung §4 (M-15 bis M-35), die bisher kein Test festhielt.
+    Steuerung ohne Tkinter; die Tk-Schicht gegen das Ersatzmodul von FensterMitErsatzmodul (kein echtes Fenster)."""
+    def _fenster(self):
+        from grafik_pult_fenster import PultFenster
+        r = FakeRechner(); s = PultSteuerung(PULT, r, hochlauf_s=0.0)
+        tk = FensterMitErsatzmodul._fake_tk(None); f = PultFenster(s, PULT, tk=tk); f.zeichnen()
+        sc = s.m['schluessel']
+        f._maus_druecken(types.SimpleNamespace(x=sc['cx'], y=sc['cy'], state=0)); s.tick(time.monotonic() + 1)
+        self.assertEqual(s.netz, BETRIEB); r.taste('H'); r.tokens.clear()
+        return f, s, r
+    def _ev(self, s, taste, **kw):
+        g = s.m['tasten'][taste]; return types.SimpleNamespace(x=g['x'] + 3, y=g['y'] + 3, state=0, **kw)
+    def test_m15_zweiter_klick_startet_die_zeit_neu(self):
+        s, r = betrieb()
+        self.assertTrue(s.klick('G', 100.0)); self.assertTrue(s.klick('G', 100.2))
+        s.tick(100.3); self.assertTrue(s.taste_gedrueckt('G'))       # ohne Neustart wäre sie seit 100.25 dunkel
+        s.tick(100.46); self.assertFalse(s.taste_gedrueckt('G')); self.assertEqual(r.tokens, ['G', 'G'])
+    def test_m16_loslassen_zaehlt_ueberall_im_fenster(self):
+        f, s, r = self._fenster()
+        f._maus_druecken(self._ev(s, 'E')); self.assertEqual(r.tokens, ['E+'])
+        f._maus_loslassen(types.SimpleNamespace(x=5, y=5)); self.assertEqual(r.tokens, ['E+', 'E-'])   # Zeiger weit von der Taste
+    def test_m27_timer_laufen_nach_fokusverlust_zu_ende(self):
+        s, r = betrieb(); s.klick('E', 1.0); s.fokus_verloren(1.05)
+        self.assertEqual(r.tokens, ['E+', 'E-'])
+        s.tick(1.2); self.assertTrue(s.taste_gedrueckt('E'))          # der 0,25-s-Timer läuft zu Ende
+        s.tick(1.3); self.assertFalse(s.taste_gedrueckt('E'))
+    def test_m30_klick_nur_fuer_den_fokus_loest_keine_taste_aus(self):
+        f, s, r = self._fenster()
+        f.root.focus_get = lambda: object()                           # Fokus liegt woanders
+        f._maus_druecken(self._ev(s, 'G')); self.assertEqual(r.tokens, [])
+        self.assertTrue(getattr(f.cv, 'fokus', False))                 # der Klick holt den Fokus zurück
+        f.root.focus_get = lambda: f.cv
+        f._maus_druecken(self._ev(s, 'G')); self.assertEqual(r.tokens, ['G'])   # der nächste Klick wirkt
+    def test_r_wirkt_sofort_nach_kurzem_klick_auf_e(self):
+        s, r = betrieb(); s.klick('E', 1.0); s.loslassen('E', 1.05); r.tokens.clear()
+        self.assertTrue(s.klick('R', 1.1)); self.assertEqual(r.tokens, ['R'])   # innerhalb der 0,25 s (Darstellung)
+    def test_op35b_r_wirkt_sofort_nach_kurzem_klick_auf_m(self):
+        """OP-35 (b), 21.10.2026 bestaetigt ('ja, wirkt sofort'): auch nach M; erst bei gehaltener Taste (Umschalt+Klick) ist R wirkungslos."""
+        s, r = betrieb(); s.klick('M', 1.0); s.loslassen('M', 1.05); r.tokens.clear()
+        self.assertTrue(s.klick('R', 1.1)); self.assertEqual(r.tokens, ['R'])
+        s2, r2 = betrieb(); s2.klick('M', 2.0, umschalt=True); r2.tokens.clear()
+        self.assertFalse(s2.klick('R', 2.1)); self.assertEqual(r2.tokens, [])      # M gehalten: R wirkungslos (M-21)
+    def test_m24_m22_keine_bindung_fuer_ueberfahren_und_touch(self):
+        f, s, r = self._fenster()
+        verboten = ('Motion', 'Enter', 'Leave', 'Touch', 'Double', 'Triple', 'ButtonPress-2', 'ButtonPress-3', 'MouseWheel')
+        gebunden = [k for k in f.cv.bound if any(v in str(k) for v in verboten)]
+        self.assertEqual(gebunden, [], gebunden)
+        self.assertIn('<ButtonPress-1>', f.cv.bound)                   # Gegenprobe der Prüfung selbst: die erlaubte Bindung ist da
+    def test_m28_mehrere_computertasten_je_eigener_timer(self):
+        s, r = betrieb(); r.m.k0.erw = True
+        self.assertTrue(s.tastatur('1', 1.0)); self.assertTrue(s.tastatur('3', 1.1))
+        s.tick(1.3); self.assertFalse(s.taste_gedrueckt('1')); self.assertTrue(s.taste_gedrueckt('3'))
+        s.tick(1.4); self.assertFalse(s.taste_gedrueckt('3')); self.assertEqual(r.m.k0.got, ['1', '3'])
+    def test_m16_m_leuchtet_nach_dem_loslassen_nicht_weiter(self):
+        """M-16 (OP-16, 21.10.2026): M gilt wie E sofort als losgelassen; nur der 0,25-s-Timer vom Druecken laeuft zu Ende."""
+        for taste in ('E', 'M'):
+            s, r = betrieb()
+            s.klick(taste, 1.0); s.tick(1.3)                                   # Maustaste gehalten, Timer abgelaufen
+            self.assertTrue(s.taste_gedrueckt(taste))                          # gehalten = gedrueckt
+            s.loslassen(taste, 5.0); s.tick(5.0)
+            self.assertFalse(s.taste_gedrueckt(taste), taste)                  # lange gehalten: sofort dunkel
+            s.klick(taste, 10.0); s.loslassen(taste, 10.05); s.tick(10.1)
+            self.assertTrue(s.taste_gedrueckt(taste), taste)                   # kurz gehalten: die vollen 0,25 s hell
+            s.tick(10.3); self.assertFalse(s.taste_gedrueckt(taste), taste)
+    def test_op35a_kanal_per_befehl_aendert_die_rastung_nicht(self):
+        """OP-35 (a), 21.10.2026 bestaetigt: Eine Kanaltaste wirkt nur im Moment des Drueckens. Waehlt das Programm einen anderen Kanal, folgen die Lampen,
+        die Taste bleibt in ihrer Rastung; erst das Druecken einer anderen Kanaltaste wirkt wieder sofort."""
+        s, r = betrieb(); s.klick('K1', 10); s.tick(20); r.tokens.clear()
+        r.m.fl['K1'] = 0; r.m.fl['K2'] = 1                                       # das Programm waehlt Kanal 2 an
+        g = s.lampen()[0]
+        self.assertEqual((g['K1'], g['K2']), ('dunkel', 'hell'))                  # Lampen folgen dem Programm
+        self.assertEqual([k for k in KANAL_ALLE if s.taste_gedrueckt(k)], ['K1'])  # Rastung bleibt bei K1
+        self.assertEqual(r.tokens, [])                                            # nichts an den Rechner ohne Tastendruck
+        s.klick('K3', 30); self.assertEqual(r.tokens, ['K3'])                     # andere Kanaltaste: sofortige Wirkung
+        self.assertEqual([k for k in KANAL_ALLE if s.taste_gedrueckt(k)], ['K3'])
+        s.tick(40); r.tokens.clear(); s.klick('K3', 41); self.assertEqual(r.tokens, ['K3'])   # dieselbe Taste erneut gedrueckt: wirkt wieder
+    def _fenster_tasten(self):
+        """Fenster im Betrieb, K0 erwartet Zeichen (Computertastatur wirkt)."""
+        f, s, r = self._fenster(); r.m.k0.erw = True
+        return f, s, r
+    def test_m28_gehaltene_taste_wiederholt_nicht(self):
+        f, s, r = self._fenster_tasten()
+        ev = types.SimpleNamespace(char='1', keysym='1', state=0)
+        f._taste(ev); self.assertEqual(f._taste(ev), 'break'); self.assertEqual(f._taste(ev), 'break')
+        s.tick(time.monotonic() + 1); self.assertEqual(r.m.k0.got, ['1'])
+    def test_m28_nach_loslassen_loest_die_taste_wieder_aus(self):
+        f, s, r = self._fenster_tasten()
+        ev = types.SimpleNamespace(char='1', keysym='1', state=0)
+        f._taste(ev); f._taste_los(ev); time.sleep(0.06); f._taste(ev)
+        s.tick(time.monotonic() + 1); self.assertEqual(r.m.k0.got, ['1', '1'])
+    def test_m28_x11_paar_loslassen_druecken_ist_wiederholung(self):
+        f, s, r = self._fenster_tasten()
+        ev = types.SimpleNamespace(char='1', keysym='1', state=0)
+        f._taste(ev)
+        for _ in range(3):
+            f._taste_los(ev); self.assertEqual(f._taste(ev), 'break')      # Wiederholung des Betriebssystems: Los und Druck unmittelbar nacheinander
+        s.tick(time.monotonic() + 1); self.assertEqual(r.m.k0.got, ['1'])
+    def test_m28_andere_taste_ist_keine_wiederholung(self):
+        f, s, r = self._fenster_tasten()
+        a = types.SimpleNamespace(char='1', keysym='1', state=0); b = types.SimpleNamespace(char='3', keysym='3', state=0)
+        f._taste(a); f._taste(b); s.tick(time.monotonic() + 1); self.assertEqual(r.m.k0.got, ['1', '3'])
+    def test_m28_fokusverlust_gibt_gehaltene_tasten_frei(self):
+        f, s, r = self._fenster_tasten()
+        ev = types.SimpleNamespace(char='1', keysym='1', state=0)
+        f._taste(ev); f._fokus_aus(None); f._taste(ev)
+        s.tick(time.monotonic() + 1); self.assertEqual(r.m.k0.got, ['1', '1'])
+
+class Op47Buchstaben(unittest.TestCase):
+    """OP-47 (21.10.2026): Pult-Tasten H R E G M T S und Umschalt+E, Umschalt+M ueber die Buchstabentasten der Computertastatur; die Sperren gelten wie bei der Maus."""
+    def _fenster(self):
+        return Op16Maus._fenster(self)
+    def _ev(self, ch, state=0, keysym=None):
+        return types.SimpleNamespace(char=ch, keysym=keysym or ch, state=state)
+    def test_h_und_r(self):
+        s, r = betrieb()
+        self.assertFalse(s.tastatur('h', 1))                      # H rastet schon
+        self.assertTrue(s.tastatur('r', 2)); self.assertEqual(r.tokens, ['R'])
+        self.assertFalse(s.tastatur('R', 3))                      # Grossbuchstabe wie klein; R rastet schon
+        self.assertTrue(s.tastatur('H', 4)); self.assertEqual(r.tokens, ['R', 'H'])
+    def test_e_und_m_druecken_und_loslassen_wie_die_maus(self):
+        for z, n in (('e', 'E'), ('m', 'M')):
+            s, r = betrieb()
+            self.assertTrue(s.tastatur(z, 1.0)); self.assertTrue(s.tastatur_los(z, 1.1))
+            self.assertEqual(r.tokens, [n + '+', n + '-'], z)
+            s.tick(1.2); self.assertTrue(s.taste_gedrueckt(n)); s.tick(1.3); self.assertFalse(s.taste_gedrueckt(n))   # 0,25 s hell
+    def test_umschalt_e_und_m_halten_und_loesen(self):
+        for z, n in (('E', 'E'), ('M', 'M')):
+            s, r = betrieb()
+            self.assertTrue(s.tastatur(z, 1.0, umschalt=True)); self.assertFalse(s.tastatur_los(z, 1.1))
+            self.assertEqual(r.tokens, [n + '+']); self.assertIn(n, s.halter)
+            self.assertTrue(s.tastatur(z, 2.0, umschalt=True)); self.assertEqual(r.tokens, [n + '+', n + '-']); self.assertNotIn(n, s.halter)
+    def test_g_und_t_s(self):
+        s, r = betrieb()
+        self.assertTrue(s.tastatur('g', 1)); self.assertTrue(s.tastatur('s', 2)); self.assertTrue(s.tastatur('t', 3))
+        self.assertEqual(r.tokens, ['G', 'SW=1', 'SW=0'])
+        self.assertFalse(s.tastatur('t', 4))                      # T rastet schon
+    def test_sperren_bei_stellung_r(self):
+        s, r = betrieb(); s.tastatur('r', 1); r.tokens.clear()
+        for z in 'egmts':
+            self.assertFalse(s.tastatur(z, 2), z); self.assertFalse(s.tastatur(z.upper(), 2, umschalt=True), z)
+        self.assertEqual(r.tokens, [])                            # Rollensperre: nur bei H bedienbar (wie bei der Maus)
+        self.assertTrue(s.tastatur('h', 3)); self.assertEqual(r.tokens, ['H'])
+    def test_r_wirkungslos_bei_gehaltenem_e(self):
+        s, r = betrieb(); s.tastatur('E', 1, umschalt=True); r.tokens.clear()
+        self.assertFalse(s.tastatur('r', 2)); self.assertEqual(r.tokens, [])
+    def test_ohne_betrieb_wirkt_nichts(self):
+        r = FakeRechner(); s = PultSteuerung(PULT, r)
+        for z in 'hregmts': self.assertFalse(s.tastatur(z, 1), z)
+        self.assertEqual(r.tokens, [])
+    def test_eingabetasten_unveraendert(self):
+        s, r = betrieb(); r.m.k0.erw = True
+        for z in '09+-.,:': self.assertTrue(s.tastatur(z, 1.0), z)
+        self.assertEqual(r.m.k0.got, list('09+-.,:'))
+    def test_fenster_e_gehalten_wiederholt_nicht_und_loslassen_sendet_e_minus(self):
+        f, s, r = self._fenster(); ev = self._ev('e')
+        f._taste(ev); self.assertEqual(f._taste(ev), 'break'); self.assertEqual(f._taste(ev), 'break')
+        self.assertEqual(r.tokens, ['E+'])                         # gehaltene Taste wiederholt nicht (M-28)
+        f._taste_los(ev); self.assertEqual(r.tokens, ['E+', 'E-'])
+    def test_fenster_umschalt_e_haelt(self):
+        f, s, r = self._fenster()
+        f._taste(self._ev('E', state=0x0001)); f._taste_los(self._ev('E', state=0x0001))
+        self.assertEqual(r.tokens, ['E+']); self.assertIn('E', s.halter)
+    def test_fenster_umschalt_vor_der_taste_losgelassen_gibt_die_taste_frei(self):
+        f, s, r = self._fenster()
+        f._taste(self._ev('M', state=0x0001)); f._taste_los(self._ev('m'))       # Umschalt zuerst los: 'm' statt 'M'
+        time.sleep(0.06); f._taste(self._ev('M', state=0x0001))                  # nicht als gehalten haengengeblieben
+        self.assertEqual(r.tokens, ['M+', 'M-'])                                  # zweimal Umschalt+M: halten, dann loesen
+    def test_fenster_feststelltaste_ist_kein_umschalt(self):
+        f, s, r = self._fenster(); f._taste(self._ev('E', state=0x0002))
+        self.assertEqual(r.tokens, ['E+']); self.assertNotIn('E', s.halter)
+    def test_fenster_strg_und_alt_werden_nicht_ausgewertet(self):
+        f, s, r = self._fenster()
+        f._taste(self._ev('r', state=0x0004)); f._taste(self._ev('g', state=0x0008)); self.assertEqual(r.tokens, [])
+    def test_fenster_loslassen_ohne_zeichen_nutzt_den_keysym(self):
+        f, s, r = self._fenster(); f._taste(self._ev('e')); f._taste_los(self._ev('', keysym='e'))
+        self.assertEqual(r.tokens, ['E+', 'E-'])
+    def test_fenster_sw_eingabe_hat_vorrang_wenn_das_sw_fenster_die_taste_nimmt(self):
+        f, s, r = self._fenster(); f.sw_weiter = types.SimpleNamespace(taste_vom_pult=lambda ev: True, taste_los_vom_pult=lambda ev: None)
+        self.assertEqual(f._taste(self._ev('h')), 'break'); self.assertEqual(r.tokens, [])
+    def test_fenster_sw_nimmt_sie_nicht_dann_wirkt_die_pult_taste(self):
+        f, s, r = self._fenster(); f.sw_weiter = types.SimpleNamespace(taste_vom_pult=lambda ev: False, taste_los_vom_pult=lambda ev: None)
+        f._taste(self._ev('r')); self.assertEqual(r.tokens, ['R'])
+    def test_aufzeichnung_haelt_den_tastendruck_als_klick_fest(self):
+        s, r = betrieb(); z = []
+        s.aufzeichnung = types.SimpleNamespace(klick=lambda t, j, u, ok: z.append(('klick', t, u, ok)), loslassen=lambda t, j: z.append(('los', t)))
+        s.tastatur('e', 1.0); s.tastatur_los('e', 1.1); s.tastatur('E', 2.0, umschalt=True)
+        self.assertEqual(z, [('klick', 'E', False, True), ('los', 'E'), ('klick', 'E', True, True)])
+
+    # --- OP-48: Pult-Buchstaben haben Vorrang vor der SW-Eingabe, wenn sie als Pult-Taste wirken wuerden
+    def _sw(self, erwartet=False, puffer=()):
+        aufrufe = []
+        sw = types.SimpleNamespace(eingabe=types.SimpleNamespace(erwartet=lambda: erwartet, puffer=list(puffer)), aufrufe=aufrufe, los=[],
+                                   taste_vom_pult=lambda ev: aufrufe.append(ev.char) or True)
+        sw.taste_los_vom_pult = lambda ev: sw.los.append(ev.char)
+        return sw
+    def test_op48_s_dann_r_wirkt_am_pult_nicht_in_der_sw_eingabe(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw()
+        f._taste(self._ev('s')); f._taste_los(self._ev('s'))
+        f._taste(self._ev('r')); f._taste_los(self._ev('r'))
+        self.assertEqual(r.tokens, ['SW=1', 'R']); self.assertEqual(sw.aufrufe, []); self.assertEqual(sw.los, [])
+    def test_op48_nicht_klickbar_dann_bleibt_es_sw_eingabe(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw()
+        f._taste(self._ev('r')); r.tokens.clear()
+        f._taste_los(self._ev('r')); time.sleep(0.06)
+        self.assertEqual(f._taste(self._ev('r')), 'break')               # R rastet schon: nicht klickbar -> SW-Eingabe
+        self.assertEqual(sw.aufrufe, ['r']); self.assertEqual(r.tokens, [])
+        f._taste(self._ev('e'))                                          # Stellung R: E gesperrt -> ebenfalls SW-Eingabe
+        self.assertEqual(sw.aufrufe, ['r', 'e']); self.assertEqual(r.tokens, [])
+    def test_op48_h_in_stellung_r_wirkt_wie_die_maus(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw(); s.tastatur('r', 1.0); r.tokens.clear()
+        f._taste(self._ev('h')); self.assertEqual(r.tokens, ['H']); self.assertEqual(sw.aufrufe, [])
+    def test_op48_erwartet_das_sw_eine_eingabe_gehoert_die_taste_dem_sw(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw(erwartet=True)
+        f._taste(self._ev('r')); self.assertEqual(sw.aufrufe, ['r']); self.assertEqual(r.tokens, [])
+    def test_op48_vorgemerktes_zeichen_im_puffer_gehoert_dem_sw(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw(puffer=[['3', None, False]])
+        f._taste(self._ev('r')); self.assertEqual(sw.aufrufe, ['r']); self.assertEqual(r.tokens, [])
+    def test_op48_gehaltene_pult_taste_wiederholt_nicht_und_geht_nie_an_das_sw(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw(); ev = self._ev('r')
+        f._taste(ev); self.assertEqual(f._taste(ev), 'break'); self.assertEqual(f._taste(ev), 'break')
+        self.assertEqual(r.tokens, ['R']); self.assertEqual(sw.aufrufe, [])
+    def test_op48_loslassen_geht_nur_bei_sw_tasten_an_das_sw(self):
+        f, s, r = self._fenster(); f.sw_weiter = sw = self._sw()
+        f._taste(self._ev('g')); f._taste_los(self._ev('g')); self.assertEqual(sw.los, [])           # Pult-Taste
+        f._taste(self._ev('x')); f._taste_los(self._ev('x')); self.assertEqual(sw.los, ['x'])          # SW-Eingabe
+    def test_op48_taste_klickbar_ist_eine_reine_pruefung(self):
+        s, r = betrieb(); z = []
+        s.aufzeichnung = types.SimpleNamespace(klick=lambda *a: z.append(a), loslassen=lambda *a: z.append(a))
+        self.assertTrue(s.taste_klickbar('r')); self.assertFalse(s.taste_klickbar('h')); self.assertTrue(s.taste_klickbar('t') is False)
+        self.assertTrue(s.taste_klickbar('s')); self.assertTrue(s.taste_klickbar('E', umschalt=True)); self.assertFalse(s.taste_klickbar('x'))
+        self.assertEqual((r.tokens, z, s.rastet & {'R'}), ([], [], set()))
+    def test_op48_taste_klickbar_stimmt_mit_den_sperren_ueberein(self):
+        for z in 'hregmts':
+            for vorher in ('', 'r', 'E'):
+                s, r = betrieb()
+                if vorher == 'r': s.tastatur('r', 1.0)
+                if vorher == 'E': s.tastatur('E', 1.0, umschalt=True)
+                erwartet = s.taste_klickbar(z); r.tokens.clear()
+                self.assertEqual(s.tastatur(z, 2.0), erwartet, (z, vorher))
 
 if __name__ == '__main__':
     unittest.main(verbosity=1)

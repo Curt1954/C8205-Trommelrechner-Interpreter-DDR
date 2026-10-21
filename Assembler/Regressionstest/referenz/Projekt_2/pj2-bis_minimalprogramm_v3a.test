@@ -1,0 +1,122 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00002000000 # 000 haupt1 ; Zelle 0000: Sprung zum ersten Hauptprogramm
+0100: 00007741240 # triadendruck: 240 td_rs ; Rueckkehrbefehl sichern
+0101: 00000127211 # 211 t_konst_1
+0102: 00000132000 # 000 t_spur_speich
+0103: 00007777217 # t_schleife: 217 adr7777 ; das auszugebende Wort als Uebergabe
+0104: 00000115006 # 006 t_verschieben
+0105: 00000010030 # dto 1
+0106: 00000260030 # dto 6
+0107: 00007721520 # t_zu_gx: 520 adr7721
+0110: 77740000000 # t_konst_z: dw 077740000000 ; Zaehler: 10 Einsen = 11 Ziffern
+0111: 00007720311 # 311 td_z
+0112: 00007741170 # 170 td_rs
+0113: 00000134004 # 004 t_zn ; td_z := td_z um 1 Bit nach links
+0114: 00000040030 # dto 4
+0115: 00000124006 # t_verschieben: 006 t_speichern_r1
+0117: 00000000007 # t_konst_7: dw 07 ; Maske fuer die unterste Triade
+0122: 00000020030 # dto 2
+0123: 00000070030 # dto 7
+0124: 00007777240 # t_speichern_r1: 240 adr7777
+0125: 00000117200 # 200 t_konst_7
+0126: 00000107000 # 000 t_zu_gx
+0127: 00000000001 # t_konst_1: dw 01 ; Konstante
+0130: 00000200030 # dto 0
+0131: 00000250030 # dto 5
+0132: 00007724440 # t_spur_speich: 440 adr7724 ; AC auf Spur speichern
+0133: 00000110211 # 211 t_konst_z
+0134: 00007720240 # t_zn: 240 td_z
+0135: 00000103000 # 000 t_schleife
+0137: 00000230030 # dto 3
+0200: 00007741240 # adressdruck: 240 td_rs ; Rueckkehrbefehl sichern
+0201: 00000240000 # 000 a_vorlauf ; 12 Bit drehen, dann Einsen-Spur anlegen (Code auf Spur 00240)
+0203: 00007777217 # a_schleife: 217 adr7777 ; das auszugebende Wort als Uebergabe
+0204: 00000215006 # 006 a_verschieben
+0205: 00000010030 # dto 1
+0206: 00000260030 # dto 6
+0207: 00007721520 # a_zu_gx: 520 adr7721
+0210: 70000000000 # a_konst_z: dw 070000000000 ; Zaehler: 3 Einsen = 4 Ziffern
+0211: 00007720311 # 311 td_z
+0212: 00007741170 # 170 td_rs
+0213: 00000234004 # 004 a_zn ; td_z := td_z um 1 Bit nach links
+0214: 00000040030 # dto 4
+0215: 00000224006 # a_verschieben: 006 a_speichern_r1
+0217: 00000000007 # a_konst_7: dw 07 ; Maske fuer die unterste Triade
+0222: 00000020030 # dto 2
+0223: 00000070030 # dto 7
+0224: 00007777240 # a_speichern_r1: 240 adr7777
+0225: 00000217200 # 200 a_konst_7
+0226: 00000207000 # 000 a_zu_gx
+0227: 00000000001 # a_konst_1: dw 01 ; Konstante
+0230: 00000200030 # dto 0
+0231: 00000250030 # dto 5
+0232: 00007724440 # a_spur_speich: 440 adr7724 ; AC auf Spur speichern
+0233: 00000210211 # 211 a_konst_z
+0234: 00007720240 # a_zn: 240 td_z
+0235: 00000203000 # 000 a_schleife
+0237: 00000230030 # dto 3
+0240: 00007640441 # a_vorlauf: 441 nullspur ; Nullspur := 0 (loescht auch den AC)
+0241: 00007777211 # 211 adr7777 ; AC := Wort
+0242: 00007644616 # 616 nz_12 ; 12 Bit zyklisch links: die zu druckenden Ziffern stehen oben
+0243: 00007777240 # 240 adr7777 ; Wort zurueck in die Transportzelle
+0244: 00000227211 # 211 a_konst_1 ; AC := 1
+0245: 00000232000 # 000 a_spur_speich
+0300: 00007741240 # befehlsdruck: 240 td_rs ; Rueckkehrbefehl sichern
+0301: 00000340000 # 000 b_vorlauf ; 12 Bit drehen, dann Einsen-Spur anlegen (Code auf Spur 00340)
+0303: 00007777217 # b_schleife: 217 adr7777 ; das auszugebende Wort als Uebergabe
+0304: 00000315006 # 006 b_verschieben
+0305: 00000010030 # dto 1
+0306: 00000260030 # dto 6
+0307: 00007721520 # b_zu_gx: 520 adr7721
+0310: 77000000000 # b_konst_z: dw 077000000000 ; Zaehler: 6 Einsen = 7 Ziffern
+0311: 00007720311 # 311 td_z
+0312: 00007741170 # 170 td_rs
+0313: 00000334004 # 004 b_zn ; td_z := td_z um 1 Bit nach links
+0314: 00000040030 # dto 4
+0315: 00000324006 # b_verschieben: 006 b_speichern_r1
+0317: 00000000007 # b_konst_7: dw 07 ; Maske fuer die unterste Triade
+0322: 00000020030 # dto 2
+0323: 00000070030 # dto 7
+0324: 00007777240 # b_speichern_r1: 240 adr7777
+0325: 00000317200 # 200 b_konst_7
+0326: 00000307000 # 000 b_zu_gx
+0327: 00000000001 # b_konst_1: dw 01 ; Konstante
+0330: 00000200030 # dto 0
+0331: 00000250030 # dto 5
+0332: 00007724440 # b_spur_speich: 440 adr7724 ; AC auf Spur speichern
+0333: 00000310211 # 211 b_konst_z
+0334: 00007720240 # b_zn: 240 td_z
+0335: 00000303000 # 000 b_schleife
+0337: 00000230030 # dto 3
+0340: 00007640441 # b_vorlauf: 441 nullspur ; Nullspur := 0 (loescht auch den AC)
+0341: 00007777211 # 211 adr7777 ; AC := Wort
+0342: 00007644616 # 616 nz_12 ; 12 Bit zyklisch links: die zu druckenden Ziffern stehen oben
+0343: 00007777240 # 240 adr7777 ; Wort zurueck in die Transportzelle
+0344: 00000327211 # 211 b_konst_1 ; AC := 1
+0345: 00000332000 # 000 b_spur_speich
+2000: 00004500030 # 030 04500 ; Kanal K2 (Schreibwerk) anwaehlen
+2001: 00001170030 # dz $inkb ; Kleinbuchstabenlage (Ziffern)
+2002: 00002006211 # 211 beisp_1
+2003: 00007777240 # 240 adr7777
+2004: 00000100025 # 025 triadendruck
+2005: 00000000020 # 020 0000 ; Stopp
+2006: 01234567012 # beisp_1: dw 01234567012 ; alle 11 Triaden: 01234567012
+2100: 00004500030 # 030 04500 ; Kanal K2 (Schreibwerk) anwaehlen
+2101: 00001170030 # dz $inkb ; Kleinbuchstabenlage (Ziffern)
+2102: 00002106211 # 211 beisp_2
+2103: 00007777240 # 240 adr7777
+2104: 00000200025 # 025 adressdruck
+2105: 00000000020 # 020 0000 ; Stopp
+2106: 01234567012 # beisp_2: dw 01234567012 ; mittlere 4 Triaden: 4567
+2200: 00004500030 # 030 04500 ; Kanal K2 (Schreibwerk) anwaehlen
+2201: 00001170030 # dz $inkb ; Kleinbuchstabenlage (Ziffern)
+2202: 00002206211 # 211 beisp_3
+2203: 00007777240 # 240 adr7777
+2204: 00000300025 # 025 befehlsdruck
+2205: 00000000020 # 020 0000 ; Stopp
+2206: 01234567012 # beisp_3: dw 01234567012 ; untere 7 Triaden: 4567012
+Tastenfolge:
+H G R

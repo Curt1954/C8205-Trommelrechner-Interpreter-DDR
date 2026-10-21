@@ -1,0 +1,27 @@
+0000: 01 2400 000                     000    haupt           ; Zelle 0000: Sprung zum Hauptprogramm
+      20 0000 0156                    equ    00156           
+0156: 00 7741 240    adresseneingabe: 240    ae_rs           ; Rueckkehrbefehl sichern auf Arbeitszelle
+0157: 01 0200 001                     001    schleife        
+      20 0000 0200                    equ100 00200           
+0200: 01 0240 014    schleife:        014    ae_tab          ; Linksverschiebung
+0201: 01 0202 004                     004    *+1             
+0202: 01 0200 004                     004    schleife        
+0203: 00 7741 000    ende:            000    ae_rs           
+      20 0000 0240                    spa    00240           
+0240: 0              ae_tab:          dw     0               ; Ziffer 0
+0241: 00 00000000100                  dw     0100            ; Ziffer 1 (1 * 0100)
+0242: 00 00000000200                  dw     0200            ; Ziffer 2
+0243: 00 00000000300 x3:              dw     0300            ; Ziffer 3
+0244: 00 00000000400                  dw     0400            ; Ziffer 4
+0245: 00 00000000500                  dw     0500            ; Ziffer 5
+0246: 00 00000000600                  dw     0600            ; Ziffer 6
+0247: 00 00000000700                  dw     0700            ; Ziffer 7
+      20 0000 0252                    spa    00252           
+0252: 01 0200 001                     001    schleife        ; ZR  löschen und Neuanfang
+      20 0000 0273                    spa    00273           
+0273: 01 0203 002                     002    ende            ; Fortsetzung nach Eingabe von "Punkt"
+      20 0000 2400   haupt:           equ    02400           
+2400: 00 4700 030                     030    04700           ; Kanal K0
+2401: 01 0156 025                     025    adresseneingabe ; Zeichen 0 bis 7 und Punkt einlesen
+2402: 00 7773 240                     240    r1              ; R1 := eingelesene Konstante
+2403: 01 0000 020                     020    0000            ; Stopp (AC = R1 = Konstante)

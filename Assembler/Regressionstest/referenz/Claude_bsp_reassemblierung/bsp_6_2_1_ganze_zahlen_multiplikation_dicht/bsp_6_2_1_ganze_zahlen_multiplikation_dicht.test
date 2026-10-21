@@ -1,0 +1,16 @@
+Trommeldatei:
+#DOK-0001 Ganze Festkommazahlen: Multiplikation positiver ganzer Zahlen (Programmieranleitung 6.2.1), a und b mit vielen gesetzten Bits,
+#DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3006>, b=<3007>, Arbeitsspur 7700; 7700 444 Transport von a, je Zelle um ein Bit nach
+#DOK-0001 erwartet <AC> = a*b = 1240659*3000 = 3721977000 (dezimal) = 33566156250 (oktal), das Produkt liegt im Zahlenbereich
+#PROT STUFE=2
+0000: 00003000000 # 000 m3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+3000: 00003006211 # m3000: 211 m3006 ; 3006 211 ; <AC>:=a
+3001: 00007700444 # 444 d7700 ; 7700 444 ; Transport von a, jeweils um ein Bit nach links verschoben, auf alle Zellen der
+3002: 00003007211 # 211 m3007 ; 3007 211 ; <AC>:=b
+3003: 00007700472 # 472 d7700 ; 7700 472 ; Bildung der Teilprodukte P(i)=b(32-i)*a(i)
+3004: 00007700410 # 410 d7700 ; 7700 410 ; <AC>:=a*b, Summierung der Teilprodukte
+3005: 00003000020 # 020 03000 ; 3000 020 ; unbedingter Stopp
+3006: 00004567123 # m3006: 123 d4567 ; a
+3007: 00000005670 # m3007: 670 d0005 ; b
+Tastenfolge:
+H G R

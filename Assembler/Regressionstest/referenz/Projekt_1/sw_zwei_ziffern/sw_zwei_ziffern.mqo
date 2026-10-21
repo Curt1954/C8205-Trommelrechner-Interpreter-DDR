@@ -1,0 +1,185 @@
+beginn:                030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Erste Ziffer 0-3:\    
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  ; Zeilenschaltung
+                       030                    04700                  ; 4700 oder K0 oder SW1 Input oder KON Input
+lesen1:                011                    ztab                   ; Eingabe-Halt mit Loeschen
+                       040                    e1                     
+                       004                    *+1                    
+                       040                    e2                     
+                       004                    *+1                    
+                       040                    e3                     
+                       004                    *+1                    
+                       040                    e0                     
+                       000                    lesen1                 ; 4 bis 9: uebergehen
+e1:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Erste: 1\             
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       000                    zwei                   
+e2:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Erste: 2\             
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       000                    zwei                   
+e3:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Erste: 3\             
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       000                    zwei                   
+e0:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Erste: 0\             
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+zwei:                  030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Zweite Ziffer 0-3:\   
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  ; Zeilenschaltung
+                       030                    04700                  ; 4700 oder K0 oder SW1 Input oder KON Input
+lesen2:                011                    ztab                   
+                       040                    z1                     
+                       004                    *+1                    
+                       040                    z2                     
+                       004                    *+1                    
+                       040                    z3                     
+                       004                    *+1                    
+                       040                    z0                     
+                       000                    lesen2                 
+z1:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Zweite: 1\            
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       020                    0                      ; Stopp
+z2:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Zweite: 2\            
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       020                    0                      
+z3:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Zweite: 3\            
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       020                    0                      
+z0:                    030                    04500                  ; 4500 oder K2 oder LSL2 oder SW1 Output
+                       dtm                    \Zweite: 0\            
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                       dz                     $wrzl                  
+                       020                    0                      
+                       equ100                 00300                      ; ztab muss durch 0100 teilbar sein
+ztab:                  dw                     004000000000           ; Ziffer 0 : z3
+                       dw                     040000000000           ; Ziffer 1 : z0
+                       dw                     020000000000           ; Ziffer 2 : z1
+                       dw                     010000000000           ; Ziffer 3 : z2
+                       dw                     0                      
+                       dw                     0                      
+                       dw                     0                      
+                       dw                     0                      
+                       dw                     0                      
+                       dw                     0                      

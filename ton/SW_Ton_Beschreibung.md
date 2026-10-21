@@ -1,12 +1,14 @@
 # SW-Ton und LS-Ton
 
-Version: 0.01-003
+Version: 0.01-005
 
 Geräusche von Schreibwerk und Lochstreifenleser für den C 8205-Interpreter: Anforderungen, Ergebnisse, Diskussion
 
 Stand: 19.10.2026 (Nachführung Stufe 4: Schreibwerkzeit 80 ms, Zeichenklang 100 ms, ein TAB-Klang; Teil D Rechner- und Stanzertöne vom 15.10.2026) · Programm: `sw_ton.py` · Klänge: Ordner `sw_toene/`
 
 > **Stand Stufe 4 (19.10.2026).** Die Abschnitte 7, 11 und 16 beschreiben `sw_ton.py` nach den Entscheidungen vom 16. und 18.10.2026: **Schreibwerkzeit 80 ms (70 bis 90 ms, gleichverteilt), Zeichenklang 100 ms, TAB nur noch `tab_400.wav` (400 ms), WRZL 360 ms.** Wo die Teile B bis D noch „120 ms ±10 %“, `tab_kurz`/`tab_lang` oder „Einbau später“ nennen, ist das der Stand vom 14./15.10.2026 (Messwerte der Aufnahmen bleiben gültig) und durch dieses Feld überholt. In GRAFIK spielt `grafik_schreibwerk.py` diese Zeiten über den Mischer `tonmisch` (`C8205-Interpreter-GRAFIK_Beschreibung.md` §6); `sw_ton.py` bleibt der selbständige Testrahmen für die Klänge. Die Hörprüfung (S4-16) steht noch aus.
+>
+> **Nachführung 21.10.2026 (Abgleich OP-30 (b)).** Teil D (Abschnitte 17 bis 21) trägt den Stand vom 15.10.2026. Seitdem gilt: Die Töne des Rechners, des Schreibwerks, des Lesers und des Stanzers sind in GRAFIK eingebaut (Rechnertöne Stufe 2, 17.10.2026; Rest Stufe 4, 19.10.2026) und laufen über den Mischer `tonmisch`; alle Klänge liegen als WAV vor (Ordner `ton/` und `ton/toene_rechner_stanzer/`), die Umwandlung aus MP3 ist erfolgt; die Hörprüfung 2 am 19.10.2026 ist als „ok“ gemeldet. Damit sind in Abschnitt 21.2 D-1, D-10, D-11 und D-12 beantwortet (je mit Zusatz vermerkt). Der Abschnitt 19 „Wartezeit = 0“ gilt für den Modus TEST; in GRAFIK gilt das Stanztempo von etwa 50 Zeichen/s. Maßgeblich ist `C8205-Interpreter-GRAFIK_Beschreibung.md` §6. **Aus dem Abgleich (erledigt 21.10.2026, OP-42):** Der Testrahmen spielte für `WR` den WRZL-Klang, GRAFIK den Zeichenklang. Entschieden: WR hat einen eigenen kurzen Klang, `sw_toene/wr.wav` (120 ms, erste Hälfte des WRZL-Klangs vor dem markanten Ton); der Testrahmen und GRAFIK spielen ihn für `<WR>` (§7.1, §7.2, §14.1).
 
 ## 1 Zweck und Abgrenzung
 
@@ -44,7 +46,7 @@ Als Vorgabe lagen fünf Aufnahmen vor, dazu der Interpreter mit der Datei `Kodet
 | Nr. | Anforderung |
 |---|---|
 | A-SW-1 | Eine Funktion gibt zu einem Zeichen das Schreibwerk-Geräusch aus. Das Zeichen wird gemäß R 300-Code, Tabelle 1 übergeben. |
-| A-SW-2 | Es gibt drei Klangarten: WRZL, TAB und allgemeines Zeichen (für den Rest des Codes). |
+| A-SW-2 | Es gibt drei Klangarten: WRZL, TAB und allgemeines Zeichen (für den Rest des Codes). *(Seit 21.10.2026 vier: dazu WR, siehe §14.1.)* |
 | A-SW-3 | Die Rückkehr der Funktion wird um die Ausgabedauer verzögert. Der Interpreter „steht" für die Dauer der Tonausgabe. |
 | A-SW-4 | Für allgemeine Zeichen wird zufällig ein Ton aus mehreren, sich leicht unterscheidenden Tönen gewählt. Diese werden dem Dauerprint entnommen. |
 | A-SW-5 | Die Tondauer einfacher Zeichen wird zufällig um ±10 % verändert. |
@@ -81,6 +83,7 @@ Als Vorgabe lagen fünf Aufnahmen vor, dazu der Interpreter mit der Datei `Kodet
 | `sw_toene/tab_lang.wav` | Tabulator lang (325 ms) |
 | `sw_toene/tab_400.wav` | Tabulator, **der einzige gespielte TAB-Klang seit Stufe 4** (400 ms, aus `tab_lang.wav` gedehnt) |
 | `sw_toene/wrzl.wav` | Wagenrücklauf (360 ms) |
+| `sw_toene/wr.wav` | Wagenrücklauf ohne Zeilenschaltung (120 ms, neu 21.10.2026; erzeugt mit `erzeuge_wr_klang.py` aus den ersten 120 ms von `wrzl.wav`, letzte 5 ms ausgeblendet) |
 | `sw_toene/ls_einzel.wav` | Leser: Einzelschritt (148 ms) |
 | `sw_toene/ls_dauer.wav` | Leser: Dauergeräusch, nahtlose Schleifeneinheit (1,25 s) |
 | `sw_toene/ls_ende.wav` | Leser: Auslaufen nach dem Dauergeräusch (60 ms) |
@@ -103,7 +106,8 @@ Die Funktion gibt den Klang zum Zeichen aus und **kehrt erst nach der Schreibwer
 | Eingabe | Klangart |
 |---|---|
 | `'\t'` (ASCII 9), `<TAB>`, `<Tabulator>`, Zahl `9` | **TAB** |
-| `'\n'` (ASCII 10 = WRZL), `'\r'` (ASCII 13), `<WRZL>`, `<WR>`, `<SatzMarke>`, Zahlen `10`, `13` | **WRZL** |
+| `'\n'` (ASCII 10 = WRZL), `'\r'` (ASCII 13, nach Vorgabe CR = WRZL), `<WRZL>`, `<SatzMarke>`, Zahlen `10`, `13` | **WRZL** |
+| `<WR>` (Wagenrücklauf ohne Zeilenschaltung, so liefert es der Interpreter) | **WR** (seit 21.10.2026, OP-42) |
 | jedes andere einzelne Zeichen, auch Leerzeichen | **ZEICHEN** |
 | jeder andere Name in `<>` (z. B. `<Um. KB>`, `<Nr.7>`) | **ZEICHEN** |
 | leerer String `''` | keine Ausgabe, Rückgabe 0.0 |
@@ -118,6 +122,7 @@ Namen in `<>` werden ohne Leerzeichen und Punkte und ohne Beachtung der Groß-/K
 | ZEICHEN | zufällig eine der 24 Dateien `zeichen_*.wav` | **80 ms, je Zeichen zufällig um ±10 ms**, also 70 bis 90 ms (gleichverteilt) | **100 ms**: die Dateien (120 ms) werden gekürzt, die letzten 10 ms ausgeblendet |
 | TAB | `tab_400.wav` (ein Klang für jeden Tabulatorweg) | 400 ms | 400 ms |
 | WRZL | `wrzl.wav` | 360 ms | 360 ms |
+| WR | `wr.wav` | 120 ms | 120 ms |
 
 - Bei ZEICHEN wird nie zweimal hintereinander derselbe Klang gewählt.
 - Schreibwerkzeit und Klanglänge sind getrennt (S4-17). Bei Zeichen ist der Klang (100 ms) länger als die Schreibwerkzeit (70 bis 90 ms). Der Überstand **überlappt** mit dem Klang des folgenden Zeichens (O4-7); `--wav` mischt die Klänge deshalb übereinander (Summe auf 16 bit begrenzt).
@@ -286,7 +291,7 @@ Alle Prüfungen liefen unter Python 3.12 auf Linux ohne Tonausgabe. Dabei wurden
 | Nr. | Erfüllung | Anmerkung |
 |---|---|---|
 | A-SW-1 | erfüllt | Zeichenübergabe nach Tabelle 1 (7.1) |
-| A-SW-2 | erfüllt | WRZL, TAB, ZEICHEN. WR (ASCII 13) spielt ebenfalls WRZL, siehe 14.1 |
+| A-SW-2 | erfüllt | WRZL, TAB, ZEICHEN; seit 21.10.2026 auch WR (`<WR>`, eigener Klang), siehe 14.1. Der Code ASCII 13 / `\r` spielt weiter WRZL |
 | A-SW-3 | erfüllt | geprüft: Abweichung der Wartezeit 0,3 bis 8 ms je Folge von 10 bis 11 Zeichen |
 | A-SW-4 | erfüllt | 24 Klänge, nie derselbe zweimal hintereinander |
 | A-SW-5 | erfüllt | 108 bis 132 ms, Mittel 119,94 ms |
@@ -305,7 +310,7 @@ Alle Prüfungen liefen unter Python 3.12 auf Linux ohne Tonausgabe. Dabei wurden
 
 ### 14.1 WRZL und WR
 
-Laut Tabelle 1 ist WRZL ASCII 10 und WR (Wagenrücklauf ohne Zeilenschaltung, Zeile 55) ASCII 13. Nach Vorgabe gilt CR = WRZL, deshalb spielen beide Codes den WRZL-Klang. Der Interpreter gibt ein WRZL als `chr(10)` aus. Ein eigener Klang für WR allein liegt nicht vor.
+Laut Tabelle 1 ist WRZL ASCII 10 und WR (Wagenrücklauf ohne Zeilenschaltung, Zeile 55) ASCII 13. Nach Vorgabe gilt CR = WRZL, deshalb spielten bisher beide Codes den WRZL-Klang. Der Interpreter gibt ein WRZL als `chr(10)` aus. **Seit 21.10.2026 (OP-42, Entscheidung des Projektinhabers)** hat WR einen eigenen Klang: nur die erste Hälfte des WRZL-Klangs, vor dem markanten Ton, 120 ms lang (`sw_toene/wr.wav`, Schreibwerkzeit ebenfalls 120 ms). Der Klang entsteht mit `erzeuge_wr_klang.py`: die ersten 120 ms von `wrzl.wav`, die letzten 5 ms ausgeblendet; als markanter Ton gilt der laute Schlag bei etwa 126 ms (Auslegung, nicht gehört; `--ende MS` stellt den Schnitt nach). Der Testrahmen erkennt WR nur am Namen `<WR>` (im Aufrufstring die vier Zeichen `<WR>`); `'\r'`, ASCII 13 und `<WRZL>` bleiben WRZL, damit die Vorgabe „CR = WRZL“ weiter gilt. GRAFIK: `grafik_schreibwerk.py` G4-002.
 
 „Um. KB" und „Um. GB" machen im Interpreter keinen Ton, denn `a017` stellt dort nur die Zeichenlage um und ruft `sw_schreibe` nicht auf. Würden sie doch übergeben, wären sie allgemeine Zeichen.
 
@@ -372,11 +377,11 @@ Zu klären wäre beim Einbau:
 
 ## Teil D – Rechner- und Stanzertöne (Ergänzung 15.10.2026)
 
-Dieser Teil ergänzt (Anforderungen jetzt in `C8205-Interpreter-GRAFIK_Beschreibung.md` §6, früher Dokument 03) die Geräusche von Schreibwerk und Leser um das Grundgeräusch des Rechners (Netz ein und aus) und um die Geräusche des Lochbandstanzers. Er hält fest, welche Töne vorliegen, was entschieden ist und was offen bleibt. **Weder `sw_ton.py` noch der Ordner `sw_toene/` enthalten diese Töne bisher.** Die Dateien liegen als MP3 vor.
+Dieser Teil ergänzt (Anforderungen jetzt in `C8205-Interpreter-GRAFIK_Beschreibung.md` §6, früher Dokument 03) die Geräusche von Schreibwerk und Leser um das Grundgeräusch des Rechners (Netz ein und aus) und um die Geräusche des Lochbandstanzers. Er hält fest, welche Töne vorliegen, was entschieden ist und was offen bleibt. **Weder `sw_ton.py` noch der Ordner `sw_toene/` enthalten diese Töne bisher.** Die Dateien liegen als MP3 vor. *(Stand 15.10.2026; seit 17.10.2026 liegen sie als WAV in `ton/` und `ton/toene_rechner_stanzer/`, `sw_ton.py` spielt sie weiterhin nicht, in GRAFIK spielen sie `grafik_rechnerton.py` und `grafik_geraeteton.py`.)*
 
 ## 17 Vorliegende Aufnahmen
 
-Die Werte sind gemessen (Dauer, mittlerer Pegel als RMS bei Vollaussteuerung 1,0). Die Aufnahmen wurden bisher nicht angehört; die Zuordnung beruht auf den Dateinamen. Die Dateien wurden am 15.10.2026 vom Projektinhaber unter neuen, aussagekräftigeren Namen geliefert; der Inhalt ist bitgleich (Prüfsummen verglichen). Frühere Namen: `Cellatron_8205-Grundgeräusch.mp3` (jetzt `Rechner-arbeitet`), `…-Grundgeräusch-fade_in.mp3` (jetzt `Netzschalter-Ein`), `…-Grundgeräusch-fade_out.mp3` (jetzt `Netzschalter-Aus`), `LS_Motor_läuft.mp3` (jetzt `…-ohne-stanzen`). **Die Töne sind weder in `sw_ton.py` noch in das Pult-Fenster oder den Interpreter eingebaut.**
+Die Werte sind gemessen (Dauer, mittlerer Pegel als RMS bei Vollaussteuerung 1,0). Die Aufnahmen wurden bisher nicht angehört; die Zuordnung beruht auf den Dateinamen. Die Dateien wurden am 15.10.2026 vom Projektinhaber unter neuen, aussagekräftigeren Namen geliefert; der Inhalt ist bitgleich (Prüfsummen verglichen). Frühere Namen: `Cellatron_8205-Grundgeräusch.mp3` (jetzt `Rechner-arbeitet`), `…-Grundgeräusch-fade_in.mp3` (jetzt `Netzschalter-Ein`), `…-Grundgeräusch-fade_out.mp3` (jetzt `Netzschalter-Aus`), `LS_Motor_läuft.mp3` (jetzt `…-ohne-stanzen`). **Die Töne sind weder in `sw_ton.py` noch in das Pult-Fenster oder den Interpreter eingebaut.** *(Stand 15.10.2026; überholt, siehe Nachführung oben.)*
 
 | Datei | Dauer | Format | Messbefund |
 |---|---|---|---|
@@ -417,7 +422,7 @@ Nach der Projektdokumentation (Lochstreifenleser-Doku B3 und B5, Bedienpult-Doku
 - Höchstgeschwindigkeit 50 Zeichen/s, ein Zeichen dauert 20 ms.
 - Der Motor läuft nicht dauernd. Er läuft an, sobald ein Zeichen ausgegeben werden soll (Einschaltverzögerung, Hochlauf), und schaltet nach 3 s ohne Zeichen ab (Abschaltverzögerung).
 - Bei gesetztem Schalter „LS" auf dem Pult läuft der Motor ständig.
-- Der Interpreter bildet Puffer und Stanzvorgang zeitlich nicht nach (Wartezeit = 0).
+- Der Interpreter bildet Puffer und Stanzvorgang zeitlich nicht nach (Wartezeit = 0). *(Gilt für den Modus TEST; in GRAFIK gilt seit Stufe 4 ein Stanztempo von etwa 50 Zeichen/s, Beschreibung §6.4.)*
 
 Vorliegende Töne: `LS_Motor_läuft-ohne-stanzen.mp3` (Motor) und `LS-Stanzer-Dauerstanzen.mp3` (Stanzen fortlaufend). **Wie und wann sie eingesetzt werden, ist nicht festgelegt** (siehe 21). Das gilt auch für die Frage, ob ein Einzelschritt-Ton für ein einzelnes gestanztes Zeichen gebraucht wird; er liegt nicht vor.
 
@@ -429,8 +434,8 @@ Vorliegende Töne: `LS_Motor_läuft-ohne-stanzen.mp3` (Motor) und `LS-Stanzer-Da
 
 ### 21.1 Technische Hinweise
 
-- **Format:** `sw_ton.py` erwartet WAV, 44,1 kHz, mono, 16 bit. Die neuen Dateien sind MP3 in Stereo und müssten vorher umgewandelt werden. `winsound` unter Windows kann kein MP3 abspielen.
-- **Gleichzeitige Töne:** Das Grundgeräusch läuft dauernd unter Schreibwerk-, Leser- und Stanzertönen. Unter Windows spielt `winsound` aber nur einen Klang gleichzeitig (Abschnitt 15). Ein Konzept mit gleichzeitiger Wiedergabe (z. B. Mischen vor der Ausgabe oder ein anderer Player) ist nötig.
+- **Format:** `sw_ton.py` erwartet WAV, 44,1 kHz, mono, 16 bit. Die neuen Dateien sind MP3 in Stereo und müssten vorher umgewandelt werden. `winsound` unter Windows kann kein MP3 abspielen. *(Stand 15.10.2026; die Umwandlung ist erfolgt, alle Klänge liegen als WAV vor.)*
+- **Gleichzeitige Töne:** Das Grundgeräusch läuft dauernd unter Schreibwerk-, Leser- und Stanzertönen. Unter Windows spielt `winsound` aber nur einen Klang gleichzeitig (Abschnitt 15). Ein Konzept mit gleichzeitiger Wiedergabe (z. B. Mischen vor der Ausgabe oder ein anderer Player) ist nötig. *(Seit Stufe 4: Mischer `tonmisch`, Beschreibung §6.1; unter Windows nicht übersetzt und nicht getestet.)*
 - **Anschluss `fade_in` an die Schleife:** Das Ende von `fade_in` liegt im Pegel höher (ca. 0,073 in den letzten 100 ms) als der Anfang von `Cellatron_8205-Rechner-arbeitet-Grundgeräusch.mp3` (ca. 0,044). Eine Überblendung ist nicht festgelegt und müsste durch Hören geprüft werden.
 - **Schleife:** `Cellatron_8205-Rechner-arbeitet-Grundgeräusch.mp3` hat Pegel 0,044 am Anfang und 0,059 am Ende der letzten 100 ms. Ob die Naht hörbar ist, ist nicht geprüft.
 
@@ -438,7 +443,7 @@ Vorliegende Töne: `LS_Motor_läuft-ohne-stanzen.mp3` (Motor) und `LS-Stanzer-Da
 
 | Nr. | Frage |
 |---|---|
-| D-1 | **Startzustand:** GRAFIK-Beschreibung §3 (früher Pult-Dokument 01) lässt B und N beim Skriptstart grün sein. **Startzustand entschieden 16.10.2026:** Das Skript beginnt mit Rechner aus (B dunkel) und wartet auf den Klick auf den Netzschalter. **Offen:** Das Skript beendet sich beim Ausschalten komplett, wie wird es dann wieder eingeschaltet? |
+| D-1 | **Startzustand:** GRAFIK-Beschreibung §3 (früher Pult-Dokument 01) lässt B und N beim Skriptstart grün sein. **Startzustand entschieden 16.10.2026:** Das Skript beginnt mit Rechner aus (B dunkel) und wartet auf den Klick auf den Netzschalter. **Offen:** Das Skript beendet sich beim Ausschalten komplett, wie wird es dann wieder eingeschaltet? *(Beantwortet, Beschreibung §6.5: Wiedereinschalten heißt, das Skript neu zu starten.)* |
 | D-2 | **Zeitpunkt B grün:** genau am Ende von `fade_in` (11,3 s) oder früher? *(Entschieden 16.10.2026, Dialog F-14: B wird grün am Ende von `fade_in`; `fade_in` läuft in voller Länge, 11,3 s)* |
 | D-3 | **Ohne Ton:** Gilt die Wartezeit des Hochlaufs auch, wenn der Ton abgeschaltet ist (`STUMM`)? Für Tests wären 11 s je Start eine erhebliche Verzögerung. |
 | D-4 | **Lampe N:** Wann schaltet sie beim Einschalten auf grün, mit B oder schon früher? *(Entschieden 16.10.2026, Dialog zu F-14: N leuchtet schon nach dem Aufblenden grün, vor dem Klick; `C8205-Interpreter-GRAFIK_Beschreibung.md` §3.6, früher Dokument 01 §1.8)* |
@@ -447,9 +452,9 @@ Vorliegende Töne: `LS_Motor_läuft-ohne-stanzen.mp3` (Motor) und `LS-Stanzer-Da
 | D-7 | **Stanzer, Dauerstanzen:** Ab welchem Zeichenabstand gilt Dauerstanzen statt Einzelstanzen? Gilt wie beim Leser eine Schwelle? **Entschieden 16.10.2026 (Entwurf 59, dem Assistenten überlassen):** Zustandsgesteuert; Dauerstanzen ab Zeichenabstand höchstens 40 ms, Ende nach 60 ms ohne Zeichen; GRAFIK_Beschreibung §6 (früher Dokument 03 §5 Nr. 15). **Berichtigt 16.10.2026 (Entwurf 66):** Schwelle 50 ms, Abschalten nach 5 s; GRAFIK_Beschreibung §6 (früher Dokument 03 §5 Nr. 21). |
 | D-8 | **Stanzer, Einzelschritt:** Wird ein Ton für ein einzelnes Zeichen gebraucht? Wenn ja, fehlt die Aufnahme. **Entschieden 16.10.2026 (Entwurf 59):** Kein Einzelschritt-Ton; Einzeltöne sind viel länger als die Stanzzeit eines Zeichens. |
 | D-9 | **Aufnahmen:** Ist `LS-Stanzer-Dauerstanzen` mit oder ohne Motorgeräusch aufgenommen (ob Motor und Stanzen getrennte Ebenen sind)? Der neue Dateiname des Motortons (`…-ohne-stanzen`) legt nahe, dass er ohne Stanzen aufgenommen ist; für `Dauerstanzen` sagt der Name nichts dazu (nach Dateinamen, nicht angehört). **Standardannahme 16.10.2026 (Entwurf 59):** Dauerstanzen enthält den Motor; Motor-Pegel während Dauerstanzen 0; Hörprüfung steht aus. **Entschieden 16.10.2026 (Entwurf 66):** Motor und Dauerstanzen sind das gleiche Geräusch; GRAFIK_Beschreibung §6 (früher Dokument 03 §5 Nr. 21). |
-| D-10 | **Wiedergabe:** Lösung für gleichzeitige Töne und Umwandlung der MP3 in WAV (21.1). |
-| D-11 | **Hörprüfung** aller Aufnahmen und ihrer Zuordnung zu den Dateinamen. |
-| D-12 | **Einbau:** Die fünf Aufnahmen sind noch nirgends eingebaut (Netzschalter-Ein/-Aus, Rechner-arbeitet-Schleife, Stanzer-Motor, Dauerstanzen). Der Einbau folgt nach den Entscheidungen D-1 bis D-11 (Stand 15.10.2026: keine davon getroffen). |
+| D-10 | **Wiedergabe:** Lösung für gleichzeitige Töne und Umwandlung der MP3 in WAV (21.1). *(Erledigt: Mischer `tonmisch` und WAV-Dateien, Beschreibung §6.1.)* |
+| D-11 | **Hörprüfung** aller Aufnahmen und ihrer Zuordnung zu den Dateinamen. *(Hörprüfung 2 am 19.10.2026 vom Projektinhaber als „ok“ gemeldet, ohne Einzelbefunde; eine eigene Prüfung der Zuordnung Dateiname zu Klang ist nicht belegt.)* |
+| D-12 | **Einbau:** Die fünf Aufnahmen sind noch nirgends eingebaut (Netzschalter-Ein/-Aus, Rechner-arbeitet-Schleife, Stanzer-Motor, Dauerstanzen). Der Einbau folgt nach den Entscheidungen D-1 bis D-11 (Stand 15.10.2026: keine davon getroffen). *(Erledigt: eingebaut, Rechnertöne Stufe 2, Schreibwerk, Leser, Stanzer und Mischer Stufe 4; Windows offen, Beschreibung §6.8.)* |
 | D-13 | **Modi (15.10.2026):** `--MODUS=TEST` läuft ohne Töne und ohne Wartezeit des Hochlaufs (vorgegeben, D-3 ist damit für TEST erledigt); Töne gibt es nur im Modus `--MODUS=GRAFIK`. Entschieden 15.10.2026: In GRAFIK schaltet `--STUMM` die Töne ab, dann entfällt auch die Hochlaufwartezeit. Siehe GRAFIK_Beschreibung §1 und §6. |
 
 ## 22 Änderungsverzeichnis
@@ -461,3 +466,5 @@ Vorliegende Töne: `LS_Motor_läuft-ohne-stanzen.mp3` (Motor) und `LS-Stanzer-Da
 | 15.10.2026 | Aufnahmen unter neuen Dateinamen übernommen (Inhalt unverändert), Punkt D-12 und Anmerkung zu D-9 ergänzt |
 | 15.10.2026 | Teil D ergänzt: Rechner- und Stanzertöne, Entscheidungen zum Netzablauf (B rot → `fade_in` → B grün, Interpreter läuft erst bei B grün), offene Punkte |
 | 19.10.2026 | Nachführung Stufe 4 (B-8): `sw_ton.py` und Beschreibung auf Schreibwerkzeit 80 ms (70 bis 90 ms), Zeichenklang 100 ms (gekürzt, 10 ms Ausblendung, Überlappung), ein TAB-Klang `tab_400.wav`; `tab_lang`, `TAB_LANG_VORGABE`, `ZEICHEN_STREUUNG` und `--tab-lang` entfallen, neu `--zeit`, `--streuung` in ms; Hinweis auf den Einbau über `grafik_schreibwerk.py` und `--TON`. Hörprüfung offen. Abschnitte 8, 12 bis 15 und Teil D nicht umgeschrieben (Stand der Messungen 14./15.10.2026) |
+| 21.10.2026 | Abgleich mit `C8205-Interpreter-GRAFIK_Beschreibung.md` §6, dem Code, den WAV-Dateien und einem Lauf von `sw_ton.py` (OP-30 (b)): Konstanten und Beispiele aus Teil B stimmen; Nachführungsvermerk und Zusätze in Teil D (§17, §19, §21.1, §21.2); neuer Befund zu `WR` (Beschreibung OP-42; am selben Tag entschieden, siehe nächste Zeile). Messwerte und Texte der Teile A bis C unverändert. Dok. 03 lag nicht vor |
+| 21.10.2026 | OP-42 entschieden und umgesetzt (0.01-005): vierte Klangart WR (`<WR>`, `sw_toene/wr.wav`, 120 ms, erste Hälfte des WRZL-Klangs vor dem markanten Ton); §7.1, §7.2, §14.1, Tabelle der Dateien und A-SW-2 nachgeführt; `sw_ton.py` und `erzeuge_wr_klang.py` angepasst bzw. neu. Messwerte und Texte der Teile A bis C sonst unverändert |

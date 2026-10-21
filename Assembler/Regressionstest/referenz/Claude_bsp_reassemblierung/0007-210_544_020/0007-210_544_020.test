@@ -1,0 +1,15 @@
+Trommeldatei:
+#DOK-0007 Test Ladebefehl und X-Wiederhol-Speicherbefehl und Linksverschiebung
+#DOK-0007 So ein Befehl bringt eigentlich nichts, besser alle 32 Zellen durchlaufen, und dann logisch begrenzen
+#DOK-0007 da hat man für jeden logische Speichernummer einen korrekt verschobenen Wert.
+#SPEI-0007 4000-4037
+#SPUR-0007 4000
+#PROT STUFE=2
+0000: 00003000211 # 211 d3000
+0001: 00004001544 # 544 d4001
+0003: 00000000020 # 020 0
+0021: 00000007164 # 164 00007 ; 164 Leerbefehl (Diagnose)
+3000: 00001000000 # d3000: dw 01000000
+3001: 00000000045 # dw 045
+Tastenfolge:
+H G R

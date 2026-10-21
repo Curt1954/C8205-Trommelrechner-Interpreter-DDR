@@ -1,0 +1,5 @@
+0000: 01 2000 000        000 go    
+      20 0000 2000       equ 02000 
+2000: 00 4600 030    go: 030 04600 ; Anwahl Kanal 1 (Leser 1)
+2001: 01 0000 010        010 0     ; Eingabe-Halt 1. Art
+2002: 01 0000 020        020 0     ; unbedingter Stopp

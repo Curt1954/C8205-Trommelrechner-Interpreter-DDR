@@ -1,0 +1,15 @@
+Trommeldatei:
+#DOK-0006 Test Ladebefehl und X-Gruppen-Speicherbefehl und Linksverschiebung
+#DOK-0006 So ein Befehl bringt eigentlich nichts, besser alle 32 Zellen durchlaufen, und dann logisch begrenzen
+#DOK-0006 da hat man für jeden logische Speichernummer einen korrekt verschobenen Wert.
+#SPEI-0006 4000-4037
+#SPUR-0006 4000
+#PROT STUFE=2
+0000: 00003000211 # 211 d3000
+0001: 00004001744 # 744 d4001
+0003: 00000000020 # 020 0
+0021: 00000006164 # 164 00006 ; 164 Leerbefehl (Diagnose)
+3000: 00001000000 # d3000: dw 01000000
+3001: 00000000045 # dw 045
+Tastenfolge:
+H G R

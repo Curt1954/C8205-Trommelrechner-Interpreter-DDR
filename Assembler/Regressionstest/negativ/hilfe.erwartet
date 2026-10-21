@@ -1,0 +1,6 @@
+args -h
+ohne-p-s
+rc 0
+stdout Usage:
+stdout --no-color
+stdout --xref

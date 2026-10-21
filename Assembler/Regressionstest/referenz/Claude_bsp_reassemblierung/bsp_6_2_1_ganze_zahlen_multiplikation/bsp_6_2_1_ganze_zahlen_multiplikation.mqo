@@ -1,0 +1,10 @@
+        000     m3000   ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+        equ     03000   
+m3000:  211     d3006   ; 3006 211 ; <AC>:=a
+        444     d7700   ; 7700 444 ; Transport von a, jeweils um ein Bit nach links verschoben, auf alle Zellen der
+        211     d3007   ; 3007 211 ; <AC>:=b
+        472     d7700   ; 7700 472 ; Bildung der Teilprodukte P(i)=b(32-i)*a(i)
+        410     d7700   ; 7700 410 ; <AC>:=a*b, Summierung der Teilprodukte
+        020     03000   ; 3000 020 ; unbedingter Stopp
+d3006:  dw      013     ; a
+d3007:  dw      05      ; b

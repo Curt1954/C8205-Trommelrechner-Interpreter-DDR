@@ -1,0 +1,25 @@
+               000            beginn         
+               equ            02000          
+adr_a:         da             000000002023   ; Adrese der ersten Komponente Vektor
+adr_b:         da             000000002026   ; Adresse der letzten Komponente Vektor
+beginn:        241            zelle_s        ; s:=0
+               211            adr_a          
+               210            lesebef        
+schleife:      240            beliebig       ; Lesebefehl
+               330            adr_b          
+               equ            02010          
+               210            zelle_s        ; summe := summe + speicher
+               240            zelle_s        
+               150            halt           
+               211            beliebig       ; Lesebefehl
+               210            adr_1          ; Lesebefehl Adresse erhöhen
+               000            schleife       
+halt:          164            00001          ; DEBUG Nr. 0001 aktivieren
+               020            0              ; halt
+adr_1:         dw             01000          ; eine Adreßeinheit
+               equ            02022          
+lesebef:       dw             0211           
+a:             dw             0144           
+               dw             0145           
+               dw             0310           
+b:             dw             067            

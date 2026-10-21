@@ -70,6 +70,16 @@ class LeserEinheit(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(self.d, 'band.txt')))
         self.assertTrue(os.path.isfile(os.path.join(self.d, KORB, 'band.txt')), 'komplett gelesen: im Korb')
 
+    def test_gleicher_name_im_korb_wird_ueberschrieben(self):
+        """OP-34, entschieden 21.10.2026 (Variante a): Liegt im Korb schon eine Datei gleichen Namens, wird sie ohne Meldung ueberschrieben."""
+        os.makedirs(os.path.join(self.d, KORB))
+        schreibe(os.path.join(self.d, KORB), 'band.txt', ['11111111'])          # alte Datei im Korb
+        schreibe(self.d, 'band.txt', ['00000001'])                              # neue Datei gleichen Namens
+        self.assertEqual(GrafikLeser(self.d).naechste(), '00000001')
+        self.assertEqual(os.listdir(os.path.join(self.d, KORB)), ['band.txt'])
+        self.assertEqual(inhalt(os.path.join(self.d, KORB, 'band.txt')), '00000001\n')     # nur noch die neue
+        self.assertFalse(os.path.exists(os.path.join(self.d, 'band.txt')))
+
     def test_nachruecken_in_einem_aufruf_und_leerzeilen(self):
         schreibe(self.d, 'eins.txt', ['00000001', '', '00000010'], mtime=1_000_000_000_000_000_000)
         schreibe(self.d, 'zwei.txt', ['00000100'], mtime=2_000_000_000_000_000_000)

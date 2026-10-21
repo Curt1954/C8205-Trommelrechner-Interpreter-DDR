@@ -206,7 +206,6 @@ st-005_STARTE_1000_druck_mit_druckroutine.txt;"Programm ab 1000: Schreibwerk-Aus
 sw_eingabe.test;[Tastenfolge: H SW=1 G R];;;
 sw_eingabe_k2.test;[Tastenfolge: H SW=1 G R];;;
 sw_eingabe_lage.test;[Tastenfolge: H SW=1 G R];;Projekt_1/sw_eingabe/sw_eingabe_lage.asm;
-sw_eingabe_leser_stanzer.test;[Tastenfolge: H G R];;Projekt_1/sw_eingabe/sw_eingabe_leser_stanzer.asm;
 sw_zwei_ziffern.test;"Zwei Ziffern ueber SW einlesen, zwischen den Eingaben Anwahlbefehl K2 (Ausgabe); Eingabe: 2, 3";"virtuelle_Geraete/SW-Ausgabe/sw_zwei_ziffern.txt
 virtuelle_Geraete/T-SW-Eingabe/sw_zwei_ziffern.txt
 Test-Ergebnisvergleiche/sw_zwei_ziffern-sw-ausgabe.txt";Projekt_1/sw_zwei_ziffern/sw_zwei_ziffern.asm;

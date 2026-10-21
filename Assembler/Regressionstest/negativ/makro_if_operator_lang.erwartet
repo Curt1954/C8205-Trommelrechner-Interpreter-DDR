@@ -1,0 +1,4 @@
+rc 16
+stderr makro_if_operator_lang.asm:6: Fehler: BAD3 Der 4. Parameter muss | oder & sein.
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,4 @@
+args -WARN=SYM
+rc 0
+stderr Symbol 'ungenutzt'
+datei-da obj

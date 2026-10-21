@@ -1,0 +1,5 @@
+args -m
+ohne-p-s
+rc 16
+stderr Option '-m' erwartet einen Wert
+stdout Usage:

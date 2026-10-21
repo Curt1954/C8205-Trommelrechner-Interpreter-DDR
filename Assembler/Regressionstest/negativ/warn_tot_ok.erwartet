@@ -1,0 +1,4 @@
+args -WARN=TOT
+rc 0
+stdout Kein nicht erreichbarer Code gefunden.
+nicht-stderr nicht erreichbar

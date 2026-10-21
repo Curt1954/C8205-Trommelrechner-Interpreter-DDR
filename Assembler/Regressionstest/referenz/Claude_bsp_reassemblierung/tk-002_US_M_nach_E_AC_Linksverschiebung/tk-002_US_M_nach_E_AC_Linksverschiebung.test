@@ -1,0 +1,8 @@
+Trommeldatei:
+#DOK-0001 Tastenfolge H G M+ E M- M R: Nach G und einem E unter M gilt BZ = 1, AR = 1 und AC = 00000002000 (BZ+1 im Adreßfeld).
+#DOK-0002 Das M-Antippen stellt BR = 0001 025 auf. Phase III gilt als abgelaufen: nur die Resultatbehandlung (Linksverschiebung) wirkt auf
+#DOK-0003 Die Sprungoperation (AC := AC v Vr<BZ>) darf NICHT ablaufen (sonst AC = 00000005000). Nächster Befehl aus Zelle AR = 0001 (Stopp
+#PROT STUFE=2
+0001: 00000010020 # 020 00010 ; Stopp 020 mit Adreßteil 0010
+Tastenfolge:
+H G R

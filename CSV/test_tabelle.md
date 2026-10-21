@@ -1,6 +1,6 @@
 # Testübersicht
 
-Version: 0.95-001
+Version: 0.95-002
 
 Übersicht aller Testdateien in `Tests/`, erzeugt von `test_tabelle.py`. Die Spalte „Inhalt des Tests“ nennt die erste `#DOK`-Zeile der Testdatei (höchstens 140 Zeichen; haben mehrere Tests denselben Text, sind weitere `#DOK`-Zeilen angehängt); fehlt sie, steht die Tastenfolge in eckigen Klammern oder ein Hinweis in runden Klammern.
 
@@ -189,7 +189,6 @@ Die Spalte „ASM-Zuordnung“ ist leer, wenn die ASM-Datei denselben Namen wie 
 | sw_eingabe.test | [Tastenfolge: H SW=1 G R] |  |  |  |
 | sw_eingabe_k2.test | [Tastenfolge: H SW=1 G R] |  |  |  |
 | sw_eingabe_lage.test | [Tastenfolge: H SW=1 G R] |  | Projekt_1/sw_eingabe/sw_eingabe_lage.asm |  |
-| sw_eingabe_leser_stanzer.test | [Tastenfolge: H G R] |  | Projekt_1/sw_eingabe/sw_eingabe_leser_stanzer.asm |  |
 | sw_zwei_ziffern.test | Zwei Ziffern ueber SW einlesen, zwischen den Eingaben Anwahlbefehl K2 (Ausgabe); Eingabe: 2, 3 | virtuelle_Geraete/SW-Ausgabe/sw_zwei_ziffern.txt<br>virtuelle_Geraete/T-SW-Eingabe/sw_zwei_ziffern.txt<br>Test-Ergebnisvergleiche/sw_zwei_ziffern-sw-ausgabe.txt | Projekt_1/sw_zwei_ziffern/sw_zwei_ziffern.asm |  |
 | tk-001_US_H_M_R.txt | Tastenfolge H G M R: nach G steht BR = 0000 000, M ergibt BR = 0000 025 (Sprung mit Rückkehrabsicht), R führt aus. |  | Claude_bsp_reassemblierung/tk-001_US_H_M_R/tk-001_US_H_M_R.asm |  |
 | tk-002_US_M_nach_E_AC_Linksverschiebung.txt | Tastenfolge H G M+ E M- M R: Nach G und einem E unter M gilt BZ = 1, AR = 1 und AC = 00000002000 (BZ+1 im Adreßfeld). |  | Claude_bsp_reassemblierung/tk-002_US_M_nach_E_AC_Linksverschiebung/tk-002_US_M_nach_E_AC_Linksverschiebung.asm |  |

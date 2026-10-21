@@ -1,0 +1,7 @@
+args -m w/negativ/makrodatei_fehlerort.makros
+rc 16
+stderr makrodatei_fehlerort.asm:3: Fehler: BAD3 $IF benötigt 3, 7, 11 oder 15 Parameter
+stderr [Makro BAD3, definiert in w/negativ/makrodatei_fehlerort.makros:7]
+anzahl-stderr 1 [Makro BAD3, definiert
+datei-weg obj mqo test
+escape-weg

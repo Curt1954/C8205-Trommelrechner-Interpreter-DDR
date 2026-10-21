@@ -1,0 +1,7 @@
+rc 16
+stderr Rekursiver Macro-Aufruf von: REK
+stderr makro_rekursion.asm:7: Fehler: erwartet 0 Parameter
+stderr makro_rekursion.asm:8: Fehler: erwartet 0 Parameter
+datei-weg obj mqo test
+escape-weg
+stderr im Quelltext Zeile 3

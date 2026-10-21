@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 c8205_grafik.py - Treiber des Modus GRAFIK: Stufe 1 "Kern und Trommel", Stufe 2 "Pult-Fenster" und Stufe 3 "SW-Fenster" (ohne Ton des Schreibwerks).
-Version: G2-004 (Stufe 2: Pult-Fenster, grafik_pult.py / grafik_pult_fenster.py; Rechner-Kern unveraendert gegenueber G1-002)   (eigene Zaehlung der GRAFIK-Module; c8205_interp.py bleibt in dieser Stufe UNVERAENDERT, Version 0.03-013)
+Version: G4-007 (eigene Zaehlung der GRAFIK-Module; die Konstante VERSION_GRAFIK stimmt damit ueberein; c8205_interp.py zaehlt eigen, siehe dessen Kopf)
 
 Aufgaben (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 6), Stufe 1):
   * Rechner: Knotenautomat des C 8205 fuer den Dauerbetrieb am Pult. exec_node und run_e sind KOPIEN der verschachtelten
@@ -19,7 +19,7 @@ Aufgaben (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 6), Stufe 1):
   * Gleichwertigkeit mit TEST (GRAFIK_Beschreibung §1 (alt: Dok. 00, Abschnitt 3.6)): gleiche Ergebnisse bei gleichem Programm; ausgenommen die Zeiten.
     Prueffweg: testscripte/grafik_gleichwertigkeit.py.
 
-GRAFIK-Standardannahmen dieser Stufe (zur Abnahme, nicht ausdruecklich bestaetigt):
+GRAFIK-Standardannahmen dieser Stufe (vom Projektinhaber am 21.10.2026 bestaetigt, GRAFIK_Beschreibung §10.5, OP-13: "alle ja"):
   (1) Nach einem Halt (m.halted) bleibt der Rechner stehen; die Tasten H und R heben diesen Zustand auf (GRAFIK_Beschreibung §3.6 (alt: Dok. 01 Abschnitt 1.8 Nr. 23)).
   (2) H waehrend des Laufs wirkt an der Befehlsgrenze (Knoten 2), im Eingabe-Halt sofort; R setzt danach den Befehl fort.
   (3) Kanal-/Schalterwechsel waehrend des Laufs wirken an der Befehlsgrenze bzw. im Eingabe-Halt (Wiederaufsetzen des Eingabebefehls).
@@ -39,7 +39,7 @@ from grafik_geraete import GrafikLeser, GrafikStanzer, pruefe_verschieden
 from grafik_debuglog import log
 from grafik_haltzeit import HaltZeit, FEHLER, EA, SCHRITT, SCHRITT_ENDE
 
-VERSION_GRAFIK = 'G4-004'      # G4-004 (20.10.2026): Haltzeit auch im Einzelschritt E (HZ-004)
+VERSION_GRAFIK = 'G4-007'      # G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
 SPUR_STANDARD = 'c8205_pult_klickspur.txt'
 RC_OK, RC_ABBRUCH, RC_START = 0, 8, 16
 
@@ -57,6 +57,9 @@ class PultTaste(str):
 
 
 _OHNE_NEUE_FOLGE = ('M-', 'E-', 'SW=0', 'SW=1', 'SP+', 'SP-', 'BS+', 'BS-')
+
+# OP-11: Halt wegen Ueberlauf (ANWEISUNG-046) -> der davor liegende Pruefknoten (ANWEISUNG-020) laut Knotengraph
+_UEBERLAUF_HALT = {30: 28, 46: 44, 58: 55, 66: 65, 81: 80}
 
 
 class SwSenke:
@@ -141,6 +144,8 @@ class Rechner:
         self.e_unter_m = 0
         self.e_gedrueckt = False              # Taste E ist niedergedrueckt (E+ ohne E-); bleibt ueber andere Tasten hinweg bestehen
         self.e_nieder_unter_m = False         # M war beim Niederdruecken von E gehalten (dann entfaellt Phase II, das Loslassen bleibt ohne Wirkung)
+        self.e_ue_test = None                 # OP-11: Pruefknoten (28, 44, 55, 65, 80), hinter dem E+ im Halt wegen Ueberlauf stehen blieb
+        self.e_aufsatz = None                 # OP-11: nach G bei gehaltenem E (Ueberlauf geloescht): Pruefknoten, bei dem E- Phase IV und I fortsetzt
         self.sw_gedrueckt = False             # Property: Schalterstellung SW liegt in m.sw_schalter (a028 liest sie beim Anwahlbefehl K0)
         # Ablaufsteuerung
         self.start_gewuenscht = False
@@ -238,23 +243,38 @@ class Rechner:
             return None
         return nxt
 
+    def ar_lampen(self):
+        """Wert der Lampenreihe AR am Pult (OP-10, entschieden 21.10.2026). E+ ohne M, solange E gehalten ist (Phase IV und I sind gelaufen,
+        der Automat steht vor Phase II): die Lampen zeigen den Befehlszaehler BZ. Sonst den Adressteil des BR (m.adr); bei E+ mit gehaltenem M
+        ist das das erhoehte AR (m.adr := AR beim Niederdruecken)."""
+        m = self.m
+        if self.e_gedrueckt and not self.e_nieder_unter_m and m.vor_phase2:
+            return m.BZ & MASK12
+        return m.adr & MASK12
+
     def _zustand_br(self):
         m = self.m
         return f'BR={octs(m.adr,4)} {octs(m.OR,3)} BZ={octs(m.BZ,4)} AR={octs(m.AR,4)} AC={octs(m.AC,11)}'
 
-    def run_e_nieder(self):
+    def run_e_nieder(self, ab=None):
         """Taste E niederdruecken (Handbuch, Taste E: Phase IV und Phase I werden freigegeben; solange E gedrueckt bleibt, steht der Automat vor
         Phase II). Laeuft von der Befehlsgrenze bis unmittelbar vor Knoten 8 (Beginn Phase II). Jeder Weg zu Phase II fuehrt ueber Knoten 8, und
         Knoten 19 ist ohne Knoten 8 nicht wieder erreichbar (Graphpruefung). Rueckgabe (gestoppt, Zustandstext); gestoppt=True, wenn der Schritt
-        vorher im Stopp endet (m.halt_grund). Steht der Automat schon vor Phase II (nach E unter M), gibt es nichts freizugeben."""
+        vorher im Stopp endet (m.halt_grund). Steht der Automat schon vor Phase II (nach E unter M), gibt es nichts freizugeben.
+        ab (OP-11): Pruefknoten, bei dem ein im Halt wegen Ueberlauf stehen gebliebenes Niederdruecken fortgesetzt wird (nach G bei gehaltenem E)."""
         m = self.m
-        if m.vor_phase2:
-            return False, self._zustand_br()
-        if m.vor_phase1 and not m.br_aufgestellt:
-            node = 2
+        if ab is None:
+            if m.vor_phase2:
+                return False, self._zustand_br()
+            if m.vor_phase1 and not m.br_aufgestellt:
+                node = 2
+            else:
+                node = eintritt_br(m)
         else:
-            node = eintritt_br(m)
+            node = ab
         m.vor_phase1 = False
+        self.e_ue_test = None
+        vorher = None
         schritt = 0
         while node != 8:
             schritt += 1
@@ -264,10 +284,13 @@ class Rechner:
                 raise LaufFehler('Knoten 019 ohne Phase II erreicht (Knotengraph?)')
             nxt = self.exec_node(node)
             if m.halted:
+                if node in _UEBERLAUF_HALT and vorher == _UEBERLAUF_HALT[node]:
+                    self.e_ue_test = vorher       # OP-11: Halt wegen Ueberlauf hinter dem Pruefknoten 'vorher'
                 return True, self._zustand_br()
             if nxt is None:
                 raise LaufFehler(f'Knoten {node} hat keinen Ausgang')
             m.came_from = node
+            vorher = node
             node = nxt
         m.vor_phase2 = True
         m.br_aufgestellt = True
@@ -374,6 +397,16 @@ class Rechner:
             elif m.halted:
                 if u == 'E-':
                     zeile = f'{pre} Automat steht im Stopp ({m.halt_grund}) -> keine weitere Ausfuehrung'
+            elif self.e_aufsatz is not None:
+                # OP-11: G bei gehaltenem E hat den Ueberlauf geloescht; das Loslassen setzt Phase IV und I fort und durchlaeuft dann Phase II und III
+                ab, self.e_aufsatz = self.e_aufsatz, None
+                gem = self._schritt_start(gem)
+                gestoppt, z = self.run_e_nieder(ab=ab)
+                if not gestoppt:
+                    gestoppt, z = self.run_e_los()
+                gest = gest or gestoppt
+                zeile = (f'{pre} Einzelschritt endet im Stopp: {m.halt_grund}' if gestoppt
+                         else f'{pre} E losgelassen nach G (Ueberlauf geloescht): Phase IV und I fortgesetzt, Phase II und III, Halt vor Knoten 019; {z}')
             elif m.vor_phase2:
                 gem = self._schritt_start(gem)
                 gestoppt, z = self.run_e_los()
@@ -425,7 +458,21 @@ class Rechner:
             if self.pult_modus:
                 m.halted = False
             eff.append('H  : Schalter H-R -> "H", Flag H := 1')
+        elif u == 'G' and self.e_gedrueckt:
+            # OP-11 (entschieden 21.10.2026, Handbuch 4.1 Nr. 2): bei gehaltenem E loescht G NUR den Ueberlauf; BR, AR, BZ, AC, Kanal und
+            # die uebrigen Flags bleiben. War E+ im Halt wegen Ueberlauf stehen geblieben, wird dieser Halt aufgehoben; E- setzt dann fort.
+            hatte = bool(m.fl['FUE'])
+            m.fl['FUE'] = 0
+            fortsetzen = (hatte and m.halted and self.e_ue_test is not None
+                          and str(m.halt_grund).startswith('Halt wegen Ueberlauf'))
+            if fortsetzen:
+                m.halted = False
+                m.halt_grund = ''
+                self.e_aufsatz, self.e_ue_test = self.e_ue_test, None
+            eff.append('G  : (E gehalten) nur der Ueberlauf wird geloescht, FUE := 0; BR, AR, BZ, AC und die uebrigen Flags bleiben'
+                       + ('; der Halt wegen Ueberlauf ist aufgehoben, E- setzt Phase IV und I fort' if fortsetzen else ''))
         elif u == 'G':
+            self.e_aufsatz = self.e_ue_test = None
             for k in m.fl:
                 if k not in ('H', 'T', 'SP'):     # das Flag BS (Lampe) wird geloescht, der Schalter BS (m.bs_schalter) bleibt eingerastet
                     m.fl[k] = 0
@@ -529,6 +576,7 @@ class Rechner:
             m.fl['H'] = 0
             m.fl['US'] = 0
             m.fl['BS'] = 0
+            self.e_aufsatz = self.e_ue_test = None
             if self.pult_modus:
                 m.halted = False
             if not self.mhalt:
@@ -546,7 +594,8 @@ class Rechner:
 
     def _wirke(self, t, eff):
         """Fuehrt eine Taste aus; vom Pult kommende Tasten (PultTaste) beginnen vorher ggf. eine neue Tastenfolge."""
-        if isinstance(t, PultTaste) and t not in _OHNE_NEUE_FOLGE and not self.mhalt and t != 'M+':
+        if isinstance(t, PultTaste) and t not in _OHNE_NEUE_FOLGE and not self.mhalt and t != 'M+' \
+                and not (t.upper() == 'G' and self.e_gedrueckt):          # OP-11: G bei gehaltenem E beginnt keine neue Tastenfolge
             self.neue_folge()
         return self._taste(t, eff)
 
@@ -593,7 +642,12 @@ class Rechner:
                     log('RECHNER', f'Ausfuehrung Taste {t} endet | ' + self.zustandstext())
                 except (HUnterbrechung, Wiederaufsetzen) as e:
                     log('RECHNER', f'Taste {t} abgebrochen durch {type(e).__name__} | ' + self.zustandstext())
-                    pass                                     # Schritt abgebrochen (H bzw. Kanalwechsel im Eingabe-Halt); die Taste selbst ist schon ausgefuehrt
+                    # Schritt abgebrochen (H bzw. Kanalwechsel im Eingabe-Halt); die Taste selbst ist schon ausgefuehrt.
+                    # OP-20 (entschieden 21.10.2026, Variante a): Der Abbruch verlaesst _e_taste, ehe e_gedrueckt zurueckgesetzt wird; ohne
+                    # diese Zeilen waere E danach tot. E gilt nach dem Abbruch als losgelassen; der halbe Befehl bleibt fuer R liegen.
+                    if str(t).upper() in ('E', 'E+', 'E-'):
+                        self.e_gedrueckt = False
+                        self.e_nieder_unter_m = False
                 except (LaufFehler, Stub, KonfigFehler) as e:
                     print(f'\nFEHLER bei Taste {t}: {e}', file=sys.stderr, flush=True)
                     log('FEHLER', f'bei Taste {t}: {type(e).__name__}: {e}')
@@ -609,6 +663,7 @@ class Rechner:
         m = self.m
         self.neue_folge(sw_gedrueckt=False if not self.pult_modus else None)
         self.e_gedrueckt = False
+        self.e_aufsatz = self.e_ue_test = None
         eff = []
         ok = True
         toks = list(tokens)

@@ -1,6 +1,6 @@
 # C8205-Interpreter: Projektüberblick
 
-Version: 0.95-001
+Version: 0.95-002
 
 Dieses Dokument richtet sich an Menschen, die das Projekt nicht im Detail verfolgt haben, und
 beschreibt zusammenhängend, was hier entsteht und wie die Einzeldokumente zueinander stehen. Es
@@ -238,7 +238,7 @@ Hauptversion und Unterversion werden nur auf ausdrückliche Aufforderung des Pro
 | Datei | Rolle |
 |---|---|
 | `c8205_interp.py` | Der Python-Interpreter selbst (Abschnitt 2): liest Knotengraph und T2 zur Laufzeit aus den .md-Dateien, führt Tests aus |
-| `Hilfsprogramme/c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes (Abschnitt 5) |
+| `testscripte/c8205_befehlssweep.py` | Vollständigkeitstest über alle 512 Operationscodes (Abschnitt 5) |
 | `testscripte/erzeuge_leere_trommel.py` | Erzeugt bzw. setzt die Trommeldatei `Trommel/trommel.txt` auf eine leere Trommel zurück (alle 4096 Zellen 0) |
 | `Hilfsprogramme/c8205_lochstreifen_anzeige.py` | Hilfsprogramm: schreibt einen virtuellen Lochstreifen als Klartext in einem Fenster aus (Abschnitt 4) |
 | `Hilfsprogramme/c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben (Abschnitt 4) |

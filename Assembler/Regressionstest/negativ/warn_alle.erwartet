@@ -1,0 +1,7 @@
+args -WARN=alle
+rc 0
+stdout Pruefung auf unbenutzte Symbole (-WARN=SYM)
+stdout Pruefung der Sprungziele (-WARN=SPR)
+stdout Pruefung auf nicht erreichbaren Code (-WARN=TOT)
+stderr fuehrt auf 0002: dort liegt kein Befehl
+stderr ist vermutlich nicht erreichbar

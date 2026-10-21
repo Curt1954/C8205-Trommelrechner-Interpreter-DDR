@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_sw.py - Logik des SW-Fensters im Modus GRAFIK (Stufe 3), ohne Tkinter.
-Version: G4-007
+Version: G4-008
 
 Zwei Teile:
   SwAnzeige  - Darstellung der Schreibwerk-Ausgabe mit Schreibposition (Spalte 0 bis 130), Tabulatorstopp alle 12 Spalten,
@@ -38,7 +38,7 @@ import time
 
 import c8205_interp as I
 
-VERSION_SW = 'G4-007'
+VERSION_SW = 'G4-008'
 BREITE = 130          # rechter Anschlag
 TAB_ABSTAND = 12      # Tabulatorstopp alle 12 Zeichen
 _ECHO = {'WRZL': '\n', 'TAB': '\t', 'ZR': ' '}      # K0-Zeichen -> Text fuer die Anzeige der Eingabe (alle anderen Zeichen: sie selbst)
@@ -191,6 +191,10 @@ class SwEingabe:
     Ein Zeichen in der anderen Lage kommt als ZWEI Eingaben (Umschaltzeichen, Zeichen); die zweite folgt dem echten Abstand der Tasten
     (kein fester Wert, siehe U-11 unten) und frueh genug erst, wenn der Rechner wieder bei einem 011 ist (vorher wartet sie im Puffer).
 
+    KLANG (G4-008, OP-09, Entscheidung 21.10.2026): Der Klang kommt beim TASTENDRUCK, sobald das Zeichen im Puffer ist (Aufruf 'klick'), auch wenn der Rechner
+    es noch nicht angenommen hat; die ANZEIGE kommt weiter erst bei der Annahme (Aufruf 'echo'). Je Zeichen genau ein Klang. Das Umschaltzeichen
+    klingt nie; bei einem Paar klingt das Zeichen beim Druecken (nicht erst beim Loslassen). Keine Taste (Puffer voll, blockiert, nicht darstellbar) = kein Klang.
+
     Jedes angenommene Zeichen (kein Umschaltzeichen) wird ueber 'echo' in dieselbe Warteschlange gelegt wie die Ausgabe des Rechners
     (SwFenster.q): gleiche Schreibposition, Reihenfolge beider Quellen bleibt erhalten.
     tippen() aus dem Fenster-Thread; liefern() im Takt des Fensters.
@@ -206,8 +210,10 @@ class SwEingabe:
     #                                 False: wie G4-007, bis PUFFER_MAX Eingaben
     PUFFER_MAX = 8                  # Eingaben (Umschaltzeichen zaehlen mit); ein Zeichen in der anderen Lage braucht 2
 
-    def __init__(self, k0, maschine, echo=None, abstand=None, zeit=time.monotonic, rueck=None):
+    def __init__(self, k0, maschine, echo=None, abstand=None, zeit=time.monotonic, rueck=None, klick=None):
         self.k0 = k0
+        self.klick = klick              # G4-008 (OP-09, Entscheidung 21.10.2026): Aufruf mit dem Zeichentext, SOFORT wenn das Zeichen in den Puffer kommt (Tastendruck);
+        #                                 None = kein Klang (Pruefungen). 'echo' bleibt die ANZEIGE und kommt erst bei der Annahme durch den Rechner
         self.m = maschine
         self.echo = echo                # Aufruf mit dem anzuzeigenden Text (ein Zeichen); None = keine Anzeige (Pruefungen)
         self.abstand = abstand            # nur Vorgabe fuer Pruefungen; None = Abstand kommt von den echten Tasten (tippen(abstand=...) oder loslassen())
@@ -326,6 +332,8 @@ class SwEingabe:
             self._pumpen()
             if (self.EIN_TASTENDRUCK and self.puffer) or len(self.puffer) + len(tok) > self.PUFFER_MAX:
                 return 'voll'
+            if self.klick is not None and not tok[-1].startswith('Um.'):      # G4-008: Klang beim Druecken, vor der Annahme durch den Rechner
+                self.klick(_ECHO.get(tok[-1], tok[-1]))
             erste = [tok[0], 0.0, False]
             self.puffer.append(erste)
             zweite = None

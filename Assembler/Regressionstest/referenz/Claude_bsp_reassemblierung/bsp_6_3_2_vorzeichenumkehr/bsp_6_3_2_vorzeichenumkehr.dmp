@@ -1,0 +1,11 @@
+0000: 01 3000 000           000 m3000        ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
+      20 0000 3000          equ 03000        
+3000: 01 7777 211    m3000: 211 d7777        ; 7777 211 ; <AC>:=x
+3001: 01 7777 340           340 d7777        ; 7777 340 ; Vergleicher 3, falls x=0 (Vgl 1: x<0, Vgl 2: x>0)
+3002: 01 3005 170           170 m3005        ; 3005 170 ; Vergleichersprung 3: Pruefen, ob x=0
+3003: 01 3006 210           210 d3006        ; 3006 210 ; <AC>:=x+4000 0000 000 (Vorzeichen z0 umgekehrt; Ueberlauf bei x<0)
+3004: 01 3005 070           070 m3005        ; 3005 070 ; Ueberlaufsprung (loescht den Ueberlauf, verhindert den Halt)
+3005: 01 3000 020    m3005: 020 03000        ; 3000 020 ; unbedingter Stopp
+3006: 00 40000000000 d3006: dw  040000000000 ; Konstante 4000 0000 000 (nur z0)
+      20 0000 7777          equ 07777        
+7777: 00 62600000000 d7777: dw  062600000000 ; x = -0.5*2^5

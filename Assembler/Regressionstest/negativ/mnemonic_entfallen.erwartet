@@ -1,0 +1,3 @@
+rc 16
+stderr mnemonic_entfallen.asm:2: Fehler: Operationscode 'add' ist ungültig
+datei-weg obj mqo test

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_pult_fenster.py - Tk-Schicht des Bedienpult-Fensters im Modus GRAFIK (Stufe 2). Nur Standardbibliothek (Tkinter).
-Version: G2-001
+Version: G4-011
 
 Die gesamte Logik steckt in grafik_pult.PultSteuerung; hier nur Zeichnen (Canvas, Foto + Teilgrafiken), Maus, Computertastatur, Fenster schliessen.
 ACHTUNG: In der Entwicklungsumgebung gab es kein Tkinter; dieses Fenster wurde dort NICHT gestartet (nur mit einem Ersatzmodul
@@ -19,7 +19,7 @@ import sys
 from grafik_pult import LAMPENTAKT_S, ENDE
 from grafik_debuglog import log
 
-VERSION_FENSTER = 'G4-008'
+VERSION_FENSTER = 'G4-011'
 
 
 class PultFenster:
@@ -53,7 +53,9 @@ class PultFenster:
         self.cv.bind('<Key>', self._taste)
         self.cv.bind('<KeyRelease>', self._taste_los)
         self.sw_weiter = None       # G4-008: SwFenster; Tasten, die beim Pult ankommen, waehrend K0/SW angewaehlt ist, gehen an dessen Eingabe
-        self.cv.bind('<FocusOut>', lambda e: self.s.fokus_verloren(time.monotonic()))
+        self.cv.bind('<FocusOut>', self._fokus_aus)
+        self._pult_genommen = set()  # OP-48: Tasten, die das Pult selbst behandelt hat (ihr Loslassen geht nicht an das SW-Fenster)
+        self._gehalten = {}         # M-28 (G4-009): gehaltene Computertasten: Schluessel -> None (gedrueckt) oder Zeit des Loslassens
         self.root.protocol('WM_DELETE_WINDOW', self._schliessen)
         self._gedrueckt = None
         self.beendet = False
@@ -129,6 +131,8 @@ class PultFenster:
             return
         zeichen = ev.char or ''
         w = self.sw_weiter
+        if w is not None and self._pult_vorrang(ev, zeichen):
+            w = None                                       # OP-48: die Pult-Taste wirkt, die SW-Eingabe bekommt diese Taste nicht
         if w is not None:
             # G4-008: Der Fokus pendelt zwischen SW-Fenster und Pult (nach jedem Zeichen zurueck zum Pult, erst bei der naechsten Eingabeaufforderung
             # wieder ins SW-Fenster, Lauf 19.10.2026: im Log 'Computertastatur ... wirkt=False' fuer verschluckte Zeichen). Eine Taste, die in dieser
@@ -138,20 +142,101 @@ class PultFenster:
                     return 'break'
             except Exception as e:
                 log('FEHLER', f'Taste vom Pult an das SW-Fenster: {e!r}')
+        if self._wiederholung(ev):
+            log('TASTE', f'Computertastatur char={zeichen!r}: gehaltene Taste wiederholt nicht (M-28)')
+            return 'break'
         log('TASTE', f'Computertastatur char={zeichen!r} keysym={getattr(ev, "keysym", "")}')
+        state = getattr(ev, 'state', 0) or 0
+        if state & 0x000C:          # Strg oder Alt gehalten: keine Pult-Taste (Tastenkombinationen des Systems bleiben unberuehrt)
+            log('TASTE', '-> ignoriert (Strg/Alt)')
+            return
         if zeichen:
-            ok = self.s.tastatur(zeichen, time.monotonic())
+            # OP-47: Umschalt = Umschalttaste (0x0001); die Feststelltaste (0x0002) zaehlt nicht
+            ok = self.s.tastatur(zeichen, time.monotonic(), umschalt=bool(state & 0x0001))
             log('TASTE', f'-> wirkt={ok}')
+
+    def _pult_vorrang(self, ev, zeichen):
+        """OP-48 (G4-011): Ist ein SW-Fenster angeschlossen (Kanal SW angewaehlt: es nimmt sonst jede Taste am Pult als Eingabe), hat eine Pult-Buchstabentaste
+        (H R E G M T S) Vorrang, wenn sie jetzt als Pult-Taste wirken wuerde (taste_klickbar) und das SW keine Eingabe erwartet (kein offener 011, Puffer leer).
+        Sonst bleibt die Taste SW-Eingabe (G4-008). Strg und Alt zaehlen nicht."""
+        state = getattr(ev, 'state', 0) or 0
+        if not zeichen or state & 0x000C:
+            return False
+        if self._schluessel(ev) in self._pult_genommen:
+            return True                                    # gehaltene Taste (Wiederholung): bleibt beim Pult, die Haltesperre (M-28) verschluckt sie
+        try:
+            e = self.sw_weiter.eingabe
+            if e.erwartet() or e.puffer:
+                return False
+            if not self.s.taste_klickbar(zeichen, umschalt=bool(state & 0x0001)):
+                return False
+        except Exception as ex:
+            log('FEHLER', f'Pult-Vorrang: {ex!r}')
+            return False
+        self._pult_genommen.add(self._schluessel(ev))
+        log('TASTE', f'Pult-Taste {zeichen!r} hat Vorrang vor der SW-Eingabe (OP-48)')
+        return True
 
     def _taste_los(self, ev):
         """G4-008: Loslassen einer Taste am Pult gehoert zur SW-Eingabe, wenn deren Druecken dorthin ging (Umschalttaste, zweite Eingabe beim Loslassen)."""
+        self._los_merken(ev)
+        if self._wiedergabe_sperrt('Taste loslassen'):
+            return
+        z = self._zeichen(ev)
+        if z:
+            self.s.tastatur_los(z, time.monotonic())        # OP-47: E und M gelten beim Loslassen der Computertaste als losgelassen
         w = self.sw_weiter
-        if w is None or self._wiedergabe_sperrt('Taste loslassen'):
+        if w is None:
+            return
+        if self._schluessel(ev) in self._pult_genommen:
+            self._pult_genommen.discard(self._schluessel(ev))     # OP-48: die Taste gehoerte dem Pult
             return
         try:
             w.taste_los_vom_pult(ev)
         except Exception as e:
             log('FEHLER', f'Loslassen vom Pult an das SW-Fenster: {e!r}')
+
+    # --- M-28: gehaltene Computertasten wiederholen nicht
+    WIEDERHOLUNG_S = 0.03       # X11 meldet die Wiederholung als Paar "Loslassen, Druecken"; ein Druecken so kurz nach dem Loslassen gilt als Wiederholung
+
+    @staticmethod
+    def _zeichen(ev):
+        """Das Zeichen einer Taste auch beim Loslassen (dort ist ev.char nicht ueberall gefuellt): ev.char, sonst ein einstelliger keysym."""
+        c = getattr(ev, 'char', '') or ''
+        if c:
+            return c
+        k = getattr(ev, 'keysym', '') or ''
+        return k if len(k) == 1 else ''
+
+    @staticmethod
+    def _schluessel(ev):
+        """Schluessel der gehaltenen Taste; Buchstaben ohne Unterschied der Schreibweise (Umschalt vor der Taste losgelassen: 'E' gedrueckt, 'e' los)."""
+        k = getattr(ev, 'keysym', '') or (ev.char or '')
+        return k.lower() if len(k) == 1 else k
+
+    def _wiederholung(self, ev):
+        """True, wenn die Taste noch gehalten ist (oder weniger als WIEDERHOLUNG_S nach dem Loslassen wieder kommt); sonst wird sie als gehalten vermerkt."""
+        k = self._schluessel(ev)
+        if not k:
+            return False
+        jetzt = time.monotonic()
+        if k in self._gehalten:
+            los = self._gehalten[k]
+            if los is None or jetzt - los < self.WIEDERHOLUNG_S:
+                self._gehalten[k] = None
+                return True
+        self._gehalten[k] = None
+        return False
+
+    def _los_merken(self, ev):
+        k = self._schluessel(ev)
+        if k in self._gehalten:
+            self._gehalten[k] = time.monotonic()
+
+    def _fokus_aus(self, ev):
+        """Fokusverlust: Loslass-Ereignisse gehen verloren, also alle gemerkten Tasten freigeben; mit der Maus gehaltene Tasten loslassen."""
+        self._gehalten.clear(); self._pult_genommen.clear()
+        self.s.fokus_verloren(time.monotonic())
 
     def _schliessen(self):
         self.s.fenster_schliessen(time.monotonic())

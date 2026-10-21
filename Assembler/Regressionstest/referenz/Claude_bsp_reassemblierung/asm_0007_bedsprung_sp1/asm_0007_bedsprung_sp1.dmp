@@ -1,0 +1,10 @@
+0000: 01 0004 000           000 haupt 
+0001: 0              erg:   dw  0     
+0002: 00 00000000001 eins:  dw  01    
+      20 0000 0004          equ 00004 
+0004: 01 0006 065    haupt: 065 up    ; Aufruf nur, wenn SP gesetzt
+0005: 01 0000 020           020 0     ; Halt
+0006: 00 0003 240    up:    240 rueck ; Rücksprungwort sichern
+0007: 01 0002 211           211 eins  
+0010: 01 0001 240           240 erg   ; erg := 1
+0011: 00 0003 000           000 rueck 

@@ -1,6 +1,6 @@
 # C 8205 – GRAFIK-Interpreter: Prüfverfahren
 
-Version: 0.95-001
+Version: 0.95-019
 
 **Stand 19.10.2026 (Checkpoint G6-009): §1 bis §10 geschrieben, Entwurf, nicht abgenommen.** Das PDF dazu (`C8205-GRAFIK_Pruefverfahren_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Stufe-6-Beschreibung (Dokument 12, fällt nach Abschluss weg). Das Soll (was GRAFIK tun muss) steht in `C8205-Interpreter-GRAFIK_Beschreibung.md`; dieses Dokument sagt, **wie man prüft, dass er es tut**.
 
@@ -30,7 +30,7 @@ GRAFIK (`c8205_grafik.py`, Aufruf auch über `c8205_interp.py` ohne `--MODUS`) i
 
 | Ebene | Was sie prüft | Was sie nicht prüft | Wer kann sie laufen lassen |
 |---|---|---|---|
-| **1 Logiktests ohne Fenster** (§3, Blöcke 1 bis 12 und 14 bis 16) | Kern, Geräte, Pult-Steuerung, SW-Logik, Töne (Mischer, Klangwahl, Zeiten) gegen Ersatzmodule für Tk und Audio | Aussehen, echtes Tk, Hören | Entwickler und Projektinhaber; kein Bildschirm nötig |
+| **1 Logiktests ohne Fenster** (§3, Blöcke 1 bis 12, 14 bis 16 und 19) | Kern, Geräte, Pult-Steuerung, SW-Logik, Töne (Mischer, Klangwahl, Zeiten) gegen Ersatzmodule für Tk und Audio | Aussehen, echtes Tk, Hören | Entwickler und Projektinhaber; kein Bildschirm nötig |
 | **2 Gleichwertigkeit TEST/GRAFIK** (§4) | dieselben Ergebnisse in beiden Modi, je Test aus `Tests/` | Fenster, Töne, Zeiten | beide; dauert am längsten |
 | **3 Trockenläufe** (Block 13, `--ohne-tk`, `r300_eingabe_trockenlauf.py`) | Skripte, Klickspuren, Pult-Modell, Rechner-Thread im selben Prozess **ohne Tkinter** | Tkinter selbst | beide |
 | **4 Tk-Tests am echten Fenster** (§5, §6, `grafik_sw_tk_test.py`) | Klick → Pult-Steuerung → Rechner-Thread → Zustand im laufenden Fenster; Tasten im SW-Fenster; HW-Check | Aussehen, Gehör, Treffer- und Fokusprüfung des Pult-Fensters (die Wiedergabe umgeht das Tk-Mausereignis) | nur wer Tkinter und Bildschirm hat (bisher der Projektinhaber) |
@@ -45,13 +45,13 @@ GRAFIK (`c8205_grafik.py`, Aufruf auch über `c8205_interp.py` ohne `--MODUS`) i
 ### 3.1 Sammellauf
 
 ```
-bash testscripte/grafik_alle_tests.sh            alle 18 Blöcke
-bash testscripte/grafik_alle_tests.sh --schnell  ohne die beiden Gleichwertigkeitsläufe (16 Blöcke)
+bash testscripte/grafik_alle_tests.sh            alle 20 Blöcke
+bash testscripte/grafik_alle_tests.sh --schnell  ohne die beiden Gleichwertigkeitsläufe (18 Blöcke)
 ```
 
 Je Block eine Zeile `OK` oder `FEHLER` mit Laufzeit, bei Fehler die letzten 40 Ausgabezeilen; am Ende „Blöcke bestanden: n, fehlgeschlagen: m“. Rückgabewert 0 nur, wenn alle Blöcke bestanden sind. Das Skript setzt für sich `C8205_FENSTERLAGE=aus` (die Tests dürfen die gemerkte Fensterlage des Benutzers nicht beschreiben), `PYTHONDONTWRITEBYTECODE=1` und `PYTHONWARNINGS=ignore::ResourceWarning` (die Warnungen stammen aus dem unveränderten `c8205_interp.py`).
 
-### 3.2 Die 18 Blöcke
+### 3.2 Die 20 Blöcke
 
 Die Spalte „Erwartung“ ist bei allen: Rückgabewert 0 (alle Prüfungen des Skripts bestanden). Zahlen in Klammern sind die Prüfungszahlen zum Zeitpunkt der Abnahme laut Quelle, nicht neu gezählt.
 
@@ -62,10 +62,10 @@ Die Spalte „Erwartung“ ist bei allen: Rückgabewert 0 (alle Prüfungen des S
 | 3 | Checkpoint 4 | `grafik_checkpoint4_tests.py` | Gerätefehler brechen den Rechner nicht ab (Lauf endet mit Meldung, danach H G R neu), H bei Endlosschleife mit Ausgabebefehlen, Reaktionszeit von H bei echter Wartezeit, Stanzer legt an und schreibt fort |
 | 4 | Checkpoint 5 | `grafik_checkpoint5_tests.py` | `KonfigFehler` beim Verschieben in den `LOCHSTREIFENKORB` (letztes Lochbild wird nicht geliefert, Datei bleibt liegen) |
 | 5 | Stufe 2 | `grafik_pult_tests.py` (mit `-I`) | Pult-Steuerung ohne Tkinter, Tk-Schicht gegen Ersatzmodul |
-| 6 | Stufe 3 SW-Fenster | `grafik_sw_tests.py` (mit `-I`) | SW-Logik, Anbindung an die K0-Warteschlange, Tk-Schicht gegen Ersatzmodul (47 Prüfungen) |
+| 6 | Stufe 3 SW-Fenster | `grafik_sw_tests.py` (mit `-I`) | SW-Logik, Anbindung an die K0-Warteschlange, Tk-Schicht gegen Ersatzmodul (90 Prüfungen, Stand 21.10.2026; vorher 81; neu: zwei Tests zum ersten Zeichen nach dem Einschalten, OP-09; davor drei zur Fokus-Entprellung, OP-32) |
 | 7 | Stufe 3 Ende-zu-Ende | `grafik_sw_ende_zu_ende.py` (mit `-I`) | `ziffern` und `sw_zwei_ziffern` auf dem echten GRAFIK-Rechner, SW-Fenster durch die Logikschicht ersetzt; Ausgabe, Endzustand, Zeichenlage GB (15 Prüfungen) |
 | 8 | Stufe 3 Pult-Tasten | `grafik_sw_pult_test.py` (mit `-I`) | SW-Eingabe über Netzschalter, Hochlauf, Taste SW, G, R; Lage des SW (5 Prüfungen) |
-| 9 | Stufe 4 Töne | `grafik_stufe4_tests.py` (mit `-I`) | Mischer, Schreibwerkzeit, Klangwahl, Selektor SW, angezeigte Eingabe, Ausfall (Code 16); ohne Audiogerät, Zeitgeber und Zufall ersetzt (69 Prüfungen; mit `C8205_MISCHER=C` auch gegen das C-Modul) |
+| 9 | Stufe 4 Töne | `grafik_stufe4_tests.py` (mit `-I`) | Mischer, Schreibwerkzeit, Klangwahl, Selektor SW, angezeigte Eingabe, Ausfall (Code 16); ohne Audiogerät, Zeitgeber und Zufall ersetzt (90 Prüfungen, Stand 21.10.2026; vorher 80, die Angabe 69 war veraltet; neu fünf Tests zum Klang von WR, OP-42; mit `C8205_MISCHER=C` auch gegen das C-Modul) |
 | 10 | Stufe 5 `--MODUS` | `grafik_stufe5_tests.py` (mit `-I`) | Standard GRAFIK, TEST wie bisher, Wrapper; Unterprozesse mit eigener Trommelkopie; GRAFIK mit Ersatzmodul und leerem PATH, Start endet mit Code 16 |
 | 11 | Tastaturbelegung | `grafik_tastatur_tests.py` (mit `-I`) | `--TASTATUR de\|en` (G4-011) |
 | 12 | Abstand Umschalt-/Zeichentaste | `grafik_sw_abstand_tests.py` (mit `-I`) | Abstand bei gehaltener Umschalttaste (G4-011) |
@@ -75,8 +75,10 @@ Die Spalte „Erwartung“ ist bei allen: Rückgabewert 0 (alle Prüfungen des S
 | 16 | C-Module | `cd c-module && make test-alle && make clean` | drei Testrahmen (Trommel, Koinzidenz, `tonmisch`); `make clean` räumt die Objekte auf; die vorübersetzte `c8205_trommel.abi3.so` blieb im Probelauf (§10.1) byte-gleich |
 | 17 | Gleichwertigkeit `--alle` | `grafik_gleichwertigkeit.py --alle` | → §4 |
 | 18 | Gleichwertigkeit neue Geräte | `grafik_gleichwertigkeit.py --neue-geraete` | → §4 |
+| 19 | Trommelwächter, Selbsttest | `grafik_trommel_waechter_tests.py` (mit `-I`) | elf Prüfungen des Wächters mit Gegenproben in einem Temp-Ordner: unverändert → 0; geänderte, gelöschte oder neu entstandene `trommel.txt` bzw. `trommel.basp` → 1; Stand fehlt oder Aufruf falsch → 2 (OP-19, Variante b, 21.10.2026) |
+| 20 | Trommelwächter, Vergleich | `grafik_trommel_waechter.py pruefen <Stand>` | Letzter Block des Sammellaufs: vergleicht die Prüfsummen von `Trommel/trommel.txt` und `Trommel/trommel.basp` mit dem Stand, den das Skript vor dem ersten Block gemerkt hat; **FEHLER, wenn sich eine der beiden Dateien während des Laufs geändert hat** (die Datei wird nicht zurückgesetzt). Gilt auch bei `--schnell` |
 
-Die Nummern 1 bis 18 zählen die Blöcke in der Reihenfolge des Skripts; Block 13 ist im Skript der Trockenlauf des Tk-Tests, Block 14 der Stresstest.
+Die Nummern 1 bis 20 zählen die Blöcke in der Reihenfolge des Skripts (bei `--schnell` fehlen 17 und 18, 19 und 20 laufen trotzdem); Block 13 ist im Skript der Trockenlauf des Tk-Tests, Block 14 der Stresstest.
 
 ### 3.3 Skripte außerhalb des Sammellaufs
 
@@ -114,6 +116,8 @@ python3 testscripte/grafik_gleichwertigkeit.py --neue-geraete         (C): nur T
 **Erwartung:** keine Abweichung. Die einzige gewollte Ausnahme ist am Bandende des Lesers: GRAFIK wartet dort aktiv (Review F-11), TEST endet mit Meldung. Das Werkzeug bricht das Warten nach 1,5 s ab und meldet es als `ABWEICHUNG GEWOLLT`, und zwar nur dort, wo TEST am Bandende mit Meldung endet. Jede andere Abweichung ist ein Befund.
 
 **Stand der Abnahme:** `--alle` und `--neue-geraete` bestanden im Gesamtlauf vom 19.10.2026 (Projektinhaber, 18 von 18 Blöcken, A5-1, A5-5).
+
+**Schreibwerkzeit in den Tests (OP-40):** Der Sammellauf und die Gleichwertigkeitsläufe benutzen das Schreibwerk nicht und warten daher keine Schreibwerkzeit ab. Wie viel Zeit sie bei einem Lauf über den echten Treiber kostete, rechnet `python3 testscripte/grafik_sw_zeit_messung.py` aus der Schreibwerk-Ausgabe der Tests aus (Stand 21.10.2026: 33 von 199 Tests, 1233 Zeichen, rund 110 s). Das Skript gehört nicht zum Sammellauf.
 
 ## 5 Pult-Tastentest
 
@@ -381,11 +385,12 @@ Alles, was Aussehen, Gehör, Zeitgefühl und das Verhalten des Fenstermanagers b
 | H-4 | Hörprüfung | Handliste §7.3 | `./c8205_grafik.sh --HWCHECK` ohne `--STUMM` | Linux: Hörprüfung 1 (Befunde), Hörprüfung 2 **ok** (19.10.2026); Windows offen |
 | H-5 | Taktgefühl: Reaktion auf Klicks im Dauerlauf R | Wirkung eines Klicks spätestens 50 ms (OP-17); Tastenklang: Verzögerung höchstens 50 ms (Mischer, B-1), Vorlauf 20 ms + Puffer 20 ms | Dauerlauf starten, H und Tasten klicken; Logik misst die Reaktionszeit von H (Block 3) | vorläufig entschieden, **Erprobung im Dauerlauf offen** (OP-17) |
 | H-6 | Puffer im SW-Fenster am echten Fenster | 8 Eingaben, Ausnahme für Paare, kein Verfall (bestätigt 19.10.2026, OP-07) | Schnelltipp `a A a A` und längere Folgen; angezeigt = beim Rechner angekommen; mit `--DEBUGLOG` zeigt `SW Taste … voll` das Überlaufen | **nicht erprobt** |
-| H-7 | Eingabeklang beim ersten Zeichen | jedes angenommene Zeichen klingt (Beschreibung §6, OP-09) | mit `--DEBUGLOG` starten, erstes Zeichen tippen; je Eingabeklang schreibt das Log `SW Eingabeklang …` | Beobachtung 19.10.2026: kein Klick beim ersten Zeichen; **Ursache nicht gefunden** |
-| H-8 | `E+`, BR/BZ; G bei gehaltenem E | Beschreibung §3.8 | Pult: E niederdrücken und loslassen, BR und BZ ablesen; G bei gehaltenem E | **Entscheidungen offen** (OP-10, OP-11) |
+| H-7 | Eingabeklang beim Tastendruck | jedes Zeichen klingt **beim Tastendruck**, sobald es im Puffer ist (Beschreibung §6.2, OP-09, entschieden 21.10.2026); die Anzeige kommt erst bei der Annahme durch den Rechner; das **erste** Zeichen nach dem Einschalten (Paar mit Umschaltzeichen) klingt ebenfalls beim Drücken, angezeigt wird es nach dem Loslassen und der Annahme (§6.10 Nr. 3) | `testscripte/op09_eingabeklang.sh` starten (Test `sw_zwei_ziffern` auf frischer Trommelkopie, mit `--DEBUGLOG op09_debug.log`): Netz ein, G, R, als erstes Zeichen `2` tippen, danach `3`; Fenster schließen; Log lesen (`grep -E "Taste|Loslassen|Eingabeklang" op09_debug.log`): `SW Taste … -> folgt` und **sofort danach** `SW Eingabeklang …` (und `Stimmen im Mischer danach: n`, n größer 0); später `zweite Eingabe beim Loslassen -> geliefert` (Anzeige). Es muss **bei jedem Tastendruck** klicken, auch beim ersten und auch wenn der Rechner noch schreibt; ein Klick je Taste, keiner mehr bei der Anzeige. Steht die Zeile `Eingabeklang` da und es bleibt still: Tonstrom (Abspielprogramm) | Beobachtung 19.10.2026: kein Klick beim ersten Zeichen; Ursache 21.10.2026: Aufforderung des Testprogramms nach dem Umschaltzeichen (1,70 s); **Entscheidung (b) 21.10.2026, umgesetzt (G4-008/G4-010), Tests grün; Hören am Fenster steht aus** |
+| H-8 | `E+`: AR-Lampen zeigen BZ; G bei gehaltenem E | Beschreibung §3.8 Nr. 1, 2, 6 | Pult: E niederdrücken (ohne M), Lampenreihe AR ablesen (= BZ), loslassen; mit gehaltenem M: AR-Lampen zeigen das erhöhte AR; G bei gehaltenem E: nur FÜ erlischt, BR/AR bleiben | OP-10 und OP-11 entschieden 21.10.2026 und umgesetzt (G4-005, G2-011); Tests `EGetrennt` in `grafik_pult_tests.py` (82 von 82); **Handprüfung am Fenster nicht durchgeführt**; Fortsetzung nach G im Überlaufhalt bestätigt (OP-41) |
 | H-9 | Ausfall des Tonstroms im Betrieb | Fehlermeldung, Abbruch mit Code 16 (S4-04) | Abspielprogramm im Lauf beenden | Start geprüft (G4-019); **Ausfall im Betrieb am echten Gerät offen** |
 | H-10 | Bildschirm: Fensterlage und -größe | 1920 × 1080; Pult 1148 × 860 fest; Überlappen erlaubt (F-05) | Sichtprüfung; die gemerkte Fensterlage (in den Tests mit `C8205_FENSTERLAGE=aus` abgeschaltet) | Aussehen nicht beurteilt außer „keine Beanstandung gemeldet“; HiDPI, Mehrmonitorbetrieb, Wayland ungeprüft |
 | H-11 | Windows | → §9 | | offen |
+| H-12 | Lampenmittelung („ruhiges Bild“) im Dauerlauf | Fenster 40 ms; leuchtet ab 60 % „an“, dunkel bis 40 %, dazwischen bleibt der Zustand; bei Halt sofort genau (Beschreibung §3.5, OP-37) | Handliste §7.5 | Logik durch Tests belegt (`grafik_pult_tests.py`, Klasse `Beruhigung`); Werte vom Projektinhaber **bestätigt 21.10.2026** (OP-37); **Handprüfung am laufenden Fenster nicht durchgeführt** |
 
 ### 7.2 Handliste SW-Fenster (`grafik_sw_tk_test.py --manuell --DEBUGLOG`)
 
@@ -424,6 +429,7 @@ Aufruf: `./c8205_grafik.sh --HWCHECK` (ohne `--STUMM`), Lautstärke je Gruppe mi
 | Leser | Schwelle 100 ms, 60 ms; Pegel LL 1,3 (OP-06, bestätigt) | nicht gehört bzw. nicht berichtet |
 | Stanzer | 50 ms, 5 s (Dauerstanzen), LS | nicht berichtet |
 | angezeigte Eingabe, TAB, WRZL | Eingabe klingt wie Ausgabe; Umschaltzeichen stumm; TAB 400 ms | nicht berichtet |
+| WR (Wagenrücklauf ohne Zeilenschaltung) | eigener kurzer Klang, 120 ms, Anfang des WRZL-Klangs ohne den lauten Schlag (OP-42); zu hören mit `python3 ton/sw_ton.py "ab<WR>cd\r"`: WR kurz, `\r` = WRZL lang | **neu 21.10.2026, nicht gehört**; ob der Schnitt (vor dem Schlag bei etwa 126 ms) der gemeinte „markante Ton“ ist, entscheidet das Ohr (Beschreibung §6.10 Nr. 6) |
 | Schreibwerkzeit und Zeichenklang | 80 ms (70 bis 90 ms), 100 ms | nachgestellt (S4-16) |
 | Übergang `fade_in` zum Grundgeräusch | ohne Lücke | nicht berichtet |
 
@@ -453,6 +459,18 @@ Die Trommel wird in den Blöcken 15 (`test_c8205_trommel`, 11 Tests) und 16 (`ma
 
 **Nicht belegt:** Die alten Testrahmen `testframe.c` und `testframe_trommel.c` kompilieren, wurden mit der neuen Fassung aber nicht ausgeführt. Der Strg+C-Test wird unter Windows übersprungen. Windows ist insgesamt ungeprüft (§9, W-7).
 
+### 7.5 Handliste Lampenmittelung (H-12, OP-37)
+
+Die Logik (Konstanten, Schwellen, Fenster) ist durch Tests belegt (`grafik_pult_tests.py`, Klasse `Beruhigung`: Konstanten 0,04 s, 60 %, 40 %; Schwelle 6 von 10 an, 4 von 10 aus; 5 von 10 behält den Zustand; neue Lampe im Zwischenbereich bleibt dunkel; Beurteilung erst nach 40 ms). Ob das Bild am Fenster **ruhig wirkt**, zeigt nur das laufende Fenster. Die Werte stehen als Konstanten `MITTEL_FENSTER_S`, `MITTEL_AN`, `MITTEL_AUS` in `grafik_pult.py` und sind am Fenster einzustellen (Beschreibung §3.5).
+
+**So gehen Sie vor** (Vorschlag des Entwicklers, nicht durchgeführt):
+
+1. Die Trommel sichern oder mit `--trommel EIGENE_KOPIE.txt` starten (OP-19); `./c8205_grafik.sh --trommel EIGENE_KOPIE.txt` (mit `--STUMM`, wenn der Hochlauf nicht abgewartet werden soll).
+2. Netz einschalten, ein Programm laden, das **ohne Halt läuft** und die Lampen schnell wechseln lässt (zum Beispiel eine Zählschleife), und mit R in den Dauerlauf gehen.
+3. **Beobachten:** Die Lampen der Adressen (AR), des Befehlsregisters und der Flags dürfen nicht flackern. Eine Lampe, die den größten Teil der Zeit „an“ ist, leuchtet dauernd; eine, die selten „an“ ist, bleibt dunkel; eine, die etwa gleich oft wechselt, behält ihren Zustand.
+4. **H drücken:** Die Anzeige muss sofort den genauen Stand zeigen (kein Nachlaufen).
+5. **Zurückmelden:** Flackert eine Lampe? Wirkt das Bild zu träge oder zu unruhig? Welche Lampe? Danach ist über Fenster und Schwellen zu entscheiden.
+
 ## 8 Abnahmekriterien der Stufen 1 bis 5
 
 Kurzfassung der Kriterien und ihres Standes, als Referenz. Die Einzelheiten stehen in den Quellen (Dok. 07 bis 11), die mit Stufe 6 wegfallen.
@@ -464,7 +482,7 @@ Kurzfassung der Kriterien und ihres Standes, als Referenz. Die Einzelheiten steh
 | 1 | Kern und Trommel (`c8205_grafik.py`, C-Modul), Geräte | **18.10.2026** („abgenommen“, nach Hinweis auf den Stand in Checkpoint 49) | Windows ungebaut; Standardannahmen (1) bis (3) unbestätigt |
 | 2 | Pult-Fenster, Netzablauf, Rechnertöne, `--HWCHECK` | **18.10.2026** (ebenso) | Töne nicht gehört geprüft (dann Stufe 4); Windows; halber E-Befehl (OP-20); Dok. 06 nur zum Teil |
 | 3 | SW-Fenster | **18.10.2026** („bis hierhin alles ok, abgenommen“, nach Checkpoint 46/48) | PDFs durch den Projektinhaber (A-6, später erledigt); Handliste `[ ] #`, Schnelltipp, Kopieren nur gemeldet |
-| 4 | Töne (Mischer, Schreibwerk, Leser, Stanzer) | **19.10.2026** („ich nehme Stufe 4 ab“) | B-2 Windows und B-6 Windows offen; übrige Handbücher nicht auf Töne durchgesehen (OP-21) |
+| 4 | Töne (Mischer, Schreibwerk, Leser, Stanzer) | **19.10.2026** („ich nehme Stufe 4 ab“) | B-2 Windows und B-6 Windows offen; Handbücher am 21.10.2026 auf Töne durchgesehen, keine Änderung nötig (OP-21, Beschreibung §10.5) |
 | 5 | `--MODUS` TEST/GRAFIK, Standard GRAFIK | **19.10.2026** (ohne Windows) | A5-8 Windows: eigene, spätere Abnahme |
 | 6 | Dokumentation konsolidieren | in Arbeit | – |
 
@@ -496,7 +514,7 @@ Weitere belegte Meilensteine: erster echter Tk-Lauf `r300_eingabe` (Checkpoint 2
 | B-5 | Fehlendes Abspielprogramm: Abbruch mit Code 16 | Start erledigt (G4-019); **Ausfall im Betrieb offen** (H-9) |
 | B-6 | Hörprüfung am echten Rechner, Konstanten nachgestellt | Linux: Hörprüfung 2 ok; **Windows offen** |
 | B-7 | Bisherige Prüfungen bleiben grün, Tonstrom ändert kein Rechnerverhalten | erfüllt (19.10.2026, 18 von 18) |
-| B-8 | Dokumentation nachgeführt | Dateien nachgeführt, PDFs bestätigt; **offen:** übrige Handbücher nicht auf Töne durchgesehen (OP-21) |
+| B-8 | **Puffer am echten Fenster, Klicks im Dauerlauf, Eingabeklang beim ersten Zeichen** nicht erprobt oder nicht entschieden; E+/BR/BZ und G bei gehaltenem E sind entschieden und umgesetzt (OP-10, OP-11), nur die Handprüfung H-8 fehlt | → §7.1, H-5 bis H-8; OP-07, OP-17; OP-09: H-7, Beschreibung §10.5 | siehe Beschreibung §10 |
 
 ### 8.4 Stufe 5 (Dok. 11 §4)
 
@@ -559,14 +577,14 @@ Windows-Zeilen in den Berichten tragen „Windows“ und die Python-Version; ein
 
 | Nr. | Befund | Folge, Einordnung | Kennung |
 |---|---|---|---|
-| B-1 | **`sw_eingabe_leser_stanzer.test`** liefert im Gesamtlauf der Tests auf zurückgesetzter Trommel den Rückkehrcode 8. Ursache **nicht untersucht** | offen; das Testhandbuch nennt die Abweichung im Kasten „Achtung“ | OP-18, G5-009, Dok. 11 |
-| B-2 | **Trommeldatei wird von Testläufen verändert** (sie ist der Speicher des Rechners). Die Skripte dieses Dokuments arbeiten mit eigenen Kopien; im Probelauf vom 19.10.2026 (§10.1) blieb `Trommel/trommel.txt` unverändert | für einen reproduzierbaren Lauf vorher sichern oder `--trommel EIGENE_KOPIE` | OP-19 |
+| B-1 | **`sw_eingabe_leser_stanzer.test`** lieferte im Gesamtlauf auf zurückgesetzter Trommel den Rückkehrcode 8 (Knotenlimit erreicht, Endlosschleife: Zelle 0000 sprang nach 0001 statt nach 02000) | **Erledigt 21.10.2026:** Test entfernt (Entscheidung des Projektinhabers); `k1_leser_stanzer` deckt Leser und Stanzer ab. Das Testhandbuch-PDF ist neu zu erzeugen, dann entfällt der Kasten „Achtung“ | OP-18, G5-009, Dok. 11 |
+| B-2 | **Trommeldatei wird von Testläufen verändert** (sie ist der Speicher des Rechners). Die Skripte dieses Dokuments arbeiten mit eigenen Kopien; im Probelauf vom 19.10.2026 (§10.1) blieb `Trommel/trommel.txt` unverändert. **Seit 21.10.2026 (OP-19, Variante b) prüft der Sammellauf das selbst** (Blöcke 19 und 20, §3.2); Läufe außerhalb des Sammellaufs im Modus TEST verändern die Datei weiterhin, das ist gewollt | für einen reproduzierbaren Lauf außerhalb des Sammellaufs vorher sichern oder `--trommel EIGENE_KOPIE` | OP-19 |
 | B-3 | **ZIP-Archiv und Umlaut-Dateinamen:** Im ZIP heißen drei Dateien `…Eing#U00e4nge…`, `…#U00dcberblick…`, `…Durchf#U00fchrung…` statt `Eingänge`, `Überblick`, `Durchführung`. Wer das ZIP so entpackt, bekommt in den Blöcken 1 bis 4 `KonfigFehler: Knotendokumentation nicht gefunden: …Eingänge_der_Knoten.md`. **Nach dem Entpacken zurückbenennen** (`#U00e4` → `ä`, `#U00fc` → `ü`, `#U00dc` → `Ü`). Dasselbe Problem: Checkpoint 49 (A-1) musste die Dateien ebenfalls zurückbenennen; O6-1 | kein Fehler des Projekts; Hinweis für jeden, der aus dem ZIP prüft | O6-1, A-1 |
 | B-4 | **Klickspur und Sollfolge der R300-Eingabe fehlen im Archiv** (§6.5). Der echte Lauf und die Auswertung können so nicht starten; Neuerzeugung legt die Dateien in `Tests/` ab, wo die Regressionsschleife sie als Tests zählt (Code 16) | **Entschieden 19.10.2026 (Projektinhaber: „lassen“): so lassen**, Dateien bei Bedarf erzeugen und danach löschen (§6.5); die Skripte bleiben unverändert. Das Gerüst dieses Dokuments nannte „liegen in `Tests/` (G5-009)“; das ist überholt | G5-009, Dok. 11 |
 | B-5 | **Gravis in der Wiedergabe nicht erzeugbar** (Tottaste); Läufe enden mit 92 statt 93 Token und dem Gravis als `[BEKANNT]`. Am echten Fenster tippbar (F-56) | Wiedergabe-Artefakt, kein Fehler; keine Änderung | F-56 |
 | B-6 | **HW-Check-Fokus (B-5 aus Dok. 09):** Der Tk-Test meldet 1 WARNUNG, das SW-Fenster behalte den Fokus nicht; hängt vom Fenstermanager ab. „Fokus geht zum Pult zurück“ wurde einmal nicht übernommen (12:27) | als bekannte Eigenschaft akzeptiert; weiter beobachten | Dok. 09 §5d |
 | B-7 | **A5-2 und A5-4** liefen durch den Entwickler in einer Projektkopie, nicht am Rechner des Projektinhabers; vom Projektinhaber mit der Abnahme übernommen | zur Kenntnis | Dok. 11 |
-| B-8 | **Puffer am echten Fenster, Klicks im Dauerlauf, Eingabeklang beim ersten Zeichen, E+/BR/BZ, G bei gehaltenem E** nicht erprobt oder nicht entschieden | → §7.1, H-5 bis H-8; OP-07, OP-09, OP-10, OP-11, OP-17 | siehe Beschreibung §10 |
+| B-8 | **Puffer am echten Fenster, Klicks im Dauerlauf, Eingabeklang beim ersten Zeichen, E+/BR/BZ, G bei gehaltenem E** nicht erprobt oder nicht entschieden | → §7.1, H-5 bis H-8; OP-07, OP-10, OP-11, OP-17; OP-09: H-7, Beschreibung §10.5 | siehe Beschreibung §10 |
 
 ### 10.1 Probelauf vom 19.10.2026 (Entwicklungsumgebung)
 

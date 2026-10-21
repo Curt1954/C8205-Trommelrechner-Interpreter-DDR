@@ -1,0 +1,5 @@
+rc 0
+stderr dt_ohne_text.asm:2: Warnung: dt ohne Text
+anzahl-stderr 1 dt ohne Text
+nicht-stderr Fehler:
+datei-da obj

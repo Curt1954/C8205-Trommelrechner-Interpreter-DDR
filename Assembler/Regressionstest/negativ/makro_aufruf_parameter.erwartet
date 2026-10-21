@@ -1,0 +1,4 @@
+rc 16
+stderr makro_aufruf_parameter.asm:2: Fehler: erwartet 0 Parameter
+datei-weg obj mqo test
+escape-weg

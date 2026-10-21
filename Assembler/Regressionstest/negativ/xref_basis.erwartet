@@ -1,0 +1,6 @@
+args --xref
+rc 0
+stdout Querverweisliste (--xref)
+stdout 12 18
+stdout 9 15 16
+stdout (nie verwendet)

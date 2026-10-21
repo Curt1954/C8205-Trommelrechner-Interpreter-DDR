@@ -1,0 +1,46 @@
+               000            haupt          ; Zelle 0000: Sprung zum Hauptprogramm
+triadendruck:  equ100         00100              
+               240            td_rs          ; Rueckkehrbefehl sichern
+               211            konst_1        
+               000            spur_speich    
+schleife:      217            adr7777        ; das auszugebende Wort als Übergabe in R1
+               006            verschieben    
+               spa            00105          
+               dto            1              
+               dto            6              
+zu_gx:         520            adr7721        
+konst_7774:    dw             077740000000   
+               311            td_z           
+               170            td_rs          
+               004            zn             ; bd_z := bd_z + 1
+               spa            00114          
+               dto            4              
+verschieben:   006            speichern_r1   
+               db             1              ; ungenutzt
+konst_7:       dw             07             ; Konstante 0000 0000 007 zum Ausblenden
+               db             2              ; ungenutzt
+               spa            00122          
+               dto            2              
+               dto            7              
+speichern_r1:  240            adr7777        
+               200            konst_7        
+               000            zu_gx          
+konst_1:       dw             01             ; Konstante
+               spa            00130          
+               dto            0              
+               dto            5              
+spur_speich:   440            adr7724        ; AC auf Spur speichern
+               211            konst_7774     
+zn:            240            td_z           
+               000            schleife       
+               db             1              ; unbenutzt
+               spa            00137          
+               dto            3              
+haupt:         equ            02000          
+               030            04500          
+               dz             $inkb          
+               211            l0001          
+               240            adr7777        
+               025            triadendruck   
+               020            0000           
+l0001          dw             64             

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_rechnerton.py - Rechnertoene fuer GRAFIK ueber den Mischer (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-11, S4-12).
-Version: G4-002.  Nur Standardbibliothek.  Loest grafik_ton.RechnerTon (Stufe 2, je Klang ein Abspielprozess) ab; gleiche Schnittstelle
+Version: G4-004.  Nur Standardbibliothek.  Loest grafik_ton.RechnerTon (Stufe 2, je Klang ein Abspielprozess) ab; gleiche Schnittstelle
 (fade_in, grund_an, fade_out, alles_aus, fade_laeuft, dauer_fade_in, dauer_fade_out, verfuegbar), damit PultSteuerung unveraendert bleibt.
 
   * fade_in:   Einzelklang 'rechner' (Schluessel 'fade'), volle Laenge (11,3 s).

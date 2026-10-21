@@ -1,0 +1,4 @@
+args -WARN=SPR
+rc 0
+stdout Alle Sprungziele sind Befehle.
+nicht-stderr fuehrt auf

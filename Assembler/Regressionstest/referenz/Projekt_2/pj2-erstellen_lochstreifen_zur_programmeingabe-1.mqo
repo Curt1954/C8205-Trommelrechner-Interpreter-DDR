@@ -1,0 +1,14 @@
+             030          04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+             dtm          \Alles Ok\   ; Text "Alles Ok" ausgeben
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+halt:        020          0            ; Stopp: Programmende

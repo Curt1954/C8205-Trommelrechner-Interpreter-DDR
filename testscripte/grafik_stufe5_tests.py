@@ -51,7 +51,7 @@ class Modus(unittest.TestCase):
         self.assertEqual(rc, 2); self.assertIn('unbekannter Modus', text)
 
     def test_version_und_hilfe_bleiben_die_des_interpreters(self):
-        rc, text = self.lauf('--version'); self.assertEqual(rc, 0); self.assertIn('0.03-', text)
+        rc, text = self.lauf('--version'); self.assertEqual(rc, 0); self.assertRegex(text, r'\d+\.\d{2}-\d{3}')      # Versionsschema y.xx-zzz (C8205-Versionierung §1); die Unterversion wechselt (0.03 -> 0.95)
         rc, text = self.lauf('--help'); self.assertEqual(rc, 0); self.assertIn('--MODUS', text); self.assertIn('TEST|GRAFIK', text)
 
     def test_wrapper_setzt_modus_test(self):

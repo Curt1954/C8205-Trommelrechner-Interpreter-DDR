@@ -1,10 +1,11 @@
-//ca82_standards.h
+//ca82_standards.h - Version 1.00-026 (siehe ca82_version.h)
 #ifndef CA82_STANDARDS_H
 #define CA82_STANDARDS_H
 
 #include "c82_austausch.h"
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -53,10 +54,10 @@
 // Makros
 #define PRINT_FEHLER(format, ...) \
     do { \
-        int len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
-        char *em = malloc(len); \
+        int em_len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
+        char *em = malloc(em_len); \
         if (em) { \
-            snprintf(em, len, format, __VA_ARGS__); \
+            snprintf(em, em_len, format, __VA_ARGS__); \
             printFehler(em); \
             free(em); \
         } \
@@ -65,10 +66,10 @@
 
 #define PRINT_WARNUNG(format, ...) \
     do { \
-        int len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
-        char *em = malloc(len); \
+        int em_len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
+        char *em = malloc(em_len); \
         if (em) { \
-            snprintf(em, len, format, __VA_ARGS__); \
+            snprintf(em, em_len, format, __VA_ARGS__); \
             printWarnung(em); \
             free(em); \
         } \
@@ -76,10 +77,10 @@
 
 #define PRINT_MSG(format, ...) \
     do { \
-        int len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
-        char *em = malloc(len); \
+        int em_len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
+        char *em = malloc(em_len); \
         if (em) { \
-            snprintf(em, len, format, __VA_ARGS__); \
+            snprintf(em, em_len, format, __VA_ARGS__); \
             printMsg(em); \
             free(em); \
         } \
@@ -90,24 +91,28 @@ do { \
     int len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
     char *em = malloc(len); \
     if (em) { \
-        snprintf(em, len, format, __VA_ARGS__); \
+        snprintf(em, em_len, format, __VA_ARGS__); \
         printX(em); \
         free(em); \
     } \
 } while (0)
 
 
-#define _violett  "\033[35m"
-#define _gruen    "\033[32m"
-#define _gelb     "\033[33m"
-#define _normal   "\033[0m"
-#define _weiss    "\033[1;37m"
-#define _hellgelb "\033[1;93m"
-#define _hellgrau "\033[0;37m"
-#define _softgelb "\033[0;93m"
-#define _blau     "\033[0;34m"
-#define _hellblau "\033[1;34m"
-#define _hellrot "\033[1;31m"
+// Farben: nur bei Ausgabe auf ein Terminal (siehe main: isatty, NO_COLOR, --color, --no-color).
+// Bei Umleitung in Dateien oder Pipes sind alle Farbcodes leer.
+extern int farbeAktiv;
+#define FARBE_(code) (farbeAktiv ? (code) : "")
+#define _violett  FARBE_("\033[35m")
+#define _gruen    FARBE_("\033[32m")
+#define _gelb     FARBE_("\033[33m")
+#define _normal   FARBE_("\033[0m")
+#define _weiss    FARBE_("\033[1;37m")
+#define _hellgelb FARBE_("\033[1;93m")
+#define _hellgrau FARBE_("\033[0;37m")
+#define _softgelb FARBE_("\033[0;93m")
+#define _blau     FARBE_("\033[0;34m")
+#define _hellblau FARBE_("\033[1;34m")
+#define _hellrot  FARBE_("\033[1;31m")
 
 
 // Rueckgabecodes des Assemblers: 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch)
@@ -130,6 +135,8 @@ do { \
 #define LABEL_SIZE 64   // Maximale Länge eines Labels
 #define MAX_LINES 8192  // Maximale Größe des Ergebnis-Strings
 
+int gleichOhneGrossKlein(const char *a, const char *b);        // Vergleich ohne Gross-/Kleinschreibung
+int beginntOhneGrossKlein(const char *text, const char *praefix);  // dito, nur die ersten Zeichen (praefix)
 void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[], void (*printUsage)()) ;
 int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]);
 //void pruefeDateiX(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]);
@@ -144,6 +151,9 @@ void printX(const char *message);
 void printMsg(const char *message);
 void printFehler(const char *message);
 void printWarnung(const char *message);
+// Berichte nach Pass 3 (-WARN=..., --xref): Ausgabe auf STDOUT und, solange berichtLog gesetzt ist, auch ins .log
+extern FILE *berichtLog;
+void berichtPrintf(const char *format, ...) __attribute__((format(printf, 1, 2)));
 void removeNewline(char *line);
 void removeNewlines(char *line);
 void removeSpaces(char *str);
@@ -188,6 +198,16 @@ extern unsigned int spurnummer(unsigned int address);
 // Funktion: Sektornummer aus Adresse extrahieren
 extern unsigned int sektornummer(unsigned int address);
 
+
+// ---- Sichere Zeichenketten-Helfer (kuerzen statt ueberschreiben) ----
+// STRKOPIE(ziel, quelle) / STRANHANG(ziel, quelle): ziel muss ein Array sein (Groesse per sizeof).
+// Ein Zeiger als Ziel wird vom Compiler abgelehnt (negative Arraygroesse), damit nie
+// versehentlich nur sizeof(char*) Bytes verwendet werden. Zu lange Quellen werden abgeschnitten.
+void strkopiere(char *ziel, size_t groesse, const char *quelle);
+void stranhaengen(char *ziel, size_t groesse, const char *quelle);
+#define NUR_ARRAY(x) (sizeof(char[1 - 2 * __builtin_types_compatible_p(__typeof__(x), char *)]) ? sizeof(x) : 0)
+#define STRKOPIE(ziel, quelle)   strkopiere((ziel), NUR_ARRAY(ziel), (quelle))
+#define STRANHANG(ziel, quelle)  stranhaengen((ziel), NUR_ARRAY(ziel), (quelle))
 
 #endif // CA82_STANDARDS_H
 

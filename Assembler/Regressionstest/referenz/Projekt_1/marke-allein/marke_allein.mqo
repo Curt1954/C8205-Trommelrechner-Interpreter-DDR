@@ -1,0 +1,5 @@
+        000     a1      ; Sprung nach a1 (= b1)
+b1:     011     01000   ; Befehl mit Marke
+c1:     020     0       
+d1:     dw      0123    
+        000     daten   ; Sprung nach daten (= d1)

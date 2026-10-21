@@ -1,0 +1,248 @@
+beginn:                                                     030                                                         04500                                                       ; 4500 oder K2 oder LSL2 oder SW1 Output
+                                                            dtm                                                         \Geben Sie eine Ziffer von 0-3 ein\                         
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                                            dz                                                          $wrzl                                                       ; Zeilenschaltung
+                                                            030                                                         04700                                                       ; 4700 oder K0 oder SW1 Input oder KON Input
+lesen:                                                      011                                                         ztab                                                        ; Eingabe-Halt mit Loeschen: AC := <ztab ODER Zeichen>
+                                                            040                                                         eins                                                        ; AC<0 (z0)  -> Ziffer 1
+                                                            004                                                         *+1                                                         ; AC 1x links
+                                                            040                                                         zwei                                                        ; z1 -> z0   -> Ziffer 2
+                                                            004                                                         *+1                                                         
+                                                            040                                                         drei                                                        ; z2 -> z0   -> Ziffer 3
+                                                            004                                                         *+1                                                         
+                                                            040                                                         null                                                        ; z3 -> z0   -> Ziffer 0
+                                                            000                                                         lesen                                                       ; Ziffer 4 bis 9: uebergehen
+eins:                                                       030                                                         04500                                                       ; 4500 oder K2 oder LSL2 oder SW1 Output
+                                                            dtm                                                         \Es wurde die Ziffer 1 eingegeben, machen Sie weiter ...\   
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                                            dz                                                          $wrzl                                                       
+                                                            020                                                         0                                                           ; Stopp
+zwei:                                                       030                                                         04500                                                       ; 4500 oder K2 oder LSL2 oder SW1 Output
+                                                            dtm                                                         \Ziffer 2 eingegeben, machen Sie weiter ...\                
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                                            dz                                                          $wrzl                                                       
+                                                            020                                                         0                                                           ; Stopp
+drei:                                                       030                                                         04500                                                       ; 4500 oder K2 oder LSL2 oder SW1 Output
+                                                            dtm                                                         \Das ist jetzt Ziffer 3! Machen Sie weiter ...\             
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                                            dz                                                          $wrzl                                                       
+                                                            020                                                         0                                                           ; Stopp
+null:                                                       030                                                         04500                                                       ; 4500 oder K2 oder LSL2 oder SW1 Output
+                                                            dtm                                                         \Programmende\                                              
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                                            dz                                                          $wrzl                                                       
+                                                            020                                                         0                                                           ; Stopp
+                                                            equ100                                                      00400                                                           ; ztab muss durch 0100 teilbar sein
+ztab:                                                       dw                                                          004000000000                                                ; Ziffer 0 : z3
+                                                            dw                                                          040000000000                                                ; Ziffer 1 : z0
+                                                            dw                                                          020000000000                                                ; Ziffer 2 : z1
+                                                            dw                                                          010000000000                                                ; Ziffer 3 : z2
+                                                            dw                                                          0                                                           ; Ziffer 4 : keine Auswertung
+                                                            dw                                                          0                                                           ; Ziffer 5 : keine Auswertung
+                                                            dw                                                          0                                                           ; Ziffer 6 : keine Auswertung
+                                                            dw                                                          0                                                           ; Ziffer 7 : keine Auswertung
+                                                            dw                                                          0                                                           ; Ziffer 8 : keine Auswertung
+                                                            dw                                                          0                                                           ; Ziffer 9 : keine Auswertung

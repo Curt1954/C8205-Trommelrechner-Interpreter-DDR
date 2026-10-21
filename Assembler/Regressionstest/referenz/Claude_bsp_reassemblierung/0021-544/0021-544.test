@@ -1,0 +1,13 @@
+Trommeldatei:
+#DOK-0021 Test Ladebefehl und X-Wiederholung-Speicherbefehl und Linksverschiebung
+#SPEI-0021 4000-4037
+#SPUR-0021 4000
+#PROT STUFE=2
+0000: 00003000211 # 211 d3000
+0001: 00004001544 # 544 d4001
+0003: 00000000020 # 020 0
+0025: 00000021164 # 164 00021 ; 164 Leerbefehl (Diagnose)
+3000: 10000000000 # d3000: dw 010000000000
+3001: 00000000045 # dw 045
+Tastenfolge:
+H G R

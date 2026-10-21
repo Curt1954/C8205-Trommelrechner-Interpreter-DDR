@@ -1,0 +1,39 @@
+Trommeldatei:
+#DOK-0001 Abdruck numerischer Texte vom Lochband im R 300-Code (Programmieranleitung 5.15), Leser 2 -> Schreibwerk
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
+--leser2 Test-virtuelleGeraete/Leser2/bsp_5_15_lochstreifen.txt
+#PROT STUFE=2
+0000: 00003100000 # m0000: 000 m3100 ; Sprung zum Startstück
+3100: 00004500030 # m3100: 030 04500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)
+3101: 00001170030 # 030 01170 ; Umschaltung auf KB
+3102: 00003014000 # 000 m3014 ; Sprung zum Programmanfang
+3000: 00000200030 # m3000: 030 00200 ; Druck "0"
+3001: 00000010030 # 030 00010 ; Druck "1"
+3002: 00000020030 # 030 00020 ; Druck "2"
+3003: 00000230030 # 030 00230 ; Druck "3"
+3004: 00000040030 # 030 00040 ; Druck "4"
+3005: 00000250030 # 030 00250 ; Druck "5"
+3006: 00000260030 # 030 00260 ; Druck "6"
+3007: 00000070030 # 030 00070 ; Druck "7"
+3010: 00000100030 # 030 00100 ; Druck "8"
+3011: 00000310030 # 030 00310 ; Druck "9"
+3012: 00000320030 # 030 00320 ; Zwischenraum
+3013: 00003015000 # 000 m3015 ; Sprung zur Eingabe
+3014: 00004500030 # m3014: 030 04500 ; Anwahl 2, Programmanfang
+3015: 00003000011 # m3015: 011 m3000 ; Eingabe eines Zeichens, <AC> := Druckbefehl, falls Umstellung in Addition
+3016: 00003021240 # 240 m3021 ; <3021> := Druckbefehl
+3017: 00003021000 # 000 m3021 ; Sprung zum Druckbefehl
+3020: 00000400030 # 030 00400 ; Druck "+"
+3021: 00000000000 # m3021: 000 m0000 ; Druckbefehl (wird zur Laufzeit gesetzt)
+3022: 00003015000 # 000 m3015 ; Sprung zur Eingabe
+3032: 00002720030 # 030 02720 ; Wagenrücklauf mit Zeilenschaltung
+3033: 00003015000 # 000 m3015 ; Sprung zur Eingabe
+3040: 00001000030 # 030 01000 ; Druck "-"
+3041: 00003015000 # 000 m3015 ; Sprung zur Eingabe
+3073: 00001530030 # 030 01530 ; Druck ","
+3074: 00003015000 # 000 m3015 ; Sprung zur Eingabe
+3075: 00001550030 # 030 01550 ; Tabulator
+3076: 00003015000 # 000 m3015 ; Sprung zur Eingabe
+3061: 00000000020 # 020 0 ; unbedingter Stopp
+Tastenfolge:
+H G R

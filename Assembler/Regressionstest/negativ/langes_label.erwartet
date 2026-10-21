@@ -1,0 +1,4 @@
+rc 16
+stderr langes_label.asm:4: Fehler: Label
+datei-weg obj mqo test
+escape-weg

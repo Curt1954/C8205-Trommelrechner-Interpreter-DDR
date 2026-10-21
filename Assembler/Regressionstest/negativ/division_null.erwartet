@@ -1,0 +1,5 @@
+rc 16
+stderr division_null.asm:2: Fehler: Operand
+stderr (Division durch 0)
+datei-weg obj mqo test
+escape-weg

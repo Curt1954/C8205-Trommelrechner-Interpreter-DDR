@@ -1,0 +1,4 @@
+rc 16
+stderr makro_if_parameterzahl.asm:6: Fehler: BAD2 $IF benötigt 3, 7, 11 oder 15 Parameter
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,6 @@
+rc 16
+stderr .asm:2: Fehler: Symbol 'nirgends1' ist nicht definiert
+stderr .asm:21: Fehler: Symbol 'nirgends20' ist nicht definiert
+nicht-stderr nirgends21' ist nicht definiert
+stderr 25 Fehler insgesamt, 5 weitere Fehlermeldungen unterdrückt
+datei-weg obj mqo test

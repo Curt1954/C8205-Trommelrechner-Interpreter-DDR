@@ -15,6 +15,7 @@ class Rec:
     def __init__(self): self.abstaende = []
     def tippen(self, z, a): self.abstaende.append(a); return 'geliefert'
     puffer = []
+    def erwartet(self): return True          # G4-009: das Debug-Log des Fensters fragt '011 aktiv' ab
 
 
 def fenster():

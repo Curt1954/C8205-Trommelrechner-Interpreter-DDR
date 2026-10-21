@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_pult.py - Pult-Steuerung des Modus GRAFIK (Stufe 2). Reine Standardbibliothek, KEIN Tkinter (dadurch testbar).
-Version: G2-001
+Version: G2-011
 
 Aufgaben (GRAFIK_Beschreibung §4.5, §5.7 (alt: Dok. 01 Abschnitte 1.3, 1.7, 1.8, 3.5); GRAFIK_Beschreibung §4 (alt: Dok. 06)):
   * Netzablauf: AUS (Start) -> HOCHLAUF (B rot, 11,3 s) -> BETRIEB (B gruen) -> AUSLAUF (B dunkel, ~2 s) -> ENDE.
@@ -21,7 +21,7 @@ import threading
 
 from grafik_debuglog import log
 
-VERSION_PULT = 'G2-010'
+VERSION_PULT = 'G2-014'
 
 HOCHLAUF_S = 11.3       # Laenge von fade_in (GRAFIK_Beschreibung §3.6 (alt: Dok. 01 Abschnitt 1.8 Nr. 4)); Ton folgt in Stufe 4
 AUSLAUF_S = 2.0         # Laenge von fade_out (rund 2 s)
@@ -49,6 +49,11 @@ ROLLENGESPERRT = {'E', 'M', 'G', 'UE', 'T', 'SW'}
 # Computertastatur (GRAFIK_Beschreibung §4.5, §5.7 (alt: Dok. 01 Abschnitt 1.7)): Zeichen -> Manifestname
 TASTATUR = {**{c: c for c in '0123456789'}, '+': 'PLUS', '-': 'MINUS', ',': 'KOMMA', '.': 'PUNKT', ':': 'DOPPELPUNKT',
             'b': 'B', 'd': 'D', ' ': 'ZR'}
+
+# OP-47 (G2-013): Buchstabentasten der Computertastatur fuer die Pult-Tasten (Gross-/Kleinschreibung gleich): Buchstabe -> Manifestname.
+# S ist die Taste SW der Wippe T-SW. Umschalt+E und Umschalt+M wirken wie Umschalt+Klick (Halter). Die Sperren gelten wie bei der Maus,
+# weil alles durch klick() laeuft (Rollensperre, R bei gehaltenem E/M, Betrieb).
+TASTATUR_PULT = {'h': 'H', 'r': 'R', 'e': 'E', 'g': 'G', 'm': 'M', 't': 'T', 's': 'SW'}
 
 FLAG_LAMPEN = ('E', 'A', 'T', 'SW', 'K1', 'K2', 'K3', 'FE', 'FUE', 'BS', 'US', 'H')
 
@@ -329,9 +334,7 @@ class PultSteuerung:
                         pass
                 if taste in ('E', 'M') and taste not in self.halter:
                     self._an_rechner(taste + '-')               # Loslassen: bei E beginnen jetzt Phase II und III
-                if taste == 'M':
-                    self._blinken('M', jetzt)
-                return True
+                return True              # M-16 (G2-012): E und M gelten sofort als losgelassen, kein Weiterleuchten
             return False
 
     def fokus_verloren(self, jetzt):
@@ -339,18 +342,58 @@ class PultSteuerung:
         for t in list(self.maus_gehalten):
             self.loslassen(t, jetzt)
 
-    def tastatur(self, zeichen, jetzt):
-        """Computertastatur: nur Eingabetasten (GRAFIK_Beschreibung §4.5, §5.7 (alt: Dok. 01 Abschnitt 1.7))."""
-        name = TASTATUR.get(zeichen.lower() if zeichen.isalpha() else zeichen)
-        return self.klick(name, jetzt) if name else False
+    def tastatur(self, zeichen, jetzt, umschalt=False):
+        """Computertastatur (GRAFIK_Beschreibung §4.5): Eingabetasten und seit OP-47 die Buchstabentasten H R E G M T S. Druecken wirkt wie ein Mausklick;
+        umschalt (Umschalttaste gehalten, nicht Feststelltaste) gilt nur fuer E und M (Halter)."""
+        z = zeichen.lower() if zeichen.isalpha() else zeichen
+        name = TASTATUR.get(z)
+        if name:
+            return self.klick(name, jetzt)
+        name = TASTATUR_PULT.get(z)
+        if name:
+            return self.klick(name, jetzt, umschalt=bool(umschalt) and name in ('E', 'M'))
+        return False
+
+    def taste_klickbar(self, zeichen, umschalt=False):
+        """OP-48 (G2-014): Wuerde die Computertaste jetzt als Pult-Taste wirken? Reine Pruefung ohne Wirkung und ohne Aufzeichnung; nur fuer die
+        Buchstabentasten H R E G M T S (sonst False). Spiegelt die Sperren von _klick: Betrieb, Wippen, Rollensperre, R bei gehaltenem E/M, Halter."""
+        name = TASTATUR_PULT.get(zeichen.lower() if zeichen.isalpha() else zeichen)
+        if not name:
+            return False
+        with self._lock:
+            if not self.bedienbar():
+                return False
+            if name == 'H':
+                return 'H' not in self.rastet
+            if name == 'R':
+                return 'R' not in self.rastet and not self.halter
+            if self._r_stellung() and name in ROLLENGESPERRT:
+                return False
+            if name in ('T', 'SW'):
+                return name not in self.rastet
+            if name in ('E', 'M'):
+                return bool(umschalt) or name not in self.halter
+            return True                                  # G
+
+    def tastatur_los(self, zeichen, jetzt):
+        """Computertaste LOSGELASSEN: bei E und M wie das Loslassen der Maustaste (E-, M-); sonst ohne Wirkung."""
+        name = TASTATUR_PULT.get(zeichen.lower() if zeichen.isalpha() else zeichen)
+        if name in ('E', 'M'):
+            return self.loslassen(name, jetzt)
+        return False
 
     # ------------------------------------------------------------------ Anzeige
+    def _ar_lampen(self):
+        """Wert der Lampenreihe AR (OP-10): bei E+ ohne M (E gehalten) der BZ, sonst der Adressteil des BR; die Entscheidung trifft der Rechner (ar_lampen)."""
+        f = getattr(self.r, 'ar_lampen', None)
+        return (f() if f is not None else self.r.m.adr) & 0o7777
+
     def _werte(self):
         """Alle Lampenwerte des Rechners als flaches Dict (Schluessel 'f:E', 'a:bit', 'o:bit', 'v:V1')."""
         m = self.r.m
         w = {f'f:{n}': m.fl.get(n, 0) for n in FLAG_LAMPEN}
         w.update({f'v:{n}': m.fl.get(n, 0) for n in ('V1', 'V2')})
-        adr, or_ = m.adr, m.OR
+        adr, or_ = self._ar_lampen(), m.OR
         w.update({f'a:{b}': (adr >> b) & 1 for b in range(12)})
         w.update({f'o:{b}': (or_ >> b) & 1 for b in range(9)})
         return w
@@ -391,7 +434,7 @@ class PultSteuerung:
         gross['R'] = 'hell' if (betrieb and 'H' in fl and not fl['H']) else 'dunkel'
         gross['B'] = {HOCHLAUF: 'rot', BETRIEB: 'gruen'}.get(self.netz, 'dunkel')
         gross['N'] = 'gruen'
-        adr = (self.r.m.adr & 0o7777) if (self.r is not None and betrieb) else 0
+        adr = self._ar_lampen() if (self.r is not None and betrieb) else 0
         or_ = (self.r.m.OR & 0o777) if (self.r is not None and betrieb) else 0
         if mit is not None:
             adr = sum(mit.get(f'a:{b}', 0) << b for b in range(12))

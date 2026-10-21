@@ -1,0 +1,4 @@
+rc 16
+stderr belegung_ort.asm:4: Fehler: Adresse 0000 doppelt belegt
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,8 @@
+args -WARN=SPR
+rc 0
+stderr warn_spr_datenwort.asm:3: Warnung: Sprung '000 daten' (Adresse 0001) fuehrt auf 0003: dort liegt kein Befehl, sondern ein Datenwort (dw), Zeile 5.
+anzahl-stderr 1 fuehrt auf
+stdout Pruefung der Sprungziele (-WARN=SPR)
+stdout 1 Sprungziel ist kein Befehl.
+nicht-stdout nicht erreichbaren Code
+datei-da obj mqo test

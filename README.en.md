@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.95-002
+Version: 0.95-003
 
 [Deutsch](README.md) | **English**
 
@@ -47,15 +47,10 @@ as regression tests.
 | `c-module/` | C modules: drum, track lock, interrupt, sound mixer `tonmisch`; extension module in `c-module/python/` |
 | `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | checks and test scripts, e.g. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
-| `Hilfsprogramme/c8205_befehlssweep.py` | Completeness test over all 512 operation codes |
-| `c8205_interpreter.sh`, `c8205_interpreter.bat` | Wrappers: run a test and write the log to `Test-Protokolle/` |
-| `testscripte/compute_all_tests.sh` | runs the interpreter for all test definitions in `Tests/` |
-| `testscripte/c8205_bis_test.sh` | Wrapper for tests of the BIS building blocks: first loads the minimal program (`Tests/pj2-bis_minimalprogramm.test`), then the given test file |
-| `testscripte/test_bis.sh` | runs all BIS tests one after another (empty drum, minimal program, then each `pj2-bis_*` test) |
-| `testscripte/test.sh` | older version of `test_bis.sh` (without the test `pj2-bis_druck_bz_ac`) |
-| `testscripte/erzeuge_leere_trommel.py` | creates the empty drum file `Trommel/trommel.txt` (also resets a used drum) |
-| `Hilfsprogramme/c8205_lochstreifen_anzeige.py` | helper program: displays a virtual punched tape as plain text in a window |
-| `Hilfsprogramme/c8205_lochstreifen_eingabe.py` | helper program: creates a virtual punched tape from keyboard input in a window |
+| `Hilfsprogramme/` | helper programs: `c8205_befehlssweep.py` (completeness test over all 512 operation codes; run from the project folder with `--interp c8205_interp.py`, or from `Hilfsprogramme/` with `--interp ../c8205_interp.py`), `c8205_lochstreifen_anzeige.py` (shows a virtual punched tape as plain text in a window), `c8205_lochstreifen_eingabe.py` (creates a virtual punched tape from keyboard input), `c8205_lochstreifen_umwandlung.py` (converts a text file to a binary-coded R300 punched tape and back) |
+| `testscripte/` | test scripts; each one changes to the project directory itself and can be started from anywhere: `compute_all_tests.sh` (all test definitions in `Tests/`), `c8205_bis_test.sh` (BIS tests: first loads the minimal program `Tests/pj2-bis_minimalprogramm.test`, then the given test file), `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` (BIS tests one after another: empty drum, minimal program, then the `pj2-bis_*` tests; each a larger set), `test.sh` (older version of `test_bis.sh`), `erzeuge_leere_trommel.py` (creates the empty drum file `Trommel/trommel.txt`, also resets a used drum) |
+| `pult/` | images and manifest of the control-panel window (GRAFIK mode) |
+| `make_pdf.sh`, `make_all_pdf.sh` | helpers for generating the PDFs (scripts in the `pdf-layout-scripte/` folders) |
 | `markdown-dateien/` | Rule set and project description (.md); the interpreter reads the node graph from here |
 | `PDF/` | Readable versions of the documents (A4) |
 | `Tests/` | Test orders (mostly `.txt`; the extension is free, the assembler produces `.test`) |
@@ -66,18 +61,22 @@ as regression tests.
 | `Trommel/` | The drum file `trommel.txt`, shared by both interpreters |
 | `CSV/` | Overview table of all tests (`test_tabelle.py` produces `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` opens it in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Sub-project BIS (documentation only for now) |
-| `Assembler/` | Assembler `c82ass` with source code, binaries, examples and documentation |
+| `Assembler/` | Assembler `c82ass` with source code, Linux binary, examples and documentation |
 
 Abridged overview (subfolders of the logs and of the example projects are not listed individually):
 
 ```
 C8205/
 ├── c8205_interp.py                 Python interpreter
-├── c8205_interpreter.sh / .bat     Wrappers with log file
-├── Hilfsprogramme/                 c8205_befehlssweep.py (completeness test, 512 operation codes),
-│                                   c8205_lochstreifen_anzeige.py / _eingabe.py / _umwandlung.py
-├── testscripte/                    compute_all_tests.sh, c8205_bis_test.sh, test_bis.sh, test.sh,
-│                                   erzeuge_leere_trommel.py, grafik_* checks
+├── c8205_grafik.py / .sh / .bat    GRAFIK mode (panel window, typewriter window, sounds)
+├── grafik-interpreter-module/      Modules of GRAFIK mode (grafik_*.py)
+├── c-module/                       C modules (drum, track lock, interrupt, sound mixer)
+├── ton/                            Sounds and sound test harness
+├── pult/                           Images and manifest of the panel window
+├── Hilfsprogramme/                 Instruction sweep (512 operation codes), punched-tape helper programs
+├── testscripte/                    Test scripts (compute_all_tests.sh, BIS tests, GRAFIK checks,
+│                                   erzeuge_leere_trommel.py)
+├── make_pdf.sh, make_all_pdf.sh    PDF generation
 ├── markdown-dateien/               Rule set and project description (.md)
 ├── PDF/                            Readable versions (A4)
 ├── Tests/                          Test orders (.txt or .test)
@@ -94,13 +93,14 @@ C8205/
 ├── virtuelle_Geraete/              virtual devices of the GRAFIK interpreter
 │   ├── Leser1/, Leser2/            Punched tape input
 │   └── Stanzer1/                   Punch output
+├── README.md, README.en.md, LICENSE
 └── Assembler/
     ├── c82ass.sh                   Run the assembler
     ├── asm_alle.sh                 assemble all .asm files under a folder (reports errors only)
     ├── asm_aufraeumen.sh           delete unneeded files (.log, .mqo, .obj, .sym)
     ├── make_c82ass.sh / .bat       Build the assembler (Linux / Windows)
     ├── Sourcecode/                 C source code and macro file
-    ├── _Linux/, _Windows/          Binaries
+    ├── _Linux/                     Binary (build it yourself for Windows; _Windows/ currently holds none)
     ├── Dokumentation/              .odt (authoritative), .md, .pdf
     ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Project folders (any number, any name)
     └── Claude_bsp_reassemblierung/ Project folders: among others the source code of the tests in Tests/
@@ -128,13 +128,13 @@ c8205_interpreter.bat 0015-030.txt       # Windows
 Run all test definitions in `Tests/` at once:
 
 ```
-./testscripte/compute_all_tests.sh
+testscripte/compute_all_tests.sh
 ```
 
 All switches (devices, log depth, file checks) and error messages are described in
 `markdown-dateien/C8205-Interpreter-Python_Interpreter.md` (German).
 
-## Quick start: GRAFIK mode with panel, typewriter window and sounds (stage 4)
+## Quick start: GRAFIK mode with panel, typewriter window and sounds
 
 Besides batch mode (`c8205_interp.py`, no windows, no sound) there is GRAFIK mode: control-panel window, typewriter (SW)
 window and all sounds (computer, typewriter, paper-tape reader, tape punch).
@@ -142,18 +142,17 @@ window and all sounds (computer, typewriter, paper-tape reader, tape punch).
 ```
 python3 c8205_grafik.py                    # with sound (Linux: needs paplay, pw-cat, aplay or ffplay)
 python3 c8205_grafik.py --STUMM            # no sound, no start-up delay
-python3 c8205_grafik.py --TON=5955         # volume per group: panel, SW, reader, punch (0 = mute, 5 = default)
+python3 c8205_grafik.py --TON=5955         # volume per group: panel, SW, reader, punch (0 = mute, 5 = default, i.e. 5555)
 python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
 ```
 
-- Typewriter: **80 ms writing time per character (70 to 90 ms), character sound 100 ms**, tab 400 ms, carriage return 360 ms.
+- Typewriter: **80 ms writing time per character (70 to 90 ms), character sound 100 ms**, tab 400 ms, carriage return with line feed (WRZL) 360 ms, carriage return without line feed (WR) 120 ms (first half of the WRZL sound).
   With the SW selector latched there is no output, no sound and no waiting.
 - Punch: about 50 characters per second; continuous punching below 50 ms spacing, off after 5 s without a character.
 - Without a playback program, start-up without `--STUMM` ends with return code 16.
 - The mixer is the C module `c-module/tonmisch.c` (linked into the extension module `c8205_trommel`; build with
   `cd c-module/python && python3 setup.py build_ext --inplace`). Without the built module the Python mixer is used.
-- **Status:** stage 4 is written and logic-tested on Linux; the listening test, a complete hand run of all acceptance cases
-  and Windows (`winmm`) are still open. Details (German): `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (description) and `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (testing, open points).
+- **Status:** On Linux the logic tests and the listening test (19 Oct 2026) have been done; Windows (`winmm`) is untested. Details and open points (German): `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (description) and `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (testing, hand checklists).
 - `ton/sw_ton.py` stays as a stand-alone test harness for the sounds (`ton/SW_Ton_Beschreibung.md`, German).
 
 Copy-tape example: `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` reads from reader 1 (`ANWAHL LSL1`) and punches to punch 1
@@ -169,17 +168,19 @@ instruction are described in `markdown-dateien/C8205-Interpreter-Durchführung_e
 
 ## Quick start: assembler
 
-The assembler runs on Linux and Windows 10. Call on Linux:
+The assembler runs on Linux and Windows 10; the Linux binary is included (`Assembler/_Linux/`), on Windows you build it
+yourself (see below). Call on Linux, **from the `Assembler/` folder**:
 
 ```
-Assembler/c82ass.sh -p Projekt_1/bsp_16 -s bsp_5_16
+cd Assembler
+./c82ass.sh -p Projekt_1/bsp_5.16 -s bsp_5_16
 ```
 
 Assemble all `.asm` files below a folder at once (only errors are reported; exit code 0 = no errors,
 1 = errors):
 
 ```
-Assembler/asm_alle.sh [base directory]
+Assembler/asm_alle.sh [base directory]   # default: Assembler/; can be started from anywhere
 ```
 
 To build it from the source code: `Assembler/make_c82ass.sh` (Linux) or `Assembler/make_c82ass.bat`
@@ -227,6 +228,12 @@ All PDFs are in German.
 | `C8205-Knotentabellen_A4.pdf` | Node table and variable table T2 in the wording of the sources |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generic instruction description and overview of all 512 operation codes |
 | `C8205-Kodetabellen_A4.pdf` | Character code table (R 300 punched tape code) |
+| `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` | Orientation for newcomers: what the project contains, reading order |
+| `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | The punched-tape helper programs in `Hilfsprogramme/` |
+| `C8205-Projektstruktur_A4.pdf` | Directory structure of the whole project |
+| `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | Design guideline for all PDF output |
+| `CSV/C8205-Testuebersicht_A4.pdf` | Overview of all tests |
+| `Bausteininterpretiersystem BIS/markdown-dateien/C8205-BIS_A4.pdf` | The building-block interpreter system BIS |
 | `Assembler/Dokumentation/C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: call, language, macros, example |
 
 ## Status
@@ -254,7 +261,3 @@ remain with their respective owners.
 
 The rule set was reconstructed from original documentation of the machine (among others the programming manual and
 the original documentation). The documents cite them section by section.
-
-## Change: interpreter 0.03-016 (18 Oct 2026)
-
-The K0 selection command evaluates the persistent position of the SW switch (input from the typewriter window in GRAFIK mode). Description (German): `C8205-Versionierung.md` (Abschnitt 10.2); manuals (German): `C8205-Interpreter-Bedienpult_mit_Schaltern.md`, `C8205-Interpreter-Python_Interpreter.md`. The PDFs under `PDF/` have not been regenerated yet.

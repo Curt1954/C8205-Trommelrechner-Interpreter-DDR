@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00003000000 # 000 maximum ; Sprung zum Programmanfang (Zelle 0000)
+3000: 00003020211 # maximum: 211 a ; M:=a
+3001: 00003021330 # 330 b ; M>=b ?
+3002: 00003004150 # 150 nachb ; Sprung, wenn M>=b
+3003: 00003021211 # 211 b ; M:=b
+3004: 00003022330 # nachb: 330 c ; M>=c ?
+3005: 00003007150 # 150 nachc ; Sprung, wenn M>=c
+3006: 00003022211 # 211 c ; M:=c
+3007: 00007776240 # nachc: 240 r2 ; M -> R2 (absolute Adresse, Kennzeichen 00)
+3010: 00001111021 # 021 stoppnr ; Stopp (Adreßteil 1111 absolut)
+3020: 00000000100 # a: dw 0100
+3021: 00000000300 # b: dw 0300
+3022: 00000000200 # c: dw 0200
+Tastenfolge:
+H G R

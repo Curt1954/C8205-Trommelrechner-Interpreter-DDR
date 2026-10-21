@@ -1,0 +1,21 @@
+0000: 01 3000 000            000 euklid  ; Sprung zum Programmanfang (Zelle 0000)
+      20 0000 3000           equ 03000   
+3000: 01 3012 211    euklid: 211 a       ; ac:=a
+3001: 01 3013 330            330 b       ; a = b ?
+3002: 01 3013 170            170 ende    ; Sprung bei gleich
+3003: 01 3005 140            140 vcspei  ; a < b ? -> c:=a
+3004: 01 3013 220            220 b       ; ac:=a-b
+3005: 01 3015 240    vcspei: 240 c       ; c:=a / c:=a-b
+3006: 01 3013 211            211 b       ; ac:=b
+3007: 01 3012 240            240 a       ; a:=b
+3010: 01 3015 211            211 c       ; ac:=c
+3011: 01 3013 240            240 b       ; b:=c
+3012: 01 3000 000            000 euklid  ; Schleife
+3013: 00 7774 240    ende:   240 t       ; t:=a
+3014: 00 1111 021            021 stoppnr ; Stopp
+3015: 20 3016        c:      db  1       ; Hilfszelle c (db belegt nichts, wird nicht geprueft)
+      20 0000 3012           equ 03012   ; FEHLER: liegt noch im Programm (3000 bis 3014)
+3012: 00 00000000060 a:      dw  060     
+                     ;*** 3 Fehler: Adresse 3012 doppelt belegt: "a: dw 060" ueberschneidet sich mit " 000 euklid".   
+3013: 00 00000000044 b:      dw  044     
+                     ;*** 3 Fehler: Adresse 3013 doppelt belegt: "b: dw 044" ueberschneidet sich mit "ende: 240 t".   

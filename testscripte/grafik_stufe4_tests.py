@@ -15,7 +15,7 @@ if os.environ.get('C8205_MISCHER') == 'C':
         raise SystemExit('C8205_MISCHER=C, aber das C-Modul tonmisch ist nicht gebaut (c-module/python: python3 setup.py build_ext --inplace)')
     TM.Mischer, TM.ListenSenke, TM.ProzessSenke = TC.CMischer, TC.CListenSenke, TC.CProzessSenke
     MISCHER_ART = 'C'
-from grafik_schreibwerk import Schreibwerk, zeichen_aus_text
+from grafik_schreibwerk import Schreibwerk, zeichen_aus_text, _art
 from c8205_grafik import SwSenke
 
 
@@ -87,18 +87,29 @@ class Mischer(unittest.TestCase):
         self.assertEqual(b[0], 1000); self.assertLess(abs(b[-1]), 100)          # Ende ausgeblendet
         k = klang(100); self.assertIs(TM.begrenze(k, 100), k)                     # kuerzer: unveraendert zurueck
 
-    def test_echte_dateien_laden_24_zeichen_tab_wrzl(self):
+    def test_echte_dateien_laden_24_zeichen_tab_wrzl_wr(self):
         sw = Schreibwerk.laden(os.path.join(PROJ, 'ton'), None)
         self.assertEqual(len(sw.zeichen_klaenge), 24)
         self.assertTrue(all(len(k) <= 4410 for k in sw.zeichen_klaenge))
         self.assertEqual(len(sw.tab), 17640); self.assertEqual(len(sw.wrzl), 15876)
+        self.assertEqual(len(sw.wr), 5292)                                         # OP-42: 120 ms
+
+    def test_wr_klang_ist_der_anfang_des_wrzl_klangs_vor_dem_markanten_ton(self):
+        """OP-42 (Entscheidung 21.10.2026): wr.wav = erste 120 ms von wrzl.wav, letzte 5 ms ausgeblendet; der laute Schlag (ab etwa 126 ms) fehlt."""
+        sw = Schreibwerk.laden(os.path.join(PROJ, 'ton'), None)
+        n, aus = 5292, 220                                                          # 120 ms, 5 ms Ausblendung
+        self.assertEqual(list(sw.wr[:n - aus]), list(sw.wrzl[:n - aus]))           # davor unveraendert
+        self.assertNotEqual(list(sw.wr[n - aus:]), list(sw.wrzl[n - aus:n]))       # Ausblendung vorhanden
+        self.assertLess(abs(sw.wr[-1]), 50)                                         # endet leise, kein Knacken
+        self.assertLess(max(abs(v) for v in sw.wr), 12000)                          # der Schlag mit Spitze 12941 (ab etwa 126 ms) ist nicht darin
+        self.assertGreater(max(abs(v) for v in sw.wrzl[5292:5800]), 12000)         # (Gegenprobe: im WRZL-Klang liegt er gleich dahinter)
 
 
 class Werk(unittest.TestCase):
     def neu(self, mit_mischer=True, seed=1):
         self.zeiten = []
         self.m = TM.Mischer() if mit_mischer else None
-        k = {'zeichen': [klang(5292, 100 + i) for i in range(24)], 'tab': klang(17640, 7), 'wrzl': klang(15876, 8)}
+        k = {'zeichen': [klang(5292, 100 + i) for i in range(24)], 'tab': klang(17640, 7), 'wrzl': klang(15876, 8), 'wr': klang(5292, 9)}
         return Schreibwerk(self.m, k, schlafe=self.zeiten.append, zufall=random.Random(seed))
 
     def test_schreibwerkzeit_70_bis_90_ms_gleichverteilt(self):
@@ -113,6 +124,28 @@ class Werk(unittest.TestCase):
         w = self.neu(); w.ausgabe('\t'); w.ausgabe('\n'); w.ausgabe(' '); w.ausgabe('<Nr.5>')
         self.assertEqual(self.zeiten[0], 0.4); self.assertEqual(self.zeiten[1], 0.36)
         self.assertTrue(0.07 <= self.zeiten[2] <= 0.09); self.assertEqual(len(self.zeiten), 4)       # <Nr.5> = ein Zeichen
+
+    def test_wr_120_ms_eigener_klang_nicht_wrzl(self):
+        """OP-42: <WR> (Wagenruecklauf ohne Zeilenschaltung) hat Klang und Schreibwerkzeit 120 ms; WRZL bleibt 360 ms, jedes andere benannte Zeichen ein Zeichen."""
+        self.assertEqual(_art('<WR>'), 'wr'); self.assertEqual(_art('\n'), 'wrzl'); self.assertEqual(_art('<WRZL>'), 'zeichen')
+        self.assertEqual(_art('<Nr.5>'), 'zeichen'); self.assertEqual(_art('\t'), 'tab')
+        w = self.neu(); w.ausgabe('<WR>')
+        self.assertEqual(self.zeiten, [0.12]); self.assertEqual(self.m.klingt(), 1)
+        self.assertEqual(samples(self.m.block())[0], int(9 * w.pegel))               # Kennung 9 des WR-Klangs mal Pegel (nicht 8 = WRZL, nicht 100+i = Zeichen)
+        w.ausgabe('a<WR>\nb')                                                         # Zeichen, WR, WRZL, Zeichen
+        self.assertEqual([round(z, 3) for z in self.zeiten[2:4]], [0.12, 0.36]); self.assertEqual(len(self.zeiten), 5)
+
+    def test_wr_ohne_klangdatei_still_aber_mit_schreibwerkzeit(self):
+        k = {'zeichen': [klang(5292)] * 3, 'tab': klang(10), 'wrzl': klang(10)}       # 'wr' fehlt: kein Absturz, kein Klang, Zeit bleibt
+        zeiten = []; m = TM.Mischer(); w = Schreibwerk(m, k, schlafe=zeiten.append); w.ausgabe('<WR>')
+        self.assertEqual(zeiten, [0.12]); self.assertEqual(m.klingt(), 0)
+
+    def test_wr_stumm_schreibwerkzeit_ja(self):
+        w = self.neu(mit_mischer=False); w.ausgabe('<WR>'); self.assertEqual(self.zeiten, [0.12])
+
+    def test_wr_als_angezeigte_eingabe_klingt_ohne_schreibwerkzeit(self):
+        w = self.neu(); w.eingabe('<WR>'); self.assertEqual(self.zeiten, []); self.assertEqual(self.m.klingt(), 1)
+        self.assertEqual(samples(self.m.block())[0], int(9 * w.pegel))
 
     def test_zeichenklang_100_ms_nie_zweimal_derselbe(self):
         w = self.neu(); letzter = None
@@ -149,6 +182,54 @@ class Werk(unittest.TestCase):
         self.assertEqual(self.m.klingt(), 3)
 
 
+class SchreibwerkzeitUndH(unittest.TestCase):
+    """OP-40/OP-39: Hängt der Rechner-Thread in der Schreibwerkzeit, blockiert das weder die Pult-Taste H noch das Beenden.
+    Echtzeit (einmal 0,4 s, TAB ist die längste Schreibwerkzeit eines Ausgabebefehls)."""
+
+    def test_ein_ausgabebefehl_ist_ein_zeichen(self):
+        """Aufrufstelle c8205_interp.py: sw_schreibe(m, sw_zeichen(m, z)) je Befehl, also genau ein Zeichen oder ein <Name>."""
+        for text in ('a', '\t', '\n', '<WR>', '<WRZL>', '<Nr.7>'):
+            self.assertEqual(len(list(zeichen_aus_text(text))), 1, text)
+
+    def test_ein_befehl_hoechstens_400_ms(self):
+        w = Schreibwerk(None, None, schlafe=lambda t: None, zufall=random.Random(1))
+        langste = max(w.zeit(a) for a in ('tab', 'wrzl', 'wr', 'zeichen'))
+        self.assertLessEqual(langste, 0.4)
+
+    def test_pult_taste_h_blockiert_nicht_in_der_schreibwerkzeit(self):
+        import types
+        import c8205_grafik as G
+        r = G.Rechner({}, types.SimpleNamespace(), pult_modus=True)
+        r.thread_modus = True
+        r.sw.schreibwerk = Schreibwerk(None, None)            # echtes time.sleep
+        im_werk = threading.Event(); fertig = threading.Event()
+
+        def rechner():
+            im_werk.set(); r.sw.schreibe('\t'); fertig.set()    # TAB: 400 ms Schreibwerkzeit
+        th = threading.Thread(target=rechner, daemon=True); th.start()
+        self.assertTrue(im_werk.wait(1))
+        time.sleep(0.05)
+        self.assertFalse(fertig.is_set())                     # der Rechner-Thread steckt in der Schreibwerkzeit
+        t0 = time.monotonic(); r.pult_taste('H'); dauer = time.monotonic() - t0
+        self.assertLess(dauer, 0.05)                          # die Pult-Taste kehrt sofort zurueck (nur vorgemerkt)
+        self.assertTrue(r._h_angefordert.is_set())            # und H ist angefordert: wirkt an der naechsten Befehlsgrenze
+        self.assertFalse(fertig.is_set())
+        th.join(2); self.assertTrue(fertig.is_set())
+
+    def test_abbrechen_blockiert_nicht_in_der_schreibwerkzeit(self):
+        import types
+        import c8205_grafik as G
+        r = G.Rechner({}, types.SimpleNamespace(), pult_modus=True)
+        r.thread_modus = True
+        r.sw.schreibwerk = Schreibwerk(None, None)
+        im_werk = threading.Event()
+        th = threading.Thread(target=lambda: (im_werk.set(), r.sw.schreibe('\t')), daemon=True); th.start()
+        self.assertTrue(im_werk.wait(1)); time.sleep(0.05)
+        t0 = time.monotonic(); r.abbrechen(); dauer = time.monotonic() - t0
+        self.assertLess(dauer, 0.05)
+        th.join(2)
+
+
 class Senke(unittest.TestCase):
     def test_selektor_sw_keine_ausgabe_kein_ton_keine_zeit(self):
         zeiten = []; m = TM.Mischer()
@@ -171,13 +252,23 @@ class Senke(unittest.TestCase):
 
 
 class Fenster(unittest.TestCase):
-    def test_eingabe_echo_klingt_auch_bei_selektor_sw(self):
+    def test_eingabe_klick_klingt_auch_bei_selektor_sw(self):
+        """OP-09 (21.10.2026): der Klang der Eingabe kommt aus _klick_eingabe (beim Tastendruck), der Selektor SW wirkt nicht auf ihn."""
         import types, grafik_sw_fenster as F
         gespielt = []
         w = types.SimpleNamespace(senke=types.SimpleNamespace(schreibwerk=types.SimpleNamespace(eingabe=gespielt.append),
                                                               unterdruecken=True), q=__import__('queue').Queue())
+        F.SwFenster._klick_eingabe(w, 'a')
+        self.assertEqual(gespielt, ['a']); self.assertTrue(w.q.empty())      # Klang ja, Anzeige noch nicht
+
+    def test_eingabe_echo_zeigt_nur_an(self):
+        """OP-09: _echo_eingabe (Annahme durch den Rechner) zeigt nur an und klingt nicht noch einmal."""
+        import types, grafik_sw_fenster as F
+        gespielt = []
+        w = types.SimpleNamespace(senke=types.SimpleNamespace(schreibwerk=types.SimpleNamespace(eingabe=gespielt.append),
+                                                              unterdruecken=False), q=__import__('queue').Queue())
         F.SwFenster._echo_eingabe(w, 'a')
-        self.assertEqual(gespielt, ['a']); self.assertEqual(w.q.get_nowait(), 'a')
+        self.assertEqual(gespielt, []); self.assertEqual(w.q.get_nowait(), 'a')
 
 
 # ===================================================================================================================
