@@ -1,5 +1,5 @@
 @echo off
-rem Version 1.00-026
+rem Version 1.00-030
 rem c82ass.bat - Windows-Pendant zum Linux-Skript "c82ass"
 rem Erzeugt den C8205-Assembler fuer Windows 10 mit dem MinGW-w64-Compiler.
 rem Voraussetzung: gcc.exe (MinGW-w64) muss im PATH liegen, z.B. ueber

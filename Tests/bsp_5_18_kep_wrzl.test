@@ -1,0 +1,30 @@
+Trommeldatei:
+#DOK-0001 Kleines Eingabeprogramm KEP (Programmieranleitung 5.18, Abb. 27): derselbe Streifen wie bsp_5_18_kep, mit WRZL (SatzMarke) nach jedem ":" und "." (WRZL wirkt im KEP wie ZWR, Zelle 0032)
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/kep_eingabe_wrzl.txt
+#SPEI-0001 3000-3004
+#SPEI-0001 7723-7724
+#PROT STUFE=2
+0000: 00000002000 # m0000: 000 m0002 ; Sprung zum Programmanfang des KEP
+0002: 00000022000 # m0002: 000 m0022 ; Programmanfang
+0014: 00007723211 # m0014: 211 m7723 ; <AC>:=<7723>
+0015: 00000025210 # 210 m0025 ; <AC>:=<AC>+1°
+0016: 00007723240 # m0016: 240 m7723 ; <7723>:=<AC> = Leitbefehl
+0017: 00000030001 # 001 m0030 ; <AC>:=0, Sprung zur Eingabe
+0020: 00000000000 # 000 m0000 ; "0" Konstante im R 300-Code
+0021: 40000000000 # dw 040000000000 ; "1" Konstante im R 300-Code
+0022: 00000037211 # m0022: 211 m0037 ; <AC>:=0014 000
+0023: 00007724240 # 240 d7724 ; <7724>:=0014 000
+0024: 00000030001 # 001 m0030 ; "ZWR" im FS-Code, <AC>:=0
+0025: 00000001000 # m0025: 000 m0001 ; Konstante (Adresseneinheit 1°)
+0026: 00000000000 # 000 m0000 ; "0" Konstante im FS-Code
+0027: 40000000000 # dw 040000000000 ; "1" Konstante im FS-Code (Zeile im Listing verdruckt, ergaenzt)
+0030: 00000020010 # m0030: 010 00020 ; E (0|1|:|.|ZWR), Eingabe-Halt
+0031: 00000030006 # 006 m0030 ; <AC>:=Vzl(<AC>), Sprung zur Eingabe
+0032: 00000030001 # 001 m0030 ; "ZWR" im R 300-Code, <AC>:=0
+0033: 00007723000 # 000 m7723 ; "." im R 300-Code, Sprung zur Ausfuehrung des Leitbefehls
+0034: 00007723000 # 000 m7723 ; "." im FS-Code
+0035: 00000016000 # 000 m0016 ; ":" im R 300-Code, Leitbefehl speichern
+0036: 00000016000 # 000 m0016 ; ":" im FS-Code
+0037: 00000014000 # m0037: 000 m0014 ; Konstante 0014 000
+Tastenfolge:
+H SW=1 G R

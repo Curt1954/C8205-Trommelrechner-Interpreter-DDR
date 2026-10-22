@@ -177,6 +177,8 @@ ls_ton() -> float
 
 Die Funktion wird **bei jedem Eingabe-Halt von Kanal K1 oder K2** einmal aufgerufen, ohne Parameter. Bei 130 Zeichen/s (7,7 ms je Zeichen) wären einzelne Töne nicht mehr unterscheidbar. Deshalb richtet sich der Klang nach dem **Abstand der Aufrufe**, und der Ton läuft im Hintergrund.
 
+> **Nachführung 22.10.2026 (G4-005, Wunsch des Projektinhabers; ersetzt die Tabelle 9.1 und die Schwelle von 100 ms in GRAFIK):** Der Ton hängt am tatsächlichen Benutzen des Lesers (ein Zeichen wird geliefert), nicht am Warten im Eingabe-Halt. Läuft kein Ton, startet der Einzelton (148 ms bis zu seinem Ende); die Befehlsschleife ist nach 1/10 s wieder frei. Kommt dann der nächste Zugriff und der Einzelton läuft noch, wird er abgebrochen und durch den Dauerton ersetzt, der ab diesem Moment läuft; die Befehlsschleife ist danach je Zeichen nach 1/130 s frei. Läuft der Einzelton nicht mehr, beginnt wieder ein Einzelton. Folgt `LS_AUS_S` (3 s, geschätzt, nachzustellen) lang kein Zugriff, geht der Ton aus (Dauerton mit 60 ms Auslaufen) und der Ablauf beginnt von vorn. Umgesetzt in `grafik_geraeteton.LeserTon`; `sw_ton.py` ist unverändert.
+
 ### 9.1 Verhalten
 
 | Lage | Klang |

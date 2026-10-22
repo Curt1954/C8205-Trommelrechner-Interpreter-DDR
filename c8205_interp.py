@@ -3,7 +3,7 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
-Version: 0.95-001
+Version: 0.95-002
 (Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
 REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
 Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
@@ -11,7 +11,7 @@ Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinh
 Aufruf:  python3 c8205_interp.py [--MODUS TEST|GRAFIK] [--mdverz VERZ] [--out VERZ|DATEI.log]
          [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
          [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL] [--zwischenablage auto|tk|system]
-         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] TEST.txt [TEST2.txt ...]
+         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] [--LOADONLY] TEST.txt [TEST2.txt ...]
          python3 c8205_interp.py --version      (zeigt die Versionsnummer und endet)
          (--leser1, --leser2, --stanzer1, --sw-ausgabe und --k0 duerfen auch als Zeile in der Testdatei stehen; die Kommandozeile hat Vorrang)
          (--SW-TERMINAL: Schreibwerk-Ausgabe zusaetzlich im Fenster "SW Ausgabe"; das Fenster bleibt auch nach dem Testende offen, bis es mit X
@@ -31,6 +31,12 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
 
+Aenderung 21.10.2026 (Version 0.95-002): Neuer Schalter --LOADONLY (Standard: aus). Der Interpreter bringt das Programm der Testdatei nur auf die Trommel
+  (#TROMMEL=-Marke und Abschnitt Trommeldatei: wie im Test, danach Trommeldatei geschlossen) und endet sofort mit Rueckkehrcode 0; es wird KEINE Tastenfolge
+  ausgefuehrt, kein Programm gestartet, nichts geprueft, kein Protokoll geschrieben, kein Geraet geoeffnet (auch kein --SW-TERMINAL-Fenster). Damit bleibt kein
+  Programm mehr in einer Eingabe-Wartestellung haengen (Abbruch mit Strg+C entfaellt); das Programm auf der Trommel wird danach mit dem Grafik-Interpreter
+  gestartet. Gilt allgemein, nicht nur beim Warten auf Eingabe. Die formale Vorab-Pruefung der Testdatei und der Trommel bleibt: Fehler -> Code 16, die Trommel
+  ist dann unveraendert. Mehrere Testdateien werden nacheinander geladen (die letzte gewinnt).
 Aenderung 20.10.2026 (Version 0.95-001): Unterversion auf Aufforderung des Projektinhabers von 03 auf 95 gesetzt (Build wieder 001, Regel der
   Versionierung). Nur die Versionsangaben (Kopfzeile, Konstante VERSION); der Programmablauf ist unveraendert.
 Aenderung 18.10.2026 (Version 0.03-016): Schalterstellung SW dauerhaft (m.sw_schalter; Befund B-1 aus GRAFIK-Checkpoint 22). Der Anwahlbefehl K0 (a028) waehlt T oder SW
@@ -188,7 +194,7 @@ import subprocess
 import sys
 import time
 
-VERSION = '0.95-001'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
+VERSION = '0.95-002'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
@@ -1925,12 +1931,18 @@ def tastenfolge(m, tokens, run_e=None):
     return ok, eff
 
 
-def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=False):
+def lade_nur(test, trommel):
+    """Programm der Testdatei auf die Trommel bringen (--LOADONLY): #TROMMEL=-Marke, dann Abschnitt Trommeldatei:; sonst nichts."""
     if test.trommel_vor == 'LEER':
         trommel.setze_inhalt({})
     elif test.trommel_vor in TROMMEL_VORLAGEN:
         trommel.setze_inhalt(lies_trommelabbild(trommelvorlage_pfad(test.trommel_vor)))
     trommel.uebertrage_aus_testdatei(test.mem)
+    trommel.datei.flush()
+
+
+def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=False):
+    lade_nur(test, trommel)
 
     m = Machine(trommel)
     if test.ac_init is not None:
@@ -2388,6 +2400,9 @@ def main():
                     help='Bahnsperrenschalter der Magnettrommel: sechs Ziffern 0/1 (1 = EIN); a = Hauptschalter (EIN-AUS), '
                     'b bis f = Zusatzschalter 0040, 0100, 0200, 0400, 1000 (Standard: 000000). Der Parameter wird nur geprueft '
                     'und gespeichert; die Wirkung (Schreibsperre) ist noch nicht umgesetzt (nur Kommandozeile, nicht in der Testdatei)')
+    ap.add_argument('--LOADONLY', '--loadonly', action='store_true', default=False, dest='loadonly',
+                    help='Programm der Testdatei nur auf die Trommel laden (Marke #TROMMEL=, Abschnitt Trommeldatei:) und sofort mit Rueckkehrcode 0 '
+                    'beenden: keine Tastenfolge, kein Programmlauf, keine Pruefung, kein Protokoll (Standard: aus)')
     ap.add_argument('--zwischenablage', choices=['auto', 'tk', 'system'], default='auto', metavar='auto|tk|system',
                     help='Kopierverfahren des Fensters "SW Ausgabe" (nur mit --SW-TERMINAL): auto = zuerst Systemprogramm '
                     '(Windows: Win32-API; Linux: wl-copy, xsel, xclip; macOS: pbcopy), dann Tk; tk = nur Tk-Zwischenablage; '
@@ -2481,7 +2496,10 @@ def main():
             tp(f'\n=== Test {t.name} (#PROT STUFE={t.stufe}) ===')
             for h in t.hinweise:
                 tp(h)
-            vorab = list(t.fehler) + vorab_geraete(t) + vorab_trommel(t)
+            if args.loadonly:
+                vorab = list(t.fehler) + vorab_trommel(t)
+            else:
+                vorab = list(t.fehler) + vorab_geraete(t) + vorab_trommel(t)
             if vorab:
                 vp('FORMALE PRUEFUNG NEGATIV - Test startet nicht, Klaerung erforderlich:')
                 for f in vorab:
@@ -2492,6 +2510,11 @@ def main():
                 tp('Trommel: vor dem Test geleert (#TROMMEL=LEER)')
             elif t.trommel_vor in TROMMEL_VORLAGEN:
                 tp(f'Trommel: vor dem Test mit dem Abbild "{TROMMEL_VORLAGEN[t.trommel_vor]}" belegt (#TROMMEL={t.trommel_vor})')
+            if args.loadonly:
+                lade_nur(t, trommel)
+                tp(f'--LOADONLY: Programm aus {pfad} auf die Trommel {args.trommel} geladen; Test nicht ausgefuehrt')
+                rc = 0
+                continue
             if basp_text():
                 tp(basp_text())
             if SW_FENSTER is not None:

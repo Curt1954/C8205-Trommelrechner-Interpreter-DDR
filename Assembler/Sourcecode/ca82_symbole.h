@@ -1,4 +1,4 @@
-// ca82_symbole.h - Version 1.00-026 (siehe ca82_version.h)
+// ca82_symbole.h - Version 1.00-030 (siehe ca82_version.h)
 // Tabellen des Assemblers (Symbole, Literale, equ, abs): Typen, Daten und Suchfunktionen (ca82_symbole.c).
 #ifndef CA82_SYMBOLE_H
 #define CA82_SYMBOLE_H

@@ -1,6 +1,6 @@
 # C 8205 – GRAFIK-Interpreter: Prüfverfahren
 
-Version: 0.95-019
+Version: 0.95-025
 
 **Stand 19.10.2026 (Checkpoint G6-009): §1 bis §10 geschrieben, Entwurf, nicht abgenommen.** Das PDF dazu (`C8205-GRAFIK_Pruefverfahren_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Stufe-6-Beschreibung (Dokument 12, fällt nach Abschluss weg). Das Soll (was GRAFIK tun muss) steht in `C8205-Interpreter-GRAFIK_Beschreibung.md`; dieses Dokument sagt, **wie man prüft, dass er es tut**.
 
@@ -430,7 +430,7 @@ Aufruf: `./c8205_grafik.sh --HWCHECK` (ohne `--STUMM`), Lautstärke je Gruppe mi
 | Stanzer | 50 ms, 5 s (Dauerstanzen), LS | nicht berichtet |
 | angezeigte Eingabe, TAB, WRZL | Eingabe klingt wie Ausgabe; Umschaltzeichen stumm; TAB 400 ms | nicht berichtet |
 | WR (Wagenrücklauf ohne Zeilenschaltung) | eigener kurzer Klang, 120 ms, Anfang des WRZL-Klangs ohne den lauten Schlag (OP-42); zu hören mit `python3 ton/sw_ton.py "ab<WR>cd\r"`: WR kurz, `\r` = WRZL lang | **neu 21.10.2026, nicht gehört**; ob der Schnitt (vor dem Schlag bei etwa 126 ms) der gemeinte „markante Ton“ ist, entscheidet das Ohr (Beschreibung §6.10 Nr. 6) |
-| Schreibwerkzeit und Zeichenklang | 80 ms (70 bis 90 ms), 100 ms | nachgestellt (S4-16) |
+| Schreibwerkzeit und Zeichenklang | 82,5 ms (75 bis 90 ms; vorher 80 ms, 70 bis 90 ms), 100 ms | nachgestellt (S4-16) |
 | Übergang `fade_in` zum Grundgeräusch | ohne Lücke | nicht berichtet |
 
 **Hörprüfung 2 (Linux, 19.10.2026): ok** (Meldung des Projektinhabers; Einzelbefunde zu den Zeilen oben nicht gemeldet). Das reicht für die Abnahme von Stufe 4 (B-6, B-3, B-4); eine zeilenweise Protokollierung gibt es nicht. Eine künftige Hörprüfung (auch unter Windows) hakt die Zeilen oben einzeln ab.
@@ -470,6 +470,55 @@ Die Logik (Konstanten, Schwellen, Fenster) ist durch Tests belegt (`grafik_pult_
 3. **Beobachten:** Die Lampen der Adressen (AR), des Befehlsregisters und der Flags dürfen nicht flackern. Eine Lampe, die den größten Teil der Zeit „an“ ist, leuchtet dauernd; eine, die selten „an“ ist, bleibt dunkel; eine, die etwa gleich oft wechselt, behält ihren Zustand.
 4. **H drücken:** Die Anzeige muss sofort den genauen Stand zeigen (kein Nachlaufen).
 5. **Zurückmelden:** Flackert eine Lampe? Wirkt das Bild zu träge oder zu unruhig? Welche Lampe? Danach ist über Fenster und Schwellen zu entscheiden.
+
+### 7.6 Trommelzeit der Befehlsschleife gegen die Dokumentation
+
+Ein Programm, das nach der Magnettrommel-Dokumentation zeitoptimal liegt, findet seinen Sektor nur, wenn die Befehlsschleife zwischen zwei Zugriffen weniger Zeit braucht, als der Abstand vorgibt. Dokumentierte Mindestabstände (Wortzeit 104 µs): Sprung 4 Wortzeiten (416 µs), Einzelbefehl: Operand frühestens nach 2 Wortzeiten, Folgebefehl nach 5 (520 µs); Gruppen- und Wiederholungsbefehle: Phase IV je Wiederholung eine Wortzeit, bis 32. Ist die Schleife zu langsam, ist der Sektor vorbei und der Zugriff wartet bis zu eine Umdrehung (31 Wortzeiten, 3,2 ms) länger: Das Programm läuft richtig, aber langsamer.
+
+**Skript:** `testscripte/grafik_sektor_pruefung.py` (SP-003). Aufruf aus dem Projektordner: `python3 testscripte/grafik_sektor_pruefung.py [--art sprung|einzel|gruppe] [--dauer S] [--d-von N] [--d-bis N] [--last N] [--mdverz ORDNER]`. Ergebnis: Tabelle und `testscripte/sektor_pruefung_ergebnis.csv`. Es ändert nichts im Projekt (Arbeitskopie der Trommel in einem Temp-Ordner). Je Zugriff wird die Wartezeit mitgeschrieben; ein *Fehlgriff* ist ein Zugriff, dessen Sektor vorbei war (Sprung: Wartezeit größer als der Abstand d; Einzelbefehl: ab 16 Wortzeiten; Gruppenbefehl: Abweichung vom festen Wartezeitmuster des 34-Zugriffe-Zyklus, weil dort lange Wartezeiten ohne Fehlgriff vorkommen). Zusätzlich wird die Rechenzeit in µs zwischen der Rückkehr eines Zugriffs und der nächsten Anforderung gemessen.
+
+- `--art sprung`: Kette aus 32 Sprungbefehlen, Folgeadresse d Wortzeiten später (d = 1 bis 8).
+- `--art einzel`: 31 Lade-/Speicherbefehle hintereinander, Operand d Wortzeiten nach dem Befehl (d = 1 bis 5); entspricht der Last von `grafik_zeit_messung.py` (Kennzahl „Warte/Tick“, ideal 2,5).
+- `--art gruppe`: Gruppenbefehl 411 über die Spur 3000 mit Sprung zurück; zeigt, wie lange die 32 Wiederholungen von Phase IV dauern.
+
+**Ergebnis (Linux, Entwicklungsumgebung des Assistenten, Python 3.12.3, nur 1 CPU-Kern, nichts sonst laufend):**
+
+| Messung | Ergebnis |
+|---|---|
+| Rechenzeit der Schleife | Sprung etwa 28 µs (99 % unter 50 µs), Einzelbefehl etwa 18 µs je Zugriff; also ein Zwölftel bis ein Sechzehntel des Abstands, Spitzen bis 1,5 ms |
+| Sprung, d = 4 (Soll) | Fehlgriffe 0,01 % (3 s) bzw. 0,03 % (15 s); d = 5 bis 8: 0,00 % bis 0,06 % |
+| Einzelbefehl, Operand 2 bis 5 Wortzeiten | Fehlgriffe 0,01 % bis 0,09 %, 2,54 bis 2,57 Wortzeiten je Zugriff in allen Fällen |
+| Gruppenbefehl 411 | Wartezeit der Wiederholungen im Mittel 1,12 Wortzeiten: Phase IV läuft mit der Trommel, eine Wortzeit je Wiederholung (wie dokumentiert). Der Zyklus hat 34 Zugriffe mit festem Muster (6, 27, 0, dann 31 mal 1 Wortzeit). Die 27 ist der Rücksprung 0001 nach 0000: Nach der Sektorfolge liegt 0000 27 Wortzeiten hinter 0001, das ist der Abstand der Trommel, kein Fehlgriff. Die frühere Zählung „etwa 3 %, rund einer je Zyklus“ (Schwelle ab 16 Wortzeiten, SP-002) war ein Messartefakt. Echte Fehlgriffe (Abweichung vom Muster): 0,8 % und 1,7 % in zwei Läufen zu 5 s. Die Reserve ist hier am kleinsten: Rechenzeit je Wiederholung im Mittel 19 bis 21 µs gegen 104 µs, 99 % unter 52 bis 63 µs; die Fehlgriffe passen zu den Spitzen (bis 2 ms) des Betriebssystems |
+| **Unter dem dokumentierten Mindestabstand** | Sprung d = 1 bis 3: Treffer, Fehlgriffe 0,17 % bis 0,37 % (Dokumentation: 4). Einzelbefehl, Operand nach 1 Wortzeit: Treffer, Fehlgriffe 0,04 % (Dokumentation: 2). Das Modell bedient diese Zugriffe, das echte Gerät hätte den Sektor verpasst |
+| Sprungkette mit 1 Rechenprozess als Last auf dem einen Kern, d = 4 | Fehlgriffe 2,4 % (d = 2 bis 8: 1,8 % bis 4,7 %) |
+
+**Lesart:** Die Schleife ist schnell genug, solange der Rechner-Thread die CPU bekommt; die seltenen Fehlgriffe (weit unter 1 %) kommen von Spitzen von 0,2 bis 3 ms (Planer des Betriebssystems, Wechsel zwischen den Threads). Bei Last auf dem einzigen Kern steigt die Rate auf einige Prozent; das ist auf einen Rechner mit mehreren Kernen nicht übertragbar. Umgekehrt ist das Modell gutmütiger als das Original: Es braucht für einen Befehl nur etwa 0,2 bis 0,3 Wortzeiten Rechenzeit statt der dokumentierten 2 bis 5 und bedient deshalb auch Zugriffe, die das Original verpasst. Zeitoptimale Programme (Abstände nach Dokumentation) laufen mit der Originalzeit; Programme, die in diesem engen Bereich (Sprung 1 bis 3, Operand 1 Wortzeit nach dem Befehl) liegen, laufen im Modell um bis zu eine Umdrehung je solchem Zugriff schneller als am Original. Das betrifft auch die Zeit der Haltzeit-Zeile (8.3). Eine Erzwingung der dokumentierten Mindestabstände ist nicht eingebaut. **Entschieden 22.10.2026 (Projektinhaber): nicht erzwingen; `trommel.c` bleibt unverändert, es gibt kein neues C-Binary dafür.**
+
+**Grenzen:** Gemessen wurde nur auf diesem einen Linux-Rechner mit einem Kern. Nicht gemessen: Windows, mehrere Kerne, Lauf mit Pult-Fenster und Bedienung (siehe `grafik_zeit_messung.py`), Abstände von Befehlen mit X-Abbruch, Eingabe- und Ausgabebefehle. Die Wartezeit des C-Moduls zählt in ganzen Ticks (104 µs); die Rechenzeit in µs stammt von der Uhr des Python-Prozesses und enthält das Aufwachen des Threads nach dem Zuschlag nicht. Auf der Zielmaschine sollte `python3 testscripte/grafik_sektor_pruefung.py` (und mit `--art einzel`) laufen; der Wert bei Sprung d = 4 bzw. Operand d = 2 ist das Ergebnis, das zählt.
+
+### 7.7 Zeitmessung: Pult-Fenster, Lampenabtastung und HW-Check gegen die Befehlszeit
+
+**Frage:** Stören Pult-Anzeige, Lampenabtastung und HW-Check-Fenster die Befehlsausführung in Echtzeit? (Das Original führt einen Befehl in 0,2 bis 0,4 ms aus, das sind 2 bis 4 Wortzeiten zu 104 µs.)
+
+**Aufbau (gelesen):** Das Pult und das HW-Check-Fenster laufen im Tk-Hauptthread (Pult-Takt 40 ms; HW-Check ohne eigenen Timer, über `fenster.zusatz`). Der Rechner läuft im Thread `rechner`, die Lampenabtastung im Thread `lampenabtastung` (alle 2 ms), die Trommel in einem C-Thread (Sektorwechsel alle 104 µs, GIL beim Warten freigegeben). Python kennt keine Thread-Prioritäten. Jeder Trommelzugriff wartet in Echtzeit auf seinen Sektor; kommt eine Anforderung zu spät, kostet das bis zu eine Umdrehung (etwa 3,2 ms). Beeinflusst wird nur die Echtzeit, nie das Rechenergebnis. Der HW-Check liest `m.BZ`, `m.AC`, `m.AR`, `m.adr`, `m.OR` und den Trommelinhalt ohne Sperre (Absicht): im Dauerlauf können Zeilenwerte aus leicht verschiedenen Momenten stammen, im Halt ist der Stand exakt.
+
+**Skript:** `testscripte/grafik_zeit_messung.py` (ZM-001). Aufbauten: `rechner` (Grundlinie), `abtastung`, `takt_python`, `tk_ohne_abt`, `tk`, `tk_hw`; jede Messung in einem eigenen Prozess. Aufrufe aus dem Projektordner: `python3 testscripte/grafik_zeit_messung.py [--dauer 10 --wiederholungen 5] [--varianten rechner,tk_hw] [--sw 0.0001] [--liste]`. Das Skript überschreibt `testscripte/zeit_messung_ergebnis.csv` bei jedem Aufruf (vorher sichern). Last: trommeloptimale Endlosschleife aus 32 Befehlen auf 0000 bis 0037, abwechselnd Laden (`211`) und Speichern (`240`), Operand 2 Wortzeiten nach dem Befehl, nächster Befehl 5 Wortzeiten danach; eine Verzögerung ab etwa 50 µs kostet 31 Wortzeiten, die Last ist also empfindlich. Kennzahlen: Zugriffe/s, mittlere Wartezeit je Zugriff in Wortzeiten (ideal 2,5), mittlere und größte Verspätung des Trommel-Threads in µs (die größte gilt seit Programmstart, nicht nur im Messfenster). Mess-Hilfen: `tr.T.statistik()` und `GrafikTrommel.wartezeit_summe`.
+
+**Ergebnis (gemessen, 20.10.2026):**
+
+| Rechner | Ergebnis |
+|---|---|
+| Entwicklungsumgebung (1 Kern, Python 3.12, ohne Tk) | Abtastung −1,1 %, Pult-Takt −0,3 % Zugriffe/s gegen die Grundlinie |
+| Rechner des Projektinhabers (i9-13900HX, Python 3.11.4, 5 × 10 s, ungepinnt) | Abtastung −0,5 %, Tk −0,7 %, Tk mit HW-Check −1,4 %; Verspätung überall etwa 5 µs; größte Verspätung höchstens 1,3 ms, nicht höher als in der Grundlinie |
+| derselbe Rechner, ganzer Prozess auf einen Kern gepinnt (`taskset`; ungünstigster Fall) | Tk mit HW-Check −1,1 % bis −9,8 % Zugriffe/s; mittlere Verspätung höchstens 11,5 µs (Verlustgrenze etwa 50 µs); Wartezeit je Zugriff höchstens +5 % |
+
+Schluss: Die Lampenabtastung stört die Befehlsausführung nicht messbar; Pult-Takt und HW-Check kosten wenig; es wurde kein Einbruch gefunden. **Ein Umbau der Lampenabtastung ist nicht nötig** (bei Bedarf: Rohwerte in einen Ringpuffer und Auswertung im Tk-Takt, Schnappschuss an der Befehlsgrenze, C-Abtaster oder Anzeige in eigenem Prozess; nur die letzte Lösung beseitigt die GIL-Konkurrenz ganz). Auffällig, nicht erklärt: Mit einem Lastprozess auf dem Kern sind die gepinnten Werte besser als ohne (Vermutung: der Kern taktet sonst herunter). Im Einzelschritt und im E/A-Halt zeigt die Anzeige den genauen Stand direkt aus `m`.
+
+**Grenzen:** Nicht gemessen sind Windows, ein Lauf mit Bedienung (Fenster ziehen, schnell wechselnde Lampen), die Rechenzeit-Reserve der Knoten direkt und andere Befehlsmischungen als die Lade-/Speicherschleife. Die Messung gilt für die genannten Rechner.
+
+### 7.8 Einlesezeit des KEP und Trommelzeit
+
+Das Einlesen von `pj2-bis_minimalprogramm.kep` (7542 Zeilen) über das KEP dauert 54 s, über 90 % davon im Warten der Trommel. Die virtuelle Trommelzeit (`--trommelzeit alt|echt|schnell`, Standard `alt`; `echt` und `schnell` sind ein Entwurf) zählt 521 241 Wortzeiten = 54,2 s, das ist dieselbe Zeit wie das C-Modul nach der Wanduhr. Der Interpreter hält also mit der Trommel Schritt; die Vermutung, das KEP verpasse wegen eines zu langsamen Interpreters seinen Sektor, ist nicht belegt. Die Schleife des KEP (Zellen 0020, 0030, 0031/0021) wartet je Durchlauf feste 22, 24 und 11 bzw. 6 Wortzeiten, zusammen etwa 70 Wortzeiten = 7,2 ms je Zeichen, fast genau ein Zeichen je 1/130 s (7,7 ms): Das KEP ist auf das Lesetempo des Lesers abgestimmt, nicht auf die kürzeste Zeit je Zeichen. Folgerung: Bei 130 Zeichen/s dauern 7542 Zeichen mindestens 58 s und die 12 139 Zeichen von `namen_raten.kep` mindestens 93 s, auch am echten Gerät. Gemessene 101 s im Fenster (statt 92 s vor dem Zeitmodell) sind nicht aufgeklärt; der Projektinhaber verfolgt das nicht weiter.
 
 ## 8 Abnahmekriterien der Stufen 1 bis 5
 

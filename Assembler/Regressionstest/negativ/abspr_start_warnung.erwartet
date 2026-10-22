@@ -1,0 +1,5 @@
+args --ABSPR
+rc 0
+stderr Startadresse 2000 nicht auf die Operanden addiert
+datei-da kep
+datei-weg obj

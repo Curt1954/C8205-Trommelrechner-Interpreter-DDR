@@ -1,11 +1,17 @@
 ** Assemblerdokumentation (durchsuchbare Ableitung) **
 
-Version: 1.00-026
+Version: 1.00-030
 
-Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-010 (per `extract-text`), gedacht
+Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-030 (per `extract-text`), gedacht
 zum Durchsuchen und Zitieren. **Maßgeblich bleibt die .odt** (siehe `C8205-Projektstruktur.md`,
 Abschnitte 1 und 3); bei Widersprüchen gilt die .odt. Diese Ableitung wird nicht automatisch
 aktualisiert, wenn die .odt sich ändert.
+
+Stand 22.10.2026 (.odt nachgeführt): Die .odt trägt jetzt Version 1.00-030 und enthält Usage mit `-WARN=SYM,SPR,TOT,ALLE` und `--ABSPR`, die Dateiendung `.kep`, Abschnitt 3.1a, die neue Regel für `da`, den Wegfall der Mnemonics, die Bezeichnung „Eingabe mit Kennzeichen (Format des Minimalprogramms)“ (Pass 3, `equ`, 5.2), die Quelltextliste (1.1), die Pragma-Verweise auf 3.3.12 und die Einträge 1.00-018 bis 1.00-030 im Änderungsverzeichnis (Abschnitt 6). Die Abschnitte 6.1 bis 6.22 dieser Ableitung sind eine eigene Übersicht und stehen in der .odt in Kurzform.
+
+Stand 22.10.2026 (Ableitung auf Version 1.00-030 gesetzt, die .odt hat Vorrang): Versionsangaben in Titel, Kopf, Usage (2) und `--version` (3.1) von 1.00-027, 1.00-026 und 1.00-010 auf 1.00-030 gesetzt; `--ABSPR` in Usage-Zeile und Optionsliste (2) und der Zusatz „sofern nicht mit `-m` ein Pfad angegeben ist“ (3.1) aus der .odt übernommen; Abschnitte 6.23 bis 6.25 für 1.00-028 bis 1.00-030 ergänzt. Das Beispiel in 5.1 zeigt wie in der .odt die Versionszeile „Version 1.00“ (Mitschnitt eines älteren Laufs); der Assembler gibt heute „1.00-030“ aus. Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist aus dieser Fassung neu erzeugt.
+
+Stand 22.10.2026 (Ableitung, Entscheidung des Projektinhabers): Die Bezeichnung „Kleines Eingabeprogramm" für den Objektcode (`.obj`) in Pass 3 (Abschnitt 1), bei `equ` (3.3.5) und in der Überschrift von 5.2 ist ersetzt durch „Eingabe mit Kennzeichen (Format des Minimalprogramms)": Das KEP liest nur den binären Lochstreifen `.kep` (3.1a, `--ABSPR`). Die .odt enthält dieselbe Bezeichnung inzwischen (Stand 1.00-030); der Hinweis „In der .odt nachzuführen“ ist damit erledigt.
 
 Stand 20.10.2026 (Ableitung nachgeführt nach der .odt vom 20.10.2026): Die .odt beschreibt jetzt die Schalter `-o` und `-t` sowie `-h`, `--help` und `--version` mit der vollständigen Usage-Ausgabe (Abschnitt 2), den Vorspann der `.test`-Datei aus dem Quelltext (3.1), das Symbol allein auf einer Zeile (3.2) und das Label allein vor `start` (3.3.7). `-WARN=SYS` ist in `-WARN=SYM` berichtigt, denn der Assembler kennt nur `SYM`. Abschnitt 6.3 hält die zugehörigen Änderungen an `ca82ass.c` fest. Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist nicht nachgeführt.
 
@@ -25,7 +31,7 @@ nicht. Die Anweisung `dw <literal>` beschreibt die .odt nicht; sie ist deshalb a
 (der Assembler weist sie ab, s. Abschnitt 6). Abschnitt 6 stammt nicht aus der .odt.
 
 
-# Cross-Assembler für C8205 / C8205Z – Version 1.00-026
+# Cross-Assembler für C8205 / C8205Z – Version 1.00-030
 
 Die gesamte Software läuft sowohl unter Linux als auch Windows 10. Sie ist in C (gcc) programmiert.
 
@@ -112,8 +118,8 @@ die Parameter einfach mit veränderten Werten wieder angegeben werden.
 
 ```
 $ c82ass.sh -h
-C8205 Assembler C82aas Version 1.00-026
-Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE] [--xref] [--color | --no-color]
+C8205 Assembler C82aas Version 1.00-030
+Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE] [--xref] [--ABSPR] [--color | --no-color]
        ./_Linux/c82ass -h | --help | --version
 
   -p Projektverzeichnis  Verzeichnis mit dem Quelltext; dorthin werden auch die Ausgabedateien
@@ -136,6 +142,9 @@ Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei]
                          Die Meldungen stehen auch im .log (hinter der Symboltabelle).
   --xref                 Gibt nach fehlerfreiem Lauf eine Querverweisliste aus: je Symbol Wert,
                          Definitionszeile und alle Zeilen des Quelltexts, die es verwenden. Sie steht auch im .log.
+  --ABSPR                Statt der .obj-Datei einen absolut adressierten, binaer im R300-Code codierten
+                         Lochstreifen <name>.kep fuer das Kleine Eingabeprogramm (KEP) erzeugen:
+                         Leitbefehl <start> 240: und Worte als Dualziffern (auch --ABSOLUTPROGRAMM, --ASBPR).
   --color, --no-color    Farbige Ausgabe erzwingen bzw. abschalten. Ohne Angabe nur, wenn STDOUT und
                          STDERR ein Terminal sind und die Umgebungsvariable NO_COLOR fehlt.
   -h, --help             Diese Hilfe ausgeben.
@@ -144,7 +153,7 @@ Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei]
 
 Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint daher `./_Linux/c82ass`. `c82ass.sh` ruft
 `./_Linux/c82ass` relativ auf und muss deshalb aus dem Verzeichnis `Assembler` gestartet werden; dort werden auch
-`projekdetails` und (zuerst) `c82ass.makros` gesucht.
+`projekdetails` und (zuerst) `c82ass.makros` gesucht (sofern nicht mit `-m` ein Pfad angegeben ist).
 
 - `-p` nennt das Verzeichnis, in dem die `.asm`-Datei **direkt** liegt (z. B. `Projekt_1/bsp_5.16`). Unterverzeichnisse
   werden nicht durchsucht; ein Pfadanteil bei `-s` wird abgeschnitten.
@@ -159,7 +168,7 @@ Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint dahe
   nächste Parameter mit `-` beginnt) und ein zu langer Pfad sind Fehler (Rückgabecode 16). `-o` und `-t` gelten nur für den einen Aufruf und
   werden nicht in `projekdetails` gespeichert; die übrigen Ausgabedateien (`.log`, `.mqo`, `.sym`, `.dmp`) bleiben im Projektverzeichnis.
   Beispiel: `$ c82ass.sh -p Projekt_1/bsp_5.16 -s bsp_5_16 -o ausgabe/ -t tests/bsp_5_16_neu.test`
-- `-h` und `--help` geben den Usage-Text aus, `--version` nur die Versionszeile „C8205 Assembler C82aas Version 1.00-010“. Beide enden ohne
+- `-h` und `--help` geben den Usage-Text aus, `--version` nur die Versionszeile „C8205 Assembler C82aas Version 1.00-030“. Beide enden ohne
   Assemblerlauf mit Rückgabecode 0.
 - `projekdetails` enthält die Zeilen `-p <Verzeichnis>` und `-s <Datei>`; fehlt einer der Parameter im Aufruf, wird der
   gespeicherte Wert benutzt. Beim Wechsel des Projektverzeichnisses wird die bisherige Datei als
@@ -192,7 +201,7 @@ Der Assembler `c82ass` erwartet eine Eingabedatei mit `<quelltext>` unter einem 
 - **Pass 1:** ermittelt die Literaltabelle, ausgegeben im Logfile `.log`.
 - **Pass 2:** ermittelt die Symboltabelle, ausgegeben im Logfile `.log`, und schreibt die Symboldatei `.sym`.
 - **Pass 3:** erzeugt aus dem aufgelösten Quelltext (Literale und Symbole eingesetzt) die Kennzeichenbefehle
-  für das „Kleine Eingabeprogramm", ausgegeben im Objektfile `.obj`. Im selben Pass entstehen die Hilfsdatei
+  für die Eingabe mit Kennzeichen (Format des Minimalprogramms, nicht des KEP), ausgegeben im Objektfile `.obj`. Im selben Pass entstehen die Hilfsdatei
   `.mqo`, die formatierte Speicherbelegung `.dmp` und die Trommeldatei `.test` für den Interpreter.
 
 Auf STDOUT gibt der Assembler den formatierten Quelltext (einschließlich der aufgelösten Literale) aus. Der Aufruf erfolgt zum
@@ -240,6 +249,7 @@ Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`
 | `.log` | Abschnitte, soweit vorhanden: Literaltabelle, EQU-Definitionen, ABS-Definitionen, Symboltabelle (Symbol, RelAddr, Adresse, original Operation) und Adresstabelle (nach Adresse sortiert) |
 | `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet. Gegenüber dem Quelltext fehlen `start`, `end`, Makrodefinitionen, reine Kommentarzeilen und `abs`-Anweisungen; Makroaufrufe sind durch ihre Ersetzung ersetzt, `equ`-Operanden aufgelöst, und die Literale stehen am Ende als `dw`-Zeilen (`l0001 dw 5`) |
 | `.obj` | mit `c82load` ladefähiger Objektcode K1K2; das Kennzeichen 01 kann mit dem Pragma `LEITADRESSE` durch 00 oder 02 … 09 ersetzt werden (siehe 3.3.12); bei 00 entfällt außerdem die Kennzeichenzeile `21 0000 <zahl>` |
+| `.kep` | nur mit dem Schalter `--ABSPR`, **statt** `.obj`: absolut adressierter, binär im R300-Code codierter Lochstreifen für das Kleine Eingabeprogramm (KEP); siehe 3.1a |
 | `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen. Je Zeile `<symbol>,<adresse>` (vierstellig oktal, in Quelltextreihenfolge, einschließlich Literalsymbolen wie `l0001`) |
 | `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (Abschnitt `Trommeldatei:`) und Fuß (Abschnitt `Tastenfolge:` mit `H G R`). Der Kopf besteht aus den Vorspannzeilen des Quelltextes (siehe unten); enthält der Quelltext keine, erzeugt der Assembler als Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000` und `#PROT STUFE=2`. Kopf und Fuß müssen für den jeweiligen Fall ergänzt bzw. erweitert werden. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
 
@@ -279,6 +289,22 @@ Vor jedem Lauf löscht der Assembler die Dateien `.log`, `.obj`, `.mqo`, `.sym`,
 Projekts und erzeugt sie neu. Die früher genannten Endungen `.mqt` (modifizierter
 Quelltext) und `.l82` (Objektcode für den `C8205Simulator`) erzeugt der aktuelle Assembler nicht mehr.
 Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an. Mit `-o` bzw. `-t` (Abschnitt 2) wird statt der `.obj`- bzw. `.test`-Datei im Projektverzeichnis die dort angegebene Datei gelöscht und neu erzeugt; eine ältere Datei im Projektverzeichnis bleibt unberührt.
+
+### 3.1a Schalter `--ABSPR` (absolut adressierter KEP-Lochstreifen)
+
+Das KEP liest nur Dualziffern. Mit `--ABSPR` (gleichwertig `--ABSOLUTPROGRAMM` und `--ASBPR`, Groß-/Kleinschreibung egal) schreibt der Assembler deshalb statt der `.obj`-Datei die Datei `<name>.kep` (mit `-o` wie bei `.obj` umlenkbar). Sie ist ein Lochstreifen in der Form der Lochstreifen-Hilfsprogramme: je Lochungszeile 8 Ziffern 0/1 (Spurfolge `w v u p 8 4 2 1`), nur die Zeichen `0 1 : .` des R300-Codes in Kleinbuchstabenlage (ungerade Parität), also ohne weitere Umwandlung in den Leser 1 legbar.
+
+Aufbau, aus den Zeilen, die sonst in die `.obj` kämen (die Kennziffern K1 entfallen, bestimmen aber die Aufbereitung):
+
+| Zeile | Ausgabe |
+|---|---|
+| Anfang | Leitbefehl `<start> 240:` mit der Adresse aus `start` (oktal, ohne Vornullen, höchstens 8 Oktaltriaden), dann der Operationscode 240 |
+| `00` | Rest der Zeile ohne Leerzeichen unverändert, mit `.` abgeschlossen |
+| `01` | Adressstellen plus aktueller Wert `oo..oo` (Anfangswert = `start`), dann die 3 Oktalziffern des Operationscodes, ohne Vornullen, mit `.` |
+| `20` | `oo..oo` wird durch den angegebenen Wert (ohne Leerzeichen) ersetzt und gilt für spätere Additionen; dazu ein neuer Leitbefehl `<wert> 240:` |
+| `21`, Endezeichen `/` | entfallen |
+
+Jede Oktalziffer wird durch ihre 3 Bits ersetzt, führende Nullbits entfallen (Beispiele: `0040 240:` = `100000010100000:`, `0001 164.` = `1001110100.`). Das Pragma `LEITADRESSE` hat Vorrang und wird vor der Umsetzung ins Binäre angewendet: Ersetzt es 01 durch 00, wird K1=00 behandelt (Rest unverändert, keine Addition). Ersetzt es 01 durch 02 … 09, werden diese Zeilen nicht umgesetzt (sie fehlen in der `.kep`); der Assembler gibt dazu eine Warnung mit der Anzahl aus. Gibt es danach keine Zeile mit K1=01 mehr, gibt er eine Warnung aus; ist die Ursache das Pragma `LEITADRESSE 00` (absolut geschriebener Quelltext, der Regelfall beim Minimalprogramm), ist es nur ein Hinweis „Der Quelltext gilt als absolut adressiert, es wird keine Adresse umgerechnet“ (ab Version 1.00-030). Dasselbe gilt für `LEITADRESSE 00` zusammen mit `start <adresse>` ungleich 0: Der erste Leitbefehl lautet dann `<adresse> 240`, die Operanden bleiben aber unverändert (die Startadresse wird nicht addiert); der Assembler warnt (ab Version 1.00-028). Regel: Relativ geschriebener Quelltext mit `start <adresse>` ohne Pragma; absolut geschriebener Quelltext mit Pragma `LEITADRESSE 00` und `start` ohne Operand. Wird ein Wort auf eine Zelle von 0002 bis 0037 geladen (dort liegt das KEP selbst), gibt der Assembler eine Warnung mit der Zelle aus (ab Version 1.00-029; vorher warnte er bei jedem Leitbefehl auf 0000 bis 0037). Die Zellen 0000 und 0001 sind erlaubt und warnen nicht: Dort trägt das geladene Programm, wie das Minimalprogramm, seinen Sprung zur Startadresse ein; der Bahnsperrenschalter muss beim Laden aus sein. Das KEP selbst ist nicht Teil des Lochstreifens.
 
 ### 3.2 Sprachdefinition
 
@@ -491,7 +517,7 @@ start  [<zahl>]
 ```
 - Definiert für das `<symbol>` einen `<werteausdruck>`. Der Befehlszähler wird auf diesen Wert gesetzt.
 - Ist `*` angegeben, wird dem Symbol stattdessen der aktuelle Befehlszählerstand zugewiesen.
-- Eine Maschinencodeausgabe erfolgt nicht. Im Objektcode für das „Kleine Eingabeprogramm" wird der
+- Eine Maschinencodeausgabe erfolgt nicht. Im Objektcode (Eingabe mit Kennzeichen, Format des Minimalprogramms) wird der
   Kennzeichenbefehl für das Setzen der Relativadresse ausgegeben (KZ=20).
 - Das weitere Laden erfolgt auf 1. Leitadresse + Ladeadresse + Relativadresse. Die Ladeadresse existiert
   dabei nur beim Laden des Objektcodes.
@@ -880,7 +906,7 @@ Hinweis: Die Datei `Projekt_1/bsp_5.16/bsp_5_16.asm` ist eine veränderte Fassun
 Projektverzeichnis: Projekt_1/bsp_5.16
 Benutze für -s die Datei: bsp_5_16
 Startadresse: 0000
-C8205 Assembler C82aas Version 1.00-010
+C8205 Assembler C82aas Version 1.00
 
 Pass 0
 Verarbeite 'c82ass.makros', Erzeuge Macroersetzungen
@@ -941,7 +967,7 @@ Ausgabe der formatierten Speicherbelegung nach: Projekt_1/bsp_5.16/bsp_5_16.dmp
 Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: Projekt_1/bsp_5.16/bsp_5_16.test
 ```
 
-### 5.2 Durch c82ass erzeugter Objektcode (K1K2-Programmcode) für „Kleines Eingabeprogramm"
+### 5.2 Durch c82ass erzeugter Objektcode (K1K2-Programmcode) für die Eingabe mit Kennzeichen (Format des Minimalprogramms)
 
 ```
 0000: 01 0007 000.
@@ -1229,3 +1255,34 @@ Weiterhin offen: Windows-Binary, Nachführen von PDF und `.odt` (liegt bei Proma
 | 1 | Opcode-Tabelle (entfällt) | `Sourcecode/c8205_op_codes.c` ist gelöscht, ebenso die Suche in der Tabelle in `getOperationCode` (`ca82_codierung.c`) und die Abhängigkeit im `Makefile`. Die Mnemonics `add`, `sub`, `ld`, `jmp`, `stopp` und `nop` (Platzhalterwerte, die nicht zum Befehlssatz passten) sind damit ungültige Operationscodes. Gültig bleiben nur dreistellige Oktalcodes. Keines der 139 Programme benutzt sie (Referenz unverändert). Abschnitt 3 der Doku entsprechend geändert. |
 | 2 | `--xref` und Makros (`ca82_berichte.c`, `ca82_pass0.c`) | Entscheidung: Die expandierten Makrozeilen stehen im Listing, deshalb zählen sie mit. Pass 0 meldet bei `--xref` die Operanden jeder Makroexpansion; die Querverweisliste führt ein dort verwendetes Symbol in der Zeile des Makroaufrufs auf (nur die Operanden, nicht Marken und Kommentare; je Zeile einmal, Zeilennummern jetzt sortiert). Beispiel: Ruft ein Makro `000 ziel` auf und wird in den Zeilen 5 und 6 aufgerufen, steht `ziel` mit `3 5 6` (3 = Makrodefinition im Quelltext). Ohne `--xref` ändert sich nichts. |
 | 3 | Regressionstest | Neue Negativtests `xref_makro` und `mnemonic_entfallen` (50 insgesamt). |
+
+### 6.22 Änderungen vom 21.10.2026 (Version 1.00-027: Schalter `--ABSPR`)
+
+| Nr. | Stelle | Änderung |
+|---|---|---|
+| 1 | Neuer Schalter `--ABSPR` (`ca82_main.c`, `ca82_codierung.c`, `ca82_pass3.c`, `ca82_berichte.c`) | Schreibt statt `.obj` die binär codierte Lochstreifendatei `.kep` für das KEP (Abschnitt 3.1a). Die Rückumwandlung mit `c8205_lochstreifen_umwandlung.py --IN-TXT` liefert die erwartete Zeichenfolge (geprüft mit `Claude/betrag.asm`). Ohne den Schalter ist die Ausgabe unverändert. |
+| 2a | Warnung Bahn 0000 bis 0037 | Bei `--ABSPR` Warnung, wenn ein Wort auf eine Zelle von 0002 bis 0037 (das KEP selbst) geladen wird. Die Zellen 0000 und 0001 sind erlaubt (ab 1.00-029; zuvor warnte jeder Leitbefehl auf 0000 bis 0037). |
+| 2 | Pragma `LEITADRESSE` | Bei `--ABSPR` gilt das Pragma zuerst; ohne verbleibendes K1=01 sowie bei K1=02..09 (nicht umgesetzt) erscheint je eine Warnung. |
+| 3 | Offen | Der Regressionstest meldet für `Projekt_2/pj2-bis_minimalprogramm.asm` eine Abweichung (`.obj`, `.mqo`, `.dmp`); sie besteht auch mit dem unveränderten Quelltext der Version 1.00-026 (die Referenz stimmt dort nicht mit dem Quelltext überein). Nicht geändert. Für `--ABSPR` gab es zu diesem Zeitpunkt noch keinen Regressionstest (inzwischen vorhanden, siehe 6.25). |
+
+### 6.23 Änderungen vom 22.10.2026 (Version 1.00-028: Warnung bei `--ABSPR` mit `LEITADRESSE 00` und Startadresse)
+
+| Nr. | Stelle | Änderung |
+|---|---|---|
+| 1 | Warnung `start` bei `--ABSPR` | Neue Warnung bei `--ABSPR` mit Pragma `LEITADRESSE 00` und `start <adresse>` ungleich 0: Die Startadresse wird nicht auf die Operanden addiert. Regel: relativ geschriebener Quelltext mit `start <adresse>` ohne Pragma; absolut geschriebener Quelltext mit Pragma `LEITADRESSE 00` und `start` ohne Operand. (Quelle: Änderungsverzeichnis der .odt) |
+
+### 6.24 Änderungen vom 22.10.2026 (Version 1.00-029: Warnung zur KEP-Bahn eingeschränkt)
+
+| Nr. | Stelle | Änderung |
+|---|---|---|
+| 1 | Warnung Bahn bei `--ABSPR` | Die Warnung zur KEP-Bahn kommt nur noch, wenn ein Wort auf eine Zelle von 0002 bis 0037 (das KEP selbst) geladen wird. Die Sprungzellen 0000 und 0001 sind erlaubt und warnen nicht (Festlegung des Projektinhabers); vorher warnte jeder Leitbefehl auf 0000 bis 0037. (Quelle: Änderungsverzeichnis der .odt; siehe auch 6.22, Nr. 2a) |
+
+### 6.25 Änderungen vom 22.10.2026 (Version 1.00-030: Regressionstest für `--ABSPR`)
+
+Der Eintrag „Version 1.00-030 (22.10.2026)“ im Änderungsverzeichnis der .odt hat noch keinen Text. Die folgenden Angaben stammen aus `Regressionstest/LIESMICH.md` und nicht aus der .odt.
+
+| Nr. | Stelle | Änderung |
+|---|---|---|
+| 1 | Regressionstest | Jedes Programm wird ein zweites Mal mit `--ABSPR` assembliert; verglichen werden der Lochstreifen `.kep` und der Rückgabecode (`.rck`) mit `referenz/`. |
+| 2 | Negativtests | Vier neue Negativtests: `abspr_ok`, `abspr_bahn_warnung`, `abspr_start_warnung`, `abspr_ohne_schalter` (insgesamt 54). `negativ/version.erwartet` erwartet 1.00-030. |
+| 3 | Referenz | Die Referenz von `namen_raten` und `pj2-bis_minimalprogramm` (`.obj`, `.dmp`) ist nach dem Pragma `LEITADRESSE 00` neu geschrieben. Damit entfällt die in 6.22, Nr. 3 genannte Abweichung. |

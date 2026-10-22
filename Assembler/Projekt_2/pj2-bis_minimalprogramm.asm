@@ -63,6 +63,7 @@
 ;   316  Adresseneingabe                           (BIS-2.2.9)
 ;   022  Druck BZ und AC (Angabe der Quelle): liegt im KEP, bewusst NICHT belegt
 ;
+;#; LEITADRESSE 00   ; Adressen sind absolut geschrieben: bei --ABSPR keine Basis addieren (siehe Assemblerdokumentation 3.3.12)
                 start
                 000     haupt           ; Zelle 0000: Sprung zum Hauptprogramm
                 000     druck           ; Zelle 0001: Sprung zum Druck von BZ und AC

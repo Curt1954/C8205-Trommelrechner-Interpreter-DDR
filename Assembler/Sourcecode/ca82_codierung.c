@@ -180,6 +180,97 @@ void copyAndIncrementLineElementsSpOnly(int i, char *buffer) {
 // Die Puffer fuer .dmp und .test behalten die Adresse; sie werden von dieser Funktion nicht veraendert.
 // Das Listing (STDOUT und .dmp) erhaelt das Kennzeichen xx in schreibeListingX (ersetzeKennzeichen01).
 int objWortAnzahl = 0;   // Anzahl der in die .obj geschriebenen Worte (fuer die Warnung bei leerem Programm)
+
+// ---- Schalter --ABSPR: absolut adressierte Lochstreifendatei (.kep) fuer das Kleine Eingabeprogramm (KEP) ----
+// Statt des Objektcodes K1K2 wird ein binaer im R300-Code codierter Lochstreifen geschrieben: je Lochungszeile
+// 8 Ziffern 0/1 (Spurfolge w v u p 8 4 2 1), Zeichen nur 0 1 : . (Lage KB, Paritaet ungerade).
+//   Leitbefehl:  <Adresse>240:   (Adresse = start bzw. neuer Wert einer 20-Zeile, ohne Vornullen)
+//   Das Pragma LEITADRESSE gilt zuerst: ersetzt es 01 durch 00, ist K1=00 (Rest unveraendert, keine Addition);
+//   ersetzt es 01 durch 02..09, werden diese Zeilen nicht umgesetzt (nicht ausgegeben, Warnung).
+//   K1=00: Rest der Zeile ohne Leerzeichen unveraendert;  K1=01: (Adressstellen + Basis), dann 3 Oktalziffern Op;
+//   K1=20: Basis := Wert, dazu neuer Leitbefehl;  K1=21 (Hauptleitadresse) und das Endezeichen entfallen.
+// Jede Oktalziffer wird durch ihre 3 Bits ersetzt; Wort mit '.', Leitbefehl mit ':' abgeschlossen.
+int absprAktiv = 0;                     // 1 = Aufruf mit --ABSPR
+static unsigned long absprBasis = 0;    // aktueller Wert oo..oo (Leit-/Ladeadresse)
+int absprAnzahl0209 = 0;                // Zeilen mit K1=02..09 (nicht umgesetzt, nur gezaehlt)
+int absprAnzahl01 = 0;                  // Zeilen, die nach Anwendung des Pragmas LEITADRESSE noch K1=01 haben
+
+static void absprZeichen(FILE *f, char z) {
+    static const char *const kb0 = "00010000", *const kb1 = "00000001", *const dp = "00001101", *const pkt = "00111011";
+    fprintf(f, "%s\n", z == '0' ? kb0 : z == '1' ? kb1 : z == ':' ? dp : pkt);
+}
+
+// Gibt eine Oktalzahl (Ziffernfolge) als Bitfolge aus; fuehrende Nullbits entfallen (mindestens eine 0 bleibt).
+static void absprOktal(FILE *f, const char *ziffern, int vornullenBehalten, char abschluss) {
+    int begonnen = vornullenBehalten;
+    for (const char *c = ziffern; *c; c++) {
+        for (int b = 2; b >= 0; b--) {
+            char bit = (((*c - '0') >> b) & 1) ? '1' : '0';
+            if (bit == '1') begonnen = 1;
+            if (begonnen) absprZeichen(f, bit);
+        }
+    }
+    if (!begonnen) absprZeichen(f, '0');
+    absprZeichen(f, abschluss);
+}
+
+#define ABSPR_BAHN_MAX 64
+unsigned long absprBahnAdresse[ABSPR_BAHN_MAX];   // Woerter, die auf die Zellen 0002 bis 0037 (das KEP selbst) geladen werden; 0000 und 0001 sind die Sprungzellen (wie beim Minimalprogramm) und warnen nicht
+static unsigned long absprAdr = 0;                // Adresse, auf die das naechste Wort geladen wird
+int absprBahnAnzahl = 0;
+
+static void absprLeitbefehl(FILE *f, unsigned long adresse) {
+    char text[32];
+    absprAdr = adresse;
+    snprintf(text, sizeof(text), "%lo240", adresse);   // oktale Adresse ohne Vornullen, dann Operationscode 240
+    absprOktal(f, text, 0, ':');
+}
+
+// Erster Leitbefehl; wird von pass3 vor der ersten Zeile aufgerufen.
+void absprStart(FILE *f) {
+    absprBasis = startAdresse;
+    absprLeitbefehl(f, absprBasis);
+}
+
+static void absprWortGezaehlt(void) {            // ein Wort wird auf absprAdr geladen
+    if (absprAdr >= 2 && absprAdr <= 037) {      // Warnung folgt in meldeErfolg
+        if (absprBahnAnzahl < ABSPR_BAHN_MAX) absprBahnAdresse[absprBahnAnzahl] = absprAdr;
+        absprBahnAnzahl++;
+    }
+    absprAdr++;
+}
+
+static void absprZeile(FILE *f, const char *p) {
+    char kz[3] = "00";
+    char rest[128];
+    size_t n = 0;
+    if (p[0] >= '0' && p[0] <= '9' && p[1] >= '0' && p[1] <= '9' && (p[2] == ' ' || p[2] == '\0')) {
+        kz[0] = p[0]; kz[1] = p[1];
+        p += 2;
+    }   // sonst (Nullwort "0"): wie K1=00
+    for (; *p && n < sizeof(rest) - 1; p++) if (*p != ' ') rest[n++] = *p;
+    rest[n] = '\0';
+    if (strcmp(kz, "01") == 0 && leitadresseKennzeichen >= 2 && leitadresseKennzeichen <= 9) {
+        absprAnzahl0209++;                             // K1=02..09 (Pragma LEITADRESSE): wird nicht umgesetzt
+        return;
+    }
+    if (strcmp(kz, "21") == 0) return;                 // Hauptleitadresse: entfaellt
+    if (strcmp(kz, "20") == 0) {
+        absprBasis = strtoul(rest, NULL, 8);
+        absprLeitbefehl(f, absprBasis);
+    } else if (strcmp(kz, "01") == 0 && leitadresseKennzeichen == 1) {   // Pragma LEITADRESSE hat Vorrang: nur noch echte 01
+        absprAnzahl01++;
+        absprWortGezaehlt();
+        unsigned long z = strtoul(rest, NULL, 8);       // aaaa ooo
+        char text[32];
+        snprintf(text, sizeof(text), "%lo%03lo", (z >> 9) + absprBasis, z & 0777UL);
+        absprOktal(f, text, 0, '.');
+    } else {
+        absprWortGezaehlt();
+        absprOktal(f, rest, 1, '.');                    // 00: unveraendert, auch Vornullen
+    }
+}
+
 void schreibeObjZeile(FILE *objFile, const char *zeile) {
     const char *p = zeile;
     objWortAnzahl++;
@@ -192,6 +283,8 @@ void schreibeObjZeile(FILE *objFile, const char *zeile) {
         p = q + 1;
         while (*p == ' ') p++;
     }
+
+    if (absprAktiv) { absprZeile(objFile, p); return; }
 
     if (p[0] == '0' && p[1] == '1' && (p[2] == ' ' || p[2] == '\0')) {
         fprintf(objFile, "%02d%s.\n", leitadresseKennzeichen, p + 2);

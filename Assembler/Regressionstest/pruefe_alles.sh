@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version 1.00-026
+# Version 1.00-030
 # Vollstaendige Pruefung des Assemblers c82ass fuer Entwickler und CI (aus beliebigem Verzeichnis aufrufbar):
 #   1. Uebersetzen mit -Wall -Wextra -Wshadow -Werror: der Quelltext muss ohne Warnung uebersetzen.
 #   2. Regressionstest (139 Programme gegen Referenz, Negativtests) mit dem normalen Binary.

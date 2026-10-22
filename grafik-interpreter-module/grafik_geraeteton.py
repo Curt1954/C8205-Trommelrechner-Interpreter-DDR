@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 grafik_geraeteton.py - Toene von Lochstreifenleser und Lochbandstanzer fuer GRAFIK (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-09, S4-10).
-Version: G4-004.  Nur Standardbibliothek.
+Version: G4-005.  Nur Standardbibliothek.
 
 Beides sind Zustandsautomaten mit ersetzbarer Uhr (`uhr`) und ersetzbarem Warten (`schlafe`), damit die Pruefungen ohne Audiogeraet
 und ohne Echtzeit laufen.  Zeitgeber: tick() wird vom Mischer nach jedem Block (alle 10 ms) aufgerufen (mischer.takt_haken).
 
-LeserTon (S4-09; ton/SW_Ton_Beschreibung.md Abschnitt 9):
-  zeichen() bei jedem Zeichen, das ein Leser tatsaechlich liefert.  Lesetempo 130 Zeichen/s: ein Zeichen fruehestens 1/130 s nach dem
-  vorigen (Rechenzeit wird angerechnet); die Tonlaenge verzoegert nichts.  Eine Schwelle LS_PAUSE_S = 100 ms:
-    erstes Zeichen nach mehr als 100 ms Pause -> Einzelschritt (ls_einzel.wav, 148 ms);
-    naechstes Zeichen hoechstens 100 ms spaeter -> Einzelschritt abgebrochen, Dauergeraeusch (ls_dauer.wav, Schleife);
-    mehr als 100 ms ohne Zeichen waehrend Dauergeraeusch -> Ende mit 60 ms Auslaufen (ls_ende.wav); danach wieder Einzelschritt.
+LeserTon (S4-09, neu G4-005 am 22.10.2026): zeichen() bei jedem Zeichen, das ein Leser tatsaechlich liefert (echtes Benutzen, nicht das Warten im Eingabe-Halt).
+  Laeuft kein Ton: Einzelton (ls_einzel.wav, 148 ms), Befehlsschleife nach 1/10 s frei.  Laeuft er noch beim naechsten Zugriff: abgebrochen, Dauerton
+  (ls_dauer.wav, Schleife) ab jetzt, Freigabe je Zeichen nach 1/130 s.  LS_AUS_S ohne Zugriff: Ton aus (60 ms Auslaufen, ls_ende.wav), Ablauf zurueck.
 
 StanzerTon (S4-10; GRAFIK_Beschreibung §6 (alt: Dok. 03) Nr. 21, 23): Zustaende Aus / Geraeusch (ls_motor.wav, Schleife) / Dauerstanzen (ls_dauerstanzen.wav, Schleife);
   nie zwei Geraeusche zugleich.  Das erste Zeichen schaltet Aus -> Geraeusch.  Das zweite Zeichen mit weniger als 50 ms Abstand zum
@@ -26,8 +23,11 @@ import time
 
 import grafik_tonmisch as TM
 
-VERSION_GERAETETON = 'G4-004'
-LS_PAUSE_S = 0.100          # Schwelle des Lesers (S4-09), nach der Hoerpruefung nachzustellen (S4-16)
+VERSION_GERAETETON = 'G4-005'
+LS_PAUSE_S = 0.100          # (bis G4-004: Schwelle des Lesers; ab G4-005 ersetzt durch EINZEL_FREIGABE_S und LS_AUS_S)
+EINZEL_FREIGABE_S = 0.100   # G4-005: Befehlsschleife nach dem Einzelton-Beginn nach 1/10 s wieder frei
+LS_EINZEL_S = 0.148         # Laenge von ls_einzel.wav, wenn der Klang nicht bekannt ist
+LS_AUS_S = 3.0              # G4-005: so lange ohne Zugriff auf den Leser -> Ton aus, Ablauf zurueckgesetzt (Wert geschaetzt, nachzustellen)
 LESETEMPO = 130.0           # Zeichen je Sekunde
 STANZTEMPO = 50.0           # Zeichen je Sekunde (Antwort F-62 Nr. 4: ungefaehr so; Mindestabstand 20 ms, Rechenzeit angerechnet)
 STANZ_DAUER_S = 0.050       # Abstand zweier Zeichen, unter dem Dauerstanzen beginnt, und Frist bis zum Ende von Dauerstanzen (S4-10)
@@ -52,59 +52,76 @@ def lade_stanzerklaenge(ordner):
 
 
 class LeserTon:
+    """G4-005 (Wunsch des Projektinhabers 22.10.2026): Einzelton, Dauerton und Abschalten haengen am tatsaechlichen BENUTZEN des Lesers
+    (zeichen() = ein Eingabebefehl hat ein Zeichen von K1/K2 geholt), nicht am Warten im Eingabe-Halt.
+    Ablauf: Der erste Zugriff, wenn kein Ton laeuft, schaltet den Einzelton ein; er laeuft bis zu seinem Ende.  Parallel dazu wird die
+    Befehlsschleife nach EINZEL_FREIGABE_S (1/10 s) wieder freigegeben.  Kommt dann ein neuer Zugriff und der Einzelton laeuft noch, wird er
+    abgebrochen und durch den Dauerton ersetzt, der ab diesem Moment neu laeuft; die Befehlsschleife wird danach jeweils nach 1/130 s frei.
+    Laeuft der Einzelton nicht mehr, beginnt wieder ein Einzelton.  Folgt LS_AUS_S lang kein Zugriff, geht der Ton aus (Dauerton mit 60 ms
+    Auslaufen) und der Ablauf beginnt von vorn.  Die Freigabezeit wird vor dem naechsten Zugriff abgewartet; Rechenzeit dazwischen zaehlt mit."""
     AUS, EINZEL, DAUER = 'aus', 'einzel', 'dauer'
 
     def __init__(self, mischer=None, klaenge=None, uhr=time.monotonic, schlafe=time.sleep, tempo=LESETEMPO, pegel=PEGEL):
         """tempo: Zeichen/s oder 0/None = kein Lesetempo (nur Ton).  pegel: Lautstaerke (--TON, Gruppe LL)."""
         self.mischer, self.k, self.uhr, self.schlafe, self.tempo, self.pegel = mischer, klaenge, uhr, schlafe, tempo, pegel
         self.zustand = self.AUS
-        self._letzt = None
+        self._letzt = None                      # Zeit des letzten Zugriffs (Beginn der Aus-Frist)
+        self._frei = None                       # Zeitpunkt, ab dem die Befehlsschleife nach dem letzten Zugriff wieder frei ist
+        self._einzel_ende = 0.0                 # Zeitpunkt, an dem der laufende Einzelton endet
         self._lock = threading.Lock()
         self.verzoegerungen = []                # Wartezeiten des Lesetempos (Pruefungen; nur die letzten 200)
+        n = len(klaenge['einzel']) if klaenge else 0
+        self.einzel_s = n / 44100.0 if n else LS_EINZEL_S
 
     def _mischer_ein(self, m):
         self.mischer = m
         m.takt_haken.append(self.tick)
 
     def zeichen(self):
-        """Aufruf bei jedem gelieferten Zeichen.  Rueckgabe: die Verzoegerung dieses Aufrufs in Sekunden (Lesetempo)."""
+        """Aufruf bei jedem Zeichen, das ein Leser tatsaechlich liefert.  Rueckgabe: die Verzoegerung dieses Aufrufs in Sekunden."""
         warte = 0.0
-        if self.tempo and self._letzt is not None:
-            frei = self._letzt + 1.0 / self.tempo
-            warte = frei - self.uhr()
+        if self.tempo and self._frei is not None:
+            warte = self._frei - self.uhr()
             if warte > 0:
-                self.schlafe(warte)
+                self.schlafe(warte)             # die Befehlsschleife ist erst nach der Freigabezeit des vorigen Zugriffs wieder frei
             else:
                 warte = 0.0
         self.verzoegerungen.append(warte)
         del self.verzoegerungen[:-200]
         with self._lock:
             t = self.uhr()
-            self._tick(t)                       # ein abgelaufenes Dauergeraeusch zuerst beenden (der Zeitgeber kann noch nicht gelaufen sein)
+            self._tick(t)                       # eine abgelaufene Aus-Frist zuerst behandeln (der Zeitgeber kann noch nicht gelaufen sein)
             m = self.mischer
-            if self._letzt is not None and t - self._letzt <= LS_PAUSE_S:
-                if self.zustand != self.DAUER:
-                    self.zustand = self.DAUER
-                    if m is not None and self.k:
-                        m.dauer_aus('ls_einzel')                            # Einzelschritt abbrechen
-                        m.dauer_an('leser', 'ls_dauer', self.k['dauer'], self.pegel)
-            else:
+            if self.zustand == self.DAUER:
+                frei = 1.0 / self.tempo if self.tempo else 0.0               # Dauerton laeuft weiter
+            elif self.zustand == self.EINZEL and t < self._einzel_ende:
+                self.zustand = self.DAUER                                    # Einzelton laeuft noch: abbrechen, Dauerton ab jetzt
+                if m is not None and self.k:
+                    m.dauer_aus('ls_einzel')
+                    m.dauer_an('leser', 'ls_dauer', self.k['dauer'], self.pegel)
+                frei = 1.0 / self.tempo if self.tempo else 0.0
+            else:                                                            # kein Ton laeuft: Einzelton
                 self.zustand = self.EINZEL
+                self._einzel_ende = t + self.einzel_s
                 if m is not None and self.k:
                     m.einzel('leser', self.k['einzel'], self.pegel, 'ls_einzel')
+                frei = EINZEL_FREIGABE_S if self.tempo else 0.0
             self._letzt = t
+            self._frei = t + frei
         return warte
 
     def _tick(self, t):
-        if self._letzt is None or t - self._letzt <= LS_PAUSE_S:
+        """Aus-Frist: LS_AUS_S ohne Zugriff -> Ton aus, Ablauf zurueckgesetzt (Aufruf unter der Sperre)."""
+        if self._letzt is None or t - self._letzt < LS_AUS_S:
             return
         if self.zustand == self.DAUER:
             m = self.mischer
             if m is not None and self.k:
                 m.dauer_aus('ls_dauer')
                 m.einzel('leser', self.k['ende'], self.pegel, 'ls_ende')         # 60 ms Auslaufen
-        if self.zustand != self.AUS:
-            self.zustand = self.AUS
+        self.zustand = self.AUS
+        self._letzt = None
+        self._frei = None
 
     def tick(self):
         with self._lock:
@@ -112,8 +129,12 @@ class LeserTon:
 
     def stop(self):
         with self._lock:
+            m = self.mischer
+            if m is not None:
+                m.dauer_aus('ls_dauer'); m.dauer_aus('ls_einzel')
             self.zustand = self.AUS
             self._letzt = None
+            self._frei = None
 
 
 class StanzerTon:

@@ -1,4 +1,4 @@
-// ca82_makros.c - Version 1.00-026 (siehe ca82_version.h)
+// ca82_makros.c - Version 1.00-030 (siehe ca82_version.h)
 // Makrodatei und Quelltextmakros einlesen, Makros aufloesen ($IF/$PR/$WDHL/$SPRUNG).
 #include "ca82_typen.h"
 #include "ca82_makros.h"

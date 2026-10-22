@@ -1,6 +1,6 @@
 # ** Bausteininterpretationssystem (BIS) **
 
-Version: 0.03-003
+Version: 0.03-014
 
 Dieses Dokument gibt den Inhalt der Quelle wieder und ordnet ihn in das Projekt ein. Die Gliederungsnummern der Quelle werden nicht
 übernommen; Verweise auf Abschnitte oder andere Dokumente enthält dieses Dokument nicht.
@@ -43,7 +43,7 @@ daher Konventionen des BIS.
 
 ## BIS-2 Beschreibung der Bausteine
 
-### BIS-2.1 Baustein 1: Das kleine Eingabeprogramm (KEP)
+### BIS-2.1 Das kleine Eingabeprogramm (KEP): Voraussetzung des BIS
 
 - **Lage:** Das KEP befindet sich auf Spur 0 der Trommel und belegt die Adressen 0000₈ … 0037₈ (die 32 Zellen der Spur 0). Es wird über
   den Speicherplatz 0002 angesprungen.
@@ -71,7 +71,7 @@ daher Konventionen des BIS.
   Akkumulator aufgebaute Befehl sofort abgearbeitet werden, müssen als Schlusszeichen „:" und „." gegeben werden.
 - **Korrektur:** Mit „ZR" können Tipp- und Lochfehler korrigiert werden, solange noch kein Schlusszeichen gegeben wurde; der
   Akkumulatorinhalt wird gelöscht und das Wort kann nochmals eingegeben werden.
-- **Zugehörigkeit zum Minimalprogramm:** Das KEP gehört zum Minimalprogramm (Belegung 0000–0337 des Gesamtbausteins). Das separat ladbare Minimalprogramm, das mit Hilfe des KEP geladen wird, belegt 0040–0337.
+- **Zugehörigkeit:** Das KEP liegt auf Spur 0 und zählt zur Gesamtbelegung des Minimalprogramms (0000–0337). Es ist aber nicht Teil dessen, was geladen wird, sondern Voraussetzung des BIS: Das separat ladbare Minimalprogramm (0040–0337) wird erst mit Hilfe des KEP geladen.
 - **Aufgabe im BIS:** Mit Hilfe des KEP wird das auf dem Lochband dargestellte **Minimalprogramm**, der Grundbaustein des BIS,
   eingegeben.
 
@@ -539,6 +539,212 @@ ohne Modifikation benutzt.
 
 Anmerkung (Lesehilfe, nicht Wortlaut der Quelle): K1 und K2 sind die Kanaltasten des Bedienpults (K1 wählt Kanal 1 = Leser 1, K2 wählt Kanal 2 = Leser 2).
 
+#### BIS-2.2.11a Laden eines Programms: Objektdatei über das Minimalprogramm oder bitweise über das KEP (Ergänzung 21.10.2026)
+
+Anmerkung (Festlegung des Projektinhabers): Ein Programm kann auf zwei verschiedenen Wegen auf die Trommel gelangen. Welcher Weg
+möglich ist, hängt davon ab, was schon auf der Trommel steht und in welcher Form das Programm vorliegt.
+
+**Weg 1: Objektdatei über das Minimalprogramm.** Eine echte Objektdatei, wie sie der Assembler als `.obj`-Datei erzeugt, kann das
+Minimalprogramm unmittelbar einlesen. Sie besteht aus Zeilen der Eingabe mit Kennzeichen (BIS-2.2.2 bis BIS-2.2.5, BIS-2.2.11):
+Kennzeichen K₁ K₂, Adreßteil, Operationsteil, Schlußpunkt, zum Beispiel `01 0040 000.` oder `20 0000 0053.`; die Hauptleitadresse
+steht als `21 …`-Zeile in der Datei oder wird vorher von Hand eingegeben. Das Minimalprogramm führt dabei die Adressenänderung
+nach K₂ aus; ein relativ adressiertes Programm kann deshalb auf eine beliebige Hauptleitadresse geladen werden. Voraussetzung
+ist, dass das Minimalprogramm selbst bereits auf der Trommel steht.
+
+**Weg 2: bitweise über das KEP.** Das Minimalprogramm steht auf einer leeren Trommel nicht zur Verfügung; es wird selbst erst mit
+Hilfe des KEP geladen (BIS-2.1). Das KEP ist deshalb die Voraussetzung des BIS. Anmerkung (Festlegung des Projektinhabers): Es ist
+kein Bestandteil des BIS, aber dessen Voraussetzung. Weil das KEP weder Eingabekennzeichen noch Adressenänderung kennt
+(BIS-2.1), gilt für ein Programm, das über das KEP geladen werden soll:
+
+1. **Das Programm muss absolut adressiert sein.** Jede Adresse ist die endgültige Trommeladresse. Im Assemblerquelltext heißt das:
+   `start` ohne Operand und keine relativen Adressen, die erst beim Laden umgerechnet werden. Das Beispiel ist das Minimalprogramm selbst: Es ist absolut adressiert und wird mit der
+   Hauptleitadresse 0 geladen.
+2. **Das Programm besteht aus Leitbefehlen und aus abzuspeichernden Programmworten.** Der Leitbefehl bestimmt, wohin die folgenden
+   Worte gehören (ein Transportbefehl `a₁ a₂ a₃ a₄ 240` für die fortlaufende Abspeicherung ab der Zelle a₁ a₂ a₃ a₄,
+   BIS-2.1). Ein neuer Leitbefehl ist nötig, wenn die Adressen nicht mehr fortlaufend sind. In der Quelldatei stehen
+   Leitbefehle und Programmworte in Oktalschreibweise.
+3. **Das KEP selbst liest nur Dualziffern.** Jede Oktalziffer wird deshalb durch ihre drei Bits ersetzt; geschrieben wird ab dem
+   ersten von Null verschiedenen Bit. Der Leitbefehl endet mit „:“, jedes Programmwort mit „.“; ein Lochbandschlußzeichen gibt es
+   bei der bitweisen Eingabe nicht (BIS-2.2.12.3). Beispiele:
+   - Leitbefehl `0040 240` (Transport nach Zelle 0040), oktal `0040240`: Ziffernfolge `100 000 010 100 000` und das Schlußzeichen,
+     also `100000010100000:`.
+   - Programmwort `0001 164` (Befehl 164 mit Adreßteil 0001), oktal `00000001164`: `1001110100.`.
+
+   Anmerkung (Festlegung des Projektinhabers): Diese Umsetzung nimmt der Assembler `c82ass` mit dem Schalter `--ABSPR` selbst vor. Er gibt
+   das absolut adressierte Programm als Lochstreifen im binären R 300-Code aus, so wie das KEP ihn lesen kann (Leitbefehl am Anfang,
+   dann die Worte; Dateiendung `.kep`), siehe BIS-2.2.11b.
+4. **Ablauf:** KEP anspringen (BIS-2.2.12.2: `H G M↓ E E M↑`, Kanal anwählen, `R`), den Leitbefehl eingeben (`…:`), bei
+   Eingabe über einen Lochbandleser auf „Halt“ schalten und den Kanal anwählen (BIS-2.2.12.3), dann die Worte (`….`) in der Reihenfolge
+   der Adressen.
+
+Anmerkung (Folgerung, nicht aus der Quelle): Eine Objektdatei im Kennzeichenformat (Weg 1) ist für das KEP unbrauchbar, weil die
+Kennzeichenzeilen aus Ziffern, Leerzeichen und Punkten bestehen, die das KEP als Dualziffern, Zwischenraum und Wortende liest. Aus einer solchen
+Datei entstünden falsche Worte.
+
+Anmerkung (Folgerung, nicht aus der Quelle): Für Weg 1 gibt der Assembler `c82ass` die `.obj`-Datei mit dem Schalter `-o` in einen
+beliebigen Ordner aus. Der Aufruf im Ordner `Assembler/`, mit dem das Minimalprogramm in den Ordner des Lesers 1 ausgegeben wird, ist:
+
+```
+$ ./c82ass.sh -p Projekt_2 -s pj2-bis_minimalprogramm.asm -o ../virtuelle_Geraete/Leser1
+```
+
+(`make_c82ass.sh` erzeugt dagegen nur das Programm `c82ass`, es assembliert nicht.) Ein Lochstreifenleser des Interpreters verlangt
+je Zeile ein Zeichen als 8 Ziffern 0/1 (virtueller Lochstreifen); eine Textdatei im Leserordner wird abgelehnt. Eine Textdatei,
+auch die `.obj`-Datei oder eine Datei mit bitweise notierten Worten, muss deshalb vorher mit `c8205_lochstreifen_umwandlung.py` in einen
+Lochstreifen umgewandelt werden. Die `.kep`-Datei von Weg 2 (Schalter `--ABSPR`) ist dagegen schon ein fertiger Lochstreifen und
+braucht keine Umwandlung.
+
+Anmerkung (geprüft 22.10.2026): Ein Programm, das aus der oktalen Quelle die bitweise Folge für das KEP erzeugt, gibt es: den Assembler mit
+dem Schalter `--ABSPR` (BIS-2.2.11b); die `.kep`-Datei enthält keine Zeilenenden. Eine von Hand geschriebene Textdatei mit bitweisen Worten wird mit
+`c8205_lochstreifen_umwandlung.py` in einen Lochstreifen umgewandelt und erhält dabei für jedes Zeilenende das Zeichen SatzMarke/WRZL. Das KEP
+überliest dieses Zeichen zwischen den Worten. Begründung aus dem Code: Der Eingabe-Halt in Zelle 0030 (`0020 010`) spricht die Zelle
+0020 ∨ Eingabe-Adresse an. WRZL hat die Eingabe-Adresse 0032 und ZWR die Eingabe-Adresse 0012; beide ergeben die Zelle 0032 (`0030 001`: Sprung
+nach 0030 mit Löschen von ⟨AC⟩). WRZL wirkt im KEP also wie ZWR. Zwischen zwei Worten ist ⟨AC⟩ nach dem Ausführen des Leitbefehls schon 0,
+das Zeichen bleibt ohne Wirkung. **Mitten in einem Wort** würde WRZL wie ZWR die bisher gelesenen Bits verwerfen (BIS-2.2.1a, Beispiel „111 ZR 101“).
+Prüfung: `Tests/bsp_5_18_kep_wrzl.test` liest denselben Streifen wie `bsp_5_18_kep.test`, mit je einer Zeile WRZL nach jedem `:` und `.`
+(Tastenfolge `H SW=1 G R`, weil die Pult-Tastatur WRZL nicht eingeben kann). Ergebnis: die Zellen 3000 bis 3004, 7723 und 7724 sind
+gleich wie ohne WRZL. Nicht geprüft: WRZL mitten im Wort, SatzMarke an einem echten Leser, die Zeichen WR und ZV (beide Eingabe-Adresse zur Zelle 0072,
+außerhalb des KEP).
+
+#### BIS-2.2.11b Gesamtablauf: das KEP auf die Trommel bringen und ein Programm über das KEP laden (Ergänzung 21.10.2026)
+
+Anmerkung (Festlegung des Projektinhabers): Das KEP ist die Wurzel allen Programmladens. Auf einer leeren Trommel gibt es nichts, womit
+sich das KEP selbst laden ließe; es muss deshalb mit Hilfsmitteln auf die Trommel gebracht werden, zum Beispiel mit dem TEST-Interpreter
+(Schalter `--LOADONLY`) oder durch Bearbeiten der Trommeldatei von Hand. Erst danach kann das KEP über den Lochstreifenleser das
+Minimalprogramm oder ein anderes absolut adressiertes Programm laden. Der folgende Ablauf zeigt alle Schritte mit den Aufrufen des Projekts.
+Die Aufrufe im Ordner `Assembler/` verwenden `c82ass.sh` (`make_c82ass.sh` baut nur den Assembler); Zielordner werden relativ zu
+`Assembler/` angegeben.
+
+**Schritt 1: das KEP assemblieren.** Der Quelltext des KEP (`bsp_5_18_kep.asm`) ist absolut adressiert und beginnt auf Zelle 0000.
+Er wird mit dem Schalter `-t` zu einer Testdatei übersetzt, die der TEST-Interpreter laden kann:
+
+```
+$ cd Assembler
+$ ./c82ass.sh -p Claude_bsp_reassemblierung/bsp_5_18_kep -s bsp_5_18_kep.asm -t ../Tests
+C8205 Assembler C82aas Version 1.00-027
+Projektverzeichnis: Claude_bsp_reassemblierung/bsp_5_18_kep
+Benutze für -s die Datei: bsp_5_18_kep.asm
+
+Pass 0
+Verarbeite 'c82ass.makros', Erzeuge Macroersetzungen
+
+Pass 1
+Löse Literale auf
+
+Pass 2
+Löse Symbole auf nach Claude_bsp_reassemblierung/bsp_5_18_kep/bsp_5_18_kep.log und Claude_bsp_reassemblierung/bsp_5_18_kep/bsp_5_18_kep.sym
+Startadresse: 0000
+
+Pass 3
+Erzeuge Kennzeichen-Befehle in Objektdatei Claude_bsp_reassemblierung/bsp_5_18_kep/bsp_5_18_kep.obj
+
+0000: 01 0002 000    m0000: 000 m0002        ; Sprung zum Programmanfang des KEP
+      20 0000 0002          equ 00002
+0002: 01 0022 000    m0002: 000 m0022        ; Programmanfang
+      20 0000 0014          equ 00014
+0014: 00 7723 211    m0014: 211 m7723        ; <AC>:=<7723>
+0015: 01 0025 210           210 m0025        ; <AC>:=<AC>+1°
+0016: 00 7723 240    m0016: 240 m7723        ; <7723>:=<AC> = Leitbefehl
+0017: 01 0030 001           001 m0030        ; <AC>:=0, Sprung zur Eingabe
+0020: 01 0000 000           000 m0000        ; "0" Konstante im R 300-Code
+0021: 00 40000000000        dw  040000000000 ; "1" Konstante im R 300-Code
+0022: 01 0037 211    m0022: 211 m0037        ; <AC>:=0014 000
+0023: 00 7724 240           240 d7724        ; <7724>:=0014 000
+0024: 01 0030 001           001 m0030        ; "ZWR" im FS-Code, <AC>:=0
+0025: 00 0001 000    m0025: 000 m0001        ; Konstante (Adresseneinheit 1°)
+0026: 01 0000 000           000 m0000        ; "0" Konstante im FS-Code
+0027: 00 40000000000        dw  040000000000 ; "1" Konstante im FS-Code (Zeile im Listing verdruckt, ergaenzt)
+0030: 01 0020 010    m0030: 010 00020        ; E (0|1|:|.|ZWR), Eingabe-Halt
+0031: 01 0030 006           006 m0030        ; <AC>:=Vzl(<AC>), Sprung zur Eingabe
+0032: 01 0030 001           001 m0030        ; "ZWR" im R 300-Code, <AC>:=0
+0033: 00 7723 000           000 m7723        ; "." im R 300-Code, Sprung zur Ausfuehrung des Leitbefehls
+0034: 00 7723 000           000 m7723        ; "." im FS-Code
+0035: 01 0016 000           000 m0016        ; ":" im R 300-Code, Leitbefehl speichern
+0036: 01 0016 000           000 m0016        ; ":" im FS-Code
+0037: 01 0014 000    m0037: 000 m0014        ; Konstante 0014 000
+
+Ausgabe als Minimalprogramm-Objektdatei nach: Claude_bsp_reassemblierung/bsp_5_18_kep/bsp_5_18_kep.obj
+Ausgabe der formatierten Speicherbelegung nach: Claude_bsp_reassemblierung/bsp_5_18_kep/bsp_5_18_kep.dmp
+Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: ../Tests/bsp_5_18_kep.test
+```
+
+**Schritt 2: das KEP auf die Trommel laden.** Der TEST-Interpreter überträgt das KEP aus der Testdatei auf die Trommel und führt den Test
+nicht aus (`--LOADONLY`). Im Projektordner:
+
+```
+$ cd ..
+$ python3 c8205_interp.py --MODUS=TEST Tests/bsp_5_18_kep.test --LOADONLY
+
+=== Test bsp_5_18_kep (#PROT STUFE=2) ===
+--LOADONLY: Programm aus Tests/bsp_5_18_kep.test auf die Trommel <Pfad>/Trommel/trommel.txt geladen; Test nicht ausgefuehrt
+```
+
+Das KEP steht nun auf der Spur 0 der Trommel (Adressen 0000 bis 0037). Das Ersetzen dieser Schritte 1 und 2 durch das Bearbeiten der
+Trommeldatei von Hand ist ebenso möglich.
+
+**Schritt 3: das zu ladende Programm als KEP-Lochstreifen assemblieren.** Das Minimalprogramm oder ein anderes, absolut adressiertes
+Programm wird mit dem Schalter `--ABSPR` in den Ordner des Lesers 1 ausgegeben. Es entsteht ein absolut adressierter Lochstreifen im
+binären R 300-Code, so wie ihn das KEP lesen kann (Dateiendung `.kep`; Aufbau siehe BIS-2.2.11a und die Assemblerdokumentation):
+
+```
+$ cd Assembler
+$ ./c82ass.sh -p Projekt_2 -s pj2-bis_minimalprogramm.asm -o ../virtuelle_Geraete/Leser1 --ABSPR
+$ ./c82ass.sh -p Projekt_1/namen_raten -s namen_raten.asm -o ../virtuelle_Geraete/Leser1 --ABSPR
+```
+
+Der erste Aufruf ist der Regelfall: Das Minimalprogramm ist der Grundbaustein des BIS und kommt als erstes über das KEP auf die Trommel.
+Dafür muss `pj2-bis_minimalprogramm.asm` vor `start` die Zeile `;#; LEITADRESSE 00` enthalten (Quelltext ist absolut geschrieben, siehe unten).
+Fehlt sie, läuft der Aufruf ohne Fehlermeldung durch, der Lochstreifen enthält aber bei 118 von 293 Worten falsche Adressen. Ein Merkmal zur
+Kontrolle: Mit Pragma hat die `.kep` 7542 Zeilen, ohne 7182, denn bei Kennzeichen 00 behält `--ABSPR` die führenden Nullbits der Wörter, bei
+Kennzeichen 01 lässt es sie weg. Der zweite Aufruf (`namen_raten`) ist ebenfalls absolut geschrieben und trägt dasselbe Pragma mit `start` ohne Operand: Das Programm steht quasi an
+der Stelle des späteren Minimalprogramms und trägt in Zelle 0000 den Sprung zu seiner Startadresse (hier 02000) ein, genau wie das Minimalprogramm.
+Mit `start 02000` (ohne oder mit Pragma) fehlte Zelle 0000 im Lochstreifen (552 statt 553 Worte).
+Beim Minimalprogramm ist das ebenso: Sein Lochstreifen beginnt mit dem Leitbefehl `0000 240` und setzt die beiden Sprungzellen, Zelle 0000 mit dem
+Sprung zum Hauptprogramm (nach 0040) und Zelle 0001 mit dem Sprung zum Druck von BZ und AC (nach 0150). Dabei wird der KEP-Sprung in Zelle 0000
+(nach 0002) ausgetauscht; das KEP selbst auf 0002 bis 0037 bleibt unberührt. Der Assembler warnt deshalb nur bei Wörtern auf den Zellen 0002 bis 0037.
+Bei Pragma `LEITADRESSE 00` gibt er einen Hinweis aus („Der Quelltext gilt als absolut adressiert, es wird keine Adresse umgerechnet“), keine Warnung.
+Der zweite zeigt, dass auf demselben Weg auch jedes andere absolut adressierte Programm geladen werden kann. Liegen mehrere Dateien im
+Ordner des Lesers 1, rückt die nach Änderungszeit, bei Gleichstand nach Dateiname, nächste nach; für das Laden sollte deshalb nur die
+gewünschte Datei dort liegen.
+
+**Adressen und Pragma (geprüft 22.10.2026):** `--ABSPR` addiert zu jedem Wort mit Kennzeichen 01 die Ladeadresse (die Startadresse, nach
+jeder `equ`-Zeile die dortige Adresse). Zwei Schreibweisen führen zu einem richtig adressierten Lochstreifen:
+
+- **Relativ geschriebener Quelltext** (Adressen ab 0000, ohne Zelle 0000 als Sprungzelle): **kein** Pragma, `start <adresse>`.
+  Das Programm wird auf `<adresse>` geladen, die Operanden werden um `<adresse>` erhöht. Für ein Programm, das über das KEP seine
+  Zelle 0000 setzen soll, ist diese Schreibweise nicht geeignet (Zelle 0000 fiele aus dem Streifen).
+- **Absolut geschriebener Quelltext** (Adressen stehen schon fest, z. B. das Minimalprogramm und `namen_raten`): Pragma `;#; LEITADRESSE 00` vor `start`,
+  `start` ohne Operand. Fehlt das Pragma, wird die Blockbasis zu den schon absoluten Adressen noch einmal addiert (beim Minimalprogramm
+  118 von 293 Worten falsch). Pragma 00 zusammen mit `start <adresse>` ungleich 0 ist falsch gemischt; der Assembler warnt (ab 1.00-028). Ein Wort auf einer Zelle 0002 bis 0037 würde das KEP überschreiben und wird gemeldet (ab 1.00-029); die Sprungzellen 0000 und 0001 sind erlaubt.
+
+Das Laden selbst wurde mit dem Minimalprogramm geprüft: Nach dem Ansprung des KEP und dem Einlesen der `.kep` stimmen alle 293 Worte der
+Trommel mit der `.test`-Datei des Assemblers überein.
+
+Auch `namen_raten` wurde über das KEP geladen und mit `H G R` ausgeführt; der Projektinhaber bestätigt, dass es einwandfrei läuft (22.10.2026,
+von ihm selbst am Gerät-Modell ausgeführt, hier nicht nachgestellt).
+
+**Schritt 4: den GRAFIK-Interpreter starten.**
+
+```
+$ cd ..
+$ ./c8205_grafik.sh --HWCHECK
+```
+
+Der Interpreter findet auf Spur 0 (0000 bis 0037) das KEP vor. Es wird am Pult über den Speicherplatz 0002 angesprungen:
+
+```
+H  G  M+  E  E  M-  K1  R
+```
+
+(`M+` = M gedrückt halten, `M-` = M loslassen, `K1` = Kanal 1, Leser 1 anwählen; BIS-2.2.12.2).
+
+**Schritt 5: das KEP liest den Lochstreifen.** Auf Kanal 1 liegt der binär codierte Lochstreifen mit dem Leitbefehl am Anfang (`… 240:`)
+und den Programmworten (`….`). Das KEP liest den Leitbefehl, speichert ihn in der Zelle 7723 und überträgt jedes folgende Wort in die
+Zelle, auf die der Leitbefehl zeigt; nach jedem Wort wird die Adresse des Leitbefehls um eine Einheit erhöht. Ein Lochbandschlußzeichen
+gibt es nicht (BIS-2.2.12.3). Nach dem Lesen des Lochstreifens steht das Programm auf der Trommel; war es das Minimalprogramm, kann
+damit nun mit `H G R` die Eingabe mit Kennzeichen angesprungen werden, und weitere Programme lassen sich als Objektdatei laden (Weg 1
+in BIS-2.2.11a).
+
 #### BIS-2.2.12 Unterstützung elementarer Tastenkombinationen
 
 Das Minimalprogramm ermöglicht es, mit wenigen Tastenkombinationen elementare Arbeiten am Programm auszuführen: Zellinhalte
@@ -616,7 +822,7 @@ Bei der bitweisen Eingabe gibt es kein Lochbandschlußzeichen.
 ## BIS-3 Abgrenzung zu Interpreter und Assembler
 
 Der Interpreter kennt das BIS nicht: Das BIS ist Anwendungs-Software auf dem C 8205 und kein Teil der simulierten Hardware.
-Der Assembler kennt das BIS (er erzeugt Objektcode für das KEP), ist aber ein eigenes Teilprojekt. Anmerkung (Folgerung, nicht aus der Quelle): Es ließe sich als Programm, etwa als Trommeldatei eines Tests,
+Der Assembler kennt das BIS (er erzeugt Objektcode für die Eingabe mit Kennzeichen über das Minimalprogramm und mit `--ABSPR` den binären Lochstreifen für das KEP), ist aber ein eigenes Teilprojekt. Anmerkung (Folgerung, nicht aus der Quelle): Es ließe sich als Programm, etwa als Trommeldatei eines Tests,
 im Interpreter ausführen.
 
 
@@ -728,7 +934,7 @@ Hauptleitadresse 7724, Register, Transportzelle 7777); diese sind belegt.
 | 7724 | Hauptleitadresse (1. Leitadresse) | KEP: Zelle 0023 setzt hier den Anfangswert `0014 000` (aus Zelle 0037 über Zelle 0022), weil die Hauptleitadresse beim frisch geladenen KEP noch nicht gesetzt ist. Das Minimalprogramm setzt sie mit K₁ = 2, K₂ = 1. | geklärt (Angabe des Projektinhabers) |
 | 7777 | Transportzelle für den Akkumulator | Ziel von HGÜE (aufgestellter Befehl `7777 240`, Akkumulatorinhalt wird nach 7777 transportiert). Quelle für die Ausgabe mit D0, D1, D2 und für das Druckprogramm von Befehlszähler und Akkumulator. | geklärt |
 | 7724 | Hauptleitadresse (1. Leitadresse) | s. Zeile 7724 oben. Wird mit K₁ = 2, K₂ = 1 gesetzt und im Allgemeinen erst durch eine neue Hauptleitadresse zerstört. | geklärt |
-| offen | Leitadressen 2 … 9 | Feste Zellen; werden mit K₁ = 2, K₂ = 2 … 9 gesetzt. | Adressen offen |
+| 7725, 7726, 7727, 7730, 7731, 7732, 7733, 7734 | Leitadressen 2 … 9 (in dieser Reihenfolge) | Feste Zellen der Leitadressentabelle `la_tab`; werden mit K₁ = 2, K₂ = 2 … 9 gesetzt. Zusammen mit 7724 (Hauptleitadresse) und 7735 (Relativadresse, K₂ = 0) sind es zehn aufeinanderfolgende Zellen 7724 bis 7735 (Tabelle unten). | festgelegt im Quelltext `pj2-bis_minimalprogramm.asm` (`la_tab` = 7724) |
 | 7761 | Abspeicherbefehl (`ps_ab`) | Feste Zelle; wird mit der Hauptleitadresse aufgebaut und nach jedem abgespeicherten Wort um eins erhöht. Im Quelltext: Arbeitszelle 7761 (`a₁ a₂ a₃ a₄ 240`), Folgezelle 7762 (`ps_ab1`, `000 ps_nx`); gebaut von `ps_la`/`ps_anf`, erhöht von `ps_nx`. | geklärt (Festlegung im Quelltext, 11.10.2026) |
 | 7705 | Zelle des Sofortbefehls | „Feste Zelle des Systems“, in der der Befehl bei K₁ = 1 gespeichert und sofort ausgeführt wird. Beim KEP ist das 7723. Das Minimalprogramm benutzt dafür die Arbeitszelle `kz_xw` (7705) mit der Folgezelle `kz_xr` (7706), die bei Nicht-Sprungbefehlen zum Stopp `ps_us` führt. | geklärt (Festlegung im Quelltext, 11.10.2026) |
 | 7773 | R₁ (Register 1) | Keine feste Verwendung (s. Definition oben). Im jetzigen Stand: Die Ausgabeunterprogramme erwarten beim Aufruf das auszugebende Wort in R₁ und verändern es nicht. Im Assembler als `r1: abs 07773` definiert. | geklärt (Angabe des Projektinhabers) |
@@ -753,7 +959,7 @@ sind in der Tabelle oben beschrieben und hier nur der Vollständigkeit halber au
 | 7706 | `kz_xr` | Kennzeicheneingabe: Folgezelle von `kz_xw`, Sprungbefehl `000 ziel` (`kz_g` bzw. `kz_neu`); wird vor jeder Ausführung gesetzt, weil Arbeitszellen nicht mitgeladen werden In der Programmstück-Eingabe steht hier `000 ps_us` (Folge des Sofortbefehls) bzw. `000 ps_la` nach einer Hilfsadresse. |
 | 7707 | `kz_v` | Kennzeicheneingabe: Zuschlag (Leitadresse K₂) beim Wortende |
 | 7723 | – | Leitbefehl des KEP (s. Tabelle oben) |
-| 7724 bis 7735 | `la_tab` | Leitadressentabelle der Kennzeicheneingabe, 10 Zellen: 7724 Hauptleitadresse (K₂ = 1, zugleich die 1. Leitadresse des KEP, s. Tabelle oben), 7725 bis 7734 die 2. bis 9. Leitadresse (K₂ = 2 bis 9), 7735 die Relativadresse (K₂ = 0). Die Zelle für K₂ ist `la_tab` + (K₂ − 1) mod 10. Die Lage von 7725 bis 7735 ist eine Festlegung im Quelltext; in der Tabelle oben stehen die Adressen der Leitadressen 2 bis 9 weiterhin als offen. 7725, 7730 und 7731 stehen außerdem in der Liste der festen Zellen unten |
+| 7724 bis 7735 | `la_tab` | Leitadressentabelle der Kennzeicheneingabe, 10 Zellen: 7724 Hauptleitadresse (K₂ = 1, zugleich die 1. Leitadresse des KEP, s. Tabelle oben), 7725 bis 7734 die 2. bis 9. Leitadresse (K₂ = 2 bis 9), 7735 die Relativadresse (K₂ = 0). Die Zelle für K₂ ist `la_tab` + (K₂ − 1) mod 10. Die Lage von 7725 bis 7735 ist eine Festlegung im Quelltext (Tabelle oben: Zellen der Leitadressen 2 bis 9). 7725, 7730 und 7731 stehen außerdem in der Liste der festen Zellen unten; sie sind damit als `la_tab` belegt und nicht mehr offen |
 | 7740 | `okt_z` | Triadendruck und Befehlsdruck: Zähler der noch zu druckenden Ziffern (Einsen, werden nach links geschoben) |
 | 7741 | `okt_rs` | Triadendruck und Befehlsdruck: Rückkehrbefehl der Ziffernschleife (wird bei der Rückkehr als Befehl ausgeführt) |
 | 7742 | `bd_rs` | Befehlsdruck: Rückkehrbefehl zum Aufrufer |

@@ -1,4 +1,4 @@
-0000: 01 2000 000    beginn:   000    anfang                                                    ; Zelle 0000: Sprung nach 02000
+0000: 00 2000 000    beginn:   000    anfang                                                    ; Zelle 0000: Sprung nach 02000
       20 0000 2000             equ    02000                                                     
 2000: 00 4500 030    anfang:   030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0570 030              dtm    \Rate mal, welchen Namen ich mir gemerkt habe.\           
@@ -115,20 +115,20 @@
       00 1240 030    ;    
       00 0730 030    ;    
       00 2720 030              dz     $wrzl                                                     
-2163: 01 2607 211    lzuf:     211    zufall                                                    ; AC := Eintrag der Zufallsliste (Namensnummer * 8 Zellen, << 9); Befehl wird weitergeschaltet
-2164: 01 2524 040              040    wrap                                                      ; Eintrag < 0: Endmarke, Liste von vorn
-2165: 01 2534 210              210    nbasis                                                    ; AC := "211 namen" + Eintrag = Befehl auf den 1. Buchstaben des gewaehlten Namens
-2166: 01 2174 240              240    l1                                                        
-2167: 01 2527 210              210    eins                                                      ; Adresse + 1: 2. Buchstabe
-2170: 01 2234 240              240    lnam                                                      
-2171: 01 2163 211              211    lzuf                                                      ; Zeiger der Zufallsliste um 1 weiter
-2172: 01 2527 210              210    eins                                                      
-2173: 01 2163 240              240    lzuf                                                      
-2174: 01 2537 211    l1:       211    namen                                                     ; AC := Eingabeadresse des 1. Buchstabens (Befehl wird je Spiel gesetzt)
-2175: 01 2536 210              210    abef                                                      ; AC := "211 atab" + Eingabeadresse = Befehl "211 atab+Eingabeadresse"
-2176: 01 2177 240              240    ba                                                        
+2163: 00 2607 211    lzuf:     211    zufall                                                    ; AC := Eintrag der Zufallsliste (Namensnummer * 8 Zellen, << 9); Befehl wird weitergeschaltet
+2164: 00 2524 040              040    wrap                                                      ; Eintrag < 0: Endmarke, Liste von vorn
+2165: 00 2534 210              210    nbasis                                                    ; AC := "211 namen" + Eintrag = Befehl auf den 1. Buchstaben des gewaehlten Namens
+2166: 00 2174 240              240    l1                                                        
+2167: 00 2527 210              210    eins                                                      ; Adresse + 1: 2. Buchstabe
+2170: 00 2234 240              240    lnam                                                      
+2171: 00 2163 211              211    lzuf                                                      ; Zeiger der Zufallsliste um 1 weiter
+2172: 00 2527 210              210    eins                                                      
+2173: 00 2163 240              240    lzuf                                                      
+2174: 00 2537 211    l1:       211    namen                                                     ; AC := Eingabeadresse des 1. Buchstabens (Befehl wird je Spiel gesetzt)
+2175: 00 2536 210              210    abef                                                      ; AC := "211 atab" + Eingabeadresse = Befehl "211 atab+Eingabeadresse"
+2176: 00 2177 240              240    ba                                                        
 2177: 0              ba:       dw     0                                                         ; wird ausgefuehrt: AC := Ausgabebefehl "030 <Ausgabeadresse>" des Buchstabens
-2200: 01 2231 240              240    aus                                                       
+2200: 00 2231 240              240    aus                                                       
 2201: 00 4500 030              030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 1170 030              dtm    \1. Buchstabe ist:  \                                     
       00 0010 030    ;    
@@ -156,20 +156,20 @@
 2231: 0              aus:      dw     0                                                         ; wird zum Ausgabebefehl des 1. Buchstabens
       00 2720 030              dz     $wrzl                                                     ; Zeilenschaltung
 2233: 00 4700 030              030    04700                                                     ; 4700 oder K0 oder SW1 Input oder KON Input
-2234: 01 2537 211    lnam:     211    namen                                                     ; AC := erwarteter Buchstabe (Eingabeadresse << 9); 0 = Namensende (Befehl wird weitergeschaltet)
-2235: 01 2532 240              240    erw                                                       
-2236: 01 2530 320              320    null                                                      ; Vergleich mit 0 (markierter Einzelbefehl, Vgl 3 bei Gleichheit)
-2237: 01 2426 170              170    gewonnen                                                  ; Vgl 3: Namensende erreicht, alle Buchstaben erraten
-2240: 01 2234 211              211    lnam                                                      
-2241: 01 2527 210              210    eins                                                      
-2242: 01 2234 240              240    lnam                                                      ; Zeiger auf den uebernaechsten Buchstaben
-2243: 01 2531 211              211    minus1                                                    
-2244: 01 2533 240              240    vers                                                      ; vers := -1: 1. Versuch
-2245: 01 3000 011    lesen:    011    ztab                                                      ; Eingabe-Halt mit Loeschen: AC := ztab + Eingabeadresse (Sprung-Zeichen springen)
-2246: 01 2532 320              320    erw                                                       ; getippten Buchstaben mit dem erwarteten vergleichen
-2247: 01 2405 170              170    richtig                                                   ; Vgl 3: gleich
-2250: 01 2533 211    falsch:   211    vers                                                      ; Fehlversuch (auch Sprungziel der Sonderzeichen in ztab)
-2251: 01 2340 040              040    nochmal                                                   ; vers < 0: das war der 1. Versuch
+2234: 00 2537 211    lnam:     211    namen                                                     ; AC := erwarteter Buchstabe (Eingabeadresse << 9); 0 = Namensende (Befehl wird weitergeschaltet)
+2235: 00 2532 240              240    erw                                                       
+2236: 00 2530 320              320    null                                                      ; Vergleich mit 0 (markierter Einzelbefehl, Vgl 3 bei Gleichheit)
+2237: 00 2426 170              170    gewonnen                                                  ; Vgl 3: Namensende erreicht, alle Buchstaben erraten
+2240: 00 2234 211              211    lnam                                                      
+2241: 00 2527 210              210    eins                                                      
+2242: 00 2234 240              240    lnam                                                      ; Zeiger auf den uebernaechsten Buchstaben
+2243: 00 2531 211              211    minus1                                                    
+2244: 00 2533 240              240    vers                                                      ; vers := -1: 1. Versuch
+2245: 00 3000 011    lesen:    011    ztab                                                      ; Eingabe-Halt mit Loeschen: AC := ztab + Eingabeadresse (Sprung-Zeichen springen)
+2246: 00 2532 320              320    erw                                                       ; getippten Buchstaben mit dem erwarteten vergleichen
+2247: 00 2405 170              170    richtig                                                   ; Vgl 3: gleich
+2250: 00 2533 211    falsch:   211    vers                                                      ; Fehlversuch (auch Sprungziel der Sonderzeichen in ztab)
+2251: 00 2340 040              040    nochmal                                                   ; vers < 0: das war der 1. Versuch
 2252: 00 4500 030              030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0320 030              dtm    \  Du musst deine Fantasie viel mehr schulen.\            
       00 0320 030    ;    
@@ -223,9 +223,9 @@
       00 2720 030              dz     $wrzl                                                     ; Leerzeile 1
       00 2720 030              dz     $wrzl                                                     ; Leerzeile 2
       00 2720 030              dz     $wrzl                                                     ; Leerzeile 3
-2337: 01 2000 000              000    anfang                                                    ; von vorn
-2340: 01 2530 211    nochmal:  211    null                                                      
-2341: 01 2533 240              240    vers                                                      ; vers := 0: 2. Versuch
+2337: 00 2000 000              000    anfang                                                    ; von vorn
+2340: 00 2530 211    nochmal:  211    null                                                      
+2341: 00 2533 240              240    vers                                                      ; vers := 0: 2. Versuch
 2342: 00 4500 030              030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0320 030              dtm    \  Falsch, noch ein Versuch.\                             
       00 0320 030    ;    
@@ -260,7 +260,7 @@
       00 0730 030    ;    
       00 2720 030              dz     $wrzl                                                     ; Zeilenschaltung
 2403: 00 4700 030              030    04700                                                     ; 4700 oder K0 oder SW1 Input oder KON Input
-2404: 01 2245 000              000    lesen                                                     
+2404: 00 2245 000              000    lesen                                                     
 2405: 00 4500 030    richtig:  030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0320 030              dtm    \  Richtig!\                                              
       00 0320 030    ;    
@@ -277,7 +277,7 @@
       00 0730 030    ;    
       00 2720 030              dz     $wrzl                                                     ; Zeilenschaltung
 2424: 00 4700 030              030    04700                                                     ; 4700 oder K0 oder SW1 Input oder KON Input
-2425: 01 2234 000              000    lnam                                                      
+2425: 00 2234 000              000    lnam                                                      
 2426: 00 4500 030    gewonnen: 030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0320 030              dtm    \  Toll, du bist fantasiebegabt.\                         
       00 0320 030    ;    
@@ -315,7 +315,7 @@
       00 2720 030              dz     $wrzl                                                     ; Leerzeile 1
       00 2720 030              dz     $wrzl                                                     ; Leerzeile 2
       00 2720 030              dz     $wrzl                                                     ; Leerzeile 3
-2473: 01 2000 000              000    anfang                                                    ; von vorn
+2473: 00 2000 000              000    anfang                                                    ; von vorn
 2474: 00 4500 030    ende:     030    04500                                                     ; 4500 oder K2 oder LSL2 oder SW1 Output
       00 0320 030              dtm    \  Programm beendet.\                                     
       00 0320 030    ;    
@@ -339,18 +339,18 @@
       00 1630 030    ;    
       00 0730 030    ;    
       00 2720 030              dz     $wrzl                                                     
-2523: 01 0000 020              020    0                                                         ; Stopp
-2524: 01 2535 211    wrap:     211    zanf                                                      ; Endmarke der Zufallsliste: Zeiger wieder auf den Anfang ...
-2525: 01 2163 240              240    lzuf                                                      
-2526: 01 2163 000              000    lzuf                                                      ; ... und den Eintrag erneut holen
+2523: 00 0000 020              020    0                                                         ; Stopp
+2524: 00 2535 211    wrap:     211    zanf                                                      ; Endmarke der Zufallsliste: Zeiger wieder auf den Anfang ...
+2525: 00 2163 240              240    lzuf                                                      
+2526: 00 2163 000              000    lzuf                                                      ; ... und den Eintrag erneut holen
 2527: 00 00000001000 eins:     dw     01000                                                     ; 1 in den Adressstellen (Adresse << 9)
 2530: 0              null:     dw     0                                                         
 2531: 00 77777777777 minus1:   dw     -1                                                        
 2532: 0              erw:      dw     0                                                         ; erwarteter Buchstabe
 2533: 0              vers:     dw     0                                                         ; -1 = 1. Versuch, 0 = 2. Versuch
-2534: 01 2537 211    nbasis:   211    namen                                                     ; Vorlage: Befehl auf den 1. Buchstaben des 1. Namens
-2535: 01 2607 211    zanf:     211    zufall                                                    ; Vorlage: Anfangswert des Zeigers lzuf
-2536: 01 2650 211    abef:     211    atab                                                      ; Vorlage: Befehl auf den Anfang der Ausgabetabelle atab
+2534: 00 2537 211    nbasis:   211    namen                                                     ; Vorlage: Befehl auf den 1. Buchstaben des 1. Namens
+2535: 00 2607 211    zanf:     211    zufall                                                    ; Vorlage: Anfangswert des Zeigers lzuf
+2536: 00 2650 211    abef:     211    atab                                                      ; Vorlage: Befehl auf den Anfang der Ausgabetabelle atab
 2537: 00 00000044000 namen:    dw     044*01000                                                 ; Name 0, Buchstabe 1: m  (Eingabeadresse 044)
 2540: 00 00000031000           dw     031*01000                                                 ; Name 0, Buchstabe 2: i  (Eingabeadresse 031)
 2541: 00 00000023000           dw     023*01000                                                 ; Name 0, Buchstabe 3: c  (Eingabeadresse 023)
@@ -499,11 +499,11 @@
 3007: 0                        dw     0                                                         ; 07: kein Buchstabe (Fehlversuch)
 3010: 0                        dw     0                                                         ; 10: kein Buchstabe (Fehlversuch)
 3011: 0                        dw     0                                                         ; 11: kein Buchstabe (Fehlversuch)
-3012: 01 2250 000              000    falsch                                                    ; 12: Leertaste / ZWR: zaehlt als Fehlversuch
+3012: 00 2250 000              000    falsch                                                    ; 12: Leertaste / ZWR: zaehlt als Fehlversuch
 3013: 0                        dw     0                                                         ; 13: kein Buchstabe (Fehlversuch)
 3014: 0                        dw     0                                                         ; 14: kein Buchstabe (Fehlversuch)
-3015: 01 2250 000              000    falsch                                                    ; 15: : / (          : zaehlt als Fehlversuch
-3016: 01 2250 000              000    falsch                                                    ; 16: Irrung Satz: zaehlt als Fehlversuch
+3015: 00 2250 000              000    falsch                                                    ; 15: : / (          : zaehlt als Fehlversuch
+3016: 00 2250 000              000    falsch                                                    ; 16: Irrung Satz: zaehlt als Fehlversuch
 3017: 0                        dw     0                                                         ; 17: kein Buchstabe (Fehlversuch)
 3020: 0                        dw     0                                                         ; 20: kein Buchstabe (Fehlversuch)
 3021: 00 00000021000           dw     021*01000                                                 ; 21: a
@@ -515,13 +515,13 @@
 3027: 00 00000027000           dw     027*01000                                                 ; 27: g
 3030: 00 00000030000           dw     030*01000                                                 ; 30: h
 3031: 00 00000031000           dw     031*01000                                                 ; 31: i
-3032: 01 2250 000              000    falsch                                                    ; 32: SatzMarke / WRZL: zaehlt als Fehlversuch
-3033: 01 2474 000              000    ende                                                      ; 33: . / !          : Punkt beendet das Programm
+3032: 00 2250 000              000    falsch                                                    ; 32: SatzMarke / WRZL: zaehlt als Fehlversuch
+3033: 00 2474 000              000    ende                                                      ; 33: . / !          : Punkt beendet das Programm
 3034: 0                        dw     0                                                         ; 34: kein Buchstabe (Fehlversuch)
 3035: 0                        dw     0                                                         ; 35: kein Buchstabe (Fehlversuch)
 3036: 0                        dw     0                                                         ; 36: kein Buchstabe (Fehlversuch)
-3037: 01 2245 000              000    lesen                                                     ; 37: Um. GB: ueberlesen, weiter warten
-3040: 01 2250 000              000    falsch                                                    ; 40: - / Dreieck: zaehlt als Fehlversuch
+3037: 00 2245 000              000    lesen                                                     ; 37: Um. GB: ueberlesen, weiter warten
+3040: 00 2250 000              000    falsch                                                    ; 40: - / Dreieck: zaehlt als Fehlversuch
 3041: 00 00000041000           dw     041*01000                                                 ; 41: j
 3042: 00 00000042000           dw     042*01000                                                 ; 42: k
 3043: 00 00000043000           dw     043*01000                                                 ; 43: l
@@ -536,8 +536,8 @@
 3054: 0                        dw     0                                                         ; 54: kein Buchstabe (Fehlversuch)
 3055: 0                        dw     0                                                         ; 55: kein Buchstabe (Fehlversuch)
 3056: 0                        dw     0                                                         ; 56: kein Buchstabe (Fehlversuch)
-3057: 01 2245 000              000    lesen                                                     ; 57: Um. KB: ueberlesen, weiter warten
-3060: 01 2250 000              000    falsch                                                    ; 60: ` / ;          : zaehlt als Fehlversuch
+3057: 00 2245 000              000    lesen                                                     ; 57: Um. KB: ueberlesen, weiter warten
+3060: 00 2250 000              000    falsch                                                    ; 60: ` / ;          : zaehlt als Fehlversuch
 3061: 0                        dw     0                                                         ; 61: kein Buchstabe (Fehlversuch)
 3062: 00 00000062000           dw     062*01000                                                 ; 62: s
 3063: 00 00000063000           dw     063*01000                                                 ; 63: t
@@ -547,9 +547,9 @@
 3067: 00 00000067000           dw     067*01000                                                 ; 67: x
 3070: 00 00000070000           dw     070*01000                                                 ; 70: y
 3071: 00 00000071000           dw     071*01000                                                 ; 71: z
-3072: 01 2250 000              000    falsch                                                    ; 72: BM (ZV hat dieselbe Adresse, aber keine Sprung-Umstellung): Fehlversuch
-3073: 01 2250 000              000    falsch                                                    ; 73: , / ?          : zaehlt als Fehlversuch
+3072: 00 2250 000              000    falsch                                                    ; 72: BM (ZV hat dieselbe Adresse, aber keine Sprung-Umstellung): Fehlversuch
+3073: 00 2250 000              000    falsch                                                    ; 73: , / ?          : zaehlt als Fehlversuch
 3074: 0                        dw     0                                                         ; 74: kein Buchstabe (Fehlversuch)
-3075: 01 2250 000              000    falsch                                                    ; 75: Tabulator: zaehlt als Fehlversuch
+3075: 00 2250 000              000    falsch                                                    ; 75: Tabulator: zaehlt als Fehlversuch
 3076: 0                        dw     0                                                         ; 76: kein Buchstabe (Fehlversuch)
 3077: 0                        dw     0                                                         ; 77: kein Buchstabe (Fehlversuch)

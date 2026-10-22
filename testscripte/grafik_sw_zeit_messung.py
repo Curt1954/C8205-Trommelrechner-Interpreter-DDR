@@ -4,7 +4,7 @@
 grafik_sw_zeit_messung.py - Messung zu OP-40 (GRAFIK_Beschreibung §10.4): Wie viel Schreibwerkzeit kaeme zur Laufzeit der Tests aus Tests/ hinzu?
 Verfahren: jeder Test laeuft mit dem GRAFIK-Kern (wie grafik_gleichwertigkeit.py, ohne Schreibwerk, also ohne Schreibwerkzeit); aus der Schreibwerk-Ausgabe
 (sw) wird die Schreibwerkzeit berechnet, die der echte Treiber (c8205_grafik.py, Schreibwerk nach S4-17, auch bei --STUMM) abwarten wuerde:
-Zeichen im Mittel 80 ms, TAB 400 ms, WRZL 360 ms, WR 120 ms (grafik_schreibwerk.py). Die Rechnung nimmt die Mittelwerte, keine Zufallswerte.
+Zeichen im Mittel 82,5 ms, TAB 400 ms, WRZL 360 ms, WR 120 ms (grafik_schreibwerk.py). Die Rechnung nimmt die Mittelwerte, keine Zufallswerte.
 Aufruf:  python3 testscripte/grafik_sw_zeit_messung.py [--zeit SEK] [--bericht DATEI]
 Es wird nichts veraendert; jeder Lauf hat einen eigenen Arbeitsordner.
 """

@@ -1,0 +1,57 @@
+Das ist der Stand nach dem letzten Checkpoint.
+
+
+Ich möchte eine neue Version eines symbolischen Assemblerprogrammes für das BIS-Minimalprogramm schreiben.
+
+Es soll vom Assembler mit absoluten Adressen ausgegeben werden und ab Adresse 0040 gespeichert werden.
+Auf Adresse 0000:  ist ein unbedingter Sprung zum Anfang des BIS vorzusehen.
+Dort ist die 1. Leitadresse auf 0 zu setzen und der Leitbefehl ist mit 0240 aufzubauen.
+
+
+Dann ist das Unterrpogramm  "Eingabe eines Wortes mit Kennzeichen" aufzurufen.
+
+Das BIS-Minimalprogramm soll diese bereits programmierten Unterprogramme enthalten:
+Projekt_2/pj2-bis_minimalprogramm_v3.asm
+
+Die genannten Ansprungzellen müssen fest eingehalten werden,
+der Programmcode selbst kann verschoben oder verteilt werden unter Beachtung der Restriktionen von Eingabebefehlen und Ausgabebefehlen.
+
+Noch zu programmieren sind die Unterprogramme:
+
+   Adresseingabe
+   "Eingabe eines Wortes mit Kennzeichen"
+   "Eingabe eines Programmstückes"
+ 
+Anfangen würde ich mit "Eingabe eines Wortes mit Kennzeichen", weil die Eingabe bestimmte feste zellen erfordert.
+Als Zeichen können nur Zeichen auftreten, die über die Bedienpulttastatur eingegeben werden können, deshalb braucht man für andere Zeichen keine Fehlerprüfung zu programmieren. Es sind die Zeichen:
+    + ZR / : BM 0 1 2 3 4 5 6 7 8 9 B D
+B D liefern aber abweichend vom Schreibwerk und dem Buchstabencode bei Eingabe über die Tastatur des Bedienpultes andere Codes:
+B  ->  Eingabeadresse 0035  Sprung
+D  ->  Eingabeadresse 0055  Sprung
+auf den Ansprungzellen für B und D ist ein unbedingter Sprung zum Anfang des BIS vorzusehen, allerdings ist die Initialisierung der Relativadresse, der 1. leitadresse und des leitbefehles dabei zu übergehen.
+
+Nur für die oben angegebenen Zeichen ist die Eingabe auszulegen. 
+Bei Eingabe von K1=0 können 11 Oktal-Triaden mit Zifferntasten eingegeben werden:   K2 t10 ... t0  
+Der ggf. vorzeitige Abschluß erfolgt mit dem Zeichen Punkt. 
+Die Triaden t10 ... t0 sind dann mit Vornullen aufzufüllen. 
+Ist K2 == 0, wird der Leitbefehl benutzt und das eingegebene Wort unberändert zu speichern. anschließend wird die Adresse des leitbefehls um 1000  
+erhöht.
+Ist K2 == 1 wird zu den eingagebenen Oktalstellen t10 ... t3 die 1. Leitadresse (Hauptleitadresse) addiert. Dann wird er wie bei K1 == 0 gespeichert
+Ist K2 == 2 bis 9 wird zu den eingagebenen Oktalstellen t10 ... t3 die x-te Leitadresse addiert. Dann wird er wie bei K1 == 0 gespeichert
+Ist K1 == 1 wird der eingegebene Befehl (t10 .. t0) sofort abgearbeitet. Die Kennzeiche K2 == 0 .. 9 habe die selbe Bedeutung wie bei K1 == 0. 
+   Der so einegebene und eventuell in seiner Adresse geänderte Befehl wird auf eine freie Arbeitszele gespeichert. Auf der Zelle nach ihm muß ein 
+   unbedingter stop stehen. dann wird die Abspeicherzelle angesprungen. dadurch wird der befehl ausgeführt und anschlißend stoppt der Rechner.
+Ist K1 == 2 wird das unterprogramm "Adreßeingabe" benutzt, um bis zu 8 Adreßtriaden abgeschlossen mit Punkt einzugeben. sie stehen bei Rückkehr
+im AC.  Danach wird je nach K2  1 ..9 der AC auf der Zelle der entsprechenden Leitadresse abgespeichert.  Wir K2 == 0 eingegeben, wird der inhalt 
+des AC zum Leitbefehl addiert.
+K1 == 2 mit K2 == 3 .. 9 ist nicht definiert. 
+Wird K1 == ZR gegeben, wird der AC gelöscht.
+
+
+
+Entpacke das zip-File mit unzip -O CP437
+Beachte: die Assembler.odt hat das Primat.
+Hinweis: erzeuge keine Assembler-binaries, das mache ich selbst. Aber Scripte dafst du anpassen.
+Führe die Aufgabe aus und mache nach 10 Minuten einen checkpoint zum Download mit den geänderten Dateien.
+
+

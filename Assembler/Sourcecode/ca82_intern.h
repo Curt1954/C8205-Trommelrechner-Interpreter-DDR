@@ -113,6 +113,12 @@ extern int leitadressePragmaGesetzt;
 extern unsigned int absolutadresse;
 extern int line_ausgegeben;
 extern unsigned int startAdresse;
+extern int absprAktiv;            // 1 = --ABSPR: .kep statt .obj
+void absprStart(FILE *f);         // erster Leitbefehl der .kep-Datei
+extern int absprAnzahl0209;       // K1=02..09-Zeilen, nicht umgesetzt (Warnung)
+extern int absprBahnAnzahl;                 // Woerter auf den Zellen 0002..0037 (KEP)
+extern unsigned long absprBahnAdresse[];    // deren Adressen (hoechstens 64 gespeichert)
+extern int absprAnzahl01;         // verbleibende K1=01-Zeilen (Warnung, wenn 0)
 
 extern char inputFileName[1024];
 

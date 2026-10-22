@@ -1,4 +1,4 @@
-// ca82_symbole.c - Version 1.00-026 (siehe ca82_version.h)
+// ca82_symbole.c - Version 1.00-030 (siehe ca82_version.h)
 // Symbol-, Literal-, equ- und abs-Tabellen des Assemblers samt Suchfunktionen und Sortierung.
 // Aus ca82ass.c ausgelagert. Das Eintragen von Symbolen und Literalen mit Fehlermeldung ins Listing
 // (addSymbol, addLiteral) bleibt vorerst in ca82ass.c.

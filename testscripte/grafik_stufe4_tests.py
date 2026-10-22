@@ -108,40 +108,44 @@ class Mischer(unittest.TestCase):
 class Werk(unittest.TestCase):
     def neu(self, mit_mischer=True, seed=1):
         self.zeiten = []
+        self.uhr = Uhr()                                      # G4-003: ersetzbare Uhr, schlafe() rueckt sie vor und merkt die Wartezeit
         self.m = TM.Mischer() if mit_mischer else None
         k = {'zeichen': [klang(5292, 100 + i) for i in range(24)], 'tab': klang(17640, 7), 'wrzl': klang(15876, 8), 'wr': klang(5292, 9)}
-        return Schreibwerk(self.m, k, schlafe=self.zeiten.append, zufall=random.Random(seed))
+        return Schreibwerk(self.m, k, schlafe=self._schlafe, zufall=random.Random(seed), uhr=self.uhr)
 
-    def test_schreibwerkzeit_70_bis_90_ms_gleichverteilt(self):
-        w = self.neu(); w.ausgabe('x' * 2000)
+    def _schlafe(self, dt):
+        self.zeiten.append(round(dt, 9)); self.uhr.schlafe(dt)
+
+    def test_schreibwerkzeit_75_bis_90_ms_gleichverteilt(self):
+        w = self.neu(); w.ausgabe('x' * 2000); w.warte_bis_frei()            # das letzte Zeichen wird erst beim Auslaufen gezaehlt
         self.assertEqual(len(self.zeiten), 2000)
-        self.assertGreaterEqual(min(self.zeiten), 0.070); self.assertLessEqual(max(self.zeiten), 0.090)
+        self.assertGreaterEqual(min(self.zeiten), 0.075); self.assertLessEqual(max(self.zeiten), 0.090)
         mittel = sum(self.zeiten) / 2000
-        self.assertAlmostEqual(mittel, 0.080, delta=0.001)
+        self.assertAlmostEqual(mittel, 0.0825, delta=0.001)
         self.assertGreater(len(set(round(z, 5) for z in self.zeiten)), 500)       # je Zeichen verschieden
 
     def test_tab_400_wrzl_360_zeichen_zr_benannt(self):
-        w = self.neu(); w.ausgabe('\t'); w.ausgabe('\n'); w.ausgabe(' '); w.ausgabe('<Nr.5>')
+        w = self.neu(); w.ausgabe('\t'); w.ausgabe('\n'); w.ausgabe(' '); w.ausgabe('<Nr.5>'); w.warte_bis_frei()
         self.assertEqual(self.zeiten[0], 0.4); self.assertEqual(self.zeiten[1], 0.36)
-        self.assertTrue(0.07 <= self.zeiten[2] <= 0.09); self.assertEqual(len(self.zeiten), 4)       # <Nr.5> = ein Zeichen
+        self.assertTrue(0.075 <= self.zeiten[2] <= 0.09); self.assertEqual(len(self.zeiten), 4)       # <Nr.5> = ein Zeichen
 
     def test_wr_120_ms_eigener_klang_nicht_wrzl(self):
         """OP-42: <WR> (Wagenruecklauf ohne Zeilenschaltung) hat Klang und Schreibwerkzeit 120 ms; WRZL bleibt 360 ms, jedes andere benannte Zeichen ein Zeichen."""
         self.assertEqual(_art('<WR>'), 'wr'); self.assertEqual(_art('\n'), 'wrzl'); self.assertEqual(_art('<WRZL>'), 'zeichen')
         self.assertEqual(_art('<Nr.5>'), 'zeichen'); self.assertEqual(_art('\t'), 'tab')
-        w = self.neu(); w.ausgabe('<WR>')
+        w = self.neu(); w.ausgabe('<WR>'); w.warte_bis_frei()
         self.assertEqual(self.zeiten, [0.12]); self.assertEqual(self.m.klingt(), 1)
         self.assertEqual(samples(self.m.block())[0], int(9 * w.pegel))               # Kennung 9 des WR-Klangs mal Pegel (nicht 8 = WRZL, nicht 100+i = Zeichen)
-        w.ausgabe('a<WR>\nb')                                                         # Zeichen, WR, WRZL, Zeichen
+        w.ausgabe('a<WR>\nb'); w.warte_bis_frei()                                      # Zeichen, WR, WRZL, Zeichen
         self.assertEqual([round(z, 3) for z in self.zeiten[2:4]], [0.12, 0.36]); self.assertEqual(len(self.zeiten), 5)
 
     def test_wr_ohne_klangdatei_still_aber_mit_schreibwerkzeit(self):
         k = {'zeichen': [klang(5292)] * 3, 'tab': klang(10), 'wrzl': klang(10)}       # 'wr' fehlt: kein Absturz, kein Klang, Zeit bleibt
-        zeiten = []; m = TM.Mischer(); w = Schreibwerk(m, k, schlafe=zeiten.append); w.ausgabe('<WR>')
+        zeiten = []; u = Uhr(); m = TM.Mischer(); w = Schreibwerk(m, k, schlafe=lambda dt: (zeiten.append(round(dt, 9)), u.schlafe(dt)), uhr=u); w.ausgabe('<WR>'); w.warte_bis_frei()
         self.assertEqual(zeiten, [0.12]); self.assertEqual(m.klingt(), 0)
 
     def test_wr_stumm_schreibwerkzeit_ja(self):
-        w = self.neu(mit_mischer=False); w.ausgabe('<WR>'); self.assertEqual(self.zeiten, [0.12])
+        w = self.neu(mit_mischer=False); w.ausgabe('<WR>'); w.warte_bis_frei(); self.assertEqual(self.zeiten, [0.12])
 
     def test_wr_als_angezeigte_eingabe_klingt_ohne_schreibwerkzeit(self):
         w = self.neu(); w.eingabe('<WR>'); self.assertEqual(self.zeiten, []); self.assertEqual(self.m.klingt(), 1)
@@ -163,7 +167,7 @@ class Werk(unittest.TestCase):
         s = samples(self.m.block()); self.assertGreater(s[0], 200)                   # Summe beider Klaenge
 
     def test_stumm_schreibwerkzeit_ja_ton_nein(self):
-        w = self.neu(mit_mischer=False); w.ausgabe('abc'); self.assertEqual(len(self.zeiten), 3)
+        w = self.neu(mit_mischer=False); w.ausgabe('abc'); w.warte_bis_frei(); self.assertEqual(len(self.zeiten), 3)
 
     def test_eingabe_klingt_ohne_schreibwerkzeit(self):
         w = self.neu(); w.eingabe('a'); w.eingabe('\t'); w.eingabe('\n')
@@ -180,6 +184,53 @@ class Werk(unittest.TestCase):
     def test_abwechselnd_ein_und_ausgabe_laufen_ineinander(self):
         w = self.neu(); w.ausgabe('a'); w.eingabe('b'); w.ausgabe('c')
         self.assertEqual(self.m.klingt(), 3)
+
+
+class SchreibwerkAsynchron(unittest.TestCase):
+    """G4-003 (Projektinhaber 22.10.2026): die Befehlsschleife wartet nicht auf das Ende des Zeichens; erst der naechste Ausgabebefehl wartet,
+    falls das Schreibwerk noch beschaeftigt ist; dieses Warten ist ein E/A-Halt (nicht Rechnerzeit)."""
+
+    def werk(self):
+        self.u = Uhr(); self.ereignisse = []; self.waits = []
+        def schlafe(dt): self.waits.append(round(dt, 9)); self.u.schlafe(dt)
+        w = Schreibwerk(None, None, schlafe=schlafe, zufall=random.Random(3), uhr=self.u)
+        w.bei_halt = lambda: self.ereignisse.append('halt'); w.bei_weiter = lambda: self.ereignisse.append('weiter')
+        return w
+
+    def test_erstes_zeichen_kehrt_sofort_zurueck(self):
+        w = self.werk(); w.ausgabe('a')
+        self.assertEqual((self.waits, self.ereignisse), ([], []))
+        self.assertGreater(w.frei_ab, self.u.t)
+
+    def test_naechster_befehl_wartet_genau_bis_frei(self):
+        w = self.werk(); w.ausgabe('a'); t_a = w.letzte_zeiten[-1]
+        self.u.t += 0.030                                                # der Rechner rechnet 30 ms
+        w.ausgabe('b')
+        self.assertEqual(len(self.waits), 1); self.assertAlmostEqual(self.waits[0], t_a - 0.030, places=9)
+        self.assertEqual(self.ereignisse, ['halt', 'weiter'])            # E/A-Halt nur fuer die Restzeit
+
+    def test_kein_warten_wenn_schreibwerk_schon_frei(self):
+        w = self.werk(); w.ausgabe('a'); self.u.t += 0.5; w.ausgabe('b')
+        self.assertEqual((self.waits, self.ereignisse), ([], []))
+
+    def test_text_aus_mehreren_zeichen_wartet_je_folgezeichen(self):
+        w = self.werk(); w.ausgabe('abc')
+        self.assertEqual(len(self.waits), 2); self.assertEqual(self.ereignisse, ['halt', 'weiter'] * 2)
+
+    def test_tab_blockiert_erst_den_folgebefehl(self):
+        w = self.werk(); w.ausgabe('\t'); self.assertEqual(self.waits, [])
+        w.ausgabe('x'); self.assertEqual(self.waits, [0.4])
+
+    def test_haltzeit_zaehlt_das_warten_nicht_zur_rechnerzeit(self):
+        """Mit dem Rechner verdrahtet: das Warten auf das Schreibwerk ist ein E/A-Halt der Haltuhr."""
+        import types
+        import c8205_grafik as G
+        r = G.Rechner({}, types.SimpleNamespace(), pult_modus=True)
+        w = Schreibwerk(None, None, schlafe=lambda dt: None, zufall=random.Random(1), uhr=lambda: 0.0)
+        r.sw.schreibwerk = w
+        r.haltuhr.start(); r.sw.schreibe('a'); n0 = r.haltuhr.anzahl; r.sw.schreibe('b')
+        self.assertEqual(r.haltuhr.anzahl, n0 + 1)                       # ein Halt (E/A-Halt) wegen des Wartens auf 'a'
+        self.assertEqual(r.haltuhr.lesen()[2], 'E/A-Halt') if r.haltuhr.lesen() else None
 
 
 class SchreibwerkzeitUndH(unittest.TestCase):
@@ -205,7 +256,7 @@ class SchreibwerkzeitUndH(unittest.TestCase):
         im_werk = threading.Event(); fertig = threading.Event()
 
         def rechner():
-            im_werk.set(); r.sw.schreibe('\t'); fertig.set()    # TAB: 400 ms Schreibwerkzeit
+            im_werk.set(); r.sw.schreibe('\t'); r.sw.schreibe('x'); fertig.set()    # TAB startet sofort; das naechste Zeichen wartet 400 ms (G4-003)
         th = threading.Thread(target=rechner, daemon=True); th.start()
         self.assertTrue(im_werk.wait(1))
         time.sleep(0.05)
@@ -223,7 +274,7 @@ class SchreibwerkzeitUndH(unittest.TestCase):
         r.thread_modus = True
         r.sw.schreibwerk = Schreibwerk(None, None)
         im_werk = threading.Event()
-        th = threading.Thread(target=lambda: (im_werk.set(), r.sw.schreibe('\t')), daemon=True); th.start()
+        th = threading.Thread(target=lambda: (im_werk.set(), r.sw.schreibe('\t'), r.sw.schreibe('x')), daemon=True); th.start()
         self.assertTrue(im_werk.wait(1)); time.sleep(0.05)
         t0 = time.monotonic(); r.abbrechen(); dauer = time.monotonic() - t0
         self.assertLess(dauer, 0.05)
@@ -231,14 +282,32 @@ class SchreibwerkzeitUndH(unittest.TestCase):
 
 
 class Senke(unittest.TestCase):
-    def test_selektor_sw_keine_ausgabe_kein_ton_keine_zeit(self):
-        zeiten = []; m = TM.Mischer()
+    def test_selektor_sw_keine_ausgabe_kein_ton_aber_schreibwerkzeit(self):
+        """G4-004: Selektor SW: kein Text, kein Klang, nichts nachgeholt; die Schreibwerkzeit laeuft still weiter (der Rest eines Textes ist beim Loesen nicht verbraucht)."""
+        zeiten = []; m = TM.Mischer(); uhr = [0.0]
         k = {'zeichen': [klang(5292)] * 3, 'tab': klang(10), 'wrzl': klang(10)}
-        s = SwSenke(Schreibwerk(m, k, schlafe=zeiten.append)); gehoert = []; s.hoere(gehoert.append)
+        def schlafe(t): zeiten.append(t); uhr[0] += t
+        s = SwSenke(Schreibwerk(m, k, schlafe=schlafe, uhr=lambda: uhr[0])); gehoert = []; s.hoere(gehoert.append)
         s.unterdruecken = True; s.schreibe('abc'); s.schreibe('\t')
-        self.assertEqual((s.alles(), gehoert, zeiten, m.klingt()), ('', [], [], 0))
-        s.unterdruecken = False; s.schreibe('d')                                   # danach wieder, nichts wird nachgeholt
-        self.assertEqual((s.alles(), gehoert, len(zeiten), m.klingt()), ('d', ['d'], 1, 1))
+        self.assertEqual((s.alles(), gehoert, m.klingt()), ('', [], 0))
+        self.assertEqual(len(zeiten), 3)                                                                           # 'b', 'c' und TAB warten je auf das vorige Zeichen
+        s.unterdruecken = False; s.schreibe('d'); s.schreibwerk.warte_bis_frei()                                   # danach wieder, nichts wird nachgeholt
+        self.assertEqual((s.alles(), gehoert, m.klingt()), ('d', ['d'], 1))
+
+    def test_selektor_sw_mitten_im_text_loesen_der_rest_erscheint(self):
+        """G4-004: Text von 30 Zeichen, Selektor rastet nach 5 Zeichen ein und wird nach 0,5 s geloest: der Rest NACH dem Loesen erscheint (vorher ging er in Millisekunden verloren)."""
+        uhr = [0.0]; m = TM.Mischer(); k = {'zeichen': [klang(5292)] * 3, 'tab': klang(10), 'wrzl': klang(10)}
+        s = SwSenke(Schreibwerk(m, k, schlafe=lambda t: uhr.__setitem__(0, uhr[0] + t), uhr=lambda: uhr[0]))
+        for i in range(30):
+            if i == 5:
+                s.unterdruecken = True; t_ein = uhr[0]
+            if s.unterdruecken and uhr[0] - t_ein >= 0.5:
+                s.unterdruecken = False
+            s.schreibe(chr(ord('a') + i % 26))
+        ausgegeben = s.alles()
+        self.assertEqual(ausgegeben[:5], 'abcde')
+        self.assertGreater(len(ausgegeben), 10)                    # nach dem Loesen geht es weiter
+        self.assertLess(len(ausgegeben), 25)                       # ein Stueck ging waehrend der Sperre verloren
 
     def test_ohne_schreibwerk_wie_bisher(self):
         s = SwSenke(); s.schreibe('xy'); self.assertEqual(s.alles(), 'xy')
@@ -365,39 +434,53 @@ class Leser(unittest.TestCase):
         lt = self.neu(); lt.zeichen(); self.assertEqual(lt.zustand, 'einzel'); self.assertEqual(self.m.klingt_schluessel('ls_einzel'), 1)
         self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 0)
 
-    def test_naechstes_zeichen_hoechstens_100_ms_dauergeraeusch_einzel_abgebrochen(self):
-        lt = self.neu(); lt.zeichen(); self.uhr.t += 0.100; lt.zeichen()
+    def test_naechster_zugriff_nach_freigabe_einzel_laeuft_noch_dauerton(self):
+        lt = self.neu(); lt.zeichen(); w = lt.zeichen()                                # 2. Zugriff wartet die 1/10 s Freigabe ab
+        self.assertAlmostEqual(w, GT.EINZEL_FREIGABE_S, delta=1e-6)
         self.assertEqual(lt.zustand, 'dauer'); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 1); self.assertEqual(self.m.klingt_schluessel('ls_einzel'), 0)
 
-    def test_dauer_laeuft_solange_zeichen_kommen_und_endet_mit_auslaufen(self):
+    def test_dauer_freigabe_je_zeichen_1_130_s(self):
+        lt = self.neu(); lt.zeichen(); lt.zeichen(); w = lt.zeichen()
+        self.assertAlmostEqual(w, 1 / 130.0, delta=1e-6); self.assertEqual(lt.zustand, 'dauer')
+
+    def test_einzel_beendet_dann_wieder_einzelton(self):
+        lt = self.neu(); lt.zeichen(); lauf(self.m, self.uhr, 0.20)                    # Einzelton (148 ms) ist zu Ende, Aus-Frist noch nicht
+        self.assertEqual(lt.zustand, 'einzel'); lt.zeichen()
+        self.assertEqual(lt.zustand, 'einzel'); self.assertEqual(self.m.klingt_schluessel('ls_einzel'), 1); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 0)
+
+    def test_dauer_laeuft_solange_zugriffe_kommen_und_endet_nach_aus_frist_mit_auslaufen(self):
         lt = self.neu()
         for _ in range(50): lt.zeichen(); lauf(self.m, self.uhr, 0.010)
         self.assertEqual(lt.zustand, 'dauer'); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 1)
-        lauf(self.m, self.uhr, 0.12)
+        lauf(self.m, self.uhr, GT.LS_AUS_S - 0.1)                                      # noch nicht abgelaufen: der Motor laeuft weiter
+        self.assertEqual(lt.zustand, 'dauer'); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 1)
+        lauf(self.m, self.uhr, 0.2)
         self.assertEqual(lt.zustand, 'aus'); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 0)
-        self.assertGreaterEqual(self.m.klingt_schluessel('ls_ende'), 0)
         lauf(self.m, self.uhr, 0.1); self.assertEqual(self.m.klingt(), 0)
 
+    def test_aus_frist_zaehlt_ab_dem_letzten_zugriff_nicht_ab_dem_eingabe_halt(self):
+        lt = self.neu(); lt.zeichen(); lt.zeichen()
+        lauf(self.m, self.uhr, GT.LS_AUS_S + 0.05)                                     # Leser wartet (Eingabe-Halt), kein Zugriff: Ton geht aus
+        self.assertEqual(lt.zustand, 'aus'); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 0)
+
     def test_auslaufen_ist_ein_einzelklang_60_ms(self):
-        lt = self.neu(); lt.zeichen(); self.uhr.t += 0.05; lt.zeichen()
-        self.uhr.t += 0.101; lt.tick()
+        lt = self.neu(); lt.zeichen(); lt.zeichen()
+        self.uhr.t += GT.LS_AUS_S + 0.01; lt.tick()
         self.assertEqual(self.m.klingt_schluessel('ls_ende'), 1); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 0)
 
-    def test_nach_dauer_und_mehr_als_100_ms_pause_wieder_einzelschritt(self):
-        lt = self.neu(); lt.zeichen(); self.uhr.t += 0.05; lt.zeichen(); lauf(self.m, self.uhr, 0.3)
+    def test_nach_aus_wieder_einzelschritt(self):
+        lt = self.neu(); lt.zeichen(); lt.zeichen(); lauf(self.m, self.uhr, GT.LS_AUS_S + 0.3)
         self.assertEqual(lt.zustand, 'aus'); lt.zeichen(); self.assertEqual(lt.zustand, 'einzel')
 
-    def test_zeichen_ohne_zeitgeber_beendet_abgelaufenes_dauergeraeusch_selbst(self):
-        lt = self.neu(); lt.zeichen(); self.uhr.t += 0.05; lt.zeichen(); self.uhr.t += 0.5; lt.zeichen()
+    def test_zugriff_ohne_zeitgeber_setzt_abgelaufene_aus_frist_selbst_um(self):
+        lt = self.neu(); lt.zeichen(); lt.zeichen(); self.uhr.t += GT.LS_AUS_S + 0.5; lt.zeichen()
         self.assertEqual(lt.zustand, 'einzel'); self.assertEqual(self.m.klingt_schluessel('ls_dauer'), 0)
 
-    def test_lesetempo_130_zeichen_je_sekunde_rechenzeit_angerechnet(self):
-        lt = self.neu(); w = []
-        for _ in range(131):
-            w.append(lt.zeichen())
-        self.assertAlmostEqual(self.uhr.t - 100.0, 130 / 130.0, delta=0.002)           # 131 Zeichen = 130 Abstaende = 1 s
-        self.assertEqual(w[0], 0.0)
-        lt2 = self.neu(); lt2.zeichen(); self.uhr.t += 0.05                             # Interpreter war ohnehin langsamer: nichts zusaetzlich
+    def test_lesetempo_im_dauerton_130_zeichen_je_sekunde_rechenzeit_angerechnet(self):
+        lt = self.neu(); lt.zeichen(); lt.zeichen(); t0 = self.uhr.t
+        for _ in range(130): lt.zeichen()
+        self.assertAlmostEqual(self.uhr.t - t0, 1.0, delta=0.002)                      # 130 Zeichen im Dauerton = 1 s
+        lt2 = self.neu(); lt2.zeichen(); lt2.zeichen(); self.uhr.t += 0.05             # Interpreter war ohnehin langsamer: nichts zusaetzlich
         self.assertEqual(lt2.zeichen(), 0.0)
 
     def test_tonlaenge_verzoegert_nicht(self):
@@ -406,8 +489,8 @@ class Leser(unittest.TestCase):
         self.assertEqual(self.uhr.t, t0)                                               # ohne Lesetempo kein Warten, Ton laeuft nebenher
 
     def test_ohne_mischer_nur_tempo(self):
-        u = Uhr(); lt = GT.LeserTon(None, None, uhr=u, schlafe=u.schlafe); lt.zeichen(); lt.zeichen(); lt.tick()
-        self.assertAlmostEqual(u.t - 100.0, 1 / 130.0, delta=1e-6)
+        u = Uhr(); lt = GT.LeserTon(None, None, uhr=u, schlafe=u.schlafe); lt.zeichen(); lt.zeichen(); lt.zeichen(); lt.tick()
+        self.assertAlmostEqual(u.t - 100.0, GT.EINZEL_FREIGABE_S + 1 / 130.0, delta=1e-6)
 
     def test_tor_leser_zu_stumm(self):
         lt = self.neu(); self.m.tor('leser', False); lt.zeichen(); self.assertEqual(self.m.klingt(), 0)

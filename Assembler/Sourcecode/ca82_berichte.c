@@ -1,4 +1,4 @@
-// ca82_berichte.c - Version 1.00-026 (siehe ca82_version.h)
+// ca82_berichte.c - Version 1.00-030 (siehe ca82_version.h)
 // Aufrufhilfe (Usage), Versionszeile und die Berichte nach dem Lauf: -WARN=SYM und --xref.
 // Aus ca82ass.c ausgelagert; benutzt nur die Symboltabelle (ca82_symbole.h) und ca82_standards.
 #include "ca82_standards.h"
@@ -9,7 +9,7 @@
 #include <errno.h>
 
 void printUsage(const char *programName) {
-    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE] [--xref] [--color | --no-color]\n", programName);
+    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE] [--xref] [--ABSPR] [--color | --no-color]\n", programName);
     printf("       %s -h | --help | --version\n", programName);
     printf("\n");
     printf("  -p Projektverzeichnis  Verzeichnis mit dem Quelltext; dorthin werden auch die Ausgabedateien\n");
@@ -32,6 +32,9 @@ void printUsage(const char *programName) {
     printf("                         Die Meldungen stehen auch im .log (hinter der Symboltabelle).\n");
     printf("  --xref                 Gibt nach fehlerfreiem Lauf eine Querverweisliste aus: je Symbol Wert,\n");
     printf("                         Definitionszeile und alle Zeilen des Quelltexts, die es verwenden. Sie steht auch im .log.\n");
+    printf("  --ABSPR                Statt der .obj-Datei einen absolut adressierten, binaer im R300-Code codierten\n");
+    printf("                         Lochstreifen <name>.kep fuer das Kleine Eingabeprogramm (KEP) erzeugen:\n");
+    printf("                         Leitbefehl <start> 240: und Worte als Dualziffern (auch --ABSOLUTPROGRAMM, --ASBPR).\n");
     printf("  --color, --no-color    Farbige Ausgabe erzwingen bzw. abschalten. Ohne Angabe nur, wenn STDOUT und\n");
     printf("                         STDERR ein Terminal sind und die Umgebungsvariable NO_COLOR fehlt.\n");
     printf("  -h, --help             Diese Hilfe ausgeben.\n");

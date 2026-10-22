@@ -1239,10 +1239,10 @@ M.merge_intros = _merge_intros_mit_ueberleitung
 
 
 # ------------------------------------------------------------------ Gruene Hinterlegung bestimmter Abschnitte
-# Die Arbeitsablaeufe (Beispiel 1 und 2) sind leicht gruen hinterlegt, damit man sie im Dokument findet.
+# Die Arbeitsablaeufe (Beispiel 1 bis 3) sind leicht gruen hinterlegt, damit man sie im Dokument findet.
 # Gewaehlt werden sie ueber den Anfang ihrer Ueberschrift (Abschnittsnummer); die Hinterlegung gilt vom
 # Abschnitt bis zur naechsten Ueberschrift gleicher oder hoeherer Ebene mit anderer Nummer.
-GRUENE_ABSCHNITTE = ('2h.', '2i.')
+GRUENE_ABSCHNITTE = ('2h.', '2i.', '2j.')
 GRUEN_BG = colors.HexColor('#E8F5E9')
 _BasisDoc = M.Doc
 

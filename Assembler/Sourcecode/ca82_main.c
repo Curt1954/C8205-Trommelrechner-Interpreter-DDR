@@ -9,6 +9,11 @@
 
 static char projektVerzeichnis[512] = {0};
 
+// --ABSPR / --ABSOLUTPROGRAMM / --ASBPR (Gross-/Kleinschreibung egal)
+static int istAbsprOption(const char *a) {
+    return gleichOhneGrossKlein(a, "--ABSPR") || gleichOhneGrossKlein(a, "--ABSOLUTPROGRAMM") || gleichOhneGrossKlein(a, "--ASBPR");
+}
+
 static char quellcodeDatei[512] = "";
 
 static char logFileName[1024] = "";
@@ -144,6 +149,7 @@ static int pruefeOptionen(int argc, char *argv[]) {
         }
         if (strcmp(a, "--color") == 0 || strcmp(a, "--no-color") == 0) continue;
         if (strcmp(a, "--xref") == 0) continue;
+        if (istAbsprOption(a)) continue;
         if (beginntOhneGrossKlein(a, "-WARN=")) continue;
         if (a[0] == '-') {
             PRINT_FEHLER("Unbekannte Option '%s'.", a);
@@ -168,14 +174,14 @@ static void bildeDateinamen(int argc, char *argv[]) {
 
     snprintf(inputFileName, sizeof(inputFileName), "%s/%s", projektVerzeichnis, quellcodeDatei);
     snprintf(logFileName, sizeof(logFileName), "%s/%.*s.log", projektVerzeichnis, namensLaenge, quellcodeDatei);
-    snprintf(machineCodeFileName, sizeof(machineCodeFileName), "%s/%.*s.obj", projektVerzeichnis, namensLaenge, quellcodeDatei);
+    snprintf(machineCodeFileName, sizeof(machineCodeFileName), "%s/%.*s%s", projektVerzeichnis, namensLaenge, quellcodeDatei, absprAktiv ? ".kep" : ".obj");
     snprintf(hilfsFileName, sizeof(hilfsFileName), "%s/%.*s.mqo", projektVerzeichnis, namensLaenge, quellcodeDatei);
     snprintf(symFileName, sizeof(symFileName), "%s/%.*s.sym", projektVerzeichnis, namensLaenge, quellcodeDatei);
     snprintf(testFileName, sizeof(testFileName), "%s/%.*s.test", projektVerzeichnis, namensLaenge, quellcodeDatei);
     snprintf(dmpFileName, sizeof(dmpFileName), "%s/%.*s.dmp", projektVerzeichnis, namensLaenge, quellcodeDatei);
 
     // Optional: eigener Ablageort fuer .obj (-o) und .test (-t) statt des Projektverzeichnisses
-    ermittleAusgabeDatei(argc, argv, "-o", ".obj",  quellcodeDatei, machineCodeFileName, sizeof(machineCodeFileName));
+    ermittleAusgabeDatei(argc, argv, "-o", absprAktiv ? ".kep" : ".obj",  quellcodeDatei, machineCodeFileName, sizeof(machineCodeFileName));
     ermittleAusgabeDatei(argc, argv, "-t", ".test", quellcodeDatei, testFileName,        sizeof(testFileName));
 
     ensureFileExtension(inputFileName, ".asm", sizeof(inputFileName));
@@ -227,9 +233,36 @@ static void meldeErfolg(void) {
         printf("\n");
         PRINT_WARNUNG("%s", "Das Programm enthaelt keine Befehle und keine Daten; die Objektdatei ist leer.");
     }
+    if (absprAktiv && absprBahnAnzahl > 0) {
+        printf("\n");
+        PRINT_WARNUNG("Bei --ABSPR werden %d Wort(e) auf die Zellen 0002 bis 0037 geladen und ueberschreiben das KEP (nur 0000 und 0001, die Sprungzellen, sind erlaubt):", absprBahnAnzahl);
+        for (int i = 0; i < absprBahnAnzahl && i < 64; i++) PRINT_WARNUNG("  Wort auf Zelle %04lo", absprBahnAdresse[i]);
+        if (absprBahnAnzahl > 64) {
+            char rest[64];
+            snprintf(rest, sizeof(rest), "  ... und %d weitere", absprBahnAnzahl - 64);
+            PRINT_WARNUNG("%s", rest);
+        }
+    }
+    if (absprAktiv && leitadresseKennzeichen == 0 && startAdresse != 0) {
+        printf("\n");
+        PRINT_WARNUNG("Bei --ABSPR mit Pragma LEITADRESSE 00 wird die Startadresse %04o nicht auf die Operanden addiert: der Leitbefehl lautet %o 240, die Operanden bleiben unveraendert.", startAdresse, startAdresse);
+        PRINT_WARNUNG("%s", "Ist der Quelltext relativ geschrieben, das Pragma weglassen; ist er absolut geschrieben, start ohne Operand verwenden.");
+    }
+    if (absprAktiv && absprAnzahl0209 > 0) {
+        printf("\n");
+        PRINT_WARNUNG("Bei --ABSPR werden %d Zeilen mit Kennzeichen 02..09 (Pragma LEITADRESSE) nicht umgesetzt und fehlen in der .kep-Datei.", absprAnzahl0209);
+    }
+    if (absprAktiv && absprAnzahl01 == 0) {
+        printf("\n");
+        if (leitadresseKennzeichen == 0)
+            PRINT_MSG("%s", "Hinweis: --ABSPR mit Pragma LEITADRESSE 00: Der Quelltext gilt als absolut adressiert, es wird keine Adresse umgerechnet.");
+        else
+            PRINT_WARNUNG("%s", "Im Objektcode fuer --ABSPR gibt es kein Kennzeichen 01 mehr (Pragma LEITADRESSE oder keine Befehle): es wird keine Adresse umgerechnet.");
+    }
     if (berichtLog) { fclose(berichtLog); berichtLog = NULL; }
     printf("\n");
-    printf("Ausgabe als Minimalprogramm-Objektdatei nach: %s\n", machineCodeFileName);
+    if (absprAktiv) printf("Ausgabe als absolut adressierter KEP-Lochstreifen (binaer, R300-Code) nach: %s\n", machineCodeFileName);
+    else printf("Ausgabe als Minimalprogramm-Objektdatei nach: %s\n", machineCodeFileName);
     printf("Ausgabe der formatierten Speicherbelegung nach: %s\n", dmpFileName);
     printf("Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: %s\n", testFileName);
 }
@@ -320,6 +353,7 @@ int main(int argc, char *argv[]) {
     greetings();
     for (int i = 1; i < argc; i++) if (argv[i] != NULL && strcmp(argv[i], "--xref") == 0) xrefAktiv = 1;
     verarbeiteWarnOptionen(argc, argv);
+    for (int i = 1; i < argc; i++) if (argv[i] != NULL && istAbsprOption(argv[i])) absprAktiv = 1;
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--version") == 0) {
             return RC_OK;   // die Versionszeile hat greetings() schon ausgegeben

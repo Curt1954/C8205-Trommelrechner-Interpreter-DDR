@@ -145,7 +145,7 @@ python3 c8205_grafik.py --TON=5955         # Lautstärke je Gruppe: Pult SW LL L
 python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
 ```
 
-- Schreibwerk: **80 ms Schreibwerkzeit je Zeichen (70 bis 90 ms), Zeichenklang 100 ms**, Tabulator 400 ms, Wagenrücklauf mit Zeilenschaltung (WRZL) 360 ms, Wagenrücklauf ohne Zeilenschaltung (WR) 120 ms (erste Hälfte des WRZL-Klangs).
+- Schreibwerk: **82,5 ms Schreibwerkzeit je Zeichen (75 bis 90 ms), Zeichenklang 100 ms**, Tabulator 400 ms, Wagenrücklauf mit Zeilenschaltung (WRZL) 360 ms, Wagenrücklauf ohne Zeilenschaltung (WR) 120 ms (erste Hälfte des WRZL-Klangs).
   Bei eingerastetem Selektor SW gibt es keine Ausgabe, keinen Ton und kein Warten.
 - Stanzer: ungefähr 50 Zeichen je Sekunde; Dauerstanzen unter 50 ms Abstand, nach 5 s ohne Zeichen aus.
 - Fehlt ein Abspielprogramm, endet der Start ohne `--STUMM` mit Rückkehrcode 16.

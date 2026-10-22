@@ -1,6 +1,6 @@
 ** Projektstruktur (Wurzeldokument für die Verzeichnisstruktur) **
 
-Version: 0.95-013
+Version: 0.95-014
 
 Dieses Dokument erläutert die Verzeichnisstruktur des Gesamtprojekts C 8205: welches Verzeichnis welchen
 Zweck hat und in welchem Dokument die Einzelheiten stehen. Es wiederholt keine Details aus den
@@ -104,7 +104,7 @@ Vollständige Liste, je Skript ein Satz. Alle Skripte wechseln selbst ins Projek
 | `grafik_sw_tk_test.py` | Testet das echte SW-Fenster und das HW-Check-Fenster in einem Prozess; im Sammellauf läuft nur die Variante `--ohne-tk`. |
 | `grafik_pult_tk_test.py` | Testet die Pult-Tastenbedienung am echten Tk-Fenster (Verfahren in §5 des Prüfverfahrens). |
 | `grafik_sw_vormerkung_s3_13.py` | Prüfmittel zu S3-13/S3-18: keine Vormerkung, Sperre statt Warten, Eingabe nur bei aktivem `011`. |
-| `grafik_zeit_messung.py` | Misst, wie stark Pult-Fenster, Lampenabtastung und HW-Check-Fenster die Echtzeit der Befehlsausführung stören (Dokument: `CHECKPOINT_4_Zeitmessung_Haltzeit_Gesamtstand.md`). |
+| `grafik_zeit_messung.py` | Misst, wie stark Pult-Fenster, Lampenabtastung und HW-Check-Fenster die Echtzeit der Befehlsausführung stören (Prüfverfahren §7.7). |
 | `k0_schatten_haken.py` | Messwerkzeug: baut in eine Kopie von `c8205_interp.py` einen Zusatz ein, der Abweichungen zwischen alter und neuer K0-Regel protokolliert (nie auf das Projekt selbst anwenden). |
 
 **Eingabeprogramm `r300_eingabe`** (`C8205-Interpreter-GRAFIK_Pruefverfahren.md`, §6)

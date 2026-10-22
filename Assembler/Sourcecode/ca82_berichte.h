@@ -1,4 +1,4 @@
-// ca82_berichte.h - Version 1.00-026 (siehe ca82_version.h)
+// ca82_berichte.h - Version 1.00-030 (siehe ca82_version.h)
 // Aufrufhilfe, Versionszeile und Berichte nach dem Lauf: -WARN=SYM (unbenutzte Symbole), --xref (Querverweisliste).
 #ifndef CA82_BERICHTE_H
 #define CA82_BERICHTE_H

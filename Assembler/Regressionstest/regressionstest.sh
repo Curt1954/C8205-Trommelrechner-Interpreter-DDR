@@ -1,8 +1,9 @@
 #!/bin/bash
-# Version 1.00-026
+# Version 1.00-030
 # Regressionstest fuer den C8205-Assembler c82ass.
 #
-#   Regressionstest/regressionstest.sh                  prueft alle .asm gegen die Referenz und fuehrt die Negativtests aus
+#   Regressionstest/regressionstest.sh                  prueft alle .asm gegen die Referenz (normaler Lauf und Lauf mit --ABSPR)
+#                                                       und fuehrt die Negativtests aus
 #   Regressionstest/regressionstest.sh --referenz       schreibt die Referenz neu (nach bewusster Aenderung des Assemblers)
 #   Regressionstest/regressionstest.sh --binary PFAD    anderes Binary als _Linux/c82ass pruefen
 #   Regressionstest/regressionstest.sh Projekt_1 ...    nur die genannten Verzeichnisse (relativ zu Assembler)
@@ -21,13 +22,14 @@ MODUS=pruefen
 VERBOSE=0
 VERZ=()
 ENDUNGEN="obj mqo sym dmp test log rc"
+ENDUNGEN_KEP="kep rck"      # Lauf mit --ABSPR: Lochstreifen .kep und Rueckgabecode (.rck); die uebrigen Dateien des Laufs entsprechen dem normalen Lauf und werden nicht doppelt verglichen
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --referenz) MODUS=referenz ;;
         --binary)   shift; BIN=$(cd "$(dirname "$1")" 2>/dev/null && pwd)/$(basename "$1") ;;
         -v)         VERBOSE=1 ;;
-        -h|--help)  sed -n '2,12p' "$0"; exit 0 ;;
+        -h|--help)  sed -n '2,13p' "$0"; exit 0 ;;
         -*)         echo "Unbekannte Option: $1" >&2; exit 2 ;;
         *)          VERZ+=("$1") ;;
     esac
@@ -56,12 +58,20 @@ for rel in $LISTE; do
     mkdir -p "$TMP/w/$dir"
     cp "$ASM/$rel" "$TMP/w/$dir/"
     ( cd "$TMP" && "$BIN" --no-color -p "w/$dir" -s "$base" >/dev/null 2>&1; echo $? > "w/$dir/$base.rc" )
+    # zweiter Lauf mit --ABSPR in eigenem Arbeitsverzeichnis (erzeugt .kep statt .obj)
+    mkdir -p "$TMP/k/$dir"
+    cp "$ASM/$rel" "$TMP/k/$dir/"
+    ( cd "$TMP" && "$BIN" --no-color --ABSPR -p "k/$dir" -s "$base" >/dev/null 2>&1; echo $? > "k/$dir/$base.rck" )
     anzahl=$((anzahl+1))
     if [ "$MODUS" = referenz ]; then
         mkdir -p "$REFERENZ/$dir"
         for e in $ENDUNGEN; do
             rm -f "$REFERENZ/$dir/$base.$e"
             [ -f "$TMP/w/$dir/$base.$e" ] && cp "$TMP/w/$dir/$base.$e" "$REFERENZ/$dir/$base.$e"
+        done
+        for e in $ENDUNGEN_KEP; do
+            rm -f "$REFERENZ/$dir/$base.$e"
+            [ -f "$TMP/k/$dir/$base.$e" ] && cp "$TMP/k/$dir/$base.$e" "$REFERENZ/$dir/$base.$e"
         done
         continue
     fi
@@ -75,6 +85,15 @@ for rel in $LISTE; do
         elif [ ! -f "$a" ] && [ -f "$b" ]; then echo "ABWEICHUNG $rel: .$e unerwartet erzeugt"; fehler=1
         elif [ -f "$a" ] && ! cmp -s "$a" "$b"; then
             echo "ABWEICHUNG $rel: .$e unterscheidet sich"; fehler=1
+            [ $VERBOSE = 1 ] && diff "$a" "$b" | head -10
+        fi
+    done
+    for e in $ENDUNGEN_KEP; do
+        a="$REFERENZ/$dir/$base.$e"; b="$TMP/k/$dir/$base.$e"
+        if [ -f "$a" ] && [ ! -f "$b" ]; then echo "ABWEICHUNG $rel: .$e (--ABSPR) fehlt"; fehler=1
+        elif [ ! -f "$a" ] && [ -f "$b" ]; then echo "ABWEICHUNG $rel: .$e (--ABSPR) unerwartet erzeugt (oder keine Referenz; --referenz ausfuehren)"; fehler=1
+        elif [ -f "$a" ] && ! cmp -s "$a" "$b"; then
+            echo "ABWEICHUNG $rel: .$e (--ABSPR) unterscheidet sich"; fehler=1
             [ $VERBOSE = 1 ] && diff "$a" "$b" | head -10
         fi
     done

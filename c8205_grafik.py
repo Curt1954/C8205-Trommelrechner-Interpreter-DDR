@@ -39,7 +39,7 @@ from grafik_geraete import GrafikLeser, GrafikStanzer, pruefe_verschieden
 from grafik_debuglog import log
 from grafik_haltzeit import HaltZeit, FEHLER, EA, SCHRITT, SCHRITT_ENDE
 
-VERSION_GRAFIK = 'G4-007'      # G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
+VERSION_GRAFIK = 'G4-011'      # G4-011 (22.10.2026): Selektor SW laesst die Schreibwerkzeit still weiterlaufen (Schreibwerk G4-004); G4-010 (22.10.2026): Schreibwerk laeuft asynchron (G4-003), Warten auf das beschaeftigte Schreibwerk = E/A-Halt; G4-009 (22.10.2026): virtuelle Trommelzeit (--trommelzeit); G4-008 G4-008 (22.10.2026): Leserton nach dem Benutzen des Lesers (LeserTon G4-005: Einzelton, Dauerton, Aus nach LS_AUS_S); G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
 SPUR_STANDARD = 'c8205_pult_klickspur.txt'
 RC_OK, RC_ABBRUCH, RC_START = 0, 8, 16
 
@@ -62,27 +62,43 @@ _OHNE_NEUE_FOLGE = ('M-', 'E-', 'SW=0', 'SW=1', 'SP+', 'SP-', 'BS+', 'BS-')
 _UEBERLAUF_HALT = {30: 28, 46: 44, 58: 55, 66: 65, 81: 80}
 
 
+def _selektor_mit_zeit():
+    import grafik_schreibwerk
+    return grafik_schreibwerk.SELEKTOR_MIT_ZEIT
+
+
 class SwSenke:
     """Ziel der Schreibwerk-Ausgabe (K2). Ersetzt m.sw_datei: a017 -> sw_schreibe() -> senke.schreibe(s) und kehrt zurueck, es
     gibt also weder Terminal- noch Dateiausgabe. Das SW-Fenster (Stufe 3) meldet sich mit hoere() an.
     unterdruecken (Selektor SW, GRAFIK_Beschreibung §3.6 (alt: Dok. 01 Abschnitt 1.8 Nr. 17)): neuer Text wird nicht ausgegeben und nicht nachgeholt; es gibt
     dann weder Klang noch Schreibwerkzeit (Stufe 4, S4-07, O4-10). Der Selektor SW wirkt nur auf die Ausgabe.
     schreibwerk (Stufe 4, grafik_schreibwerk.Schreibwerk): Klang und Schreibwerkzeit je ausgegebenem Zeichen (S4-17); der Text
-    erscheint zu Beginn der Schreibwerkzeit, der Aufruf kehrt erst danach zurueck. None = wie bisher (Pruefungen, TEST)."""
+    erscheint zu Beginn der Schreibwerkzeit; seit G4-003 kehrt der Aufruf sofort zurueck, erst der naechste Ausgabebefehl wartet bei Bedarf (E/A-Halt). None = wie bisher (Pruefungen, TEST)."""
 
     def __init__(self, schreibwerk=None):
         self.text = []
         self.unterdruecken = False
         self.hoerer = []
         self.schreibwerk = schreibwerk
+        self.bei_halt = None         # G4-010: E/A-Halt, wenn der Rechner auf das noch beschaeftigte Schreibwerk wartet (vom Rechner gesetzt)
+        self.bei_weiter = None
 
     def schreibe(self, s):
         if self.unterdruecken:
+            # G4-011: kein Text, kein Klang, aber das Schreibwerk laeuft still durch (Schreibwerkzeit), damit die Ausgabe beim Loesen des Selektors wieder
+            # beginnt und nicht der ganze Rest eines Textes in Millisekunden verbraucht ist
+            sw = self.schreibwerk
+            if sw is not None and hasattr(sw, 'warte_bis_frei') and _selektor_mit_zeit():
+                if hasattr(sw, 'bei_halt'):
+                    sw.bei_halt, sw.bei_weiter = self.bei_halt, self.bei_weiter
+                sw.ausgabe(s, stumm=True)
             return
         self.text.append(s)
         for h in list(self.hoerer):
             h(s)
         if self.schreibwerk is not None:
+            if hasattr(self.schreibwerk, 'bei_halt'):
+                self.schreibwerk.bei_halt, self.schreibwerk.bei_weiter = self.bei_halt, self.bei_weiter
             self.schreibwerk.ausgabe(s)
 
     def hoere(self, funktion):
@@ -122,6 +138,7 @@ class Rechner:
     def __init__(self, graph, trommel, pult_modus=True, knotentest=False, max_knoten=2_000_000, k0=None):
         self.graph = graph
         self.trommel = trommel
+        self._tick = getattr(trommel, 'tick', None)
         self.pult_modus = pult_modus
         self.knotentest = knotentest
         self.max_knoten = max_knoten
@@ -138,6 +155,7 @@ class Rechner:
         if hasattr(self.m.k0, 'aufruf_beim_warten') and self.m.k0.aufruf_beim_warten is None:
             self.m.k0.aufruf_beim_warten = self._warte_hook
         self.m.k0.bei_halt, self.m.k0.bei_weiter = self._ea_halt, self.haltuhr.weiter      # HZ-001: E/A-Halt im Eingabebefehl
+        self.sw.bei_halt, self.sw.bei_weiter = self._ea_halt, self.haltuhr.weiter          # G4-010: E/A-Halt beim Warten auf das Schreibwerk
         # dauerhafter Zustand der Pult-Tastenlogik (in TEST: lokale Variablen von tastenfolge)
         self.or_basis = 0
         self.mhalt = False
@@ -203,9 +221,13 @@ class Rechner:
                                 br_nach = 7
                             break
                 text = f'KON {bez}'
+                if node == 63 and self._tick is not None:
+                    self._tick()                                  # G4-009: Sprung/Organisationsbefehl (Knoten 63 -> 6): Phase I (Knoten 2) wird uebersprungen, kostet aber eine Wortzeit
                 nxt = ziel
             elif typ == 'Phasenzuordnung':
                 text = 'PHA ' + n['text'].replace('Beginn ', '')
+                if self._tick is not None:
+                    self._tick()                                  # G4-009: jede Phase kostet eine Wortzeit (virtuelle Trommelzeit)
                 if 'Phase IV' in n['text']:
                     m.zaehler = 0
                     m.start_sek = sektor(m.AR)
@@ -1116,6 +1138,7 @@ def hauptprogramm(argv=None):
     ap.add_argument('--leser2')
     ap.add_argument('--stanzer1')
     ap.add_argument('--STUMM', action='store_true')
+    ap.add_argument('--trommelzeit', choices=('echt', 'schnell', 'alt'), default='alt', help='G4-009 (Entwurf, noch nicht abgestimmt): Zeitmodell der Trommel: alt = Wartezeiten nach der Wanduhr im C-Modul (Standard), echt = virtuelle Zeit (Wortzeit 104 us je Phase) mit Echtzeit-Anpassung, schnell = virtuelle Zeit ohne Warten')
     ap.add_argument('--TON', '--ton', dest='TON', default=TM_ton_standard(), type=_ton_arg, metavar='pppp',
                     help='Lautstaerke je Gruppe, vier Ziffern 0 bis 9 in der Reihenfolge Pult SW LL LS (Rechnertoene, Schreibwerk, Lochstreifenleser, '
                          'Lochbandstanzer); 5 = Voreinstellung, 0 = stumm. Beispiel: --TON=5955. Wirkungslos mit --STUMM.')
@@ -1196,7 +1219,7 @@ def hauptprogramm(argv=None):
     try:
         try:
             graph = lade_graph(args.mdverz)
-            trommel = GrafikTrommel(args.trommel, basp=args.basp)
+            trommel = GrafikTrommel(args.trommel, basp=args.basp, zeitmodell=args.trommelzeit)
         except KonfigFehler as e:
             print(f'\nFEHLER: {e}', file=sys.stderr)
             return RC_START

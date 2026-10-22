@@ -1,0 +1,8 @@
+args --ABSPR
+rc 0
+stdout absolut adressierter KEP-Lochstreifen
+stderr Hinweis: --ABSPR mit Pragma LEITADRESSE 00
+nicht-stderr ueberschreiben das KEP
+nicht-stderr Warnung:
+datei-da kep dmp test
+datei-weg obj

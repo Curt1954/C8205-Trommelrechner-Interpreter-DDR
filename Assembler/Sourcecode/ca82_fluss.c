@@ -1,4 +1,4 @@
-// ca82_fluss.c - Version 1.00-026 (siehe ca82_version.h)
+// ca82_fluss.c - Version 1.00-030 (siehe ca82_version.h)
 // Ablaufpruefungen nach Pass 3 (nur mit -WARN=SPR bzw. -WARN=TOT; sie aendern weder .obj noch .log noch .dmp):
 //
 //   SPR  Ein Sprungbefehl (unbedingt, bedingt oder mit Rueckkehrabsicht) fuehrt auf eine Adresse, an der kein

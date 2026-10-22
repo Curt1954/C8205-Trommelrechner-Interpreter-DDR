@@ -1,6 +1,6 @@
 ** Durchführung eines Tests **
 
-Version: 0.95-001
+Version: 0.95-002
 
 ## 1. Einordnung und Testvoraussetzungen
 
@@ -857,6 +857,14 @@ Mit der Eingabe eines Punktes beendest du das Programm.
 
 Der Interpreter wartet nun im Terminal, weil das Programm Eingaben über das Schreibwerk verlangt. Diese Eingaben müssen im TEST-Interpreter **nicht** nachgestellt werden: Manuelle Eingaben mit zufälligem Charakter (das Programm wählt den Namen zufällig) lassen sich in einem Test nicht sinnvoll vorgeben, und der Lauf dient hier nur dem Laden des Programms. Die Trommel ist zu diesem Zeitpunkt bereits beschrieben. Der Lauf wird deshalb mit **Strg+C** abgebrochen.
 
+> **Richtig laden mit `--LOADONLY` (Ergänzung 21.10.2026):** Wenn es nur darum geht, das Programm auf die Trommel zu bringen, genügt der Schalter `--LOADONLY`. Der TEST-Interpreter überträgt dann das Programm auf die Trommel und endet sofort mit Rückkehrcode 0, ohne das Programm zu starten; es wartet nichts auf Eingaben, und Strg+C entfällt:
+>
+> ```
+> $ python3 c8205_interp.py --MODUS=TEST --LOADONLY Tests/namen_raten.test
+> ```
+>
+> Das gilt für jedes Programm, nicht nur für solche, die gleich zur Eingabe übergehen. Wurde `--LOADONLY` vergessen, hilft wie oben Strg+C: Die Trommel ist bereits beschrieben. Schalter: Python-Interpreter, Abschnitt 5.1.
+
 **6. GRAFIK-Interpreter starten und das Programm anspringen.** Das Programm steht auf der gemeinsamen Trommel und beginnt bei Adresse 0000. Es braucht keine Geräte-Schalter; `--HWCHECK` blendet das zusätzliche Fenster mit den Registern ein:
 
 ```
@@ -883,8 +891,49 @@ Der erste Buchstabe wechselt von Spiel zu Spiel, weil das Programm den Namen zuf
 | Programm | `k1_leser_stanzer`: von Hand in der Testdatei geschrieben | `namen_raten`: Assemblerquelltext, vom Assembler übersetzt |
 | Testdatei | von Hand erstellt | vom Assembler erzeugt (`-t`, 2a) |
 | Lochstreifen | ja: Leser und Stanzer | nein: Ein- und Ausgabe über das Schreibwerk (SW) |
-| TEST-Interpreter | lädt das Programm und prüft das Ergebnis | lädt das Programm; der Lauf wird abgebrochen |
+| TEST-Interpreter | lädt das Programm und prüft das Ergebnis | lädt das Programm (am besten mit `--LOADONLY`; ohne den Schalter wird der Lauf mit Strg+C abgebrochen) |
 | GRAFIK-Interpreter | mit `--leser1` und `--stanzer1`, Schlüsselschalter und R | ohne Geräte-Schalter, bedient wird am Pult und im SW-Fenster |
+
+## 2j. Beispiel 3: Ein absolut assembliertes Programm als binären Lochstreifen mit Hilfe des KEP laden (Ergänzung 22.10.2026)
+
+Der dritte Arbeitsablauf lädt das Programm nicht über den TEST-Interpreter, sondern so, wie es am Gerät geschieht: Das Kleine Eingabeprogramm (KEP) liest einen binär codierten Lochstreifen (`.kep`) vom Leser 1 und schreibt die Worte auf die Trommel. Der TEST-Interpreter bringt nur das KEP selbst auf die Trommel (Schalter `--LOADONLY`). Als Programm dient wieder `namen_raten` (Beispiel 2, 2i). Die ausführlichen Erläuterungen stehen im BIS-Dokument (BIS-2.2.11b); hier steht nur der Ablauf.
+
+### 2j.1 Schritt für Schritt
+
+Die Aufrufe der Schritte 1 und 2 gelten vom Ordner `Assembler/` aus, die übrigen vom Projektordner (dort, wo `c8205_interp.py` liegt). Alle Pfade sind relativ zum jeweiligen Ordner.
+
+**1. Das Programm absolut assemblieren.** Der Quelltext muss absolut geschrieben sein und in der ersten Zeile das Pragma `;#; LEITADRESSE 00` tragen; `start` steht ohne Operand (bei `namen_raten` schon so). Der Schalter `--ABSPR` erzeugt statt der `.obj` den Lochstreifen `namen_raten.kep`, `-o` legt ihn in den Ordner des Lesers:
+
+```
+$ cd Assembler
+$ ./c82ass.sh -p Projekt_1/namen_raten -s namen_raten.asm -o ../virtuelle_Geraete/Leser1 --ABSPR
+$ cd ..
+```
+
+Die Warnung zur Bahn 0000 bis 0037 ist hier Absicht: Zelle 0000 trägt den Sprung zur Startadresse. Die Meldung „kein Kennzeichen 01" ist mit dem Pragma nur ein Hinweis.
+
+**2. Das KEP auf die Trommel bringen** (nur nötig, wenn es nicht schon dort steht; Assemblieren des KEP mit `-t ../Tests` siehe BIS-2.2.11b, Schritt 1):
+
+```
+$ python3 c8205_interp.py --MODUS=TEST Tests/bsp_5_18_kep.test --LOADONLY
+```
+
+Der Test wird nicht ausgeführt, die Zellen 0000 bis 0037 stehen danach auf der Trommel `Trommel/trommel.txt`.
+
+**3. Den GRAFIK-Interpreter starten:**
+
+```
+$ ./c8205_grafik.sh --HWCHECK
+```
+
+**4. Das KEP ansprechen:** `H` `G` `M+` `E` `E` `M-` `K1` `R`. Der Leser 1 wird angewählt, das KEP liest den Streifen aus `virtuelle_Geraete/Leser1/`. Nach dem Lesen stehen die Worte auf der Trommel, und das Programm ist ansprungbereit (Zelle 0000 springt zur Startadresse).
+
+### 2j.2 Hinweise
+
+- **Lesedauer.** Das KEP ist auf das Lesetempo von 130 Zeichen je Sekunde abgestimmt: `namen_raten` (12139 Zeichen) braucht mindestens 93 s, das Minimalprogramm (7542 Zeichen) mindestens 58 s, im Fenster etwas mehr (gemessen 62 s). Das ist kein Hänger.
+- **Lochstreifenkorb.** Der gelesene Streifen wandert aus `virtuelle_Geraete/Leser1/` nach `LOCHSTREIFENKORB/`; vor einem erneuten Laden die Datei zurücklegen.
+- **Erneutes Laden.** Das KEP bleibt auf der Trommel stehen, Schritt 2 entfällt dann.
+- **Unterschied zu Beispiel 2 (2i).** Dort lädt der TEST-Interpreter das Programm selbst auf die Trommel; hier liest das KEP es vom Streifen, so wie am Gerät.
 
 ## 3. Schritt 2 jedes Tests: die Tastenfolge zur Definition des Ausgangszustands
 

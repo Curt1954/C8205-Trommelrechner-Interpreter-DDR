@@ -146,7 +146,7 @@ python3 c8205_grafik.py --TON=5955         # volume per group: panel, SW, reader
 python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt --stanzer1 virtuelle_Geraete/Stanzer1/lb_kopie_ausgabe.txt
 ```
 
-- Typewriter: **80 ms writing time per character (70 to 90 ms), character sound 100 ms**, tab 400 ms, carriage return with line feed (WRZL) 360 ms, carriage return without line feed (WR) 120 ms (first half of the WRZL sound).
+- Typewriter: **82.5 ms writing time per character (75 to 90 ms), character sound 100 ms**, tab 400 ms, carriage return with line feed (WRZL) 360 ms, carriage return without line feed (WR) 120 ms (first half of the WRZL sound).
   With the SW selector latched there is no output, no sound and no waiting.
 - Punch: about 50 characters per second; continuous punching below 50 ms spacing, off after 5 s without a character.
 - Without a playback program, start-up without `--STUMM` ends with return code 16.

@@ -1,7 +1,7 @@
-# Version 1.00-026
+# Version 1.00-030
 # Erzeugt und prueft den C8205-Assembler c82ass (aus dem Verzeichnis Assembler aufrufen).
 #   make            Linux-Binary _Linux/c82ass erzeugen (mit -Wall -Wextra -Wshadow)
-#   make test       Regressionstest (139 Programme, 50 Negativtests)
+#   make test       Regressionstest (139 Programme, 54 Negativtests)
 #   make pruefen    Gesamtpruefung mit -Werror und AddressSanitizer/UBSan (Regressionstest/pruefe_alles.sh)
 #   make fuzz       Zufallstest (Regressionstest/fuzz.py) mit Sanitizer-Binary; FUZZ_N=Laeufe, FUZZ_SEED=Startwert
 #   make clean      Binary entfernen

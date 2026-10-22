@@ -1,5 +1,5 @@
 #!/bin/sh
-# Version 1.00-026
+# Version 1.00-030
 # Erzeugt den C8205-Assembler fuer Linux (aus dem Verzeichnis Assembler aufrufen).
 # Die Warnungen (-Wall -Wextra -Wshadow) sind eingeschaltet; der Quelltext uebersetzt ohne Warnung.
 mkdir -p ./_Linux

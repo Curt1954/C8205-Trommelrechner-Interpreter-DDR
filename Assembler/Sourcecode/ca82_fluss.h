@@ -1,4 +1,4 @@
-// ca82_fluss.h - Version 1.00-026 (siehe ca82_version.h)
+// ca82_fluss.h - Version 1.00-030 (siehe ca82_version.h)
 // Ablaufpruefungen nach Pass 3: -WARN=SPR (Sprungziel ist kein Befehl) und -WARN=TOT (nicht erreichbarer Code).
 #ifndef CA82_FLUSS_H
 #define CA82_FLUSS_H

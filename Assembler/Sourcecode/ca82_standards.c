@@ -1,4 +1,4 @@
-//ca82_standards.c - Version 1.00-026 (siehe ca82_version.h)
+//ca82_standards.c - Version 1.00-030 (siehe ca82_version.h)
 #include "ca82_standards.h"
 #include <errno.h>
 

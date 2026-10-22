@@ -514,6 +514,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
     FILE *hilfsFile = oeffneAusgabedatei(hilfsFileName, "w");
     FILE *dmpFile = oeffneAusgabedatei(dmpFileName, "w");  //.dmp
 
+    if (absprAktiv) absprStart(machineCodeFile);
     line_ausgegeben=0;
     Pass3Zustand zst = { machineCodeFile, hilfsFile, 0, 0, "" };
 
@@ -678,7 +679,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
     printFormattedAsmListingX(lineAsmAufgeloestX, lineCountAsmAufgeloestX, dmpFile);
     erzeugeTestDatei(lineAsmAufgeloestX, lineCountAsmAufgeloestX, testFileName);
 
-    fprintf(machineCodeFile, "/\n"); 
+    if (!absprAktiv) fprintf(machineCodeFile, "/\n");   // bei --ABSPR entfaellt das Endekennzeichen
     fclose(machineCodeFile);
     fclose(hilfsFile);
     if (dmpFile) fclose(dmpFile);

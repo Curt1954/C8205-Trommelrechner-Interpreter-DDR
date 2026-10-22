@@ -1,6 +1,6 @@
 # Regressionstest für c82ass
 
-Version 1.00-026 (Stand 21.10.2026)
+Version 1.00-030 (Stand 22.10.2026)
 
 Prüft, dass der Assembler nach einer Änderung dieselben Ergebnisse liefert wie vorher.
 
@@ -23,8 +23,13 @@ temporären Verzeichnis und legt im Projekt nichts ab (auch keine `projekdetails
    `Sourcecode`, `Dokumentation`) wird assembliert. Verglichen werden `.obj`, `.mqo`, `.sym`, `.dmp`,
    `.test`, `.log` und der Rückgabecode mit `referenz/`. Fehlende oder zusätzlich erzeugte Dateien zählen
    als Abweichung (so fällt auf, wenn bei einem Fehlerlauf wieder halbe `.obj` liegen bleiben).
+   Jedes Programm wird ein zweites Mal mit dem Schalter `--ABSPR` assembliert (in einem eigenen Arbeitsverzeichnis);
+   verglichen werden der Lochstreifen `.kep` und der Rückgabecode (`.rck`) mit `referenz/`. Die übrigen Dateien dieses Laufs
+   entsprechen dem normalen Lauf. Bei Programmen, bei denen `--ABSPR` mit einem Fehler endet, gibt es keine `.kep`; dann zählt der Rückgabecode.
 2. **Negativtests** in `negativ/`: je Test `<name>.asm` und `<name>.erwartet` (Rückgabecode, Texte in
    STDOUT/STDERR, vorhandene/fehlende Ausgabedateien, Farbcodes). Das Format steht im Kopf des Skripts.
+
+Mit Version 1.00-030 kamen der `--ABSPR`-Lauf in Teil 1 (`.kep` und `.rck` in `referenz/`) und vier Negativtests hinzu (insgesamt 54): `abspr_ok` (`.kep` statt `.obj`, Hinweis zum Pragma `LEITADRESSE 00`, keine Bahn-Warnung), `abspr_bahn_warnung` (Wörter auf den Zellen 0002 und 0003 lösen die Bahn-Warnung aus), `abspr_start_warnung` (Pragma `LEITADRESSE 00` mit `start <adresse>`) und `abspr_ohne_schalter` (ohne Schalter bleibt es bei `.obj`). `negativ/version.erwartet` erwartet 1.00-030. Die Referenz von `namen_raten` und `pj2-bis_minimalprogramm` (`.obj`, `.dmp`) ist nach dem Pragma `LEITADRESSE 00` (Checkpoint 7) neu geschrieben.
 
 ## Gesamtprüfung
 
@@ -41,7 +46,7 @@ Mit Version 1.00-019 kamen die Negativtests `da_relativ_fehler` und `da_relativ_
 
 Mit Version 1.00-016 kam der Negativtest `da_symbol_fehlt` hinzu (insgesamt 32; `da` mit nicht definiertem Symbol muss mit Rückgabecode 16 enden).
 
-Mit Version 1.00-015 kamen drei Negativtests hinzu (insgesamt 31): `makro_if_geschachtelt`, `makro_if_parameterzahl` und `makro_if_operator_lang` (Fehler in `$IF` eines Makros; die alte Fassung las dabei hinter das Zeilenfeld bzw. überschrieb den Stack).
+Mit Version 1.00-015 kamen vier Negativtests hinzu (insgesamt 31): `makro_if_geschachtelt`, `makro_if_parameterzahl` und `makro_if_operator_lang` (Fehler in `$IF` eines Makros; die alte Fassung las dabei hinter das Zeilenfeld bzw. überschrieb den Stack).
 
 Mit Version 1.00-013 kamen zwei Negativtests hinzu (insgesamt 28): `leeres_programm` und `dt_ohne_text`.
 
@@ -75,4 +80,4 @@ Mit Version 1.00-024 kamen acht Negativtests hinzu (insgesamt 46): `warn_spr_dat
 
 Mit Version 1.00-025 kamen zwei Negativtests hinzu (insgesamt 48): `warn_log` und `warn_log_aus` prüfen mit den neuen Schlüsselwörtern `log-da` und `log-weg`, dass die Berichte von `-WARN=…` und `--xref` am Ende der `.log` stehen und ohne diese Optionen nicht. `makro_rekursion` prüft zusätzlich den Ort im Rekursionsfehler. Neu ist auch `make fuzz`.
 
-Mit Version 1.00-026 kamen `xref_makro` (Makroexpansionen in der Querverweisliste) und `mnemonic_entfallen` (`add` ist kein Operationscode mehr) hinzu (insgesamt 50).
+Mit Version 1.00-027 kamen `xref_makro` (Makroexpansionen in der Querverweisliste) und `mnemonic_entfallen` (`add` ist kein Operationscode mehr) hinzu (insgesamt 50).

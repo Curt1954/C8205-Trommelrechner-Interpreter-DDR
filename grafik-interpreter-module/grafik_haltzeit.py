@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_haltzeit.py - Zeitmessung Start -> Halt und Halt -> Halt fuer die Zeile "Haltzeit" des HW-Check-Fensters (--HWCHECK). Kein Tkinter.
-Version: HZ-004 (20.10.2026; HZ-001 Wunsch des Projektinhabers; HZ-003: Anzeige zeigt nur die reine Rechnerzeit, ohne Wartezeit im Halt; HZ-004: auch der Einzelschritt (E) wird gemessen)
+Version: HZ-005 (22.10.2026: Intervall min bis max der letzten INTERVALL_N Halts, HZ-004: 20.10.2026; HZ-001 Wunsch des Projektinhabers; HZ-003: Anzeige zeigt nur die reine Rechnerzeit, ohne Wartezeit im Halt; HZ-004: auch der Einzelschritt (E) wird gemessen)
 
 Gemessen wird die Zeit in Millisekunden
   * zwischen dem Start (Taste R wirkt) und dem folgenden Halt, und
@@ -18,12 +18,14 @@ Feld ms_lauf, im Debug-Log (Marke HALT) und fuer eine spaetere Anzeige; das Fens
 
 Faeden: start()/halt()/weiter() kommen aus dem Rechner-Thread, lesen() aus dem Fenster-Thread; der Stand wird als ein Tupel ersetzt.
 """
+import collections
 import threading
 import time
 
 from grafik_debuglog import log
 
-VERSION_HALTZEIT = 'HZ-004'
+VERSION_HALTZEIT = 'HZ-005'
+INTERVALL_N = 10       # HZ-005: Zahl der letzten Halts mit Zeitwert fuer das Intervall (min bis max) der Anzeige
 NUR_LAUF = True        # HZ-003 (Projektinhaber 19.10.2026): die Anzeige nennt nur die reine Rechnerzeit seit Start bzw. Fortsetzung; False: Zeit zwischen den Halts mit Wartezeit (HZ-001)
 STOPP, FEHLER, EA = 'Stopp', 'Fehler', 'E/A-Halt'
 START = 'R'
@@ -47,6 +49,7 @@ class HaltZeit:
         self._lauf_ab = None          # Zeitpunkt des Starts bzw. der letzten Fortsetzung (der Rechner rechnet seitdem)
         self.stand = None             # (ms, von, bis, ms_lauf, nummer): der letzte Halt mit Bezug; bis None = Art noch aus m.halt_grund
         self.anzahl = 0
+        self._letzte = collections.deque(maxlen=INTERVALL_N)    # HZ-005: die angezeigten Zeitwerte (ms) der letzten Halts
         self.grund_fn = None          # Aufruf ohne Argument: m.halt_grund (bestimmt die Art eines Halts 'None', siehe _aufloesen)
 
     def _aufloesen(self):
@@ -92,6 +95,7 @@ class HaltZeit:
                 ms = (t - bezug[0]) * 1000.0
                 self.stand = (ms, bezug[1], art, (t - lauf_ab) * 1000.0 if lauf_ab is not None else None, self.anzahl)
                 ms_lauf = self.stand[3]
+                self._letzte.append(ms_lauf if (NUR_LAUF and ms_lauf is not None) else ms)
             self._bezug = (t, art)        # None: die Art wird beim Lesen aus dem Haltgrund bestimmt; bis dahin Name None
             self._lauf_ab = None
             n = self.anzahl
@@ -106,6 +110,21 @@ class HaltZeit:
         with self._lock:
             self._aufloesen()
             return self.stand
+
+
+    def intervall(self):
+        """HZ-005: (kleinster, groesster, Anzahl) der angezeigten Zeitwerte der letzten INTERVALL_N Halts; None, solange weniger als zwei vorliegen."""
+        with self._lock:
+            w = list(self._letzte)
+        return (min(w), max(w), len(w)) if len(w) >= 2 else None
+
+
+def zeile_intervall(intervall):
+    """HZ-005: Anzeigeteil fuer das Intervall, z. B. '  (0.7 bis 2.9 ms, letzte 10)'; ohne Intervall ''."""
+    if intervall is None:
+        return ''
+    kl, gr, n = intervall
+    return f'  ({kl:.1f} bis {gr:.1f} ms, letzte {n})'
 
 
 def zeile(stand, nur_lauf=None):

@@ -1,4 +1,5 @@
-         start  0
+;#; LEITADRESSE 00   ; absolut geschrieben: zum Laden ueber das KEP (--ABSPR) werden keine Adressen umgerechnet
+         start
 ; namen_raten.asm  --  Ratespiel "Rate mal, welchen Namen ich mir gemerkt habe" ueber das Schreibwerk (SW)
 ;
 ; Aufgabe: Das Programm waehlt aus fuenf Namen mit je 7 Buchstaben einen aus und nennt den 1. Buchstaben.

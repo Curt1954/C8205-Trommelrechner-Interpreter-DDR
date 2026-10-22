@@ -1,0 +1,7 @@
+args --ABSPR
+rc 0
+stderr Bei --ABSPR werden 2 Wort(e) auf die Zellen 0002 bis 0037 geladen
+stderr Wort auf Zelle 0002
+stderr Wort auf Zelle 0003
+datei-da kep
+datei-weg obj

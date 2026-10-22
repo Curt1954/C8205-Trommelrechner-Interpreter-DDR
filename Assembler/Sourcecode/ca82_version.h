@@ -4,6 +4,6 @@
 #ifndef CA82_VERSION_H
 #define CA82_VERSION_H
 
-#define ASM_VERSION "1.00-026"
+#define ASM_VERSION "1.00-030"
 
 #endif

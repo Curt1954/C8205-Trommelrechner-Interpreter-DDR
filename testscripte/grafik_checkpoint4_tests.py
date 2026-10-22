@@ -202,5 +202,43 @@ class HBeiAusgabe(Hilfe):
         print(f'\n  Reaktionszeit H (Trommel-Dauerlauf): {dauer * 1000:.1f} ms', end='')
 
 
+class SelektorSW(Hilfe):
+    """Selektor SW (SW_umschalt, einrastend): solange er rastet, geht jede Schreibwerk-Ausgabe verloren (nicht nachgeholt, kein Warten des Rechners);
+    beim Loesen beginnt die Ausgabe wieder (Meldung des Projektinhabers 'sie beginnt nicht wieder': hier nicht nachvollziehbar, Pruefung CP20)."""
+    def test_ausgabe_beginnt_nach_dem_loesen_wieder(self):
+        from grafik_pult import PultSteuerung, BETRIEB
+        from grafik_schreibwerk import Schreibwerk
+        r = self.rechner(SW_SCHLEIFE)
+        r.sw.schreibwerk = Schreibwerk(None, None)                         # echte Schreibwerkzeit (75 bis 90 ms), kein Ton
+        s = PultSteuerung(os.path.join(PROJEKT, 'pult'), r, hochlauf_s=0.01, auslauf_s=0.01, tastenzeit_s=0.05)
+        stop = threading.Event()
+
+        def betrieb():
+            r.taste('H'); r.taste('SW=0'); r.thread_modus = True
+            threading.Thread(target=G.rechner_schleife, args=(r, stop), daemon=True).start()
+        s.bei_betrieb = betrieb
+        s.bei_ende = lambda: (stop.set(), r.abbrechen())
+        s.netz_klick(time.monotonic()); s.tick(time.monotonic() + 1)
+        self.assertEqual(s.netz, BETRIEB)
+
+        def takt(sek):
+            ende = time.time() + sek
+            while time.time() < ende:
+                s.tick(time.monotonic()); time.sleep(0.01)
+        try:
+            s.klick('R', time.monotonic())
+            self.assertTrue(self.warte_bis(lambda: len(r.sw.alles()) >= 5), 'es muss gedruckt werden')
+            s.klick('SW_umschalt', time.monotonic())                       # einrasten
+            self.assertTrue(r.sw.unterdruecken)
+            takt(0.2); n1 = len(r.sw.alles()); takt(0.5)
+            self.assertEqual(len(r.sw.alles()), n1, 'bei rastendem Selektor darf nichts ausgegeben werden')
+            s.klick('SW_umschalt', time.monotonic())                       # loesen
+            self.assertFalse(r.sw.unterdruecken)
+            self.assertTrue(self.warte_bis(lambda: len(r.sw.alles()) >= n1 + 5), 'nach dem Loesen muss die Ausgabe wieder beginnen')
+            self.assertTrue(r.laeuft, 'der Rechner darf waehrend der Sperre nicht stehengeblieben sein')
+        finally:
+            stop.set(); r.abbrechen()
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
