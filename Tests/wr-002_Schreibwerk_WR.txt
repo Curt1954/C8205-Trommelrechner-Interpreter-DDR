@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0001 Ausgabe von WR (Ausgabe-Adresse 112) auf dem Schreibwerk: Der Interpreter schreibt <WR>
 --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00002000000 # 000 go
 2000: 00004500030 # 030 4500 ; Anwahl Kanal K2 (Schreibwerk-Ausgabe)

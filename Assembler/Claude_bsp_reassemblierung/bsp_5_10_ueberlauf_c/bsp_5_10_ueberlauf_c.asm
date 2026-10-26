@@ -1,8 +1,8 @@
 ; bsp_5_10_ueberlauf_c.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_10_ueberlauf_c.txt
-; #DOK-0001 Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=20000000000 b=17777777777 c=1, Ueberlauf erst bei
-;   a+b+c
+; #DOK-0001 Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=20000000000 b=17777777777 c=1, Ueberlauf erst bei a+b+c
 ; #SPEI-0001 3000-3003
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -32,9 +32,11 @@ m3014:          240     m3003                    ; <3003>:=<AC>
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3017 AC=40000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 20000000000
 ; 3001: 17777777777
 ; 3002: 00000000001
 ; 3003: 40000000000
+;#PRUEFE-ENDE
 ;

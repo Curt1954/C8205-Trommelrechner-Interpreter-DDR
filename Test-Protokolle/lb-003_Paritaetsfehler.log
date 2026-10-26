@@ -7,6 +7,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   2001: 00000000010
   2002: 00000000020
   #DOK-0001 Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

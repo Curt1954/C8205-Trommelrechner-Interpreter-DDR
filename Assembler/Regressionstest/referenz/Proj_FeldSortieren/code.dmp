@@ -10,7 +10,7 @@
 0010: 01 0011 004                 004    *+1                 ; Verschiebe AC 1x links (8)
 0011: 01 0012 004                 004    *+1                 ; Verschiebe AC 1x links (9)
 0012: 01 0201 240                 240    len                 
-0013: 01 4021 605                 605    04021               ; 9 mal Linksverschiebung
+0013: 01 4013 605                 605    04013               ; 9 mal Linksverschiebung
 0014: 01 0020 000                 000    firstEntry          
 0015: 01 0213 211    loop1:       211    i                   ; Lade i
 0016: 01 0217 210                 210    l0001               ; Addiere 1 Adreßeinheit zu `i`

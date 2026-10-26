@@ -1,6 +1,7 @@
 Trommeldatei:
 #DOK-0001 Bestimmung des groessten gemeinsamen Teilers nach Euklid (pj2), a=060 (48), b=044 (36), erwartet ggT=014 (12); durchläuft a>b, a<b und a=b
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000000 # 000 euklid ; Sprung zum Programmanfang (Zelle 0000)
 3000: 00003020211 # euklid: 211 a ; ac:=a
 3001: 00003021330 # 330 b ; a = b ?

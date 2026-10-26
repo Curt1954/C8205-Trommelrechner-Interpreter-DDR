@@ -1,0 +1,5 @@
+Trommeldatei:
+#DOK-0001 Start ab Speicherplatz 0000 mit #STARTE
+#TROMMEL=LEER   # Trommel vorher leeren
+#STARTE 0
+0000: 00000000020 # 020 0

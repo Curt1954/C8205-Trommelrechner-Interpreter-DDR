@@ -4,6 +4,7 @@ Trommeldatei:
 #DOK-1011 Erwartet am Terminal: XY, eine Zeile "BZ 00001004000 AC 00001001000", dann xy. Stopp in 1010, BZ=1011; V1=V2=1 stammen aus der Druckroutine
 #STARTE 1000        # = H G M+ 512 mal E M- R (512 = 1000 oktal): Ansprung des Speicherplatzes 1000
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 # Keine Zeile --sw-ausgabe: die Schreibwerk-Ausgabe geht aufs Terminal.
 
 # Beginn Programm bei 1000

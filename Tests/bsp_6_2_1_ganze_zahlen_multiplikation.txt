@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3006>, b=<3007>, Arbeitsspur 7700; 7700 444 Transport von a, je Zelle um ein Bit nach links verschoben (a(i)=a*2^i); 7700 472 Teilprodukte b(i)*a(i); 7700 410 Summierung
 #DOK-0001 erwartet <AC> = a*b = 11*5 = 55 (dezimal) = 00000000067 (oktal), das Produkt liegt im Zahlenbereich
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
 # Programm 6.2.1; Arbeitsspur 7700 (die Zellen der Spur werden vom Gruppenbefehl beschrieben)

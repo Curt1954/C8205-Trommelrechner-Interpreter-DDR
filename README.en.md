@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.95-003
+Version: 0.95-006
 
 [Deutsch](README.md) | **English**
 
@@ -43,11 +43,12 @@ as regression tests.
 | Path | Contents |
 |---|---|
 | `c8205_interp.py` | Python interpreter |
+| `CLAUDE.md`, `C8205-Programmierhandbuch_fuer_Claude.md` | entry point for AI sessions (in German): one-page card and handbook for assembly programming |
 | `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik_*.py` | GRAFIK mode: panel window, typewriter window, sounds (mixer, typewriter, reader, punch, computer) |
 | `c-module/` | C modules: drum, track lock, interrupt, sound mixer `tonmisch`; extension module in `c-module/python/` |
 | `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | checks and test scripts, e.g. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
-| `Hilfsprogramme/` | helper programs: `c8205_befehlssweep.py` (completeness test over all 512 operation codes; run from the project folder with `--interp c8205_interp.py`, or from `Hilfsprogramme/` with `--interp ../c8205_interp.py`), `c8205_lochstreifen_anzeige.py` (shows a virtual punched tape as plain text in a window), `c8205_lochstreifen_eingabe.py` (creates a virtual punched tape from keyboard input), `c8205_lochstreifen_umwandlung.py` (converts a text file to a binary-coded R300 punched tape and back) |
+| `Hilfsprogramme/` | helper programs: `c8205_lochstreifen_anzeige.py` (shows a virtual punched tape as plain text in a window), `c8205_lochstreifen_eingabe.py` (creates a virtual punched tape from keyboard input), `c8205_lochstreifen_umwandlung.py` (converts a text file to a binary-coded R300 punched tape and back) |
 | `testscripte/` | test scripts; each one changes to the project directory itself and can be started from anywhere: `compute_all_tests.sh` (all test definitions in `Tests/`), `c8205_bis_test.sh` (BIS tests: first loads the minimal program `Tests/pj2-bis_minimalprogramm.test`, then the given test file), `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` (BIS tests one after another: empty drum, minimal program, then the `pj2-bis_*` tests; each a larger set), `test.sh` (older version of `test_bis.sh`), `erzeuge_leere_trommel.py` (creates the empty drum file `Trommel/trommel.txt`, also resets a used drum) |
 | `pult/` | images and manifest of the control-panel window (GRAFIK mode) |
 | `make_pdf.sh`, `make_all_pdf.sh` | helpers for generating the PDFs (scripts in the `pdf-layout-scripte/` folders) |
@@ -59,7 +60,7 @@ as regression tests.
 | `Test-virtuelleGeraete/` | Virtual devices of the TEST interpreter (punched tape readers, punch, typewriter unit output, keyboard input) |
 | `virtuelle_Geraete/` | Virtual devices of the GRAFIK interpreter (`Leser1/`, `Leser2/`, `Stanzer1/`) |
 | `Trommel/` | The drum file `trommel.txt`, shared by both interpreters |
-| `CSV/` | Overview table of all tests (`test_tabelle.py` produces `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` opens it in LibreOffice Calc) |
+| `Testausfuehrungen/` | Running tests and overviewing them: `testwahl.sh` (choose a test from the list and run it), `kep_test.sh`, `interpreter_test.sh` and `bis_test.sh` (demonstration runs with KEP, TEST interpreter and BIS); plus the overview table of all tests (`test_tabelle.py` produces `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` opens it in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Sub-project BIS (documentation only for now) |
 | `Assembler/` | Assembler `c82ass` with source code, Linux binary, examples and documentation |
 
@@ -73,16 +74,17 @@ C8205/
 ├── c-module/                       C modules (drum, track lock, interrupt, sound mixer)
 ├── ton/                            Sounds and sound test harness
 ├── pult/                           Images and manifest of the panel window
-├── Hilfsprogramme/                 Instruction sweep (512 operation codes), punched-tape helper programs
+├── Hilfsprogramme/                 punched-tape helper programs
 ├── testscripte/                    Test scripts (compute_all_tests.sh, BIS tests, GRAFIK checks,
 │                                   erzeuge_leere_trommel.py)
+├── c8205_zip_packen.sh             Pack the total zip "C8205 Simulator V.M.P.zip" (with the sub-zips Test-Protokolle.zip and Regressionstest.zip); with `--claude` the slim variant without PDFs, sounds and panel images
 ├── make_pdf.sh, make_all_pdf.sh    PDF generation
 ├── markdown-dateien/               Rule set and project description (.md)
 ├── PDF/                            Readable versions (A4)
 ├── Tests/                          Test orders (.txt or .test)
 ├── Test-Ergebnisvergleiche/        Expected-result files for file checks
-├── Test-Protokolle/                Logs of the runs (.log)
-├── CSV/                            Overview table of all tests (test_tabelle.py)
+├── Test-Protokolle/                Logs of the runs (.log); in the total zip only as Test-Protokolle.zip (unpack in the project root; otherwise the interpreter recreates it)
+├── Testausfuehrungen/              Test execution (testwahl.sh etc.) and overview table of all tests (test_tabelle.py)
 ├── Bausteininterpretiersystem BIS/ Sub-project BIS (documentation only for now)
 ├── Trommel/                        Drum file trommel.txt (shared by TEST and GRAFIK)
 ├── Test-virtuelleGeraete/          virtual devices of the TEST interpreter
@@ -93,6 +95,8 @@ C8205/
 ├── virtuelle_Geraete/              virtual devices of the GRAFIK interpreter
 │   ├── Leser1/, Leser2/            Punched tape input
 │   └── Stanzer1/                   Punch output
+├── CLAUDE.md                       Card for AI sessions (read first)
+├── C8205-Programmierhandbuch_fuer_Claude.md   Handbook for it
 ├── README.md, README.en.md, LICENSE
 └── Assembler/
     ├── c82ass.sh                   Run the assembler
@@ -100,8 +104,9 @@ C8205/
     ├── asm_aufraeumen.sh           delete unneeded files (.log, .mqo, .obj, .sym)
     ├── make_c82ass.sh / .bat       Build the assembler (Linux / Windows)
     ├── Sourcecode/                 C source code and macro file
-    ├── _Linux/                     Binary (build it yourself for Windows; _Windows/ currently holds none)
+    ├── _Linux/                     Binary (Windows: `_Windows/c82ass.exe` is included, or build it with `make_c82ass.bat`)
     ├── Dokumentation/              .odt (authoritative), .md, .pdf
+    ├── Regressionstest/            checks of the assembler; in the total zip only as Regressionstest.zip (unpack in the project root; paths inside: Assembler/Regressionstest/...)
     ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Project folders (any number, any name)
     └── Claude_bsp_reassemblierung/ Project folders: among others the source code of the tests in Tests/
 ```
@@ -152,7 +157,7 @@ python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle
 - Without a playback program, start-up without `--STUMM` ends with return code 16.
 - The mixer is the C module `c-module/tonmisch.c` (linked into the extension module `c8205_trommel`; build with
   `cd c-module/python && python3 setup.py build_ext --inplace`). Without the built module the Python mixer is used.
-- **Status:** On Linux the logic tests and the listening test (19 Oct 2026) have been done; Windows (`winmm`) is untested. Details and open points (German): `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (description) and `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (testing, hand checklists).
+- **Status:** On Linux the logic tests and the listening test (19 Oct 2026) have been done; on Windows the C module has been built with MinGW-w64 (26 Oct 2026), the main drum tested and the mixer (`winmm`) switched on (background noise, tape reader and punch heard); typewriter sound, long-run operation, panel window and other Python versions are untested. Details and open points (German): `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (description) and `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (testing, hand checklists).
 - `ton/sw_ton.py` stays as a stand-alone test harness for the sounds (`ton/SW_Ton_Beschreibung.md`, German).
 
 Copy-tape example: `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` reads from reader 1 (`ANWAHL LSL1`) and punches to punch 1
@@ -168,8 +173,8 @@ instruction are described in `markdown-dateien/C8205-Interpreter-Durchführung_e
 
 ## Quick start: assembler
 
-The assembler runs on Linux and Windows 10; the Linux binary is included (`Assembler/_Linux/`), on Windows you build it
-yourself (see below). Call on Linux, **from the `Assembler/` folder**:
+The assembler runs on Linux and Windows 10; the Linux binary (`Assembler/_Linux/`) and the Windows binary
+(`Assembler/_Windows/c82ass.exe`) are included; to build it yourself see below. Call on Linux, **from the `Assembler/` folder**:
 
 ```
 cd Assembler
@@ -192,6 +197,8 @@ sequence have been added, can be used as a test order in `Tests/`. Language, dir
 in `Assembler/Dokumentation/` (the `.odt` is authoritative; German).
 
 ## Where to start reading
+
+**AI session (Claude) or a quick start into programming?** Read `CLAUDE.md` in the root (one page, in German: quick start, pitfalls, which file for what), then `C8205-Programmierhandbuch_fuer_Claude.md` selectively.
 
 **First time here?** Start with `markdown-dateien/C8205-Einstieg_fuer_Neueinsteiger.md` (in German): it explains what
 the project contains (interpreter, assembler, BIS), in which order to read the documents, and what can be skipped at
@@ -232,7 +239,7 @@ All PDFs are in German.
 | `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | The punched-tape helper programs in `Hilfsprogramme/` |
 | `C8205-Projektstruktur_A4.pdf` | Directory structure of the whole project |
 | `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | Design guideline for all PDF output |
-| `CSV/C8205-Testuebersicht_A4.pdf` | Overview of all tests |
+| `Testausfuehrungen/C8205-Testuebersicht_A4.pdf` | Overview of all tests |
 | `Bausteininterpretiersystem BIS/markdown-dateien/C8205-BIS_A4.pdf` | The building-block interpreter system BIS |
 | `Assembler/Dokumentation/C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: call, language, macros, example |
 
@@ -240,7 +247,7 @@ All PDFs are in German.
 
 The interpreter deliberately reports every point where the rule set is unclear or where no implementation exists
 yet as a **stub** and stops with a message instead of guessing ("fail loudly"). This is intended and not a defect.
-`Hilfsprogramme/c8205_befehlssweep.py` checks whether an implementation exists for each of the 512 operation codes.
+`testscripte/c8205_befehlssweep.py` checks whether an implementation exists for each of the 512 operation codes.
 
 ## Version numbers
 

@@ -12,6 +12,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0010: 00000001240
   0011: 00000003000
   #DOK-0001 Test 065 (bedingter Sprung mit Rückkehrabsicht), SP gesetzt: Unterprogramm läuft, erg=1
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G SP=1 R
   H  : Schalter H-R -> "H", Flag H := 1

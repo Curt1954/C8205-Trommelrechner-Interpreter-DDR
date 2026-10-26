@@ -14,6 +14,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3010: 00000000020
   #DOK-0001 Angabe des Vorzeichens einer Zahl (Programmieranleitung 5.11), x = -5
   #SPEI-0001 3000-3000
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

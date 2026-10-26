@@ -1,10 +1,10 @@
 ; bsp_6_1_2_verkuerzte_multiplikation_dicht.asm  -  symbolisches Assemblerprogramm zu Testdatei
 ;   bsp_6_1_2_verkuerzte_multiplikation_dicht.txt
 ; #DOK-0001 Zahlwort Festkomma vorn: verkuerzte Multiplikation positiver Zahlen (Programmieranleitung 6.1.2), x und a mit voller Stellenzahl
-; #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<3007>, a=<3010>, Maske <3011>=3777 7777 777, Arbeitsspur 7700; der Verfahrensfehler ist
-;   stets negativ und kleiner als 2^-27
+; #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<3007>, a=<3010>, Maske <3011>=3777 7777 777, Arbeitsspur 7700; der Verfahrensfehler ist stets negativ und kleiner als 2^-27
 ; #DOK-0001 erwartet <AC> = x*a = 25761027721 (oktal), Verfahrensfehler stets negativ, kleiner als 2^-27
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -31,6 +31,7 @@ d7700:          abs     07700
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3007 AC=25761027721 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3007: 35762104535
 ; 3010: 27351646213
@@ -67,4 +68,5 @@ d7700:          abs     07700
 ; 7731: 35762104530
 ; 7706: 35762104534
 ; 7723: 35762104534
+;#PRUEFE-ENDE
 ;

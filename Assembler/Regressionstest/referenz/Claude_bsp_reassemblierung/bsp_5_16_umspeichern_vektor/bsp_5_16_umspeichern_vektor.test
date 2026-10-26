@@ -1,10 +1,11 @@
 Trommeldatei:
-#DOK-0001 Umspeichern eines Vektors (Programmieranleitung 5.16), Programm wie im Buch ab Zelle 3000, Parameter a°=4034, n°=6 Komponenten,
-#DOK-0001 Quellvektor 4034-4041 (Spurgrenze 4037/4040 wird überschritten), Zielvektor 4106-4113; erwartet: alle sechs Komponenten ab 4106
+#DOK-0001 Umspeichern eines Vektors (Programmieranleitung 5.16), Programm wie im Buch ab Zelle 3000, Parameter a°=4034, n°=6 Komponenten, b°=4106
+#DOK-0001 Quellvektor 4034-4041 (Spurgrenze 4037/4040 wird überschritten), Zielvektor 4106-4113; erwartet: alle sechs Komponenten ab 4106 kopiert, <3006>=n°, <3016>=(b+5) 240
 #SPEI-0001 3000-3026
 #SPEI-0001 4034-4041
 #SPEI-0001 4106-4113
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000000 # m0000: 000 m3000 ; Sprung zum Programmanfang
 3000: 00003007000 # m3000: 000 m3007 ; 3007 000 ; Programmanfang
 3001: 00004034000 # m3001: 000 d4034 ; a° = Adresse der ersten Komponente des gespeicherten Vektors
@@ -37,3 +38,19 @@ Trommeldatei:
 4041: 50505050606 # dw 050505050606 ; a6
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3027 AC=00000006000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
+3006: 00000006000
+3016: 00004113240
+4034: 70000000101
+4035: 12345670202
+4036: 00000000303
+4037: 77777777777
+4040: 00000000505
+4041: 50505050606
+4106: 70000000101
+4107: 12345670202
+4110: 00000000303
+4111: 77777777777
+4112: 00000000505
+4113: 50505050606

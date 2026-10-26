@@ -5,6 +5,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0000: 00000000060
   #DOK-0001 Flag/Lampe BS und Schalter BS sind getrennt: BS+ stellt nur den Schalter ein (Flag BS bleibt 0); erst der bedingte Stopp 060 bei eingerastetem Schalter setzt das Flag BS := 1 (Bedienpult_mit_Schaltern.md, Abschnitt Selektoren).
   #DOK-0002 Nach H G BS+ R wird Zelle 0000 (060, bedingter Stopp) entnommen: BZ = 0001, BS = 1, US = 0 (R loescht US).
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G BS+ R
   H  : Schalter H-R -> "H", Flag H := 1

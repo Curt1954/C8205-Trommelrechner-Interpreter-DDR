@@ -1,8 +1,6 @@
 ; bsp_5_13_dezimaleingabe_korrektur.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_13_dezimaleingabe_korrektur.txt
-; #DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9
-;   und die Null
-; #DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214,
-;   Arbeitsspur 7700); ZWR loescht den AC; Punkt liefert <AC>:=<7706>
+; #DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9 und die Null
+; #DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214, Arbeitsspur 7700); ZWR loescht den AC; Punkt liefert <AC>:=<7706>
 ; #DOK-0001 erwartet <AC> = 00000017641 (oktal)
 ; #SPEI-0001 3000-3016
 ; #SPEI-0001 3033-3035
@@ -10,6 +8,7 @@
 ; #SPEI-0001 7723-7723
 ; --leser1 Test-virtuelleGeraete/Leser1/bsp_5_13_lochstreifen_korrektur.txt
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -52,6 +51,7 @@ d7706:          abs     07706
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3036 AC=00000017641 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 00000000000
 ; 3011: 00000000011
@@ -59,4 +59,5 @@ d7706:          abs     07706
 ; 3033: 00007706211
 ; 7706: 00000017641
 ; 7723: 00000037502
+;#PRUEFE-ENDE
 ;

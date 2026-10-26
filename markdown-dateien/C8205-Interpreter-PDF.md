@@ -1,6 +1,6 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
-Version: 0.95-002
+Version: 0.95-006
 
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,
@@ -26,6 +26,7 @@ stillschweigend überschreiben.
   setzt und die Platzverhältnisse dort knapp sind; der Knotengraph wird nicht umgestellt. Die ASCII-Schreibweise z12
   statt z₁₂ gilt weiter für selbst erzeugte Beschriftungen in Diagrammen.
 - Richtgrößen:
+
   - Deckblatt: Titel 26 pt fett, Untertitel 12 pt (weitere Größen: Abschnitt 4.2)
   - Seitentitel auf Referenzseiten (z. B. „Kurzcodes A-nnn“): 16 pt fett
   - Abschnittsüberschriften: 12 pt fett
@@ -351,6 +352,7 @@ ergänzt, bevor das PDF erzeugt wird.
 |---|---|---|---|---|
 | `C8205-Projektueberblick_A4.pdf` | Projektüberblick | Was das Projekt ist, wie es aufgebaut ist und wie die Dokumente zusammenhängen | ÜBERBLICK | GESAMTPROJEKT |
 | `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` | Einstieg für Neueinsteiger | Was das Projekt enthält, in welcher Reihenfolge man liest und wo man bei einer Frage weiterliest | ÜBERBLICK | GESAMTPROJEKT |
+| `C8205-Ueberblick_und_Gesamtaufbau_A4.pdf` | Überblick und Gesamtaufbau | Einordnung, Geräteaufbau, Rechen- und Leitwerk, Befehlsphasen, Speicher-Timing und Teilprojekte des C 8205 | ÜBERBLICK | RECHNER UND REGELWERK |
 | `C8205-Rechnerbeschreibung_A4.pdf` | Rechnerbeschreibung | Aufbau, Register, Maschinenwort, Zahlendarstellung, Magnettrommel und Befehlszyklus des Cellatron C 8205 | BESCHREIBUNG | RECHNER UND REGELWERK |
 | `C8205-Bedienpult_und_Peripherie_A4.pdf` | Bedienpult und Peripherie | Tasten, Schalter, Lampen, Kanäle, Lochstreifenleser, -stanzer und Schreibwerk | BESCHREIBUNG | RECHNER UND REGELWERK |
 | `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Bedienungsanleitung Python-Interpreter | Aufruf, Schalter und Geräte von c8205_interp.py | HANDBUCH | INTERPRETER |
@@ -358,6 +360,7 @@ ergänzt, bevor das PDF erzeugt wird.
 | `C8205-Durchfuehrung_eines_Tests_A4.pdf` | Durchführung eines Tests | Das Testformat im Wortlaut der Quelle: Trommeldatei, Tastenfolge, Prüfungen, Geräte, Protokoll | REFERENZ | INTERPRETER |
 | `C8205-GRAFIK_Beschreibung_A4.pdf` | GRAFIK-Interpreter: Beschreibung | Zweck, Fenster, Geräte, Töne, Aufruf und Grenzen des GRAFIK-Modus im Wortlaut der Quelle | BESCHREIBUNG | INTERPRETER |
 | `C8205-GRAFIK_Pruefverfahren_A4.pdf` | GRAFIK-Interpreter: Prüfverfahren | Wie man prüft, dass der GRAFIK-Interpreter das Soll der Beschreibung erfüllt: Läufe, Tests, Abnahme | HANDBUCH | INTERPRETER |
+| `C8205-Zusatztrommeln_A4.pdf` | Zusatztrommeln C 8205Z | Experimenteller Prototyp: Eckdaten, Ablauf, Zeiten, Befehle und Modulspezifikation der vier Zusatztrommeln im Wortlaut der Quelle | BESCHREIBUNG | INTERPRETER |
 | `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | Lochstreifen-Hilfsprogramme | Anzeige, Eingabe und Umwandlung virtueller Lochstreifen: Format, Aufruf, Zwischenablage und Installation | HANDBUCH | INTERPRETER |
 | `C8205-Knotengraph_A4.pdf` | Knotengraph | Ablaufplan der Befehlsverarbeitung (Phasen I bis IV) als Knoten- und Testgraph | DIAGRAMM | RECHNER UND REGELWERK |
 | `C8205-Knotentabellen_A4.pdf` | Knotentabellen | Knotentabelle und Variablentabelle T2 im Wortlaut der Quellen | REFERENZ | RECHNER UND REGELWERK |
@@ -481,6 +484,9 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
 - `C8205-Projektueberblick_A4.pdf` (Quelle: C8205-Interpreter-Projektueberblick.md)
 - `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` (Quelle: C8205-Einstieg_fuer_Neueinsteiger.md; Wortlaut nach Abschnitt 6a, erzeugt mit
   `PDF/pdf-layout-scripte/erzeuge_einstieg_pdf.py`, das `md2pdf.py` aufruft)
+- `C8205-Ueberblick_und_Gesamtaufbau_A4.pdf` (Quelle: C8205-Interpreter-Überblick_und_Gesamtaufbau.md; Wortlaut nach Abschnitt 6a, erzeugt mit
+  `PDF/pdf-layout-scripte/erzeuge_ueberblick_gesamtaufbau_pdf.py`, das `md2pdf.py` aufruft; das Blockschaltbild (`abbildungen/C8205-Abb-Blockschaltbild.svg`)
+  setzt das Skript selbst als Vektorgrafik, weil `pdflib.bild` nur Rasterbilder kennt)
 - `C8205-BIS_A4.pdf` (Quelle: C8205-Interpreter-BIS.md; Fließtext und Tabellen nach Abschnitt 6a, ohne Kachelung)
 - `C8205-Durchfuehrung_eines_Tests_A4.pdf` (Quelle: C8205-Interpreter-Durchführung_eines_Tests.md; Wortlaut nach
   Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_durchfuehrung_pdf.py`, das `md2pdf.py` aufruft)
@@ -488,6 +494,9 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
   Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_grafik_beschreibung_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-GRAFIK_Pruefverfahren_A4.pdf` (Quelle: C8205-Interpreter-GRAFIK_Pruefverfahren.md; Wortlaut nach
   Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_grafik_pruefverfahren_pdf.py`, das `md2pdf.py` aufruft)
+- `C8205-Zusatztrommeln_A4.pdf` (Quelle: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`, experimenteller Prototyp C8205Z; Wortlaut nach
+  Abschnitt 6a, erzeugt mit `PDF/pdf-layout-scripte/erzeuge_zusatztrommel_pdf.py`, das `md2pdf.py` aufruft; Bereich INTERPRETER, weil der
+  Prototyp über den Schalter `--C8205Z` am Interpreter hängt)
 - `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` (Quelle: C8205-Interpreter-Lochstreifen-Hilfsprogramme.md; Wortlaut nach Abschnitt 6a,
   erzeugt mit `PDF/pdf-layout-scripte/erzeuge_lochstreifen_hilfsprogramme_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-Rechnerbeschreibung_A4.pdf` (redaktionell; erzeugt mit `PDF/pdf-layout-scripte/erzeuge_rechnerbeschreibung_pdf.py`, Bausteine aus `pdflib.py`; Stand 08.10.2026)
@@ -504,8 +513,8 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
   `PDF/pdf-layout-scripte/erzeuge_projektstruktur_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` (Quelle: C8205-Interpreter-PDF.md, diese Datei; Wortlaut nach Abschnitt 6a, erzeugt
   mit `PDF/pdf-layout-scripte/md2pdf.py`)
-- `C8205-Testuebersicht_A4.pdf` (Quelle: `CSV/test_tabelle.md`, von `CSV/test_tabelle.py` aus `Tests/` und `Assembler/` erzeugt; Tabelle nach
-  Abschnitt 3a.3, erzeugt mit `CSV/pdf-layout-scripte/erzeuge_testuebersicht_pdf.py`, das weder `md2pdf.py` noch `pdflib` braucht; liegt in `CSV/`)
+- `C8205-Testuebersicht_A4.pdf` (Quelle: `Testausfuehrungen/test_tabelle.md`, von `Testausfuehrungen/test_tabelle.py` aus `Tests/` und `Assembler/` erzeugt; Tabelle nach
+  Abschnitt 3a.3, erzeugt mit `Testausfuehrungen/pdf-layout-scripte/erzeuge_testuebersicht_pdf.py`, das weder `md2pdf.py` noch `pdflib` braucht; liegt in `Testausfuehrungen/`)
 
 ## 9. Änderungsprotokoll
 

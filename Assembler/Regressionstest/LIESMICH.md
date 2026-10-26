@@ -1,6 +1,6 @@
 # Regressionstest für c82ass
 
-Version 1.00-030 (Stand 22.10.2026)
+Version 1.00-038 (Stand 25.10.2026)
 
 Prüft, dass der Assembler nach einer Änderung dieselben Ergebnisse liefert wie vorher.
 
@@ -29,7 +29,7 @@ temporären Verzeichnis und legt im Projekt nichts ab (auch keine `projekdetails
 2. **Negativtests** in `negativ/`: je Test `<name>.asm` und `<name>.erwartet` (Rückgabecode, Texte in
    STDOUT/STDERR, vorhandene/fehlende Ausgabedateien, Farbcodes). Das Format steht im Kopf des Skripts.
 
-Mit Version 1.00-030 kamen der `--ABSPR`-Lauf in Teil 1 (`.kep` und `.rck` in `referenz/`) und vier Negativtests hinzu (insgesamt 54): `abspr_ok` (`.kep` statt `.obj`, Hinweis zum Pragma `LEITADRESSE 00`, keine Bahn-Warnung), `abspr_bahn_warnung` (Wörter auf den Zellen 0002 und 0003 lösen die Bahn-Warnung aus), `abspr_start_warnung` (Pragma `LEITADRESSE 00` mit `start <adresse>`) und `abspr_ohne_schalter` (ohne Schalter bleibt es bei `.obj`). `negativ/version.erwartet` erwartet 1.00-030. Die Referenz von `namen_raten` und `pj2-bis_minimalprogramm` (`.obj`, `.dmp`) ist nach dem Pragma `LEITADRESSE 00` (Checkpoint 7) neu geschrieben.
+Mit Version 1.00-030 kamen der `--ABSPR`-Lauf in Teil 1 (`.kep` und `.rck` in `referenz/`) und vier Negativtests hinzu (insgesamt 54): `abspr_ok` (`.kep` statt `.obj`, Hinweis zum Pragma `LEITADRESSE 00`, keine Bahn-Warnung), `abspr_bahn_warnung` (Wörter auf den Zellen 0002 und 0003 lösen die Bahn-Warnung aus), `abspr_start_warnung` (Pragma `LEITADRESSE 00` mit `start <adresse>`) und `abspr_ohne_schalter` (ohne Schalter bleibt es bei `.obj`). `negativ/version.erwartet` erwartet die Versionszeile des Assemblers (zuletzt 1.00-034). Die Referenz von `namen_raten` und `pj2-bis_minimalprogramm` (`.obj`, `.dmp`) ist nach dem Pragma `LEITADRESSE 00` (Checkpoint 7) neu geschrieben.
 
 ## Gesamtprüfung
 
@@ -81,3 +81,5 @@ Mit Version 1.00-024 kamen acht Negativtests hinzu (insgesamt 46): `warn_spr_dat
 Mit Version 1.00-025 kamen zwei Negativtests hinzu (insgesamt 48): `warn_log` und `warn_log_aus` prüfen mit den neuen Schlüsselwörtern `log-da` und `log-weg`, dass die Berichte von `-WARN=…` und `--xref` am Ende der `.log` stehen und ohne diese Optionen nicht. `makro_rekursion` prüft zusätzlich den Ort im Rekursionsfehler. Neu ist auch `make fuzz`.
 
 Mit Version 1.00-027 kamen `xref_makro` (Makroexpansionen in der Querverweisliste) und `mnemonic_entfallen` (`add` ist kein Operationscode mehr) hinzu (insgesamt 50).
+
+Seit 1.00-033 begrenzt der Assembler auch die Fehlerzeilen aus Operanden, Labeln, Makros, `dt` und `dz` (bisher nur die Meldungen mit Ort) auf 20 samt Zusammenfassung. Seit 1.00-034 fasst er außerdem gleiche Meldungen zusammen (dieselbe Meldung höchstens dreimal mit verschiedenen Quellzeilen, weitere als „N-mal gleiche Fehlermeldung“). `zeilenfeld_voll` prüft das für 4092 gleiche Fehler (4091 Wiederholungen zusammengefasst); der neue Negativtest `gleiche_fehler` (insgesamt 55) prüft es mit 31 Fehlern, davon 30-mal derselbe (29 zusammengefasst) und ein anderer mit eigener Zeile.

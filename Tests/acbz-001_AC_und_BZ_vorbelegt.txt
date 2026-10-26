@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001 #AC und #BZ zusammen: AC = 00000000200, BZ = 0100. G setzt BZ := 0, der AC bleibt: Start in Zelle 0000.
 #DOK-0002 Befehl 210 addiert die Zelle 3000 (45) zum AC: AC = 245.
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 #AC=00000000200
 #BZ=0100
 0000: 00003000210 # Einzel-Addition ohne Löschen

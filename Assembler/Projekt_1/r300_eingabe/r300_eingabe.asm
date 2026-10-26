@@ -1,3 +1,8 @@
+; #DOK-0001 R300-Eingabe: alle Zeichen mit Computertaste ueber SW einlesen und als Echo ausgeben (RE-001)
+; #TROMMEL=LEER
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/r300_eingabe.txt
+; --k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/r300_eingabe.txt
+; #PROT STUFE=2
          start  0
 ; r300_eingabe.asm  --  Eingabeprogramm fuer ALLE Zeichen des R300-Codes, die eine Computertaste haben (Version RE-001)
 ; ERZEUGT von testscripte/r300_eingabe_erzeugen.py - nicht von Hand aendern, sondern das Skript.

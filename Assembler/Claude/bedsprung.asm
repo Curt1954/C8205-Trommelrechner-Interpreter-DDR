@@ -14,3 +14,10 @@ up:             240     rueck        ; Rücksprungwort aus AC sichern
                 240     erg          ; erg := 1
                 000     rueck
 ende:           end
+
+; Sollwerte von Hand hergeleitet. Lauf ohne gesetztes SP (Tastenfolge H G R): 065 springt nicht, AC=0, erg bleibt 0; Halt auf 0006.
+;#PRUEFE-START
+; BZ=0007 AC=00000000000 US=1
+; 0001: 00000000000   # erg bleibt 0
+; 0002: 00000000001   # eins
+;#PRUEFE-ENDE

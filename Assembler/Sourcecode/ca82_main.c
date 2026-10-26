@@ -262,7 +262,7 @@ static void meldeErfolg(void) {
     if (berichtLog) { fclose(berichtLog); berichtLog = NULL; }
     printf("\n");
     if (absprAktiv) printf("Ausgabe als absolut adressierter KEP-Lochstreifen (binaer, R300-Code) nach: %s\n", machineCodeFileName);
-    else printf("Ausgabe als Minimalprogramm-Objektdatei nach: %s\n", machineCodeFileName);
+    else printf("Ausgabe als binaer codierte Objektdatei (R300-Lochstreifen) nach: %s\n", machineCodeFileName);
     printf("Ausgabe der formatierten Speicherbelegung nach: %s\n", dmpFileName);
     printf("Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: %s\n", testFileName);
 }

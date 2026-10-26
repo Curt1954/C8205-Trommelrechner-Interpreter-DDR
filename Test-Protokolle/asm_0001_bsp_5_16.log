@@ -32,6 +32,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Test eines mit Assembler assemblierten Programmes
   #SPEI-0001 2027-2033
   #SPEI-0001 2100-2104
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

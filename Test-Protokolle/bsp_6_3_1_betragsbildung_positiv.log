@@ -11,6 +11,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
   #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; 7777 215 bildet Vl(x), 3002 002 schiebt zurueck: |x| mit z0=0
   #DOK-0001 erwartet <AC> = |x| = 16700000000 (oktal) = +0.75*2^-3
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

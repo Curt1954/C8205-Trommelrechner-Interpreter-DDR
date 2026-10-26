@@ -1,6 +1,6 @@
 # C 8205 – GRAFIK-Interpreter: Beschreibung
 
-Version: 0.95-056
+Version: 0.95-061
 
 **Stand: Gerüst, Abschnitte 1 bis 11 geschrieben (§10 mit teilweiser Triage, siehe §10.6); Prüfverfahren §1 bis §10 liegt vor (`C8205-Interpreter-GRAFIK_Pruefverfahren.md`).** Das PDF dazu (`C8205-GRAFIK_Beschreibung_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Anforderungspaket Dokument 12 (fällt nach Abschluss weg).
 
@@ -37,14 +37,14 @@ Leser: Anwender und Entwickler des GRAFIK-Interpreters. Das Dokument ersetzt nac
 
 ## 2 Start und Schalter
 
-**Inhalt:** `c8205_grafik.sh/.bat`, `python3 c8205_interp.py`, `--leser1/2`, `--stanzer1`, `--trommel`, `--STUMM`, `--BASP`, `--mdverz`, `--HWCHECK`, Rückkehrcodes
+**Inhalt:** `c8205_grafik.sh/.bat`, `python3 c8205_interp.py`, `--leser1/2`, `--stanzer1`, `--trommel`, `--STUMM`, `--BASP`, `--trommelzeit`, `--mdverz`, `--HWCHECK`, `--C8205Z`, Rückkehrcodes
 
 **Quellen (alt):** Dok. 05 F-08, F-13; Dok. 11
 
 **Aufruf.**
 
 ```
-./c8205_grafik.sh [Schalter ...]          (Linux; Windows: c8205_grafik.bat, ungetestet)
+./c8205_grafik.sh [Schalter ...]          (Linux; Windows: c8205_grafik.bat, Teilabnahme 26.10.2026, §9.2)
 python3 c8205_interp.py [Schalter ...]    (gleichwertig; ohne --MODUS startet GRAFIK)
 ```
 
@@ -59,10 +59,12 @@ python3 c8205_interp.py [Schalter ...]    (gleichwertig; ohne --MODUS startet GR
 | `--stanzer1 ORDNER` | Ausgabeordner des Stanzers; Standard `virtuelle_Geraete/Stanzer1` |
 | `--trommel PFAD` | Trommeldatei (seit 15.10.2026); Standard `Trommel/trommel.txt`. Sie ist der Speicher des Rechners, Programme verändern sie; wer die Ausgangsbelegung behalten will, sichert sie oder gibt eine eigene Kopie an. Neben ihr liegt die Schalterdatei der Bahnsperren (`trommel.basp`) |
 | `--BASP abcdef` | Bahnsperrenschalter, sechs Ziffern 0/1; wirkt in GRAFIK über das C-Modul (`bahnsperre_setzen`), wird im Pult nicht angezeigt; ohne Angabe gilt die Stellung der Schalterdatei (anlegen mit `000000`) |
+| `--trommelzeit alt\|echt\|schnell` | Zeitmodell der Trommel; Standard `alt`. `alt`: Wartezeiten nach der Wanduhr im C-Modul; `echt`: virtuelle Zeit (eine Wortzeit je Phase), auf Hardwaretempo gebremst; `schnell`: virtuelle Zeit ohne Bremsen. Einzelheiten und Zähler: §7.8 |
 | `--STUMM` | schaltet alle Töne ab; damit entfällt auch die Wartezeit des Hochlaufs (Entscheidung 6) |
 | `--TON pppp` | Lautstärke je Gruppe (Pult, SW, LL, LS), vier Ziffern 0 bis 9, 5 = Voreinstellung, 0 = stumm; wirkungslos mit `--STUMM` |
 | `--TASTATUR de\|en` | Tastaturbelegung beim Abspielen einer Klickspur und im Protokoll; Standard `de` |
 | `--HWCHECK` | zweites Fenster mit BZ, BR, Spur/Sektor, AC und <<AR>> (§8) |
+| `--C8205Z[=VERZ]` | schaltet die vier Zusatztrommeln des **experimentellen Prototyps C8205Z** ein (Standard: aus; §7.10): `5k00 030` wählt ZT k (1 bis 4), `zzz0 bbbb 601` gibt die Haupttrommelspur bbbb auf die gewählte ZT aus, `zzz0 bbbb 661` liest sie zurück; ein Befehl dauert rund 81 bis 86 ms. Die Trommeln liegen als `zt1.txt` bis `zt4.txt` in `VERZ` (Standard `Trommel/ZT/`). Braucht das gebaute Erweiterungsmodul `c8205_ztmodul` |
 | `--mdverz VERZ` | Ordner mit den Dokumenten, aus denen der Knotengraph gelesen wird; Standard `markdown-dateien` |
 | `--DEBUGLOG [DATEI]`, `--AUFZEICHNUNG [DATEI]`, `--WIEDERGABE [DATEI]` | Fehlersuche: Protokoll, Aufzeichnung und Wiedergabe einer Klickspur (Prüfverfahren §5) |
 | `--pult-protokoll`, `--netz-schnell`, `--ohne-fenster`, `--entwickler-tasten`, `--entwickler-k0` | Entwicklerschalter für Prüfungen, nicht für den Betrieb |
@@ -427,13 +429,13 @@ Die Rücktaste hat **Löschwirkung** (G4-006; Antwort des Projektinhabers 19.10.
 
 **Quellen (alt):** Dok. 03, 10 §4; `ton/SW_Ton_Beschreibung.md` bleibt als Teil B bis D
 
-Töne gibt es nur im Modus GRAFIK. Im Modus TEST gibt es keine Töne und keine Hochlaufwartezeit. Dieser Abschnitt beschreibt den **geltenden Stand** der Töne (Stufe 4, am 19.10.2026 vom Projektinhaber abgenommen; offen bleibt Windows). Er ersetzt Dok. 03 (Stand 16.10.2026, in großen Teilen überholt) als Beschreibung. Die Herkunft der Klangdateien, die Messwerte und der Testrahmen `ton/sw_ton.py` stehen weiter in `ton/SW_Ton_Beschreibung.md` (Teil B bis D, nachgeführt am 19.10.2026). Alte Kennungen (S4-xx, O4-xx, Nr. aus Dok. 03 §5, G4-xx) stehen in Klammern.
+Töne gibt es nur im Modus GRAFIK. Im Modus TEST gibt es keine Töne und keine Hochlaufwartezeit. Dieser Abschnitt beschreibt den **geltenden Stand** der Töne (Stufe 4, am 19.10.2026 vom Projektinhaber abgenommen; Windows: Teilabnahme am 26.10.2026, §9.2). Er ersetzt Dok. 03 (Stand 16.10.2026, in großen Teilen überholt) als Beschreibung. Die Herkunft der Klangdateien, die Messwerte und der Testrahmen `ton/sw_ton.py` stehen weiter in `ton/SW_Ton_Beschreibung.md` (Teil B bis D, nachgeführt am 19.10.2026). Alte Kennungen (S4-xx, O4-xx, Nr. aus Dok. 03 §5, G4-xx) stehen in Klammern.
 
 ### 6.1 Aufbau: ein Tonstrom, ein Mischer
 
 - **Tonstrom** (S4-01): In GRAFIK ohne `--STUMM` wird beim Start **ein Ausgabestrom geöffnet, der bis zum Ende dauernd läuft** (bei Ruhe Stille). Es wird kein Abspielprozess je Klang gestartet. *Dauergeräusche* (Rechner-Grundgeräusch, Leser-Dauergeräusch, Stanzer) laufen als Schleife und werden nur über den Pegel (0 oder voll) stumm oder hörbar. *Einzelklänge* (Zeichen, TAB, WRZL, Leser-Einzelschritt, Auslaufen) werden beim Ereignis in den laufenden Strom eingemischt; gleichzeitige Klänge überlappen und werden summiert (auf 16 Bit begrenzt).
 - **Mischer** (S4-01, S4-02): das C-Modul `tonmisch` (`c-module/tonmisch.c`), als statische Bibliothek `libtonmisch.a` **fest in das Erweiterungsmodul `c8205_trommel` eingebunden** (eine Datei zusammen mit der Trommel, §7). Blöcke zu 10 ms (441 Werte, 44,1 kHz, mono, 16 Bit), **eigener C-Thread ohne GIL**, höchstens 2 Blöcke Vorlauf (20 ms), bis 128 gleichzeitige Stimmen. Der Python-Mischer `grafik_tonmisch.py` bleibt als Rückfall (ohne gebautes Erweiterungsmodul meldet `c8205_grafik` das beim Start) und als Bezug der Prüfungen.
-- **Senke** (S4-02): Linux: ein Abspielprogramm mit Roh-Audio über eine Röhre, vom Modul gestartet; der Mischer nimmt in dieser Reihenfolge das erste vorhandene von `paplay`, `pw-cat`, `aplay`, `ffplay` (`SPIELER_ROH` in `grafik_tonmisch.py`). Windows: `winmm` (`waveOut…`) mit vier Puffern zu 10 ms, im Code, **nicht übersetzt und nicht getestet** (§6.8).
+- **Senke** (S4-02): Linux: ein Abspielprogramm mit Roh-Audio über eine Röhre, vom Modul gestartet; der Mischer nimmt in dieser Reihenfolge das erste vorhandene von `paplay`, `pw-cat`, `aplay`, `ffplay` (`SPIELER_ROH` in `grafik_tonmisch.py`). Windows: `winmm` (`waveOut…`) mit vier Puffern zu 10 ms; seit 26.10.2026 mit MinGW-w64 übersetzt und im GRAFIK-Interpreter eingeschaltet (Grundgeräusch, Lochbandleser und Stanzer vom Projektinhaber gehört; Dauerbetrieb und Schreibwerkton nicht geprüft; §9.2, §6.8).
 - **Tonkanäle** (S4-12): Rechner, Schreibwerk, Leser, Stanzer; je Kanal ein internes Tor. Die Tore dienen **Netz aus** und dem Auslaufen der Dauergeräusche. **Der Selektor SW schließt kein Tor** (§6.2). Es gibt kein neues Bedienelement.
 - **Verzögerung** (S4-03): Ton und Zeichen im SW-Fenster erscheinen im Mittel gleichzeitig; der Ton setzt höchstens 50 ms nach dem Zeichen ein; das Zeichen wird nie wegen des Tons verzögert. In der ersten Hörprüfung war der Tastenklang „bemerkbar“ verzögert (geschätzt 0,1 s); daraufhin wurden Vorlauf (30 → 20 ms) und Puffer des Abspielprogramms (40 → 20 ms; `pw-cat` 100 → 20 ms) gesenkt (G4-004). Gemessen ist das am Gerät nicht; die zweite Hörprüfung war „ok“. Zu kleine Werte können knacken (`SPIELER_LATENZ_MS` in `grafik_tonmisch.py`, ohne Neubau änderbar).
 - **Aufrufstellen** (S4-14): Der Interpreter für TEST bleibt unverändert; die Töne hängen im GRAFIK-Pfad an vorhandenen Stellen: Schreibwerk-Ausgabe (`SwSenke`), Leser (`GrafikLeser.bei_zeichen`), Stanzer (`GrafikStanzer.bei_zeichen`, Selektor LS über `PultSteuerung.bei_ls`), Netzablauf (`MischerRechnerTon`).
@@ -482,7 +484,7 @@ Der Ablauf von Netz-Ein bis Netz-Aus steht in §3.4. Die Töne dazu (S4-11; Dok.
 ### 6.6 Lautstärke und Stummschaltung
 
 - **`--STUMM`** (S4-13): keine Töne, **keine Hochlaufwartezeit** (B grün sofort nach dem Klick), keine Prüfung des Audiogeräts; Schreibwerkzeit, Lesetempo und Stanztempo bleiben.
-- **`--TON=pppp`** (S4-19; Entscheidung 19.10.2026 nach der ersten Hörprüfung): vier Ziffern 0 bis 9 in der Reihenfolge **Pult, SW, LL, LS** (Pult = Rechnertöne; SW = Schreibwerk einschließlich der angezeigten Eingabe; LL = Lochstreifenleser; LS = Lochbandstanzer). Voreinstellung 5555; 0 = stumm. Faktor = Basis × Ziffer / 5. **Basis laut Code (`TON_BASIS` in `grafik_tonmisch.py`): Pult 1,0, SW 2,0, LL 1,3, LS 1,0.** SW 2,0, weil der Tastenanschlag doppelt so laut werden sollte (Hörprüfung 1); LL 1,3 seit G4-012 („Leser einen Tick lauter“, Hörprüfung 19.10.2026). Ungültige Angaben (nicht vier Ziffern) beenden den Start mit der argparse-Meldung (Code 2). Mit `--STUMM` wirkungslos; unter Windows wirkt der Wert Pult nicht. Die Zeichenklänge erreichen 0,4 des Vollausschlags; ab Faktor 2,5 (SW: Ziffer 6) übersteuert ein einzelner Klick.
+- **`--TON=pppp`** (S4-19; Entscheidung 19.10.2026 nach der ersten Hörprüfung): vier Ziffern 0 bis 9 in der Reihenfolge **Pult, SW, LL, LS** (Pult = Rechnertöne; SW = Schreibwerk einschließlich der angezeigten Eingabe; LL = Lochstreifenleser; LS = Lochbandstanzer). Voreinstellung 5555; 0 = stumm. Faktor = Basis × Ziffer / 5. **Basis laut Code (`TON_BASIS` in `grafik_tonmisch.py`): Pult 1,0, SW 2,0, LL 1,3, LS 1,0.** SW 2,0, weil der Tastenanschlag doppelt so laut werden sollte (Hörprüfung 1); LL 1,3 seit G4-012 („Leser einen Tick lauter“, Hörprüfung 19.10.2026). Ungültige Angaben (nicht vier Ziffern) beenden den Start mit der argparse-Meldung (Code 2). Mit `--STUMM` wirkungslos; unter Windows wirkte der Wert Pult im `winsound`-Zweig nicht; mit dem Mischer (`winmm`) ist `--TON` nicht geprüft (§9.2.3). Die Zeichenklänge erreichen 0,4 des Vollausschlags; ab Faktor 2,5 (SW: Ziffer 6) übersteuert ein einzelner Klick.
 
 ### 6.7 Start und Fehlerfälle
 
@@ -490,7 +492,7 @@ Fehlt in GRAFIK ohne `--STUMM` ein Abspielprogramm oder ein nutzbares Audiogerä
 
 ### 6.8 Plattformen
 
-Linux ist umgesetzt und vom Projektinhaber abgehört (Hörprüfung 2, 19.10.2026: ok). Windows ist weder übersetzt noch getestet: Der Bau von `tonmisch` mit MinGW-w64 und der Mischer mit `winmm` sind offen, bis ein Windows-Tester da ist (B-2; → §9, §10, Prüfverfahren §9). Bis dahin bleibt unter Windows der Stand von Stufe 2: Rechnertöne über `winsound` (nur ein Klang gleichzeitig), Schreibwerkzeit und Lesetempo ja, sonst kein Ton, mit Hinweis beim Start (O4-18). Bekannte funktionierende Linux-Umgebung (Dok. 10 §10): Ubuntu 23.04, Python 3.11.4, gcc 12.3.0, `paplay`; das Erweiterungsmodul ist ein abi3-Modul (nach dem Absturz „deallocating None“ auf Python 3.11, behoben mit G4-005, benutzt es `Py_IncRef`/`Py_DecRef` statt der Makros). Ein Neubau am eigenen Rechner ist der sichere Weg: `cd c-module/python && rm -rf build && python3 setup.py build_ext --inplace`.
+Linux ist umgesetzt und vom Projektinhaber abgehört (Hörprüfung 2, 19.10.2026: ok). Windows: seit 26.10.2026 mit MinGW-w64 gebaut; der Mischer mit `winmm` läuft im GRAFIK-Interpreter (Grundgeräusch, Lochbandleser und Stanzer vom Projektinhaber gehört); offen sind Dauerbetrieb, Schreibwerkton und Lautstärken (B-2; → §9.2, §10, Prüfverfahren §9). Lässt sich `winmm` nicht öffnen, bleibt als Rückfall der Stand von Stufe 2: Rechnertöne über `winsound` (nur ein Klang gleichzeitig), Schreibwerkzeit und Lesetempo ja, sonst kein Ton, mit Hinweis und Grund beim Start (O4-18). Bekannte funktionierende Linux-Umgebung (Dok. 10 §10): Ubuntu 23.04, Python 3.11.4, gcc 12.3.0, `paplay`; das Erweiterungsmodul ist ein abi3-Modul (nach dem Absturz „deallocating None“ auf Python 3.11, behoben mit G4-005, benutzt es `Py_IncRef`/`Py_DecRef` statt der Makros). Ein Neubau am eigenen Rechner ist der sichere Weg: `cd c-module/python && rm -rf build && python3 setup.py build_ext --inplace`.
 
 ### 6.9 Konstanten und ihr Stand
 
@@ -514,7 +516,7 @@ Alle Konstanten sind nach der Hörprüfung nachstellbar (S4-16); der Projektinha
 1. **Pegel LL:** Dok. 10 S4-19 nennt die Basis 1,0 für Pult, LL und LS; der Code hat für LL seit G4-012 1,3. Eine Beschreibung dieser Änderung liegt in den Dokumenten nicht vor; hier steht der Code-Wert, vom Projektinhaber am 19.10.2026 bestätigt (§10.5).
 2. **Dok. 03** beschreibt in Kopf, §2, §3 und im Absatz „Stand 16.10.2026“ noch „nichts eingebaut“, „120 ms ±10 %“ und „Einsatz nicht festgelegt“; maßgeblich sind hier §6 und Dok. 10. Dok. 03 ist nur im Kopf und mit einer Berichtigung zu O4-1 bis O4-6 vermerkt (Dok. 10 B-1, B-8). `tab_kurz.wav` und `tab_lang.wav` liegen als Quelle, werden aber nicht mehr gespielt.
 3. **Eingabeklang beim ersten Zeichen:** Der Projektinhaber berichtete (19.10.2026), dass für das erste Zeichen im Fenster kein Klick kam; eine Ursache wurde nicht gefunden (Dok. 10 §11, „Drei Beobachtungen“). Das Debug-Log schreibt dazu je Eingabeklang eine Zeile `SW Eingabeklang …`.  **Untersucht 21.10.2026 (ohne Fenster, ohne Ton):** (1) Der Klangweg ist in Ordnung: `Schreibwerk.eingabe()` legt beim ersten Zeichen eine Stimme in den Mischer (Python- und C-Mischer gemessen: eine Stimme, Spitzenwert 26212 im ersten Block). Der Aufruf `_echo_eingabe` steht hinter `SwEingabe._geliefert()`, also erst **nach** der Annahme durch den Rechner. (2) **Einzige Besonderheit des ersten Zeichens:** Nach dem Einschalten ist die Lage des SW unbestimmt (`lage = None`), das erste Zeichen mit bestimmter Lage geht daher als **Paar** (`Um. KB` oder `Um. GB`, dann das Zeichen; Regel 18.10.2026, G3-008). Das Umschaltzeichen klingt und erscheint nie (O4-6); das Zeichen selbst wird ohne gehaltene Umschalttaste (Fall b, U-11) erst **beim Loslassen** der Taste frei und klingt erst dann, und nur wenn der Rechner bis dahin wieder bei einem `011` ist; fragt er nicht noch einmal, bleibt es im Puffer (kein Klang, keine Anzeige). Beim **Drücken** der ersten Taste ist es deshalb still. Das passt zur Beobachtung, ist aber **nicht als Ursache belegt**: ob der Klick am Fenster gefehlt hat oder nur beim Drücken ausblieb, ist nicht bekannt. Belegt durch zwei neue Tests (`test_op09_*` in `grafik_sw_tests.py`, 83 von 83 grün; Gegenprobe: mit sofort freigegebenem zweiten Zeichen werden drei Tests rot). Verhalten **nicht geändert** (Regel G3-008 und U-11 sind entschieden). (3) **Offen, nur am Fenster prüfbar:** Mit `--DEBUGLOG` zeigen die Zeilen die Ursache: `SW Taste … -> folgt`, dann `zweite Eingabe beim Loslassen -> geliefert`, dann `SW Eingabeklang …`. Fehlt die Zeile `Eingabeklang`, liegt es am Paar (Puffer oder fehlender zweiter `011`); steht sie da und es klingt trotzdem nichts, liegt es am Tonstrom (Abspielprogramm). **Lauf am Fenster 21.10.2026 (`op09_eingabeklang.sh`, Log des Projektinhabers):** Das erste Zeichen `3` kam bei 25,384 s mit „folgt“ (Puffer 1); die Zeile `SW Eingabeklang '3'` (Schreibwerk und Mischer vorhanden) folgt erst bei 27,172 s, also **1,8 s später**; ein zweites Zeichen `4` (Lage nun bekannt) wurde bei 30,577 s sofort geliefert und klang ohne Verzug. Eine Zeile „zweite Eingabe beim Loslassen“ fehlt. **Folgerung:** Das Zeichen geht nicht verloren, der Klang wird angefordert, Schreibwerk und Mischer sind vorhanden; der Klick des ersten Zeichens kommt verspätet, weil es als Paar zuerst das Umschaltzeichen braucht und erst frei wird, wenn Taste losgelassen und ein `011` aktiv ist. **Zweiter Lauf (gleiche Anordnung, noch mit der alten `grafik_sw_fenster.py`, die neuen Log-Felder fehlen):** Taste `2` bei 23,137 s, Eingabeklang bei 24,868 s (1,73 s); `3` sofort. Der Verzug ist also **wiederholbar** und fast gleich lang (1,8 s und 1,73 s), kein Zufall einer langen Haltezeit. **Offen bleibt, was die Zeit ausmachte** (lange Tastenhaltezeit oder ein Rechner, der nicht bei einem `011` war): das alte Log zeigte weder den Zeitpunkt des Loslassens ohne Lieferung noch den Zustand `011`. Dafür schreibt `grafik_sw_fenster.py` (G4-009) jetzt je Taste `011 aktiv`, beim Loslassen ohne Lieferung `Taste los … nichts geliefert (Puffer, 011 aktiv)` und je Eingabeklang `Stimmen im Mischer danach: n`. Kein Verhalten geändert. **Ursache gefunden 21.10.2026 (Probe `testscripte/grafik_op09_rechnerzeit_probe.py`, Rechner mit Schreibwerkzeit, Test `sw_zwei_ziffern`):** Der Rechner braucht nach dem Umschaltzeichen `Um. KB` **1,70 s** bis zum nächsten `011`, weil das Testprogramm das Zeichen nicht als Ziffer annimmt und die Aufforderung `Erste Ziffer 0-3:` mit Zeilenschaltung **noch einmal ausgibt** (17 Zeichen zu 80 ms und WRZL 360 ms, rund 1,7 s Schreibwerkzeit). Das erste Zeichen wartet im Puffer und wird erst dann angenommen, angezeigt und gespielt; die Zeit (1,73 bis 1,8 s in drei Läufen des Projektinhabers) stimmt damit überein. Der Klang ist also **nicht ausgefallen, sondern kam mit der Annahme** (Regel bis G4-009: Anzeige und Klang erst bei Annahme durch den Rechner, G4-007, U-9; seit G4-010 klingt das Zeichen beim Tastendruck, siehe unten). Ohne das Umschaltzeichen (zweites Zeichen) gibt es keinen Verzug. **Entschieden 21.10.2026 (Projektinhaber): Variante (b), Klang beim Tastendruck.** Wortlaut: „Bei einer Eingabe ist das so. Dass das Zeichen vom SW in den Eingabepuffer kommt, kann die Eingabe noch nicht angenommen sein, aber der Tastendruck ‚klingt‘ schon.“ Umgesetzt in `grafik_sw.py` (G4-008): neuer Aufruf `klick` an `SwEingabe`; `tippen()` ruft ihn auf, sobald das Zeichen (bei einem Paar: das zweite Token) in den Puffer kommt, vor der Weitergabe an den Rechner. `echo` bleibt die Anzeige bei der Annahme (`_geliefert`). Im Fenster (`grafik_sw_fenster.py`, G4-010): `_klick_eingabe` spielt den Klang (Schreibwerk, ohne Schreibwerkzeit, ohne Sperre, auch bei Selektor SW), `_echo_eingabe` zeigt nur noch an. Folge: Das erste Zeichen nach dem Einschalten klingt beim Drücken, die Anzeige kommt nach dem Loslassen und der Annahme (am Testprogramm `sw_zwei_ziffern` rund 1,7 s später). Keine Taste, die der Puffer nicht aufnimmt (voll, gesperrt, nicht darstellbar), klingt. Tests: sechs neue in `grafik_sw_tests.py` (`test_op09_klick_*`, `test_op09_direkte_lieferung_*`, `test_op09_erstes_zeichen_klingt_beim_druecken_*`, `test_op09_kein_klang_*`, `test_op09_ruecktaste_*`, `test_op09_ohne_klick_*`), zwei im Fenster-Block von `grafik_stufe4_tests.py` (`test_eingabe_klick_klingt_auch_bei_selektor_sw` ersetzt `test_eingabe_echo_klingt_auch_bei_selektor_sw`, neu `test_eingabe_echo_zeigt_nur_an`); Gegenproben: ohne den Aufruf in `tippen()` werden fünf, mit dem Klang erst in `_geliefert` vier der sechs neuen Tests rot. **Nicht geprüft:** das Hören am Fenster (H-7, Prüfverfahren §7); `--DEBUGLOG` zeigt `SW Eingabeklang …` jetzt sofort nach `SW Taste … -> folgt` bzw. `vorgemerkt`, nicht mehr erst bei der Annahme. **Klarstellung des Projektinhabers (21.10.2026):** Seine Bemerkung, bei einem nicht angenommenen Zeichen sei „der Puffer voll, eine weitere Taste geht nicht“, beschreibt das **echte C 8205**: Das SW hat dort einen elektronischen Ein-Zeichen-Puffer. Sie hat **nichts mit dem Software-Puffer** des SW-Fensters zu tun (§5.5, bis 8 Eingaben, OP-07 bestätigt); dieser bleibt unverändert, `EIN_TASTENDRUCK` bleibt `False`. Kein offener Punkt.
-4. **Nicht an echten Geräten gemessen:** Verzögerung (50 ms), Schreibwerkzeit im Betrieb, Stanztempo. Windows offen (§6.8).
+4. **Nicht an echten Geräten gemessen:** Verzögerung (50 ms), Schreibwerkzeit im Betrieb, Stanztempo. Windows nur teilweise geprüft (§9.2).
 5. **Abgleich `ton/SW_Ton_Beschreibung.md` und Handbücher (OP-30 (b), OP-21; 21.10.2026):** Verglichen wurde mit §6, mit den Konstanten im Code (`grafik_schreibwerk.py`, `grafik_geraeteton.py`, `grafik_rechnerton.py`, `grafik_tonmisch.py`), mit Dauer und Format der WAV-Dateien und mit einem Lauf von `ton/sw_ton.py` (Beispiele §11.1 und §11.2 der Beschreibung). **Grenze:** Dok. 03 liegt nicht im Archiv; Nr. 11 bis 24 konnten nicht Satz für Satz verglichen werden, nur gegen das, was an seine Stelle trat. *Übereinstimmend:* alle Konstanten aus Teil B §7.3 (80 ms ±10 ms, 100 ms, 10 ms, 400 ms, 360 ms, 130 Zeichen/s, 100 ms), die Dauern der WAV-Dateien (Format überall 44,1 kHz, mono, 16 Bit), die Stanzerwerte D-6 und D-7 (50 ms, 5 s), das Beispiel §11.2 (Zeiten 0,000 bis 2,257 s reproduziert). *Berichtigt:* Teil D der `SW_Ton_Beschreibung.md` (Aufnahmen „nicht eingebaut“, MP3, D-1, D-10 bis D-12 „offen“) trug noch den Stand 15.10.2026; sie hat jetzt einen Nachführungsvermerk (0.01-004). In §6.1 fehlte `ffplay` in der Liste der Abspielprogramme (steht im Code und in `README.md`), in §6.5 war die Länge des Grundgeräuschs 6,0 s statt 5,9 s (Datei 5,94 s). *Neu gefunden:* OP-42 (Klang für `WR`; am 21.10.2026 entschieden und umgesetzt, Nr. 6). *Handbücher:* siehe OP-21 in §10.5.
 6. **Klang für `WR` (OP-42, entschieden 21.10.2026):** Vorgabe des Projektinhabers: „für WR ohne Zeilenschaltung nur die erste Hälfte des WRZL-Tons nehmen, vor dem markanten Ton, und diesen neuen Ton 120 ms spielen.“ Umgesetzt als eigene Klangart `wr` in `grafik_schreibwerk.py` (G4-002): `_art('<WR>')` = `wr`, Klang `wr.wav`, Schreibwerkzeit 120 ms (`WR_MS`); WR gilt bei `--STUMM` wie jedes Zeichen als Schreibwerkzeit ohne Klang, und als angezeigte Eingabe klingt es ohne Schreibwerkzeit (§6.2). `wr.wav` entsteht mit `ton/erzeuge_wr_klang.py` aus `wrzl.wav`: die ersten 120 ms (5292 Samples), die letzten 5 ms linear ausgeblendet; 44,1 kHz, 16 Bit, mono wie die übrigen Dateien. **Auslegung, nicht gehört:** Als „markanter Ton“ gilt der laute Schlag bei etwa 126 ms (Spitze 12941, der größte Einzelwert der Datei); davor liegt der Schnitt, und die 120 ms passen dazu. Ein zweiter lauter Schlag liegt bei etwa 224 ms (Effektivwert am höchsten); wäre er gemeint, läge der Schnitt später. Wo der Schnitt liegen soll, entscheidet das Ohr: `python3 ton/erzeuge_wr_klang.py --ende MS` erzeugt die Datei neu. Im Testrahmen `ton/sw_ton.py` gilt nur der Name `<WR>` als WR (eigener Klang); `\r`, ASCII 13 und `<WRZL>` bleiben WRZL, weil dort „nach Vorgabe CR = WRZL“ gilt (`SW_Ton_Beschreibung.md` §14.1). Tests: fünf neue in `grafik_stufe4_tests.py` (`test_wr_*`) und die Prüfung der Datei; Gegenproben (WR als Zeichen, 360 ms statt 120 ms) schlagen an.
 
@@ -535,7 +537,7 @@ Alle Konstanten sind nach der Hörprüfung nachstellbar (S4-16); der Projektinha
 
 ## 7 Echte Trommel
 
-**Inhalt:** C-Module, Regel „Schlitz ist Schlitz“, Takt, Plattformschicht, Anbindung
+**Inhalt:** C-Module, Regel „Schlitz ist Schlitz“, Takt, Plattformschicht, Anbindung, Zeitmodelle und Zähler der Trommelstatistik
 
 **Quellen (alt):** Dok. 02; Dok. 07 (Stufe 1); `C8205-Interpreter-Magnettrommel.md` verweist hierher
 
@@ -578,7 +580,7 @@ Der Takt kommt aus der Monotonic-Uhr (Linux `clock_gettime`, Windows `QueryPerfo
 | Schlafen bis zum nächsten Tick | `clock_nanosleep` (absolut), kein Spin | siehe unten |
 | Strg+C | `sigaction(SIGINT)` | `signal(SIGINT)` |
 
-**Kein aktives Warten** (entschieden 16.10.2026, O-7 Nr. 4: „alle 20 µs prüfen reicht“; zuerst als 20 ms gelesen, gemeint sind Mikrosekunden): Der Hintergrund-Thread schläft immer; solange ein Auftrag ansteht, prüft er die Uhr in Abständen von höchstens 20 µs. Ein Tickbeginn darf bis etwa 20 µs spät erkannt werden; die Tickzahl und die Wartezeit in Wortzeiten bleiben exakt. Unter Windows arbeitet die Systemuhr nur grob (`timeBeginPeriod(1)` ist gesetzt); dort kann die **Echtzeit-Dauer** eines Zugriffs länger werden, die Wartezeit in Wortzeiten nicht. **Stand Dok. 02 (16.10.2026): Der Windows-Zweig (Parameter `spinnen` in `plattform.h`, Schalter `req_wartet` in `trommel.c`) war noch nicht angepasst; ob das inzwischen geschehen ist, habe ich nicht geprüft.** Bauen unter Windows: MinGW-w64 (Entscheidung 16.10.2026, O-8; kein MSVC, `build_msvc.bat` liegt nur bei); die Bauskripte sollen `-static` bekommen und `--compiler=mingw32` benutzen; mit MinGW-w64 gilt das Modul voraussichtlich nur für die Python-Version, mit der gebaut wurde (die versionsunabhängige `python3.lib` über `#pragma comment` gibt es nur bei MSVC). **Alles ungebaut und ungetestet** (§9, §10; Prüfverfahren §9).
+**Kein aktives Warten** (entschieden 16.10.2026, O-7 Nr. 4: „alle 20 µs prüfen reicht“; zuerst als 20 ms gelesen, gemeint sind Mikrosekunden): Der Hintergrund-Thread schläft immer; solange ein Auftrag ansteht, prüft er die Uhr in Abständen von höchstens 20 µs. Ein Tickbeginn darf bis etwa 20 µs spät erkannt werden; die Tickzahl und die Wartezeit in Wortzeiten bleiben exakt. Unter Windows arbeitet die Systemuhr nur grob (`timeBeginPeriod(1)` ist gesetzt); dort kann die **Echtzeit-Dauer** eines Zugriffs länger werden, die Wartezeit in Wortzeiten nicht. **Stand Dok. 02 (16.10.2026): Der Windows-Zweig (Parameter `spinnen` in `plattform.h`, Schalter `req_wartet` in `trommel.c`) war noch nicht angepasst; ob das inzwischen geschehen ist, habe ich nicht geprüft.** Bauen unter Windows: MinGW-w64 (Entscheidung 16.10.2026, O-8; kein MSVC, `build_msvc.bat` liegt nur bei) mit den Skripten `bau_trommel_mingw.bat` und `bau_ztmodul_mingw.bat` (ohne setuptools, `-static-libgcc`, gegen `python3.lib`; §9.2). Windows-Zweig seit 26.10.2026 mit MinGW-w64 (64 Bit) gebaut; `test_c8205_trommel.py` besteht unter Windows mit Python 3.13 (23 Tests, 1 übersprungen, der SIGINT-Test). Messwerte zur Windows-Uhr liegen nicht vor (§9.2.3).
 
 ### 7.5 Anbindung an den GRAFIK-Interpreter
 
@@ -594,14 +596,78 @@ Seit Stufe 1 umgesetzt und abgenommen (18.10.2026; Dok. 07). Dok. 02 §6 führt 
 ### 7.6 Folgen
 
 - **Tempo:** Jeder Zugriff dauert 0 bis 3,2 ms (0 bis 31 Wortzeiten). Bei zufälligen Adressen liegt die mittlere Wartezeit bei etwa 16 Ticks (rund 1,6 ms), bei nach der Trommelstruktur gewählten Adressen bei 0 bis 5 Ticks. Programme mit vielen Zugriffen laufen damit zum ersten Mal in realistischer Zeit; die Laufzeit hängt von der Programmierung ab. Gemessen ist das nur an den Testfolgen des Moduls.
-- **Nicht reproduzierbar:** Die Wartezeit hängt von der Echtzeit ab, zu der der Interpreter einen Auftrag stellt. Läuft der Interpreter in Python langsamer als eine Wortzeit zwischen zwei Aufträgen, verpasst er „optimale“ Folgezellen und wartet bis zum nächsten Auftreten des Sektors. **Zeiten und Zyklenzahlen schwanken von Lauf zu Lauf.** Zeiten sind deshalb von der Gleichwertigkeit TEST/GRAFIK ausgenommen (Register, 16.10.2026); Zeitvergleiche in GRAFIK werden nicht gefordert. Ein virtueller Takt (deterministisch, ohne Thread) wäre eine weitere, nicht gewünschte Änderung.
+- **Nicht reproduzierbar:** Die Wartezeit hängt von der Echtzeit ab, zu der der Interpreter einen Auftrag stellt. Läuft der Interpreter in Python langsamer als eine Wortzeit zwischen zwei Aufträgen, verpasst er „optimale“ Folgezellen und wartet bis zum nächsten Auftreten des Sektors. **Zeiten und Zyklenzahlen schwanken von Lauf zu Lauf.** Zeiten sind deshalb von der Gleichwertigkeit TEST/GRAFIK ausgenommen (Register, 16.10.2026); Zeitvergleiche in GRAFIK werden nicht gefordert. Einen deterministischen virtuellen Takt, der nicht nach der Wanduhr wartet, gibt es als wählbares Zeitmodell: Schalter `--trommelzeit` mit den Werten `echt` und `schnell` (§7.8). Der Standard bleibt `alt`; nur dort schwanken die Zeiten wie beschrieben.
 - **Anzeige:** Ob eine Anzeige die aktuelle Sektornummer zeigen soll, ist nicht festgelegt. Das Lampentempo des Pults ist in §3.5 geregelt.
 
 ### 7.7 Prüfstand
 
 Linux (gcc, ein Kern): `make test` mit 8 Prüfgruppen bestanden; 11 Python-Tests des Erweiterungsmoduls bestanden (Lesen mit Wartezeit 0 bis 31, Schreiben mit Begrenzung auf 33 Bit, Bahnsperre, Abbruch, Datei im alten Format, Pfad mit Umlaut, Strg+C mit Rückkehrcode 8, Lader mit Code 16); AddressSanitizer, UndefinedBehaviorSanitizer und ThreadSanitizer ohne Meldung (ein früher Datenwettlauf bei `req_wartet` ist durch atomare Zugriffe behoben); die alten Testrahmen `testframe.c` und `testframe_trommel.c` kompilieren, wurden mit der neuen Fassung nicht ausgeführt. Die Zahlen stammen aus Dok. 02 §5 (Stand 16.10.2026) und sind in dieser Sitzung **nicht neu gelaufen**. Die Meldung des Projektinhabers vom 19.10.2026 (Gesamtlauf `grafik_alle_tests.sh` 18 von 18 Blöcken) schließt die Trommel ein (Prüfverfahren §8).
 
-### 7.8 Kennungen
+### 7.8 Zeitmodelle und Zähler der Trommelstatistik
+
+*Quellen: `c-module/trommel.h`, `trommel.c`, `grafik_trommel.py`, `c8205_grafik.py`. Aussagen mit „gemessen“ stammen aus dem Probelauf `testscripte/grafik_trommel_zaehler_probe.py` (TZ-001; Linux, Python 3.12.3, ein Kern; arbeitet auf einer Kopie der Trommeldatei). Alles andere ist aus dem Code gelesen. Windows ist nicht geprüft.*
+
+**Zwei Uhren.** In GRAFIK laufen zwei voneinander unabhängige Uhren. Die Zähler der Statistik gehören zu verschiedenen:
+
+- **Wanduhr (C-Modul).** Der Hintergrund-Thread in `trommel.c` schaltet alle 104 µs (`TICK_NS`) einen Sektor weiter, gemessen an der Monotonic-Uhr (§7.3). Alle Zähler mit Herkunft „C“ in der Tabelle unten beschreiben diesen Thread.
+- **Virtuelle Zeit `vt` (Python).** `GrafikTrommel` (`grafik_trommel.py`) führt in den Modellen `echt` und `schnell` einen eigenen Zähler in Wortzeiten. Er beginnt beim Einschalten mit der Sektorlage der Trommel (`vt = PERM.index(aktueller Sektor)`); im Betrieb ist `start_index = -1`, die Lage also beliebig wie am echten Gerät (§7.2). Jede Phase der Befehlsschleife schreibt `vt` um eine Wortzeit fort (`tick()`; der Sprung über Knoten 63 → 6 zählt eine zusätzliche, weil Phase I übersprungen wird), jeder Zugriff um die Wartezeit bis zu seinem Sektor (`_warte_ticks()`). Die Wartezeit hängt also nur vom Programm und von `vt` ab, nicht von der Wanduhr. `vt` steht nicht in `statistik()`.
+
+**Zeitmodelle** (Schalter `--trommelzeit`, §2; Standard `alt`):
+
+| Modell | Wartezeit bestimmt | Zugriff auf die Trommel | Tempo |
+|---|---|---|---|
+| `alt` | C-Modul nach der Wanduhr | `lesen_warten` und `schreiben_warten`: blockiert, bis der Sektor unter dem Kopf ist | Hardwaretempo; die Wartezeit hängt vom Zeitpunkt des Auftrags ab (§7.6) |
+| `echt` | Python aus `vt` | direkt (`lesen`, `schreiben`), ohne Auftragskanal des C-Moduls | `_pace()` bremst auf Hardwaretempo: das Modell läuft nie merklich schneller als eine Wortzeit je 104 µs (ein Vorsprung bis 2 ms wird nicht ausgebremst). Ist der Rechner mehr als 20 ms im Rückstand, wird nichts aufgeholt, der Bezug beginnt neu (z. B. nach einem Halt) |
+| `schnell` | Python aus `vt` | wie `echt` | kein Bremsen; der Lauf ist so schnell wie der Rechner |
+
+In `echt` und `schnell` läuft dieselbe Rechnung; sie unterscheiden sich nur im Bremsen. Deshalb ist die Wartezeitsumme (`wartezeit_summe_ticks_aufrufer`) in beiden gleich.
+
+**Zähler.** `GrafikTrommel.statistik()` liefert die sieben Zähler des C-Moduls (`trommel_statistik_t`) und drei, die Python selbst führt. `c8205_grafik.py` schreibt sie bei Läufen mit `--ohne-fenster` oder `--entwickler-tasten` am Ende als Zeile `Trommel: {…}`.
+
+| Zähler | Herkunft | Bedeutung |
+|---|---|---|
+| `ticks` | C | Wortzeiten seit dem Einschalten der Trommel (beim Programmstart, nicht erst mit Netz-Ein am Pult), **aus der Wanduhr**. `trommel_statistik_lesen()` rechnet den Wert beim Abruf als (jetzt − Startzeit) / 104 µs. Der im Thread mitgeführte Wert hinkt nach, wenn der Thread verdrängt wird |
+| `aufwachen` | C | Zahl der Aufwachvorgänge des Threads. Nach jedem Schlaf bis zum nächsten Tickbeginn wird er um 1 erhöht, gleich wie viele Ticks der Thread danach bearbeitet |
+| `nachgeholte_ticks` | C | Ticks, die der Thread bearbeitet hat, obwohl schon ein späterer Tick lief. Wacht er verspätet auf, schaltet er die übersprungenen Sektoren der Reihe nach nach (§7.3), damit kein Sektor ausgelassen wird; jeder Tick eines Durchgangs außer dem letzten zählt hier. Bleibt 0, wenn der Thread immer pünktlich ist |
+| `verspaetung_summe_ns` | C | Summe der Aufwachverspätungen in ns (tatsächliche minus geplante Aufwachzeit). Pünktliche Aufwachvorgänge tragen nichts bei |
+| `verspaetung_max_ns` | C | größte einzelne Verspätung |
+| `zugriffe` | C | vom Auftragskanal ausgeführte Aufträge, einschließlich gesperrter Schreibzugriffe |
+| `wartezeit_summe_ticks` | C | Summe der vom Kanal gemeldeten Wartezeiten aller Zugriffe in Wortzeiten, vom Eintreffen des Auftrags bis zu seiner Ausführung |
+| `rd_wr_zugriffe` | Python | Aufrufe von `rd()` und `wr()` |
+| `gesperrte_schreibzugriffe` | Python | davon Schreibzugriffe auf eine gesperrte Bahn (Bahnsperre, §7.5; sie verbrauchen ihre Wartezeit) |
+| `wartezeit_summe_ticks_aufrufer` | Python | Summe der Wartezeiten, wie `rd()` und `wr()` sie erhalten: in `echt` und `schnell` von `_warte_ticks()` in virtueller Zeit, in `alt` vom C-Modul gemeldet |
+
+**Welcher Zähler in welchem Modell.**
+
+- **`alt`:** Alle Zugriffe laufen über den Auftragskanal des C-Moduls. `zugriffe` ist gleich `rd_wr_zugriffe` und `wartezeit_summe_ticks` gleich `wartezeit_summe_ticks_aufrufer` (gemessen: 800 und 800, 12 414 und 12 414).
+- **`echt` und `schnell`:** Python rechnet die Wartezeit selbst und liest und schreibt direkt; der Auftragskanal des C-Moduls bleibt unbenutzt. `zugriffe` und `wartezeit_summe_ticks` bleiben 0 (gemessen). Maßgeblich sind `rd_wr_zugriffe` und `wartezeit_summe_ticks_aufrufer`.
+- **Die Thread-Zähler** (`ticks`, `aufwachen`, `nachgeholte_ticks`, `verspaetung_summe_ns`, `verspaetung_max_ns`) beschreiben in allen Modellen nur den Thread, der die Trommel dreht. In `echt` und `schnell` hängt die Zeit des Modells nicht von ihnen ab. `ticks` ist dort die Wanduhr seit dem Programmstart und taugt **nicht** zum Vergleich von Läufen: In `schnell` ist der Wert bei kurzen Läufen winzig, weil der ganze Lauf nur Millisekunden dauert. In `echt` ist er etwa so groß wie die Zeit des Modells, solange nichts anhält; Halt, Eingabe-Halt und Hochlauf vergehen auf der Wanduhr, während `vt` steht, und bei einem zu langsamen Rechner wird nichts aufgeholt (`_pace()`, Tabelle der Zeitmodelle). Zum Vergleich von Läufen taugt `wartezeit_summe_ticks_aufrufer`.
+
+**Lesehilfen.**
+
+- **Mittlere Verspätung:** `verspaetung_summe_ns / aufwachen`, ein grober Wert dafür, wie pünktlich der Thread aufwacht. Ein hohes `verspaetung_max_ns` oder viele `nachgeholte_ticks` heißen, dass der Host den Thread ausgebremst hat. Die Sektorfolge bleibt trotzdem vollständig; in `alt` werden die Wartezeiten dann ungenauer.
+- **Mittlere Wartezeit je Zugriff:** `wartezeit_summe_ticks_aufrufer / rd_wr_zugriffe` (0 bis 31 Wortzeiten; bei zufälligen Adressen etwa 16, §7.6).
+- **Kontrolle der Thread-Zähler (Linux):** Jeder Durchgang des Threads bearbeitet einen Tick und die nachgeholten dazu. `aufwachen + nachgeholte_ticks` ist daher der Tickstand des Threads, und `ticks` minus diese Summe sein Rückstand beim Abruf. Gemessen: `alt` 12 293 + 161 = 12 454 = `ticks`; `echt` 13 960 + 61 = 14 021 = `ticks`. Unter Windows kehrt der Thread bei Auftragseingang früher aus dem Schlaf zurück (`plattform.h`); dort zählt `aufwachen` mehr, und die Gleichung gilt nur als Ungleichung. Nicht geprüft.
+
+**Streuung der Wartezeitsumme.** In `echt` und `schnell` hängt `wartezeit_summe_ticks_aufrufer` nur von der Startlage ab. `vt` beginnt mit der zufälligen Lage der Trommel, und davon hängt allein die Wartezeit des **ersten** Zugriffs ab (0 bis 31 Wortzeiten); danach liegt `vt` auf dem Sektor dieses Zugriffs, und der Rest ist bei gleichem Programm festgelegt. Gemessen mit allen 32 festen Startlagen (`start_index` 0 bis 31): Summen von 12 797 bis 12 828, eine Spanne von 31 Wortzeiten (eine Umdrehung), bei dieser Summe 0,24 %. Die Schranke gilt **absolut** (höchstens 31 Wortzeiten), nicht in Prozent; bei Programmen mit wenigen Zugriffen ist die relative Streuung groß. Auch bei fester Startlage können zwei Läufe um wenige Wortzeiten abweichen, weil `vt` erst nach dem Einschalten aus der laufenden Uhr gelesen wird (gemessen: 12 821 in `schnell`, 12 822 in `echt`, beide Startlage 5). In `alt` gibt es keine solche Schranke (§7.6).
+
+**Messbeispiel (gemessen).** Probelauf mit 400 Durchgängen aus `tick(2)`, `rd`, `tick(1)`, `wr` (800 Zugriffe), Startlage 5, auf einer Kopie der Trommeldatei (Aufruf: `python3 testscripte/grafik_trommel_zaehler_probe.py [--startlagen]`):
+
+| Zähler | `schnell` | `echt` | `alt` |
+|---|---|---|---|
+| Dauer des Laufs (Wanduhr) | 1,8 ms | 1458 ms | 1295 ms |
+| `ticks` | 19 | 14 021 | 12 454 |
+| `aufwachen` / `nachgeholte_ticks` | 1 / 1 | 13 960 / 61 | 12 293 / 161 |
+| `verspaetung_max_ns` | 135 674 | 908 886 | 3 412 877 |
+| `zugriffe` | 0 | 0 | 800 |
+| `wartezeit_summe_ticks` | 0 | 0 | 12 414 |
+| `rd_wr_zugriffe` | 800 | 800 | 800 |
+| `wartezeit_summe_ticks_aufrufer` | 12 821 | 12 822 | 12 414 |
+| `vt` am Ende (nicht in `statistik()`) | 14 027 | 14 027 | – |
+
+Lesart: In `echt` ist `ticks` (14 021) fast `vt` (14 027), denn 14 027 Wortzeiten sind 1458,8 ms, die der Lauf auf der Wanduhr auch gedauert hat; die 6 Wortzeiten Unterschied sind die Startlage. In `schnell` hatte der Thread auf dem einen Kern in den 1,8 ms nur einen Durchgang geschafft (Thread-Stand 1 + 1 = 2), während die Uhr schon bei 19 stand: der Fall „Thread hinkt nach“. Die Spalte `alt` ist mit den anderen nicht vergleichbar, weil im Probelauf die Phasen (`tick()`) dort nicht vergehen. Die Zahlen der Wanduhr schwanken von Lauf zu Lauf (§7.6); die der virtuellen Zeit nur um die Startlage.
+
+### 7.9 Kennungen
 
 | Alte Kennung | Gegenstand | Abschnitt |
 |---|---|---|
@@ -610,6 +676,18 @@ Linux (gcc, ein Kern): `make test` mit 8 Prüfgruppen bestanden; 11 Python-Tests
 | O-7 Nr. 4, O-8 | kein aktives Warten, MinGW-w64 | 7.4 |
 | O-9, Entwurf 86 und 87 | `--BASP`, Schalterdatei `.basp` | 7.5 |
 | G1-xx (Stufe 1), Dok. 07 | `grafik_trommel.py`, Treiber | 7.1, 7.5 |
+| `c8205_grafik.py` G4-009 (22.10.2026) | `--trommelzeit`, virtuelle Zeit, Zähler der Trommelstatistik | 7.8 |
+
+### 7.10 Zusatztrommeln des experimentellen Prototyps C8205Z (`--C8205Z`)
+
+Mit `./c8205_grafik.sh --C8205Z[=VERZ]` (auch zusammen mit `--HWCHECK`) hat GRAFIK vier Zusatztrommeln ZT1 bis ZT4 zu je 4096 Worten. Es handelt sich um einen **experimentellen Prototyp**; Zeitmodell und Modulspezifikation: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`. Ohne den Schalter ist alles unverändert (`601`/`661` sind Leer-Operationen mit Löschen).
+
+- **Befehle:** `5k00 030` (k = 1 bis 4) wählt die Zusatztrommel k; `zzz0 bbbb 601` überträgt die Haupttrommelspur bbbb auf die Spur zzz0 der gewählten ZT, `zzz0 bbbb 661` die Spur zzz0 der gewählten ZT auf die Haupttrommelspur bbbb. Jeder Befehl überträgt eine ganze Spur (32 Worte). Ohne Anwahl: Halt mit Flag A (601) bzw. E (661) wie in TEST.
+- **Anbindung:** `grafik-interpreter-module/grafik_zt.py` (Klasse `GrafikZT`, G5-001) hängt das C-Modul `C8205Z/zt_modul` über das Erweiterungsmodul `c8205_ztmodul` an die Haupttrommel (Direktzugriffe ohne Koinzidenz). Der Python-Interpreter im Modus TEST rechnet dagegen mit Zeit 0 (`c8205_zt.py`).
+- **Zeit:** Bei `--trommelzeit alt` wartet das C-Modul in Echtzeit (ein Befehl dauert 81 bis 86 ms). Bei `echt` und `schnell` rechnet das Modul nur; die Dauer wird auf die virtuelle Zeit der Haupttrommel aufgeschlagen, bei `echt` abgeschlafen, bei `schnell` nicht. Ein Abbruch (X im Fenster, Netz-Aus, Strg+C) beendet auch einen laufenden Befehl.
+- **Bauen:** `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace` (Windows: `bau_ztmodul_mingw.bat` im selben Ordner; am 26.10.2026 gebaut und importiert, kein Funktionstest, §9.2.3). Fehlt das Modul, endet der Start mit einer Fehlermeldung und der Bauanleitung.
+- **Prüfung:** `bash C8205Z/Tests_Z/zt_grafik_tests.sh` vergleicht TEST und GRAFIK (ohne Fenster) in allen drei Trommelzeiten Byte für Byte. Das Pult-Fenster mit `--C8205Z` ist nur gestartet, nicht abgenommen.
+- **Anzeige:** Das Pult zeigt die Zusatztrommeln nicht. Der HW-Check (§8.7) zeigt sie nur mit `--C8205Z`: je ZT die zuletzt bearbeitete Adresse, hinter der angewählten ein kleiner grüner Punkt, und ein Inhaltsfeld für die angewählte ZT.
 
 ## 8 Hardware-Check
 
@@ -623,7 +701,7 @@ Mit dem Schalter `--HWCHECK` (nur Modus GRAFIK, nur mit dem Pult-Fenster; Entsch
 
 - **Größe und Lage:** nur so groß, wie die Anzeige braucht (keine Skalierung), **verschiebbar**; erscheint beim Start neben dem Pult-Fenster.
 - **Dauer:** Das Fenster bleibt aufgeblendet, solange der GRAFIK-Interpreter gestartet ist. Es lässt sich **nicht schließen** (X am HW-Check-Fenster ohne Wirkung) und endet mit dem Pult-Fenster (Netz aus, X am Pult, Strg+C). „Aufgeblendet“ heißt nicht „immer im Vordergrund“.
-- **Aktualisierung:** im 40-ms-Takt des Pult-Fensters (§3.5). **Keine Rückwirkung** auf den Rechner: Der Speicherinhalt wird ohne Koinzidenz direkt gelesen, ohne Wartezeit und ohne Änderung der Trommelstatistik (§7).
+- **Aktualisierung:** im 40-ms-Takt des Pult-Fensters (§3.5). **Keine Rückwirkung** auf den Rechner: Der Speicherinhalt wird ohne Koinzidenz direkt gelesen, ohne Wartezeit und ohne Änderung der Trommelstatistik (§7.8).
 - **Vor dem Einschalten** (Rechner aus) zeigt das Fenster die Registerwerte: BZ, BR, `Spur Sektor` und AC stehen auf 0. Die Zeile `<<AR>>` zeigt dabei den **Inhalt der Zelle 0000 aus der Trommel**, nicht Null: Die Trommel wird beim Programmstart angelegt und eingeschaltet, nicht erst mit dem Netzschalter am Pult (gemessen 21.10.2026 am GRAFIK-Kern mit Trommelkopie: `<<AR>>  AR=0000` → `0000 2000 000`; Platzhalter `---- ---- ---` erscheint nur, wenn die Trommel geschlossen ist). Haltzeit: `---.- ms`.
 - **Nicht Teil der Anforderung:** Schreiben in Register oder Speicher, Haltepunkte, weitere Elemente (Flags, V1/V2); sie lassen sich später ergänzen. Die umlaufende Trommellage (der Sektor unter dem Kopf, wechselt alle 104 µs) wäre im 40-ms-Takt nicht lesbar und ist nicht Teil der Anzeige; sie ließe sich bei Bedarf als eigene Zeile ergänzen.
 
@@ -674,15 +752,27 @@ Bei geöffnetem HW-Check-Fenster kann das SW-Fenster den Fokus bei einem Eingabe
 | Entwurf 97, 98, 99; Dok. 01 §1.9 | Fenster, Zeilen, Gruppierung | 8.1, 8.2 |
 | HW-003 | Lesen des Speicherinhalts (Rückfall), Gruppierung von links | 8.2, 8.5 |
 | HW-004, HZ-001, HZ-002, HZ-003, HZ-004, HZ-005 | Haltzeit | 8.3 |
+| HW-005 (25.10.2026) | Zusatztrommeln im HW-Check (`--C8205Z`) | 8.7 |
 | B-5, A-4 (Dok. 09) | Fokus bei geöffnetem Fenster | 8.4 |
+
+### 8.7 Zusatztrommeln im HW-Check (nur mit `--C8205Z`, experimenteller Prototyp C8205Z)
+
+Mit `./c8205_grafik.sh --HWCHECK --C8205Z` hat das Fenster fünf weitere Zeilen unter den sechs der §8.2 (`grafik_hwcheck.py` HW-005; Entscheidung des Inhabers 25.10.2026):
+
+| Zeile | Wert |
+|---|---|
+| `ZT1` bis `ZT4` | zuletzt bearbeitete Adresse der Zusatztrommel als `Spur Sektor` (oktal, wie die Zeile Spur Sektor; `--- --` = noch nichts übertragen). Hinter der **angewählten** Zusatztrommel steht ein kleiner grüner Punkt |
+| `<<ZTk>>  aaaa` | **ein** Inhaltsfeld für alle vier (es ist immer nur eine Zusatztrommel aktiv): das Wort (11 Stellen, 4 + 4 + 3) an der zuletzt bearbeiteten Adresse der angewählten ZT k; ohne Anwahl `<<ZT>>` und `---- ---- ---` |
+
+Die „laufende Adresse“ ist die Adresse des zuletzt übertragenen Wortes (`zt_letzte_adresse` im C-Modul); sie läuft während eines Befehls mit (in `--trommelzeit alt` und `echt` sichtbar, in `schnell` nur als Ergebnis, weil ein Befehl dort keine Zeit dauert). Es ist nicht die Lage der Zusatztrommel unter dem Kopf. Ohne den Schalter bleibt das Fenster bei sechs Zeilen. Die Anzeige liest nur und verändert nichts. Prüfung ohne Fenster mit Tk-Attrappe: `python3 C8205Z/Tests_Z/zt_hwcheck_test.py`; das echte Fenster ist nicht abgenommen.
 
 ## 9 Plattformen
 
-**Inhalt:** Linux (getestet), Windows (nicht getestet), Abhängigkeiten (Tk, ALSA/winmm)
+**Inhalt:** Linux (getestet), Windows (Teilabnahme 26.10.2026), Abhängigkeiten (Tk, ALSA/winmm)
 
 **Quellen (alt):** Dok. 00 §3.2; Dok. 01 §9; Dok. 02 §5.3; Dok. 10 §10; Dok. 11 S5-12
 
-Zielsysteme sind **Linux und Windows**, nicht von bestimmten Versionen abhängig. Getestet ist nur Linux; ein Windows-Tester „kommt noch“ (Antwort des Projektinhabers 16.10.2026). Die Abnahme der Stufen 4 und 5 am 19.10.2026 erfolgte **ohne Windows**; Windows ist eine eigene, spätere Abnahme (O5-3, A5-8; Prüfverfahren §9).
+Zielsysteme sind **Linux und Windows**, nicht von bestimmten Versionen abhängig. Vollständig getestet ist nur Linux; unter Windows hat der Projektinhaber am 26.10.2026 gebaut und teilweise geprüft (§9.2). Die Abnahme der Stufen 4 und 5 am 19.10.2026 erfolgte **ohne Windows**; Windows ist eine eigene Abnahme (O5-3, A5-8; Prüfverfahren §9), die erst teilweise erfolgt ist.
 
 ### 9.1 Linux
 
@@ -695,15 +785,90 @@ Zielsysteme sind **Linux und Windows**, nicht von bestimmten Versionen abhängig
 | Python-Version | Das Erweiterungsmodul ist ein abi3-Modul für CPython ab 3.8. Bis Checkpoint 56 wurde es mit 3.12 gebaut und stürzte auf 3.11 ab (`deallocating None`); behoben in G4-005 (§6.8). Die Entwicklungsumgebung hat Python 3.12; der Absturz ließ sich dort nicht nachstellen |
 | Bekannte Eigenschaften | Fokus bei geöffnetem HW-Check-Fenster hängt vom Fenstermanager ab (§8.4); der Strg+C-Test des C-Moduls schlägt fehl, wenn `grafik_alle_tests.sh` als Hintergrundauftrag (`&`) startet, weil die Shell dann SIGINT ignoriert; im Vordergrund ist er grün |
 
-### 9.2 Windows (nicht getestet)
+### 9.2 Windows (Teilabnahme 26.10.2026)
 
-- **Stand:** Alles, was Windows betrifft, ist **ungebaut und ungetestet**: der Windows-Zweig der Trommel (Win32-Threads, `QueryPerformanceCounter`; Dok. 02 §5.3), der Mischer `tonmisch` mit `winmm` (`waveOut` mit vier Puffern zu 10 ms), das Startscript `c8205_grafik.bat` (neu angelegt, Entwurf) und `c8205_interpreter.bat`. Eine Syntaxprüfung des Trommelzweigs (`gcc -fsyntax-only -D_WIN32` gegen eigene Platzhalter-Header) fand keine Fehler; sie ersetzt keinen Test. Das Pult-Fenster (Tkinter) ist plattformneutral geschrieben, aber unter Windows nicht gestartet; Tkinter gehört nach bisheriger Kenntnis zur üblichen Python-Installation, geprüft ist das nicht.
-- **Compiler:** MinGW-w64 (entschieden 16.10.2026, O-8; der Projektinhaber hat nur diesen installiert), kein MSVC. Bau: `mingw32-make` im Ordner `c-module` und `python setup.py build_ext --inplace --compiler=mingw32` im Ordner `c-module/python`. Offen sind `-static` in Makefile und `setup.py` und die Frage, ob ein mit MinGW-w64 gebautes Modul nur für die Python-Version gilt, mit der gebaut wurde.
-- **Auslieferung:** vorübersetzt, eine Datei je System; die Windows-Datei erst, wenn der Tester sie geprüft hat.
-- **Töne unter Windows bis zum Mischer:** Rechnertöne über `winsound` (nur ein Klang gleichzeitig), Schreibwerkzeit und Lesetempo ja, sonst kein Ton, mit Hinweis beim Start (O4-18); `--TON` wirkt für Pult nicht (§6.6). Der C-Mischer hat `winmm`-Code; in `c8205_grafik.py` bleibt der Windows-Zweig bis zum Tester unverändert.
+*Quelle der Windows-Angaben: Meldungen des Projektinhabers vom 26.10.2026 (Bau und Test auf seinem Rechner). Windows-Bau und Windows-Test laufen beim Inhaber, nie in der Cloud-Sitzung; die Angaben sind hier nicht nachgeprüft.*
+
+- **Stand:** Der Windows-Zweig der Trommel, der Mischer `tonmisch` mit `winmm` und die Zusatztrommel sind seit 26.10.2026 mit MinGW-w64 gebaut (Ergebnis, Bau, Fehlerbilder, Dateiablage und offene Punkte: unten und §9.2.1 bis §9.2.3). Für `c8205_interpreter.bat` liegt keine Meldung vor. Das Pult-Fenster (Tkinter) ist plattformneutral geschrieben; ob es unter Windows vollständig bedienbar ist, wurde nicht gemeldet und nicht geprüft.
+- **Compiler:** MinGW-w64 (entschieden 16.10.2026, O-8; der Projektinhaber hat nur diesen installiert), kein MSVC. Bau ohne setuptools mit `bau_trommel_mingw.bat` (Ordner `c-module\python`) und `bau_ztmodul_mingw.bat` (Ordner `C8205Z\zt_modul\python`). Belegt ist nur der Bau mit diesen Skripten; der frühere Weg über `mingw32-make` und `python setup.py build_ext --inplace --compiler=mingw32` ist unter Windows nicht erprobt. Die Skripte benutzen nur `-static-libgcc`; ob mehr nötig ist, hängt von der DLL-Prüfung ab (§9.2.3). Das Modul benutzt die Limited API (`python3.lib`); ob dieselbe `.pyd` unter Python 3.8 bis 3.12 lädt, ist nicht geprüft (§9.2.3).
+- **Auslieferung:** vorübersetzt, eine Datei je System (Entscheidung 16.10.2026). Die Windows-Dateien `c8205_trommel.pyd` und `c8205_ztmodul.pyd` liegen neben den Linux-Dateien (`.abi3.so`); Windows lädt nur `.pyd`, die `.abi3.so` wird dort ignoriert, beide dürfen nebeneinander liegen. Ob die Windows-Dateien als geprüft gelten, hängt von der DLL-Prüfung und den anderen Python-Versionen ab (§9.2.3).
+- **Töne unter Windows:** `c8205_grafik.py` prüft beim Start mit `grafik_tonmisch_c.winmm_verfuegbar()`, ob das C-Modul mit `ton_*`-Methoden lädt und `winmm` sich öffnen lässt. Dann läuft derselbe Aufbau wie unter Linux (Pult-, Schreibwerk-, Leser- und Stanzerton über den C-Mischer, Senke `CWinmmSenke`, `neuer_mischer_winmm()`), mit der Startzeile „Hinweis: Toene unter Windows ueber den Mischer (winmm).“. Sonst gilt als Rückfall der `winsound`-Zweig von Stufe 2 (Rechnertöne, ein Klang zur Zeit, Schreibwerkzeit und Lesetempo, kein Leser- und Stanzerton) mit Hinweiszeile und einer Zeile „Grund: …“ (O4-18). Mit `--STUMM` wird `winmm` nicht geprüft. Fällt `winmm` im Betrieb aus, gilt wie unter Linux Code 16. `--TON` wirkt im `winsound`-Zweig für Pult nicht (§6.6); mit dem Mischer ist es nicht geprüft.
 - **Trommel:** Die Systemuhr arbeitet unter Windows nur grob; die Wartezeit in Wortzeiten bleibt exakt, die Echtzeit-Dauer eines Zugriffs kann länger werden (§7.4). Die Trommeldatei muss LF-Zeilenenden haben (Werkzeuge im Textmodus würden CRLF schreiben; das Modul weist solche Dateien ab). Strg+C-Test des Erweiterungsmoduls wird unter Windows übersprungen.
 - **Gemeinsam relevant:** Zeilenenden, Namen der Bibliotheken (`libtrommel.so`, `trommel.dll`), Pfadtrenner (Pfade mit Umlauten sind über `_wfopen` vorgesehen), Strg+C-Behandlung.
-- **Abnahme:** Windows wird gegen das Prüfverfahren abgenommen (O5-3, O6-5; Prüfverfahren §9 mit B-2 und A5-8).
+- **Abnahme:** Windows wird gegen das Prüfverfahren abgenommen (O5-3, O6-5; Prüfverfahren §9 mit B-2 und A5-8). Teilabnahme am 26.10.2026, Rest offen (§9.2.3, §10.1).
+
+**Ergebnis (26.10.2026, Rechner des Projektinhabers)**
+
+| Baustein | Bau | Laden | Test |
+|---|---|---|---|
+| `c8205_trommel.pyd` (Trommel, Bahnsperre, Unterbrechung, Tonmischer) | gebaut mit MinGW-w64 | `import c8205_trommel` ok | `test_c8205_trommel.py`: 23 Tests, OK, 1 übersprungen |
+| `c8205_ztmodul.pyd` (Zusatztrommeln, C8205Z) | gebaut mit MinGW-w64 | `import c8205_ztmodul` ok | kein Python-Test vorhanden |
+| GRAFIK-Interpreter (`c8205_grafik.bat`, Start aus `neu\`) | – | startet; Startzeile „Hinweis: Toene unter Windows ueber den Mischer (winmm).“ | Töne vom Inhaber **gehört**: Grundgeräusch, Lochbandleser (LL) und Stanzer (LS) über den C-Mischer mit `winmm` |
+
+Umgebung: Python 3.13, 64 Bit (`...\Python313`), `gcc` aus MSYS2 `mingw64` (`gcc -dumpmachine` meldet `x86_64-w64-mingw32`; die gcc-Version wurde nicht festgehalten).
+
+Der übersprungene Test ist der SIGINT-Test (`test_c8205_trommel.py`, Zeile 81); er ist unter Windows absichtlich ausgenommen. Die Meldung `trommel_einschalten: Dateigroesse 69632, erwartet 73728 …` mitten im Lauf gehört zum Test, der eine Datei im alten 17-Byte-Format (4096 × 17 = 69632) anlegt und deren Abweisung prüft (`TrommelFehler`, Zeilen 70 bis 73). Sie erscheint auch unter Linux und ist kein Fehler.
+
+**Ton unter Windows (Beobachtung des Inhabers, 26.10.2026):** Beim Start von `c8205_grafik.bat` erscheint die Zeile „Hinweis: Toene unter Windows noch nicht ueber den Mischer (winmm fehlt): nur Rechnertoene (winsound) und Schreibwerkzeit.“ Die Töne waren hörbar. Sie kommen aber aus dem Stufe-2-Zweig (`os.name == 'nt'` in `c8205_grafik.py`, Klasse `RechnerTon` in `grafik_ton.py`, `winsound`, ein Klang zur Zeit). Der C-Mischer `tonmisch` mit `winmm` wurde damit **nicht benutzt**, weil dieser Zweig ihn umging; Leser- und Stanzerton waren dort aus. Das Hören belegt also `winsound`, nicht den Mischer.
+
+**Änderung danach (26.10.2026):** `c8205_grafik.py` prüft unter Windows zuerst mit `grafik_tonmisch_c.winmm_verfuegbar()`, ob das C-Modul mit `ton_*`-Methoden lädt und `winmm` sich öffnen lässt. Dann läuft derselbe Aufbau wie unter Linux (Pult-, Schreibwerk-, Leser- und Stanzerton über den C-Mischer; Senke `CWinmmSenke`, `neuer_mischer_winmm()`), und die Hinweiszeile entfällt. Sonst gilt der alte `winsound`-Zweig mit der Hinweiszeile. Mit `--STUMM` wird `winmm` nicht geprüft. Fällt `winmm` im Betrieb aus, gilt wie unter Linux Code 16. **Ergebnis:** Der Inhaber hat danach Grundgeräusch, Leser- und Stanzertöne gehört (Mischer mit `winmm` aktiv, Startzeile wie oben). Schreibwerkton, Lücken und Lautstärken (`--TON`) wurden nicht gemeldet und gelten als nicht geprüft.
+
+Linux: Beide Module bauen mit der geänderten `plattform.h` unverändert; `test_c8205_trommel.py` läuft unter Linux mit 23 Tests ohne Auslassung und ohne Fehler (Python 3.12 in der Cloud-Sitzung, Build mit `gcc`, nicht mit `setup.py`). Die Änderungen stehen nur im `_WIN32`-Zweig und in `.bat`-Dateien.
+
+**Bauen unter Windows**
+
+Voraussetzungen: ein **64-Bit**-MinGW-w64 (MSYS2 `mingw64` oder gleichwertig) und ein 64-Bit-Python mit der Bibliothek `libs\python3.lib` (Standardinstallation von python.org). Ohne Setuptools:
+
+```
+set PATH=C:\Users\<name>\AppData\Local\Programs\Python\Python313;C:\msys64\mingw64\bin;%PATH%
+gcc -dumpmachine                                   (muss x86_64-w64-mingw32 ausgeben)
+cd <projekt>\c-module\python
+bau_trommel_mingw.bat                              (ergibt c8205_trommel.pyd)
+cd <projekt>\C8205Z\zt_modul\python
+bau_ztmodul_mingw.bat                              (ergibt c8205_ztmodul.pyd)
+python -c "import c8205_trommel; print('ok')"
+python test_c8205_trommel.py
+```
+
+Beide Skripte rufen `gcc` mit `-shared -O2 -std=gnu11 -DPy_LIMITED_API=0x03080000 -D_WIN32_WINNT=0x0601 -DWINVER=0x0601 -static-libgcc`, binden gegen `python3.lib` und `winmm` und lesen den Python-Ordner über `sysconfig` und `sys.base_prefix`. Das `set PATH` gilt nur für das offene Terminalfenster.
+
+#### 9.2.1 Fehlerbilder und Abhilfe
+
+| Meldung | Ursache | Abhilfe |
+|---|---|---|
+| `unknown type name 'CONDITION_VARIABLE'`, danach implizite Deklarationen von `InitializeConditionVariable`, `WakeAllConditionVariable`, `SleepConditionVariableCS`, `YieldProcessor` | MinGW setzt sonst eine Windows-Zielversion unter Vista (`_WIN32_WINNT` 0x0502) und `windows.h` blendet diese Deklarationen aus | `-D_WIN32_WINNT=0x0601 -DWINVER=0x0601` im gcc-Aufruf der `.bat` (maßgeblich, weil `Python.h`, `bahnsperre.c` und `unterbrechung.c` `windows.h` selbst einbinden); zusätzlich setzt `plattform.h` die Werte vor `#include <windows.h>` und definiert `YieldProcessor` als `pause`, falls der Header es nicht liefert |
+| `Recognised but unhandled machine type (0x8664) in Import Library Format archive` | Der gefundene `gcc` ist der alte 32-Bit-MinGW von mingw.org (`c:/mingw`, Pfad `mingw32/6.3.0`); `python3.lib` ist 64 Bit | 64-Bit-MinGW-w64 vor den alten in `PATH` setzen; `gcc -dumpmachine` prüfen |
+| `FEHLER: ...\libs\python3.lib fehlt` mit einem MSYS2-Pfad | Steht der MSYS2-Ordner vor Python im `PATH`, antwortet das Python von MSYS2 auf die Abfrage der `.bat`; es hat kein `libs\python3.lib` | Den Python-Ordner **vor** den MSYS2-Ordner setzen |
+| `fatal error: ../tonmisch.h: No such file or directory` | `tonmisch.h` fehlt in `c-module`, oder `c8205_ton_methoden.h` liegt in `c-module` statt in `python` (dann zeigt `../tonmisch.h` eine Ebene zu hoch) | Ablage nach §9.2.2 herstellen |
+| `fatal error: c8205_ton_methoden.h: No such file or directory` | Die Datei fehlt im Ordner `python` | Dorthin kopieren |
+
+#### 9.2.2 Dateiablage
+
+```
+c-module\
+    plattform.h            nur hier (nicht in python\)
+    tonmisch.h             hier; c8205_ton_methoden.h bindet "../tonmisch.h" ein
+    trommel.h, bahnsperre.h, unterbrechung.h, c8205_api.h, *.c
+c-module\python\
+    bau_trommel_mingw.bat
+    c8205_ton_methoden.h   nur hier (nicht in c-module\)
+    c8205_trommel_modul.c, setup.py, trommel_lader.py, test_c8205_trommel.py
+C8205Z\zt_modul\python\
+    bau_ztmodul_mingw.bat  liest plattform.h und c8205_api.h über ..\..\..\c-module
+```
+
+Dateinamen: Windows lädt nur `.pyd`. Die `.abi3.so` im selben Ordner ist der Linux-Build und wird unter Windows ignoriert; beide dürfen nebeneinander liegen.
+
+#### 9.2.3 Offen (nicht geprüft)
+
+- **Weitere DLLs:** Der Importtest lief in demselben Terminal, in dem der MSYS2-Ordner im `PATH` stand. Fehlende Laufzeit-DLLs aus `C:\msys64\mingw64\bin` wären dadurch nicht aufgefallen. Prüfen: `objdump -p c8205_trommel.pyd | findstr "DLL Name"` und Importtest in einem frischen Fenster ohne MSYS2 im `PATH`.
+- **Python-Versionen:** Gebaut und getestet nur mit Python 3.13. Das Modul benutzt die Limited API (`Py_LIMITED_API=0x03080000`) und `python3.lib`; ob dieselbe `.pyd` unter 3.8 bis 3.12 lädt, ist nicht geprüft. Der Inhaber nutzt sonst Python 3.11.
+- **Tonmischer unter Windows:** `tonmisch.c` mit `winmm` läuft (gehört: Grundgeräusch, LL, LS). **Nicht geprüft:** Schreibwerkton und Tastenklänge über den Mischer, Lücken und Aussetzer bei längerem Betrieb (Puffer 4 × 10 ms), Lautstärke und `--TON`, Verhalten ohne Audiogerät (Probe `winmm_pruefen()` meldet dann den Grund), Netz aus mit `fade_out`. Unter Linux belegt: die Änderungen stehen nur im Windows-Zweig; `grafik_stufe4_tests.py` besteht mit beiden Mischern (103 Tests), und der Sammellauf `grafik_alle_tests.sh --schnell` ist so wie vorher (siehe nächster Punkt). Ob `test_c8205_trommel.py` den Mischer aufruft, wurde nicht geprüft.
+- **Vorhandener Fehlschlag unter Linux (nicht von dieser Änderung):** `testscripte/grafik_sw_ende_zu_ende.py` (Block „Stufe 3 Ende-zu-Ende“) meldet 2 Fehlschläge und 1 Fehler, mit und ohne die Änderung gleich (15 Tests). Ursache nicht untersucht.
+- **Zeitverhalten:** Der Test hat 0,43 s gedauert und bestanden; Messwerte der Windows-Uhr (Aufwachverspätung, Zähler `aufwachen`, `nachgeholte_ticks`, §7.8) liegen nicht vor.
+- **Zusatztrommel:** nur gebaut und importiert, kein Funktionstest. In `C8205Z/zt_modul` liegt als Test nur `testframe_zt.c` (C-Testrahmen).
+- **GRAFIK-Interpreter und Pult unter Windows:** Der Start über `c8205_grafik.bat` läuft bis zur Tonhinweiszeile und die Töne waren hörbar (`winsound`). Ob das Pult-Fenster (Tk) vollständig bedienbar ist, wurde nicht gemeldet und nicht geprüft.
+- **`-static`:** Die Skripte benutzen nur `-static-libgcc`; ob mehr nötig ist, hängt vom Ergebnis der DLL-Prüfung ab.
 
 ### 9.3 macOS
 
@@ -717,16 +882,16 @@ Dieser Abschnitt führt alles, was bei Abschluss der Stufen 1 bis 5 nicht entsch
 
 Der Projektinhaber hat am 22.10.2026 festgelegt, dass folgende Punkte aus den Arbeitsständen (Checkpoints) **nicht weiterverfolgt** werden: Hören der Leserton-Frist (`LS_AUS_S`), Lesedauer 101 s von `namen_raten.kep`, Umbau der Lampenabtastung, Wahl eines kritischsten Befehlsmixes, Messung mit Bedienung und Rechenzeit-Reserve der Knoten, Governor-Test und Erweiterung des Messskripts. Die Ergebnisse stehen im Prüfverfahren §7.6 bis §7.8. Windows bleibt eine eigene spätere Abnahme (10.1).
 
-### 10.1 Windows (eigene, spätere Abnahme)
+### 10.1 Windows (eigene Abnahme, Teilabnahme 26.10.2026)
 
-Entschieden 19.10.2026 (O5-3): Stufe 5 wurde ohne Windows abgenommen; Windows ist eine eigene Abnahme, sobald ein Tester da ist (Dok. 00 §4: der Tester „kommt noch“, baut und testet selbst; Compiler MinGW-w64). Bis dahin bleibt der Windows-Zweig ungetestet. Die Abnahmekriterien stehen im Prüfverfahren §9.
+Entschieden 19.10.2026 (O5-3): Stufe 5 wurde ohne Windows abgenommen; Windows ist eine eigene Abnahme, sobald ein Tester da ist (Dok. 00 §4: der Tester „kommt noch“, baut und testet selbst; Compiler MinGW-w64). Teilabnahme am 26.10.2026: Bau von `c8205_trommel.pyd` und `c8205_ztmodul.pyd` mit MinGW-w64, Laden, Test der Haupttrommel bestanden (§9.2). GRAFIK startet unter Windows; der Mischer mit `winmm` ist eingeschaltet, Grundgeräusch, Lochbandleser und Stanzer hat der Inhaber gehört. Offen: Schreibwerkton und Dauerbetrieb über den Mischer, Pult-Fenster, Zeitmessung, andere Python-Versionen, Zusatztrommel-Funktionstest. Die Abnahmekriterien stehen im Prüfverfahren §9.
 
 | Nr. | Punkt | Stand | Alte Fundstelle |
 |---|---|---|---|
-| OP-01 | **Bau `tonmisch` mit MinGW-w64** und Mischer mit `winmm` (Mischer-Code für Windows ist geschrieben, nicht übersetzt) | offen | B-2 (Dok. 10), S4-02, S4-15 |
-| OP-02 | **Startskripte** `c8205_grafik.bat` und `c8205_interpreter.bat` | angelegt, nicht getestet | S5-12, A5-8 (Dok. 11) |
-| OP-03 | **Ton unter Windows:** bis zum Mischer nur Rechnertöne (`winsound`), Schreibwerkzeit und Lesetempo; sonst kein Ton, mit Hinweis beim Start | bestätigt (O4-18, „wenn du meinst. ja“), ungetestet | O4-18 |
-| OP-04 | **Trommel, Plattformschicht Windows** (`plattform.h`, Win32): nicht übersetzt, nicht getestet. Ob dort das aktive Warten inzwischen entfernt ist (Dok. 02 §4.4: „noch nicht angepasst“, Stand 16.10.2026), habe ich **nicht geprüft** (→ §7.4) Aus Dok. 02 §5.3 zusätzlich zu prüfen: das Makefile setzt unter Windows kein `-static` (Entscheidung Entwurf 67); ohne `--compiler=mingw32` sucht setuptools nach MSVC (Kenntnisstand des Entwicklers, nie geprüft); der Strg+C-Test wird unter Windows übersprungen; Echtzeit-Prüfungen der Trommel sind dort neu zu bewerten; das Erweiterungsmodul (Limited API) ist unter MinGW-w64 voraussichtlich an die Python-Version gebunden (Dok. 00 §6, Entwurf 85; nie geprüft) | offen | Dok. 02 §4.4, §5.3 |
+| OP-01 | **Bau `tonmisch` mit MinGW-w64** und Mischer mit `winmm` | erledigt für Bau und Betrieb am 26.10.2026: übersetzt, gelinkt und im GRAFIK-Interpreter unter Windows eingeschaltet (`winmm_pruefen()`, `neuer_mischer_winmm()`; Rückfall `winsound`); Grundgeräusch, Lochbandleser- und Stanzerton über `winmm` vom Inhaber gehört. Offen: Dauerbetrieb, Schreibwerkton | B-2 (Dok. 10), S4-02, S4-15 |
+| OP-02 | **Startskripte** `c8205_grafik.bat` und `c8205_interpreter.bat` | `c8205_grafik.bat` am 26.10.2026 unter Windows gestartet (Start aus `neu\`); für `c8205_interpreter.bat` keine Meldung, nicht geprüft | S5-12, A5-8 (Dok. 11) |
+| OP-03 | **Ton unter Windows** | am 26.10.2026 unter Windows gehört: erst Rechnertöne über `winsound` (Zweig ohne Mischer), danach über den Mischer mit `winmm` zusätzlich Lochbandleser- und Stanzertöne; die Startzeile nennt den Weg. Rückfall auf `winsound` mit Hinweis und Grund, wenn `winmm` nicht öffnet (O4-18, „wenn du meinst. ja“) | O4-18 |
+| OP-04 | **Trommel, Plattformschicht Windows** (`plattform.h`, Win32): am 26.10.2026 mit MinGW-w64 übersetzt; `test_c8205_trommel.py` besteht unter Windows (Python 3.13, 23 Tests, 1 übersprungen). `plattform.h` setzt dafür `_WIN32_WINNT` und `WINVER` auf 0x0601 und definiert `YieldProcessor` (§9.2.1). **Offen:** ob das aktive Warten entfernt ist (Dok. 02 §4.4: „noch nicht angepasst“, Stand 16.10.2026; **nicht geprüft**, → §7.4); `-static` (die Skripte benutzen `-static-libgcc`); Python-Versionen 3.8 bis 3.12 (Limited API); Echtzeit-Prüfungen und Messwerte der Windows-Uhr; der Strg+C-Test wird unter Windows übersprungen | teilweise erledigt, Rest offen | Dok. 02 §4.4, §5.3 |
 | OP-05 | **Tk-Verhalten unter Windows und WSL**, Bildschirmgrößen, Zwischenablage, X/Strg+C über die Pipe-Meldung (plattformneutral gewählt, Dok. 04 Nr. 15): nie geprüft | offen | Dok. 01 §8 Nr. 13, Dok. 04 Nr. 15 |
 | OP-26 | **Kein Sammellauf unter Windows:** `grafik_alle_tests.sh` ist ein Bash-Skript, eine `.bat`-Entsprechung gibt es nur für `r300_eingabe_*`; ebenso weicht `build_msvc.bat` (MSVC) von S4-02 (MinGW-w64 für `tonmisch`) ab. Welcher Weg unter Windows gilt, ist offen (Prüfverfahren §9, W-2 und W-5). Aufgenommen am 19.10.2026 (Projektinhaber: „mir egal“, daher vom Entwickler eingetragen) | offen | Prüfverfahren §9, §10 |
 
@@ -773,7 +938,7 @@ Punkte, die in den Anforderungsdokumenten offen standen und durch spätere Abnah
 | OP-06 Leserpegel LL 1,3 (G4-012) | **Bestätigt 19.10.2026** („ja das ist alles ok“, auf die Frage, ob 1,3 als gewollter Wert gilt); Dok. 10 S4-19 (1,0) ist überholt | Antwort 19.10.2026 |
 | OP-07 Puffer im SW-Fenster: 8 Eingaben, Ausnahme für Umschaltzeichen und Zeichen, kein Verfall | **Bestätigt 19.10.2026** (gleiche Antwort); am echten Fenster weiter nicht erprobt, `--DEBUGLOG` zeigt es an Zeilen `SW Taste … voll` | Antwort 19.10.2026 |
 | OP-08 Hinweis bei gesperrter Taste (Selektor SW nicht gerastet) | **Bestätigt 19.10.2026: bleibt still, kein Hinweis** (gleiche Antwort; gelesen als „so bleibt es“) | Antwort 19.10.2026 |
-| OP-12 C-Modul vorübersetzt mitliefern oder bauen | Antwort „ja das ist alles ok“ auf die Frage mit vier Punkten; eine Wahl zu diesem Punkt wurde nicht genannt. **Gelesen als: der jetzige Stand gilt** (vorübersetzte `c8205_trommel.abi3.so` liegt bei, `c-module/python/setup.py` baut sie; unter Windows ist zu bauen). Bei Widerspruch bitte sagen | Antwort 19.10.2026 |
+| OP-12 C-Modul vorübersetzt mitliefern oder bauen | Antwort „ja das ist alles ok“ auf die Frage mit vier Punkten; eine Wahl zu diesem Punkt wurde nicht genannt. **Gelesen als: der jetzige Stand gilt** (vorübersetzte `c8205_trommel.abi3.so` liegt bei, `c-module/python/setup.py` baut sie; unter Windows baut `bau_trommel_mingw.bat` die `c8205_trommel.pyd`, die seit 26.10.2026 auch vorübersetzt beiliegt). Bei Widerspruch bitte sagen | Antwort 19.10.2026 |
 | Testhandbuch nennt 201 Tests und die beiden r300-Dateien | `r300_eingabe_klickspur.txt` und `r300_eingabe_soll.txt` gelöscht (199 Tests); PDFs über `make_all_pdf.sh` neu erzeugt und bestätigt | Dok. 11, Dok. 04 |
 | Gravis ungeprüft (Dok. 09 §5b/§5d, Vorschlag „aus S3-09 streichen“) | Handlauf F-56: am echten Fenster kommt `grave` an und wird geliefert; in der Wiedergabe nicht erzeugbar, daher `[BEKANNT]`. Keine Streichung | Dok. 09 §5d (`gravis.log`), Prüfverfahren §10 B-5 |
 | `ziffern_2` bei Um. KB (Dok. 10 §16) | Kein Fehler des Interpreters; die Prüfung `grafik_sw_ende_zu_ende.py` hatte eine falsche Erwartung und wurde berichtigt (15 von 15). `ziffern_*` kennen kein Umschaltzeichen (U-12) und bleiben unverändert | Dok. 10 §16 |
@@ -887,6 +1052,7 @@ Dieser Abschnitt erklärt kurz, **warum** es neben `c8205_interp.py` den Treiber
 | Logik ohne Tk | `grafik_pult.py`, `grafik_sw.py`, `grafik_k0.py`, `grafik_haltzeit.py`, `grafik_schreibwerk.py`, `grafik_geraeteton.py`, `grafik_tastatur.py` | testbar ohne Fenster und ohne Audiogerät |
 | Tk-Schicht | `grafik_pult_fenster.py`, `grafik_sw_fenster.py`, `grafik_hwcheck.py`, `grafik_fensterlage.py` | Zeichnen, Maus, Computertastatur, Fenster merken; ein Tk-Prozess, zwei Fenster |
 | Geräte | `grafik_geraete.py`, `grafik_trommel.py` | Leser und Stanzer als Ordner, Trommel über das C-Modul |
+| Geräte | `grafik_zt.py` | Anbindung der Zusatztrommeln des experimentellen Prototyps C8205Z (`--C8205Z`, Klasse `GrafikZT`) über das Erweiterungsmodul `c8205_ztmodul` (§7.10) |
 | Töne | `grafik_tonmisch.py` (Rückfall), `grafik_tonmisch_c.py`, `grafik_rechnerton.py`, `grafik_ton.py` (Stufe 2) | Mischer und Rechnertöne |
 | Fehlersuche | `grafik_debuglog.py` | `--DEBUGLOG` |
 | C-Module | `c-module/` (`trommel.c`, `bahnsperre.c`, `unterbrechung.c`, `tonmisch.c`, `plattform.h`), Erweiterungsmodul `c-module/python/c8205_trommel_modul.c` | echte Trommel mit Koinzidenz, Bahnsperren, Abbruch, Tonmischer; statisch in **ein** Erweiterungsmodul gebunden (abi3) |
@@ -913,7 +1079,7 @@ Die Trennung „Logik ohne Tk“ und „Tk-Schicht“ gilt, damit die Logik in d
 | Töne | `grafik_schreibwerk.py` | Schreibwerkzeit (82,5 ms ± 7,5 ms) und Klangwahl des Schreibwerks, einschließlich TAB, WRZL und WR. |
 | Töne | `grafik_geraeteton.py` | Zustandsautomaten für die Töne von Lochstreifenleser und Lochbandstanzer (Einzelschritt, Dauergeräusch, Auslaufen). |
 | Töne | `grafik_rechnerton.py` | Rechnertöne über den Mischer: Hochlauf, Grundgeräusch als Schleife und Auslauf beim Ausschalten. |
-| Töne | `grafik_ton.py` | Frühere Rechnertöne (Stufe 2) mit je einem Abspielprozess je Klang; bleibt für Windows. |
+| Töne | `grafik_ton.py` | Frühere Rechnertöne (Stufe 2) mit je einem Abspielprozess je Klang; bleibt unter Windows als Rückfall, wenn `winmm` nicht verfügbar ist (§9.2). |
 | Fehlersuche | `grafik_debuglog.py` | Zeitgestempeltes Fehlersuch-Protokoll (`--DEBUGLOG`) sowie Aufzeichnung und Wiedergabe der Pult-Bedienung (Klickspur). |
 | Prüfung | `grafik_pult_tests.py` | Prüfungen der Pult-Steuerung ohne Tkinter und der Tk-Schicht mit Ersatzmodul; liegt hier zusätzlich zur Fassung in `testscripte/`, die davon abweicht. |
 

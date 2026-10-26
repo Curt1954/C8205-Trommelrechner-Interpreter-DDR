@@ -16,6 +16,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Zahlwort Festkomma vorn: Multiplikation positiver Zahlen (Programmieranleitung 6.1.1), a und b mit voller Stellenzahl
   #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; das Ergebnis weicht durch die Rundung um weniger als eine Einheit der letzten Stelle vom exakten Produkt ab
   #DOK-0001 erwartet <AC> = a*b = 25761027732 (oktal), Teilprodukte b(i)*a in den 32 Zellen der Arbeitsspur 7700
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

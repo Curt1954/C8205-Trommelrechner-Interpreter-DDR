@@ -1,14 +1,13 @@
 ; bsp_6_1_4_division_dicht.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_1_4_division_dicht.txt
 ; #DOK-0001 Zahlwort Festkomma vorn: Division positiver Zahlen (Programmieranleitung 6.1.4), a und b mit voller Stellenzahl
-; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3010>, b=<3011>, Maske <3012>=7777 7777 777, Arbeitsspur 7700; 7700 440 Transport von b/2
-;   auf alle Zellen, 7700 454 Abschneiden der niedrigsten Bits von b, 7700 436 Divisionsvorgang (bedingte Addition/Subtraktion mit zyklischer
-;   Linksverschiebung)
-; #DOK-0001 Voraussetzung 0 <= a < b < 1; <AC> = 0 beim Start (3000 212 rechnet <AC>:=<AC>+b mit Rechtsverschiebung). Die Quotientenziffern
-;   z1...z32 stehen nach 32 Schritten in z1...z32 des AC; z0 ist das zuletzt zyklisch verschobene Vorzeichen des Rests.
+; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3010>, b=<3011>, Maske <3012>=7777 7777 777, Arbeitsspur 7700;
+; #DOK-0001 7700 440 Transport von b/2 auf alle Zellen, 7700 454 Abschneiden der niedrigsten Bits von b, 7700 436 Divisionsvorgang (bedingte Addition/Subtraktion mit zyklischer Linksverschiebung)
+; #DOK-0001 Voraussetzung 0 <= a < b < 1; <AC> = 0 beim Start (3000 212 rechnet <AC>:=<AC>+b mit Rechtsverschiebung). Die Quotientenziffern z1...z32 stehen nach 32 Schritten in z1...z32
+; #DOK-0001 des AC; z0 ist das zuletzt zyklisch verschobene Vorzeichen des Rests.
 ; #DOK-0001 erwartet <AC> = 71026033723 (oktal), Fehler gegenueber a/b kleiner als 2^-26
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
-;   ohne Zelle im Programm sind am Ende per abs definiert.
 
                 start
 
@@ -34,6 +33,7 @@ d7700:          abs     07700
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3010 AC=71026033723 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3010: 27351646213
 ; 3011: 35762104535
@@ -70,4 +70,5 @@ d7700:          abs     07700
 ; 7731: 14000000000
 ; 7706: 10000000000
 ; 7723: 00000000000
+;#PRUEFE-ENDE
 ;

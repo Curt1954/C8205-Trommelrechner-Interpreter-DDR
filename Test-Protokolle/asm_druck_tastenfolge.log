@@ -78,6 +78,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0003 5000: Ausgabe eines Zeichens (030 0520), 5001: Stopp 1111. Der Stopp in 5001 zeigt, dass ab 5000 fortgesetzt wurde.
   #AC=10101010101
   #BZ=5000
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G Ü E H G M+ E M- R
   H  : Schalter H-R -> "H", Flag H := 1

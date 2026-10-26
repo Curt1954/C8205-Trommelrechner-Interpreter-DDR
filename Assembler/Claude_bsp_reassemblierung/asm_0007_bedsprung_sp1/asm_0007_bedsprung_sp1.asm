@@ -1,6 +1,7 @@
 ; asm_0007_bedsprung_sp1.asm  -  symbolisches Assemblerprogramm zu Testdatei asm_0007_bedsprung_sp1.txt
 ; #DOK-0001 Test 065 (bedingter Sprung mit Rückkehrabsicht), SP gesetzt: Unterprogramm läuft, erg=1
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -23,7 +24,9 @@ rueck:          abs     03
 ; H G SP=1 R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0006 AC=00000000001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 0001: 00000000001
 ; 0003: 00000005000
+;#PRUEFE-ENDE
 ;

@@ -1,0 +1,2 @@
+0000: EE 0000 5/0                                                               dw 5/0 
+                     bei Operand: 5/0 Operand  ist ungültig (Division durch 0)        

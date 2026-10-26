@@ -20,6 +20,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 erwartet <AC> = 00000000033 (oktal), x = 10a - 5b - 4c
   #SPEI-0001 3000-3002
   #SPEI-0001 3031-3034
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

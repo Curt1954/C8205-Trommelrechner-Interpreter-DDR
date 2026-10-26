@@ -4,6 +4,7 @@
 ; #SPEI-0001 3020-3020
 ; #SPEI-0001 7777-7777
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -67,8 +68,10 @@ d7724:          abs     07724
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3037 AC=00000000000 AR=3001 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
 ; 3020: 00000000000
 ; 7777: 70123456701
 ; --pruefe-sw-ausgabe bsp_5_17_oktaldruck-sw-ausgabe.txt
+;#PRUEFE-ENDE
 ;

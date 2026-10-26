@@ -1,10 +1,11 @@
 Trommeldatei:
-#DOK-0001 Zeitoptimale Programmierung, algebraischer Ausdruck (Programmieranleitung 5.19.1, Aufgabe wie 5.5): a=3, b=7, c=5, negatives
-#DOK-0001 Programm 5.19.1 wie im Buch (Zellen 3003, 3006-3011, 3031-3032); Operanden a=<3000>, b=<3001>, c=<3002>; Befehlsfolge: 2a, 2a-b,
+#DOK-0001 Zeitoptimale Programmierung, algebraischer Ausdruck (Programmieranleitung 5.19.1, Aufgabe wie 5.5): a=3, b=7, c=5, negatives Ergebnis x=-25 (Zweierkomplement)
+#DOK-0001 Programm 5.19.1 wie im Buch (Zellen 3003, 3006-3011, 3031-3032); Operanden a=<3000>, b=<3001>, c=<3002>; Befehlsfolge: 2a, 2a-b, 2(2a-b-c), 2(2(2a-b-c)+a), -b
 #DOK-0001 erwartet <AC> = 77777777747 (oktal), x = 10a - 5b - 4c
 #SPEI-0001 3000-3002
 #SPEI-0001 3031-3034
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003003000 # 000 m3003 ; Sprung zum Programmanfang der Aufgabe
 3000: 00000000003 # d3000: dw 03 ; a
 3001: 00000000007 # d3001: dw 07 ; b
@@ -20,3 +21,10 @@ Trommeldatei:
 3034: 00000000020 # 020 0 ; unbedingter Stopp
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3035 AC=77777777747 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000000003
+3001: 00000000007
+3002: 00000000005
+3031: 00003000214
+3032: 00003001220

@@ -9,6 +9,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3000: 00000000100
   3001: 00000000045
   3002: 00000000003
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #INTERRUPT nach Befehl 0000: H R
   #INTERRUPT nach Befehl 0001: H R
   #INTERRUPT nach Befehl 0002: H R
@@ -21,17 +22,17 @@ Tastenfolge: H G R
 
 == 2. Zustaende des Knotenautomaten ==
   BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
---- INTERRUPT nach Befehl 0000 (Testzeile 4): BZ=0001 AC=00000000100 ---
+--- INTERRUPT nach Befehl 0000 (Testzeile 5): BZ=0001 AC=00000000100 ---
   H  : Schalter H-R -> "H", Flag H := 1
   R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
 --- Ende INTERRUPT: Ablauf wird fortgesetzt ---
   BR=3000 211  (vor Knoten 002)  BZ=0001 AC=00000000100 FÜ=0 V1=0 V2=0 V3=0
---- INTERRUPT nach Befehl 0001 (Testzeile 6): BZ=0002 AC=00000000145 ---
+--- INTERRUPT nach Befehl 0001 (Testzeile 7): BZ=0002 AC=00000000145 ---
   H  : Schalter H-R -> "H", Flag H := 1
   R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
 --- Ende INTERRUPT: Ablauf wird fortgesetzt ---
   BR=3001 210  (vor Knoten 002)  BZ=0002 AC=00000000145 FÜ=0 V1=0 V2=0 V3=0
---- INTERRUPT nach Befehl 0002 (Testzeile 8): BZ=0003 AC=00000000150 ---
+--- INTERRUPT nach Befehl 0002 (Testzeile 9): BZ=0003 AC=00000000150 ---
   H  : Schalter H-R -> "H", Flag H := 1
   R  : Schalter H-R -> "R", Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B
 --- Ende INTERRUPT: Ablauf wird fortgesetzt ---

@@ -1,5 +1,6 @@
 Trommeldatei:
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000211 # 211 Laden
 0001: 00002000000 # 000 Sprung nach 2000
 #INTERRUPT H G Ü E # gehört zur Zelle 0001: nach einem Sprung läuft der Ablauf nicht sequentiell weiter, die Zeile wird übersprungen

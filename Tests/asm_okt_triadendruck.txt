@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0001 Triadendruck (Zelle 0276) mit GX-Befehl als Ziffernwaehler (Programmieranleitung 5.17): R1 = 70123456701 wird als 11 Oktalziffern gedruckt.
 #SPEI-0001 7773-7773
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000000 # 000 3000 ; Sprung zum Testtreiber
 0001: 00000150000 # 000 druck ; Zelle 0001: Sprung zum Druck von BZ und AC
 0040: 00000320025 # haupt: 025 kzeingabe ; Aufruf Unterprogramm Kennzeicheneingabe

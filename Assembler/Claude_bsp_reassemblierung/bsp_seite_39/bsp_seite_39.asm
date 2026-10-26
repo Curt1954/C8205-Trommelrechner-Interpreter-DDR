@@ -2,6 +2,7 @@
 ; #DOK-0001 Summieren eines Vektors
 ; #SPEI-0001 2020-2021
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -37,9 +38,11 @@ zelle_s:        abs     02021
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=2017 AC=00000000710 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
 ;
 ; 2020: 00002025000
 ; 2021: 00000000710
+;#PRUEFE-ENDE
 ;
 ;

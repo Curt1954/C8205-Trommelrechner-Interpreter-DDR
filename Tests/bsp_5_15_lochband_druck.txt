@@ -3,6 +3,7 @@ Trommeldatei:
 --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 --leser2 Test-virtuelleGeraete/Leser2/bsp_5_15_lochstreifen.txt
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 # Startstück (nicht Teil des Buchprogramms): Das Schreibwerk muss nach der Aufgabe auf Kleinbuchstaben (KB) stehen;
 # sein Zustand nach dem Einschalten ist zufällig. Daher Anwahl K2, Umschaltung auf KB, dann Sprung zum Programmanfang 3014.

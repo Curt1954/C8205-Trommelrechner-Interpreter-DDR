@@ -6,6 +6,7 @@ Trommeldatei:
 #SPEI-0001 7702-7702
 #SPEI-0001 7723-7723
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003005000 # 000 3005 ; Sprung zum Programmanfang der Aufgabe
 3000: 52526317434 # (A;B;C) mit A=2525 B=1463 C=3434 (je 11 Bit, oktal)

@@ -19,6 +19,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   7255: 00000015164
   7256: 00000000020
   #DOK-0015 Test Ausgabebefehl
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G M-drücken E M-loslassen R
   H  : Schalter H-R -> "H", Flag H := 1

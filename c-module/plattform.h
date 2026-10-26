@@ -15,11 +15,28 @@
 
 #ifdef _WIN32
 /* ======================= Windows ======================= */
+/* CONDITION_VARIABLE & Co. gibt es erst ab Vista (0x0600). MinGW-w64 setzt sonst 0x0502 und blendet sie aus.
+ * Muss VOR dem ersten Include von windows.h stehen; zuverlaessig daher auch per -D in der Bau-Datei. */
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
+#undef  _WIN32_WINNT
+#define _WIN32_WINNT 0x0601
+#endif
+#if !defined(WINVER) || (WINVER < 0x0600)
+#undef  WINVER
+#define WINVER 0x0601
+#endif
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
 #include <mmsystem.h>
+#ifndef YieldProcessor
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+#define YieldProcessor() __asm__ __volatile__("pause" ::: "memory")
+#else
+#define YieldProcessor() ((void)0)
+#endif
+#endif
 #ifdef _MSC_VER
 #pragma comment(lib, "winmm.lib")
 #endif

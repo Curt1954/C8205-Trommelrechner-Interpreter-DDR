@@ -1,0 +1,25 @@
+0000: 01 2002 000              000 beginn       ;
+      20 0000 2000             equ 02000        ;
+2000: 01 2023000     adr_a:    da  000000002023 ; Adrese der ersten Komponente Vektor
+2001: 01 2026000     adr_b:    da  000000002026 ; Adresse der letzten Komponente Vektor
+2002: 01 2021 241    beginn:   241 zelle_s      ; s:=0
+2003: 01 2000 211              211 adr_a        
+2004: 01 2022 210              210 lesebef      
+2005: 01 2007 240    schleife: 240 beliebig     ; Lesebefehl
+2006: 01 2001 330              330 adr_b        
+2007: 20 2010        beliebig: db  1            
+2010: 01 2021 210              210 zelle_s      ; summe := summe + speicher
+2011: 01 2021 240              240 zelle_s      
+2012: 01 2016 150              150 halt         
+2013: 01 2007 211              211 beliebig     ; Lesebefehl
+2014: 01 2020 210              210 adr_1        ; Lesebefehl Adresse erhöhen
+2015: 01 2005 000              000 schleife     
+2016: 01 0001 164    halt:     164 0001         ; DEBUG Nr. 0001 aktivieren
+2017: 01 0000 020              020 0            ; halt
+2020: 00 00000001000 adr_1:    dw  0001000      ; eine Adreßeinheit
+2021: 20 2022        zelle_s:  db  1            
+2022: 00 00000000211 lesebef:  dw  0211         
+2023: 00 00000000144 a:        dw  100          
+2024: 00 00000000145           dw  101          
+2025: 00 00000000310           dw  200          
+2026: 00 00000000067 b:        dw  55           

@@ -18,6 +18,8 @@ arr=(
   erzeuge_projektueberblick_pdf.py
   erzeuge_rechnerbeschreibung_pdf.py
   erzeuge_testuebersicht_pdf.py
+  erzeuge_ueberblick_gesamtaufbau_pdf.py
+  erzeuge_zusatztrommel_pdf.py
 )
 
 for dat in "${arr[@]}"; do

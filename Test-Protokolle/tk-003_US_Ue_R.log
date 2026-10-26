@@ -6,6 +6,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   7777: 00000000555
   #DOK-0001 Tastenfolge H G Ü R: BR = 7777 240 (Transport ⟨7777⟩ := AC), R führt aus (Start bei Knoten 19).
   #DOK-0002 AC = 0 wird nach 7777 übertragen (vorbelegter Wert 555 wird überschrieben). Danach Phase I mit BZ = 0: Zelle 0000 (Stopp, Adresse 0005): BZ = 0001, AR = 0005.
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G Ü R
   H  : Schalter H-R -> "H", Flag H := 1

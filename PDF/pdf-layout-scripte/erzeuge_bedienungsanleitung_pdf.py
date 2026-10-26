@@ -1772,7 +1772,7 @@ def kap4(lab):
     s += L.code("""python3 c8205_interp.py --MODUS=TEST [--mdverz VERZ] [--trommel PFAD] [--out VERZ|DATEI.log]
         [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
         [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL]
-        [--zwischenablage auto|tk|system]
+        [--zwischenablage auto|tk|system] [--LOADONLY]
         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef]  TEST.txt [TEST2.txt ...]
 python3 c8205_interp.py --version""")
     s += tbl([['Schalter', 'Wirkung', 'Vorgabe'],
@@ -1832,6 +1832,11 @@ python3 c8205_interp.py --version""")
                                                    'Protokollkopf. **Die Wirkung (Schreibsperre der Trommel) ist noch nicht '
                                                    'umgesetzt:** der Wert wird nur geprüft und gespeichert. Nur auf der '
                                                    'Kommandozeile, nicht in der Testdatei.', '`000000` (alle aus)'],
+              ['`--LOADONLY`, `--loadonly`', 'Lädt nur das Programm der Testdatei auf die Trommel (Marke `#TROMMEL=` und Abschnitt '
+                                             '`Trommeldatei:` wie im Test) und endet sofort mit Rückkehrcode 0: keine Tastenfolge, '
+                                             'kein Programmstart, keine Prüfungen, kein Protokoll, keine Geräte. Die formale '
+                                             'Vorab-Prüfung bleibt (bei einem Fehler Code 16, die Trommel bleibt unverändert). '
+                                             'Mehrere Testdateien werden nacheinander geladen.', '`aus`'],
               ['`--version`', 'Gibt die Versionsnummer des Interpreters (Form `y.xx-zzz`) aus und endet mit Rückkehrcode 0, ohne '
                               'einen Test auszuführen; eine Testdatei ist nicht anzugeben.', '–'],
               ['`-h`, `--help`', 'Hilfetext mit allen Schaltern.', '–']],

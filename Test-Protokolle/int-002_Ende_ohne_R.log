@@ -7,6 +7,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0002: 00000000020
   3000: 00000000100
   3001: 00000000045
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #INTERRUPT nach Befehl 0000: H
   #PROT STUFE=2
 Tastenfolge: H G R
@@ -17,7 +18,7 @@ Tastenfolge: H G R
 
 == 2. Zustaende des Knotenautomaten ==
   BR=0000 000  (vor Knoten 002)  BZ=0000 AC=00000000000 FÜ=0 V1=0 V2=0 V3=0
---- INTERRUPT nach Befehl 0000 (Testzeile 4): BZ=0001 AC=00000000100 ---
+--- INTERRUPT nach Befehl 0000 (Testzeile 5): BZ=0001 AC=00000000100 ---
   H  : Schalter H-R -> "H", Flag H := 1
   Ende der Tastenfolge ohne R: Rechner bleibt im Halt (H)
 

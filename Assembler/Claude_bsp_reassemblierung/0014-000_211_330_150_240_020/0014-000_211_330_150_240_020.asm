@@ -2,6 +2,7 @@
 ; #DOK-0014 Test Unbedingter Sprung, Ladebefehl und Vergleicher setzen und Vergleichersprung und Speicherbefehl
 ; #SPEI-0014 7773-7776
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -31,12 +32,14 @@ d7776:          dw      011111111111
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3012 AC=20000000100 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
 ;
 ; 7773: 20000000100
 ; 7774: 00000000200
 ; 7775: 00000000000
 ; 7776: 11111111111
+;#PRUEFE-ENDE
 ;
 ;
 ;

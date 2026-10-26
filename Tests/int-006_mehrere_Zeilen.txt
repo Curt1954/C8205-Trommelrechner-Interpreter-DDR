@@ -1,5 +1,6 @@
 Trommeldatei:
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000211 # 211 Laden
 #INTERRUPT H R
 0001: 00003001210 # 210 Addieren

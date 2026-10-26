@@ -1,3 +1,9 @@
+; #DOK-0001
+; #SPEI-0001 0000-0000
+; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
+; --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
+; --stanzer1 Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt
          start  0
 ; k1_leser_stanzer.asm  --  Lochband kopieren: Eingabe vom Lochstreifenleser 1 (K1), Ausgabe auf den Lochbandstanzer 1 (K1)
 ;

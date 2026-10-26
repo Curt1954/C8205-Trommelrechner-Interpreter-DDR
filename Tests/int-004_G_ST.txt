@@ -1,5 +1,6 @@
 Trommeldatei:
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000211 # 211 Laden
 #INTERRUPT H G ST # G setzt US, ST ist dann wirksam: BR = 0000 240 (Transport AC nach 0000), der Lauf geht weiter
 0001: 00003001210 # 210 Addieren

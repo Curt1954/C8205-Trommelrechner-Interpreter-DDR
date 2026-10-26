@@ -1,6 +1,7 @@
 Trommeldatei:
 #DOK-0001 Test Programmbeispiel 8: Sortierung von 4 Namen (Unterprogramm SORT + Hauptprogramm)
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00000052000 # 000 haupt
 0001: 00000004000 # sort: 000 sstart ; Nr. 0000  Sprung über Parameter
 0004: 00000043240 # sstart: 240 sruck ; Nr. 0003  Stellung Rücksprung
@@ -49,3 +50,9 @@ Trommeldatei:
 0065: 11206050000 # dw 011206050000 ; IHLE
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=0060 AC=00000004000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0
+0062: 10021054460
+0063: 11206050000
+0064: 13300654600
+0065: 13371052070

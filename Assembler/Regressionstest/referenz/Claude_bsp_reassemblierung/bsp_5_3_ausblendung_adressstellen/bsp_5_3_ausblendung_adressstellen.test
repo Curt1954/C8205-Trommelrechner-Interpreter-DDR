@@ -4,6 +4,7 @@ Trommeldatei:
 #SPEI-0001 3000-3002
 #SPEI-0001 3003-3007
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003003000 # m0000: 000 m3003 ; Sprung zum Programmbeginn der Aufgabe in Zelle 3003
 3000: 52525103523 # d3000: dw 052525103523 ; Befehl: beliebige Bits 5252, Adressteil a=5103, BAZ=523
 3001: 00007777000 # m3001: 000 m7777 ; Konstante 0000 7777 000 (Maske fuer den Adressteil)
@@ -15,3 +16,8 @@ Trommeldatei:
 3007: 00000000020 # 020 0 ; unbedingter Stop
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3010 AC=00005103000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 52525103523
+3001: 00007777000
+3002: 00005103000

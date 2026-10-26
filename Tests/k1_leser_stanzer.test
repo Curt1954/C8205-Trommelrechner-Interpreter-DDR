@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001
 #SPEI-0001 0000-0000
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt
 --stanzer1 Test-virtuelleGeraete/Stanzer1/lb_kopie_ausgabe.txt
 0000: 00002000000 # beginn: 000 anfang ; Zelle 0000: Sprung nach 02000
@@ -134,7 +135,3 @@ Trommeldatei:
 0477: 00001770030 # dw 01770030 ; 77: Transport (Relikt) / Transport (Relikt)
 Tastenfolge:
 H G R
-
-Prüfungen:
-BZ=4035 AC=00000000020 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
---pruefe-stanzer1 Test-Ergebnisvergleiche/k1_leser_stanzer-stanzer-ausgabe.txt

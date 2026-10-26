@@ -1,4 +1,4 @@
-//ca82_standards.h - Version 1.00-030 (siehe ca82_version.h)
+//ca82_standards.h - Version 1.00-034 (siehe ca82_version.h)
 #ifndef CA82_STANDARDS_H
 #define CA82_STANDARDS_H
 
@@ -137,7 +137,7 @@ extern int farbeAktiv;
 
 int gleichOhneGrossKlein(const char *a, const char *b);        // Vergleich ohne Gross-/Kleinschreibung
 int beginntOhneGrossKlein(const char *text, const char *praefix);  // dito, nur die ersten Zeichen (praefix)
-void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[], void (*printUsage)()) ;
+void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[], void (*printUsage)(const char *)) ;
 int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]);
 //void pruefeDateiX(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]);
 void pruefeLadeadresse(int argc, char *argv[], const char *kennzeichen, unsigned int *ladeadresse);
@@ -150,6 +150,7 @@ void printBits(unsigned int num, int bits);
 void printX(const char *message);
 void printMsg(const char *message);
 void printFehler(const char *message);
+int fehlerZaehleUndPruefe(const char *schluessel); // ca82_fehler.c: 1 = Meldung ausgeben, 0 = Wiederholung/Obergrenze (nur gezaehlt)
 void printWarnung(const char *message);
 // Berichte nach Pass 3 (-WARN=..., --xref): Ausgabe auf STDOUT und, solange berichtLog gesetzt ist, auch ins .log
 extern FILE *berichtLog;

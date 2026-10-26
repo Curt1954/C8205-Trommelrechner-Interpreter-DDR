@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001 #BZ=0100 setzt den Anfangs-BZ vor der ersten Taste. Die danach abgearbeitete Taste G wirkt wie bisher: BZ := 0.
 #DOK-0002 H G R beginnt daher bei Zelle 0000 (Stopp 020), nicht bei 0100.
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 #BZ=0100
 0000: 00000000020 # Stopp
 0100: 00003000211 # würde bei Start in 0100 den AC mit 45 füllen

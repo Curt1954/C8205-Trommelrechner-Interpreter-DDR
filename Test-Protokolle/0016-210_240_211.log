@@ -13,6 +13,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3717: 00110011001
   #DOK-0016 Test Ladebefehl und Addition
   #SPEI-0016 7774-7774
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

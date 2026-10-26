@@ -1,9 +1,9 @@
 ; bsp_6_1_1_multiplikation_festkomma_dicht.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_1_1_multiplikation_festkomma_dicht.txt
 ; #DOK-0001 Zahlwort Festkomma vorn: Multiplikation positiver Zahlen (Programmieranleitung 6.1.1), a und b mit voller Stellenzahl
-; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; das Ergebnis weicht durch die Rundung um weniger als
-;   eine Einheit der letzten Stelle vom exakten Produkt ab
+; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; das Ergebnis weicht durch die Rundung um weniger als eine Einheit der letzten Stelle vom exakten Produkt ab
 ; #DOK-0001 erwartet <AC> = a*b = 25761027732 (oktal), Teilprodukte b(i)*a in den 32 Zellen der Arbeitsspur 7700
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -30,6 +30,7 @@ d7700:          abs     07700
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3007 AC=25761027732 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3007: 27351646213
 ; 3010: 35762104535
@@ -66,4 +67,5 @@ d7700:          abs     07700
 ; 7731: 27351646213
 ; 7706: 27351646213
 ; 7723: 27351646213
+;#PRUEFE-ENDE
 ;

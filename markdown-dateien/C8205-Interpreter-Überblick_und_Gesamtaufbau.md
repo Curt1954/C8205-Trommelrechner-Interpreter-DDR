@@ -1,6 +1,6 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
-Version: 0.95-001
+Version: 0.95-007
 
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
@@ -105,6 +105,22 @@ Zugriffsrichtung zum Trommelspeicher: Eine **Entnahme** gespeicherter Informatio
 zum Befehlszähler und zum Operationsregister hin möglich. Eine **Abspeicherung** von Information im
 Speicher ist dagegen nur vom Akkumulator her möglich.
 
+Abbildung 2 zeigt das Blockschaltbild: Akkumulator, Rechenwerk und Vergleicher, Spurwähler und Trommel, Adreßregister,
+Befehlszähler und Operationsregister sowie die Kanäle zu Tastatur, Schreibwerk, Lochbandlesern und Stanzer, verbunden
+durch Leitungen mit Toren.
+
+![Blockschaltbild des C 8205](abbildungen/C8205-Abb-Blockschaltbild.svg)
+
+*Abbildung 2: Blockschaltbild des C 8205 (Nachzeichnung). Die Legende „Bezeichnungen“ steht in der Abbildung.*
+
+**Lesehilfe:** Ein Kreis auf einer Leitung ist ein **Tor**; die Beschriftung nennt die Durchlaßbedingung, unter der das
+Tor Information durchläßt. Römische Ziffern bedeuten die Phase des Befehlszyklus (Abschnitt 4), „∧“ ein
+gleichzeitiges Zutreffen, „∨“ ein alternatives. Die Zusätze nach der Legende der Abbildung: T = Befehl mit Resultat
+in Speicherzelle, T̃ = kein solcher Befehl und kein Organisationsbefehl, RS = Sprung mit Rückkehrabsicht, R = R-Befehl,
+Vr = Rechtsverschiebung, Vl = Linksverschiebung, V̄ = keine Verschiebung; F̄ bezieht sich auf die
+Löschanweisung in Phase III. Die Tore A0, A1, A2 wählen den i-ten Kanal an. Gestrichelte Leitungen und Pfeilrichtungen
+zeigen die Datenwege; [K] bedeutet Koinzidenzprüfung, [1] Verzögerung um 1 Bit.
+
 ## 4. Ablauf der Befehlsabarbeitung – die vier Phasen
 
 Charakteristisch für den Einadreßautomaten C 8205 ist, dass als Zellenwähler in jedem Fall das
@@ -129,6 +145,10 @@ Darstellungstiefe.
 | III | Befehlsadressenaufstellung | Füllen des Zellenwählers AR mit ADR, gleichzeitig Rücktransport von BADR nach BZ und Erhöhung um 1: `<AR> := <BZ> = ADR`, gleichzeitig `<BZ> := <AR>+1 = BADR+1` |
 | (K) | W₂ — Wartezeit | Trommel dreht sich bis zum Sektor, der durch `<AR> = ADR` vorgegeben ist |
 | IV | Operationsausführung | Ausführung entsprechend `<OR> = OP` |
+
+Im Blockschaltbild (Abbildung 2, Abschnitt 3) stehen die Phasen als Durchlaßbedingungen an den Toren; so ist etwa
+das Tor „III ∧ RS“ in Phase III beim Sprung mit Rückkehrabsicht durchlässig, und die beiden Tore am Adreßregister („I ∨ III“)
+füllen den Zellenwähler in den Phasen I und III.
 
 Zwischen Phase III und Phase IV kann von außen eingegriffen werden (AC-Löschung, Stop, Start) – die
 Bedeutung der zugehörigen Tasten (E, G, M, Ü, ST) und des Schalters H-R ist im Dokument
@@ -328,6 +348,9 @@ die Zeitangaben dieses Abschnitts beschreiben die Hardware. Um sie am Interprete
 die Trommelposition (Wortzeitzähler mod 32 und Reihenfolge der Magnettrommel-Datei) mitführen.
 
 
+**Tabellen der zeitoptimalen Sektoren.** Die Nachschlagetabellen der Programmieranleitung 5.19 (Spalten A bis F) stehen,
+neu berechnet, in "C8205-Interpreter-Befehlsliste.md", Abschnitt "Tabellen der zeitoptimalen Sektoren".
+
 ## 6. Teilprojekte
 
 ### 6.1 Interpreter
@@ -378,7 +401,8 @@ Einzelheiten stehen nicht hier, sondern in "C8205-Interpreter-BIS.md"; Einordnun
 **Rechner und Regelwerk**
 - Trommelorganisation im Detail (128 Spuren/32 Sektoren, Interleaving/logische vs. physische
   Sektoradressen, Bahnwahl, Bahnsperrenschalter): "C8205-Interpreter-Magnettrommel.md".
-  Anwendung auf die Programmierung (zeitoptimale Operanden- und Sprungziel-Lage): Abschnitt 5.1 dieser Datei.
+  Anwendung auf die Programmierung (zeitoptimale Operanden- und Sprungziel-Lage): Abschnitt 5.1 dieser Datei;
+  Tabellen der zeitoptimalen Sektoren: "C8205-Interpreter-Befehlsliste.md".
 - Register-, Feld- und Flag-Definitionen im Detail (AC, OR, BZ, AR, BR, Maschinenwortaufbau, Flags E, A,
   T, SW, K1–K3, FE, FÜ, BS, US, V1, V2, H, SP): "C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md".
 - Bedienelemente im Detail (Schalter H-R, Tasten E/G/M/Ü/SW/ST, Eingabetasten, Kanalauswahl, Selektoren
@@ -406,7 +430,7 @@ Einzelheiten stehen nicht hier, sondern in "C8205-Interpreter-BIS.md"; Einordnun
 **BIS**
 - Inhalt (allgemeine Beschreibung, KEP, Minimalprogramm, Eingabekennzeichen K₁/K₂): "C8205-Interpreter-BIS.md".
 - Einordnung als Teilprojekt: "C8205-Interpreter-Projektueberblick.md", Abschnitt 3a; "C8205-Projektstruktur.md", Abschnitt 3a.
-- Zahlendarstellungen des BIS (Gleitkomma, Tetraden, Festkomma): "C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md".
+- Zahlendarstellungen: Übersicht, ganze Festkommazahl und interne Gleitkommadarstellung: "C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md"; externe Gleitkommadarstellung und Tetraden des BIS: "C8205-Interpreter-BIS.md", Abschnitt BIS-1.1.
 
 **Ausgabe**
 - Gestaltung aller PDF-Ausgaben sowie Namensschema und Liste der erzeugten PDFs: "C8205-Interpreter-PDF.md" (Abschnitt 8: Dateibenennung).

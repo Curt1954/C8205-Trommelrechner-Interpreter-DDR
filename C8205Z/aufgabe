@@ -1,0 +1,63 @@
+# aufgabe – Projekt C 8205Z (eigenes Projekt, getrennt vom C-8205-Simulator)
+Stand 25.10.2026 (Sitzung 10). Der Assembler wird NICHT angefasst; der Interpreter nur ueber den Schalter --C8205Z (Entscheidung 25.10.2026, siehe Simulator-aufgabe Sitzung 9).
+
+## Ordner
+- pult_z/  Pult-Zeichnung der Z-Ausfuehrung (ruht, wartet auf Fotos Technische Sammlung Dresden); Details in pult_z/aufgabe_pult.md
+- zt_modul/ C-Modul der Zusatztrommeln (zt_modul.c/.h 0.01-002, testframe_zt.c, Makefile; python/ = Erweiterungsmodul c8205_ztmodul 0.01-001 fuer GRAFIK)
+- zt/      Zusatztrommeln: zt_zeitmodell.py (Rechnung) und Zusatztrommel_Zeitmodell.md (Version 0.01-006: Eckdaten, Ablauf, Zeiten, Befehle, Modulspezifikation fuer ein C-Modul als Hintergrundprozess mit zwei Puffern und Semaphoren, Referenzwerte, Festlegungen)
+
+## Stand
+- Spezifikation vollstaendig genug fuer ein C-Modul (Abschnitt 6: Konstanten, Permutationstabellen als C-Code, Schnittstelle, Ablauf, Kopplung an trommel.h; Abschnitt 7: Referenzwerte).
+- Zeitmodell: Block darf an jeder seiner 8 ZT-Positionen beginnen (Anlauf <= 2,5 ms); Spur Eingabe 80,9/82,8/84,7 ms, Ausgabe 82,5/83,8/85,6 ms; bestaetigt die Angabe 85 ms als Obergrenze. Das frueher gerechnete "fester Start" (81/92,5/104 ms) ist verworfen (Vergleichszeile).
+- Entscheidungen des Inhabers: siehe Zeitmodell.md Abschnitt 8. g = 4 ist Festlegung Claude.
+
+## Offen
+- Pult-Matrix links am Z-Pult (Fotos Dresden).
+- Kopplung: HT-Block als Einheit mit berechneter Zeit (Direktzugriffe), keine Aenderung an trommel.c noetig.
+
+## Stand 25.10.2026 (Sitzung 9)
+- aaaa 032 entfaellt; Befehle: 5k00 030, zzz0 bbbb 601 (Ausgabe), zzz0 bbbb 661 (Eingabe), spaeter von 401/461 umbenannt (Spezifikation 0.01-004).
+- Anbindung versuchsweise im Simulator: c8205_interp.py 0.95-007 mit --C8205Z und Python-Modul c8205_zt.py 0.01-001 (Zeit 0); Tests in Tests_Z/ des Simulators. Das C-Modul zt_modul ist noch nicht geschrieben.
+- Offen: GRAFIK-Anbindung, Zeitmodell im Lauf.
+
+## Stand 25.10.2026 (Sitzung 10): C-Modul zt_modul
+- Neu C8205Z/zt_modul/ (0.01-001): Zeitmodell in Ganzzahl-ns (zt_modell_dauer), Puffer/Semaphore/Empfaengerthread, Modus VIRTUELL oder ECHT, Persistenz, Anbindung an trommel.h (Vorgabe) oder Ersatz-HT. `make test` im Ordner: 153 Pruefungen, TEST ZT WAHR (dreimal wiederholt; Referenzwerte Abschnitt 7 und Statistik stimmen). Spezifikation 0.01-005 (Abschnitt 6.6).
+- Simulator (c-module/, Interpreter) nicht geaendert; Makefile liegt im Projektordner (SIM=../../c-module).
+- Offen: Anbindung ans Python-Modul c8205_zt.py / Interpreter (Python-Erweiterungsmodul, wie c8205_trommel); Zeitmodell im Lauf des Interpreters; GRAFIK-Anbindung; Windows-Zweig ungetestet; HT-Phase nur auf eine Position (104 us) genau.
+
+## Stand 25.10.2026 (Sitzung 10, GRAFIK-Anbindung)
+- Entscheidung des Inhabers: Python-Interpreter (TEST) bleibt bei Zeit 0 (c8205_zt.py); das C-Modul haengt am GRAFIK-Interpreter.
+- Erledigt: zt_modul 0.01-002 (-DZT_OHNE_TROMMEL), Erweiterungsmodul python/c8205_ztmodul.c + setup.py, grafik-interpreter-module/grafik_zt.py G5-001, c8205_grafik.py G4-013 (Schalter --C8205Z), Tests_Z/zt_grafik_tests.sh. Spezifikation 0.01-006 (Abschnitt 6.7).
+- Geprueft: zt_grafik_tests.sh (zt-001..003 x alt/echt/schnell) alle gleich wie TEST; make test im Ordner zt_modul 153 Pruefungen ok; grafik_gleichwertigkeit.py mit trommel-001_leer.txt GLEICH; GRAFIK ohne Schalter unveraendert (601 bleibt dort ohne Wirkung der ZT, Anwahl 5100 = Stub).
+- Offen: Pult-Fenster mit --C8205Z nicht geprueft (nur --ohne-fenster); GRAFIK_Beschreibung, README, Befehlsliste und Handbuch nennen --C8205Z/601/661 noch nicht; Windows-Zweig ungetestet; .so (c8205_ztmodul.abi3.so) baut der Inhaber (kein Binary in der Lieferung).
+
+## Stand 25.10.2026 (Sitzung 11): ins Simulator-Projekt aufgenommen
+- Dieser Ordner C8205Z/ ist jetzt der einzige Zusatzpfad im Projektstamm des Simulators. Neu hier: Tests_Z/ (vorher im Projektstamm; Skripte wechseln zwei Ebenen hoch), zt/zt_zeitmodell.py.
+- Anbindung liegt im Simulator: c8205_interp.py 0.95-008, c8205_zt.py, c8205_grafik.py G4-013, grafik-interpreter-module/grafik_zt.py; Doku Python_Interpreter.md 0.95-005, Versionierung 0.95-112.
+- Aufruf der Tests vom Projektstamm: bash C8205Z/Tests_Z/zt_tests.sh und bash C8205Z/Tests_Z/zt_grafik_tests.sh.
+
+## Stand 25.10.2026 (Sitzung 12): Doku, Benennung
+- Bezeichnung: C8205Z heisst in der Projektstruktur (und sonst in der Doku) "experimenteller Prototyp" (Auftrag des Inhabers). Projektstruktur 0.95-027, Abschnitt 3b.
+- Beim Inhaber bestaetigt: Modul gebaut, zt_grafik_tests.sh 9 x gleich, zt_tests.sh ok, ./c8205_grafik.sh --HWCHECK --C8205Z startet.
+- Offen: HW-Check mit laufender Adresse und Inhalt je ZT (Klaerung: was ist "laufende Adresse"); zt_zeitmodell.py: Beschriftung 401/461 -> 601/661.
+
+## Stand 25.10.2026 (Sitzung 13): HW-Check-Anzeige
+- zt_modul 0.01-003 (zt_letzte_adresse), c8205_ztmodul 0.01-002, grafik_zt.py G5-002 (ansicht()), grafik_hwcheck.py HW-005; Test C8205Z/Tests_Z/zt_hwcheck_test.py. Spezifikation 0.01-008 (6.6, 6.7).
+- Offen: Modul neu bauen (Inhaber), echtes Fenster abnehmen.
+
+ARBEITSSTAND 25.10.2026 (Sitzung 14): Beispielprogramm fuer die Zusatztrommeln.
+Erledigt: Assembler/Claude/zt_feld/zt_feld.asm und .test: 32 Zufallskonstanten (fester Startwert, Spur 0100-0137) -> Anwahl ZT2 (030 05200) -> Ausgabe 601 auf ZT2 Adresse 01000 (zzz0=1000, Spur 020) -> Eingabe 661 in den Bereich Spur 0200-0237 (32 Worte) -> Halt (020). Skript C8205Z/Tests_Z/zt_feld_test.sh.
+Geprueft: TEST mit --C8205Z: Test wahr (rc 0), ZT2 1000-1037 = Feld, ZT1/3/4 leer; ohne Schalter rc 8. GRAFIK ohne Fenster (alt, schnell): Ergebnis gleich. Assembler unveraendert, keine versionierte Datei geaendert.
+Annahmen: '32 Byte' = 32 Worte (eine Spur, kleinste Uebertragungseinheit der ZT); Adresse 01000 = Spur 020 (Adresse >> 5); Zielbereich Spur 0200; Zufallswerte zur Assemblerzeit festgelegt (kein Zufall zur Laufzeit moeglich).
+Offen: nichts neues. Erweiterungsmodule (.so) baut der Inhaber; echtes Fenster weiter nicht abgenommen.
+
+ARBEITSSTAND 25.10.2026 (Sitzung 14, Abschluss): HW-Check-Anzeige der Zusatztrommeln vom Inhaber am echten Fenster abgenommen (ZT2 020 13 mit gruenem Punkt, <<ZT2>> 1013 = Wort 32101714277, Halt BZ 0006); zt_feld.asm im GRAFIK-Interpreter mit --HWCHECK --C8205Z geprueft (ZT2 1000-1037 und Spur 0200 gleich dem Feld).
+Befund: Zeigte der HW-Check ueberall ---, lag es am alten c8205_ztmodul (ohne letzte_adresse): Nach dem Auspacken des Zips gilt das alte .so als aktuell. Abhilfe: cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace --force; Kontrolle hasattr(m,'letzte_adresse') = True.
+Erledigt: Hinweis dazu im Kopf von Tests_Z/zt_grafik_tests.sh und zt_hwcheck_test.py (nur Kommentare). --trommelzeit echt ist nicht noetig (Standard alt); nur --C8205Z und das gebaute Modul.
+Entscheidung des Inhabers: keine Fehlermeldung statt --- bei altem Modul (HW-006 entfaellt); zt_hwcheck_test.py wird mit python3 gestartet (keine Shebang).
+Offen: nichts.
+
+ARBEITSSTAND 25.10.2026 (Sitzung 15): PDF zu den Zusatztrommeln.
+Erledigt: Neues Skript PDF/pdf-layout-scripte/erzeuge_zusatztrommel_pdf.py (Kopie von erzeuge_grafik_beschreibung_pdf.py, nur Konstanten und finde_quelle geaendert: Quelle C8205Z/zt/Zusatztrommel_Zeitmodell.md). Erzeugt PDF/C8205-Zusatztrommeln_A4.pdf, 7 Seiten, Deckblatt und Seite 3 angesehen. Aufruf: ./make_pdf.sh erzeuge_zusatztrommel_pdf.py; make_all_pdf.sh ruft es mit auf. Doku: C8205-Interpreter-PDF.md 0.95-006 (4.6 und 8), Projektstruktur 0.95-029, Versionierung 0.95-115.
+Annahmen: Art BESCHREIBUNG, Bereich INTERPRETER (kein eigener Bereich fuer C8205Z im Wertevorrat der PDF.md; ein neuer Wert muesste in allen eingebetteten pdflib-Kopien nachgezogen werden). Titel 'Zusatztrommeln C 8205Z'. Zwei Hinweise des Erzeugers ('Liste beginnt direkt nach Absatzzeile') sind nur Hinweise, die Quelle nicht angefasst.
+Offen (Inhaber): PDFs der Gestaltungsrichtlinie (PDF.md 0.95-006) und der Projektstruktur neu erzeugen (make_pdf.sh erzeuge_gestaltungsrichtlinie_pdf.py / erzeuge_projektstruktur_pdf.py); README.md und Projektueberblick.md fuehren die neue PDF noch nicht in ihren PDF-Listen.

@@ -1,4 +1,4 @@
-//ca82_standards.c - Version 1.00-030 (siehe ca82_version.h)
+//ca82_standards.c - Version 1.00-034 (siehe ca82_version.h)
 #include "ca82_standards.h"
 #include <errno.h>
 
@@ -403,7 +403,7 @@ void createFileName(char *neueDateiName, size_t size, const char *projektdetails
     snprintf(neueDateiName, size, "%s.%s", projektdetailsDatei, oldProjekt);
 }
 
-void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[], void (*printUsage)()) {
+void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[], void (*printUsage)(const char *)) {
     char projektdetailsDatei[] = "projekdetails";
     int parameterGefunden = 0;
 
@@ -507,7 +507,7 @@ void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[],
                         PRINT_FEHLER("Projektverzeichnis '%s' existiert nicht.", projektVerzeichnis);
                         projektVerzeichnis[0] = '\0';
                         fclose(file);
-                        printUsage();
+                        printUsage(argv[0]);
                         exit(RC_FEHLER);
                     }
                 }

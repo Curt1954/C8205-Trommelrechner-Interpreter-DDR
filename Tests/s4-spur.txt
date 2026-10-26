@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0023 Test Ausgabe einer ganzen Spur in physischer Zugriffsreihenfolge
 #SPUR-0023 4000
 #PROT STUFE=0
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000211 # AC := <3000>
 0001: 00004001544 # GX-Transport nach 4001, Z=2 (R=2, ohne Loeschen)
 0003: 00000000020 # 020 Stopp

@@ -22,3 +22,12 @@ c:              dw      0200
                 end
 r2:             abs     07776           ; Register R2
 stoppnr:        abs     01111           ; Stoppnummer
+
+; Sollwerte von Hand hergeleitet. Fall b ist das Maximum (a=0100, b=0300, c=0200): R2 = 0300; Stopp 021 löscht AC, AR = 1111.
+;#PRUEFE-START
+; BZ=3011 AC=00000000000 AR=1111 US=1
+; 3020: 00000000100   # a
+; 3021: 00000000300   # b
+; 3022: 00000000200   # c
+; 7776: 00000000300   # R2 = Maximum
+;#PRUEFE-ENDE

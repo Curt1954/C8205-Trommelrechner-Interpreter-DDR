@@ -3,7 +3,7 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
-Version: 0.95-002
+Version: 0.95-008
 (Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
 REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
 Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
@@ -11,7 +11,7 @@ Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinh
 Aufruf:  python3 c8205_interp.py [--MODUS TEST|GRAFIK] [--mdverz VERZ] [--out VERZ|DATEI.log]
          [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
          [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL] [--zwischenablage auto|tk|system]
-         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] [--LOADONLY] TEST.txt [TEST2.txt ...]
+         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] [--LOADONLY] [--C8205Z[=VERZ]] TEST.txt [TEST2.txt ...]
          python3 c8205_interp.py --version      (zeigt die Versionsnummer und endet)
          (--leser1, --leser2, --stanzer1, --sw-ausgabe und --k0 duerfen auch als Zeile in der Testdatei stehen; die Kommandozeile hat Vorrang)
          (--SW-TERMINAL: Schreibwerk-Ausgabe zusaetzlich im Fenster "SW Ausgabe"; das Fenster bleibt auch nach dem Testende offen, bis es mit X
@@ -30,6 +30,28 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
   * Befehlszeilenschalter --knotentest (Standard: aus): nur wenn gesetzt, enthalten die Knotenprotokolle
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
+
+Aenderung 25.10.2026 (Version 0.95-008): Die Befehle der Zusatztrommeln (--C8205Z) heissen jetzt 601 (Ausgabe HT -> ZT) und 661 (Eingabe ZT -> HT) statt 401 und 461
+  (Festlegung des Inhabers; Wiederholungsbefehl W, B = 6). Unveraendert: 5k00 030 (Anwahl), ganze Spur zu 32 Worten, zzz0 = obere vier Ziffern des Befehlswortes.
+  Ohne den Schalter sind 601/661 wie bisher Leer-Operationen mit Loeschen; 401/461 sind es immer.
+Aenderung 25.10.2026 (Version 0.95-007): Neuer Aufrufschalter --C8205Z[=VERZ] (Standard: aus) fuer die Zusatztrommeln des C 8205Z (Modul c8205_zt.py,
+  Dateien VERZ/zt1.txt .. zt4.txt, Vorgabe Trommel/ZT/). Nur mit dem Schalter wirken: 5k00 030 (k = 1..4: Anwahl Zusatztrommel k, a028), zzz0 bbbb 401
+  (Ausgabe: HT-Spur bbbb -> ZT-Spur zzz0) und zzz0 bbbb 461 (Eingabe: ZT-Spur -> HT-Spur bbbb); die oberen vier Ziffern des Befehlswortes werden dazu in a005
+  gemerkt. Ohne Anwahl: Halt mit Flag A (TEST: Stub). Ohne den Schalter ist alles unveraendert (a2 < 4: Stub; 401/461: Leer-Operation mit Loeschen).
+  #TROMMEL=LEER und Trommelvorlagen leeren auch die vier Zusatztrommeln. Nur Modus TEST; GRAFIK kennt den Schalter noch nicht. Die Konstante VERSION stand
+  auf 0.95-005, die Kopfzeile auf 0.95-006; beide jetzt 0.95-007.
+Aenderung 24.10.2026 (Version 0.95-005): Neue Testmarke #TROMMEL=KEEP: die Trommel bleibt unveraendert (Stand des vorigen Laufs), wie ohne Marke, aber ausdruecklich;
+  Hinweis im Protokoll und auf dem Bildschirm. Sonst keine Wirkung (kein Ueberschreiben, keine Vorlagenpruefung).
+
+Aenderung 24.10.2026 (Version 0.95-004): Knotenlimit bei aktivem Eingabe-/Ausgabe-Befehl. Wird das Knotenlimit (2 000 000 Knoten) erreicht und ist dabei in
+  diesem oder dem vorigen Befehl eine Ausgabe (ANWEISUNG-017) oder Eingabe (ANWEISUNG-032) ausgefuehrt worden, arbeitet der Rechner ein Geraet ab (Dauerausgabe,
+  Warten): der Lauf endet dann ordnungsgemaess (Grund "Knotenlimit erreicht bei aktivem Eingabe-/Ausgabe-Befehl", kein Rueckkehrcode 8); die Ergebnispruefung
+  und die Dateipruefungen laufen wie bei jedem Ende (Test wahr/falsch, ohne Pruefung rc 4). Im Protokoll werden dann die am Ende gleichen Zeilen (kleinste Periode
+  bis 200 Zeilen, mindestens 3 Wiederholungen) nur einmal ausgegeben, davor steht ein Hinweis mit der Zahl der weggelassenen Wiederholungen. Ohne E/A-Befehl bleibt
+  das Knotenlimit ein Fehler (Endlosschleife, rc 8, Protokoll unveraendert). Neuer Test: Tests/knotenlimit_ausgabeschleife.txt.
+
+Aenderung 24.10.2026 (Version 0.95-003): Protokoll, Abschnitt 1 (Ausgangsbedingungen): Die uebernommenen Zellen des Abschnitts Trommeldatei: werden nach Adresse
+  aufsteigend sortiert ausgegeben (vorher in der Reihenfolge der Testdatei). Die Pruefzellen im Abschnitt 3 waren schon sortiert. Nur Ausgabe; Ablauf und Ergebnis unveraendert.
 
 Aenderung 21.10.2026 (Version 0.95-002): Neuer Schalter --LOADONLY (Standard: aus). Der Interpreter bringt das Programm der Testdatei nur auf die Trommel
   (#TROMMEL=-Marke und Abschnitt Trommeldatei: wie im Test, danach Trommeldatei geschlossen) und endet sofort mit Rueckkehrcode 0; es wird KEINE Tastenfolge
@@ -194,7 +216,7 @@ import subprocess
 import sys
 import time
 
-VERSION = '0.95-002'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
+VERSION = '0.95-008'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
@@ -206,7 +228,7 @@ PROJEKTVERZ = os.path.dirname(os.path.abspath(__file__))
 # #TROMMEL=<Name>: LEER ist eingebaut (alle Zellen 0); die uebrigen Namen brauchen ein Trommelabbild (Format wie trommel.txt) unter
 # Trommel/Trommelvorlagen/<Name>.txt. Name -> Beschreibung (fuer Meldungen).
 TROMMEL_VORLAGEN = {'MP': 'Minimalprogramm'}
-TROMMEL_MARKEN = ('LEER',) + tuple(TROMMEL_VORLAGEN)
+TROMMEL_MARKEN = ('LEER', 'KEEP') + tuple(TROMMEL_VORLAGEN)   # KEEP: Trommel unveraendert (wie ohne Marke), aber ausdruecklich
 
 PHYS_LOG = [0o00,0o15,0o32,0o07,0o24,0o01,0o16,0o33,
             0o10,0o25,0o02,0o17,0o34,0o11,0o26,0o03,
@@ -289,6 +311,11 @@ def sgn(w):
 
 
 class Stub(Exception):
+    pass
+
+
+class AusgabeHaltOhneGeraet(Stub):
+    """Ausgabe-Halt ohne angewaehltes Ausgabegeraet: im Original ein regulaerer Stopp mit Flag A; TEST meldet ihn als Stub, GRAFIK haelt nur an."""
     pass
 
 
@@ -524,7 +551,7 @@ class Test:
         self.interrupts = []
         self.starte = None
         self.starte_nr = None
-        self.trommel_vor = None      # None | 'LEER' | 'MP': Trommel vor dem Test neu setzen (#TROMMEL=...)
+        self.trommel_vor = None      # None | 'LEER' | 'KEEP' | 'MP': Trommel vor dem Test neu setzen (#TROMMEL=...)
         self._letzte_adr = None
         self._offen = []
         self.zeilen = []
@@ -776,6 +803,7 @@ class Machine:
 
     def __init__(self, trommel):
         self.trommel = trommel
+        self.zt = ZT              # Zusatztrommeln (--C8205Z) oder None
         self.AC = self.BZ = self.AR = self.OR = self.adr = 0
         self.fl = {k: 0 for k in self.FLAGS}
         self.bs_schalter = 0      # Schalterstellung BS (eingerastet = 1); NICHT das Flag fl['BS'] (= Lampe BS: bedingter Stopp wirksam)
@@ -893,6 +921,22 @@ def a001(m):
 
 def a004(m): pass
 
+def zt_befehl(m, w):
+    """--C8205Z: Befehl zzz0 bbbb 601 (Ausgabe HT -> ZT) bzw. 661 (Eingabe ZT -> HT); zzz0 = obere 12 Bit des Befehlswortes."""
+    import c8205_zt
+    zzz0, bbbb = (w >> 21) & MASK12, (w >> 9) & MASK12
+    if (w & 0x1FF) == 0o601:
+        rc = m.zt.ausgabe(zzz0, bbbb, m)
+        if rc == c8205_zt.ZT_KEINE_ANWAHL:
+            m.fl['A'] = 1
+            raise AusgabeHaltOhneGeraet('Ausgabe-Halt: Befehl 601 ohne angewaehlte Zusatztrommel (5k00 030 fehlt); Flag A')
+    else:
+        rc = m.zt.eingabe(zzz0, bbbb, m)
+        if rc == c8205_zt.ZT_KEINE_ANWAHL:
+            m.fl['E'] = 1
+            raise Stub('Eingabe-Halt: Befehl 661 ohne angewaehlte Zusatztrommel (5k00 030 fehlt); Flag E')
+
+
 def a005(m):
     if m.x_fetch:
         m.x_fetch = False
@@ -901,6 +945,8 @@ def a005(m):
         w = m.rd(m.AR)
     m.OR = w & 0x1FF
     m.adr = (w >> 9) & MASK12
+    if m.zt is not None and m.OR in (0o601, 0o661):
+        zt_befehl(m, w)
 
 def a007(m): m.BZ = m.adr
 def a010(m):
@@ -1033,6 +1079,7 @@ RESET = '\033[0m'
 GERAETE = {'leser1': None, 'leser2': None, 'stanzer1': None, 'sw_ausgabe': None, 'k0': None,
            'pruefe_stanzer1': None, 'pruefe_sw_ausgabe': None}
 NO_TERMOUT = False
+ZT = None   # --C8205Z: Zusatztrommeln (c8205_zt.Zusatztrommeln) oder None
 BASP_TEXT = '000000'   # --BASP: Hauptschalter, dann Zusatzschalter 0040, 0100, 0200, 0400, 1000 (1 = EIN); Wirkung noch nicht umgesetzt
 SW_FENSTER = None      # --SW-TERMINAL: SwFenster-Objekt, sonst None
 POLL_SEKUNDEN = 0.5
@@ -1564,6 +1611,9 @@ def a028(m):
     a = m.AR
     if a & 0o4000:
         kanal = {0o7: 0, 0o6: 1, 0o5: 2, 0o4: 3}.get((a >> 6) & 0o7)
+        if kanal is None and m.zt is not None and (a >> 9) == 0o5 and (a & 0o77) == 0 and 1 <= ((a >> 6) & 7) <= 4:
+            m.zt.anwahl((a >> 6) & 7)     # --C8205Z: 5k00 030 = Anwahl Zusatztrommel k (Kanalflags unveraendert)
+            return
         if kanal is None:
             m.fl['A'] = 1
             raise Stub(f'Anwahlbefehl {octs(a,4)}: a2 < 4 nicht definiert; Flag A bleibt gesetzt')
@@ -1605,7 +1655,7 @@ def a017(m):
         else:
             m.stanzer.stanze(int(z[3], 8))
     else:
-        raise Stub('Ausgabe-Halt ohne Ausgabegeraet (Kanal K0, K3 oder keine Anwahl); nach der Originaldokumentation 4.3.2.5 '
+        raise AusgabeHaltOhneGeraet('Ausgabe-Halt ohne Ausgabegeraet (Kanal K0, K3 oder keine Anwahl); nach der Originaldokumentation 4.3.2.5 '
                    'stoppt der Rechner mit gesetztem Flag A (Lampe A)')
     m.fl['A'] = 0
 
@@ -1935,10 +1985,37 @@ def lade_nur(test, trommel):
     """Programm der Testdatei auf die Trommel bringen (--LOADONLY): #TROMMEL=-Marke, dann Abschnitt Trommeldatei:; sonst nichts."""
     if test.trommel_vor == 'LEER':
         trommel.setze_inhalt({})
+        if ZT is not None:
+            ZT.leeren()
     elif test.trommel_vor in TROMMEL_VORLAGEN:
         trommel.setze_inhalt(lies_trommelabbild(trommelvorlage_pfad(test.trommel_vor)))
+        if ZT is not None:
+            ZT.leeren()
     trommel.uebertrage_aus_testdatei(test.mem)
     trommel.datei.flush()
+
+
+def _kuerze_wiederholung(zeilen, max_periode=200, min_wiederholungen=3):
+    """Entfernt am Ende der Protokollzeilen die von hinten betrachtet gleichen Wiederholungen.
+
+    Sucht die kleinste Periode p (1 bis max_periode Zeilen), mit der sich das Ende der Liste mindestens
+    min_wiederholungen-mal wiederholt; behalten wird nur die letzte Periode, davor steht eine Hinweiszeile.
+    Wirkt nur auf die Protokollzeilen (zeilen wird verkuerzt), nicht auf den Ablauf."""
+    n = len(zeilen)
+    bester = None
+    for p in range(1, min(max_periode, n // min_wiederholungen) + 1):
+        k = 1                                  # Zahl der gleichen Perioden am Ende
+        while (k + 1) * p <= n and zeilen[n - (k + 1) * p:n - k * p] == zeilen[n - p:n]:
+            k += 1
+        if k >= min_wiederholungen and (bester is None or (k - 1) * p > (bester[1] - 1) * bester[0]):
+            bester = (p, k)
+    if bester is None:
+        return
+    p, k = bester
+    letzte = zeilen[n - p:]
+    del zeilen[n - k * p:]
+    zeilen.append(f'  ... {k - 1}-mal dieselben {p} Zeile(n) weggelassen (Wiederholung am Ende, Knotenlimit); es folgt die letzte:')
+    zeilen.extend(letzte)
 
 
 def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=False):
@@ -1993,6 +2070,8 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
                       f'BZ={octs(m.BZ,4)} AC={octs(m.AC,11)} F\u00dc={f["FUE"]} '
                       f'V1={f["V1"]} V2={f["V2"]} V3={f["V1"] & f["V2"]}')
 
+    io_stand = {'jetzt': False, 'vorher': False}   # E/A-Anweisung (017 Ausgabe, 032 Eingabe) im laufenden / im vorigen Befehl ausgefuehrt
+
     def exec_node(node):
         n = graph[node]
         typ = n['typ']
@@ -2000,6 +2079,9 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
         br_nach = None
         if node == 2:
             br_zeile(2)
+            io_stand['vorher'], io_stand['jetzt'] = io_stand['jetzt'], False   # neuer Befehl (Phase I)
+        if typ == 'Anweisung' and n['anw'] in (17, 32):
+            io_stand['jetzt'] = True
         try:
             if typ == 'Konnektor':
                 bez = n['text']
@@ -2088,7 +2170,7 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
     kopf.append('')
     kopf.append('== 1. Ausgangsbedingungen ==')
     kopf.append('Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):')
-    kopf += ['  ' + z for z in test.zeilen]
+    kopf += ['  ' + z for z in sorted(test.zeilen, key=lambda z: int(z[:4], 8))]   # nach Adresse sortiert (nur Ausgabe)
     for x, text in test.dok:
         kopf.append(f'  #DOK-{octs(x,4)} {text}')
     for x, s0, e0 in test.spei:
@@ -2101,6 +2183,8 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
         kopf.append(f'  #BZ={octs(test.bz_init,4)}')
     if test.trommel_vor == 'LEER':
         kopf.append('  #TROMMEL=LEER (Trommel vor dem Test geleert: alle 4096 Zellen = 0; danach die Zeilen von Trommeldatei:)')
+    elif test.trommel_vor == 'KEEP':
+        kopf.append('  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)')
     elif test.trommel_vor in TROMMEL_VORLAGEN:
         kopf.append(f'  #TROMMEL={test.trommel_vor} (Trommel vor dem Test mit dem Abbild "{TROMMEL_VORLAGEN[test.trommel_vor]}" belegt; danach die Zeilen von Trommeldatei:)')
     if basp_text():
@@ -2164,7 +2248,13 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
     while not m.halted:
         zaehl += 1
         if zaehl > max_knoten:
-            fehler = 'Abbruch: Knotenlimit erreicht (Endlosschleife?)'
+            if io_stand['jetzt'] or io_stand['vorher']:
+                # Eingabe- oder Ausgabe-Halt aktiv: der Rechner arbeitet ein Geraet ab (Dauerausgabe/Warten), keine Endlosschleife
+                ende_grund = ('Knotenlimit erreicht bei aktivem Eingabe-/Ausgabe-Befehl (Rechner arbeitet am Geraet, '
+                              'kein Fehler)')
+                _kuerze_wiederholung(zeilen)
+            else:
+                fehler = 'Abbruch: Knotenlimit erreicht (Endlosschleife?)'
             break
         if node == 2 and ir_tab:
             if cur is not None and cur in ir_tab and m.BZ == ((cur + 1) & MASK12):
@@ -2339,7 +2429,7 @@ def _modus_aus_argv(argv):
 
 
 def main():
-    global NO_TERMOUT, SW_FENSTER, BASP_TEXT
+    global NO_TERMOUT, SW_FENSTER, BASP_TEXT, ZT
     here = os.path.dirname(os.path.abspath(__file__))
     modus = _modus_aus_argv(sys.argv[1:]).upper()
     if modus not in ('TEST', 'GRAFIK'):
@@ -2403,6 +2493,9 @@ def main():
     ap.add_argument('--LOADONLY', '--loadonly', action='store_true', default=False, dest='loadonly',
                     help='Programm der Testdatei nur auf die Trommel laden (Marke #TROMMEL=, Abschnitt Trommeldatei:) und sofort mit Rueckkehrcode 0 '
                     'beenden: keine Tastenfolge, kein Programmlauf, keine Pruefung, kein Protokoll (Standard: aus)')
+    ap.add_argument('--C8205Z', '--c8205z', dest='c8205z', nargs='?', const='', default=None, metavar='VERZ',
+                    help='Zusatztrommeln des C 8205Z einschalten (Standard: aus): 5k00 030 waehlt ZT k (1..4), zzz0 bbbb 601 gibt die HT-Spur bbbb auf die '
+                    'ZT-Spur zzz0 aus, zzz0 bbbb 661 liest sie zurueck. Die Trommeln liegen als zt1.txt .. zt4.txt in VERZ (Standard: Trommel/ZT/). Nur TEST')
     ap.add_argument('--zwischenablage', choices=['auto', 'tk', 'system'], default='auto', metavar='auto|tk|system',
                     help='Kopierverfahren des Fensters "SW Ausgabe" (nur mit --SW-TERMINAL): auto = zuerst Systemprogramm '
                     '(Windows: Win32-API; Linux: wl-copy, xsel, xclip; macOS: pbcopy), dann Tk; tk = nur Tk-Zwischenablage; '
@@ -2472,6 +2565,15 @@ def main():
     except KonfigFehler as e:
         vp(f'\nFEHLER: Trommeldatei "{args.trommel}" kann nicht geoeffnet werden: {e}')
         sys.exit(16)
+    if args.c8205z is not None:
+        if here not in sys.path:
+            sys.path.insert(0, here)      # python3 -I nimmt den Skriptordner nicht in den Suchpfad auf
+        import c8205_zt
+        try:
+            ZT = c8205_zt.Zusatztrommeln(args.c8205z or os.path.join(here, 'Trommel', 'ZT'), Trommel, schreibe_leere_trommeldatei)
+        except KonfigFehler as e:
+            vp(f'\nFEHLER: Zusatztrommeln (--C8205Z) nicht zu oeffnen: {e}')
+            sys.exit(16)
 
     rc = 0
     try:
@@ -2508,6 +2610,8 @@ def main():
                 continue
             if t.trommel_vor == 'LEER':
                 tp('Trommel: vor dem Test geleert (#TROMMEL=LEER)')
+            elif t.trommel_vor == 'KEEP':
+                tp('Trommel: unveraendert, Stand des vorigen Laufs (#TROMMEL=KEEP)')
             elif t.trommel_vor in TROMMEL_VORLAGEN:
                 tp(f'Trommel: vor dem Test mit dem Abbild "{TROMMEL_VORLAGEN[t.trommel_vor]}" belegt (#TROMMEL={t.trommel_vor})')
             if args.loadonly:
@@ -2586,6 +2690,8 @@ def main():
                    f'(Datei entsteht nur bei #PROT STUFE=2).')
     finally:
         trommel.schliessen()
+        if ZT is not None:
+            ZT.schliessen()
         if SW_FENSTER is not None:
             SW_FENSTER.ende()
 

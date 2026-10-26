@@ -6,6 +6,7 @@ Trommeldatei:
 #SPEI-0001 3010-3010
 #SPEI-0001 3023-3023
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003010211 # 211 d3010 ; <AC>:=a (Vorbereitung: AC muss laut Aufgabe schon a enthalten)
 0001: 00003000000 # 000 m3000 ; Sprung zum Programmbeginn der Aufgabe in Zelle 3000
 3000: 00003006644 # m3000: 644 d3006 ; <AC>:=4a, <3006>:=a, <3023>:=2a
@@ -15,3 +16,8 @@ Trommeldatei:
 3010: 77777777775 # d3010: dw 077777777775 ; a = -3 (Zweierkomplement, 33 Bit)
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3004 AC=77777777742 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3006: 77777777775
+3010: 77777777775
+3023: 77777777772

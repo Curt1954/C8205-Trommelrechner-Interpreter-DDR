@@ -12,4 +12,6 @@
 ende:          end
 
 ; Pruefungen:
+;#PRUEFE-START
 ; --pruefe-sw-ausgabe test_vorspann-sw-ausgabe.txt
+;#PRUEFE-ENDE

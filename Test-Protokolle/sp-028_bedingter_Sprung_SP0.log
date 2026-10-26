@@ -12,6 +12,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0007: 00000000020
   3000: 40000000005
   #DOK-0001 Bedingter Sprung mit Rueckkehrabsicht bei SP=0 (nicht genommen): keine Verschiebung, Loeschung nach L
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: SP=0 H G R
   SP : Schalter SP geloest -> Flag SP := 0

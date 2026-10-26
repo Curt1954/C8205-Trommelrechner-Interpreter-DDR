@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001 Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=1 b=2 c=3, Summe 6 ohne Ueberlauf
 #SPEI-0001 3000-3003
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003005000 # m0000: 000 m3005 ; Sprung zum Programmanfang
 3000: 00000000001 # d3000: dw 01 ; a
 3001: 00000000002 # d3001: dw 02 ; b
@@ -20,3 +21,9 @@ Trommeldatei:
 3016: 00000000020 # 020 0 ; unbedingter Stop
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3017 AC=00000000006 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000000001
+3001: 00000000002
+3002: 00000000003
+3003: 00000000006

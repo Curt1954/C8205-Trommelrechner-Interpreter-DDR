@@ -2,6 +2,7 @@
 ; #DOK-0001 Trennung des Maschinenwortes in Teilwoerter (Programmieranleitung 5.7)
 ; #SPEI-0001 3000-3004
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -34,10 +35,12 @@ d7721:          abs     07721
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3020 AC=77760000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 52526317434
 ; 3001: 52520000000
 ; 3002: 31460000000
 ; 3003: 70700000000
 ; 3004: 77760000000
+;#PRUEFE-ENDE
 ;

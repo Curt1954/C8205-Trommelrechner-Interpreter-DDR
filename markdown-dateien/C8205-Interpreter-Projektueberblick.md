@@ -1,6 +1,6 @@
 # C8205-Interpreter: Projektüberblick
 
-Version: 0.95-002
+Version: 0.95-003
 
 Dieses Dokument richtet sich an Menschen, die das Projekt nicht im Detail verfolgt haben, und
 beschreibt zusammenhängend, was hier entsteht und wie die Einzeldokumente zueinander stehen. Es
@@ -115,8 +115,9 @@ Minimalprogramm; weitere Bausteine sind noch nicht erfasst (`C8205-Interpreter-B
 **Beziehung zu den anderen Teilprojekten:**
 
 - Die Gleitkomma-, Festkomma- und Tetradendarstellung der Zahlen sowie ihre externe Darstellung sind
-  Konventionen des BIS (`C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md`), nicht der
-  Rechner-Hardware.
+  Konventionen von Programmen, nicht der Rechner-Hardware. Die Übersicht und die Wortdeutungen (ganze Festkommazahl, interne
+  Gleitkommadarstellung) stehen in `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md`, die externe Darstellung und
+  die Tetraden des BIS in `C8205-Interpreter-BIS.md` (Abschnitt BIS-1.1).
 - Der Objektcode des Assemblers (K1K2-Format, Abschnitt 3) ist für das KEP bestimmt, also für den ersten
   Baustein des BIS.
 - Interpreter und Assembler kennen das BIS nicht: Es ist kein Teil der simulierten Hardware. Anmerkung
@@ -208,7 +209,7 @@ zusätzlich zu den inhaltlichen Einzeltests.
 | `C8205-Interpreter-Magnettrommel.md` | Speicherorganisation der Trommel (128 Spuren × 32 Sektoren), Interleaving/physische vs. logische Sektoradresse, Bahnsperrenschalter; Nachbildung im Interpreter als persistente Datei |
 | `C8205-Interpreter-Bedienpult_mit_Schaltern.md` | Bedienelemente: Tasten, Schalter, Kanalanwahl, Wirkung auf Register/Flags |
 | `C8205-Interpreter-Lochstreifenleser.md` | Hardwarebeschreibung Lochbandleser, -stanzer und Schreibwerk (Kanäle, Ablauf einer Zeichen-Ein-/Ausgabe) |
-| `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md` | Register (AC, BZ, AR, OR, BR), Flags, Maschinenwort- und Befehlswortaufbau (Bitfelder) |
+| `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md` | Register (AC, BZ, AR, OR, BR), Flags, Maschinenwort- und Befehlswortaufbau (Bitfelder), Übersicht der Zahlendarstellungen |
 | `C8205-Interpreter-Eingänge_der_Knoten.md` | Der Knotengraph selbst: alle Knoten (Konnektor/Phasenzuordnung/Anweisung/Test), Ein-/Ausgänge, Verzweigungen |
 | `C8205-Interpreter-Beschreibung_der_Knoten.md` | Variablentabelle T2: Bedeutung jeder ANWEISUNG-nnn, die im Knotengraph referenziert wird |
 | `C8205-Interpreter-Befehlsliste.md` | Generische Befehlsbeschreibung nach B/A/Z sowie die vollständige, nach Oktalcode geordnete Einzelbefehlsübersicht (372 Befehle) |

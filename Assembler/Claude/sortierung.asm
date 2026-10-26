@@ -65,3 +65,12 @@ feld:           dw      010021054460 ; HABERL
                 dw      013300654600 ; KLAUS
                 dw      011206050000 ; IHLE
 ende:           end
+
+; Sollwerte von Hand hergeleitet. Feld aufsteigend sortiert: HABERL, IHLE, KLAUS, KOREHN (Zellen 0062 bis 0065); AC = n = 4 Adresseneinheiten.
+;#PRUEFE-START
+; BZ=0060 AC=00000004000 US=1
+; 0062: 10021054460   # HABERL
+; 0063: 11206050000   # IHLE
+; 0064: 13300654600   # KLAUS
+; 0065: 13371052070   # KOREHN
+;#PRUEFE-ENDE

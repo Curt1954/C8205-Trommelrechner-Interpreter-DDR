@@ -1,6 +1,7 @@
 ; 0023-Ueberlaufsprung.asm  -  symbolisches Assemblerprogramm zu Testdatei 0023-Ueberlaufsprung.txt
 ; #DOK-0002 Test Ueberlaufsprung 070 bei vorhandenem Ueberlauf: Sprung nach 0010 und Ueberlauf wird geloescht
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -23,9 +24,11 @@ d3001:          dw      01
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0011 AC=40000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 0010: 00000000020
 ; 3000: 37777777777
 ; 3001: 00000000001
+;#PRUEFE-ENDE
 ;
 ;

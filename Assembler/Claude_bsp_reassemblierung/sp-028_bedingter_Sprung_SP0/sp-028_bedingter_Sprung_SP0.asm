@@ -1,6 +1,7 @@
 ; sp-028_bedingter_Sprung_SP0.asm  -  symbolisches Assemblerprogramm zu Testdatei sp-028_bedingter_Sprung_SP0.txt
 ; #DOK-0001 Bedingter Sprung mit Rueckkehrabsicht bei SP=0 (nicht genommen): keine Verschiebung, Loeschung nach L
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -23,5 +24,7 @@ m0010:          abs     010
 ; SP=0 H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0010 AC=40000000005 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+;#PRUEFE-ENDE
 ;

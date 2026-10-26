@@ -1,0 +1,6 @@
+# Nach R: neues Kennzeichen 0 0 5 . und Schlusszeichen :
+0
+0
+5
+.
+:

@@ -3,11 +3,12 @@ Test wr-001_Leser_WR
 == 1. Ausgangsbedingungen ==
 Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0000: 00002000000
+  0052: 00000000007
   2000: 00004600030
   2001: 00000000010
   2002: 00000000020
-  0052: 00000000007
   #DOK-0001 Lochbandeingabe von WR (Wagenrücklauf ohne Zeilenschaltung): Eingabeadresse 0052, Lochbild 01001010, keine Sprung-Umstellung
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

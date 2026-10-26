@@ -1,10 +1,9 @@
 ; bsp_6_2_1_ganze_zahlen_multiplikation.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_2_1_ganze_zahlen_multiplikation.txt
-; #DOK-0001 Ganze Festkommazahlen: Multiplikation positiver ganzer Zahlen (Programmieranleitung 6.2.1), Zahlenbeispiel des Buches b=101,
-;   a=1011 (dual), a*b=110111 (dual; das Buch nennt im Text 10 111, die Tabelle zeigt richtig 0110111)
-; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3006>, b=<3007>, Arbeitsspur 7700; 7700 444 Transport von a, je Zelle um ein Bit nach
-;   links verschoben (a(i)=a*2^i); 7700 472 Teilprodukte b(i)*a(i); 7700 410 Summierung
+; #DOK-0001 Ganze Festkommazahlen: Multiplikation positiver ganzer Zahlen (Programmieranleitung 6.2.1), Zahlenbeispiel des Buches b=101, a=1011 (dual), a*b=110111 (dual; das Buch nennt im Text 10 111, die Tabelle zeigt richtig 0110111)
+; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3006>, b=<3007>, Arbeitsspur 7700; 7700 444 Transport von a, je Zelle um ein Bit nach links verschoben (a(i)=a*2^i); 7700 472 Teilprodukte b(i)*a(i); 7700 410 Summierung
 ; #DOK-0001 erwartet <AC> = a*b = 11*5 = 55 (dezimal) = 00000000067 (oktal), das Produkt liegt im Zahlenbereich
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -30,6 +29,7 @@ d7700:          abs     07700
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3006 AC=00000000067 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3006: 00000000013
 ; 3007: 00000000005
@@ -65,4 +65,5 @@ d7700:          abs     07700
 ; 7731: 00000000000
 ; 7706: 00000000000
 ; 7723: 00000000000
+;#PRUEFE-ENDE
 ;

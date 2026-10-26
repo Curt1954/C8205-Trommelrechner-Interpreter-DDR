@@ -2,6 +2,7 @@
 ; #DOK-0001 Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp
 ; --leser1 Test-virtuelleGeraete/Leser1/lb-002_ohne_Irrung_Zeichen.txt
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -22,5 +23,7 @@ go:             030     04600                    ; Anwahl Kanal 1 (Leser 1)
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=2003 AC=00000000001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+;#PRUEFE-ENDE
 ;

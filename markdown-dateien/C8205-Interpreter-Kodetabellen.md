@@ -1,12 +1,13 @@
 # Kodetabellen
 
-Version: 0.95-002
+Version: 0.95-004
 
 Die Zeichenkode-Tabellen des C 8205: R 300-Lochstreifenkode (Tabelle 1) und externer R 300-Code (Tabelle 2).
 
 ## Inhaltsverzeichnis
 
 - [1 Tabelle 1 — Lochstreifenkode (R 300)](#1-tabelle-1--lochstreifenkode-r-300)
+
  - [1.1 Spalten und Bedeutung](#11-spalten-und-bedeutung)
  - [1.2 Verwendung durch Leser und Stanzer](#12-verwendung-durch-leser-und-stanzer)
  - [1.3 Lochbilder und Konsistenzprüfung](#13-lochbilder-und-konsistenzprüfung)
@@ -16,6 +17,7 @@ Die Zeichenkode-Tabellen des C 8205: R 300-Lochstreifenkode (Tabelle 1) und exte
  - [1.7 Auffälligkeiten](#17-auffälligkeiten)
  - [1.8 Verprobung mit dem kleinen Eingabeprogramm (KEP)](#18-verprobung-mit-dem-kleinen-eingabeprogramm-kep)
 - [2 Tabelle 2 — Externer R 300-Code für C 8205](#2-tabelle-2--externer-r-300-code-für-c-8205)
+
  - [2.1 Geltungsbereich und Spalten](#21-geltungsbereich-und-spalten)
  - [2.2 Die Tabelle](#22-die-tabelle)
  - [2.3 Abgleich mit Tabelle 1](#23-abgleich-mit-tabelle-1)
@@ -79,6 +81,7 @@ keiner Zeile mit einem Punkt besetzt (auch nicht bei "Transport"). Sie ist die T
 keine Information (s. Lochstreifenleser, A4).
 
 **Konsistenzprüfung (maschinell, alle 55 Zeilen):**
+
 - In 54 von 55 Zeilen ist die Anzahl der Lochungen **ungerade** (Parität
  ungerade; **p** ergänzt die Datenspuren zu ungerader Zahl). Ausnahme:
  "Irrung Zeichen" (8 Lochungen, gerade); es wird bei der Eingabe von der Paritätsprüfung ausgeschlossen

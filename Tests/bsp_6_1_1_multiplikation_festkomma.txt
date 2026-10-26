@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; 7700 440 Transport auf alle Zellen, 7700 472 Teilprodukte, 7700 412 Summierung; das exakte Produkt ist 0,101111001101 (dual)
 #DOK-0001 erwartet <AC> = a*b = 27464000000 (oktal), Teilprodukte b(i)*a in den 32 Zellen der Arbeitsspur 7700
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
 # Programm 6.1.1; Arbeitsspur 7700 (die Zellen der Spur werden vom Gruppenbefehl beschrieben)

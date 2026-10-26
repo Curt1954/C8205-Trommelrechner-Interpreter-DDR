@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001 Tastenfolge ST R ohne vorheriges G: Der Rechner steht nicht im Stopp (US = 0, BS = 0), ST ist elektronisch verriegelt und ohne Wirkung.
 #DOK-0002 Der Ablauf beginnt bei Konnektor B mit BZ = 0: Zelle 0000 (Stopp, Adresse 0005) wird entnommen, BZ = 0001, AR = 0005. Zelle 0000 bleibt unverändert (bei wirksamem ST würde der Transport sie mit AC = 0 überschreiben).
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00000005020 # Stopp 020 mit Adreßteil 0005
 
 Tastenfolge:

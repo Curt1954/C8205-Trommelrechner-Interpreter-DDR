@@ -9,6 +9,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3000: 37777777777
   3001: 00000000001
   #DOK-0002 Test Halt wegen Ueberlauf: nach einem Ueberlauf folgt kein Ueberlaufsprung, nur FUE ist gesetzt (weder US noch BS)
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

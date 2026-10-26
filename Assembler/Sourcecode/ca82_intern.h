@@ -206,6 +206,7 @@ int isValueInTable(const char *operand, TableRow outUmschluesselungsTable_p[], i
 void copyAndIncrementLineElementsX(int i, char *buffer);
 void copyAndIncrementLineElementsSpOnly(int i, char *buffer);
 void schreibeObjZeile(FILE *objFile, const char *zeile);
+void schreibeLochbilder(FILE *f, const char *text);
 void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int no_kbgb ,int iii);
 int zaehleText(char operand[], int no_kbgb);
 void dzAuswertung(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii);

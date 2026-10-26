@@ -1,0 +1,14 @@
+# K1 = 1 mit sofortigem Punkt ist der Befehl 0 (Sprung nach 0000): 2 1 2000 . 0 0 5 . 1 .
+2
+1
+2
+0
+0
+0
+.
+0
+0
+5
+.
+1
+.

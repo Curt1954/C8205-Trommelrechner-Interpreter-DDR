@@ -5,6 +5,7 @@ Trommeldatei:
 #SPEI-0001 4034-4041
 #SPEI-0001 4106-4113
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 # Programm 5.16 (Programmanfang in Zelle 3000, wie im Buch; Start über 0000)
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang

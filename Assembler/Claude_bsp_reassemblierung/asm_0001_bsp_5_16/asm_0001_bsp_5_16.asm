@@ -3,6 +3,7 @@
 ; #SPEI-0001 2027-2033
 ; #SPEI-0001 2100-2104
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -14,7 +15,7 @@
 go:             000     beginn
 aqv:            da      qvektor                  ; Adrese der ersten Komponente Quellvektor
 dqv:            dw      05000                    ; Dimension von qvektor gezählz in Adreßeinheiten
-azv:            da      d2100                    ; Adresse der ersten Komponente Zielvektor
+azv:            dw      d2100                    ; Adresse der ersten Komponente Zielvektor
 adreinheit:     dw      01000                    ; Adresseinheit
 spbef:          dw      0240                     ; Speicherbefehl
                 equ     02007
@@ -49,6 +50,7 @@ d2100:          abs     02100
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=2027 AC=00000005000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
 ;
 ; 2027: 00000000001
@@ -61,5 +63,6 @@ d2100:          abs     02100
 ; 2102: 00000000003
 ; 2103: 00000000004
 ; 2104: 00000000005
+;#PRUEFE-ENDE
 ;
 ;

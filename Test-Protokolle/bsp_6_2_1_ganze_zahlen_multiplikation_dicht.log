@@ -14,6 +14,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Ganze Festkommazahlen: Multiplikation positiver ganzer Zahlen (Programmieranleitung 6.2.1), a und b mit vielen gesetzten Bits, Produkt knapp unter 2^32
   #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3006>, b=<3007>, Arbeitsspur 7700; 7700 444 Transport von a, je Zelle um ein Bit nach links verschoben (a(i)=a*2^i); 7700 472 Teilprodukte b(i)*a(i); 7700 410 Summierung
   #DOK-0001 erwartet <AC> = a*b = 1240659*3000 = 3721977000 (dezimal) = 33566156250 (oktal), das Produkt liegt im Zahlenbereich
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

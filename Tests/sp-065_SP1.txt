@@ -5,6 +5,7 @@ Trommeldatei:
 0010: 00000000020
 3000: 00000000005
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 Tastenfolge:
 SP=1 H G R
 

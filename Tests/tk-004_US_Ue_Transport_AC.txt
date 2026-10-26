@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0002 Ausgeführt wird BR = 7777 240: ⟨7777⟩ := AC = 00000002000, AC und danach der Befehlsablauf bei BZ = 1 unverändert.
 #DOK-0003 Zelle 0001 (Stopp, Adresse 0010) wird entnommen: BZ = 0002, AR = 0010.
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0001: 00000010020 # Stopp 020 mit Adreßteil 0010
 7777: 00000000555 # wird mit AC überschrieben
 

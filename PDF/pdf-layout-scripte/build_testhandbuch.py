@@ -745,16 +745,12 @@ class Beispiele:
         with open(log, encoding='utf-8') as f:
             return rc, out, [l.rstrip() for l in f.read().split('\n')]
 
-    MINIMAL = 'Tests/pj2-bis_minimalprogramm.test'
+    MINIMAL = 'Tests/pj2-bis_minimalprogramm_v6.test'
 
     def bis_lauf(self, test, extra=()):
-        """Wie c8205_bis_test.sh: erst das Minimalprogramm laden (ohne Zurücksetzen der Trommel), dann der Test."""
-        self.lauf(self.MINIMAL)
-        return self.lauf(test, extra)
-
-    def bis_lauf(self, test, extra=()):
-        """Wie c8205_bis_test.sh (2f): erst das Minimalprogramm laden, dann den Test; liefert (rc, Ausgabe) des Tests."""
-        self.lauf('Tests/pj2-bis_minimalprogramm.test', ['--NO-TERMOUT'])
+        """Wie c8205_bis_test.sh (11.4): erst das Minimalprogramm v6 nur laden (--LOADONLY), dann den Test;
+        liefert (rc, Ausgabe) des Tests."""
+        self.lauf(self.MINIMAL, ['--LOADONLY', '--NO-TERMOUT'])
         return self.lauf(test, extra)
 
     def erwartet_falsch(self, test):
@@ -2412,9 +2408,8 @@ def kap10_3(S, ex):
                                                              'aktuellen Ordner auf'],
         ['`compute_all_tests.sh`', 'Sammellauf (11.1); braucht den Wrapper, `Tests/`, `Test-Ergebnisvergleiche/`, '
                                    '`Test-virtuelleGeraete/Stanzer1/` und `erzeuge_leere_trommel.py`'],
-        ['`c8205_bis_test.sh`, `test_bis.sh`, `test.sh`', 'Tests der BIS-Bausteine (11.4): erst das Minimalprogramm laden, '
-                                                          'dann den eigentlichen Test; `test_bis.sh` und `test.sh` rufen '
-                                                          'den Wrapper für jeden Test auf'],
+        ['`c8205_bis_test.sh`', 'Tests der BIS-Bausteine (11.4): erst das Minimalprogramm v6 nur laden '
+                                                          '(`--LOADONLY`), dann den eigentlichen Test'],
         ['`c8205_befehlssweep.py`', 'Vollständigkeitstest über alle 512 Operationscodes (11.3)'],
     ], wd(3.4, 6.6))
     S += [P('**Nicht nötig:** alle übrigen `.md`-Dateien (Dokumentation und Regelwerk für den Claude-Interpreter; der '
@@ -2456,13 +2451,24 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
                                 '(r300_eingabe, RE-001); dazu Klickspur und Sollfolge'),
             ('sw_', 'sw_…', 'Eingabe über das Schreibwerk SW (sw_eingabe, sw_eingabe_k2, sw_eingabe_lage, '
                             'sw_zwei_ziffern)'),
-            ('betrag', 'betrag.test', 'Betragsbildung (z = -|a+b| + |-b+c| + |-c+d|, erwartet z = 1)'),
+            ('betrag', 'betrag…', 'Betragsbildung (z = -|a+b| + |-b+c| + |-c+d|, erwartet z = 1; betrag, betrag-2, '
+                                 'betrag_betrag)'),
+            ('asm-einzel', 'bedsprung, code, mini, sortierung, deepseek_asm_…',
+             'Einzeltests aus Assemblerläufen und Probeprogrammen ohne Namenspräfix (bedingter Sprung, Codetabelle, '
+             'Marke allein, Minimalbeispiel, Sortierung, vier Programme aus der Fremdprüfung deepseek_asm_20261007)'),
+            ('test_vorspann', 'test_vorspann…', 'Vorspann der Tests (Abschnitt 4): Druck von BZ und AC, Standardvorspann, '
+                                                'Start mit `#STARTE`'),
             ('namen_raten', 'namen_raten.test', 'Programmbeispiel Namen raten (Assembler-Projekt 1, `Assembler/Projekt_1/namen_raten`)'),
             ('lb-', 'lb-…', 'Lochband: Irrung Zeichen übersprungen (lb-001), ohne Irrung (lb-002), Paritätsfehler (lb-003)'),
             ('pj2-', 'pj2-…', 'Programmbeispiele: ggT nach Euklid, Maximum von drei Zahlen (vier Fälle), Vertauschung '
                               'zweier Zahlenfelder; dazu das Minimalprogramm des BIS als .test-Datei'),
-            ('pj2-bis', 'pj2-bis_…', 'Tests der BIS-Bausteine (11.4): Befehlsdruck, Adressendruck, Adresseneingabe, Druck '
-                                     'von BZ und AC; setzen das Minimalprogramm auf der Trommel voraus'),
+            ('pj2-bis', 'pj2-bis_…', 'Tests der BIS-Bausteine des Minimalprogramms v6 (11.4): Triadendruck, Adressdruck, Befehlsdruck, '
+                                     'Druck von BZ und AC, Adresseneingabe, Wort mit Kennzeichen, Programmstück; jeder '
+                                     'Test trägt das Abbild des Minimalprogramms selbst'),
+            ('v6_', 'v6_…', 'Bausteine des BIS-Minimalprogramms v6 (Triadendruck, Adressdruck, Befehlsdruck, Adresseneingabe, '
+                            'Wort mit Kennzeichen, Programmstück): v6_druck, v6_leitadressen, v6_programmstueck, v6_worte '
+                            'und v6_test_adresse, _druck, _progst, _wort; Treiber stehen auf Zellen, die nicht mit dem '
+                            'Minimalprogramm kollidieren'),
             ('sN-', 's1-R1 bis s4-spur', 'Vorzeichenbit und X-Abbruch beim verkürzten Gruppen-Transport (s1-R1: Rechtsverschiebung, '
                                          's2-R2: Linksverschiebung, s3-neg: AC schon vor der ersten Zelle negativ); '
                                          's4-spur: Ausgabe einer ganzen Spur mit `#SPUR` (3.2)'),
@@ -2470,6 +2476,8 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
             ('tk-', 'tk-…', 'Tastenfolgen (Tabelle unten): jeder Test belegt eine Festlegung aus 4.3 bis 4.5'),
             ('ac/bz', 'ac-…, bz-…, acbz-…', 'Anfangswerte `#AC=` und `#BZ=` (3.6): AC vorbelegt, BZ vorbelegt mit `G`, '
                                            'mit `M` und `E`, beide zusammen, mit `Ü` und `E`'),
+            ('knotenlimit_', 'knotenlimit_…', 'Knotenlimit bei Ein-/Ausgabe: Endlosschleife mit Ausgabe auf SW endet am Knotenlimit '
+                                              'ordnungsgemäß (`Test wahr`), das Protokoll ist gekürzt (knotenlimit_ausgabeschleife)'),
             ('int-', 'int-…', 'Unterbrechung mit `#INTERRUPT` (4.7): Fortsetzung mit `H R`, Ende mit `G Ü E`'),
             ('st-', 'st-…', 'Makro `#STARTE` (4.6): `#STARTE 4`, Gegenprobe mit ausgeschriebener Tastenfolge, '
                             '`#STARTE 12` (oktal) und `#STARTE 1000` zusammen mit der Druckroutine bzw. dem Minimalprogramm'),
@@ -2481,13 +2489,24 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
                                      '(`ziffern_uebergehen`)')]
 
 
+# Einzeltests ohne Namenspräfix, aus Assemblerläufen und Probeprogrammen (Dateiname = Programmname)
+ASM_EINZELTESTS = ('bedsprung.test', 'code.test', 'code_wdhl_bef.test', 'dt_test.test', 'marke_allein.test', 'mini.test',
+                   'sortierung.test')
+
+
 def familie(n):
     if re.match(r'\d{4}[-_]', n):
         return 'NNNN'
-    if n == 'betrag.test':
+    if n.startswith('betrag'):
         return 'betrag'
     if n.startswith('pj2-bis'):
         return 'pj2-bis'
+    if n.startswith('pj2_'):
+        return 'pj2-'               # Programmbeispiele des Projekts 2 (Unterstrich statt Bindestrich)
+    if n.startswith('test_vorspann'):
+        return 'test_vorspann'
+    if n.startswith('deepseek_asm_') or n in ASM_EINZELTESTS:
+        return 'asm-einzel'
     if n.startswith(('ac-', 'acbz-', 'bz-')):
         return 'ac/bz'
     if re.match(r's\d-', n):
@@ -2496,7 +2515,7 @@ def familie(n):
         return 'bdpt1'
     if n == 'namen_raten.test':
         return 'namen_raten'
-    for p in ('asm_', 'bs-', 'bsp_', 'int-', 'k1_', 'lb-', 'pj2-', 'r300_', 'sp-', 'st-', 'sw_', 'tk-', 'trommel-', 'wr-', 'ziffern'):
+    for p in ('asm_', 'bs-', 'bsp_', 'int-', 'k1_', 'knotenlimit_', 'lb-', 'pj2-', 'r300_', 'sp-', 'st-', 'sw_', 'tk-', 'trommel-', 'v6_', 'wr-', 'ziffern'):
         if n.startswith(p):
             return p
     raise ValueError('Testfamilie unbekannt: ' + n)
@@ -2520,8 +2539,8 @@ def erwartet_falsch(pfad):
 def voraussetzung(ex, t):
     """Test, der vorher auf der Trommel laufen muss (laut #DOK-Zeile des Tests), sonst None: das Minimalprogramm des BIS
     (11.4) oder die Druckroutine (asm_druck_tastenfolge)."""
-    if t == os.path.basename(Beispiele.MINIMAL):
-        return None
+    if t == os.path.basename(Beispiele.MINIMAL) or t.startswith('pj2-bis_v6_'):
+        return None             # v6-Tests tragen das Abbild des Minimalprogramms selbst (#TROMMEL=LEER)
     with open(os.path.join(ex.tmp, 'Tests', t), encoding='utf-8') as f:
         dok = ' '.join(l for l in f.read().split('\n') if l.startswith('#DOK'))
     if 'asm_druck_tastenfolge' in dok:
@@ -2565,7 +2584,7 @@ def kap11(S, ex, gl, stand):
     falsch = [t for t, rc in res['dirty'] if rc != 4 and not ok(t, rc)]
     ohne = [t for t, rc in res['reset'] if rc == 4]
     abweichend = [(t, rc) for t, rc in res['reset'] if not ok(t, rc) and rc != 4]
-    nbis = sum(1 for t, _ in res['reset'] if t.startswith('pj2-bis_') and t.endswith('.txt'))
+    nbis = sum(1 for t, _ in res['reset'] if t.startswith('pj2-bis_v6_') and t.endswith('.test'))
     S += h1('11 Referenztests und Regression')
     S += h2('11.1 Testbestand und Gesamtlauf')
     S += [P('Für die Regression liegen in `Tests/` zum Stand %s **%d Tests** (Dateien `*.txt` und `*.test`; davon %d als '
@@ -2587,9 +2606,9 @@ def kap11(S, ex, gl, stand):
               'Soll-Dateien muss `*-sw-ausgabe.txt` heißen, nicht `*-sw-ausgabe.*`: `bsp_seite_42_025-sw-ausgabe.test` '
               'ist ein Test und keine Soll-Datei.')
     S += [P('Weil die Trommel ihren Inhalt behält (3.5), setzt der Gesamtlauf sie vor jedem Test zurück. Tests, die ein '
-            'Programm auf der Trommel voraussetzen (die BIS-Tests und `st-004`: das Minimalprogramm, `st-005`: die '
-            'Druckroutine aus `asm_druck_tastenfolge`; die Voraussetzung steht in der `#DOK`-Zeile), erhalten es durch '
-            'einen vorgeschalteten Lauf (11.4). Der Lauf liefert dann für alle %d Tests den Rückkehrcode 0%s:'
+            'Programm auf der Trommel voraussetzen (`st-005`: die Druckroutine aus `asm_druck_tastenfolge`; die '
+            'Voraussetzung steht in der `#DOK`-Zeile), erhalten es durch einen vorgeschalteten Lauf. Die BIS-Tests '
+            '`pj2-bis_v6_*` brauchen das nicht: Jeder trägt das Abbild des Minimalprogramms selbst (11.4). Der Lauf liefert dann für alle %d Tests den Rückkehrcode 0%s:'
             % (n, (' (außer %s)' % ', '.join('`%s` (4)' % t for t in ohne)) if ohne else ''))]
     zaehl = '\n'.join('%7d %d' % (c, rc) for rc, c in sorted(cr.items()))
     if not abweichend:
@@ -2597,7 +2616,7 @@ def kap11(S, ex, gl, stand):
     S += code('for t in Tests/*.txt Tests/*.test; do\n'
               '  case $t in *-ausgabe.txt|*_erwartet.txt) continue;; esac\n'
               '  python3 erzeuge_leere_trommel.py                 # leere Trommel für jeden Test\n'
-              '  # Tests mit Voraussetzung: vorher das Minimalprogramm laden (BIS-Tests, st-004) bzw. die Druckroutine (st-005)\n'
+              '  # Tests mit Voraussetzung: vorher die Druckroutine laden (st-005); die BIS-Tests pj2-bis_v6_* tragen ihr Programm selbst\n'
               '  python3 c8205_interp.py --MODUS=TEST --NO-TERMOUT --stanzer1 Test-virtuelleGeraete/Stanzer1/ "$t" > /dev/null\n'
               '  echo "$? $(basename $t)"\n'
               'done | awk \'{print $1}\' | sort | uniq -c\n' + zaehl)
@@ -2612,11 +2631,11 @@ def kap11(S, ex, gl, stand):
             'Tests oder des Interpreters.'
             % (', '.join('%d × Code %d' % (c, rc) for rc, c in sorted(cd.items(), key=lambda x: x[0])),
                ', '.join('`%s`' % f for f in falsch) or 'keiner'))]
-    S += note('hinweis', 'Der Sammellauf `compute_all_tests.sh` durchläuft nur `Tests/*.txt` (%d von %d Tests; nicht die %d '
-              '`.test`-Dateien und nicht die %d BIS-Tests `pj2-bis_*.txt`, die mit `test_bis.sh` laufen, 11.4). Er meldet '
+    S += note('hinweis', 'Der Sammellauf `compute_all_tests.sh` durchläuft alle %d `.txt`-Tests und die %d BIS-Tests '
+              '`pj2-bis_v6_*.test` (11.4); die übrigen %d `.test`-Dateien laufen nur in der Schleife oben. Er meldet '
               'jeden Rückkehrcode außer 0 und 4; Code 6 bleibt bei einer Testdatei mit `Prüfungen: False` ungemeldet (5.5). '
               'Die leere Trommel erzeugt er erst nach dem Lauf, nicht vor jedem Test. Für einen Gesamtlauf über alle Tests '
-              'gilt die Schleife oben.' % (ntxt - nbis, n, ntst, nbis))
+              'gilt die Schleife oben.' % (ntxt, nbis, ntst - nbis))
     S += h2('11.2 Referenztests zu den Tastenfolgen (tk-001 bis tk-008)')
     S += [P('Die acht Tests `tk-…` stützen sich auf Festlegungen aus 4.3 bis 4.5. Die Zelle 0000 (bei tk-002 bis tk-005 '
             'auch 0001 und 0002) enthält einen Stopp-Befehl, sodass die Wirkung der Tasten im Endzustand sichtbar wird. '
@@ -2651,79 +2670,75 @@ def kap11(S, ex, gl, stand):
 
 
 def kap11_4(S, ex):
-    S += h2('11.4 Tests der BIS-Bausteine: das Minimalprogramm läuft zuerst')
-    S += [P('Ein Test, der einen Baustein des BIS prüft (z. B. ein Unterprogramm des Minimalprogramms wie Befehlsdruck, '
-            'Adressendruck oder Adresseneingabe), braucht das **Minimalprogramm auf der Trommel**. Das ist für alle '
-            'BIS-Tests der Normalfall und gilt als feste Regel:')]
+    S += h2('11.4 Tests der BIS-Bausteine: das Minimalprogramm v6')
+    S += [P('Ein Test, der einen Baustein des BIS prüft (ein Unterprogramm des Minimalprogramms v6: Triadendruck 0200, '
+            'Adressdruck 0220, Befehlsdruck 0240, Wort mit Kennzeichen 0262, Programmstück 0263, Adresseneingabe 0316), '
+            'braucht das **Minimalprogramm v6 auf der Trommel**. Quelltext ist `Assembler/Projekt_2/'
+            'pj2-bis_minimalprogramm_v6.asm`; die Spezifikation steht in `C8205-Interpreter-BIS.md`. Es gibt zwei Wege:')]
     S += numbered([
-        '**Schritt 1: Minimalprogramm laden.** `./c8205_interpreter.sh Tests/pj2-bis_minimalprogramm.test` belegt die '
-        'Zellen 0000 bis 0337 sowie die Tabelle der Adresseneingabe auf 0400 bis 0434 (Sprung auf das Hauptprogramm in '
-        '0000, Druck von BZ und AC in 0001, die Unterprogramme ab 0040). Der Test ist beliebig oft wiederholbar; er setzt '
-        'vorher nichts zurück. Wer eine saubere Ausgangslage braucht, erzeugt zuerst eine leere Trommel '
-        '(`python3 erzeuge_leere_trommel.py`, 3.5).',
-        '**Schritt 2: der eigentliche Test.** Er liegt mit seinem Hauptprogramm üblicherweise ab Zelle 1000, ruft das '
-        'Unterprogramm über seine feste Ansprungzelle auf und endet mit einem Stopp. Er belegt **keine** Zelle des '
-        'Minimalprogramms (0000 bis 0337), auch nicht 0001: Eine Testzeile `0001: …` überlagert die persistente Trommel '
-        'und bleibt für spätere Tests (3.5).',
-        '**Dokumentation im Test:** Der Test nennt die Voraussetzung in einer `#DOK`-Zeile.',
-        '**Wrapper:** `c8205_bis_test.sh TESTDATEI` führt Schritt 1 und Schritt 2 hintereinander aus; `test_bis.sh` setzt '
-        'dazu die Trommel zurück und ruft den Wrapper für alle BIS-Tests auf.'])
-    S += [P('Aufruf eines Unterprogramms aus dem Hauptprogramm: Der Wert steht in R1 (Register 7773; `211 wert` und '
-            '`240 r1`), der Aufrufer wählt den Ausgabekanal an (`030 4500` für K2; die Ausgabeunterprogramme enthalten '
-            'keinen Anwahlbefehl), dann folgt `025 ansprungzelle`. Die Rückkehr erfolgt in die Zelle hinter dem Aufruf.')]
+        '**Abbild im Test (der Normalfall).** Jeder Test `Tests/pj2-bis_v6_*.test` trägt das Abbild des Minimalprogramms '
+        '(Zellen 0000, 0001, 0040 bis 0377, 0500 bis 0533 und die Arbeitszellen) selbst im Trommelabschnitt, setzt '
+        '`#TROMMEL=LEER` und ist damit auf jeder Trommel reproduzierbar. Das Hauptprogramm des Tests, der Treiber, '
+        'liegt außerhalb dieser Zellen (üblicherweise ab 1000) und endet mit einem Stopp.',
+        '**Minimalprogramm vorher laden.** `c8205_bis_test.sh TESTDATEI` lädt zuerst `Tests/pj2-bis_minimalprogramm_v6.test` '
+        'mit `--LOADONLY` (das Programm kommt nur auf die Trommel; ohne den Schalter startete die Tastenfolge `H G R` das '
+        'Minimalprogramm, und es wartete auf die Tastatur) und führt dann den Test aus. Die Trommel wird dabei nicht '
+        'zurückgesetzt (`python3 erzeuge_leere_trommel.py`, 3.5). Dieser Weg gilt für Tests ohne eingebettetes Abbild.',
+        '**Dokumentation im Test:** Der Test nennt in einer `#DOK`-Zeile, was er prüft; Sollwerte sind von Hand '
+        'hergeleitet, nicht aus einem Lauf übernommen.',
+        '**Übergabe an die Druckprogramme:** Das Wort steht in R1 (Register 7773); das Druckprogramm kopiert es bei Bedarf '
+        'nach 7777 und lässt R1 unverändert (Prüfung `7773` in den Tests `druck_adressdruck` und `druck_befehlsdruck`).'])
+    S += [P('Aufruf eines Druckunterprogramms aus dem Treiber: Der Wert kommt nach R1 (`211 wert`, `240 7773`), der '
+            'Treiber wählt den Ausgabekanal an (`030 4500` für das Schreibwerk; die Druckprogramme enthalten keinen '
+            'Anwahlbefehl) und die Lage (`dz $inkb`: Kleinbuchstaben), dann folgt `025 ansprungzelle`. Die Rückkehr '
+            'erfolgt in die Zelle hinter dem Aufruf.')]
     ex.leere_trommel()
-    rc1, out1 = ex.lauf(ex.MINIMAL)
-    rc2, out2 = ex.lauf('Tests/pj2-bis_befehlsdruck.txt')
-    z1, z2 = zeilen(out1), zeilen(out2)
-    S += [P('Echtes Beispiel `Tests/pj2-bis_befehlsdruck.txt`: Das Hauptprogramm holt den Befehl aus Zelle 1000 '
-            '(`211 1000`, Wort `00001000211`) in den AC, speichert ihn nach R1 und ruft den Befehlsdruck (`025 053`). '
-            'Erwartet wird die Schreibwerk-Ausgabe `1000 211` (ohne Zeilenende), R1 bleibt unverändert, Stopp in 1004 '
-            'mit BZ=1005. V1=V2=1 stammen aus dem letzten Vergleich der Ziffernschleife, nicht aus dem Hauptprogramm. '
-            'Die `#DOK`-Texte sind gekürzt:')]
-    S += code(kompakt(ex.text('Tests/pj2-bis_befehlsdruck.txt')))
-    S += code('$ python3 erzeuge_leere_trommel.py\n'
-              '$ python3 c8205_interp.py --MODUS=TEST Tests/pj2-bis_minimalprogramm.test          # Schritt 1 (Rückkehrcode %d: keine Prüfung)\n' % rc1 +
-              '$ python3 c8205_interp.py --MODUS=TEST Tests/pj2-bis_befehlsdruck.txt               # Schritt 2\n' +
+    rc1, out1 = ex.lauf(ex.MINIMAL, ['--LOADONLY', '--NO-TERMOUT'])
+    test = 'Tests/pj2-bis_v6_druck_befehlsdruck.test'
+    soll = 'Test-Ergebnisvergleiche/pj2-bis_v6_druck_befehlsdruck_erwartet.txt'
+    ex.leere_trommel()
+    rc2, out2 = ex.lauf(test)
+    z2 = zeilen(out2)
+    S += [P('Echtes Beispiel `%s`: Der Treiber holt den Befehl aus Zelle 1000 (`211 1000`, Wort `00001000211`) in den AC, '
+            'legt ihn nach 2100 und in R1 (7773), wählt das Schreibwerk an und ruft den Befehlsdruck (`025 0240`). Erwartet '
+            'wird die Schreibwerk-Ausgabe `1000 211` (ohne Zeilenende), 2100 und R1 unverändert, Stopp in 1006 mit BZ=1007. '
+            'Von der Testdatei sind hier nur die Kopfzeilen und der Treiber gezeigt; die Zellen des Minimalprogramms '
+            '(rund 250 Zeilen) sind ausgelassen:' % test)]
+    zl = ex.text(test).split('\n')
+    kopf = [l for l in zl if not re.match(r'[0-7]{4}:', l)]
+    treiber = [l for l in zl if re.match(r'(1\d{3}|2100|7773):', l)]
+    ersten = [l for l in kopf if not l.startswith(('Prüfungen:', 'BZ=', '2100', '7773'))]
+    pruef = [l for l in kopf if l.startswith(('Prüfungen:', 'BZ='))]
+    S += code(kompakt('\n'.join(ersten[:6] + ['# … Abbild des Minimalprogramms v6: Zellen 0000, 0001, 0040 bis 0377, 0500 bis 0533 …']
+                                 + [l[:100] for l in treiber[:7]] + [''] + pruef + treiber[7:])))
+    S += code('$ python3 c8205_interp.py --MODUS=TEST %s\n' % test +
               kurz(out2, z2[:1], [z2[ab(z2, 'Ende:')]],
                    [z2[ab(z2, 'Ergebnispruefung')], '… (übrige Zeilen alle OK)'] +
                    [l for l in z2 if l.strip().startswith('Schreibwerk:')] + ['Test wahr']) +
-              '\n\n$ cat Test-Ergebnisvergleiche/pj2-bis_befehlsdruck_erwartet.txt\n' +
-              ex.text('Test-Ergebnisvergleiche/pj2-bis_befehlsdruck_erwartet.txt') + '\nRückkehrcode Schritt 2: %d' % rc2)
-    S += [P('**Die zehn Tests `pj2-bis_*`.** Je Test eine Zeile mit dem Ergebnis eines echten Laufs auf leerer Trommel '
-            '(Schritt 1, danach der Test); alle zehn sind `Test wahr`:')]
+              '\n\n$ cat %s\n' % soll + ex.text(soll) + '\nRückkehrcode: %d' % rc2 +
+              '\n\n$ c8205_bis_test.sh <Test ohne eingebettetes Abbild>     # lädt vorher Tests/pj2-bis_minimalprogramm_v6.test'
+              ' --LOADONLY (Rückkehrcode %d)' % rc1)
+    bis = sorted(f for f in os.listdir(os.path.join(ex.tmp, 'Tests')) if f.startswith('pj2-bis_v6_') and f.endswith('.test'))
+    S += [P('**Die %d Tests `pj2-bis_v6_*`.** Je Test eine Zeile mit dem Ergebnis eines echten Laufs (Abbild im Test, '
+            'Trommel zu Beginn geleert); alle sind `Test wahr`. Das Namensmuster nennt den Baustein: `kz_` Wort mit '
+            'Kennzeichen, `ae_` Adresseneingabe, `ps_` Programmstück, `druck_` die Druckprogramme:' % len(bis))]
     rows = [['Test', 'BZ', 'AC', 'Rückkehrcode']]
-    bis = sorted(f for f in os.listdir(os.path.join(ex.tmp, 'Tests')) if f.startswith('pj2-bis_') and f.endswith('.txt'))
     for f in bis:
         ex.leere_trommel()
-        rc, out = ex.bis_lauf('Tests/' + f)
+        rc, out = ex.lauf('Tests/' + f)
         m = re.search(r'Ende: .*?BZ=(\d+) AC=(\d+) AR=(\d+)', out)
-        rows.append([f[len('pj2-bis_'):-4], m.group(1), m.group(2), str(rc)])
+        rows.append([f[len('pj2-bis_v6_'):-5], m.group(1), m.group(2), str(rc)])
         assert rc == 0 and 'Test wahr' in out, f
     S += tbl(rows, wd(3.6, 1.2, 2.6, 1.6), first_bold=True)
-    S += [P('**Eingaben der Adresseneingabe.** Je Test eine Lochstreifendatei `Test-virtuelleGeraete/Leser1/'
-            'pj2-bis_adresseneingabe_<Name>.txt` (Ansprungzelle 0316) mit den Zeichen im R-300-Code, eine Zeile je Zeichen '
-            'im Format `w v u p 8 4 2 1` (9.1). Das Hauptprogramm ab 1000 wählt K1 an, ruft die Adresseneingabe, speichert '
-            'den AC nach R1 und druckt ihn mit dem Adressendruck (`030 4500`, `025 0100`); es werden nur die mittleren '
-            'vier Oktalziffern gedruckt (Wortstellen z12 bis z23).')]
-    S += tbl([
-        ['Test', 'Eingabe', 'Erwartet'],
-        ['`_4stellig`', '`1234.`', 'R1 = `00001234000`, Schreibwerk `1234`, Stopp 1005, BZ=1006'],
-        ['`_8stellig`', '`12345670.`', 'R1 = `12345670000`, Schreibwerk `5670` (die mittleren vier Ziffern), BZ=1006'],
-        ['`_null`', '`.`', 'R1 = 0 (die Konstante Null braucht nur das Schlusszeichen), Schreibwerk `0000`, BZ=1006'],
-        ['`_zr`', '`1` ZR `0` `0` `5` `.`', 'ZR bricht die Adresseneingabe ab und springt nach `kz_neu` (Zelle 0412); die neu '
-                                            'gestartete Kennzeicheneingabe liest K₁ = 0, K₂ = 0 und das Wort 5 und kehrt '
-                                            'über `kz_rs` (7700) nach 1010 zurück; Stopp, BZ=1011, AC = `00000000005`'],
-        ['`_ueberzaehlig`', '`1234567091.`', 'ab der neunten Ziffer wird alles ignoriert (auch die 9): R1 = `12345670000`, '
-                                             'Schreibwerk `5670`, BZ=1006'],
-        ['`_ziffer8_halt`', '`128.`', 'die 8 ist keine Oktalziffer: HALT im Befehl `ae_halt` (Zelle 0257), BZ=0260, '
-                                      'AC = `10000012000`'],
-        ['`_ziffer9_erste`', '`9`', 'auch als erstes Zeichen HALT: BZ=0260, AC = `10000000000`, V1=V2=1'],
-    ], wd(2.2, 2.6, 5.2), first_bold=True)
-    S += note('hinweis', 'Verlegung der Arbeitszellen (11.10.2026): Die Arbeitszellen der Ausgabe- und '
-              'Eingabeunterprogramme lagen auf 7554 bis 7563, den Speicherplätzen der Ansprungzellen der anderen '
-              'Bausteine. Sie liegen jetzt auf 7740 bis 7744 und 7756 bis 7760 (Spezifikation `C8205-Interpreter-BIS.md`, '
-              'BIS-A.3); die Zellen 7554 bis 7563 bleiben nach allen Läufen null. Die Läufe oben sind mit dem neu '
-              'assemblierten Minimalprogramm entstanden.')
+    S += [P('**Eingaben vom Lochstreifen und vom Bedienpult.** Die Tests `kz_`, `ae_` und `ps_` lesen ihre Zeichen aus '
+            'Bändern `Test-virtuelleGeraete/Leser1/pj2-bis_v6_<Name>.txt` (R-300-Code, eine Zeile je Zeichen im Format '
+            '`w v u p 8 4 2 1`, 9.1) oder aus `Test-virtuelleGeraete/T-SW-Eingabe/`. Die Sollwerte (Register, Zellen, '
+            'Schreibwerk-Ausgabe) sind je Test von Hand aus der Spezifikation hergeleitet. Gegenproben mit verstümmeltem '
+            'Code müssen anschlagen (Rückkehrcode 6).')]
+    S += note('hinweis', 'Stand der Neufassung (24.10.2026): Die früheren Tests `pj2-bis_*.txt` (Minimalprogramm vor '
+              'Verlegung der Arbeitszellen, mit `WR`, `GB`, `KB`, `ZV`, `IS` und Fehlersprung nach 0000) sind entfallen; '
+              'ihre noch gültigen Fälle wurden nach v6 übertragen. `test.sh`, `test_bis.sh`, `test2_bis.sh` und '
+              '`test3_bis.sh` gibt es nicht mehr.')
 
 
 # ------------------------------------------------------------------------------------------ Kapitel 12 und Anhang
@@ -2748,8 +2763,9 @@ def kap12(S, ex):
         '`#INTERRUPT` nur zwischen zwei Befehlszeilen, mit `H` als erster Taste, und höchstens einmal je Befehlszeile (4.7)?',
         'Soll die Prüfung bewusst `Test falsch` ergeben: Kopfzeile `Prüfungen: False` (5.5)? Soll-Dateien der Dateiprüfungen '
         'in `Test-Ergebnisvergleiche/` ablegen, mit dem Namensende `-ausgabe.txt` oder `_erwartet.txt` (5.4).',
-        'Test eines BIS-Bausteins: Minimalprogramm vorher laden (`c8205_bis_test.sh`), keine Zelle 0000 bis 0337 belegen und '
-        'die Voraussetzung in einer `#DOK`-Zeile nennen (11.4)?'])
+        'Test eines BIS-Bausteins: das Abbild des Minimalprogramms v6 in den Test einbetten (`#TROMMEL=LEER`) oder '
+        'vorher mit `c8205_bis_test.sh` laden; Treiber und Daten außerhalb der Zellen des Minimalprogramms ablegen '
+        '(11.4)?'])
     S += h2('12.2 Vorlage')
     rc, out = ex.lauf('Handbuch-Tests/vorlage.txt')
     zl = zeilen(out)
@@ -2780,8 +2796,8 @@ def anhang(S):
                          'weitere Tastenfolge (4.7)'],
         ['`Prüfungen: False`', 'Kopfzeile eines Tests, der bewusst `Test falsch` ergeben soll; der Rückkehrcode bleibt 6, '
                                'die Sammelläufe melden ihn nicht (5.5)'],
-        ['Minimalprogramm (BIS)', 'Grundprogramm auf der Trommel (Zellen 0000 bis 0337 und 0400 bis 0434); jeder Test eines '
-                                  'BIS-Bausteins setzt es voraus (11.4)'],
+        ['Minimalprogramm (BIS)', 'Grundprogramm v6 auf der Trommel (Zellen 0000, 0001, 0040 bis 0377 und 0500 bis 0533, Arbeitszellen '
+                                  '7600 bis 7777); jeder Test eines BIS-Bausteins braucht es (11.4)'],
         ['Geräte-Zeile', 'Zeile der Testdatei mit `--` (`--leser1`, `--leser2`, `--stanzer1`, `--sw-ausgabe`, `--k0`), die '
                          'ein virtuelles Gerät zuordnet'],
         ['Dateiprüfung', 'Prüfung, die die Stanzer- oder Schreibwerk-Ausgabedatei mit einer Soll-Datei vergleicht '

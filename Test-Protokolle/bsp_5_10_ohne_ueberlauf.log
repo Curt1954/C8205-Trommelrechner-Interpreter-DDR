@@ -20,6 +20,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3016: 00000000020
   #DOK-0001 Addition mit Zahlenbereichsueberschreitung (Programmieranleitung 5.10), a=1 b=2 c=3, Summe 6 ohne Ueberlauf
   #SPEI-0001 3000-3003
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

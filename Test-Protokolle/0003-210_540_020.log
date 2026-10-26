@@ -10,6 +10,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3001: 00000000045
   #DOK-0003 Test Ladebefehl und X-Wiederholungs-Speicherbefehl
   #SPEI-0003 4000-4037
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

@@ -1,12 +1,10 @@
 ; bsp_6_1_3_quadrierung_dicht.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_1_3_quadrierung_dicht.txt
-; #DOK-0001 Zahlwort Festkomma vorn: Quadrierung einer positiven Zahl (Programmieranleitung 6.1.3), x mit voller Stellenzahl; das Ergebnis
-;   weicht durch die Rundung um weniger als eine Einheit der letzten Stelle vom exakten Quadrat ab
-; #DOK-0001 Programm nach 6.1.1 ab Zelle 3000; x=<3006>, Konstante 2^-1 in <3007>, Arbeitsspur 7700; 7700 440 Transport von x auf alle
-;   Zellen, 7700 472 Teilprodukte, 7700 412 Summierung
-; #DOK-0001 Das Buch nennt im Programm die Adressen 3005/3006 (Laden von x und der Konstanten) und die Summierung 7700 212; das sind
-;   Satzfehler. Gemeint sind 3006 211, 3007 211 und 7700 412 (wie in 6.1.1).
+; #DOK-0001 Zahlwort Festkomma vorn: Quadrierung einer positiven Zahl (Programmieranleitung 6.1.3), x mit voller Stellenzahl; das Ergebnis weicht durch die Rundung um weniger als eine Einheit der letzten Stelle vom exakten Quadrat ab
+; #DOK-0001 Programm nach 6.1.1 ab Zelle 3000; x=<3006>, Konstante 2^-1 in <3007>, Arbeitsspur 7700; 7700 440 Transport von x auf alle Zellen, 7700 472 Teilprodukte, 7700 412 Summierung
+; #DOK-0001 Das Buch nennt im Programm die Adressen 3005/3006 (Laden von x und der Konstanten) und die Summierung 7700 212; das sind Satzfehler. Gemeint sind 3006 211, 3007 211 und 7700 412 (wie in 6.1.1).
 ; #DOK-0001 erwartet <AC> = x*x = 34046006623 (oktal)
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -31,6 +29,7 @@ d7700:          abs     07700
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3006 AC=34046006623 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3006: 35762104535
 ; 3007: 20000000000
@@ -66,4 +65,5 @@ d7700:          abs     07700
 ; 7731: 35762104535
 ; 7706: 35762104535
 ; 7723: 35762104535
+;#PRUEFE-ENDE
 ;

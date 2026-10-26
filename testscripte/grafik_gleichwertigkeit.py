@@ -24,7 +24,6 @@ import signal
 import subprocess
 import sys
 import tempfile
-import threading
 import time
 
 HIER = os.path.dirname(os.path.abspath(__file__))
@@ -234,35 +233,6 @@ def kind(art, testname, arbeitsverz, ausgabe):
 # Elternprozess
 # ------------------------------------------------------------------------------------------------------------------
 KINDER = set()                       # laufende Kindprozesse (eigene Sitzung): bei Strg+C werden sie alle beendet (G4-018)
-_MINIMAL = {'pfad': None}
-_MINIMAL_LOCK = threading.Lock()
-
-
-def braucht_minimalprogramm(name):
-    """Tests, die das Minimalprogramm auf der Trommel voraussetzen (Kopfzeile). Sie laufen sonst ueber das Bandende hinaus und warten dort
-    (der Leser wartet aktiv auf das naechste Band) bis zur Zeitgrenze: 2 x 120 s je Test (G4-018)."""
-    with open(os.path.join(PROJEKT, 'Tests', name), encoding='utf-8') as fh:
-        return any('Voraussetzung: Minimalprogramm auf der Trommel' in z for z in fh)
-
-
-def minimal_trommel():
-    """Einmal je Werkzeuglauf: Startdatei mit geladenem Minimalprogramm, erzeugt wie Schritt 1 von c8205_bis_test.sh (TEST-Interpreter,
-    Tests/pj2-bis_minimalprogramm.test) auf einer Kopie der gemeinsamen trommel.txt. Gibt den Pfad der Datei zurueck (None bei Fehler)."""
-    with _MINIMAL_LOCK:
-        if _MINIMAL['pfad'] is None:
-            d = tempfile.mkdtemp(prefix='c8205_minimal_')
-            shutil.copyfile(os.path.join(PROJEKT, 'Trommel', 'trommel.txt'), os.path.join(d, 'trommel.txt'))
-            os.symlink(os.path.join(PROJEKT, 'Tests'), os.path.join(d, 'Tests'))
-            shutil.copytree(os.path.join(PROJEKT, 'Test-virtuelleGeraete'), os.path.join(d, 'Test-virtuelleGeraete'))
-            try:                                       # derselbe Kindprozess wie ein Test (schreibt keine Protokolle ins Projekt)
-                subprocess.run([sys.executable, '-I', os.path.abspath(__file__), '--kind', 'test', 'pj2-bis_minimalprogramm.test', d,
-                                os.path.join(d, 'ergebnis.json')],
-                               cwd=d, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
-            except Exception:
-                _MINIMAL['pfad'] = ''
-                return None
-            _MINIMAL['pfad'] = os.path.join(d, 'trommel.txt')
-    return _MINIMAL['pfad'] or None
 
 
 def alle_kinder_beenden():
@@ -281,8 +251,7 @@ def starte_kind(art, testname, zeit):
     try:
         shutil.copytree(os.path.join(PROJEKT, 'Test-virtuelleGeraete'), os.path.join(arbeit, 'Test-virtuelleGeraete'))
         os.symlink(os.path.join(PROJEKT, 'Tests'), os.path.join(arbeit, 'Tests'))
-        start = minimal_trommel() if braucht_minimalprogramm(testname) else None
-        shutil.copyfile(start or os.path.join(PROJEKT, 'Trommel', 'trommel.txt'), os.path.join(arbeit, 'trommel.txt'))
+        shutil.copyfile(os.path.join(PROJEKT, 'Trommel', 'trommel.txt'), os.path.join(arbeit, 'trommel.txt'))
         out = os.path.join(arbeit, 'ergebnis.json')
         print(f'  ... starte {art:6s} {testname}', file=sys.stderr, flush=True)
         # Ausgabe in Dateien statt Pipes und eigene Prozessgruppe: bei Zeitueberschreitung wird die ganze Gruppe beendet; ein Enkelprozess,

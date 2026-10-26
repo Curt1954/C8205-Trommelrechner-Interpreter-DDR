@@ -1,0 +1,15 @@
+# Sofortbefehl 000 2000: springt zum Testprogramm test_druck
+1
+0
+0
+0
+0
+0
+2
+0
+0
+0
+0
+0
+0
+.

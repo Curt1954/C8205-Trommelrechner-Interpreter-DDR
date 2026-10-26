@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001
 #SPEI-0001 0000-0000
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00002000000 # beginn: 000 anfang ; Zelle 0000: Sprung nach 02000
 2000: 00004500030 # anfang: 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
 2001: 00000570030 # dtm \Rate mal, welchen Namen ich mir gemerkt habe.\

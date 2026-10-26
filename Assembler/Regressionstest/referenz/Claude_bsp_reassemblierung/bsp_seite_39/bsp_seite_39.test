@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0001 Summieren eines Vektors
 #SPEI-0001 2020-2021
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00002002000 # 000 beginn
 2000: 00002022000 # adr_a: da 000000002022 ; Adrese der ersten Komponente Vektor
 2001: 00002025000 # adr_b: da 000000002025 ; Adresse der letzten Komponente Vektor
@@ -25,3 +26,7 @@ Trommeldatei:
 2025: 00000000067 # b: dw 067
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=2017 AC=00000000710 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
+2020: 00002025000
+2021: 00000000710

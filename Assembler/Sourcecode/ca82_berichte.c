@@ -1,4 +1,4 @@
-// ca82_berichte.c - Version 1.00-030 (siehe ca82_version.h)
+// ca82_berichte.c - Version 1.00-034 (siehe ca82_version.h)
 // Aufrufhilfe (Usage), Versionszeile und die Berichte nach dem Lauf: -WARN=SYM und --xref.
 // Aus ca82ass.c ausgelagert; benutzt nur die Symboltabelle (ca82_symbole.h) und ca82_standards.
 #include "ca82_standards.h"

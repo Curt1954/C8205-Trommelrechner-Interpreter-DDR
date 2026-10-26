@@ -1,6 +1,7 @@
 Trommeldatei:
 #DOK-0014 Test Unbedingter Sprung, Ladebefehl und Addition Positiv-Sprung mit Löschen und Speicherbefehl
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00005000000
 5000: 00005006211
 5001: 00005007240

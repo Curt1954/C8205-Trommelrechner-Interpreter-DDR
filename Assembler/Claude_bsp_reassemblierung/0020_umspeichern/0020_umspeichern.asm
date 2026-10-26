@@ -4,6 +4,7 @@
 ; #SPEI-0020 6000-6020
 ; #SPEI-1020 3711-3730
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -63,6 +64,7 @@ d6000:          dw      020
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3723 AC=00000020000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
 ;
 ; 4000: 00000000000
@@ -99,5 +101,6 @@ d6000:          dw      020
 ; 6016: 00000000032
 ; 6017: 00000000034
 ; 6020: 00000000000
+;#PRUEFE-ENDE
 ;
 ;

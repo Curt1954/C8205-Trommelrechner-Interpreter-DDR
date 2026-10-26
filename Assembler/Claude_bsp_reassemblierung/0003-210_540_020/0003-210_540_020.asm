@@ -2,6 +2,7 @@
 ; #DOK-0003 Test Ladebefehl und X-Wiederholungs-Speicherbefehl
 ; #SPEI-0003 4000-4037
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -22,6 +23,7 @@ d4001:          abs     04001
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0004 AC=00000000100 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ;
 ; 4000: 00000000100
@@ -56,6 +58,7 @@ d4001:          abs     04001
 ; 4035: 00000000100
 ; 4036: 00000000100
 ; 4037: 00000000100
+;#PRUEFE-ENDE
 ;
 ;
 ;

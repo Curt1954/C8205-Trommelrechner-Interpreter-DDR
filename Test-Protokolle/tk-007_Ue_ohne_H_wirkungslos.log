@@ -6,6 +6,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   7777: 00000000555
   #DOK-0001 Tastenfolge Ü R ohne Schalter H: Ü wirkt nur bei gesetztem H und ist hier ohne Wirkung.
   #DOK-0002 Der Ablauf beginnt bei Konnektor B mit BZ = 0: Zelle 0000 (Stopp, Adresse 0005): BZ = 0001, AR = 0005. Zelle 7777 bleibt 555 (bei wirksamem Ü würde sie mit AC = 0 überschrieben).
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: Ü R
   Ue : nur bei Schalter H wirksam, H nicht gesetzt -> keine Wirkung

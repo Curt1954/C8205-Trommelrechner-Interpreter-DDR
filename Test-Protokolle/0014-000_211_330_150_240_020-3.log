@@ -19,6 +19,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   7776: 71111111111
   #DOK-0014 Test Unbedingter Sprung, Ladebefehl und Vergleicher setzen und Vergleichersprung und Speicherbefehl
   #SPEI-0014 7773-7776
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

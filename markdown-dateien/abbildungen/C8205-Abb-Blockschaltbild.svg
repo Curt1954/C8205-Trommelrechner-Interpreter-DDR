@@ -1,0 +1,267 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1830 1440" width="1830" height="1440" font-family="DejaVu Sans, Arial, sans-serif">
+<title>C 8205 Blockschaltbild (Nachzeichnung)</title>
+<defs><marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker></defs>
+<rect width="1830" height="1440" fill="#fff"/>
+<rect x="948" y="160" width="188" height="45" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1042.0" y="193.0" text-anchor="middle" font-size="30" font-style="italic">+ &#160; &#8722; &#160; &#8743;</text>
+<rect x="948" y="278" width="177" height="42" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1036.5" y="308.1" text-anchor="middle" font-size="26" font-style="italic">Akkumulator</text>
+<rect x="1310" y="255" width="78" height="43" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1349.0" y="286.3" text-anchor="middle" font-size="28" >&#8805; &#8804;</text>
+<rect x="1310" y="362" width="38" height="36" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1329.0" y="387.7" text-anchor="middle" font-size="22" font-style="italic">V<tspan font-size="16" dy="6">2</tspan></text>
+<rect x="1348" y="362" width="42" height="36" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1369.0" y="387.7" text-anchor="middle" font-size="22" font-style="italic">V<tspan font-size="16" dy="6">1</tspan></text>
+<text x="1425" y="380" font-size="30" text-anchor="start" font-style="italic">Vergleicher</text>
+<polygon points="440,478 685,408 685,545" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="500" y="495" font-size="30" text-anchor="start" font-style="italic">Spurwähler</text>
+<rect x="950" y="418" width="178" height="134" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1039.0" y="495.5" text-anchor="middle" font-size="30" font-style="italic">128 Spuren</text>
+<rect x="950" y="552" width="175" height="40" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1037.5" y="579.35" text-anchor="middle" font-size="21" font-style="italic">Sektornummer</text>
+<rect x="758" y="590" width="40" height="34" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="778.0" y="615.4" text-anchor="middle" font-size="24" font-style="italic">K</text>
+<rect x="440" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="475" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="510" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="545" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="580" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="615" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="650" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="685" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="720" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="755" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="790" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="825" y="678" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="520" y="730" font-size="26" text-anchor="start" font-style="italic">Spur</text>
+<text x="700" y="730" font-size="26" text-anchor="start" font-style="italic">Sektor</text>
+<path d="M690,668 Q690,660 698,660 L852,660 Q860,660 860,668" stroke="#000" stroke-width="3" fill="none"/>
+<text x="530" y="775" font-size="34" text-anchor="start" font-style="italic">Adreßregister</text>
+<rect x="950" y="705" width="170" height="36" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1035.0" y="732.1" text-anchor="middle" font-size="26" font-style="italic">Befehlszähler</text>
+<rect x="862" y="732" width="48" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="886.0" y="754.0" text-anchor="middle" font-size="20" >+1<tspan font-size="14" dy="-8">0</tspan></text>
+<rect x="1330" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1365" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1400" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1435" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1470" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1505" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1540" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1575" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<rect x="1610" y="693" width="35" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1410" y="752" font-size="30" text-anchor="start" font-style="italic">Operationsregister</text>
+<polyline points="1712,708 1712,62 578,62" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="518,62 370,62 370,487 437,487" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="520,120 405,120 405,470 437,470" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="580,120 1368,120 1368,253" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="1040" cy="120" r="5" fill="#000"/>
+<polyline points="1040,120 1040,160" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="1648,708 1712,708" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="1712,708 1654,708" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="1712" cy="708" r="5" fill="#000"/>
+<polyline points="948,185 766,185 766,213" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="847" cy="185" r="5" fill="#000"/>
+<circle cx="910" cy="185" r="5" fill="#000"/>
+<polyline points="847,185 847,213" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="910,185 910,213" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="766" cy="243" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="766" y="248.95" text-anchor="middle" font-size="17" font-weight="bold">IV&#8743;V<tspan font-size="14" dy="5">l</tspan></text>
+<circle cx="847" cy="243" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="847" y="250.7" text-anchor="middle" font-size="22" font-weight="bold">IV</text>
+<circle cx="910" cy="243" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="910" y="248.95" text-anchor="middle" font-size="17" font-weight="bold">IV&#8743;V<tspan font-size="14" dy="5">r</tspan></text>
+<rect x="748" y="280" width="40" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="768.0" y="302.7" text-anchor="middle" font-size="22" font-style="italic">1</text>
+<rect x="828" y="280" width="40" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="848.0" y="302.7" text-anchor="middle" font-size="22" font-style="italic">1</text>
+<polyline points="766,273 766,280" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="847,273 847,280" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="788,295 828,295" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="868,295 948,295" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="910,273 910,295" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="1145" cy="331" r="5" fill="#000"/>
+<polyline points="1145,331 938,331 938,303" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="938,222 938,190" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="938,222 1213,222" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="1243" cy="225" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1243" y="232.7" text-anchor="middle" font-size="22" font-weight="bold"><tspan text-decoration="overline">IV</tspan></text>
+<polyline points="1273,225 1287,225 1287,185 1140,185" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="1287" cy="225" r="5" fill="#000"/>
+<polyline points="1287,225 1330,225 1330,251" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="1155" cy="262" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1155" y="269.7" text-anchor="middle" font-size="22" font-weight="bold">F&#773;</text>
+<polyline points="1155,222 1155,232" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="1155,292 1155,296 1126,296" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="1465" cy="277" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1465" y="283.65" text-anchor="middle" font-size="19" font-weight="bold">IV&#8743;T</text>
+<polyline points="1495,277 1550,277" stroke="#000" stroke-width="3" fill="none"/>
+<text x="1556" y="285" font-size="30" text-anchor="start" font-style="italic">0</text>
+<polyline points="1435,277 1390,277" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="1330,298 1330,362" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="1368,298 1368,362" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="1328,398 1328,428 1458,428 1458,692" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="1368,398 1368,428" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6"/>
+<polyline points="1126,300 1278,300 1278,428 1328,428" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6"/>
+<circle cx="1130" cy="314" r="5" fill="#000"/>
+<polyline points="1126,314 1145,314 1145,352 578,352" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="1145,322 1127,322" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="518,352 440,352 440,455" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="548" cy="352" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="548" y="358.65" text-anchor="middle" font-size="19" font-weight="bold">IV&#8743;T</text>
+<polyline points="1145,330 1170,330 1170,500" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="1170" cy="530" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1170" y="535.25" text-anchor="middle" font-size="15" font-weight="bold">III&#8743;RS</text>
+<polyline points="1170,560 1170,725 1120,725" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="1126,312 1255,312 1255,500" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="1255" cy="530" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="1255" y="535.95" text-anchor="middle" font-size="17" font-weight="bold">II&#8743;R</text>
+<polyline points="1255,560 1255,760 930,760" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="548" cy="120" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="548" y="125.95" text-anchor="middle" font-size="17" font-weight="bold">IV&#8743;T&#771;</text>
+<circle cx="548" cy="62" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="548" y="70.4" text-anchor="middle" font-size="24" font-weight="bold">II</text>
+<line x1="548" y1="62" x2="548" y2="62"/>
+<polyline points="688,425 948,425" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="948,425 688,425" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="688,545 948,545" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="948,545 688,545" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="688,445 948,445" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="948,445 688,445" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="688,522 948,522" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="948,522 688,522" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="950,572 777,572 777,590" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="777,624 777,660" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="735,590 735,550" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="735,590 758,590" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6"/>
+<polyline points="455,678 455,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="490,678 490,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="526,678 526,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="562,678 562,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="598,678 598,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="634,678 634,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="670,678 670,520" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="1120,712 1143,712 1143,690 930,690" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="868,690 860,690" stroke="#000" stroke-width="3" fill="none"/>
+<circle cx="898" cy="692" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="898" y="697.25" text-anchor="middle" font-size="15" font-weight="bold">I&#8744;III</text>
+<polyline points="425,708 425,745 796,745" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="827" cy="745" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="827" y="750.25" text-anchor="middle" font-size="15" font-weight="bold">I&#8744;III</text>
+<polyline points="858,745 862,745" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="910,736 950,736" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<circle cx="922" cy="736" r="5" fill="#000"/>
+<rect x="165" y="770" width="130" height="50" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="230.0" y="804.1" text-anchor="middle" font-size="26" font-style="italic">Tastatur</text>
+<rect x="165" y="820" width="130" height="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="230.0" y="841.65" text-anchor="middle" font-size="19" font-style="italic">Schreibwerk</text>
+<rect x="165" y="870" width="92" height="38" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="211.0" y="896.7" text-anchor="middle" font-size="22" font-style="italic">Leser 1</text>
+<rect x="165" y="918" width="92" height="48" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="211.0" y="949.7" text-anchor="middle" font-size="22" font-style="italic">Stanzer</text>
+<rect x="165" y="995" width="92" height="46" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="211.0" y="1025.7" text-anchor="middle" font-size="22" font-style="italic">Leser 2</text>
+<rect x="165" y="1055" width="92" height="46" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="211.0" y="1083.25" text-anchor="middle" font-size="15" font-style="italic">Schreibwerk</text>
+<rect x="322" y="858" width="86" height="48" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="365.0" y="887.25" text-anchor="middle" font-size="15" font-style="italic">1&#8209;Zeichen<tspan x="365" dy="20">Puffer</tspan></text>
+<rect x="322" y="918" width="86" height="50" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="365.0" y="948.25" text-anchor="middle" font-size="15" font-style="italic">1&#8209;Zeichen<tspan x="365" dy="20">Puffer</tspan></text>
+<rect x="322" y="995" width="86" height="46" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="365.0" y="1023.25" text-anchor="middle" font-size="15" font-style="italic">1&#8209;Zeichen<tspan x="365" dy="20">Puffer</tspan></text>
+<rect x="322" y="1055" width="86" height="46" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="365.0" y="1083.25" text-anchor="middle" font-size="15" font-style="italic">1&#8209;Zeichen<tspan x="365" dy="20">Puffer</tspan></text>
+<circle cx="133" cy="815" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="133" y="824.1" text-anchor="middle" font-size="26" font-weight="bold">A<tspan font-size="14" dy="5">0</tspan></text>
+<circle cx="123" cy="918" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="123" y="927.1" text-anchor="middle" font-size="26" font-weight="bold">A<tspan font-size="14" dy="5">1</tspan></text>
+<circle cx="127" cy="1048" r="30" stroke="#000" stroke-width="3" fill="#fff"/>
+<text x="127" y="1057.1" text-anchor="middle" font-size="26" font-weight="bold">A<tspan font-size="14" dy="5">2</tspan></text>
+<polyline points="88,665 440,665 440,678" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6"/>
+<polyline points="88,665 88,1048 97,1048" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<circle cx="88" cy="815" r="5" fill="#000"/>
+<circle cx="88" cy="918" r="5" fill="#000"/>
+<polyline points="88,815 103,815" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="88,918 93,918" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="163,815 165,815" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="295,812 917,812" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="150,885 165,885" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="150,950 165,950" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="257,889 322,889" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="322,943 257,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="408,885 917,885" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="150,1015 165,1015" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="150,1078 165,1078" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="257,1018 322,1018" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="322,1078 257,1078" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="408,1012 917,1012" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6"/>
+<polyline points="917,1012 917,800 1385,800 1385,726" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<polyline points="668,812 668,775" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="668,885 668,848" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="668,1012 668,995" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="702,812 702,775" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="702,885 702,848" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="702,1012 702,995" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="736,812 736,775" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="736,885 736,848" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="736,1012 736,995" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="772,812 772,775" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="772,885 772,848" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="772,1012 772,995" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="808,812 808,775" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="808,885 808,848" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="808,1012 808,995" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="845,812 845,775" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="845,885 845,848" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="845,1012 845,995" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="487,905 487,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="521,905 521,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="558,905 558,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="596,905 596,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="632,905 632,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="668,905 668,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="702,905 702,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="737,905 737,943" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="520,1043 520,1073" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="558,1043 558,1073" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="632,1043 632,1073" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="668,1043 668,1073" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="702,1043 702,1073" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="737,1043 737,1073" stroke="#000" stroke-width="3" fill="none" marker-end="url(#pf)"/>
+<polyline points="408,943 740,943" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="408,1075 740,1075" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="1712,708 1712,806 922,806 922,736" stroke="#000" stroke-width="3" fill="none"/>
+<polyline points="1530,800 1530,726" stroke="#000" stroke-width="2.5" fill="none" stroke-dasharray="9 6" marker-end="url(#pf)"/>
+<text x="975" y="870" font-size="28" text-anchor="start" font-weight="bold">Bezeichnungen:</text>
+<text x="975" y="905" font-size="26" text-anchor="start">○</text>
+<text x="1092" y="905" font-size="24" text-anchor="start">Tor (mit eingeschriebener Durchlaßbedingung)</text>
+<text x="975" y="939" font-size="26" text-anchor="start">Vr</text>
+<text x="1092" y="939" font-size="24" text-anchor="start">Rechtsverschiebung</text>
+<text x="975" y="973" font-size="26" text-anchor="start">Vl</text>
+<text x="1092" y="973" font-size="24" text-anchor="start">Linksverschiebung</text>
+<text x="975" y="1007" font-size="26" text-anchor="start">V̄</text>
+<text x="1092" y="1007" font-size="24" text-anchor="start">keine Verschiebung</text>
+<text x="975" y="1041" font-size="26" text-anchor="start">[1]</text>
+<text x="1092" y="1041" font-size="24" text-anchor="start">Verzögerung um 1 Bit</text>
+<text x="975" y="1075" font-size="26" text-anchor="start">[K]</text>
+<text x="1092" y="1075" font-size="24" text-anchor="start">Koinzidenzprüfung</text>
+<text x="975" y="1109" font-size="26" text-anchor="start">T</text>
+<text x="1092" y="1109" font-size="24" text-anchor="start">Befehl mit Resultat in Speicherzelle</text>
+<text x="975" y="1143" font-size="26" text-anchor="start">RS</text>
+<text x="1092" y="1143" font-size="24" text-anchor="start">Sprung mit Rückkehrabsicht</text>
+<text x="975" y="1177" font-size="26" text-anchor="start">T̃</text>
+<text x="1092" y="1177" font-size="24" text-anchor="start">kein Befehl mit Resultat in Speicherzelle und kein</text>
+<text x="1092" y="1205" font-size="24" text-anchor="start">Organisationsbefehl</text>
+<text x="975" y="1239" font-size="26" text-anchor="start">F</text>
+<text x="1092" y="1239" font-size="24" text-anchor="start">Löschanweisung in Phase III</text>
+<text x="975" y="1273" font-size="26" text-anchor="start">Ai</text>
+<text x="1092" y="1273" font-size="24" text-anchor="start">Anwahl des i-ten Kanals (i = 0, 1, 2)</text>
+<text x="975" y="1307" font-size="26" text-anchor="start">Vi</text>
+<text x="1092" y="1307" font-size="24" text-anchor="start">Vergleicher i (i = 1, 2)</text>
+<text x="975" y="1341" font-size="26" text-anchor="start">[+ − ∧]</text>
+<text x="1092" y="1341" font-size="24" text-anchor="start">Rechenwerk mit Verknüpfungen</text>
+<text x="975" y="1375" font-size="26" text-anchor="start">[≥ ≤]</text>
+<text x="1092" y="1375" font-size="24" text-anchor="start">Vergleichersetzung</text>
+<text x="975" y="1409" font-size="26" text-anchor="start">R</text>
+<text x="1092" y="1409" font-size="24" text-anchor="start">R-Befehl</text>
+</svg>

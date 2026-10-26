@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0014 Test Unbedingter Sprung, Ladebefehl und Vergleicher setzen und Vergleichersprung und Speicherbefehl
 #SPEI-0014 7773-7776
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000000 # 000 m3000
 3000: 00007773211 # m3000: 211 d7773
 3001: 00007776330 # 330 d7776
@@ -19,3 +20,9 @@ Trommeldatei:
 7776: 11111111111 # d7776: dw 011111111111
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3012 AC=11111111111 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
+7773: 11111111111
+7774: 00000000200
+7775: 00000000000
+7776: 11111111111

@@ -293,7 +293,11 @@ const int trommel_sektor_map[32] = {
 };
 
 unsigned int berechneWiederholAdr(int anzahl, unsigned int basisAdr ) {
-    int x = 31 - anzahl - 1;
+    // Wiederholungsbefehl: n Zellen von der Startzelle bis Sektor 023; die Folgezellen liegen je 13 Sektoren weiter (Tabelle
+    // trommel_sektor_map = 13*i mod 32). Startsektor fuer n Wiederholungen = map[32 - n] (n = 1..32; vorher 31 - n - 1 = 2 zu wenig).
+    if (anzahl < 1) anzahl = 1;
+    if (anzahl > 32) anzahl = 32;
+    int x = 32 - anzahl;
     unsigned int sektor = trommel_sektor_map[x] + basisAdr;
 
     return sektor;
@@ -327,12 +331,21 @@ void verarbeiteZeile_wdhl_adr_e(char *tempLine) {
     while (*start == ' ') start++; // Ignoriere Leerzeichen
 
     char operand_str[MAX_LINE_LENGTH];
-    sscanf(start, "%s", operand_str);
+    char basis_str[MAX_LINE_LENGTH] = "";
+    sscanf(start, "%s %s", operand_str, basis_str);
+    // Zweiter Operand: Anfang der Spur, auf der der Wiederholungsbefehl laeuft (oktal mit fuehrender 0, sonst dezimal).
+    // Das Programm stellt diese Spur selbst bereit (eine Nullspur ist nirgends vorausgesetzt).
+    unsigned int basis_adr = 0;
+    if (basis_str[0] == '\0') {
+        fprintf(stderr, "Fehler: !$wdhl_adr_e ohne Spuradresse (zweiter Operand)\n");
+    } else {
+        basis_adr = (unsigned int) strtol(basis_str, NULL, basis_str[0] == '0' ? 8 : 10);
+    }
 
     // Berechne den Wert des Operanden
     //int operand_value = strtol(operand_str, NULL, 10) - 1; // `9-1` → `8`
     int operand_value = berechneOperand(operand_str);
-    unsigned int sektor_address = berechneWiederholAdr(operand_value, 07700);
+    unsigned int sektor_address = berechneWiederholAdr(operand_value, basis_adr);
 
     // Erstelle die neue Zeile mit der oktalen Sektoradresse (mit Vornull)
     char neueZeile[MAX_LINE_LENGTH];

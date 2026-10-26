@@ -3,6 +3,7 @@
 ; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 ; --leser2 Test-virtuelleGeraete/Leser2/bsp_5_15_lochstreifen.txt
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -61,8 +62,10 @@ m3021:          000     m0000                    ; Druckbefehl (wird zur Laufzei
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3062 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3021: 00000200030
 ; 3061: 00000000020
 ; --pruefe-sw-ausgabe bsp_5_15_lochband_druck-sw-ausgabe.txt
+;#PRUEFE-ENDE
 ;

@@ -3,6 +3,7 @@ Trommeldatei:
 #SPEI-0001 3100-3104
 #SPEI-0001 3200-3204
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 # Sollwerte (aus dem Programm abgeleitet):
 #  BZ=2004 AR=0000   Halt 020 0 bei 2003
 #  AC=3205 211       letzter AC-Befehl ist 0034: b_i+1o 211 mit b_i = 3204

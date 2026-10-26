@@ -4,6 +4,7 @@ Trommeldatei:
 #SPEI-0001 3020-3020
 #SPEI-0001 7777-7777
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 # Startstück (nicht Teil des Buchprogramms): Das Schreibwerk muss vor dem Druck auf Kleinbuchstaben (KB) stehen;
 # sein Zustand nach dem Einschalten ist zufällig. Daher Anwahl K2, Umschaltung auf KB, dann Sprung zum Programmanfang 3000.

@@ -3,13 +3,6 @@ Test bsp_5_15_lochband_druck_alle_zeichen
 == 1. Ausgangsbedingungen ==
 Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0000: 00003100000
-  3100: 00004500030
-  3101: 00001170030
-  3102: 00003000011
-  3103: 00003105240
-  3104: 00003105000
-  3105: 00000000000
-  3106: 00003102000
   3000: 00000200030
   3001: 00000010030
   3002: 00000020030
@@ -60,6 +53,13 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3073: 00003214000
   3074: 00001740030
   3075: 00003200000
+  3100: 00004500030
+  3101: 00001170030
+  3102: 00003000011
+  3103: 00003105240
+  3104: 00003105000
+  3105: 00000000000
+  3106: 00003102000
   3200: 00001550030
   3201: 00003102000
   3202: 00000150030
@@ -83,6 +83,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3224: 00000160030
   3225: 00003102000
   #DOK-0002 Abdruck aller Zeichen des R 300-Codes (Streifen r300_alle_zeichen.txt, "/" am Ende) mit dem Eingabeprogramm 5.15, Leser 2 -> Schreibwerk
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

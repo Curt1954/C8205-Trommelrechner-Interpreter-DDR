@@ -1,12 +1,11 @@
 ; bsp_5_16_umspeichern_vektor.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_16_umspeichern_vektor.txt
-; #DOK-0001 Umspeichern eines Vektors (Programmieranleitung 5.16), Programm wie im Buch ab Zelle 3000, Parameter a°=4034, n°=6 Komponenten,
-;   b°=4106
-; #DOK-0001 Quellvektor 4034-4041 (Spurgrenze 4037/4040 wird überschritten), Zielvektor 4106-4113; erwartet: alle sechs Komponenten ab 4106
-;   kopiert, <3006>=n°, <3016>=(b+5) 240
+; #DOK-0001 Umspeichern eines Vektors (Programmieranleitung 5.16), Programm wie im Buch ab Zelle 3000, Parameter a°=4034, n°=6 Komponenten, b°=4106
+; #DOK-0001 Quellvektor 4034-4041 (Spurgrenze 4037/4040 wird überschritten), Zielvektor 4106-4113; erwartet: alle sechs Komponenten ab 4106 kopiert, <3006>=n°, <3016>=(b+5) 240
 ; #SPEI-0001 3000-3026
 ; #SPEI-0001 4034-4041
 ; #SPEI-0001 4106-4113
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -60,6 +59,7 @@ m4106:          abs     04106
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3027 AC=00000006000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=1 V2=1
 ; 3006: 00000006000
 ; 3016: 00004113240
@@ -75,4 +75,5 @@ m4106:          abs     04106
 ; 4111: 77777777777
 ; 4112: 00000000505
 ; 4113: 50505050606
+;#PRUEFE-ENDE
 ;

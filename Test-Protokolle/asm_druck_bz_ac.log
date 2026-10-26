@@ -2,6 +2,7 @@ Test asm_druck_bz_ac
 
 == 1. Ausgangsbedingungen ==
 Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
+  0000: 00003000000
   0001: 00000150000
   0040: 00000320025
   0041: 00000000020
@@ -71,7 +72,6 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0276: 00000132000
   0316: 00000000020
   0320: 00000000020
-  0000: 00003000000
   3000: 00003010211
   3001: 00007777240
   3002: 00003011211
@@ -80,6 +80,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3010: 70123456701
   3011: 00003007000
   #DOK-0001 Druck von BZ und AC (Zelle 0001) mit Treiber: AC = Rueckkehrbefehl 0000 3007 000 (b = 3004), 7777 = 70123456701. Erwartet: BZ 00003004000 AC 70123456701, danach Fortsetzung bei 3004 (Stopp) mit dem AC.
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

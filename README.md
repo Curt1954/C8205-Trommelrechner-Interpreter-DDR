@@ -1,6 +1,6 @@
 # C 8205 – Simulation eines DDR-Kleinrechners von 1968
 
-Version: 0.95-003
+Version: 0.95-009
 
 **Deutsch** | [English](README.en.md)
 
@@ -42,12 +42,14 @@ sich Läufe als Regressionstests wiederholen.
 | Pfad | Inhalt |
 |---|---|
 | `c8205_interp.py` | Python-Interpreter |
+| `CLAUDE.md`, `C8205-Programmierhandbuch_fuer_Claude.md` | Einstieg für KI-Sitzungen: Karte (kurz, zuerst lesen; mit Skriptliste) und Handbuch zum Programmieren in Assembler |
 | `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik-interpreter-module/grafik_*.py` | Modus GRAFIK: Pult-Fenster, Schreibwerk-Fenster, Töne (Mischer, Schreibwerk, Leser, Stanzer, Rechner) |
 | `c-module/` | C-Module: Trommel, Bahnsperre, Unterbrechung, Tonmischer `tonmisch`; Erweiterungsmodul in `c-module/python/` |
+| `C8205Z/` | **Experimenteller Prototyp** der vier Zusatztrommeln des C 8205Z (einziger Zusatzpfad): Zeitmodell `zt/`, C-Modul `zt_modul/`, Tests `Tests_Z/`, Pultzeichnung `pult_z/`; wirkt nur mit dem Schalter `--C8205Z` |
 | `ton/` | Klänge (`sw_toene/`, `toene_rechner_stanzer/`, Netzgeräusche), Testrahmen `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | Prüfungen und Testskripte, u. a. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
-| `Hilfsprogramme/` | `c8205_befehlssweep.py` (Vollständigkeitstest über alle 512 Operationscodes; Aufruf aus dem Projektordner mit `--interp c8205_interp.py` bzw. aus `Hilfsprogramme/` mit `--interp ../c8205_interp.py`), `c8205_lochstreifen_anzeige.py` (virtuellen Lochstreifen als Klartext in einem Fenster ausschreiben), `c8205_lochstreifen_eingabe.py` (virtuellen Lochstreifen aus Tastatureingaben erzeugen), `c8205_lochstreifen_umwandlung.py` (Textdatei in binär kodierten R300-Lochstreifen umwandeln und zurück) |
-| `testscripte/` | Testskripte; jedes wechselt selbst ins Projektverzeichnis und darf von überall gestartet werden: `compute_all_tests.sh` (alle Testdefinitionen in `Tests/`), `c8205_bis_test.sh` (BIS-Tests: lädt zuerst das Minimalprogramm `Tests/pj2-bis_minimalprogramm.test`, dann die angegebene Testdatei), `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` (BIS-Tests nacheinander: leere Trommel, Minimalprogramm, dann die Tests `pj2-bis_*`; jeweils größerer Satz), `test.sh` (ältere Fassung von `test_bis.sh`), `erzeuge_leere_trommel.py` (erzeugt die leere Trommeldatei `Trommel/trommel.txt`, setzt auch eine benutzte Trommel zurück) |
+| `Hilfsprogramme/` | `c8205_lochstreifen_anzeige.py` (virtuellen Lochstreifen als Klartext in einem Fenster ausschreiben), `c8205_lochstreifen_eingabe.py` (virtuellen Lochstreifen aus Tastatureingaben erzeugen), `c8205_lochstreifen_umwandlung.py` (Textdatei in binär kodierten R300-Lochstreifen umwandeln und zurück) |
+| `testscripte/` | Testskripte; jedes wechselt selbst ins Projektverzeichnis und darf von überall gestartet werden: `compute_all_tests.sh` (alle Testdefinitionen in `Tests/`), `c8205_bis_test.sh` (Tests künftiger BIS-Bausteine: lädt zuerst das Minimalprogramm `Tests/pj2-bis_minimalprogramm_v6.test` mit `--LOADONLY`, dann die angegebene Testdatei; die Tests des Minimalprogramms selbst, `Tests/pj2-bis_v6_*.test`, tragen ihr Abbild und laufen über `compute_all_tests.sh`), `c8205_befehlssweep.py` (Vollständigkeitstest über alle 512 Operationscodes; Aufruf aus dem Projektordner mit `--interp c8205_interp.py` bzw. aus `testscripte/` mit `--interp ../c8205_interp.py`), `erzeuge_leere_trommel.py` (erzeugt die leere Trommeldatei `Trommel/trommel.txt`, setzt auch eine benutzte Trommel zurück) |
 | `pult/` | Bilder und Manifest des Bedienpult-Fensters (Modus GRAFIK) |
 | `make_pdf.sh`, `make_all_pdf.sh` | Aufrufhilfen zum Erzeugen der PDFs (Skripte in den Ordnern `pdf-layout-scripte/`) |
 | `markdown-dateien/` | Regelwerk und Projektbeschreibung (.md); der Interpreter liest den Knotengraphen von hier |
@@ -58,7 +60,7 @@ sich Läufe als Regressionstests wiederholen.
 | `Test-virtuelleGeraete/` | Virtuelle Geräte des TEST-Interpreters (Lochstreifenleser, Stanzer, Schreibwerk-Ausgabe, Tastatureingabe) |
 | `virtuelle_Geraete/` | Virtuelle Geräte des GRAFIK-Interpreters (`Leser1/`, `Leser2/`, `Stanzer1/`) |
 | `Trommel/` | Die Trommeldatei `trommel.txt`, gemeinsam für beide Interpreter |
-| `CSV/` | Übersichtstabelle aller Tests (`test_tabelle.py` erzeugt `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` öffnet sie in LibreOffice Calc) |
+| `Testausfuehrungen/` | Test ausführen und Tests überblicken: `testwahl.sh` (Test aus der Liste wählen und ausführen), `kep_test.sh`, `interpreter_test.sh` und `bis_test.sh` (Vorführläufe mit KEP, TEST-Interpreter und BIS); dazu die Übersichtstabelle aller Tests (`test_tabelle.py` erzeugt `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` öffnet sie in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Teilprojekt BIS (derzeit nur Dokumentation) |
 | `Assembler/` | Assembler `c82ass` mit Quellcode, Linux-Binary, Beispielen und Dokumentation |
 
@@ -72,16 +74,18 @@ C8205/
 ├── c-module/                       C-Module (Trommel, Bahnsperre, Unterbrechung, Tonmischer)
 ├── ton/                            Klänge und Ton-Testrahmen
 ├── pult/                           Bilder und Manifest des Pult-Fensters
-├── Hilfsprogramme/                 Befehlssweep (512 Operationscodes), Lochstreifen-Hilfsprogramme
+├── Hilfsprogramme/                 Lochstreifen-Hilfsprogramme
 ├── testscripte/                    Testskripte (compute_all_tests.sh, BIS-Tests, GRAFIK-Prüfungen,
 │                                   erzeuge_leere_trommel.py)
 ├── make_pdf.sh, make_all_pdf.sh    PDF-Erzeugung
+├── c8205_zip_packen.sh             Gesamt-Zip "C8205 Simulator V.M.P.zip" packen (mit den Sub-Zips Test-Protokolle.zip und Regressionstest.zip); mit `--claude` die schlanke Variante ohne PDFs, Klänge und Pult-Bilder
+├── lieferung_packen.sh             Lieferung (Checkpoint) als Zip mit Projektpfaden packen (für KI-Sitzungen)
 ├── markdown-dateien/               Regelwerk und Projektbeschreibung (.md)
 ├── PDF/                            Lesefassungen (A4)
 ├── Tests/                          Testaufträge (.txt oder .test)
 ├── Test-Ergebnisvergleiche/        Soll-Dateien der Dateiprüfungen
-├── Test-Protokolle/                Protokolle der Läufe (.log)
-├── CSV/                            Übersichtstabelle aller Tests (test_tabelle.py)
+├── Test-Protokolle/                Protokolle der Läufe (.log); im Gesamt-Zip nur als Test-Protokolle.zip (im Projektstamm entpacken, wird sonst vom Interpreter neu angelegt)
+├── Testausfuehrungen/              Testausführung (testwahl.sh u. a.) und Übersichtstabelle aller Tests (test_tabelle.py)
 ├── Bausteininterpretiersystem BIS/ Teilprojekt BIS (derzeit nur Dokumentation)
 ├── Trommel/                        Trommeldatei trommel.txt (gemeinsam für TEST und GRAFIK)
 ├── Test-virtuelleGeraete/          virtuelle Geräte des TEST-Interpreters
@@ -92,16 +96,20 @@ C8205/
 ├── virtuelle_Geraete/              virtuelle Geräte des GRAFIK-Interpreters
 │   ├── Leser1/, Leser2/            Lochstreifen-Eingabe
 │   └── Stanzer1/                   Stanzer-Ausgabe
+├── CLAUDE.md                       Karte für KI-Sitzungen (zuerst lesen)
+├── C8205-Programmierhandbuch_fuer_Claude.md   Handbuch dazu
 ├── README.md, README.en.md, LICENSE
 └── Assembler/
     ├── c82ass.sh                   Assembler ausführen
     ├── asm_alle.sh                 alle .asm-Dateien unter einem Ordner assemblieren (meldet nur Fehler)
+    ├── asm_und_test.sh             assemblieren, .test um Prüfung ergänzen und im Interpreter testen (ein Aufruf)
     ├── asm_aufraeumen.sh           nicht benötigte Dateien (.log, .mqo, .obj, .sym) löschen
     ├── make_c82ass.sh / .bat       Assembler bauen (Linux / Windows)
     ├── Sourcecode/                 C-Quellcode und Makrodatei
-    ├── _Linux/                     Binary (für Windows selbst bauen; _Windows/ enthält derzeit keines)
+    ├── _Linux/                     Binary (Windows: `_Windows/c82ass.exe` liegt bei, selbst bauen mit `make_c82ass.bat`)
     ├── Dokumentation/              .odt (maßgeblich), .md, .pdf
-    ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Projektordner (beliebig viele, beliebig benannt)
+    ├── Regressionstest/            Prüfung des Assemblers; im Gesamt-Zip nur als Regressionstest.zip (im Projektstamm entpacken, Pfade darin: Assembler/Regressionstest/...)
+    ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Projektordner (beliebig viele, beliebig benannt); Claude/mini/ ist das kleinste geprüfte Beispiel
     └── Claude_bsp_reassemblierung/ Projektordner: u. a. die Quelltexte der Tests aus Tests/
 ```
 
@@ -151,12 +159,27 @@ python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle
 - Fehlt ein Abspielprogramm, endet der Start ohne `--STUMM` mit Rückkehrcode 16.
 - Der Mischer ist das C-Modul `c-module/tonmisch.c` (in das Erweiterungsmodul `c8205_trommel` eingebunden; bauen mit
   `cd c-module/python && python3 setup.py build_ext --inplace`). Ohne gebautes Modul läuft der Python-Mischer.
-- **Stand:** Unter Linux sind die Logiktests und die Hörprüfung (19.10.2026) durchgeführt; Windows (`winmm`) ist nicht getestet. Einzelheiten und offene Punkte: `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (Beschreibung) und `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (Prüfung, Handlisten).
+- **Stand:** Unter Linux sind die Logiktests und die Hörprüfung (19.10.2026) durchgeführt; unter Windows ist das C-Modul mit MinGW-w64 gebaut (26.10.2026), die Haupttrommel getestet und der Mischer (`winmm`) eingeschaltet (Grundgeräusch, Lochbandleser, Stanzer gehört); Schreibwerkton, Dauerbetrieb, Pult-Fenster und andere Python-Versionen sind nicht geprüft. Einzelheiten und offene Punkte: `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (Beschreibung) und `markdown-dateien/C8205-Interpreter-GRAFIK_Pruefverfahren.md` (Prüfung, Handlisten).
 - Der Ton-Testrahmen `ton/sw_ton.py` bleibt als selbständiges Programm für die Klänge (`ton/SW_Ton_Beschreibung.md`).
 
 Beispiel Lochband kopieren: `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` liest von Leser 1 (`ANWAHL LSL1`) und stanzt auf
 Stanzer 1 (`ANWAHL LSS1`); `:` in KB (Code 15) beendet die Eingabe und wird nicht gestanzt. Test im Stapelbetrieb:
 `python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test`.
+
+## Zusatztrommeln (experimenteller Prototyp C8205Z)
+
+Der **experimentelle Prototyp C8205Z** (Ordner `C8205Z/`) fügt dem Simulator vier Zusatztrommeln ZT1 bis ZT4 hinzu. Er wirkt nur mit dem Schalter `--C8205Z[=VERZ]`; ohne den Schalter ist alles unverändert.
+
+```
+python3 c8205_interp.py --MODUS=TEST --C8205Z C8205Z/Tests_Z/zt-001_hin_zurueck.test   # Stapelbetrieb, Zeit 0
+./c8205_grafik.sh --C8205Z                      # GRAFIK, Befehl 601/661 dauert rund 81 bis 86 ms
+./c8205_grafik.sh --HWCHECK --C8205Z            # zusammen mit dem HW-Check-Fenster
+```
+
+- Befehle: `5k00 030` wählt die Zusatztrommel k (1 bis 4), `zzz0 bbbb 601` gibt eine Haupttrommelspur auf die Zusatztrommel aus, `zzz0 bbbb 661` liest sie zurück (je ganze Spur, 32 Worte). Die Trommeln liegen als `zt1.txt` bis `zt4.txt` in `Trommel/ZT/`.
+- Für GRAFIK einmal das Erweiterungsmodul bauen: `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace` (das C-Modul selbst prüft `cd C8205Z/zt_modul && make test`).
+- Tests: `bash C8205Z/Tests_Z/zt_tests.sh` und `bash C8205Z/Tests_Z/zt_grafik_tests.sh` (TEST gegen GRAFIK).
+- Einzelheiten: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`, `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` §7.10.
 
 ## Schnellstart: Claude-Interpreter (ohne Python)
 
@@ -168,8 +191,8 @@ Abschnitt 1b (als PDF: `PDF/C8205-Testhandbuch_A4.pdf`, „Kurzanleitung: Test s
 
 ## Schnellstart: Assembler
 
-Der Assembler läuft unter Linux und Windows 10; mitgeliefert ist das Linux-Binary (`Assembler/_Linux/`), unter Windows
-wird er selbst gebaut (s. u.). Aufruf unter Linux, **aus dem Ordner `Assembler/`**:
+Der Assembler läuft unter Linux und Windows 10; mitgeliefert sind das Linux-Binary (`Assembler/_Linux/`) und das Windows-Binary
+(`Assembler/_Windows/c82ass.exe`); Selbstbau: s. u. Aufruf unter Linux, **aus dem Ordner `Assembler/`**:
 
 ```
 cd Assembler
@@ -192,6 +215,8 @@ Tastenfolge als Testauftrag in `Tests/` verwenden. Sprache, Anweisungen und Makr
 `Assembler/Dokumentation/` (die `.odt` ist maßgeblich).
 
 ## Wo anfangen zu lesen?
+
+**KI-Sitzung (Claude) oder schneller Einstieg ins Programmieren?** `CLAUDE.md` in der Wurzel lesen (kurz: Schnellstart, Fallen, Skripte, welche Datei wofür), danach gezielt `C8205-Programmierhandbuch_fuer_Claude.md`.
 
 **Zum ersten Mal hier?** Mit `markdown-dateien/C8205-Einstieg_fuer_Neueinsteiger.md` beginnen: Es erklärt, was das
 Projekt enthält (Interpreter, Assembler, BIS), in welcher Reihenfolge man die Dokumente liest und was man zunächst
@@ -231,7 +256,7 @@ können deshalb einen älteren Stand haben (der Stand steht im Dokument). Maßge
 | `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | Die Lochstreifen-Hilfsprogramme in `Hilfsprogramme/` |
 | `C8205-Projektstruktur_A4.pdf` | Verzeichnisstruktur des Gesamtprojekts |
 | `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | Gestaltungsrichtlinie für alle PDF-Ausgaben |
-| `CSV/C8205-Testuebersicht_A4.pdf` | Übersicht aller Tests |
+| `Testausfuehrungen/C8205-Testuebersicht_A4.pdf` | Übersicht aller Tests |
 | `Bausteininterpretiersystem BIS/markdown-dateien/C8205-BIS_A4.pdf` | Das Bausteininterpretiersystem BIS |
 | `Assembler/Dokumentation/C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: Aufruf, Sprache, Makros, Beispiel |
 
@@ -239,7 +264,7 @@ können deshalb einen älteren Stand haben (der Stand steht im Dokument). Maßge
 
 Der Interpreter meldet jede Stelle, bei der das Regelwerk unklar ist oder zu der noch keine Umsetzung vorliegt,
 bewusst als **Stub** und bricht mit einer Meldung ab, statt zu raten („laut scheitern“). Das ist gewollt und kein
-Fehler. Ob für jeden der 512 Operationscodes eine Umsetzung vorhanden ist, prüft `Hilfsprogramme/c8205_befehlssweep.py`.
+Fehler. Ob für jeden der 512 Operationscodes eine Umsetzung vorhanden ist, prüft `testscripte/c8205_befehlssweep.py`.
 
 ## Versionsnummern
 

@@ -1,12 +1,12 @@
 # C 8205 – GRAFIK-Interpreter: Prüfverfahren
 
-Version: 0.95-025
+Version: 0.95-028
 
 **Stand 19.10.2026 (Checkpoint G6-009): §1 bis §10 geschrieben, Entwurf, nicht abgenommen.** Das PDF dazu (`C8205-GRAFIK_Pruefverfahren_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Stufe-6-Beschreibung (Dokument 12, fällt nach Abschluss weg). Das Soll (was GRAFIK tun muss) steht in `C8205-Interpreter-GRAFIK_Beschreibung.md`; dieses Dokument sagt, **wie man prüft, dass er es tut**.
 
 Leser: wer GRAFIK prüft oder abnimmt.
 
-Alle Aufrufe gelten für den Projektordner als Arbeitsverzeichnis, unter Linux. Unter Windows ist nichts davon getestet (→ §9).
+Alle Aufrufe gelten für den Projektordner als Arbeitsverzeichnis, unter Linux. Unter Windows ist davon nur ein Teil geprüft (→ §9).
 
 ## 1 Zweck und Einordnung
 
@@ -90,7 +90,7 @@ Die Nummern 1 bis 20 zählen die Blöcke in der Reihenfolge des Skripts (bei `--
 | `grafik_sw_vormerkung_s3_13.py` | Prüfmittel VM-003 zu S3-13/S3-18 (keine Vormerkung, Sperre statt Warten; Eingabe nur bei aktivem `011`). Ändert keinen Programmcode. **Nicht** Teil des Sammellaufs | Rückgabewert 0 (4 von 4, ohne `expectedFailure`) | 1 |
 | `k0_schatten_haken.py` | Messwerkzeug zu 0.03-016: baut in eine **Kopie** von `c8205_interp.py` einen Zusatz, der Anwahlbefehle K0 mit abweichender Entscheidung von alter und neuer Regel in die Datei aus `C8205_SCHATTEN` schreibt. **Nur auf eine Projektkopie anwenden** | kein Prüfskript, kein Rückgabewert | – |
 | `erzeuge_leere_trommel.py` | erzeugt eine leere Trommeldatei | – | – |
-| `c8205_bis_test.sh`, `test.sh`, `test2_bis.sh`, `test3_bis.sh`, `test_bis.sh`, `compute_all_tests.sh` | Stapelläufe der TEST-Seite (BIS-Tests, Regressionsschleife); beschrieben in `Durchführung_eines_Tests` und der Projektstruktur, hier nicht wiederholt | – | TEST |
+| `c8205_bis_test.sh`, `compute_all_tests.sh` | Stapelläufe der TEST-Seite (BIS-Bausteintests, Regressionsschleife; die früheren `test.sh`, `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` sind entfallen); beschrieben in `Durchführung_eines_Tests` und der Projektstruktur, hier nicht wiederholt | – | TEST |
 
 **Reihenfolge nach einer Änderung:** zuerst `grafik_alle_tests.sh --schnell`, danach der volle Lauf. Der volle Lauf mit den Gleichwertigkeitsläufen braucht am Rechner des Projektinhabers einige Minuten (Block 17 allein 159 s, Stand 19.10.2026).
 
@@ -382,14 +382,14 @@ Alles, was Aussehen, Gehör, Zeitgefühl und das Verhalten des Fenstermanagers b
 | H-1 | Aussehen und Klickflächen des Pults | Beschreibung §3 | Sichtprüfung; Tasten einzeln klicken | vom Projektinhaber abgenommen (Stufe 2, 18.10.2026); **offen** OP-22 (Grafik „BS gedrückt“, fünf Foto-Abgleiche) |
 | H-2 | SW-Fenster: Tastenabbildung, Anzeige, Sperre | Handliste §7.2 | `grafik_sw_tk_test.py --manuell --DEBUGLOG` | erledigt (A-3, 18.10.2026); `[ ] #`, Schnelltipp und Kopieren vom Projektinhaber gemeldet, nicht protokolliert |
 | H-3 | Fokus: SW-Text, Rückgabe an das Pult, HW-Check | Beschreibung §5.7, §8; hängt vom Fenstermanager ab | Tk-Test, WARNUNG beobachten | Tk-Test 1 WARNUNG (HW-Check, B-5) als bekannte Eigenschaft akzeptiert; „Fokus zum Pult zurück“ einmal nicht übernommen (12:27), später OK |
-| H-4 | Hörprüfung | Handliste §7.3 | `./c8205_grafik.sh --HWCHECK` ohne `--STUMM` | Linux: Hörprüfung 1 (Befunde), Hörprüfung 2 **ok** (19.10.2026); Windows offen |
+| H-4 | Hörprüfung | Handliste §7.3 | `./c8205_grafik.sh --HWCHECK` ohne `--STUMM` | Linux: Hörprüfung 1 (Befunde), Hörprüfung 2 **ok** (19.10.2026); Windows: Grundgeräusch, LL und LS gehört (26.10.2026), Rest offen |
 | H-5 | Taktgefühl: Reaktion auf Klicks im Dauerlauf R | Wirkung eines Klicks spätestens 50 ms (OP-17); Tastenklang: Verzögerung höchstens 50 ms (Mischer, B-1), Vorlauf 20 ms + Puffer 20 ms | Dauerlauf starten, H und Tasten klicken; Logik misst die Reaktionszeit von H (Block 3) | vorläufig entschieden, **Erprobung im Dauerlauf offen** (OP-17) |
 | H-6 | Puffer im SW-Fenster am echten Fenster | 8 Eingaben, Ausnahme für Paare, kein Verfall (bestätigt 19.10.2026, OP-07) | Schnelltipp `a A a A` und längere Folgen; angezeigt = beim Rechner angekommen; mit `--DEBUGLOG` zeigt `SW Taste … voll` das Überlaufen | **nicht erprobt** |
 | H-7 | Eingabeklang beim Tastendruck | jedes Zeichen klingt **beim Tastendruck**, sobald es im Puffer ist (Beschreibung §6.2, OP-09, entschieden 21.10.2026); die Anzeige kommt erst bei der Annahme durch den Rechner; das **erste** Zeichen nach dem Einschalten (Paar mit Umschaltzeichen) klingt ebenfalls beim Drücken, angezeigt wird es nach dem Loslassen und der Annahme (§6.10 Nr. 3) | `testscripte/op09_eingabeklang.sh` starten (Test `sw_zwei_ziffern` auf frischer Trommelkopie, mit `--DEBUGLOG op09_debug.log`): Netz ein, G, R, als erstes Zeichen `2` tippen, danach `3`; Fenster schließen; Log lesen (`grep -E "Taste|Loslassen|Eingabeklang" op09_debug.log`): `SW Taste … -> folgt` und **sofort danach** `SW Eingabeklang …` (und `Stimmen im Mischer danach: n`, n größer 0); später `zweite Eingabe beim Loslassen -> geliefert` (Anzeige). Es muss **bei jedem Tastendruck** klicken, auch beim ersten und auch wenn der Rechner noch schreibt; ein Klick je Taste, keiner mehr bei der Anzeige. Steht die Zeile `Eingabeklang` da und es bleibt still: Tonstrom (Abspielprogramm) | Beobachtung 19.10.2026: kein Klick beim ersten Zeichen; Ursache 21.10.2026: Aufforderung des Testprogramms nach dem Umschaltzeichen (1,70 s); **Entscheidung (b) 21.10.2026, umgesetzt (G4-008/G4-010), Tests grün; Hören am Fenster steht aus** |
 | H-8 | `E+`: AR-Lampen zeigen BZ; G bei gehaltenem E | Beschreibung §3.8 Nr. 1, 2, 6 | Pult: E niederdrücken (ohne M), Lampenreihe AR ablesen (= BZ), loslassen; mit gehaltenem M: AR-Lampen zeigen das erhöhte AR; G bei gehaltenem E: nur FÜ erlischt, BR/AR bleiben | OP-10 und OP-11 entschieden 21.10.2026 und umgesetzt (G4-005, G2-011); Tests `EGetrennt` in `grafik_pult_tests.py` (82 von 82); **Handprüfung am Fenster nicht durchgeführt**; Fortsetzung nach G im Überlaufhalt bestätigt (OP-41) |
 | H-9 | Ausfall des Tonstroms im Betrieb | Fehlermeldung, Abbruch mit Code 16 (S4-04) | Abspielprogramm im Lauf beenden | Start geprüft (G4-019); **Ausfall im Betrieb am echten Gerät offen** |
 | H-10 | Bildschirm: Fensterlage und -größe | 1920 × 1080; Pult 1148 × 860 fest; Überlappen erlaubt (F-05) | Sichtprüfung; die gemerkte Fensterlage (in den Tests mit `C8205_FENSTERLAGE=aus` abgeschaltet) | Aussehen nicht beurteilt außer „keine Beanstandung gemeldet“; HiDPI, Mehrmonitorbetrieb, Wayland ungeprüft |
-| H-11 | Windows | → §9 | | offen |
+| H-11 | Windows | → §9 | | teilweise (26.10.2026), Rest offen |
 | H-12 | Lampenmittelung („ruhiges Bild“) im Dauerlauf | Fenster 40 ms; leuchtet ab 60 % „an“, dunkel bis 40 %, dazwischen bleibt der Zustand; bei Halt sofort genau (Beschreibung §3.5, OP-37) | Handliste §7.5 | Logik durch Tests belegt (`grafik_pult_tests.py`, Klasse `Beruhigung`); Werte vom Projektinhaber **bestätigt 21.10.2026** (OP-37); **Handprüfung am laufenden Fenster nicht durchgeführt** |
 
 ### 7.2 Handliste SW-Fenster (`grafik_sw_tk_test.py --manuell --DEBUGLOG`)
@@ -457,7 +457,7 @@ Die Trommel wird in den Blöcken 15 (`test_c8205_trommel`, 11 Tests) und 16 (`ma
 
 **Python-Seite (Block 15):** Lesen mit Wartezeit 0 bis 31, Schreiben und Rücklesen mit Begrenzung auf 33 Bit, Bahnsperre, Fehler und `TrommelAbbruch`, Abbruch-Flag, Sektor und Statistik, Abweisung einer Datei im alten Format, Pfad mit Umlaut, Strg+C (Rückkehrcode 8, `ausschalten()` im `finally`, Trommeldatei danach mit 4096 gültigen Zeilen), Lader (nicht ladbar: Meldung und Code 16).
 
-**Nicht belegt:** Die alten Testrahmen `testframe.c` und `testframe_trommel.c` kompilieren, wurden mit der neuen Fassung aber nicht ausgeführt. Der Strg+C-Test wird unter Windows übersprungen. Windows ist insgesamt ungeprüft (§9, W-7).
+**Nicht belegt:** Die alten Testrahmen `testframe.c` und `testframe_trommel.c` kompilieren, wurden mit der neuen Fassung aber nicht ausgeführt. Der Strg+C-Test wird unter Windows übersprungen. Unter Windows besteht `test_c8205_trommel.py` (26.10.2026, §9); das übrige ist ungeprüft (W-7).
 
 ### 7.5 Handliste Lampenmittelung (H-12, OP-37)
 
@@ -518,7 +518,7 @@ Schluss: Die Lampenabtastung stört die Befehlsausführung nicht messbar; Pult-T
 
 ### 7.8 Einlesezeit des KEP und Trommelzeit
 
-Das Einlesen von `pj2-bis_minimalprogramm.kep` (7542 Zeilen) über das KEP dauert 54 s, über 90 % davon im Warten der Trommel. Die virtuelle Trommelzeit (`--trommelzeit alt|echt|schnell`, Standard `alt`; `echt` und `schnell` sind ein Entwurf) zählt 521 241 Wortzeiten = 54,2 s, das ist dieselbe Zeit wie das C-Modul nach der Wanduhr. Der Interpreter hält also mit der Trommel Schritt; die Vermutung, das KEP verpasse wegen eines zu langsamen Interpreters seinen Sektor, ist nicht belegt. Die Schleife des KEP (Zellen 0020, 0030, 0031/0021) wartet je Durchlauf feste 22, 24 und 11 bzw. 6 Wortzeiten, zusammen etwa 70 Wortzeiten = 7,2 ms je Zeichen, fast genau ein Zeichen je 1/130 s (7,7 ms): Das KEP ist auf das Lesetempo des Lesers abgestimmt, nicht auf die kürzeste Zeit je Zeichen. Folgerung: Bei 130 Zeichen/s dauern 7542 Zeichen mindestens 58 s und die 12 139 Zeichen von `namen_raten.kep` mindestens 93 s, auch am echten Gerät. Gemessene 101 s im Fenster (statt 92 s vor dem Zeitmodell) sind nicht aufgeklärt; der Projektinhaber verfolgt das nicht weiter.
+Das Einlesen des früheren `pj2-bis_minimalprogramm.kep` (7542 Zeilen; die Messung stammt von der alten Fassung, ersetzt durch `pj2-bis_minimalprogramm_v6.kep`) über das KEP dauert 54 s, über 90 % davon im Warten der Trommel. Die virtuelle Trommelzeit (`--trommelzeit alt|echt|schnell`, Standard `alt`; Beschreibung: GRAFIK_Beschreibung §7.8) zählt 521 241 Wortzeiten = 54,2 s, das ist dieselbe Zeit wie das C-Modul nach der Wanduhr. Der Interpreter hält also mit der Trommel Schritt; die Vermutung, das KEP verpasse wegen eines zu langsamen Interpreters seinen Sektor, ist nicht belegt. Die Schleife des KEP (Zellen 0020, 0030, 0031/0021) wartet je Durchlauf feste 22, 24 und 11 bzw. 6 Wortzeiten, zusammen etwa 70 Wortzeiten = 7,2 ms je Zeichen, fast genau ein Zeichen je 1/130 s (7,7 ms): Das KEP ist auf das Lesetempo des Lesers abgestimmt, nicht auf die kürzeste Zeit je Zeichen. Folgerung: Bei 130 Zeichen/s dauern 7542 Zeichen mindestens 58 s und die 12 139 Zeichen von `namen_raten.kep` mindestens 93 s, auch am echten Gerät. Gemessene 101 s im Fenster (statt 92 s vor dem Zeitmodell) sind nicht aufgeklärt; der Projektinhaber verfolgt das nicht weiter.
 
 ## 8 Abnahmekriterien der Stufen 1 bis 5
 
@@ -528,10 +528,10 @@ Kurzfassung der Kriterien und ihres Standes, als Referenz. Die Einzelheiten steh
 
 | Stufe | Inhalt | Abnahme durch den Projektinhaber | Ausnahmen |
 |---|---|---|---|
-| 1 | Kern und Trommel (`c8205_grafik.py`, C-Modul), Geräte | **18.10.2026** („abgenommen“, nach Hinweis auf den Stand in Checkpoint 49) | Windows ungebaut; Standardannahmen (1) bis (3) unbestätigt |
+| 1 | Kern und Trommel (`c8205_grafik.py`, C-Modul), Geräte | **18.10.2026** („abgenommen“, nach Hinweis auf den Stand in Checkpoint 49) | Windows: Teilabnahme 26.10.2026 (§9); Standardannahmen (1) bis (3) unbestätigt |
 | 2 | Pult-Fenster, Netzablauf, Rechnertöne, `--HWCHECK` | **18.10.2026** (ebenso) | Töne nicht gehört geprüft (dann Stufe 4); Windows; halber E-Befehl (OP-20); Dok. 06 nur zum Teil |
 | 3 | SW-Fenster | **18.10.2026** („bis hierhin alles ok, abgenommen“, nach Checkpoint 46/48) | PDFs durch den Projektinhaber (A-6, später erledigt); Handliste `[ ] #`, Schnelltipp, Kopieren nur gemeldet |
-| 4 | Töne (Mischer, Schreibwerk, Leser, Stanzer) | **19.10.2026** („ich nehme Stufe 4 ab“) | B-2 Windows und B-6 Windows offen; Handbücher am 21.10.2026 auf Töne durchgesehen, keine Änderung nötig (OP-21, Beschreibung §10.5) |
+| 4 | Töne (Mischer, Schreibwerk, Leser, Stanzer) | **19.10.2026** („ich nehme Stufe 4 ab“) | B-2 Windows: Bau erledigt, Dauerbetrieb offen; B-6 Windows teilweise (§9); Handbücher am 21.10.2026 auf Töne durchgesehen, keine Änderung nötig (OP-21, Beschreibung §10.5) |
 | 5 | `--MODUS` TEST/GRAFIK, Standard GRAFIK | **19.10.2026** (ohne Windows) | A5-8 Windows: eigene, spätere Abnahme |
 | 6 | Dokumentation konsolidieren | in Arbeit | – |
 
@@ -557,11 +557,11 @@ Weitere belegte Meilensteine: erster echter Tk-Lauf `r300_eingabe` (Checkpoint 2
 | Nr. | Kriterium | Stand |
 |---|---|---|
 | B-1 | Logiktests für Mischer, Leser, Stanzer, Schreibwerk ohne Audiogerät | erledigt (69 Prüfungen, gegen Python-Mischer und C-Modul) |
-| B-2 | `tonmisch` baut unter Linux als statische Bibliothek, im Erweiterungsmodul; Windows (MinGW-w64) | **Linux erledigt; Windows offen** (§9) |
+| B-2 | `tonmisch` baut unter Linux als statische Bibliothek, im Erweiterungsmodul; Windows (MinGW-w64) | **Linux erledigt; Windows: gebaut und eingeschaltet, Dauerbetrieb offen** (§9) |
 | B-3 | Selektor SW, `--STUMM`, Strg+C/X/Schließen, Netz aus | echter Lauf mit Tk-Fenster: läuft (19.10.2026) |
 | B-4 | Angezeigte Eingabe klingt wie die Ausgabe, auch bei Selektor SW | echter Lauf: läuft (19.10.2026) |
 | B-5 | Fehlendes Abspielprogramm: Abbruch mit Code 16 | Start erledigt (G4-019); **Ausfall im Betrieb offen** (H-9) |
-| B-6 | Hörprüfung am echten Rechner, Konstanten nachgestellt | Linux: Hörprüfung 2 ok; **Windows offen** |
+| B-6 | Hörprüfung am echten Rechner, Konstanten nachgestellt | Linux: Hörprüfung 2 ok; **Windows teilweise** (26.10.2026: Grundgeräusch, LL, LS gehört) |
 | B-7 | Bisherige Prüfungen bleiben grün, Tonstrom ändert kein Rechnerverhalten | erfüllt (19.10.2026, 18 von 18) |
 | B-8 | **Puffer am echten Fenster, Klicks im Dauerlauf, Eingabeklang beim ersten Zeichen** nicht erprobt oder nicht entschieden; E+/BR/BZ und G bei gehaltenem E sind entschieden und umgesetzt (OP-10, OP-11), nur die Handprüfung H-8 fehlt | → §7.1, H-5 bis H-8; OP-07, OP-17; OP-09: H-7, Beschreibung §10.5 | siehe Beschreibung §10 |
 
@@ -572,11 +572,11 @@ Weitere belegte Meilensteine: erster echter Tk-Lauf `r300_eingabe` (Checkpoint 2
 | A5-1 | `grafik_alle_tests.sh` ohne `--schnell`, alle Blöcke grün | erfüllt, 19.10.2026: 18 von 18 |
 | A5-2 | `python3 c8205_interp.py --MODUS=TEST Tests/0015-030.txt`: „Test wahr“, Code 0 | erfüllt; Lauf durch den Entwickler in einer Projektkopie |
 | A5-3 | `python3 c8205_interp.py` ohne Schalter öffnet Pult und SW mit Ton | erfüllt (durch den Tk-Lauf mit Ton bei Stufe 4 gedeckt) |
-| A5-4 | `./c8205_interpreter.sh Tests/0015-030.txt` und `c8205_bis_test.sh` wie vor Stufe 5 | erfüllt; BIS-Tests: 49 × Code 0, 1 × Code 6 (`pj2-bis_ps_zv_fehler.txt`, erwartet falsch) |
+| A5-4 | `./c8205_interpreter.sh Tests/0015-030.txt` und `c8205_bis_test.sh` wie vor Stufe 5 | erfüllt (Stand der Stufe 5 mit den damaligen Einzeltests `pj2-bis_*.txt`, inzwischen durch `Tests/pj2-bis_v6_*.test` ersetzt); BIS-Tests: 49 × Code 0, 1 × Code 6 (`pj2-bis_ps_zv_fehler.txt`, erwartet falsch) |
 | A5-5 | `grafik_gleichwertigkeit.py --alle` grün | erfüllt |
 | A5-6 | Alle Aufrufe von `c8205_interp.py` mit Testdatei tragen `--MODUS=TEST` (Suchbefehl) | erfüllt (G5-004) |
 | A5-7 | PDFs neu erzeugt | erfüllt (G5-009), bestätigt |
-| A5-8 | Windows (S5-12) | zurückgestellt (§9) |
+| A5-8 | Windows (S5-12) | teilweise (§9) |
 
 Suchbefehl zu A5-6 (im Projektordner):
 
@@ -588,25 +588,25 @@ grep -rnE "c8205_interp(\.py)? " --include=*.md --include=*.py --include=*.sh --
 
 Für Stufe 1 und 2 gibt es keine nummerierte Kriterientabelle; die Abnahme (18.10.2026) stützt sich auf die Läufe der Logiktests, den Gleichwertigkeitslauf (Stufe 1), den Stresstest und den Pult-Tastentest (§5) sowie die Handabnahme des Pult-Fensters (Stufe 2). Die bekannten Einschränkungen stehen in §8.1 und in der Beschreibung §10.4.
 
-## 9 Noch offen: Windows
+## 9 Windows (Teilabnahme 26.10.2026)
 
-Windows ist **eigene, spätere Abnahme** (O5-3, O6-5). Sie läuft gegen dieses Verfahren, nicht gegen Dok. 10 und 11. Stand: `c8205_grafik.bat` und `c8205_interpreter.bat` sind angelegt und **nicht getestet**; das C-Modul ist unter Windows weder übersetzt noch getestet; der Mischer (`winmm`) ist geschrieben, nicht übersetzt; es gibt noch keinen Tester (Dok. 04 §6 Nr. 5: „sobald der Tester da ist“).
+Windows ist **eigene Abnahme** (O5-3, O6-5). Sie läuft gegen dieses Verfahren, nicht gegen Dok. 10 und 11. Stand 26.10.2026 (Meldungen des Projektinhabers, nicht nachgeprüft): Das C-Modul ist unter Windows mit MinGW-w64 gebaut, geladen und die Haupttrommel getestet; `c8205_grafik.bat` startet, der Mischer (`winmm`) ist eingeschaltet. Offen bleibt der größere Teil (§9.2, §9.4). Bau, Fehlerbilder und Dateiablage: Beschreibung §9.2.
 
 ### 9.1 Was bisher gilt (Quellen)
 
 | Punkt | Stand | Quelle |
 |---|---|---|
-| Bau `tonmisch` mit **MinGW-w64** (statische Bibliothek, kein MSVC) und Einbindung in das Erweiterungsmodul | nicht gebaut (OP-01) | S4-02, B-2 |
-| `c8205_grafik.bat`: prüft `python` und `c-module\python\c8205_trommel*.pyd`; Bau: `cd c-module\python && python setup.py build_ext --inplace` (Visual Studio Build Tools oder MinGW-w64); Rückgabewert 0, 8 (Strg+C), 16 (Start nicht möglich) | nicht getestet (OP-02) | S5-12 |
-| `c8205_interpreter.bat` | nicht getestet (OP-02) | S5-12 |
-| Ton: Rechnertöne über `winsound`, Schreibwerkzeit, Lesetempo; Mischer über `winmm` ungetestet, Hinweis beim Start | bestätigt („wenn du meinst. ja“), ungetestet (OP-03) | O4-18 |
-| Trommel: Plattformschicht `plattform.h` (Win32) | nicht übersetzt, nicht getestet; ob das aktive Warten dort entfernt ist, nicht geprüft (OP-04) | Dok. 02 §4.4 |
+| Bau `tonmisch` mit **MinGW-w64** (statische Bibliothek, kein MSVC) und Einbindung in das Erweiterungsmodul | gebaut und im Modul eingebunden am 26.10.2026 (OP-01: Bau und Betrieb erledigt) | S4-02, B-2 |
+| `c8205_grafik.bat`: prüft `python` und `c-module\python\c8205_trommel*.pyd`; Bau: `c-module\python\bau_trommel_mingw.bat` (MinGW-w64); Rückgabewert 0, 8 (Strg+C), 16 (Start nicht möglich) | am 26.10.2026 gestartet (Start aus `neu\`); Rückgabewerte nicht gemeldet (OP-02) | S5-12 |
+| `c8205_interpreter.bat` | keine Meldung, nicht geprüft (OP-02) | S5-12 |
+| Ton: Mischer über `winmm` (Probe `winmm_pruefen()`), Startzeile nennt den Weg; Rückfall `winsound` mit Hinweis und Grund | Grundgeräusch, LL und LS gehört (26.10.2026); Schreibwerkton, Lücken, Lautstärke und `--TON` nicht geprüft (OP-03) | O4-18 |
+| Trommel: Plattformschicht `plattform.h` (Win32) | übersetzt, `test_c8205_trommel.py` besteht (26.10.2026); ob das aktive Warten dort entfernt ist, nicht geprüft (OP-04) | Dok. 02 §4.4 |
 | `c-module/build_msvc.bat` (baut `trommel.dll` und `testframe_koinzidenz.exe` mit `cl`) | im Kopf „NICHT getestet“; **nennt MSVC**, während S4-02 für `tonmisch` MinGW-w64 festlegt | – |
 | Tk unter Windows und WSL, Bildschirmgrößen, Zwischenablage, X/Strg+C über die Pipe-Meldung | nie geprüft (OP-05) | Dok. 01 §8 Nr. 13, Dok. 04 Nr. 15 |
 
 ### 9.2 Abnahmekriterien Windows (Vorschlag, aus den Quellen abgeleitet)
 
-*Diese Kriterien sind **Vorschläge des Entwicklers** (Kennungen W-1 bis W-9 neu in diesem Dokument, nicht im Register). Sie bündeln B-2, B-6, S4-15, S5-12 und A5-8 zu prüfbaren Schritten. Der Projektinhaber bestätigt sie oder ändert sie. **Stand 19.10.2026: nicht bestätigt; der Projektinhaber kannte sie nicht und hat nicht entschieden.** Sie sind für keine bisherige Abnahme nötig und werden erst gebraucht, wenn ein Windows-Tester da ist.*
+*Diese Kriterien sind **Vorschläge des Entwicklers** (Kennungen W-1 bis W-9 neu in diesem Dokument, nicht im Register). Sie bündeln B-2, B-6, S4-15, S5-12 und A5-8 zu prüfbaren Schritten. Der Projektinhaber bestätigt sie oder ändert sie. **Stand 19.10.2026: nicht bestätigt; der Projektinhaber kannte sie nicht und hat nicht entschieden.** Sie sind für keine bisherige Abnahme nötig und werden erst gebraucht, wenn ein Windows-Tester da ist. Teile davon sind am 26.10.2026 beim Projektinhaber erledigt (Stand unten); bestätigt sind die Kriterien weiterhin nicht.*
 
 | Nr. | Kriterium | Aus | Prüfer |
 |---|---|---|---|
@@ -621,6 +621,49 @@ Windows ist **eigene, spätere Abnahme** (O5-3, O6-5). Sie läuft gegen dieses V
 | W-9 | **R300-Eingabe:** `r300_eingabe_lauf_und_auswertung.bat` ohne Befund (setzt die Dateien aus §6.5 voraus: vorher erzeugen, danach löschen) | A-2 | Tester |
 
 Windows-Zeilen in den Berichten tragen „Windows“ und die Python-Version; ein Linux-Ergebnis gilt nicht für Windows.
+
+**Stand der Kriterien am 26.10.2026** (nach den Meldungen des Projektinhabers, Python 3.13):
+
+| Nr. | Stand |
+|---|---|
+| W-1 | Bau von `c8205_trommel.pyd` (mit `tonmisch`) und `c8205_ztmodul.pyd` gelingt; gebaut mit `bau_trommel_mingw.bat` und `bau_ztmodul_mingw.bat`, nicht mit `setup.py` |
+| W-2 | keine Meldung, nicht geprüft |
+| W-3 | `c8205_grafik.bat` startet; Rückgabewerte (0, 8, 16) nicht gemeldet |
+| W-4 | keine Meldung, nicht geprüft |
+| W-5 | keine Meldung, nicht geprüft (nur `test_c8205_trommel.py`: 23 Tests, 1 übersprungen) |
+| W-6 | Startzeile belegt; Grundgeräusch, LL und LS über den Mischer gehört; Hörprüfung nach §7.3 nicht durchgeführt; Schreibwerkton nicht geprüft |
+| W-7 | nicht geprüft (CPU-Last, Blöcke 1, 3, 14) |
+| W-8 | nicht gemeldet, nicht geprüft |
+| W-9 | keine Meldung, nicht geprüft |
+
+### 9.3 Ergebnis der Teilabnahme (26.10.2026, Rechner des Projektinhabers)
+
+| Baustein | Bau | Laden | Test |
+|---|---|---|---|
+| `c8205_trommel.pyd` (Trommel, Bahnsperre, Unterbrechung, Tonmischer) | gebaut mit MinGW-w64 | `import c8205_trommel` ok | `test_c8205_trommel.py`: 23 Tests, OK, 1 übersprungen |
+| `c8205_ztmodul.pyd` (Zusatztrommeln, C8205Z) | gebaut mit MinGW-w64 | `import c8205_ztmodul` ok | kein Python-Test vorhanden |
+| GRAFIK-Interpreter (`c8205_grafik.bat`, Start aus `neu\`) | – | startet; Startzeile „Hinweis: Toene unter Windows ueber den Mischer (winmm).“ | Töne vom Inhaber **gehört**: Grundgeräusch, Lochbandleser (LL) und Stanzer (LS) über den C-Mischer mit `winmm` |
+
+Umgebung: Python 3.13, 64 Bit (`...\Python313`), `gcc` aus MSYS2 `mingw64` (`gcc -dumpmachine` meldet `x86_64-w64-mingw32`; die gcc-Version wurde nicht festgehalten).
+
+Der übersprungene Test ist der SIGINT-Test (`test_c8205_trommel.py`, Zeile 81); er ist unter Windows absichtlich ausgenommen. Die Meldung `trommel_einschalten: Dateigroesse 69632, erwartet 73728 …` mitten im Lauf gehört zum Test, der eine Datei im alten 17-Byte-Format (4096 × 17 = 69632) anlegt und deren Abweisung prüft (`TrommelFehler`, Zeilen 70 bis 73). Sie erscheint auch unter Linux und ist kein Fehler.
+
+**Ton unter Windows (Beobachtung des Inhabers, 26.10.2026):** Beim Start von `c8205_grafik.bat` erscheint die Zeile „Hinweis: Toene unter Windows noch nicht ueber den Mischer (winmm fehlt): nur Rechnertoene (winsound) und Schreibwerkzeit.“ Die Töne waren hörbar. Sie kommen aber aus dem Stufe-2-Zweig (`os.name == 'nt'` in `c8205_grafik.py`, Klasse `RechnerTon` in `grafik_ton.py`, `winsound`, ein Klang zur Zeit). Der C-Mischer `tonmisch` mit `winmm` wurde damit **nicht benutzt**, weil dieser Zweig ihn umging; Leser- und Stanzerton waren dort aus. Das Hören belegt also `winsound`, nicht den Mischer.
+
+**Änderung danach (26.10.2026):** `c8205_grafik.py` prüft unter Windows zuerst mit `grafik_tonmisch_c.winmm_verfuegbar()`, ob das C-Modul mit `ton_*`-Methoden lädt und `winmm` sich öffnen lässt. Dann läuft derselbe Aufbau wie unter Linux (Pult-, Schreibwerk-, Leser- und Stanzerton über den C-Mischer; Senke `CWinmmSenke`, `neuer_mischer_winmm()`), und die Hinweiszeile entfällt. Sonst gilt der alte `winsound`-Zweig mit der Hinweiszeile. Mit `--STUMM` wird `winmm` nicht geprüft. Fällt `winmm` im Betrieb aus, gilt wie unter Linux Code 16. **Ergebnis:** Der Inhaber hat danach Grundgeräusch, Leser- und Stanzertöne gehört (Mischer mit `winmm` aktiv, Startzeile wie oben). Schreibwerkton, Lücken und Lautstärken (`--TON`) wurden nicht gemeldet und gelten als nicht geprüft.
+
+Linux: Beide Module bauen mit der geänderten `plattform.h` unverändert; `test_c8205_trommel.py` läuft unter Linux mit 23 Tests ohne Auslassung und ohne Fehler (Python 3.12 in der Cloud-Sitzung, Build mit `gcc`, nicht mit `setup.py`). Die Änderungen stehen nur im `_WIN32`-Zweig und in `.bat`-Dateien.
+
+### 9.4 Noch offen unter Windows (nicht geprüft)
+
+- **Weitere DLLs:** Der Importtest lief in demselben Terminal, in dem der MSYS2-Ordner im `PATH` stand. Fehlende Laufzeit-DLLs aus `C:\msys64\mingw64\bin` wären dadurch nicht aufgefallen. Prüfen: `objdump -p c8205_trommel.pyd | findstr "DLL Name"` und Importtest in einem frischen Fenster ohne MSYS2 im `PATH`.
+- **Python-Versionen:** Gebaut und getestet nur mit Python 3.13. Das Modul benutzt die Limited API (`Py_LIMITED_API=0x03080000`) und `python3.lib`; ob dieselbe `.pyd` unter 3.8 bis 3.12 lädt, ist nicht geprüft. Der Inhaber nutzt sonst Python 3.11.
+- **Tonmischer unter Windows:** `tonmisch.c` mit `winmm` läuft (gehört: Grundgeräusch, LL, LS). **Nicht geprüft:** Schreibwerkton und Tastenklänge über den Mischer, Lücken und Aussetzer bei längerem Betrieb (Puffer 4 × 10 ms), Lautstärke und `--TON`, Verhalten ohne Audiogerät (Probe `winmm_pruefen()` meldet dann den Grund), Netz aus mit `fade_out`. Unter Linux belegt: die Änderungen stehen nur im Windows-Zweig; `grafik_stufe4_tests.py` besteht mit beiden Mischern (103 Tests), und der Sammellauf `grafik_alle_tests.sh --schnell` ist so wie vorher (siehe nächster Punkt). Ob `test_c8205_trommel.py` den Mischer aufruft, wurde nicht geprüft.
+- **Vorhandener Fehlschlag unter Linux (nicht von dieser Änderung):** `testscripte/grafik_sw_ende_zu_ende.py` (Block „Stufe 3 Ende-zu-Ende“) meldet 2 Fehlschläge und 1 Fehler, mit und ohne die Änderung gleich (15 Tests). Ursache nicht untersucht.
+- **Zeitverhalten:** Der Test hat 0,43 s gedauert und bestanden; Messwerte der Windows-Uhr (Aufwachverspätung, Zähler `aufwachen`, `nachgeholte_ticks`, Beschreibung §7.8) liegen nicht vor.
+- **Zusatztrommel:** nur gebaut und importiert, kein Funktionstest. In `C8205Z/zt_modul` liegt als Test nur `testframe_zt.c` (C-Testrahmen).
+- **GRAFIK-Interpreter und Pult unter Windows:** Der Start über `c8205_grafik.bat` läuft bis zur Tonhinweiszeile und die Töne waren hörbar (`winsound`). Ob das Pult-Fenster (Tk) vollständig bedienbar ist, wurde nicht gemeldet und nicht geprüft.
+- **`-static`:** Die Skripte benutzen nur `-static-libgcc`; ob mehr nötig ist, hängt vom Ergebnis der DLL-Prüfung ab.
 
 ## 10 Bekannte Befunde
 

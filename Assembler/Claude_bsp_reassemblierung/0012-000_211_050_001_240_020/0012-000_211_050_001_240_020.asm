@@ -1,6 +1,7 @@
 ; 0012-000_211_050_001_240_020.asm  -  symbolisches Assemblerprogramm zu Testdatei 0012-000_211_050_001_240_020.txt
 ; #DOK-0012 Test Unbedingter Sprung, Ladebefehl und Addition Positiv-Sprung und Speicherbefehl
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -23,5 +24,7 @@ d5007:          dw      0200
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=5006 AC=00000000100 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+;#PRUEFE-ENDE
 ;

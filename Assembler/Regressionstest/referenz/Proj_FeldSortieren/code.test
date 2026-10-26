@@ -13,7 +13,7 @@ Trommeldatei:
 0010: 00000011004 # 004 *+1 ; Verschiebe AC 1x links (8)
 0011: 00000012004 # 004 *+1 ; Verschiebe AC 1x links (9)
 0012: 00000201240 # 240 len
-0013: 00004021605 # 605 04021 ; 9 mal Linksverschiebung
+0013: 00004013605 # 605 04013 ; 9 mal Linksverschiebung
 0014: 00000020000 # 000 firstEntry
 0015: 00000213211 # loop1: 211 i ; Lade i
 0016: 00000217210 # 210 l0001 ; Addiere 1 Adreßeinheit zu `i`
@@ -85,3 +85,12 @@ Trommeldatei:
 0223: 00000000240 # l0005 dw 000000000240
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=0212 US=1
+0201: 00000006000   # len
+0203: 00000010030   # 1
+0204: 00000020030   # 2
+0205: 00000040030   # 4
+0206: 00000070030   # 7
+0207: 00000200030   # 0
+0210: 00001220030   # k

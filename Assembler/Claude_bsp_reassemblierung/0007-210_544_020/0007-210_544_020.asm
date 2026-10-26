@@ -5,6 +5,7 @@
 ; #SPEI-0007 4000-4037
 ; #SPUR-0007 4000
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -28,6 +29,7 @@ d4001:          abs     04001
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ;
 ; BZ=0004 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ;
@@ -63,5 +65,6 @@ d4001:          abs     04001
 ; 4031: 00000000000
 ; 4006: 00000000000
 ; 4023: 00000000000
+;#PRUEFE-ENDE
 ;
 ;

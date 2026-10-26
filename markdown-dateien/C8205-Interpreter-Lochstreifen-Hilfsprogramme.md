@@ -1,12 +1,12 @@
 # C8205-Lochstreifen-Hilfsprogramme
 
-Version: 0.95-001
+Version: 0.95-004
 
-Dokumentversion s. oben; **Programmversion 1.9** für Anzeige und Eingabe (Stand 10.10.2026), **Programmversion 1.2** für die Umwandlung (Stand 20.10.2026). Die Programme tragen ihre eigene Versionsnummer (`--version`), unabhängig vom Schema `y.xx-zzz` der Dateien (`C8205-Versionierung.md`, Abschnitt 2).
+Dokumentversion s. oben; **Programmversion 1.11** für die Anzeige (Stand 25.10.2026), **Programmversion 1.9** für die Eingabe (Stand 10.10.2026), **Programmversion 1.2** für die Umwandlung (Stand 20.10.2026). Die Programme tragen ihre eigene Versionsnummer (`--version`), unabhängig vom Schema `y.xx-zzz` der Dateien (`C8205-Versionierung.md`, Abschnitt 2).
 
 | Programm | Datei | Version |
 |---|---|---|
-| Lochstreifen ausschreiben (Anzeige) | `c8205_lochstreifen_anzeige.py` | 1.9 |
+| Lochstreifen ausschreiben (Anzeige) | `c8205_lochstreifen_anzeige.py` | 1.11 |
 | Lochstreifen erzeugen (Eingabe) | `c8205_lochstreifen_eingabe.py` | 1.9 |
 | Textdatei in Lochstreifen umwandeln und umgekehrt (Umwandlung) | `c8205_lochstreifen_umwandlung.py` | 1.2 |
 
@@ -18,6 +18,8 @@ Die Versionsnummer lässt sich mit `--version` abfragen.
 - **Umwandlung 1.1**: Neue Schalter `--IN-BIN` (Vorgabe) und `--IN-TXT` wählen die Richtung. `--IN-TXT` wandelt einen binär codierten Lochstreifen in eine Textdatei zurück (Abschnitte 3.4 und 4.3).
 - **Umwandlung 1.0**: Erste Fassung des dritten Hilfsprogramms (Abschnitte 3.4 und 4.3). Wandelt eine Textdatei ohne Fenster und ohne Tastatureingabe in einen virtuellen Lochstreifen um; unter Linux und Windows lauffähig, nur Python-Standardbibliothek (kein Tkinter).
 
+- **1.11** (nur Anzeige): BIS-Objektstreifen (`.obj` des Assemblers: nur Ziffern und `. : /`) erscheinen mit Zeilenschaltung nach jedem `.` und `:`; der Schalter `--dual` heißt jetzt auch `--roh` und schaltet beide Aufbereitungen aus.
+- **1.10** (nur Anzeige): KEP-Lochstreifen (Streifen nur aus `0 1 : .`, wie die `.kep` des Assemblers) erscheinen standardmäßig oktal, ein Wort je Zeile (Zeilenschaltung nach jedem `.` und `:`); `--dual` gibt die Dualziffern wie bisher aus. Andere Streifen unverändert.
 - **1.9**: `Um. KB` / `Um. GB` werden in Anzeige und Eingabefenster **nicht mehr ausgegeben**, sie wirken nur (Zeichenlage). „Irrung Zeichen“ löscht das letzte Zeichen der Zeile, „Irrung Satz“ die ganze bisherige Zeile; beide erscheinen nicht als Marke. Zeilenumbrüche werden dadurch nie zurückgenommen. Auf dem Lochstreifen selbst bleiben alle Lochungen unverändert erhalten (Eingabe stanzt sie weiterhin).
 
 - **1.8**: Unter X11 wird zuerst `xsel --clipboard --input` benutzt, `xclip` nur noch, wenn `xsel` fehlt oder scheitert. Grund: In einer VMware-Umgebung kam der Text von `xclip` und von Tk nicht in der VM an, der Weg über `xsel` (vim: `:w !xsel -b`) dagegen schon.
@@ -59,11 +61,14 @@ Der Text in den Fenstern von Anzeige und Eingabe kann mit der Maus markiert und 
 1. Der Lochstreifen (Datei oder Verzeichnis) wird gelesen. Bei einem Verzeichnis werden alle Dateien ohne führenden Punkt in Namensreihenfolge hintereinander gelesen; zwischen den Dateien erscheint eine graue Trennzeile `--- Datei: NAME ---`.
 2. Jede Zeile wird anhand der Kodetabelle in ein Zeichen übersetzt. Die **Zeichenlage** (Klbuch/Gbuch) wird durch die Zeichen `Um. KB` / `Um. GB` umgeschaltet und gilt auch über Dateigrenzen hinweg. Anfangslage ist KB (mit `--lage GB` änderbar).
 3. Darstellung:
+
    - Normale Zeichen erscheinen als Text. SatzMarke/WRZL ergibt einen Zeilenumbruch, Tabulator einen Tabulator, Leertaste/ZR ein Leerzeichen.
    - `Um. KB`/`Um. GB` erscheinen nicht, sie schalten nur die Zeichenlage. `Irrung Zeichen` löscht das vorige Zeichen der Zeile, `Irrung Satz` die ganze Zeile. Sonstige Zeichen ohne druckbare Entsprechung erscheinen als **blaue Marke**, z. B. `<Transport (Relikt)>`.
    - Zeilen ohne Datenlochung (Vorspann, `00000000`) werden übersprungen.
    - Zeilen mit gerader Zahl gelochter Spuren (außer „Irrung Zeichen“) erscheinen als **rote Marke** `<Paritätsfehler 01010101>`; unbekannte Lochungen als `<unbekannte Lochung …>`; Zeilen, die keine 8 Zeichen `0`/`1` sind, als `<ungültige Zeile …>`.
 4. Die Ausgabe erscheint in einem Tkinter-Fenster (130 × 36 Zeichen, Bildlaufleiste, Standardposition rechts unten), das bis zum Schließen mit X offen bleibt. Ohne Fenstermöglichkeit oder mit `--text` geht die Ausgabe auf das Terminal.
+5. **KEP-Lochstreifen** (der Streifen besteht nur aus den Zeichen `0 1 : .`): Die Vorgabe ist die Oktalausgabe. Jedes Wort bis zum nächsten `.` oder `:` wird rechtsbündig in Oktalziffern umgesetzt (links mit Nullen auf ein Vielfaches von 3 Bit aufgefüllt) und in eine eigene Zeile geschrieben, zum Beispiel `10100000:` als `240:` (Leitbefehl 240, Adresse 0) und `10110010010100000:` als `262240:`. Mit `--roh` (auch `--dual`) bleibt die Ausgabe wie bisher in Dualziffern.
+6. **BIS-Objektstreifen** (`.obj` des Assemblers: der Streifen besteht nur aus Ziffern und `. : /`): Die Ziffern stehen schon oktal, es folgt nur eine Zeilenschaltung nach jedem `.` und `:`, ein Wort je Zeile. Mit `--roh` steht der Streifen in einer Zeile.
 
 ### 3.2 Eingabe (`c8205_lochstreifen_eingabe.py`)
 
@@ -132,7 +137,7 @@ Die Zeichentabelle des Programms ist eine Kopie der Spalten Klbuch, Gbuch und Au
 ### 4.1 Anzeige
 
 ```
-python3 c8205_lochstreifen_anzeige.py --LS-LESER PFAD [--lage KB|GB] [--text] [--debug] [--version]
+python3 c8205_lochstreifen_anzeige.py --LS-LESER PFAD [--lage KB|GB] [--text] [--roh] [--debug] [--version]
 ```
 
 | Option | Bedeutung |
@@ -140,6 +145,7 @@ python3 c8205_lochstreifen_anzeige.py --LS-LESER PFAD [--lage KB|GB] [--text] [-
 | `--LS-LESER PFAD` | **Pflicht.** Virtueller Lochstreifen: Datei oder Verzeichnis |
 | `--lage KB\|GB` | Zeichenlage am Anfang (Vorgabe `KB`) |
 | `--text` | Ausgabe auf dem Terminal statt im Fenster (auch Rückfall, wenn kein Fenster möglich ist) |
+| `--roh` (auch `--dual`) | keine Aufbereitung: KEP-Streifen in Dualziffern, Objektstreifen in einer Zeile, jeweils unverändert (Vorgabe: KEP oktal, ein Wort je Zeile; Objektstreifen ein Wort je Zeile) |
 | `--zwischenablage auto\|tk\|system` | Kopierverfahren (Vorgabe `auto`): `tk` nur Tk-Zwischenablage, `system` nur Systemprogramm (`xclip` usw.) bzw. Win32-API |
 | `--debug` | Diagnose auf der Fehlerausgabe: Tasten, Mausereignisse, Kopiervorgänge (inkl. verwendetes Verfahren `Win32`/`Tk`) |
 | `--version` | Versionsnummer ausgeben |
@@ -264,6 +270,7 @@ Meldungen: Am Ende steht eine Zusammenfassung auf der Standardausgabe (Zahl der 
 - **Python 3** (getestet mit Python 3; nötig sind f-Strings und `argparse`, daher mindestens 3.6).
 - Nur **Standardbibliothek**: `argparse`, `os`, `sys`, `tkinter`, außerdem `ctypes` und `time` für die Windows-Zwischenablage. Es ist nichts nachzuinstallieren. Die **Umwandlung** braucht nur `argparse`, `os` und `sys`, also weder Tkinter noch eine grafische Oberfläche; sie läuft auch auf einem Rechner ohne Fenstersystem.
 - **Tkinter** für die Fenster:
+
   - Linux: Paket `python3-tk` (z. B. `sudo apt install python3-tk`).
   - Windows und macOS: im Python-Installer von python.org enthalten.
 - **Grafische Oberfläche**: unter Linux muss `DISPLAY` oder `WAYLAND_DISPLAY` gesetzt sein. Fehlt sie oder fehlt Tkinter, geben beide Programme eine Warnung aus und weichen auf den Textmodus (`--text`) aus.

@@ -163,12 +163,14 @@ MACHE_ADRESSEINHEIT:  MACRO 2
              WDHL JA LI KON 9   004000
          MEND
 
-MACHE_ADRESSEINHEIT2:  MACRO 3
+MACHE_ADRESSEINHEIT2:  MACRO 4
 ; MACHE_ADRESSEINHEIT2: Wert Laden und in Adreßeinheiten umrechnen (`anzahl` mal Linksverschiebung); Speichern
-;                       Benutzung Wiederholungsbefehl
-# Werteadresse Adreß-Adresse Anzahl
-             211 $1            ; Lade $1 in AC und 1x Linksverschiebung
-             !$wdhl_adr_e $3   ; `anzahl` mal Linksverschiebung
+;                       Benutzung Wiederholungsbefehl 644 auf einer Spur, die nur Nullen enthalten muß.
+;                       Diese Nullspur stellt das Programm selbst bereit (z. B. 32 freie Zellen ab einer durch 040 teilbaren
+;                       Adresse, zu Programmbeginn mit `441 spur` gelöscht); es wird keine Vorarbeit anderer Programme vorausgesetzt.
+# Werteadresse Adreß-Adresse Anzahl Nullspur-Anfang (Zahl, oktal mit führender 0; Vielfaches von 040)
+             211 $1            ; Lade $1 in AC (keine Verschiebung)
+             !$wdhl_adr_e $3 $4 ; `anzahl` mal Linksverschiebung über die Nullspur ab $4
              240 $2
          MEND
 

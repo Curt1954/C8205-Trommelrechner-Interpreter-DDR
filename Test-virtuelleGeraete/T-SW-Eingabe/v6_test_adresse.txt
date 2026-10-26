@@ -1,0 +1,17 @@
+# Treiber-Band fuer Tests/v6_test_adresse.txt (Start ueber #STARTE 2000, daher ohne Sofortbefehl): drei Adressen 1234, 76543210, 5
+1
+2
+3
+4
+.
+7
+6
+5
+4
+3
+2
+1
+0
+.
+5
+.

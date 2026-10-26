@@ -1,6 +1,6 @@
 ** Magnettrommel (Speicher) **
 
-Version: 0.95-001
+Version: 0.95-002
 
 Der gesamte Speicher liegt magnetisch auf einer Trommel, organisiert in Zellen (Maschinenworten).
 
@@ -10,7 +10,7 @@ Der gesamte Speicher liegt magnetisch auf einer Trommel, organisiert in Zellen (
 Die Trommel hat 128 Spuren (auch Bahnen genannt) mit je 32 Sektoren. Speicherkapazität gesamt:
 128 × 32 = 4096 Maschinenworte à 33 Bit. Eine 12-Bit-Adresse gliedert sich in Bahn-Nr. (7 Bit) und
 Sektor-Nr. (5 Bit) – die genaue Bit-Aufteilung im Maschinenwort ist in der Datei "C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md"
-(Abschnitt Register/Felder, Feld "Adresse": Spur z₁₂–z₁₈, Sektor z₁₉–z₂₃) beschrieben.
+(Abschnitt Maschinenwort, Feld "Adresse": Spur z₁₂–z₁₈, Sektor z₁₉–z₂₃) beschrieben.
 (zahlenangaben dezimal)
 
 ## Speichernumerierung / Interleaving

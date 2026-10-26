@@ -3,6 +3,7 @@ Trommeldatei:
 --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 --leser2 Test-virtuelleGeraete/Leser2/r300_alle_zeichen.txt
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 # Aufbau: Wie im Buchprogramm 5.15 liest die Eingabe (3102) ein Zeichen und wählt die Zelle 3000 v Eingabeadresse (Zellen 3000-3077).
 # Zeichen mit Umstellung in Addition: <AC> := Zelleninhalt (Druckbefehl), speichern nach 3105, dort ausführen.

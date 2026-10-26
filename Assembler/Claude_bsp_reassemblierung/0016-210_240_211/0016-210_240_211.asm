@@ -2,6 +2,7 @@
 ; #DOK-0016 Test Ladebefehl und Addition
 ; #SPEI-0016 7774-7774
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -24,7 +25,9 @@ d7774:          abs     07774
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3716 AC=00110011001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 7774: 00110011001
+;#PRUEFE-ENDE
 ;
 ;

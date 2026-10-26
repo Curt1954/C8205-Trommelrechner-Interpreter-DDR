@@ -1,6 +1,6 @@
 ** Durchführung eines Tests **
 
-Version: 0.95-002
+Version: 0.95-014
 
 ## 1. Einordnung und Testvoraussetzungen
 
@@ -17,6 +17,7 @@ Jeder Test nimmt an, dass der Rechner eingeschaltet ist.
 
 Der Vor-Zustand vom Einschalten bis zum Beginn der Interpretation der Befehlsschleife am Konnektor B
 wird definiert durch:
+
 - die Interpretation der betätigten Tasten und Schalter,
 - den Trommelinhalt: den Inhalt der persistenten Trommel, nachdem die Zeilen des Tests auf sie geschrieben wurden (Abschnitte 2 und 2c; mit der Testmarke `#TROMMEL=` zuvor geleert oder mit einem Abbild belegt, Abschnitt 2g), sowie
 - optional die Anfangswerte von Akkumulator und Befehlszähler, die die Testmarken `#AC=` und `#BZ=` vorgeben (Abschnitt 2, Ergänzung 08.10.2026).
@@ -59,6 +60,7 @@ Neues fest, sondern verweist auf die Abschnitte, in denen die Einzelheiten stehe
 1. **Unterhaltung beginnen**, in der Dateien hochgeladen werden können. Die KI führt den Knotengraphen von
    Hand aus; es wird kein Programm gestartet.
 2. **Regelwerk hochladen** (Ordner `markdown-dateien/`):
+
    - immer: `C8205-Interpreter-Eingänge_der_Knoten.md`, `C8205-Interpreter-Beschreibung_der_Knoten.md`
      (Variablentabelle T2), `C8205-Interpreter-Befehlsliste.md`,
      `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md`,
@@ -300,6 +302,7 @@ müssen:
 ```
 
 Vorgehen:
+
 1. Im Assembler-Quelltext an der Stelle, an der ausgewertet werden soll, einen Leerbefehl 164 mit einer
    vierstelligen Debug-Nummer als Adresse vorsehen (Abschnitt 7), z. B. `halt: 164 0001`. Die Nummer
    muss mit den Testmarken `#DOK-`/`#SPEI-`/`#SPUR-` des Testauftrags übereinstimmen.
@@ -457,6 +460,7 @@ aufgestellten BR beginnt bei Phase I (Phase IV des vorigen Befehls ist bereits a
 3.3 bei Knoten 19.
 
 **Ende oder Fortsetzung.**
+
 - Ist die **letzte Taste `R` oder `ST`**, geht der Lauf weiter: bei Konnektor B mit dem von den Tasten hinterlassenen BZ,
   bzw. bei aufgestelltem BR wie in 3.3 (Knoten 19, nach `M` mit Sprung mit Rückkehrabsicht Knoten 54). BZ und AC gelten so,
   wie die Tasten sie verlassen haben, ihre ändernde Wirkung wird also beachtet. Bei `ST` als letzter Taste wird H gelöscht
@@ -574,19 +578,23 @@ Testdateien: `st-001` (`#STARTE 4`), `st-002` (Gegenprobe mit ausgeschriebener T
 Ein Test, der einen Baustein des BIS prüft (z. B. ein Unterprogramm des Minimalprogramms wie Befehlsdruck, Adressendruck oder
 Triadendruck), braucht das **Minimalprogramm auf der Trommel**. Das ist für alle BIS-Tests der Normalfall und gilt als feste Regel:
 
-1. **Schritt 1: Minimalprogramm laden.** `./c8205_interpreter.sh Tests/pj2-bis_minimalprogramm.test` belegt die Zellen 0000 bis 0337 sowie die Tabelle der Adresseneingabe auf 0400 bis 0434
-   (Sprung auf das Hauptprogramm in 0000, Druck von BZ und AC in 0001, die Unterprogramme ab 0040). Der Test ist fertig und
+1. **Schritt 1: Minimalprogramm laden.** `./c8205_interpreter.sh Tests/pj2-bis_minimalprogramm_v6.test --LOADONLY` bringt das Minimalprogramm v6 nur auf die Trommel (Sprung auf das BIS-Anfang 0040 in Zelle 0000,
+   Sprung zum Druck von BZ und AC ab 0500 in Zelle 0001, die Unterprogramme in 0040 bis 0377). Ohne `--LOADONLY` startete die Tastenfolge H G R des Tests das Programm, und es wartete auf Tastatureingabe. Der Test ist fertig und
    beliebig oft wiederholbar. Er setzt vorher nichts zurück; wer eine saubere Ausgangslage braucht, erzeugt zuerst eine leere Trommel
    (`python3 testscripte/erzeuge_leere_trommel.py`, Abschnitt 2c).
 2. **Schritt 2: der eigentliche Test.** Er liegt mit Hauptprogramm üblicherweise ab Zelle 1000, ruft das Unterprogramm über seine
    feste Ansprungzelle auf und endet mit einem Stopp. Er belegt **keine** Zelle des Minimalprogramms (0000 bis 0337), auch nicht 0001
    (dazu die Fehlerfalle in Abschnitt 2c: Eine Testzeile `0001: …` überlagert die persistente Trommel und bleibt für spätere Tests).
 3. **Dokumentation im Test:** Der Test nennt die Voraussetzung in einer `#DOK`-Zeile.
-4. **Wrapper:** `testscripte/c8205_bis_test.sh TESTDATEI` führt Schritt 1 und Schritt 2 hintereinander aus (Projektstruktur, Abschnitt 1).
+4. **Wrapper:** `testscripte/c8205_bis_test.sh TESTDATEI` führt Schritt 1 (mit `--LOADONLY`) und Schritt 2 hintereinander aus (Projektstruktur, Abschnitt 1).
+
+**Stand 24.10.2026 (Minimalprogramm v6).** Die Tests des Minimalprogramms selbst, `Tests/pj2-bis_v6_*.test` (35 Stück), tragen das Abbild von v6 eingebettet und setzen `#TROMMEL=LEER`; sie laufen ohne Schritt 1 in `compute_all_tests.sh`. `c8205_bis_test.sh` dient den Tests künftiger Bausteine. Die Skripte `test.sh`, `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh`, das frühere Minimalprogramm `pj2-bis_minimalprogramm.*` und die Einzeltests `pj2-bis_*.txt` samt `st-004` sind entfallen. Die folgenden Beispiele und Messungen vom 08. bis 11.10.2026 beschreiben diese früheren Fassungen und bleiben als Geschichte stehen; ihre Tests heißen jetzt `pj2-bis_v6_*`.
 
 Aufruf eines Unterprogramms aus dem Hauptprogramm: Der Wert steht in R1 (Register 7773, `211 wert` und `240 r1`), der Aufrufer wählt den
 Ausgabekanal an (`030 4500` für K2, die Ausgabeunterprogramme enthalten keinen Anwahlbefehl), dann folgt `025 ansprungzelle`; die
 Rückkehr erfolgt in die Zelle hinter dem Aufruf (BIS-2.2.10).
+
+> **Historisch (Stand 08. bis 11.10.2026):** Die folgenden Beispiele `pj2-bis_befehlsdruck.txt`, `pj2-bis_adressendruck.txt` und die Messung mit `pj2-bis_minimalprogramm.test` gehören zu den früheren Fassungen; diese Dateien gibt es nicht mehr. Heutige Entsprechungen: `Tests/pj2-bis_v6_druck_befehlsdruck.test`, `Tests/pj2-bis_v6_druck_adressdruck.test` und `Tests/pj2-bis_minimalprogramm_v6.test`.
 
 **Beispiel `pj2-bis_befehlsdruck.txt`** (Soll-Datei `pj2-bis_befehlsdruck_erwartet.txt`): Das Hauptprogramm holt den Befehl aus Zelle 1000
 (`211 1000`, Wort `00001000211`) in den AC, speichert ihn nach R1 und ruft Befehlsdruck (`025 053`). Erwartet wird die Schreibwerk-Ausgabe
@@ -626,7 +634,7 @@ Geprüft am 08.10.2026 auf leerer Trommel mit `c8205_bis_test.sh`: alle sieben T
 Sie liegen jetzt auf 7740 bis 7744 und 7756 bis 7760 (Spezifikation `C8205-Interpreter-BIS.md`, BIS-A.3). Geprüft auf leerer Trommel mit dem neu assemblierten Minimalprogramm (`Assembler/Projekt_2/pj2-bis_minimalprogramm.test`, Kopie in `Tests/`):
 alle zehn Tests `pj2-bis_*` (die oben genannten sowie `_zr` und `pj2-bis_druck_bz_ac`) `Test wahr`; die Zellen 7554 bis 7563 bleiben nach allen Läufen null.
 
-## 2g. Die Testmarke `#TROMMEL=LEER` und `#TROMMEL=MP` (Ergänzung 13.10.2026)
+## 2g. Die Testmarke `#TROMMEL=LEER`, `#TROMMEL=KEEP` und `#TROMMEL=MP` (Ergänzung 13.10.2026, `KEEP` 24.10.2026)
 
 Die Trommel ist dauerhaft (2c): Ohne weitere Angabe erbt ein Test den Trommelstand der vorigen Läufe. Mit der Testmarke `#TROMMEL=` verlangt der Test
 seinen Anfangszustand selbst. Er ist dann von der Vorgeschichte und von der Reihenfolge der Läufe unabhängig, auch im Einzellauf und in Sammelläufen.
@@ -635,15 +643,17 @@ seinen Anfangszustand selbst. Er ist dann von der Vorgeschichte und von der Reih
 
 ```
 #TROMMEL=LEER
+#TROMMEL=KEEP
 #TROMMEL=MP      # Minimalprogramm
 ```
 
 | Wert | Wirkung vor dem Test |
 | --- | --- |
 | `LEER` | Alle 4096 Zellen der Trommel werden 0. |
+| `KEEP` | Die Trommel bleibt unverändert (Stand des vorigen Laufs), wie ohne Marke, aber ausdrücklich: Der Test sagt damit, dass er vom Trommelstand des Vorläufers abhängen **soll** (z. B. Treiber, die ein vorher geladenes Programm starten). Bildschirm: `Trommel: unverändert, Stand des vorigen Laufs (#TROMMEL=KEEP)`; das Protokoll nennt die Marke. Keine Wirkung auf Prüfungen, kein Überschreiben, keine Vorlagenprüfung. |
 | `MP` | Die Trommel wird mit dem Abbild des Minimalprogramms belegt (Trommelvorlage `Trommel/Trommelvorlagen/MP.txt`, Format wie die Trommeldatei, 2c). |
 
-**Ohne die Marke bleibt die Trommel unverändert** (2c); alle bisherigen Tests laufen wie vorher.
+**Standard ist `KEEP`:** Fehlt die Marke `#TROMMEL=` ganz, gilt `KEEP`, die Trommel bleibt unverändert (2c); alle bisherigen Tests laufen wie vorher. `#TROMMEL=KEEP` verhält sich genauso und macht es nur sichtbar. Seit 24.10.2026 tragen die meisten vorhandenen Tests ohne `LEER`/`MP` die Zeile `#TROMMEL=KEEP` unter `#PROT STUFE=2` (Stand dieser Fassung: 242 Dateien in `Tests/`); die gleichnamigen Assembler-Quelltexte führen sie als `; #TROMMEL=KEEP` mit (`bsp_5_18_kep.asm` bleibt bei `LEER`, wie seine `.test`). Einige Tests haben noch keine Marke (26 `.test`-Dateien, darunter `bsp_5_15`, `bsp_5_16`, `bedsprung`, `code`, `mini`, `sortierung`, `ziffern`, die `deepseek_asm_*`, die `pj2_*` und die `pj2-bis_minimalprogramm_v6_test_*`); für sie gilt die Standardregel, also `KEEP`. Für neue Tests gilt: entweder `LEER` (unabhängig von der Vorgeschichte) oder `KEEP` (abhängig vom Vorläufer, gewollt); eine fehlende Marke bedeutet dasselbe wie `KEEP`, sollte aber nicht mehr vorkommen.
 
 **Ablauf** (Python-Interpreter):
 
@@ -655,9 +665,9 @@ seinen Anfangszustand selbst. Er ist dann von der Vorgeschichte und von der Reih
 Die Reihenfolge 2 vor 3 ist zwingend: Zellen, die der Test selbst nennt, haben ihren Wert; alle übrigen sind 0 (`LEER`) bzw. haben den Wert des Abbilds (`MP`).
 Register, Flags und Geräte sind davon nicht berührt; sie beginnen ohnehin bei jedem Test neu.
 
-**`MP` (vorgesehen).** Das Abbild des Minimalprogramms ist eine Datei im Format der Trommeldatei (2c). Es entsteht aus dem fertigen Minimalprogramm; im Projekt
-ist das der Trommelstand nach dem Laden mit `Tests/pj2-bis_minimalprogramm.test` auf leerer Trommel (2f). Mit `#TROMMEL=MP` entfällt dann der Vorlauf mit
-`c8205_bis_test.sh`. Solange die Vorlage fehlt, ist `#TROMMEL=MP` formal ungültig: Der Test startet nicht (Rückkehrcode 16) und meldet
+**`MP`.** Das Abbild des Minimalprogramms ist eine Datei im Format der Trommeldatei (2c): `Trommel/Trommelvorlagen/MP.txt` (mit `MP.basp`). Es entsteht aus dem fertigen Minimalprogramm; im Projekt
+ist das der Trommelstand nach dem Laden mit `Tests/pj2-bis_minimalprogramm_v6.test` (`--LOADONLY`) auf leerer Trommel (2f). Mit `#TROMMEL=MP` entfällt der Vorlauf mit
+`c8205_bis_test.sh`; Beispiel: `interpreter_test.sh` (2k). Fehlt die Vorlage, ist `#TROMMEL=MP` formal ungültig: Der Test startet nicht (Rückkehrcode 16) und meldet
 `#TROMMEL=MP: Trommelvorlage (Minimalprogramm) nicht gefunden: …`. Der Interpreter erzeugt die Vorlage nie selbst.
 
 **Fehlende oder fehlerhafte Trommeldatei.** Steht `#TROMMEL=LEER` (oder `#TROMMEL=MP` mit gültiger Vorlage) im **ersten** Test eines Aufrufs und ist die Trommeldatei nicht
@@ -669,7 +679,7 @@ angelegt) und meldet das in einer Hinweiszeile, statt mit Rückkehrcode 16 zu en
 Liegt auf der Standard-Trommel ein Arbeitsstand, den man behalten will, bekommen solche Tests mit `--trommel PFAD` eine eigene Trommeldatei.
 
 **Grenzen.** Die Marke stellt nur den leeren Zustand oder ein Abbild her. Braucht ein Test einen anderen Trommelinhalt, so nennt er die Zellen selbst im Abschnitt
-`Trommeldatei:` oder stellt den Inhalt durch einen vorherigen Lauf her. So lädt `compute_all_tests.sh` vor `st-004*` das Minimalprogramm und vor `st-005` die Druckroutine
+`Trommeldatei:` oder stellt den Inhalt durch einen vorherigen Lauf her. So lädt `compute_all_tests.sh` vor `st-005` die Druckroutine
 aus `asm_druck_tastenfolge.txt`; die Druckroutine ist ein bewusst vereinfachter Sonderfall und wird von Fall zu Fall hergerichtet.
 
 **Claude-Interpreter.** Er hat keine Trommeldatei; für nicht genannte Zellen gilt 0 (2c). `#TROMMEL=LEER` hat dort daher keine Wirkung. `#TROMMEL=MP` gilt entsprechend,
@@ -681,7 +691,7 @@ sofern ihm das Abbild vorliegt; sonst startet der Test nicht (Grundsatz „laut 
 
 Dieser Abschnitt führt einen Test durch, dessen Programm **nicht** in den Zeilen der Trommeldatei steht, sondern von einem Lochstreifen in die Trommel geladen wird. Er verbindet die Testdatei (Abschnitt 2 und 2b), die Hilfsprogramme für Lochstreifen (`C8205-Interpreter-Lochstreifen-Hilfsprogramme.md`), den TEST-Interpreter und den GRAFIK-Interpreter. Als Beispiel dient `Tests/k1_leser_stanzer.test`: Das Programm liest von Leser 1 Zeichen bis zum Zeichen `:` und stanzt sie auf Stanzer 1 (Lochstreifen kopieren). Im Beispiel enthält der Streifen den Text `Hallo Welt 123 (ok)!:`.
 
-**Warum dieser Umweg.** Ein Programm gelangt bisher nur über den Test auf die Trommel; ein Minimalprogramm, das die Objektkode-Lochstreifendateien des Assemblers direkt laden kann, gibt es noch nicht. Der Lauf mit dem TEST-Interpreter lädt das Programm nach den Zeilen des Abschnitts `Trommeldatei:` auf die Trommel (2c) und prüft zugleich das Ergebnis. Die Trommel (`Trommel/trommel.txt`) benutzen TEST- und GRAFIK-Interpreter gemeinsam; das Programm steht danach auch für GRAFIK bereit.
+**Warum dieser Umweg.** Ein Programm gelangt bisher nur über den Test auf die Trommel; das Minimalprogramm v6 lädt die Objektkode-Lochstreifendateien des Assemblers zwar direkt (Weg 4 in 2k), dieses Beispiel nimmt aber den Weg über die Testdatei. Der Lauf mit dem TEST-Interpreter lädt das Programm nach den Zeilen des Abschnitts `Trommeldatei:` auf die Trommel (2c) und prüft zugleich das Ergebnis. Die Trommel (`Trommel/trommel.txt`) benutzen TEST- und GRAFIK-Interpreter gemeinsam; das Programm steht danach auch für GRAFIK bereit.
 
 **Die Geräte.** Der TEST-Interpreter benutzt die Geräteordner unter `Test-virtuelleGeraete/`, der GRAFIK-Interpreter die unter `virtuelle_Geraete/`. Die beiden Ordner sind getrennt, ein Lochstreifen muss also in beide gelegt werden (Schritt 6).
 
@@ -828,7 +838,7 @@ Warnung:  Symbol 'beginn' (0000, namen_raten.asm Zeile 33) ist definiert, wird a
 1 unbenutztes Symbol.
 
 
-Ausgabe als Minimalprogramm-Objektdatei nach: Projekt_1/namen_raten/namen_raten.obj
+Ausgabe als binaer codierte Objektdatei (R300-Lochstreifen) nach: Projekt_1/namen_raten/namen_raten.obj
 Ausgabe der formatierten Speicherbelegung nach: Projekt_1/namen_raten/namen_raten.dmp
 Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: ../Tests/namen_raten.test
 ```
@@ -902,7 +912,7 @@ Der dritte Arbeitsablauf lädt das Programm nicht über den TEST-Interpreter, so
 
 Die Aufrufe der Schritte 1 und 2 gelten vom Ordner `Assembler/` aus, die übrigen vom Projektordner (dort, wo `c8205_interp.py` liegt). Alle Pfade sind relativ zum jeweiligen Ordner.
 
-**1. Das Programm absolut assemblieren.** Der Quelltext muss absolut geschrieben sein und in der ersten Zeile das Pragma `;#; LEITADRESSE 00` tragen; `start` steht ohne Operand (bei `namen_raten` schon so). Der Schalter `--ABSPR` erzeugt statt der `.obj` den Lochstreifen `namen_raten.kep`, `-o` legt ihn in den Ordner des Lesers:
+**1. Das Programm absolut assemblieren.** Der Quelltext muss absolut geschrieben sein und vor `start` das Pragma `;#; LEITADRESSE 00` tragen; `start` steht ohne Operand (bei `namen_raten` schon so). Der Schalter `--ABSPR` erzeugt statt der `.obj` den Lochstreifen `namen_raten.kep`, `-o` legt ihn in den Ordner des Lesers:
 
 ```
 $ cd Assembler
@@ -918,7 +928,7 @@ Die Warnung zur Bahn 0000 bis 0037 ist hier Absicht: Zelle 0000 trägt den Sprun
 $ python3 c8205_interp.py --MODUS=TEST Tests/bsp_5_18_kep.test --LOADONLY
 ```
 
-Der Test wird nicht ausgeführt, die Zellen 0000 bis 0037 stehen danach auf der Trommel `Trommel/trommel.txt`.
+Der Test wird nicht ausgeführt. Die Testdatei trägt `#TROMMEL=LEER`: Die Trommel `Trommel/trommel.txt` wird vorher geleert, danach steht nur das KEP auf ihr (Zelle 0001 und alle übrigen Zellen sind 0).
 
 **3. Den GRAFIK-Interpreter starten:**
 
@@ -930,10 +940,65 @@ $ ./c8205_grafik.sh --HWCHECK
 
 ### 2j.2 Hinweise
 
-- **Lesedauer.** Das KEP ist auf das Lesetempo von 130 Zeichen je Sekunde abgestimmt: `namen_raten` (12139 Zeichen) braucht mindestens 93 s, das Minimalprogramm (7542 Zeichen) mindestens 58 s, im Fenster etwas mehr (gemessen 62 s). Das ist kein Hänger.
 - **Lochstreifenkorb.** Der gelesene Streifen wandert aus `virtuelle_Geraete/Leser1/` nach `LOCHSTREIFENKORB/`; vor einem erneuten Laden die Datei zurücklegen.
 - **Erneutes Laden.** Das KEP bleibt auf der Trommel stehen, Schritt 2 entfällt dann.
 - **Unterschied zu Beispiel 2 (2i).** Dort lädt der TEST-Interpreter das Programm selbst auf die Trommel; hier liest das KEP es vom Streifen, so wie am Gerät.
+
+## 2k. Lademethoden und ihr Angang am Assemblerquelltext (Ergänzung 24.10.2026)
+
+Ein Programm kommt auf vier Wegen auf die Trommel. Jeder Weg verlangt etwas anderes vom Quelltext und vom Assembleraufruf; wer den falschen Quelltext mit dem falschen Weg paart, bekommt falsche Adressen oder ein Programm, das nicht anspringt. Die Beispiele 1 bis 3 (2h bis 2j) zeigen je einen Weg im Einzelnen; dieser Abschnitt stellt alle nebeneinander. Die Einzelheiten der Schalter stehen in der Assemblerdokumentation (`.odt` maßgeblich), Abschnitt 3.1a (`--ABSPR`) und 3.1b (Testmarken im Quelltext).
+
+### 2k.1 Übersicht
+
+| Weg | Was der Quelltext braucht | Assembleraufruf (von `Assembler/`) | Beispielskript |
+| --- | --- | --- | --- |
+| **Testdatei mit `--LOADONLY`** (KEP, Minimalprogramm v6) | Testmarken als Kommentarzeilen am Zeilenanfang (`; #TROMMEL=LEER` oder `; #TROMMEL=KEEP`, `; #SPEI-…`, `; #PROT STUFE=2`); der Assembler übernimmt sie in die `.test` (3.1b) | `-t ../Tests/<name>.test` | `kep_test.sh`, `bis_test.sh` |
+| **Testdatei mit `#TROMMEL=MP`** | `; #TROMMEL=MP` im Quelltext; das Minimalprogramm kommt aus der Vorlage (2g) | `-t ../Tests/<name>.test` | `interpreter_test.sh` |
+| **KEP-Lochstreifen `.kep`** (Leser 1, KEP liest ihn) | absolut adressiert, Pragma `;#; LEITADRESSE 00` **vor** `start` (3.3.12), `start` ohne Operand | `-o ../virtuelle_Geraete/Leser1/<name>.kep --ABSPR` | `kep_test.sh` (Druckprogramm `…-KEP.asm`) |
+| **BIS-Objektstreifen `.obj`** (Leser 1, das BIS liest ihn) | **kein** Pragma `LEITADRESSE`; das Kennzeichen 01 wirkt mit der Hauptleitadresse, die man am Fenster eingibt | `-o ../virtuelle_Geraete/Leser1/` (Name aus `-s`) | `bis_test.sh` (Druckprogramm `…-BIS.asm`) |
+
+Das BIS selbst (Minimalprogramm v6) kommt entweder mit dem TEST-Interpreter und `--LOADONLY` auf die Trommel (Zeile 1) oder, so wie am Gerät, als `.kep` über das KEP und Leser 2 (Zeile 3, `--ABSPR`). Das KEP lädt der TEST-Interpreter immer selbst; das KEP ist der einzige Teil, der nie über einen Streifen kommt.
+
+**Pragma bei v6 als `.kep`.** Auch `pj2-bis_minimalprogramm_v6.asm` trägt `;#; LEITADRESSE 00` und braucht es wegen seiner `equ`-Zeilen: Ohne das Pragma änderten sich 92 von 275 Einträgen der `.kep`.
+
+### 2k.2 Die drei Quelltextfassungen des Druckprogramms
+
+Das Hauptprogramm „alle Druckunterprogramme“ liegt in `Assembler/Projekt_2/` in drei Fassungen, die sich nur im Angang unterscheiden:
+
+| Datei | Weg | Besonderheit |
+| --- | --- | --- |
+| `pj2-bis-minimalprogramm-alle-druck-up.asm` | Testdatei, `#TROMMEL=MP` | `start` mit `equ 02000`; die Tastenfolge `H G R` und der Startbefehl kommen aus der Testdatei und der K0-Datei (`10 0000 2000 000 .`) |
+| `pj2-BIS-alle-druck-up-KEP.asm` | KEP-Streifen `.kep` | Pragma `;#; LEITADRESSE 00`, absolut, Zelle 0000 trägt den Sprung nach 2000 |
+| `pj2-BIS-alle-druck-up-BIS.asm` | BIS-Streifen `.obj` | kein Pragma, relativ zur eingegebenen Hauptleitadresse (`21 3000`) |
+
+### 2k.3 Der BIS-Weg Schritt für Schritt (`bis_test.sh`)
+
+1. Trommel leeren; KEP und BIS (v6) mit `-t` assemblieren und mit `--LOADONLY` laden (die Testdateien tragen `KEEP` bzw. `LEER`, siehe 2g).
+2. Das Druckprogramm als `.obj` in den Ordner von Leser 1 assemblieren, das BIS (v6) zusätzlich mit `--ABSPR` als `.kep` in den Ordner von Leser 2.
+3. GRAFIK starten (`./c8205_grafik.sh --HWCHECK`). Das KEP ansprechen: `H G M+ E E M- K2 R` (Kanal vor `R`, wie in 2j.1); es liest das BIS von Leser 2.
+4. Das BIS ansprechen: `H G R`. Als Leitadresse für das Druckprogramm `21 3000.` eingeben (ohne Leerzeichen), dann `K1` wählen; der Streifen wird geladen. Am Ende steht das BIS wieder in der Kennzeicheneingabe.
+5. Startadresse eingeben: `K0` und `10 3000 000 .` (ohne Leerzeichen). Das Druckprogramm prüft die drei Druckunterprogramme des BIS und hält an.
+
+Der automatisierte Test zu diesem Weg ist `Tests/pj2-bis_v6_obj_laden.test` (Programm auf 3000 bis 3021).
+
+### 2k.4 Fallen am Quelltext
+
+- **Pragma und Weg müssen zusammenpassen.** `.kep` verlangt `LEITADRESSE 00`, `.obj` für das BIS darf es nicht tragen. Beim Pragma ersetzt der Assembler das Kennzeichen 01 durch 00 (absolut); fehlt es, bleibt 01 und die Hauptleitadresse wirkt.
+- **Das Pragma steht vor `start`** (3.3.12), nicht zwingend in der ersten Zeile.
+- **Startbefehl als Wort.** Der Befehl steht mit der Adresse links vor dem Befehlscode: `10 2000000.` für „Sprung nach 2000“, nicht `10 2000`.
+- **Testmarken** zählen nur, wenn die Zeile mit `;` beginnt (3.1b); ein Kommentar hinter einem Befehl wird nicht übernommen.
+- **Nur ein Streifen im Leserordner.** `kep_test.sh` legt `…-KEP.kep`, `bis_test.sh` legt `…-BIS.obj` nach `virtuelle_Geraete/Leser1/`; beide Skripte räumen den Ordner nicht auf. Liegen nach beiden Läufen beide Streifen dort, ist nicht gesagt, welchen der Leser nimmt: den nicht benötigten Streifen vorher entfernen (der gelesene wandert ohnehin in den `LOCHSTREIFENKORB`).
+- **Die `.obj` ist binär.** Sie ist ein R300-Lochstreifen (Lochbildzeilen 0/1), kein Text; sie entsteht nur mit dem Assembler ab 1.00-036.
+
+### 2k.5 Die drei Skripte in `Testausfuehrungen/`
+
+| Skript | Was es tut | Prüfung |
+| --- | --- | --- |
+| `interpreter_test.sh` | Trommel leeren, Druckprogramm mit `#TROMMEL=MP` assemblieren, mit dem TEST-Interpreter ausführen, Protokollende zeigen | „Test wahr“ |
+| `kep_test.sh` | KEP und v6 mit `--LOADONLY` laden, Druckprogramm als `.kep` nach Leser 1, danach GRAFIK; Bedienung wie 2j.1 (Ausgabe `4567`, `0765 432`, `0765 4321 065`, Halt bei BZ=2017) | am Fenster |
+| `bis_test.sh` | KEP laden, Druckprogramm als `.obj` nach Leser 1, BIS als `.kep` nach Leser 2, GRAFIK; Bedienung wie 2k.3 | am Fenster |
+
+Die Skripte wechseln selbst in den Projektstamm und laufen von überall (Aufruf `bash Testausfuehrungen/<name>.sh`).
 
 ## 3. Schritt 2 jedes Tests: die Tastenfolge zur Definition des Ausgangszustands
 
@@ -1084,6 +1149,7 @@ Der Abschnitt `Prüfungen:` besteht aus höchstens zwei Teilen, in dieser Reihen
    Flags (z. B. H, SP, T, SW, K1–K3) sind hier nicht vorgesehen. Die Zeile muss nicht vollständig sein:
    jeder der genannten Schlüssel darf, muss aber nicht angegeben werden; jeder darf höchstens einmal
    vorkommen.
+
    - `BZ=` und `AR=` je 4 Oktalstellen (Adressbreite, wie in Abschnitt 2 für Adressen festgelegt).
    - `AC=` 11 Oktalstellen (Maschinenwortbreite, wie in Abschnitt 2 für den Wert festgelegt).
    - Flag-Werte sind je genau eine Oktalstelle mit dem Wert `0` oder `1` (kein anderer Oktalwert
@@ -1145,6 +1211,15 @@ Ergebnisprüfung vorgenommen; ein in diesem Fall dennoch vorhandener `Prüfungen
 Wirkung, es wird stattdessen vermerkt, dass die Ergebnisprüfung deswegen entfällt. Insbesondere gilt ein
 solcher Fall nicht automatisch als `Test falsch`.
 
+**Ausnahme Knotenlimit bei Ein-/Ausgabe:** Erreicht der Lauf das Knotenlimit (2 000 000 Knoten) und wurde im laufenden oder im
+vorigen Befehl eine Ausgabe (ANWEISUNG-017) oder Eingabe (ANWEISUNG-032) ausgeführt, arbeitet der Rechner ein Gerät ab
+(Dauerausgabe, Warten auf Eingabe). Das gilt nicht als Fehler: Der Lauf endet ordnungsgemäß mit dem Grund „Knotenlimit erreicht bei
+aktivem Eingabe-/Ausgabe-Befehl“, die Ergebnisprüfung (3a) und die Dateiprüfungen (3b) werden wie üblich vorgenommen, das
+Gesamtergebnis ist `Test wahr`, wenn alle Prüfungen wahr sind (ohne Prüfungen: Rückgabecode 4). Im Protokoll (Abschnitt 2) werden
+die am Ende gleichen Zeilen nur einmal ausgegeben; davor steht eine Zeile „… n-mal dieselben p Zeile(n) weggelassen“. Ohne
+Ein-/Ausgabebefehl bleibt das Knotenlimit ein Fehler (Endlosschleife, Rückgabecode 8, Protokoll vollständig). Beispiel:
+`Tests/knotenlimit_ausgabeschleife.txt` (Endlosschleife mit Ausgabebefehl auf das Schreibwerk).
+
 ### 3a.3 Ausgabe
 
 Die Ergebnisprüfung wird, unabhängig von der Protokollierungsstufe `#PROT STUFE=n` (Abschnitt 2,
@@ -1185,15 +1260,16 @@ und der Rückkehrcode (0 bzw. 6) bleiben, wie sie sind. Der Interpreter ergänzt
 **Wirkung in den Skripten.** Die Skripte erkennen die Kopfzeile in der Testdatei, die an den Interpreter übergeben wird,
 an dem Muster `^Prüfungen:[[:space:]]*[Ff][Aa][Ll][Ss][Ee][[:space:]]*$` (ohne Ordner wird zusätzlich in `Tests/` gesucht).
 Der Rückkehrcode bleibt in allen Fällen 6; der Lauf gilt als **Test wahr** und macht keine Ausgabe:
+
 - `c8205_bis_test.sh` startet den eigentlichen Test (Schritt 2) mit `--NO-TERMOUT`. Am Bildschirm erscheinen dann weder die
   Einzelprüfzeilen mit `FEHLER` noch `Test falsch` noch die Vermerkzeile; die Ausgaben des C8205-Programms selbst und
   Meldungen der Vorab-Prüfung bleiben (Python_Interpreter.md, Abschnitt 5.1). Das Protokoll bei `#PROT STUFE=2` bleibt
   vollständig. Das Laden des Minimalprogramms (Schritt 1) ist nicht betroffen.
-- `test.sh` und `test_bis.sh` rufen für jeden Test `c8205_bis_test.sh` auf und übernehmen die Regel dadurch.
 - `compute_all_tests.sh` startet alle Tests ohnehin mit `--NO-TERMOUT` und meldet Code 6 bei einer solchen Testdatei nicht
   (wie die Codes 0 und 4).
 
 **Grenzen.**
+
 - Alle anderen Rückkehrcodes (2, 8, 16) werden auch bei `Prüfungen: False` wie bisher behandelt; `compute_all_tests.sh` meldet sie weiter.
 - Ein Test mit `Prüfungen: False` ohne jede Prüfzeile hat keine Ergebnisprüfung (Code 4); `False` bleibt ohne Wirkung.
 - Endet der Test nicht ordnungsgemäß (3a.2), entfällt die Ergebnisprüfung samt Vermerk.
@@ -1361,6 +1437,7 @@ Knotenfolge: 54, 55, 59, 61, 62, 63, 7, 6, 5, 8 (Einstieg s. 3.3). ⟨BZ⟩ wird
 (Knoten 16) neu gesetzt.
 
 Übertragung auf BS, FÜ, FE (lt. Dokument "C8205-Interpreter-Bedienpult_mit_Schaltern.md"):
+
 - **BS**: verhält sich wie US, alle vier Fälle anwendbar. Zusätzlich beseitigt auch das Lösen des Schalters "BS" allein
   den Stopp: der Ablauf geht dann wie bei nicht erfüllter Schalterbedingung weiter (Überlauftest, eine Wortzeit,
   Phase I; Originaldokumentation Abb. 19, Ergänzung 04.10.2026). Bei Fall 4 wird der nächste Befehl abgearbeitet
@@ -1397,12 +1474,6 @@ Ergebnis: `<7777> := <AC>`, danach Stopp mit neu geladenem BR aus Zelle ⟨BZ⟩
 | 2. E (einzelner Tipp) | Phase II und Phase III werden durchlaufen; danach stoppt die Abarbeitung wieder (kein R in der Sequenz, H bleibt =1) |
 
 Ergebnis: `<AC> := ⟨BZ⟩+2`.
-
-**Zusatzregel:** Schlägt man statt eines einzigen 1. E's dieses mehrfach an (weiterhin bei gehaltenem M,
-vor dem M-Loslassen), erhöht sich die im AC abgelegte Adresse bei jedem zusätzlichen Anschlag um
-weitere 1 — z. B. bei zweimaligem 1. E: `<AC> := ⟨BZ⟩+3`, und Speicherplatz 0002 wird als nächster
-Befehl aufgestellt. Das 2. E (nach M-Loslassen) ist davon nicht betroffen; es ist ein einzelner,
-separater Schritt zum Abschluss von Phase II/III.
 
 ## 5. Formale Gültigkeitsprüfung vor Testbeginn
 
@@ -1532,9 +1603,7 @@ Dazu gilt:
 - Sie erscheint auch mit `--NO-TERMOUT`, weil sie keine Ergebnisausgabe ist.
 - Ist K0 mit `--k0` umgeleitet (6.1.2), erscheint sie nie.
 - Strg+C beendet den Test.
-- Stand 13.10.2026: Im Projekt fordert nur `Tests/pj2-bis_minimalprogramm.test` echte Terminaleingaben an (Ladeschritt für die
-  BIS-Tests, 2f). Skripte, die ihn nur zum Laden des Minimalprogramms benutzen (z. B. `compute_all_tests.sh`), starten ihn
-  deshalb mit geschlossenem Standardeingang (`</dev/null`).
+- Stand 24.10.2026: Die Tests `Tests/pj2-bis_v6_*.test` tragen die Tastenfolge H G R und warten sonst auf Tastatureingabe; `compute_all_tests.sh` startet sie deshalb mit geschlossenem Standardeingang (`</dev/null`), `c8205_bis_test.sh` lädt das Minimalprogramm mit `--LOADONLY`.
 
 #### 6.1.2 Flag für Datei-Eingabe: beide Subkanäle aus Datei
 
@@ -1714,6 +1783,7 @@ zur regulären Abarbeitung die im Folgenden beschriebene Diagnoseausgabe vorgeno
 1. Der Befehl 164 wird zunächst interpretativ genau so abgearbeitet, wie es der Knotenautomat für
    diesen Befehl vorgibt; die Ausführung selbst erfährt keine Sonderbehandlung.
 2. Danach wird in die Protokolldatei des Tests (s. Abschnitt 8) geschrieben:
+
    - die Testmarke `#DOK-xxxx` mit dem in der Trommeldatei zugehörig angegebenen Text,
    - der Inhalt der Register `<BZ>` und `<AC>`,
    - die Werte der Flags FE, FÜ, BS, US, E, A (Ü steht hier für Flag FÜ, s. Flagtabelle in Datei
@@ -1778,7 +1848,7 @@ bereitgestellt.
 
 ## 9. Ausblick
 
-Dieses Dokument beschreibt die Durchführung eines Tests: den Aufbau der Testdatei (Abschnitt 2 bis 2g), die Tastenfolge
+Dieses Dokument beschreibt die Durchführung eines Tests: den Aufbau der Testdatei (Abschnitt 2 bis 2g), drei durchgeführte Beispiele (2h bis 2j) und die Übersicht der Lademethoden mit ihrem Angang am Assemblerquelltext (2k), die Tastenfolge
 zum Aufstellen des Ausgangszustands (Abschnitt 3), die Ergebnisprüfung (3a) und die Dateiprüfungen (3b), weitere
 Tastensequenzen (Abschnitt 4), die formale Gültigkeitsprüfung (Abschnitt 5), die Zeichenein- und -ausgabe (Abschnitt 6),
 die Diagnoseausgabe (Abschnitt 7) und die Protokolldatei (Abschnitt 8). Der eigentliche Durchlauf durch den Knotengraphen ab

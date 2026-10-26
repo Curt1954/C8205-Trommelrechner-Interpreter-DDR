@@ -1,6 +1,7 @@
 ; asm_0009_sortierung.asm  -  symbolisches Assemblerprogramm zu Testdatei asm_0009_sortierung.txt
 ; #DOK-0001 Test Programmbeispiel 8: Sortierung von 4 Namen (Unterprogramm SORT + Hauptprogramm)
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -70,9 +71,11 @@ sh:             abs     046
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0060 AC=00000004000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0
 ; 0062: 10021054460
 ; 0063: 11206050000
 ; 0064: 13300654600
 ; 0065: 13371052070
+;#PRUEFE-ENDE
 ;

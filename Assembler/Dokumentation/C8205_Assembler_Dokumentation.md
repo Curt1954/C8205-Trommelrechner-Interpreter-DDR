@@ -1,37 +1,20 @@
 ** Assemblerdokumentation (durchsuchbare Ableitung) **
 
-Version: 1.00-030
+Version: 1.00-039
 
-Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-030 (per `extract-text`), gedacht
-zum Durchsuchen und Zitieren. **Maßgeblich bleibt die .odt** (siehe `C8205-Projektstruktur.md`,
-Abschnitte 1 und 3); bei Widersprüchen gilt die .odt. Diese Ableitung wird nicht automatisch
-aktualisiert, wenn die .odt sich ändert.
+Diese Datei ist eine Textableitung von `C8205_Assembler_Dokumentation.odt` in der Version 1.00-039, gedacht zum Durchsuchen und
+Zitieren. **Maßgeblich bleibt die .odt** (siehe `C8205-Projektstruktur.md`, Abschnitte 1 und 3); bei Widersprüchen gilt die .odt.
+Diese Ableitung wird nicht automatisch aktualisiert, wenn die .odt sich ändert.
 
-Stand 22.10.2026 (.odt nachgeführt): Die .odt trägt jetzt Version 1.00-030 und enthält Usage mit `-WARN=SYM,SPR,TOT,ALLE` und `--ABSPR`, die Dateiendung `.kep`, Abschnitt 3.1a, die neue Regel für `da`, den Wegfall der Mnemonics, die Bezeichnung „Eingabe mit Kennzeichen (Format des Minimalprogramms)“ (Pass 3, `equ`, 5.2), die Quelltextliste (1.1), die Pragma-Verweise auf 3.3.12 und die Einträge 1.00-018 bis 1.00-030 im Änderungsverzeichnis (Abschnitt 6). Die Abschnitte 6.1 bis 6.22 dieser Ableitung sind eine eigene Übersicht und stehen in der .odt in Kurzform.
+Stand 25.10.2026 (1.00-039): Die .odt trägt jetzt 1.00-039; die Usage-Ausgabe, `--version` und das Beispiel 5.1 nennen die Programmversion 1.00-038 (Programm: Wiederholungsbefehle, Startsektor für n Wiederholungen jetzt Tabelle[32 − n]; `!$wdhl_adr_e` verlangt als zweiten Operanden den Anfang der Nullspur, die das Programm selbst bereitstellt).
 
-Stand 22.10.2026 (Ableitung auf Version 1.00-030 gesetzt, die .odt hat Vorrang): Versionsangaben in Titel, Kopf, Usage (2) und `--version` (3.1) von 1.00-027, 1.00-026 und 1.00-010 auf 1.00-030 gesetzt; `--ABSPR` in Usage-Zeile und Optionsliste (2) und der Zusatz „sofern nicht mit `-m` ein Pfad angegeben ist“ (3.1) aus der .odt übernommen; Abschnitte 6.23 bis 6.25 für 1.00-028 bis 1.00-030 ergänzt. Das Beispiel in 5.1 zeigt wie in der .odt die Versionszeile „Version 1.00“ (Mitschnitt eines älteren Laufs); der Assembler gibt heute „1.00-030“ aus. Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist aus dieser Fassung neu erzeugt.
-
-Stand 22.10.2026 (Ableitung, Entscheidung des Projektinhabers): Die Bezeichnung „Kleines Eingabeprogramm" für den Objektcode (`.obj`) in Pass 3 (Abschnitt 1), bei `equ` (3.3.5) und in der Überschrift von 5.2 ist ersetzt durch „Eingabe mit Kennzeichen (Format des Minimalprogramms)": Das KEP liest nur den binären Lochstreifen `.kep` (3.1a, `--ABSPR`). Die .odt enthält dieselbe Bezeichnung inzwischen (Stand 1.00-030); der Hinweis „In der .odt nachzuführen“ ist damit erledigt.
-
-Stand 20.10.2026 (Ableitung nachgeführt nach der .odt vom 20.10.2026): Die .odt beschreibt jetzt die Schalter `-o` und `-t` sowie `-h`, `--help` und `--version` mit der vollständigen Usage-Ausgabe (Abschnitt 2), den Vorspann der `.test`-Datei aus dem Quelltext (3.1), das Symbol allein auf einer Zeile (3.2) und das Label allein vor `start` (3.3.7). `-WARN=SYS` ist in `-WARN=SYM` berichtigt, denn der Assembler kennt nur `SYM`. Abschnitt 6.3 hält die zugehörigen Änderungen an `ca82ass.c` fest. Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist nicht nachgeführt.
-
-Stand 19.10.2026 (Ableitung neu abgeglichen mit der .odt vom 16.10.2026, Entscheidung des Projektinhabers: OP-23 „aus der .odt ableiten“): Der Satz zu `node.js` ist entfallen (steht in der .odt nicht mehr); `-WARN=SYS` (1.1) und die Anweisung `spa` (neuer Abschnitt 3.3.10, damit „Ende des verschieblichen Teils“ = 3.3.11 und „Pragma LEITADRESSE“ = 3.3.12) sind aus der .odt übernommen. **Die .odt verweist an mehreren Stellen auf „3.3.11“ für das Pragma, obwohl dort 3.3.12 steht; diese Ableitung führt die richtigen Verweise (3.3.12).** Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist nicht geändert und nennt `node.js` noch.
-
-Stand 21.10.2026: Die .odt ist auf Version 1.00-010 nachgeführt (Usage mit `-m`, `--xref`, `--color`/`--no-color`; unbekannte Optionen als Fehler; Fehlerort `<datei>:<zeile>:`; keine `.obj`/`.mqo`/`.test` bei Fehlern; neuer Abschnitt 6 „Änderungsverzeichnis“ in der .odt, in dieser Ableitung als 6.4). Das PDF ist nicht nachgeführt. In 1.00-011 ist `-Wshadow` bereinigt (6.6). In 1.00-012 sind Fehlerorte und Grenzen nachgeführt (6.7). In 1.00-013 sind ein Überlauf bei leerem `dt`-Operanden behoben und zwei Warnungen ergänzt (6.8). In 1.00-014 ist `pass3` zerlegt (6.9). In 1.00-015 sind `pass2` und `loeseMacroAuf` zerlegt und mehrere Fehler in der Makro-Auswertung behoben (6.10). In 1.00-016 meldet `da` ein nirgends definiertes Symbol als Fehler (6.11). Die .odt ist auf 1.00-016 gesetzt (Versionsangaben und Änderungsverzeichnis); die Fehlertabelle in 3.1 und die Zeilengrenze in 3.2 sind dort noch nicht eingearbeitet (Text in 6.8).
-
-Stand 16.10.2026: Die Abschnitte 1 bis 5 stimmen inhaltlich mit der erneuerten .odt (Version 1.00-005, zuletzt gespeichert am
-16.10.2026) überein. Neu gegenüber der vorigen Ableitung (Stand 15.10.2026): Der `<adressausdruck>` (3.2) nennt keine Obergrenze für die
-Zahl der Symbole mehr (die Zeile „nur maximal ein Symbol erlaubt“ ist entfallen). Beim `<werteausdruck>` (3.2) und bei `dw` (3.3.3) sind
-paarweise Differenzen symbolischer Adressen zulässig, auch mehrfach. Die Verzeichnisstruktur (1.1) ist gekürzt (Beispielprojekte nur noch
-`Projekt_1`). In 3.3.8 entfällt der Satz zum Pragma `LEITADRESSE`; die Ladeadresse existiert dort nur beim Laden des Objektcodes.
-
-Rechtschreibung, Anführungszeichen und offensichtliche Tippfehler sind bereinigt; Überschriften, Codeblöcke und Tabellen haben die Form der
-Markdown-Ableitung; einzelne Zusätze der Ableitung (Tabellenköpfe, Beispiele und Erläuterungen in Klammern) ändern den Inhalt der .odt
-nicht. Die Anweisung `dw <literal>` beschreibt die .odt nicht; sie ist deshalb auch in Abschnitt 3.3.3 dieser Ableitung nicht beschrieben
-(der Assembler weist sie ab, s. Abschnitt 6). Abschnitt 6 stammt nicht aus der .odt.
+Stand 25.10.2026 (1.00-038): Die .odt trägt jetzt ebenfalls 1.00-038 (Programm c82ass bleibt 1.00-037). Berichtigt in .odt und .md: Verweise auf `c82load`, `c82dump` und `c82simi` entfernt (1.1, 3.1, 3.3.7), Nullwort `dw 0` als `0.` (3.3.3), Leitbefehl `<start> 240:` mit Doppelpunkt (3.1a), Versionszeile im Beispiel (5.1), „Objektdatei“ in 1.1. Außerdem die .md an die .odt angeglichen: Zusätze entfernt, die nur die .md hatte (Dateiliste 3.1: `.obj` und `.dmp`; `dw` in 3.3.3; Anmerkung zur Zeile „-“ der Tabelle 2), fehlender Satz zur Lochbandleser-Ablage in 3.1 ergänzt, Anordnung des Absatzes zu `asm_alle.sh` in 1.1 wie in der .odt; `.odt`, Programm und Beispielausgaben unverändert (1.00-037). Zuvor, Stand 24.10.2026 (1.00-037): Die Objektdatei `.obj` hat kein Zeilenende mehr (nur Wörter mit `.` und am Ende `/`); davor (1.00-036) ist sie jetzt ein binär codierter R300-Lochstreifen (je Zeichen eine Zeile aus acht Ziffern 0/1, ohne Zeilenende-Zeichen; ein anderes Format gibt es nicht mehr; Abschnitt 3 und 5.2). Zuvor, Stand 24.10.2026 (1.00-035): Die Objektdatei `.obj` enthält keine Leerzeichen mehr (Abschnitt 3 und 5.2; Beispiele der Objektzeilen entsprechend geändert); Programm, Titelzeile, Usage- und `--version`-Ausgabe 1.00-037. Zuvor, Stand 24.10.2026 (1.00-034): Textgestalt bereinigt (Leerzeile vor drei Listen, damit das Layoutskript keinen Hinweis mehr meldet); Inhalt und Abschnitte unverändert, die Titelzeile der .odt trägt jetzt ebenfalls 1.00-034. Zuvor, Stand 23.10.2026 (1.00-033): Abschnitt 2 beschreibt die Fehlerobergrenze (höchstens 20 Fehlerzeilen) und die Zusammenfassung gleicher Fehlermeldungen (ab Assembler 1.00-034); Titelzeile 1.00-033, Beispielausgaben des Programms 1.00-034. Zuvor (1.00-032): Abschnitt 3.1c beschreibt den Nachspann der `.test`-Datei genau (Abschnitt `Prüfungen:`, Semikolon entfällt, Beispiel); der Assembler setzt das um. Die Ableitung ist neu aus der geänderten .odt erstellt und gibt deren Abschnitte 1 bis 5 wieder. Die Versionsnummer der
+.odt wird bei jeder Änderung erhöht (jetzt 1.00-037: Titelzeile; die Usage-Ausgabe und die Beschreibung von `--version` nennen die Programmversion 1.00-037); die .md zählt ihren Build selbst (jetzt 1.00-038) und nennt im Kopf die Nummer der .odt, von der sie abgeleitet ist. Einen Abschnitt 6 gibt es weder in der .odt noch in dieser Ableitung. Offensichtliche Tippfehler der .odt sind bereinigt;
+Überschriften, Codeblöcke und Tabellen haben die Form der Markdown-Ableitung. Das PDF `C8205-Assemblerdokumentation_A4.pdf` ist aus
+dieser Fassung erzeugt.
 
 
-# Cross-Assembler für C8205 / C8205Z – Version 1.00-030
+# Cross-Assembler für C8205 / C8205Z – Version 1.00-039
 
 Die gesamte Software läuft sowohl unter Linux als auch Windows 10. Sie ist in C (gcc) programmiert.
 
@@ -51,6 +34,11 @@ gekürzt):
 make_c82ass.sh                 # Skript zum Erzeugen des Assemblers unter Linux
 c82ass.sh                      # Ausführen des Assemblers
 asm_alle.sh                    # assembliert alle .asm-Dateien unterhalb eines Verzeichnisses (meldet nur Fehler)
+                                 asm_alle.sh [Basisverzeichnis] assembliert alle .asm-Dateien
+                                 unterhalb eines Verzeichnisses (Vorgabe: ./) mit c82ass.sh. Bei
+                                 fehlerfreiem Lauf erscheint keine Meldung; bei einem Fehler wird die
+                                 Datei mit den Fehlerzeilen des Assemblers gemeldet.
+                                 Rückgabewert: 0 = alles fehlerfrei, 1 = Fehler
 asm_aufraeumen.sh              # entfernt .log, .mqo, .obj und .sym (Trockenlauf; --loeschen löscht)
 make_c82ass.bat                # Batch-Datei zum Erzeugen des Assemblers unter Windows (Pendant zu make_c82ass.sh)
 Dokumentation                  # diese Dokumentation
@@ -70,43 +58,28 @@ C8205_Assembler_Dokumentation.md   C8205_Assembler_Dokumentation.odt   C8205_Ass
 c82ass
 
 ./Assembler/Projekt_1:
-bsp_5.15
-bsp_5.16
-bsp_seite_39
-bsp_seite_40
-bsp_seite_42
-… --weitere ---
-
-./Assembler/Sourcecode:
-c82_austausch.c        c82_austausch.h  ca82_intern.h
-ca82_main.c        ca82_quelle.c      ca82_listing.c     ca82_zustand.c
-ca82_pass0.c       ca82_pass1.c       ca82_pass2.c       ca82_pass3.c
-ca82_ausdruck.c    ca82_codierung.c   ca82_testdatei.c   ca82_hilfen.c
-ca82_fehler.c      ca82_fluss.c       ca82_fluss.h
-ca82_protokoll.c  ca82_protokoll.h  ca82_standards.c  ca82_standards.h
-ca82_berichte.c    ca82_berichte.h    ca82_symbole.c     ca82_symbole.h
-ca82_makros.c      ca82_makros.h      ca82_typen.h       ca82_version.h
-c82ass.makros
-
-./Assembler/_Windows:
+… die Projekte, die zu einem Quelltext alle erzeugten Dateien zusammenhalten
 ```
 
-Projektverzeichnisse können beliebig benannt sein, auch Unterverzeichnisse enthalten. In ihnen steht der
-Quelltext, die erzeugte Objektdatei (die K1K2-ladefähige Textdatei) und weitere Hilfsdateien. Die
-Programme `c82ass`, `c82load`, `c82dump`, `c82simi` erwarten ihre Dateien immer in einem
-Projektunterverzeichnis, das im gleichen Pfad wie sie selbst liegen muss.
+Projektverzeichnisse können beliebig benannt sein, auch Unterverzeichnisse enthalten. In ihnen steht der Quelltext, die erzeugte
+Objektdatei (ein binär codierter R300-Lochstreifen, siehe 3.1) und weitere Hilfsdateien. Das Programm `c82ass`
+erwartet seine Dateien immer in einem Projektunterverzeichnis, das im gleichen Pfad wie es selbst liegen muss.
 
-In der vorliegenden Projektstruktur ist nur `c82ass` enthalten. Die Programme `c82load`, `c82dump`, `c82simi`
-und der `C8205Simulator` sind nicht Teil dieses Projekts und liegen nicht bei; sie werden in dieser Dokumentation
-nur erwähnt, weil `c82ass` Dateien für sie erzeugt (`.mqo` und `.obj` für `c82load`, `.mqo` für `c82simi`, `.sym`
-für `c82dump`). Für die Prüfung von Assemblerergebnissen im Interpreter dient stattdessen die Datei `.test`
-(s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a).
+```
+./Assembler/Sourcecode:
+alle .c und .h Dateien des Assemblerquelltextes und die Makrodatei c82ass.makros
 
-`make_c82ass.sh` ist ein Shell-Script zum Erzeugen des Assemblers. Die Datei `make_c82ass.bat` leistet das Gleiche für den
-MinGW-w64-Crosscompiler unter Windows. Der Pfad `_Linux` enthält alle Linux-Binaries und Libraries, der
-Pfad `_Windows` die Pendants für Windows 10. `Sourcecode` enthält ausschließlich den C-Quellcode.
+./Assembler/_Linux:
+Der Pfad _Linux enthält alle Linux-Binaries und Libraries des Assemblers
 
-`asm_alle.sh [Basisverzeichnis]` assembliert alle `.asm`-Dateien unterhalb eines Verzeichnisses (Vorgabe: `./`) mit `c82ass.sh`. Bei fehlerfreiem Lauf erscheint keine Meldung; bei einem Fehler wird die Datei mit den Fehlerzeilen des Assemblers gemeldet. Rückgabewert: 0 = alles fehlerfrei, 1 = Fehler. `asm_aufraeumen.sh` entfernt die erzeugten Dateien `.log`, `.mqo`, `.obj` und `.sym` unterhalb von `Assembler` (nicht in `Dokumentation`, `Sourcecode`, `_Linux`, `_Windows`); ohne Parameter wird nur angezeigt, was gelöscht würde (Trockenlauf), mit `--loeschen` wird tatsächlich gelöscht. Beide Skripte gehören in das Verzeichnis `Assembler`.
+./Assembler/_Windows:
+Das Windows-Binary des Assemblers
+```
+
+Für die Prüfung von Assemblerergebnissen im Interpreter dient die Datei `.test` (s. `C8205-Interpreter-Durchführung_eines_Tests.md`,
+Abschnitt 2a).
+
+`asm_aufraeumen.sh` entfernt die erzeugten Dateien `.log`, `.mqo`, `.obj` und `.sym` unterhalb von `Assembler` (nicht in `Dokumentation`, `Sourcecode`, `_Linux`, `_Windows`); ohne Parameter wird nur angezeigt, was gelöscht würde (Trockenlauf), mit `--loeschen` wird tatsächlich gelöscht. Beide Skripte (`asm_alle.sh` und `asm_aufraeumen.sh`) gehören in das Verzeichnis `Assembler`.
 
 
 ## 2. Überblick
@@ -118,7 +91,7 @@ die Parameter einfach mit veränderten Werten wieder angegeben werden.
 
 ```
 $ c82ass.sh -h
-C8205 Assembler C82aas Version 1.00-030
+C8205 Assembler C82aas Version 1.00-038
 Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE] [--xref] [--ABSPR] [--color | --no-color]
        ./_Linux/c82ass -h | --help | --version
 
@@ -151,9 +124,8 @@ Usage: ./_Linux/c82ass -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei]
   --version              Die Versionsnummer ausgeben (steht auch in der ersten Ausgabezeile).
 ```
 
-Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint daher `./_Linux/c82ass`. `c82ass.sh` ruft
-`./_Linux/c82ass` relativ auf und muss deshalb aus dem Verzeichnis `Assembler` gestartet werden; dort werden auch
-`projekdetails` und (zuerst) `c82ass.makros` gesucht (sofern nicht mit `-m` ein Pfad angegeben ist).
+`c82ass` muss aus dem Verzeichnis `Assembler` gestartet werden; dort werden auch `projekdetails` und (zuerst) `c82ass.makros`
+gesucht (sofern nicht mit `-m` ein Pfad angegeben ist).
 
 - `-p` nennt das Verzeichnis, in dem die `.asm`-Datei **direkt** liegt (z. B. `Projekt_1/bsp_5.16`). Unterverzeichnisse
   werden nicht durchsucht; ein Pfadanteil bei `-s` wird abgeschnitten.
@@ -168,16 +140,12 @@ Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint dahe
   nächste Parameter mit `-` beginnt) und ein zu langer Pfad sind Fehler (Rückgabecode 16). `-o` und `-t` gelten nur für den einen Aufruf und
   werden nicht in `projekdetails` gespeichert; die übrigen Ausgabedateien (`.log`, `.mqo`, `.sym`, `.dmp`) bleiben im Projektverzeichnis.
   Beispiel: `$ c82ass.sh -p Projekt_1/bsp_5.16 -s bsp_5_16 -o ausgabe/ -t tests/bsp_5_16_neu.test`
-- `-h` und `--help` geben den Usage-Text aus, `--version` nur die Versionszeile „C8205 Assembler C82aas Version 1.00-030“. Beide enden ohne
+- `-h` und `--help` geben den Usage-Text aus, `--version` nur die Versionszeile „C8205 Assembler C82aas Version 1.00-038“. Beide enden ohne
   Assemblerlauf mit Rückgabecode 0.
 - `projekdetails` enthält die Zeilen `-p <Verzeichnis>` und `-s <Datei>`; fehlt einer der Parameter im Aufruf, wird der
-  gespeicherte Wert benutzt. Beim Wechsel des Projektverzeichnisses wird die bisherige Datei als
-  `projekdetails.<altes Projekt>` gesichert (Schrägstriche im Namen werden zu `_`, z. B. `projekdetails.Projekt_1_bsp_5.16`)
-  und die gesicherte Datei des neuen Projekts, falls vorhanden, zurückgeholt.
-- Rückgabecode: 0 = fehlerfrei, 16 = Fehler (jede Art von Abbruch). Parameter ab einem Argument, das mit `>` beginnt,
-  werden ignoriert.
-- Unbekannte Optionen (z. B. `-x`) werden nicht mehr stillschweigend übergangen: Der Assembler meldet „Fehler: Unbekannte Option …“, gibt den Usage-Text aus und endet mit Rückgabecode 16. Ein Argument ohne führenden Bindestrich, das keinen Wert zu einem Schalter bildet, ergibt nur eine Warnung und wird ignoriert.
-- `-WARN=<liste>` schaltet zusätzliche Warnungen ein. Die Werte stehen durch Komma getrennt (z. B. `-WARN=SYM,SPR`); Groß-/Kleinschreibung ist egal, ein unbekannter Wert ergibt eine Warnung. Über `c82ass.sh` darf auch `--WARN=SYM` geschrieben werden. Alle Warnungen erscheinen erst nach fehlerfreiem Pass 3 und verändern weder `.obj` noch `.dmp`; sie lassen den Rückgabecode bei 0. In die `.log`-Datei werden sie (ab 1.00-025) hinter der Symboltabelle angehängt, ohne Farbcodes und mit denselben Überschriften wie auf STDOUT; ohne `-WARN=` und `--xref` bleibt die `.log` unverändert.
+  gespeicherte Wert benutzt.
+- `-WARN=<liste>` schaltet zusätzliche Warnungen ein. Die Werte stehen durch Komma getrennt (z. B. `-WARN=SYM,SPR`); Groß-/Kleinschreibung ist egal, ein unbekannter Wert ergibt eine Warnung. Über `c82ass.sh` darf auch `--WARN=SYM` geschrieben werden. Alle Warnungen erscheinen erst nach fehlerfreiem Pass 3 und verändern weder `.obj` noch `.dmp`; sie lassen den Rückgabecode bei 0. In die `.log`-Datei werden sie hinter der Symboltabelle angehängt, ohne Farbcodes und mit denselben Überschriften wie auf STDOUT; ohne `-WARN=` und `--xref` bleibt die `.log` unverändert.
+
   - `SYM` meldet Symbole, die definiert, aber nirgends verwendet werden (vom Assembler erzeugte Symbole wie Literalsymbole und Makro-Labels werden nicht gemeldet).
   - `SPR` meldet Sprungbefehle (unbedingt, bedingt oder mit Rückkehrabsicht; Operationscodes 000–007, 024–027, 040–057, 064–077, 100–107, 124–127, 140–157, 170–177), deren Ziel kein Befehl ist, sondern ein Datenwort (`dw` mit Wert ungleich 0, `da`) oder ein Wort, das der Assembler gar nicht belegt. Nicht gemeldet werden Ziele, die als Befehl dienen können: `dz`, `dt`, `dto` und `dtm` erzeugen Ausgabebefehle, `db`, `dbn` und `dw 0` reservieren Zellen, in die das Programm zur Laufzeit etwa den Rücksprungbefehl schreibt. Ebenfalls nicht gemeldet wird ein Sprungbefehl, den ein Lade- oder Speicherbefehl anspricht (Adresskonstante in Befehlsform wie `000 feld`): Er gilt als Datenzelle. Sprünge mit absoluter Adresse (`abs`-Symbol) werden nicht geprüft.
   - `TOT` meldet Befehle, die unmittelbar hinter einem unbedingten Sprung (000–007, 100–107) stehen und auf die nichts verweist: keine Marke, die irgendwo verwendet wird, kein Operand mit relativer Adresse, kein `da`-Wort, nicht die Startadresse und nicht Adresse 0000. Folgen mehrere solche Befehle aufeinander, wird nur der erste gemeldet, mit der Zahl der folgenden. Nicht gemeldet wird ein unbedingter Sprung hinter einem unbedingten Sprung (Sprungtabelle, die das Programm durch berechnete Adressen anspringt; die C8205 kennt keinen indirekten Sprung) und ein Befehl hinter einem Sprung, den ein Lade- oder Speicherbefehl anspricht (das Programm überschreibt ihn zur Laufzeit).
@@ -189,8 +157,6 @@ Im Usage-Text steht der Aufrufname (`argv[0]`); über `c82ass.sh` erscheint dahe
 
 
 ## 3. Der Assembler c82ass
-
-Version: 1.00
 
 ### 3.1 Programmstart
 
@@ -217,6 +183,8 @@ Pragma `LEITADRESSE` enthält, siehe 3.3.12) und `Startadresse:` gehen auf STDER
 (farbig hervorgehoben). Fehler werden je nach Pass in unterschiedlicher Form gemeldet (siehe die folgende Tabelle); jeder Fehler beendet
 den Lauf mit Rückgabecode 16. Fehlermeldungen mit Ort erscheinen in der Form `<datei>:<zeile>: Fehler: <text>`. Bei einem Fehler werden keine `.obj`-, `.mqo`- und `.test`-Datei hinterlassen (eine unvollständige Objektdatei könnte sonst versehentlich geladen werden); `.log`, `.sym` und `.dmp` bleiben zur Fehlersuche erhalten. Meldungen und Statuszeilen sind nur auf einem Terminal farbig (siehe `--color`).
 
+**Fehlerobergrenze und Zusammenfassung** (ab Version 1.00-034): Der Assembler gibt höchstens 20 Fehlerzeilen aus, in allen Pässen und für alle Fehlerarten, auch für „bei Operand“, „bei Labeldefinition“, „bei Macrodefinition“ sowie für Fehler in `dt` und `dz`. Dieselbe Meldung (gleicher Text, ohne Zeilennummer) erscheint höchstens dreimal und nur mit verschiedenen Quellzeilen; jede weitere Wiederholung wird nur gezählt. Neue Meldungen jenseits der 20 Zeilen werden ebenfalls nur gezählt. Am Programmende, auch nach einem Abbruch, folgt für jede zusammengefasste Meldung eine Zeile „`<datei>: <n>-mal gleiche Fehlermeldung (Zeile <z>, davon <k> einzeln ausgegeben): <text>`“ (bei verschiedenen Zeilen „Zeilen `<a>` bis `<b>`“) und, wenn etwas zusammengefasst oder unterdrückt wurde, die Gesamtzeile „`<datei>: <n> Fehler insgesamt, <w> gleiche Wiederholungen zusammengefasst, <u> weitere Fehlermeldungen unterdrückt (Obergrenze 20 Fehlerzeilen).`“; die Teile für `w` und `u` entfallen, wenn sie 0 sind. Die Meldungen „Abbruch …“ sind nicht begrenzt. Der Rückgabecode bleibt 16.
+
 **Fehlerausgaben**
 
 | Fehlerart | Ausgabe auf STDOUT (Listing) | Ausgabe auf STDERR | Ablauf danach |
@@ -237,7 +205,7 @@ und der Lauf endet mit Rückgabecode 16. Pro Zeile wird höchstens ein Konflikt 
 Speicherplätze), `equ`, `start`, `abs` und `end`.
 
 Die `<adresse>` der Befehle im Objektfile beginnt immer bei 0000. Ein Operand von `start` ändert die Adressen
-nicht; der Wert steht nur in der Kennzeichenzeile `21 0000 <zahl>` (siehe 3.3.7).
+nicht; der Wert steht nur in der Kennzeichenzeile `210000<zahl>` (siehe 3.3.7).
 
 Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`-Datei (Beispiel
 `Projekt_1/bsp_5.16/`):
@@ -245,32 +213,90 @@ Der Assembler erzeugt bzw. bearbeitet folgende Dateien im Verzeichnis der `.asm`
 | Endung | Inhalt |
 |---|---|
 | `.asm` | Quelltext (Eingabe) |
-| `.dmp` | formatierte Speicherbelegung (Listing; das Kennzeichen 01 kann durch das Pragma `LEITADRESSE` ersetzt sein, siehe 3.3.12): je Zeile Adresse mit Maschinenwort (`<adresse>: <K1> [<K2>] [<Wert>]`), Label, Mnemonic, Operand und Kommentar in Spalten. Es ist dasselbe Listing, das der Assembler auf STDOUT ausgibt (Meldung „Ausgabe der formatierten Speicherbelegung nach: …“), jedoch ohne die Farbcodes der Fehlermeldungen |
+| `.dmp` | formatierte Speicherbelegung (Listing: Adresse, Maschinenwort, Label, Mnemonic, Operand, Kommentar); entspricht dem Listing auf STDOUT, jedoch ohne die Farbcodes der Fehlermeldungen; das Kennzeichen 01 kann durch das Pragma `LEITADRESSE` ersetzt sein (siehe 3.3.12) |
 | `.log` | Abschnitte, soweit vorhanden: Literaltabelle, EQU-Definitionen, ABS-Definitionen, Symboltabelle (Symbol, RelAddr, Adresse, original Operation) und Adresstabelle (nach Adresse sortiert) |
-| `.mqo` | aufbereiteter Quelltext für `c82load` (kombiniert ihn mit dem Maschinencode); auch für `c82simi`, das ggf. bei der Einzelschrittverarbeitung die Kommentare einblendet. Gegenüber dem Quelltext fehlen `start`, `end`, Makrodefinitionen, reine Kommentarzeilen und `abs`-Anweisungen; Makroaufrufe sind durch ihre Ersetzung ersetzt, `equ`-Operanden aufgelöst, und die Literale stehen am Ende als `dw`-Zeilen (`l0001 dw 5`) |
-| `.obj` | mit `c82load` ladefähiger Objektcode K1K2; das Kennzeichen 01 kann mit dem Pragma `LEITADRESSE` durch 00 oder 02 … 09 ersetzt werden (siehe 3.3.12); bei 00 entfällt außerdem die Kennzeichenzeile `21 0000 <zahl>` |
+| `.mqo` | aufbereiteter Quelltext. Gegenüber dem Quelltext fehlen `start`, `end`, Makrodefinitionen, reine Kommentarzeilen und `abs`-Anweisungen; Makroaufrufe sind durch ihre Ersetzung ersetzt, `equ`-Operanden aufgelöst, und die Literale stehen am Ende als `dw`-Zeilen (`l0001 dw 5`) |
+| `.obj` | binär codierter R300-Lochstreifen mit dem Objektcode K1K2 (Eingabe mit Kennzeichen); es gibt nur noch das binäre Format: je Zeichen eine Zeile aus acht Ziffern 0/1 (Spurfolge w v u p 8 4 2 1, 1 = gelocht, ungerade Lochzahl, Kodetabelle 1, Klbuch). Der Text der Objektzeile steht ohne Leerzeichen und wird mit `.` abgeschlossen, zum Beispiel `010007000.` für das Listing `01 0007 000`; ein Zeilenende wird nicht gelocht (ein Lochstreifen ist endlos, SatzMarke/WRZL würde das Minimalprogramm v6 als zusätzliches Wort 0 speichern), die Wörter folgen unmittelbar aufeinander, das letzte Zeichen ist `/`. Die Datei kann unmittelbar in den Ordner des Lochbandlesers gelegt werden; zurück in Text wandelt `c8205_lochstreifen_umwandlung.py` mit `--IN-TXT`. Das Kennzeichen 01 kann mit dem Pragma `LEITADRESSE` durch 00 oder 02 … 09 ersetzt werden (siehe 3.3.12); bei 00 entfällt die Zeile `210000<zahl>` |
 | `.kep` | nur mit dem Schalter `--ABSPR`, **statt** `.obj`: absolut adressierter, binär im R300-Code codierter Lochstreifen für das Kleine Eingabeprogramm (KEP); siehe 3.1a |
-| `.sym` | Symboldatei; wird von `c82dump` benutzt, um zum Trommeldump Symbole zuzuordnen. Je Zeile `<symbol>,<adresse>` (vierstellig oktal, in Quelltextreihenfolge, einschließlich Literalsymbolen wie `l0001`) |
-| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (Abschnitt `Trommeldatei:`) und Fuß (Abschnitt `Tastenfolge:` mit `H G R`). Der Kopf besteht aus den Vorspannzeilen des Quelltextes (siehe unten); enthält der Quelltext keine, erzeugt der Assembler als Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000` und `#PROT STUFE=2`. Kopf und Fuß müssen für den jeweiligen Fall ergänzt bzw. erweitert werden. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
+| `.sym` | Symboldatei. Je Zeile `<symbol>,<adresse>` (vierstellig oktal, in Quelltextreihenfolge, einschließlich Literalsymbolen wie `l0001`) |
+| `.test` | Trommeldatei im Format des Interpreters (`Adresse: Wert # Quelltextzeile`) mit Kopf (Abschnitt `Trommeldatei:`) und Fuß (Abschnitt `Tastenfolge:` mit `H G R`). Der Kopf besteht aus den Vorspannzeilen des Quelltextes (siehe 3.1b); enthält der Quelltext keine, erzeugt der Assembler als Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000` und `#PROT STUFE=2`. Kopf und Fuß müssen für den jeweiligen Fall ergänzt bzw. erweitert werden. Zeilen gibt es nur für Wörter mit K1=00 oder 01 (Befehle, `dw`, `da`, `dz`, `dt`, `dto`, `dtm`, Nullwort); `db`, `equ`, `start` und `abs` erzeugen keine Zeile; Grundlage für Testaufträge, s. `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2a |
 
-**Vorspann der `.test`-Datei:** Der Abschnitt `Trommeldatei:` kann im Quelltext vorgegeben werden. Dazu stehen die gewünschten Zeilen als
-Kommentarzeilen im Quelltext: Das erste Zeichen außer Leerraum ist ein Semikolon, danach folgt (auch nach Leerraum) eine Testmarke. Der
-Assembler übernimmt jede solche Zeile ohne das führende Semikolon und den Leerraum dahinter in der Reihenfolge des Quelltextes in die
-`.test`-Datei. Als Testmarken werden erkannt: `#DOK-xxxx`, `#SPEI-xxxx`, `#SPUR-xxxx`, `#PROT`, `#AC`, `#BZ`, `#STARTE`, `#TROMMEL` sowie die
-Geräteschalter `--leser1`, `--leser2`, `--stanzer1`, `--sw-ausgabe` und `--k0` (Bedeutung: `C8205-Interpreter-Durchführung_eines_Tests.md`,
-Abschnitte 2, 2b, 2e und 2g).
+Vor jedem Lauf löscht der Assembler die Dateien `.log`, `.obj`, `.mqo`, `.sym`, `.test` und `.dmp` des
+Projekts und erzeugt sie neu. Mit `-o` bzw. `-t` (Abschnitt 2) wird statt der `.obj`- bzw. `.test`-Datei im Projektverzeichnis die dort angegebene Datei gelöscht und neu erzeugt; eine ältere Datei im Projektverzeichnis bleibt unberührt. Die früher genannten Endungen `.mqt` (modifizierter Quelltext) und `.l82` (Objektcode für den `C8205Simulator`) erzeugt der aktuelle Assembler nicht mehr. Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an.
 
-Die Zeilen dürfen an beliebiger Stelle des Quelltextes stehen, üblicherweise am Anfang. Davor erzeugt der Assembler nur die Zeile
-`Trommeldatei:`. Enthält der Quelltext keine einzige solche Zeile, erzeugt er stattdessen die Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000`
-und `#PROT STUFE=2`. Steht `#STARTE` im Vorspann, ersetzt es die Tastenfolge; der Assembler erzeugt dann keinen Abschnitt `Tastenfolge:`.
+### 3.1a Schalter `--ABSPR` (absolut adressierter KEP-Lochstreifen)
 
-Andere Kommentarzeilen werden nicht übernommen, insbesondere nicht `--pruefe-…` (gehört in den Abschnitt `Prüfungen:`), `#INTERRUPT`
-(muss zwischen zwei Befehlszeilen der Trommeldatei stehen) und das Pragma `;#; LEITADRESSE` (3.3.12). Beispiel (im Quelltext):
+Das KEP liest nur Dualziffern. Mit diesem Schalter kann der Assembler statt einer `.obj`-Datei im BIS-Minimalprogramm-Format eine binär codierte Datei im KEP-Format erzeugen.
+
+Mit `--ABSPR` (gleichwertig `--ABSOLUTPROGRAMM` und `--ASBPR`, Groß-/Kleinschreibung egal) schreibt der Assembler deshalb statt der `.obj`-Datei die Datei `<name>.kep` (die mit `-o` wie bei `.obj`-Dateien auch in den gewünschten Pfad umlenkbar ist).
+
+Sie ist eine binäre Lochstreifendatei, d. h. je Zeile wird ein einzelnes Zeichen durch die 8 Bit des R300-Codes dargestellt (in der Form der Lochstreifen-Hilfsprogramme: je Lochungszeile 8 Ziffern 0/1 (Spurfolge `w v u p 8 4 2 1`), nur die Zeichen `0 1 : .`). Eine solche Datei ist also ohne weitere Umwandlung in den Leser 1 einlegbar.
+
+Der Aufbau wird aus den Zeilen, die sonst in eine `.obj`-Datei kämen, abgeleitet; die Kennziffern K1K2 entfallen, bestimmen aber die Aufbereitung.
+
+Automatisch wird ein Leitbefehl vorangestellt: `<start> 240:`. Die Adresse kommt aus der `start`-Anweisung (oktal, ohne Vornullen, höchstens 8 Oktaltriaden), dann folgt der Operationscode 240.
+
+Dabei werden die K1K2 wie folgt umgesetzt:
+
+| K1K2 | Umsetzung |
+|---|---|
+| `00` | Rest der Zeile ohne Leerzeichen unverändert, mit `.` abgeschlossen |
+| `01` | Adressstellen plus aktueller Wert `oo..oo` (Anfangswert = `start`), dann die 3 Oktalziffern des Operationscodes, ohne Vornullen, mit `.` |
+| `20` | `oo..oo` wird durch den angegebenen Wert (ohne Leerzeichen) ersetzt und gilt für spätere Additionen; dazu ein neuer Leitbefehl `<wert> 240:` |
+| `21`, Endezeichen `/` | entfallen |
+
+Jede Oktalziffer wird durch ihre 3 Bits ersetzt, führende Nullbits entfallen (Beispiele: `0040 240:` = `100000010100000:`, `0001 164.` = `1001110100.`). Das Pragma `LEITADRESSE` hat Vorrang und wird vor der Umsetzung ins binäre Format angewendet: Ersetzt es 01 durch 00, wird K1=00 behandelt (Rest unverändert, keine Addition). Ersetzt es 01 durch 02 … 09, werden diese Zeilen nicht umgesetzt (sie fehlen in der `.kep`); der Assembler gibt dazu eine Warnung mit der Anzahl aus. Gibt es danach keine Zeile mit K1=01 mehr, gibt er eine Warnung aus; ist die Ursache das Pragma `LEITADRESSE 00` (absolut geschriebener Quelltext, der Regelfall beim Minimalprogramm), ist es nur ein Hinweis „Der Quelltext gilt als absolut adressiert, es wird keine Adresse umgerechnet“ (ab Version 1.00-030). Dasselbe gilt für `LEITADRESSE 00` zusammen mit `start <adresse>` ungleich 0: Der erste Leitbefehl lautet dann `<adresse> 240`, die Operanden bleiben aber unverändert (die Startadresse wird nicht addiert); der Assembler warnt (ab Version 1.00-028). Regel: Relativ geschriebener Quelltext mit `start <adresse>` ohne Pragma; absolut geschriebener Quelltext mit Pragma `LEITADRESSE 00` und `start` ohne Operand. Wird ein Wort auf eine Zelle von 0002 bis 0037 geladen (dort liegt das KEP selbst), gibt der Assembler eine Warnung mit der Zelle aus (ab Version 1.00-029; vorher warnte er bei jedem Leitbefehl auf 0000 bis 0037). Die Zellen 0000 und 0001 sind erlaubt und warnen nicht: Dort trägt das geladene Programm, wie das Minimalprogramm, seinen Sprung zur Startadresse ein; der Bahnsperrenschalter muss beim Laden aus sein. Das KEP selbst ist nicht Teil des Lochstreifens.
+
+### 3.1b Vorspann der `.test`-Datei (Testmarken im Quelltext)
+
+Der Assembler erzeugt immer eine `.test`-Datei. Die „`#…`“-Makros zur Teststeuerung mit dem Abschnitt `Trommeldatei:` (Kopf), den Trommelzeilen und dem Abschnitt `Tastenfolge:` (Fuß) können schon im Assembler-Quelltext als Assembler-Kommentare angelegt werden.
+
+**Regel.** Der Assembler liest den Quelltext Zeile für Zeile und behandelt jede Zeile so:
+
+1. Er überspringt Leerzeichen und Tabulatoren am Zeilenanfang. Das erste übrige Zeichen muss ein Semikolon `;` sein, sonst ist die Zeile keine Vorspannzeile. Ein Kommentar hinter einem Befehl (`ADD 5 ;#DOK-0001 …`) wird deshalb nicht übernommen.
+2. Er überspringt das `;` und den Leerraum dahinter.
+3. Der Rest muss mit einer Testmarke beginnen (siehe Tabelle). Sonst bleibt die Zeile ein gewöhnlicher Kommentar.
+4. Er schneidet Leerraum und Zeilenende am Ende der Zeile ab und schreibt den Rest unverändert in die `.test`-Datei. Das `;` und der Leerraum davor erscheinen dort nicht.
+
+Die Zeilen kommen in der Reihenfolge des Quelltextes in den Abschnitt `Trommeldatei:`. Sie dürfen an beliebiger Stelle des Quelltextes stehen, üblicherweise am Anfang. Zeilen mit mehr als 2047 Zeichen werden ignoriert.
+
+**Erkannte Testmarken.**
+
+| Marke | Erkennung | Bedeutung |
+|---|---|---|
+| `#DOK-xxxx` | als Präfix | Dokumentationstext zu einer Debug-Nummer |
+| `#SPEI-xxxx` | als Präfix | Speicherbereich ssss-eeee zur Ausgabe |
+| `#SPUR-xxxx` | als Präfix | Speicherausgabe nach Spuradresse |
+| `#PROT` | ganzes Wort | Protokollstufe (`#PROT STUFE=n`) |
+| `#AC`, `#BZ` | ganzes Wort | Anfangswerte von Akkumulator und Befehlszähler (`#AC=…`, `#BZ=…`) |
+| `#STARTE` | ganzes Wort | Ansprung eines Speicherplatzes; ersetzt die Tastenfolge (siehe unten) |
+| `#TROMMEL` | ganzes Wort | Trommel leeren oder mit Abbild belegen (`#TROMMEL=LEER`, `#TROMMEL=MP`) |
+| `--leser1`, `--leser2`, `--stanzer1`, `--sw-ausgabe`, `--k0` | ganzes Wort | Geräteschalter mit Pfad (`--k0 datei=PFAD`) |
+
+Ein Eintrag mit „ganzes Wort“ gilt nur, wenn hinter der Marke Zeilenende, Leerraum oder `=` folgt. `#PROTOKOLL` allein ist also keine Testmarke. Die Bedeutung der Marken beschreibt `C8205-Interpreter-Durchführung_eines_Tests.md` in den Abschnitten 2, 2b, 2e und 2g.
+
+**Nicht übernommen** (die Zeile bleibt ein gewöhnlicher Kommentar):
+
+| Zeile | Grund |
+|---|---|
+| `--pruefe-…` | gehört in den Abschnitt `Prüfungen:`, nicht in den Kopf |
+| `#INTERRUPT` | muss zwischen zwei Befehlszeilen der Trommeldatei stehen, nicht im Vorspann |
+| `;#; LEITADRESSE xx` | Pragma für den Objektcode (3.3.12), keine Testmarke |
+| jede andere Kommentarzeile | keine Testmarke |
+
+**Sonderfälle.**
+
+- *Keine Vorspannzeile:* Enthält der Quelltext keine einzige übernommene Zeile, erzeugt der Assembler die Platzhalter `#DOK-0001`, `#SPEI-0001 0000-0000` und `#PROT STUFE=2`. Schon eine einzige Vorspannzeile unterdrückt alle drei Platzhalter. Der Kopf enthält dann nur Ihre Zeilen.
+- *`#STARTE`:* Steht `#STARTE` im Vorspann, ersetzt es die Tastenfolge. Der Assembler erzeugt dann keinen Abschnitt `Tastenfolge:` (sonst steht dort `H G R`).
+
+**Beispiel.** Im Quelltext:
 
 ```
 ;#DOK-0001 Druck von BZ und AC
 ; --sw-ausgabe virtuelle_Geraete/SW-Ausgabe
 ;#PROT STUFE=2
+;#; LEITADRESSE 03
+; gewöhnlicher Kommentar
 ```
 
 ergibt in der `.test`-Datei:
@@ -285,26 +311,48 @@ Tastenfolge:
 H G R
 ```
 
-Vor jedem Lauf löscht der Assembler die Dateien `.log`, `.obj`, `.mqo`, `.sym`, `.test` und `.dmp` des
-Projekts und erzeugt sie neu. Die früher genannten Endungen `.mqt` (modifizierter
-Quelltext) und `.l82` (Objektcode für den `C8205Simulator`) erzeugt der aktuelle Assembler nicht mehr.
-Dasselbe gilt für `.mac`: Der Quellcode legt keine solche Datei an. Mit `-o` bzw. `-t` (Abschnitt 2) wird statt der `.obj`- bzw. `.test`-Datei im Projektverzeichnis die dort angegebene Datei gelöscht und neu erzeugt; eine ältere Datei im Projektverzeichnis bleibt unberührt.
+### 3.1c Nachspann der `.test`-Datei (Prüfungs-Testmarken im Quelltext)
 
-### 3.1a Schalter `--ABSPR` (absolut adressierter KEP-Lochstreifen)
+Durch die Definition von:
 
-Das KEP liest nur Dualziffern. Mit `--ABSPR` (gleichwertig `--ABSOLUTPROGRAMM` und `--ASBPR`, Groß-/Kleinschreibung egal) schreibt der Assembler deshalb statt der `.obj`-Datei die Datei `<name>.kep` (mit `-o` wie bei `.obj` umlenkbar). Sie ist ein Lochstreifen in der Form der Lochstreifen-Hilfsprogramme: je Lochungszeile 8 Ziffern 0/1 (Spurfolge `w v u p 8 4 2 1`), nur die Zeichen `0 1 : .` des R300-Codes in Kleinbuchstabenlage (ungerade Parität), also ohne weitere Umwandlung in den Leser 1 legbar.
+```
+;#PRUEFE-START
+… beliebiger Text ..
+;#PRUEFE-ENDE
+```
 
-Aufbau, aus den Zeilen, die sonst in die `.obj` kämen (die Kennziffern K1 entfallen, bestimmen aber die Aufbereitung):
+können die in `C8205-Interpreter-Durchführung_eines_Tests.md` (Abschnitt 3a) beschriebenen Prüfungen schon im Assembler-Quelltext definiert werden. Die Zeilen zwischen den beiden Marken werden am Ende der `.test`-Datei unter einer Zeile „`Prüfungen:`“ angefügt; das führende Semikolon (und der Leerraum dahinter) wird bei jeder Zeile dazwischen entfernt.
 
-| Zeile | Ausgabe |
-|---|---|
-| Anfang | Leitbefehl `<start> 240:` mit der Adresse aus `start` (oktal, ohne Vornullen, höchstens 8 Oktaltriaden), dann der Operationscode 240 |
-| `00` | Rest der Zeile ohne Leerzeichen unverändert, mit `.` abgeschlossen |
-| `01` | Adressstellen plus aktueller Wert `oo..oo` (Anfangswert = `start`), dann die 3 Oktalziffern des Operationscodes, ohne Vornullen, mit `.` |
-| `20` | `oo..oo` wird durch den angegebenen Wert (ohne Leerzeichen) ersetzt und gilt für spätere Additionen; dazu ein neuer Leitbefehl `<wert> 240:` |
-| `21`, Endezeichen `/` | entfallen |
+`;#PRUEFE-START` und `;#PRUEFE-ENDE` selbst werden nicht übernommen; dafür steht vor den Prüfungen die Zeile:
 
-Jede Oktalziffer wird durch ihre 3 Bits ersetzt, führende Nullbits entfallen (Beispiele: `0040 240:` = `100000010100000:`, `0001 164.` = `1001110100.`). Das Pragma `LEITADRESSE` hat Vorrang und wird vor der Umsetzung ins Binäre angewendet: Ersetzt es 01 durch 00, wird K1=00 behandelt (Rest unverändert, keine Addition). Ersetzt es 01 durch 02 … 09, werden diese Zeilen nicht umgesetzt (sie fehlen in der `.kep`); der Assembler gibt dazu eine Warnung mit der Anzahl aus. Gibt es danach keine Zeile mit K1=01 mehr, gibt er eine Warnung aus; ist die Ursache das Pragma `LEITADRESSE 00` (absolut geschriebener Quelltext, der Regelfall beim Minimalprogramm), ist es nur ein Hinweis „Der Quelltext gilt als absolut adressiert, es wird keine Adresse umgerechnet“ (ab Version 1.00-030). Dasselbe gilt für `LEITADRESSE 00` zusammen mit `start <adresse>` ungleich 0: Der erste Leitbefehl lautet dann `<adresse> 240`, die Operanden bleiben aber unverändert (die Startadresse wird nicht addiert); der Assembler warnt (ab Version 1.00-028). Regel: Relativ geschriebener Quelltext mit `start <adresse>` ohne Pragma; absolut geschriebener Quelltext mit Pragma `LEITADRESSE 00` und `start` ohne Operand. Wird ein Wort auf eine Zelle von 0002 bis 0037 geladen (dort liegt das KEP selbst), gibt der Assembler eine Warnung mit der Zelle aus (ab Version 1.00-029; vorher warnte er bei jedem Leitbefehl auf 0000 bis 0037). Die Zellen 0000 und 0001 sind erlaubt und warnen nicht: Dort trägt das geladene Programm, wie das Minimalprogramm, seinen Sprung zur Startadresse ein; der Bahnsperrenschalter muss beim Laden aus sein. Das KEP selbst ist nicht Teil des Lochstreifens.
+```
+Prüfungen:
+```
+
+vorangestellt.
+
+Weitere Regeln: Der Abschnitt steht hinter `Tastenfolge:` (bei `#STARTE` hinter den Trommelzeilen). Mehrere Bereiche ergeben einen gemeinsamen Abschnitt. Zeilen im Bereich ohne führendes Semikolon und Zeilen, die danach leer sind, werden übergangen. Fehlt `;#PRUEFE-ENDE` oder steht es ohne `;#PRUEFE-START`, gibt der Assembler eine Warnung aus; ein Bereich ohne Ende wird nicht übernommen.
+
+**Beispiel** (`bsp_5_19_2_teilwoerter2.asm`). Im Quelltext:
+
+```
+;#PRUEFE-START
+; BZ=3054 AC=77760000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+; 3000: 52526317434
+; 3001: 52520000000
+;#PRUEFE-ENDE
+```
+
+ergibt am Ende der `.test`-Datei:
+
+```
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=3054 AC=77760000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 52526317434
+3001: 52520000000
+```
 
 ### 3.2 Sprachdefinition
 
@@ -395,7 +443,7 @@ Hält `<zahl>` Speicherplätze frei, ohne ihren Inhalt zu definieren.
 [<symbol>]  dbn  <zahl>
 ```
 Hält `<zahl>` Speicherplätze frei, setzt ihren Inhalt auf 0.
-Für `<zahl>` gilt dasselbe wie bei `db`. Je Speicherplatz erzeugt `dbn` in der Objektdatei die Zeile `00 0.`.
+Für `<zahl>` gilt dasselbe wie bei `db`. Je Speicherplatz erzeugt `dbn` in der Objektdatei die Zeile `000.`.
 
 ### 3.3.3 Definiere Wert
 
@@ -405,11 +453,11 @@ Für `<zahl>` gilt dasselbe wie bei `db`. Je Speicherplatz erzeugt `dbn` in der 
 - Speichert den numerischen Wert von `<werteausdruck>` auf dem `<speicherplatz>`. Zulässig ist der Bereich -2^32 bis
   2^33-1 (33-Bit-Wort), sonst meldet der Assembler `Operand ist ungültig`. Negative Werte werden im Zweierkomplement
   gespeichert (`dw -5` ergibt `77777777773`). Ein Ergebnis, das ein relativer Wert ist, ist im `<werteausdruck>` von
-  `dw` nicht zulässig; das meint eine einzelne symbolische Adresse (`dw a`, `dw a+1`, Meldung `Operand ist ungültig`).
-  Dagegen sind paarweise Differenzen symbolischer Adressen zulässig, auch mehrfach (`dw ende-anfang`, `dw a-b+c-d`). Auch absolute Symbole (`abs`)
+  `dw` nicht zulässig; das meint eine einzelne symbolische Adresse.
+  Dagegen sind paarweise Differenzen symbolischer Adressen zulässig, auch mehrfach. Auch absolute Symbole (`abs`)
   sind zulässig; Adressen schreibt man mit `da`.
 - Es wird keine Hauptleitadresse addiert.
-- In der Objektdatei steht ein Datenwort als `00 <elf Oktalziffern>.`; nur der Wert 0 wird kurz als `<adresse>: 0.` ausgegeben
+- In der Objektdatei steht ein Datenwort als `00<elf Oktalziffern>.`; nur der Wert 0 wird kurz als `0.` ausgegeben
   (Nullwort ohne Kennzeichen).
 
 ### 3.3.4 Definiere Adresse
@@ -424,6 +472,7 @@ Das Ergebnis von `<adressausdruck>` muss bei `da` (und bei `@`-Literalen) immer 
 relative Symbol (Marke, `equ`-Symbol, Literalsymbol) zählt dabei +1, wenn es addiert wird, und −1, wenn es
 subtrahiert wird; Zahlen und `abs`-Symbole zählen 0. Es muss mindestens ein relativer Adressanteil übrig bleiben
 (Summe ≥ 1). Unzulässig sind daher:
+
 - Konstanten und konstante Ausdrücke (`da 5`, `da absx`, `da absx+2`),
 - paarweise Differenzen relativer Adressen, die sich aufheben (`da a-b`, `da b-a+absx`),
 - relative Adressen in `*` oder `/` (`da a*2`).
@@ -501,13 +550,13 @@ start  [<zahl>]
 ```
 - Nur als 1. Anweisung im `<quelltext>` zulässig, und nur einmal; ein Label vor `start` ist ein Fehler. Der Operand
   muss eine Konstante sein. Der Befehlszähler beginnt unabhängig vom Operanden bei 0. Dasselbe gilt für ein Label allein auf einer Zeile vor `start`. Eine Maschinencodeausgabe erfolgt
-  nicht; mit Operand wird im Objektcode die Kennzeichenzeile `21 0000 <zahl>` ausgegeben.
-- Ist `<zahl>` angegeben, wird die 1. Leitadresse in den „Lochstreifen" ausgegeben. Es wird dann durch
-  `c82load` auf diese 1. Leitadresse + Ladeadresse geladen. Die Ladeadresse existiert dabei nur beim
-  Laden mit `c82load`.
+  nicht; mit Operand wird im Objektcode die Kennzeichenzeile `210000<zahl>` ausgegeben.
+- Ist `<zahl>` angegeben, wird die 1. Leitadresse in den „Lochstreifen" ausgegeben. Es wird dann
+  auf diese 1. Leitadresse + Ladeadresse geladen. Die Ladeadresse existiert dabei nur beim
+  Laden.
 - Das Kennzeichen 01, das für die 1. Leitadresse steht, kann mit dem Pragma `;#; LEITADRESSE xx` durch ein anderes
   Kennzeichen ersetzt werden (Abschnitt 3.3.12). Das Pragma muss vor `start` stehen.
-- Mit `;#; LEITADRESSE 00` wird dem Objektcode kein Leitbefehl vorangestellt: Die Kennzeichenzeile `21 0000 <zahl>` entfällt
+- Mit `;#; LEITADRESSE 00` wird dem Objektcode kein Leitbefehl vorangestellt: Die Kennzeichenzeile `210000<zahl>` entfällt
   (im Objektcode und im Listing); der Operand von `start` hat dann keine Wirkung auf Objektcode und Listing (Abschnitt 3.3.12).
 
 ### 3.3.8 Definition Relativadresse
@@ -580,13 +629,14 @@ start  [<zahl>]
   `.test`, `.mqo`, `.sym` und `.log` enthalten kein Kennzeichen und ändern sich nicht.
 - Sonderfall `;#; LEITADRESSE 00`: Der Code wird so als Objektcode (`.obj`) ausgegeben, wie ihn der Assembler erzeugt hat, aber mit dem
   Kennzeichen 00 statt 01. Das dient dazu, bereits absolut codierte Programme im Objektcode-Format auszugeben (K1K2=00: keine
-  Adressänderung beim Laden, vgl. 3.3.9). Dem Objektcode wird dabei kein Leitbefehl vorangestellt: Die Kennzeichenzeile `21 0000 <zahl>`,
+  Adressänderung beim Laden, vgl. 3.3.9). Dem Objektcode wird dabei kein Leitbefehl vorangestellt: Die Kennzeichenzeile `210000<zahl>`,
   die `start` mit Operand sonst erzeugt (3.3.7), wird weder in die `.obj` noch in das Listing (STDOUT und `.dmp`) geschrieben. Die
-  Kennzeichenzeilen `20 0000 <adresse>` für `equ` bleiben erhalten. Im Objektcode sind die früheren 01-Wörter dann von den
+  Kennzeichenzeilen `200000<adresse>` für `equ` bleiben erhalten. Im Objektcode sind die früheren 01-Wörter dann von den
   übrigen 00-Wörtern nicht mehr zu unterscheiden.
 - Hat der Quelltext das Pragma, gibt der Assembler auf STDERR die Statuszeile `Leitadresse: <xx>` aus (nach
   `Benutze für -s die Datei:`). Das gilt auch für `;#; LEITADRESSE 01`.
 - Fehler (jeweils `Fehler: Zeile <n> der Quelldatei: …`, danach `Fehler: Abbruch.`, Rückgabecode 16, keine Ausgabedateien):
+
   - Das Pragma steht hinter `start`: „Das Pragma LEITADRESSE muss vor `start` stehen.“
   - Das Pragma kommt ein zweites Mal vor: „Das Pragma LEITADRESSE darf nur einmal vorkommen.“
   - Der Wert fehlt, ist nicht zweistellig oder liegt außerhalb von 00 … 09: „Das Pragma LEITADRESSE erwartet einen zweistelligen
@@ -599,12 +649,12 @@ Beispiel (`Projekt_1/bsp_5.16/bsp_5_16.asm`, Quelltext beginnt mit der Zeile `;#
 
 | Quelltextzeile | `.obj` ohne Pragma | `.obj` mit `;#; LEITADRESSE 03` |
 |---|---|---|
-| `000   go` | `01 2000 000.` | `03 2000 000.` |
-| `equ   02000` | `20 0000 2000.` | `20 0000 2000.` |
-| `aqv: da    qvektor` | `01 2027000.` | `03 2027000.` |
-| `dqv: dw    05000` | `00 00000005000.` | `00 00000005000.` |
-| `i: db    1` | `20 2007.` | `20 2007.` |
-| `164   0001` | `01 0001 164.` | `03 0001 164.` |
+| `000   go` | `012000000.` | `032000000.` |
+| `equ   02000` | `2000002000.` | `2000002000.` |
+| `aqv: da    qvektor` | `012027000.` | `032027000.` |
+| `dqv: dw    05000` | `0000000005000.` | `0000000005000.` |
+| `i: db    1` | `202007.` | `202007.` |
+| `164   0001` | `010001164.` | `030001164.` |
 
 Im Listing (`.dmp` und STDOUT) steht in denselben Zeilen entsprechend `03` statt `01` in der Kennzeichenspalte, zum Beispiel `0000: 03 2000 000`.
 
@@ -613,14 +663,14 @@ Beispiel für `00` (kleines Programm, das nicht zum Projekt gehört; der Quellte
 
 | Quelltextzeile | `.obj` ohne Pragma | `.obj` mit `;#; LEITADRESSE 00` |
 |---|---|---|
-| `start 0100` | `21 0000 0100.` | keine Zeile |
-| `anf: 211 wert` | `01 0020 211.` | `00 0020 211.` |
-| `240 ziel` | `01 0021 240.` | `00 0021 240.` |
-| `000 anf` | `01 0000 000.` | `00 0000 000.` |
-| `equ 020` | `20 0000 0020.` | `20 0000 0020.` |
-| `wert: dw 5` | `00 00000000005.` | `00 00000000005.` |
-| `ziel: da anf` | `01 0000.` | `00 0000.` |
-| `020 0` | `01 0000 020.` | `00 0000 020.` |
+| `start 0100` | `2100000100.` | keine Zeile |
+| `anf: 211 wert` | `010020211.` | `000020211.` |
+| `240 ziel` | `010021240.` | `000021240.` |
+| `000 anf` | `010000000.` | `000000000.` |
+| `equ 020` | `2000000020.` | `2000000020.` |
+| `wert: dw 5` | `0000000000005.` | `0000000000005.` |
+| `ziel: da anf` | `010000.` | `000000.` |
+| `020 0` | `010000020.` | `000000020.` |
 
 Im Listing (`.dmp` und STDOUT) steht entsprechend `00` statt `01` (zum Beispiel `0000: 00 0020 211`), und die Zeile `21 0000 0100` fehlt.
 
@@ -707,9 +757,6 @@ ASCII-Code Großbuchstabe (dez.), ASCII-Code Kleinbuchstabe (dez.).
 | . | ! | 0730 | 33 | 46 |
 | - | — | 1000 | — | 45 |
 | Leertaste | ZwR | 0320 | 32 | 32 |
-
-(Zeile "-" hat in der Quelle keine Einträge in den Spalten "Groß" und "ASCII Groß (dez)" — als "—" markiert,
-nicht ergänzt.)
 
 
 ## 4. Der Makro-Präprozessor des Assemblers
@@ -906,7 +953,7 @@ Hinweis: Die Datei `Projekt_1/bsp_5.16/bsp_5_16.asm` ist eine veränderte Fassun
 Projektverzeichnis: Projekt_1/bsp_5.16
 Benutze für -s die Datei: bsp_5_16
 Startadresse: 0000
-C8205 Assembler C82aas Version 1.00
+C8205 Assembler C82aas Version 1.00-038
 
 Pass 0
 Verarbeite 'c82ass.makros', Erzeuge Macroersetzungen
@@ -962,12 +1009,14 @@ ende:           end
 Nach dem Listing meldet der Assembler:
 
 ```
-Ausgabe als Minimalprogramm-Objektdatei nach: Projekt_1/bsp_5.16/bsp_5_16.obj
+Ausgabe als binaer codierte Objektdatei (R300-Lochstreifen) nach: Projekt_1/bsp_5.16/bsp_5_16.obj
 Ausgabe der formatierten Speicherbelegung nach: Projekt_1/bsp_5.16/bsp_5_16.dmp
 Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: Projekt_1/bsp_5.16/bsp_5_16.test
 ```
 
 ### 5.2 Durch c82ass erzeugter Objektcode (K1K2-Programmcode) für die Eingabe mit Kennzeichen (Format des Minimalprogramms)
+
+Das Beispiel zeigt das Listing mit Adressspalte und Leerzeichen zur besseren Lesbarkeit; die Datei `.obj` enthält die Zeilen ohne Adressspalte und ohne Leerzeichen (zum Beispiel `010007000.`), jedes Zeichen als R300-Lochbild aus acht Ziffern 0/1.
 
 ```
 0000: 01 0007 000.
@@ -1000,289 +1049,3 @@ Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: Projekt_1/bsp_5.16/b
       20 0000 0100.
 0100: 20 0105.
 ```
-
-
-## 6. Abgleich mit dem Assembler c82ass
-
-Dieser Abschnitt stammt nicht aus der .odt. Er hält fest, was am Verhalten des Assemblers `c82ass` auffällt und in der .odt nicht
-beschrieben ist, und wie der Quelltext `ca82ass.c` an die erneuerte .odt angepasst wurde. Grundlage ist der Quelltext (Stand
-16.10.2026); ein Lauf mit neu erzeugtem Binary steht noch aus.
-
-### 6.1 Auffälligkeiten im Assembler
-
-| Nr. | Stelle | c82ass tut | Anmerkung |
-|---|---|---|---|
-| 1 | `dw <literal>` (3.3.3) | `dw #5` und `dw @a` weist Pass 1 mit einer Fehlermeldung ab („Operand … ist bei dw nicht zulaessig: ein Literal ist eine relative Adresse“). Das Linux-Binary vom 15.10.2026 hatte `dw #5` noch ohne Meldung angenommen und die Adresse der Literalzelle statt des Werts eingesetzt; im Quelltext ist das behoben. | Die .odt beschreibt `dw <literal>` nicht. Den Wert 5 erhält man mit `dw 5`, Adressen mit `da`. Offen: Binary neu erzeugen und das Verhalten bestätigen. |
-
-### 6.2 Angleichung an die erneuerte .odt (16.10.2026)
-
-| Nr. | Stelle | Änderung in c82ass | Anmerkung |
-|---|---|---|---|
-| 1 | `<adressausdruck>` (3.2) bei `da` und `@`-Literalen | Die Prüfung „höchstens ein Symbol“ entfällt. Ausdrücke mit mehreren Symbolen, z. B. `da marke+absx`, werden angenommen. | Die Auswertung ist unverändert (Summe bzw. Differenz der Werte; K1K2=00, sobald ein `abs`-Symbol vorkommt, sonst 01, vgl. 3.3.9). Die Differenz zweier Marken (`da a-b`) wurde damals mit der Leitadresse verschoben; entschieden am 21.10.2026: `da a-b` ist unzulässig, siehe 6.14. |
-| 2 | `<werteausdruck>` bei `dw` (3.2, 3.3.3) | Mehrere Differenzen (`dw a-b+c-d`) konnte der Assembler schon auswerten. Geändert sind nur Kommentare und der Fehlertext: „erlaubt sind nur paarweise Differenzen von Adressen“. | – |
-
-### 6.3 Änderungen vom 20.10.2026 (Symbol allein auf der Zeile, Vorspann, Usage, `-o`/`-t`)
-
-Hier wurde die .odt dem geänderten Assembler angepasst, nicht umgekehrt. Die Änderungen stehen alle in `ca82ass.c`. Geprüft mit einem aus
-dem Quelltext gebauten Linux-Binary: Alle 134 vorhandenen `.asm`-Dateien der Projektstruktur liefern mit der alten und der neuen Fassung
-dieselben `.obj`-, `.sym`-, `.log`-, `.dmp`- und `.mqo`-Dateien; bei den `.test`-Dateien ändert sich nur der Kopf (Nr. 2). Das Windows-Binary
-ist neu zu erzeugen (`make_c82ass.bat`).
-
-| Nr. | Stelle | Änderung in c82ass | Anmerkung |
-|---|---|---|---|
-| 1 | Zeile mit Symbol, aber ohne Operationscode (3.2, 3.3.7) | Pass 2 erhöhte den Befehlszähler auch für ein Symbol allein auf der Zeile, obwohl die Zeile kein Wort belegt. Alle folgenden Symbolwerte (`.sym`, `.log`) und damit Operanden, die auf sie verweisen, waren um 1 zu hoch; die Adressen im Listing stimmten. Jetzt erhält das Symbol die Adresse der nächsten Zeile, die Speicher belegt, und der Zähler bleibt unverändert. Vor `start` meldet der Assembler jetzt „Ein Label: … vor start ist nicht zulaessig.“ (vorher kam dort nur die irreführende Meldung, `start` fehle als erste Anweisung). | In den vorhandenen Quelltexten kommt das Muster nicht vor, deshalb ändert sich dort nichts. Tests: `Projekt_1/marke-allein` und `Projekt_1/marke-allein-vor-start` (Negativtest, endet mit Rückgabecode 16). |
-| 2 | Kopf der `.test`-Datei (3.1) | Vorspannzeilen aus Kommentarzeilen des Quelltextes (Marken: siehe 3.1) ersetzen den bisher immer erzeugten Platzhalter-Kopf. Ohne Vorspannzeile entsteht weiterhin der Platzhalter. Mit `#STARTE` entfällt der Abschnitt `Tastenfolge:`. | `--pruefe-…`, `#INTERRUPT` und das Pragma `;#; LEITADRESSE` werden nicht übernommen. Bei 95 der 134 vorhandenen Quelltexte ändert sich dadurch der Kopf der `.test`-Datei, der übrige Teil der Datei nicht. Tests: `Projekt_1/test-vorspann`, `test-vorspann-standard`, `test-vorspann-starte`. |
-| 3 | Aufruf: `-h`, `--help`, `--version` (2) | `-h` gibt die vollständige Usage aus (bisher nur `-p`, `-s` und `-WARN=SYM`), `--help` ist neu, `--version` gibt nur die Versionszeile aus und endet mit Rückgabecode 0. | `--version` wurde bisher wie eine unbekannte Option ignoriert (der Lauf verwendete die gespeicherten Parameter). |
-| 4 | Schalter `-o` und `-t` (2) | Eigener Ablageort für `.obj` bzw. `.test` (Verzeichnis oder Dateiname, Regeln in Abschnitt 2). | Nicht in `projekdetails` gespeichert; `.log`, `.mqo`, `.sym` und `.dmp` bleiben im Projektverzeichnis. |
-| 5 | `-WARN=SYS` (2) | Kein Code geändert: Der Assembler kennt nur `SYM`. | `SYS` stand fälschlich in der .odt und in der Ableitung; beide sind berichtigt. |
-
-### 6.4 Änderungen vom 21.10.2026 (Version 1.00-010: Warnungen, Schalter `-m`, `--xref`, Build)
-
-Die Änderungen stehen in `ca82ass.c`, `ca82_standards.c`, `ca82_berichte.c`, `ca82_symbole.c`, `make_c82ass.sh` und `make_c82ass.bat`. Die .odt und das PDF sind dazu nicht nachgeführt. Geprüft mit `Regressionstest/regressionstest.sh`: alle 139 Programme liefern dieselben Ergebnisse wie vorher.
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Schalter `-m Makrodatei` (2) | Pfad der Makrodatei statt des festen Namens `c82ass.makros`. Mit `-m` wird nur dieser Pfad benutzt (keine Ersatzsuche in `Sourcecode/`); lässt sich die Datei nicht öffnen, endet der Lauf mit Rückgabecode 16 und einer Meldung mit Pfad und Ursache. `-m` ohne Wert ist ebenfalls ein Fehler (16). Ohne `-m` bleibt das Verhalten unverändert. |
-| 2 | Compiler-Warnungen | Mit `-Wall -Wextra` meldet der Compiler keine Warnung mehr (vorher 29 × `-Waddress`, 11 × `-Wsign-compare`, ungenutzte Variablen und Parameter, wirkungslose Anweisung `literalCount;` in `pass1`). Die immer wahren Prüfungen auf `operation` und `operand` (Arrays, nie `NULL`) sind entfernt. Nicht aufgeräumt sind nur die `-Wshadow`-Hinweise (überdeckte Namen). |
-| 3 | Zeichenketten ohne Endmarke | In `pass0` fehlte nach `strncpy` mit voller Puffergröße die abschließende 0 (`trimmedSp2`, `macroNameCleaned`); bei einem Feld von 256 oder mehr Zeichen wäre über das Ende gelesen worden. Zwei `sprintf` auf Puffer mit 1024 und 4096 Byte (Makroaufruf-Kommentar in `pass0`, Zeilenaufbau in `pass3`) sind zu `snprintf` mit Feldbegrenzung geworden. Der Puffer `maxParamStr` ist von 10 auf 16 Byte vergrößert. |
-| 3a | Symbol allein auf der Zeile (3.2) | `loeseMacroAuf` las bei leerem Operationscode ein Byte vor dem Puffer (`aktuellerOpCode[len - 1]` mit `len == 0`). Mit AddressSanitizer bei `marke_allein` und `marke_allein_vor_start` gefunden; geprüft mit AddressSanitizer/UBSan über alle 139 Programme ohne weiteren Fund. |
-| 4 | `make_c82ass.sh`, `make_c82ass.bat` | Übersetzen mit `-O2 -Wall -Wextra`; `-fPIC` entfällt (zusammen mit `--static` überflüssig). |
-| 5 | Regressionstest | Drei neue Negativtests für `-m` (`makro_ok`, `makro_fehlt`, `makro_ohne_wert`); Referenz für `Proj_FeldSortieren` aufgenommen. |
-| 6 | Version | Die Versionsangabe steht jetzt an einer Stelle: `Sourcecode/ca82_version.h` (`ASM_VERSION`). Das Programm meldet „1.00-010“ (vorher „1.00“), in den geänderten Dateien steht sie in der Kopfzeile. Bei jeder Änderung werden Version und alle betroffenen Dateien nachgeführt. Die .odt trägt jetzt ebenfalls 1.00-010 und enthält die Änderungen als Abschnitt 6 „Änderungsverzeichnis“. |
-| 7 | Schalter `--xref` (2) | Gibt nach fehlerfreiem Lauf eine Querverweisliste aus: je Symbol Wert, Definitionszeile (Name in Spalte 1) und alle Quelltextzeilen mit dem Namen als ganzem Wort (Kommentare ab `;` ausgenommen). Vom Assembler erzeugte Symbole fehlen; Vorkommen in Makroexpansionen und Makrodateien werden nicht erfasst. Ohne `--xref` ändert sich nichts. Tests: `xref_basis`, `xref_aus`. |
-| 8 | Aufteilung von `ca82ass.c` | Erster Schritt: Usage, Versionszeile und die Berichte `-WARN=SYM` und `--xref` stehen jetzt in `ca82_berichte.c`/`.h`, der Typ `Symbol` in `ca82_symbole.h`, `gleichOhneGrossKlein` und `beginntOhneGrossKlein` in `ca82_standards.c`. `make_c82ass.sh` und `.bat` übersetzen `ca82_berichte.c` mit. `ca82ass.c` ist um rund 250 Zeilen kürzer; das Ergebnis des Assemblers ist unverändert (Regressionstest). Auch in der .odt (Abschnitt 6) nachgeführt. |
-| 9 | Aufteilung von `ca82ass.c`, zweiter Schritt | Die Symbol-, Literal-, equ- und abs-Tabellen mit den Suchfunktionen (`isLiteralInTable`, `sucheInEquTabelle`, `sucheInAbsTabelle`, `isSymbol`, `getSymbolAddress` u. a.) und der Sortierung stehen in `ca82_symbole.c`/`.h`. Das Eintragen mit Fehlermeldung ins Listing (`addSymbol`, `addLiteral`) bleibt in `ca82ass.c`, weil es an den Listing-Arrays hängt. `ca82ass.c` hat jetzt rund 5.600 Zeilen (vorher 5.940). Ergebnis unverändert (Regressionstest, Sanitizer). |
-
-### 6.5 Änderungen vom 21.10.2026 (Pufferüberläufe, Fehlerorte für Pass 0 bis 2)
-
-* Absturz (Rückgabecode 134) bei sehr langen Operationscodes und Labels behoben: alle `strcpy`/`strcat`/`sprintf` in `ca82ass.c` laufen über die begrenzten Helfer `STRKOPIE`/`STRANHANG` bzw. `snprintf` (`ca82_standards.h`). Zu lange Texte werden gekürzt statt überschrieben.
-* Fehler aus Pass 0 bis 2 (doppeltes oder unzulässiges Label, Label vor `start` u. a.) erscheinen jetzt auch auf STDERR im Format `<datei>:<zeile>: Fehler: <text>`. Die Quellzeile wird über das Feld `srcLine` durch die Pässe getragen; bei Makroexpansionen gilt die Zeile des Makroaufrufs.
-* Regressionstest: neue Negativtests `langes_label`, `lange_operation`, `doppeltes_label` (20 Negativtests insgesamt). Alle Programme und Negativtests laufen auch unter AddressSanitizer fehlerfrei.
-* Das PDF und das Windows-Binary sind weiterhin nicht nachgeführt.
-
-### 6.6 Änderungen vom 21.10.2026 (Version 1.00-011: keine `-Wshadow`-Hinweise mehr)
-
-* Alle 49 Hinweise von `-Wshadow` sind beseitigt; der Quelltext übersetzt jetzt mit `-Wall -Wextra -Wshadow` ohne Meldung. `make_c82ass.sh` und `make_c82ass.bat` schalten `-Wshadow` ein.
-* Umbenannt wurden nur Funktionsparameter und lokale Variablen, die globale Namen oder Variablen eines äußeren Blocks verdeckten (Endung `_p` für Parameter, `_in` für innere Variablen, z. B. `lineAsmAufgeloest_p`; in `ca82_symbole.c` `tabelle`/`anzahl` statt `symbolTable`/`symbolCount`; in den Meldungsmakros `em_len` statt `len`). Das Verhalten ändert sich nicht: Die Parameter verdeckten die globalen Namen schon vorher, die Funktionen benutzten bereits den Parameter.
-* Prüfung: Regressionstest (139 Programme, 20 Negativtests) gleich, auch unter AddressSanitizer; alle String-Literale und Kommentare vor und nach der Umbenennung verglichen (unverändert).
-* Hinweis für Änderungen: Die Meldungsmakros (`MELDE_FEHLER*`, `MELDE_FEHLER_P2`) greifen auf die **globalen** Zeilenfelder zu. Ein gleichnamiger Funktionsparameter würde sie überdecken; deshalb heißen solche Parameter jetzt eindeutig anders.
-* Weiterhin offen: PDF und `.odt` (Stand 1.00-010) sowie das Windows-Binary sind nicht nachgeführt; die großen Funktionen (`loeseMacroAuf`, `pass2`, `pass3`) sind noch nicht zerlegt.
-
-### 6.7 Änderungen vom 21.10.2026 (Version 1.00-012: Fehlerorte, Zeilengrenze, BOM)
-
-Alle Änderungen stehen in `ca82ass.c`; Version und Kopfzeilen sind auf 1.00-012 gesetzt. Die .odt (Stand 1.00-009), das PDF und das Windows-Binary sind nicht nachgeführt.
-Geprüft mit `Regressionstest/regressionstest.sh`: 139 Programme unverändert, 26 Negativtests (6 neue), auch unter AddressSanitizer/UBSan.
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Absturz bei langen Quelltexten (3.2) | Ein Quelltext mit mehr als 8192 Zeilen (auch Kommentarzeilen) ließ den Assembler abstürzen (Rückgabecode 139). Jetzt gilt eine Grenze von 6144 Zeilen für Quelltext einschließlich Makroexpansion (die restlichen 2048 Einträge der festen Felder bleiben für Literalzeilen und Fehlermarken). Beim Überschreiten meldet der Assembler `<datei>:<zeile>: Fehler: Zu viele Zeilen: …` und endet mit Rückgabecode 16. Zusätzlich prüfen alle Schreibstellen der Zeilenfelder (Pass 1 bis 3, auch die Textzeichen von `dt`, `dto`, `dtm`) die Feldgrenze und melden „Das interne Zeilenfeld ist voll“ statt eines Überlaufs. Das größte vorhandene Programm hat 654 Zeilen. |
-| 2 | UTF-8-Bytefolgemarke (BOM) | Eine BOM am Dateianfang (Windows-Editoren, z. B. Notepad) wird übersprungen. Vorher verband sie sich mit der ersten Zeile; die Meldung lautete irreführend „`start` fehlt als erste Anweisung“. |
-| 3 | Makroaufruf fehlerhaft (Pass 0) | Fehler wie „erwartet 0 Parameter, aber 1 wurden übergeben!“ stehen jetzt zusätzlich mit Ort auf STDERR (`<datei>:<zeile>: Fehler: …`, Zeile des Makroaufrufs). Der bisherige Text „Warnung: Compilierung endete mit FEHLERn.“ bleibt. |
-| 4 | Belegungsfehler (Pass 3) | „Adresse … doppelt belegt“ steht jetzt mit Ort auf STDERR (`<datei>:<zeile>: Fehler: …`); die Zeile ist die Quellzeile, die den Konflikt auslöst. Bei vom Assembler erzeugten Zeilen (Literale) steht nur `<datei>:`. |
-| 5 | Grund bei ungültigem `dw`-Ausdruck | `dw 5/0` meldet „Operand '5/0' ist ungültig (Division durch 0)“, ein Überlauf bei `*` „(Ueberlauf bei der Multiplikation)“. Vorher fehlte der Grund. |
-| 6 | Speicherfehler Makroaufruf | Beim Fehler „erwartet n Parameter“ waren die Felder `sp2` bis `sp4` der Fehlerzeile nicht belegt; die Weiterverarbeitung las über das Pufferende (mit AddressSanitizer beim neuen Test `makro_aufruf_parameter` gefunden). Die Meldungsmakros `MELDE_FEHLER` und `MELDE_WARNUNG` setzen jetzt alle Felder. |
-| 7 | Schreibfehler | „Opertionscode“ in den Meldungen zu `start` ist „Operationscode“. |
-| 8 | Regressionstest | Neue Negativtests: `makro_aufruf_parameter`, `belegung_ort`, `division_null`, `bom_ok`, `zu_viele_zeilen`, `zeilenfeld_voll` (26 insgesamt). |
-
-Hinweis für die .odt (Abschnitt 3.1, Fehlertabelle): Zeile „Makroaufruf fehlerhaft (Pass 0)“ und Zeile „Belegungsfehler in Pass 3“ nennen als STDERR-Ausgabe jetzt zusätzlich `<datei>:<zeile>: Fehler: …`. Abschnitt 3.2 („eine Zeile darf höchstens 255 Zeichen lang sein“) braucht den Satz zur Zeilengrenze (6144 Zeilen).
-
-### 6.8 Änderungen vom 21.10.2026 (Version 1.00-013: Überlauf bei leerem `dt`, zwei Warnungen)
-
-Alle Änderungen stehen in `ca82ass.c`; Version und Kopfzeilen sind auf 1.00-013 gesetzt. Der Regressionstest liefert unverändert dasselbe Ergebnis für alle 139 Programme; dazu 28 Negativtests (2 neue), auch unter AddressSanitizer/UBSan.
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Speicherfehler bei leerem `dt`, `dto`, `dtm` | Ein Textbefehl ohne Operand (`dt` allein auf der Zeile) las in `zaehleText` und `erzeugenText` ein Byte vor dem Operandenpuffer (Stack-Überlauf, mit AddressSanitizer gefunden). Die Abfrage auf das schließende `\` prüft jetzt zuerst, ob der Text leer ist. Dieselbe Absicherung gilt für das Entfernen der Endmarken bei Symbolnamen mit weniger als zwei Zeichen. Das Ergebnis für gültige Programme ist unverändert. |
-| 2 | Warnung bei leerem Textbefehl | `dt`, `dto` oder `dtm` ohne Text erzeugt kein Wort. Das meldet der Assembler jetzt als `<datei>:<zeile>: Warnung: dt ohne Text: es wird kein Wort erzeugt.` auf STDERR. Rückgabecode bleibt 0, `.log` und `.dmp` ändern sich nicht. |
-| 3 | Warnung bei leerem Programm | Eine leere oder nur aus Kommentaren bestehende `.asm` ergab bisher stillschweigend eine leere `.obj`. Jetzt erscheint auf STDERR `Warnung: Das Programm enthaelt keine Befehle und keine Daten; die Objektdatei ist leer.` Rückgabecode bleibt 0. |
-| 4 | Regressionstest | Neue Negativtests `leeres_programm` und `dt_ohne_text` (28 insgesamt). |
-| 5 | Zufallstest (Fuzzing) | Etwa 3700 zufällig veränderte Fassungen der vorhandenen Programme (Zeilen löschen, vervielfachen, kürzen, sehr lange Zeilen, Sonderzeichen, BOM, Zeilenende CR) liefen unter AddressSanitizer/UBSan. Nach der Korrektur 1 trat kein Absturz, keine Speicher- und keine UBSan-Meldung mehr auf; Rückgabecodes waren stets 0 oder 16. |
-
-Entscheidungen in dieser Version: Der Text „Warnung: Compilierung endete mit FEHLERn.“ bei Makrofehlern bleibt wie in der .odt. Die Pass-1-Fehler erscheinen weiter im Altformat „bei Operand: … in Zeile: …“ (steht in der .odt-Tabelle) zusätzlich mit `<datei>:<zeile>:`. `da a-b` wird weiter mit der Leitadresse verschoben; die Entscheidung dazu ist offen.
-
-Hinweis für die .odt: Abschnitt 3.1 (Fehlertabelle) nennt für „Makroaufruf fehlerhaft (Pass 0)“ und „Belegungsfehler in Pass 3“ zusätzlich `<datei>:<zeile>: Fehler: …` auf STDERR. Abschnitt 3.2 braucht den Satz: „Der Quelltext darf einschließlich Makroexpansion höchstens 6144 Zeilen haben; Kommentarzeilen zählen mit. Bei Überschreitung meldet der Assembler `<datei>:<zeile>: Fehler: Zu viele Zeilen …` und endet mit Rückgabecode 16.“ Außerdem gehören die Warnungen aus Nr. 2 und 3 in die Meldungstabelle.
-
-### 6.9 Änderungen vom 21.10.2026 (Version 1.00-014: `pass3` zerlegt)
-
-Reine Umstrukturierung in `ca82ass.c`, das Verhalten ist unverändert.
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | `pass3` | Die Funktion hatte rund 490 Zeilen und steht jetzt bei 168. Jede Anweisung hat eine eigene Funktion: `pass3Start`, `pass3Equ`, `pass3Spa`, `pass3Abs`, `pass3Dw`, `pass3Da`, `pass3Db`, `pass3Dbn`, `pass3Text` (für `dt`, `dto`, `dtm`) und `pass3Befehl` (normale Maschinenbefehle). Die Schleife in `pass3` wählt nur noch die Funktion aus. |
-| 2 | Gemeinsamer Zustand | Befehlszähler, relative Adresse, Dateien und Spaltenformat stehen in der Struktur `Pass3Zustand` statt in lokalen Variablen von `pass3`. |
-| 3 | Verschachtelte Funktionen | `istInDreua` und `getTrimmed` waren in `pass3` verschachtelt (GCC-Erweiterung) und sind jetzt normale `static`-Funktionen; das erleichtert die Übersetzung mit anderen Compilern. `getTrimmed` kürzt zu lange Texte, statt den Puffer zu überschreiten. |
-| 4 | Prüfung | Regressionstest unverändert: 139 Programme, 28 Negativtests, auch unter AddressSanitizer/UBSan. Zusätzlich Vergleich der alten und der neuen Fassung auf 700 zufällig veränderten Quelltexten: Rückgabecode, STDOUT, STDERR sowie `.obj`, `.mqo`, `.sym`, `.dmp`, `.test` und `.log` waren in allen Fällen identisch. |
-
-Hinweis: `loeseMacroAuf` und `pass2` wurden in 1.00-015 zerlegt (6.10).
-
-### 6.10 Änderungen vom 21.10.2026 (Version 1.00-015: `pass2` und `loeseMacroAuf` zerlegt, Speicherfehler behoben)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | `pass2` | Von rund 600 auf etwa 70 Zeilen. Jede Anweisung hat eine eigene Funktion: `pass2Start`, `pass2Equ`, `pass2Spa`, `pass2Abs`, `pass2Db` (für `db`, `dbn`), `pass2Text` (für `dt`, `dto`, `dtm`), `pass2Dz`, `pass2DwDa` (für `dw`, `da`), `pass2Ende`, dazu `pass2Befehl`, `pass2PruefeUeberlauf` und die Ausgabe von Symbol- und Adresstabelle. Der Zustand steht in der Struktur `Pass2Zustand`. Die Anweisungen werden wie bisher nacheinander und unabhängig voneinander geprüft. Die verschachtelten Funktionen (`copyAndIncrementLineElements2`, `replaceOrigOperation`, `resolveSymbols`) sind jetzt normale `static`-Funktionen. Tote Zweige (`if (1)`, nie erreichte `else`-Teile) sind entfernt. |
-| 2 | `loeseMacroAuf` | Von rund 600 auf etwa 90 Zeilen. Prüfung der Makrodefinition (`pruefeMakroDefinition`, `pruefeMakroZeile`, `pruefePrZeile`), Übernahme der Zeilen, Ersetzen der Parameter, Auswertung von `$IF`/`$ELIF`/`$ENDIF` (`makroBedingungenAuswerten`), `!$wdhl` und Label des Aufrufs haben je eine Funktion. Die Fehler eines Aufrufs stehen in der Struktur `MakroFehler`. |
-| 3 | Fehler: Heap-Überlauf bei `$IF`-Fehlern | Meldete `macroIfAufloesen` einen Fehler (z. B. `$IF` geschachtelt oder falsche Parameterzahl), zählte die Schleife in `loeseMacroAuf` das Zeilenende mit und las hinter das Zeilenfeld (mit AddressSanitizer gefunden). Die Schleife läuft jetzt nur über die vorhandenen Zeilen. An der Fehlerstelle bleibt wie bisher eine Leerzeile. Gültige Programme sind nicht betroffen. |
-| 4 | Fehler: Stack-Überlauf in `$IF` | In `macroIfAufloesen` waren die Felder für `\|`/`&` nur 2 Byte groß; ein längeres Wort an dieser Stelle überschrieb den Stack. Alle Felder haben jetzt 128 Byte und werden mit Feldbreite gelesen. Ein zu langer Operator ergibt die Meldung „Der 4. Parameter muss \| oder & sein.“ |
-| 5 | Fehler: Speicherlecks | `loeseMacroAuf` gab das Ergebnisfeld bei einem Namen, der kein Makro ist, und das Zwischenfeld bei jedem Makroaufruf nicht frei. Beides wird freigegeben; unter AddressSanitizer mit Leak-Prüfung ist der Regressionstest jetzt frei von Meldungen. |
-| 6 | Fehler: Makrofehler gingen bei genau 64 Fehlern verloren | Bei der Obergrenze von 64 Fehlern wurde keiner davon an die Ausgabe angehängt, der Lauf endete aber mit Fehler. Jetzt werden alle 64 ausgegeben. |
-| 7 | Kleinere Absicherungen | `pass2`: Zeilenpuffer ist initialisiert (war nicht initialisiert); fehlgeschlagenes Öffnen von `.log` oder `.sym` wird gemeldet (früher Absturz). `loeseMacroAuf`: Makroname ohne Zeichen und zu lange Namen in Ausdrücken der späten Symbole führen nicht mehr zu Zugriffen außerhalb des Puffers; die erzeugte `equ`-Zeile eines Makrolabels hat eine definierte Quellzeile (0). |
-| 8 | Regressionstest | Drei neue Negativtests: `makro_if_geschachtelt`, `makro_if_parameterzahl`, `makro_if_operator_lang` (31 insgesamt). |
-| 9 | Prüfung | 139 Programme und 31 Negativtests unverändert bzw. grün, auch unter AddressSanitizer/UBSan mit Leak-Prüfung. Vergleich alte gegen neue Fassung auf 1500 zufällig veränderten Quelltexten: Rückgabecode, STDOUT, STDERR und alle sechs Ausgabedateien identisch, außer in den 11 Fällen, in denen die alte Fassung die Speicherfehler aus Nr. 3 und 4 hatte. Zufallstest unter AddressSanitizer: 1900 Läufe ohne Meldung. |
-
-Offen: `pass1`, `pass0` und `main` haben noch jeweils rund 200 Zeilen; der Quelltext liegt weiter in einer Datei `ca82ass.c`.
-
-### 6.11 Änderungen vom 21.10.2026 (Version 1.00-016: `da` mit nicht definiertem Symbol)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Fehler: `da` mit unbekanntem Symbol | `x: da nirgends` (oder `da nirgends+spaeter`) wurde ohne jede Meldung mit dem Wert 0 übersetzt, der Lauf endete mit Rückgabecode 0 und erzeugte eine `.obj`. Ursache: Die späte Auflösung der Symbole (Pass 2) erkannte das fehlende Symbol, setzte aber das Fehlerkennzeichen nicht und trug die Meldung an einer falschen Stelle ein. Jetzt meldet der Assembler `<datei>:<zeile>: Fehler: Symbol 'nirgends' ist nicht definiert.` bei der Zeile, in der das Symbol (hier `x`) definiert wird, schreibt die Fehlermarke ins Listing, erzeugt keine `.obj` und endet mit Rückgabecode 16. Bei `dw` kam die Meldung schon vorher aus Pass 3. |
-| 2 | Symboltabelle | Neues Feld `aufgeloestIndex` (Zeile der Definition im aufgelösten Listing). Es wird nur für diese Meldung gebraucht. |
-| 3 | Regressionstest | Neuer Negativtest `da_symbol_fehlt` (32 insgesamt). Die 139 Programme sind unverändert. Vergleich alte gegen neue Fassung auf 500 zufällig veränderten Quelltexten: Unterschiede nur bei der neuen Meldung (3 Fälle) und bei den Speicherfehlern der alten Fassung (2 Fälle). Zufallstest unter AddressSanitizer: 400 weitere Läufe ohne Meldung. |
-
-Damit ist Punkt 1 aus „Was man noch verbessern könnte“ erledigt: Der Wert -1 für ein nicht gefundenes Symbol kam in der Praxis nie vor, der eigentliche Fehler war das fehlende Fehlerkennzeichen.
-
-
-### 6.12 Änderungen vom 21.10.2026 (Version 1.00-017: Fehlerort bei Fehlern in der Makrodatei, Prüfskript, CI)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Fehler in `c82ass.makros` | Ein Fehler in der Definition eines Makros der Makrodatei (z. B. ein falsches `$IF`) wurde bisher nur mit dem Ort des Makroaufrufs im Quelltext gemeldet; wo der Fehler in der Makrodatei steht, ließ sich nicht erkennen. Jetzt hängt der Assembler an jede solche Meldung die Herkunft an, z. B. `t.asm:3: Fehler: BAD $IF benötigt 3, 7, 11 oder 15 Parameter ... [Makro BAD, definiert in c82ass.makros:7]`. Die Zeilennummer ist die der `MACRO`-Zeile des Makros. Die Angabe steht auch in der Fehlerzeile des Listings. Makros aus dem Quelltext sind nicht betroffen (dort ist der Ort ohnehin der Quelltext). Die Struktur `macroDefinitionen` hat dafür die Felder `defDatei` und `defZeile`. |
-| 2 | Regressionstest | Neuer Negativtest `makrodatei_fehlerort` (33 insgesamt). Dazu kann ein Negativtest jetzt eine eigene Makrodatei `<name>.makros` mitbringen, die zusammen mit der `.asm` in das Arbeitsverzeichnis kopiert und mit `args -m w/negativ/<name>.makros` verwendet wird. |
-| 3 | Prüfskript | Neu: `Regressionstest/pruefe_alles.sh`. Es übersetzt mit `-Wall -Wextra -Wshadow -Werror` (jede Warnung ist ein Fehler), führt den Regressionstest aus und wiederholt ihn mit einem Binary unter AddressSanitizer und UBSan mit Leak-Prüfung. Rückgabecode 0 = alles in Ordnung, sonst die Nummer des fehlgeschlagenen Schritts. Mit `--ohne-asan` entfällt der dritte Schritt. |
-| 4 | CI | Neu: `.github/workflows/assembler.yml` führt `pruefe_alles.sh` bei jedem Push und Pull Request aus, soweit sie `Assembler/` betreffen. |
-| 5 | Prüfung | 139 Programme und 33 Negativtests grün, auch unter AddressSanitizer/UBSan mit Leak-Prüfung; Übersetzung ohne Warnung (auch mit `-Werror`). |
-
-Offen: `pass0`, `pass1` und `main` haben noch jeweils rund 200 Zeilen; der Quelltext liegt weiter in einer Datei `ca82ass.c` (das Makro-Modul `ca82_makros.c` ist der nächste Schritt). Entscheidung zu `da a-b` mit der Leitadresse und das neue Windows-Binary stehen noch aus; das PDF ist nicht nachgeführt.
-
-### 6.13 Änderungen vom 21.10.2026 (Version 1.00-018: Makro-Modul herausgelöst)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Aufteilung von `ca82ass.c` | Der Makro-Präprozessor steht jetzt in `ca82_makros.c`/`.h` (Einlesen der Makrodatei, Quelltextmakros, `loeseMacroAuf`, `macroSprung1Aufloesen`, `macroIfAufloesen`, `printAllMacros`). Gemeinsame Typen (`lineElements`, `macroDefinitionen`, `MacroLabel`), Konstanten und die Meldemakros `MELDE_FEHLER`/`MELDE_WARNUNG` stehen in `ca82_typen.h`. `ca82ass.c` schrumpft von 5.822 auf rund 4.270 Zeilen. |
-| 2 | Pfad der Makrodatei | Der Pfad (Option `-m`) gehört dem Makromodul; `ca82ass.c` setzt ihn über `makroDateiSetzen()` und liest ihn über `makroDateiName()`. |
-| 3 | Build | `make_c82ass.sh`, `make_c82ass.bat`, `Regressionstest/pruefe_alles.sh` und die Sanitizer-Zeile in `Regressionstest/LIESMICH.md` übersetzen `ca82_makros.c` mit. |
-| 4 | Verhalten | Unverändert: Es ist ein reines Umordnen des Quelltexts. 139 Programme und 33 Negativtests liefern byte-gleiche Ergebnisse; Übersetzung ohne Warnung (`-Werror`), auch unter AddressSanitizer/UBSan. |
-
-Offen: `pass0`, `pass1` und `main` (je rund 200 Zeilen) sind noch zu zerlegen; Neues Windows-Binary und Nachführung des PDF stehen aus (`da a-b`: entschieden, siehe 6.14).
-
-### 6.14 Änderungen vom 21.10.2026 (Version 1.00-019: `da` verlangt eine relative Adresse)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | `da` und `@`-Literale (3.3.4) | Entscheidung: Bei `da` muss immer eine relative Adresse entstehen. Konstanten und konstante Ausdrücke sowie paarweise Differenzen relativer Adressen (`a-b`) sind unzulässig; es muss mindestens ein relativer Adressanteil übrig bleiben, z. B. `a-b+c`. Geprüft wird in Pass 2 (`pass2DwDa`, Hilfsfunktion `adressausdruckGrad`) am Quelltext des Operanden, also auch bei Vorwärtsreferenzen. Fehler erscheinen mit Datei und Zeile auf STDERR und im Listing; Rückgabecode 16. |
-| 2 | Relative Adresse in `*` und `/` | `da a*2` und `da a/2` sind unzulässig (eine Adresse ist nicht multiplizierbar); das entspricht der Regel bei `dw`. |
-| 3 | Sternadresse | `da *` bleibt unverändert zulässig. |
-| 4 | Literale | Ein fehlerhaftes `@`-Literal (z. B. `@5`) wird an der Stelle gemeldet, an der der Assembler die Literal-`da`-Zeile am Programmende erzeugt, nicht an der Zeile mit dem Literal. |
-| 5 | Regressionstest | Neue Negativtests `da_relativ_fehler` und `da_relativ_ok` (35 insgesamt). Das Beispiel `Claude_bsp_reassemblierung/asm_0001_bsp_5_16` verwendet `da d2100` mit `d2100: abs 02100` (eine Konstante) und wird jetzt abgewiesen; seine Referenz wurde bewusst auf das neue Verhalten (Rückgabecode 16, nur .log/.sym/.rc) gesetzt. Das Programm ist anzupassen. |
-| 6 | Prüfung | 139 Programme und 35 Negativtests grün; Übersetzung ohne Warnung (`-Werror`), auch unter AddressSanitizer/UBSan. |
-
-### 6.15 Änderungen vom 21.10.2026 (Version 1.00-020: Quelltext in Module zerlegt, `pass0`, `pass1` und `main` zerlegt)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Aufteilung von `ca82ass.c` | Die Datei `ca82ass.c` (4332 Zeilen) entfällt. Ihr Inhalt steht in zwölf Modulen: `ca82_main.c` (Optionen, Dateinamen, Ablauf der Pässe), `ca82_quelle.c` (Einlesen, Pragma, Wiederholungsadressen), `ca82_listing.c` (Listing, `.dmp`), `ca82_pass0.c`, `ca82_pass1.c`, `ca82_pass2.c`, `ca82_pass3.c`, `ca82_ausdruck.c` (Werte- und Adressausdrücke), `ca82_codierung.c` (Operationscodes, Text, `dz`, Umschlüsselung), `ca82_testdatei.c` (`.test`), `ca82_hilfen.c` (Zeilenfelder, Meldungen, Textwerkzeuge) und `ca82_zustand.c` (globale Zustandsvariablen). Die gemeinsamen Deklarationen stehen in `ca82_intern.h`. |
-| 2 | Globale Variablen | Die Dateinamen für `.log`, `.obj`, `.mqo`, `.sym`, `.test` und `.dmp` sowie Projektverzeichnis und Quellcodedatei sind jetzt `static` in `ca82_main.c`; die übrigen Module bekommen sie als Parameter. Die ungenutzte Variable `oktalzahl` entfällt. |
-| 3 | `pass0` | Zerlegt in `pass0PruefeMakrodefinitionen`, `pass0PruefeMakroEnden`, `pass0EinDurchlauf`, `pass0ZeileAufloesen` und `pass0EnthaeltMakroaufruf`; die Schleife mit dem Merker `wdhlg` ist eine einfache Schleife. |
-| 4 | `pass1` | Zerlegt in `pass1PruefeLiteralOperand`, `pass1LiteralErsetzen`, `pass1Equ`, `pass1Abs`, `pass1Sonstige`, `pass1SchreibeLog` und `pass1HaengeLiteraleAn`. |
-| 5 | `main` | Zerlegt in `bereinigeParameter`, `pruefeOptionen`, `bildeDateinamen`, `entferneAlteErgebnisse`, `assembliere` und `meldeErfolg`; die dreifach wiederholte Freigabe der Makros steht in `gibMakrosFrei`. Eine Quellcodedatei ohne Punkt im Namen führt nicht mehr zu einem ungültigen Zeigerabzug. |
-| 6 | Ausgabedateien | Kann eine Ausgabedatei (`.log`, `.sym`, `.obj`, `.mqo`, `.dmp`) nicht geschrieben werden, meldet der Assembler jetzt `datei: Fehler: Datei kann nicht geschrieben werden: <Ursache>` und bricht mit Rückgabecode 16 ab. Früher wurde ein NULL-Zeiger weiterbenutzt. |
-| 7 | Build | `make_c82ass.sh`, `make_c82ass.bat`, `Regressionstest/pruefe_alles.sh` und die Sanitizer-Zeile in `Regressionstest/LIESMICH.md` übersetzen die neuen Module. |
-| 8 | Verhalten | Sonst unverändert. 139 Programme und 35 Negativtests liefern byte-gleiche Ergebnisse; Übersetzung ohne Warnung (`-Werror`), auch unter AddressSanitizer/UBSan. |
-
-Offen: Neues Windows-Binary und Nachführung des PDF stehen aus. Die Dokumentation 6.1 bis 6.14 nennt `ca82ass.c`; das ist der Stand der jeweiligen Version.
-
-### 6.16 Änderungen vom 21.10.2026 (Version 1.00-021: zentrale Fehlerausgabe mit Obergrenze)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Neues Modul `ca82_fehler.c` | Alle Fehlermeldungen mit Ort (`datei:zeile: Fehler: text`) auf STDERR laufen durch `fehlerMitOrt()`. Das betrifft die Fehlermarken aus Pass 0 bis 2, Fehler aus Pass 3 (nicht definierte Symbole, Adresse doppelt belegt) und „Zu viele Zeilen“. |
-| 2 | Obergrenze | Es werden höchstens 20 Fehlermeldungen ausgegeben. Weitere werden gezählt; am Programmende (auch bei Abbruch mitten in einem Pass) steht eine Zeile `datei: 25 Fehler insgesamt, 5 weitere Fehlermeldungen unterdrückt (Obergrenze 20).` Bei bis zu 20 Fehlern bleibt die Ausgabe unverändert. Der Rückgabecode ist weiterhin 16. |
-| 3 | Listing | Unverändert: Das Listing (STDOUT, `.log`, `.dmp`) enthält weiterhin alle Fehlermarken. |
-| 4 | Regressionstest | Neuer Negativtest `viele_fehler` (36 insgesamt). |
-| 5 | Prüfung | 139 Programme und 36 Negativtests grün; Übersetzung ohne Warnung (`-Werror`), auch unter AddressSanitizer/UBSan. |
-
-Nicht umgesetzt: eine vollständig zentrale Fehlerliste, die Abbrüche mitten im Pass ersetzt. Dafür müssten die Pässe ohne `exit()` weiterlaufen können; das hängt an der Umstellung auf eine gemeinsame Programmstruktur statt globaler Felder.
-
-### 6.17 Änderungen vom 21.10.2026 (Version 1.00-022: `projekdetails` abgesichert, Referenz bereinigt, Makefile)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | `projekdetails` (`ca82_standards.c`) | **Absturz behoben:** Konnte die Temp-Datei `temp_projekdetails` nicht angelegt werden (Arbeitsverzeichnis nicht beschreibbar, Datei gesperrt, Verzeichnis gleichen Namens), endete der Assembler mit Speicherzugriffsfehler (Rückgabecode 139). Jetzt gibt es einmal die Warnung „Die Datei 'projekdetails' kann nicht aktualisiert werden …“, der Lauf geht normal weiter (`-p`/`-s` stehen ohnehin in der Kommandozeile). |
-| 2 | `projekdetails` | Das Schreiben der Datei steht jetzt an einer Stelle (`projektdetailsZeileSetzen`) statt dreimal. Die alte Datei bleibt bei jedem Fehler (auch Schreibfehler, Platte voll) unverändert; es bleiben keine offenen Dateien zurück. Nicht initialisierte Zeile bei leerer `projekdetails` und das Lesen hinter das Zeilenende bei einer Zeile ohne Wert behoben. |
-| 3 | Referenz | Für `Claude_bsp_reassemblierung/asm_0001_bsp_5_16` lagen noch `.obj`, `.mqo`, `.dmp` und `.test` aus der Zeit vor 1.00-019 (`da` verlangt eine relative Adresse). Das Programm endet seitdem mit Rückgabecode 16 und schreibt diese Dateien nicht mehr; die veralteten Referenzdateien wurden gelöscht. Vorher meldete der Regressionstest hier eine Abweichung. |
-| 4 | Prüfskript | Neue Schlüsselwörter `vorher-verz` und `vorher-datei` für Negativtests (Vorbedingungen im Arbeitsverzeichnis). Neuer Negativtest `projekdetails_nicht_schreibbar` (37 insgesamt). |
-| 5 | Build | Neues `Makefile` (`make`, `make test`, `make pruefen`, `make clean`) mit einer Quelldatei-Liste. |
-| 6 | Prüfung | 139 Programme und 37 Negativtests grün; Übersetzung ohne Warnung (`-Werror`), auch unter AddressSanitizer/UBSan. |
-
-Weiterhin offen: Windows-Binary, Nachführen von PDF und `.odt` (liegt bei Promat), Fehlerliste ohne `exit()`-Abbrüche (gemeinsame Programmstruktur), Warnungen für Sprünge auf Datenwörter und nicht erreichbaren Code.
-
-### 6.18 Änderungen vom 21.10.2026 (Version 1.00-023: Rekursionsfehler ohne Abbruch)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Makroauflösung (`ca82_makros.c`) | Ein rekursiver Makroaufruf beendete bisher den ganzen Lauf mit `exit()`, ohne Listing und ohne die übrigen Fehler. Jetzt endet nur die Übernahme dieses Makros; Pass 0 läuft weiter, das Listing enthält alle Fehlermarken, und die weiteren Fehler des Quelltexts werden mit Datei und Zeile gemeldet. Rückgabecode weiterhin 16. |
-| 2 | Regressionstest | Neuer Negativtest `makro_rekursion` (38 insgesamt). |
-| 3 | Bestandsaufnahme der Abbrüche | In Pass 1 bis 3 gibt es kein `exit()` mehr. Übrig sind nur Abbrüche, nach denen ein Weiterarbeiten nichts bringt: Quell-/Makro-/Ausgabedatei nicht zu öffnen, Speichermangel, Zeilenfeld voll bzw. „Zu viele Zeilen“, Makrodefinitionsfehler (alle werden vorher gezählt und gemeldet) und das Ende von Pass 0 nach vollständiger Auflösung (das Listing wird dort schon ausgegeben). Die Pässe sind stufenweise: Fehler aus Pass 1 verhindern Pass 2, weil Pass 2 gültige Pass-1-Ergebnisse braucht. Eine gemeinsame Programmstruktur statt globaler Felder ist dafür nicht mehr nötig. |
-| 4 | Prüfung | 139 Programme und 38 Negativtests grün; `-Werror`, AddressSanitizer/UBSan sauber. |
-
-### 6.19 Änderungen vom 21.10.2026 (Version 1.00-024: Warnungen für Sprungziele und nicht erreichbaren Code)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | `-WARN=SPR` (neu, `ca82_fluss.c`) | Meldet Sprungbefehle, deren Ziel ein Datenwort (`dw` ungleich 0, `da`) oder ein unbelegtes Wort ist. Ausnahmen und Einzelheiten stehen in Abschnitt 2. |
-| 2 | `-WARN=TOT` (neu) | Meldet Befehle hinter einem unbedingten Sprung, auf die nichts verweist (toter Code). Ausnahmen: Sprungtabellen und zur Laufzeit überschriebene Sprungbefehle. |
-| 3 | `-WARN=ALLE` (neu) | Schaltet `SYM`, `SPR` und `TOT` gemeinsam ein. Ein unbekannter Wert nennt jetzt alle erlaubten Werte (`SYM, SPR, TOT, ALLE`). |
-| 4 | Ablauf | Pass 3 vermerkt je Trommeladresse, ob dort ein Befehl, ein Datenwort, ein Platzhalter oder ein Ausgabebefehl steht, und bei Sprüngen das Ziel. Die Auswertung läuft nach fehlerfreiem Pass 3 und nur mit der Option. Ohne die Optionen ist die Ausgabe byte-gleich zu 1.00-023 (alle 139 Programme gegen die Referenz). |
-| 5 | Erfahrung an den 139 Programmen | Mit `-WARN=SPR,TOT` melden 7 Programme etwas. Die meisten Treffer stammen aus den Buchbeispielen zum Lochbanddruck (`bsp_5_15_…`, `bsp_5_17_oktaldruck`), deren Druckbefehle über eine Wertetabelle ausgewählt werden; dort ist der Hinweis zu erwarten. Echte Funde sind u. a. `Projekt_1/bsp_5.15` (Befehl `ANWAHL LSL2` hinter `000 eingabe`) und `Proj_FeldSortieren/code_wdhl_bef` (`WDHL …` hinter `000 loop1`). Beim ersten Entwurf meldete `SPR` auch `db`-Zellen und `dz`-Ziele sowie `TOT` Sprungtabellen; diese Fälle sind ausgenommen, weil sie auf der C8205 übliche Technik sind. |
-| 6 | Regressionstest | Acht neue Negativtests (46 insgesamt): `warn_spr_datenwort`, `warn_spr_ok`, `warn_spr_leer`, `warn_tot`, `warn_tot_ok`, `warn_alle`, `warn_unbekannt`, `warn_ohne_option`. |
-| 7 | Build | `ca82_fluss.c` steht in `Makefile`, `make_c82ass.sh`, `make_c82ass.bat` und `Regressionstest/pruefe_alles.sh`. |
-| 8 | Prüfung | 139 Programme und 46 Negativtests grün; `-Werror`, AddressSanitizer/UBSan sauber, auch mit `-WARN=ALLE --xref` über alle 139 Programme. |
-
-### 6.20 Änderungen vom 21.10.2026 (Version 1.00-025: Berichte im `.log`, Rekursionsfehler mit Ort, `make fuzz`)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Berichte im `.log` (`ca82_main.c`, `ca82_standards.c`, `ca82_hilfen.c`, `ca82_berichte.c`, `ca82_fluss.c`) | Die Berichte von `-WARN=SYM`, `-WARN=SPR`, `-WARN=TOT` und `--xref` stehen jetzt zusätzlich am Ende der `.log`-Datei, neben der Symboltabelle, ohne Farbcodes. Dafür gibt es `berichtPrintf` (STDOUT und `.log`); `printWarnung` und `meldeWarnungOrt` schreiben ebenfalls ins `.log`, solange es für die Berichte geöffnet ist. Ohne diese Optionen ist die `.log` byte-gleich zu 1.00-024 (alle 139 Programme gegen die Referenz). |
-| 2 | Rekursionsfehler (`ca82_makros.c`) | Die Meldung „Rekursiver Macro-Aufruf von: X“ nennt jetzt das Makro und den Ort: bei Makros der Makrodatei Datei und Zeile der `MACRO`-Anweisung, bei Makros im Quelltext die Zeile des Selbstaufrufs, z. B. `Rekursiver Macro-Aufruf von: REK [Makro REK ruft sich selbst auf, im Quelltext Zeile 3]`. |
-| 3 | `make fuzz` | Baut ein Binary mit AddressSanitizer/UBSan und startet `Regressionstest/fuzz.py` (`FUZZ_N` Läufe, `FUZZ_SEED` Startwert). `fuzz.py` endet mit Rückgabecode 1, wenn etwas gefunden wurde. Neu: `.github/workflows/assembler-fuzz.yml` lässt den Zufallstest nachts laufen und sichert Funde als Artefakt. |
-| 4 | Regressionstest | Neue Schlüsselwörter `log-da` und `log-weg` prüfen den Inhalt der `.log`. Zwei neue Negativtests `warn_log` und `warn_log_aus` (48 insgesamt); `makro_rekursion` prüft den Ort. |
-| 5 | Offen | Die Opcode-Tabelle und `--xref` für Makroexpansionen wurden in 1.00-026 entschieden (6.21). |
-
-### 6.21 Änderungen vom 21.10.2026 (Version 1.00-026: Opcode-Tabelle entfernt, `--xref` mit Makroexpansionen)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Opcode-Tabelle (entfällt) | `Sourcecode/c8205_op_codes.c` ist gelöscht, ebenso die Suche in der Tabelle in `getOperationCode` (`ca82_codierung.c`) und die Abhängigkeit im `Makefile`. Die Mnemonics `add`, `sub`, `ld`, `jmp`, `stopp` und `nop` (Platzhalterwerte, die nicht zum Befehlssatz passten) sind damit ungültige Operationscodes. Gültig bleiben nur dreistellige Oktalcodes. Keines der 139 Programme benutzt sie (Referenz unverändert). Abschnitt 3 der Doku entsprechend geändert. |
-| 2 | `--xref` und Makros (`ca82_berichte.c`, `ca82_pass0.c`) | Entscheidung: Die expandierten Makrozeilen stehen im Listing, deshalb zählen sie mit. Pass 0 meldet bei `--xref` die Operanden jeder Makroexpansion; die Querverweisliste führt ein dort verwendetes Symbol in der Zeile des Makroaufrufs auf (nur die Operanden, nicht Marken und Kommentare; je Zeile einmal, Zeilennummern jetzt sortiert). Beispiel: Ruft ein Makro `000 ziel` auf und wird in den Zeilen 5 und 6 aufgerufen, steht `ziel` mit `3 5 6` (3 = Makrodefinition im Quelltext). Ohne `--xref` ändert sich nichts. |
-| 3 | Regressionstest | Neue Negativtests `xref_makro` und `mnemonic_entfallen` (50 insgesamt). |
-
-### 6.22 Änderungen vom 21.10.2026 (Version 1.00-027: Schalter `--ABSPR`)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Neuer Schalter `--ABSPR` (`ca82_main.c`, `ca82_codierung.c`, `ca82_pass3.c`, `ca82_berichte.c`) | Schreibt statt `.obj` die binär codierte Lochstreifendatei `.kep` für das KEP (Abschnitt 3.1a). Die Rückumwandlung mit `c8205_lochstreifen_umwandlung.py --IN-TXT` liefert die erwartete Zeichenfolge (geprüft mit `Claude/betrag.asm`). Ohne den Schalter ist die Ausgabe unverändert. |
-| 2a | Warnung Bahn 0000 bis 0037 | Bei `--ABSPR` Warnung, wenn ein Wort auf eine Zelle von 0002 bis 0037 (das KEP selbst) geladen wird. Die Zellen 0000 und 0001 sind erlaubt (ab 1.00-029; zuvor warnte jeder Leitbefehl auf 0000 bis 0037). |
-| 2 | Pragma `LEITADRESSE` | Bei `--ABSPR` gilt das Pragma zuerst; ohne verbleibendes K1=01 sowie bei K1=02..09 (nicht umgesetzt) erscheint je eine Warnung. |
-| 3 | Offen | Der Regressionstest meldet für `Projekt_2/pj2-bis_minimalprogramm.asm` eine Abweichung (`.obj`, `.mqo`, `.dmp`); sie besteht auch mit dem unveränderten Quelltext der Version 1.00-026 (die Referenz stimmt dort nicht mit dem Quelltext überein). Nicht geändert. Für `--ABSPR` gab es zu diesem Zeitpunkt noch keinen Regressionstest (inzwischen vorhanden, siehe 6.25). |
-
-### 6.23 Änderungen vom 22.10.2026 (Version 1.00-028: Warnung bei `--ABSPR` mit `LEITADRESSE 00` und Startadresse)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Warnung `start` bei `--ABSPR` | Neue Warnung bei `--ABSPR` mit Pragma `LEITADRESSE 00` und `start <adresse>` ungleich 0: Die Startadresse wird nicht auf die Operanden addiert. Regel: relativ geschriebener Quelltext mit `start <adresse>` ohne Pragma; absolut geschriebener Quelltext mit Pragma `LEITADRESSE 00` und `start` ohne Operand. (Quelle: Änderungsverzeichnis der .odt) |
-
-### 6.24 Änderungen vom 22.10.2026 (Version 1.00-029: Warnung zur KEP-Bahn eingeschränkt)
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Warnung Bahn bei `--ABSPR` | Die Warnung zur KEP-Bahn kommt nur noch, wenn ein Wort auf eine Zelle von 0002 bis 0037 (das KEP selbst) geladen wird. Die Sprungzellen 0000 und 0001 sind erlaubt und warnen nicht (Festlegung des Projektinhabers); vorher warnte jeder Leitbefehl auf 0000 bis 0037. (Quelle: Änderungsverzeichnis der .odt; siehe auch 6.22, Nr. 2a) |
-
-### 6.25 Änderungen vom 22.10.2026 (Version 1.00-030: Regressionstest für `--ABSPR`)
-
-Der Eintrag „Version 1.00-030 (22.10.2026)“ im Änderungsverzeichnis der .odt hat noch keinen Text. Die folgenden Angaben stammen aus `Regressionstest/LIESMICH.md` und nicht aus der .odt.
-
-| Nr. | Stelle | Änderung |
-|---|---|---|
-| 1 | Regressionstest | Jedes Programm wird ein zweites Mal mit `--ABSPR` assembliert; verglichen werden der Lochstreifen `.kep` und der Rückgabecode (`.rck`) mit `referenz/`. |
-| 2 | Negativtests | Vier neue Negativtests: `abspr_ok`, `abspr_bahn_warnung`, `abspr_start_warnung`, `abspr_ohne_schalter` (insgesamt 54). `negativ/version.erwartet` erwartet 1.00-030. |
-| 3 | Referenz | Die Referenz von `namen_raten` und `pj2-bis_minimalprogramm` (`.obj`, `.dmp`) ist nach dem Pragma `LEITADRESSE 00` neu geschrieben. Damit entfällt die in 6.22, Nr. 3 genannte Abweichung. |

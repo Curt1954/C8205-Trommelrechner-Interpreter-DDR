@@ -4,6 +4,7 @@ Trommeldatei:
 #SPEI-0001 3000-3004
 #SPEI-0001 7723-7724
 #PROT STUFE=2
+#TROMMEL=LEER                  # Trommel vor dem Test leeren, danach Abschnitt Trommeldatei: (sonst erbt der Test den Stand frueherer Laeufe)
 0000: 00000002000 # m0000: 000 m0002 ; Sprung zum Programmanfang des KEP
 0002: 00000022000 # m0002: 000 m0022 ; Programmanfang
 0014: 00007723211 # m0014: 211 m7723 ; <AC>:=<7723>
@@ -28,3 +29,12 @@ Trommeldatei:
 0037: 00000014000 # m0037: 000 m0014 ; Konstante 0014 000
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3002 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000001164
+3001: 00000000020
+3002: 00000000005
+3003: 00000000010
+3004: 52525252525
+7723: 00003000000
+7724: 00000014000

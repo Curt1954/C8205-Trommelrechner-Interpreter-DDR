@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0016 Test Ladebefehl und Addition
 #SPEI-0016 7774-7774
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003710000 # 000 m3710
 3710: 00003716210 # m3710: 210 d3716
 3711: 00003712240 # 240 d3712
@@ -13,3 +14,6 @@ Trommeldatei:
 3717: 00110011001 # dw 0110011001
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3716 AC=00110011001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+7774: 00110011001

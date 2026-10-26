@@ -1,10 +1,9 @@
 ; bsp_6_1_1_multiplikation_festkomma.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_1_1_multiplikation_festkomma.txt
-; #DOK-0001 Zahlwort Festkomma vorn: Multiplikation positiver Zahlen (Programmieranleitung 6.1.1), Zahlenbeispiel des Buches a=0,110101
-;   b=0,111001 (dual, auf 33 Bit erweitert)
-; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; 7700 440 Transport auf alle Zellen, 7700 472
-;   Teilprodukte, 7700 412 Summierung; das exakte Produkt ist 0,101111001101 (dual)
+; #DOK-0001 Zahlwort Festkomma vorn: Multiplikation positiver Zahlen (Programmieranleitung 6.1.1), Zahlenbeispiel des Buches a=0,110101 b=0,111001 (dual, auf 33 Bit erweitert)
+; #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; 7700 440 Transport auf alle Zellen, 7700 472 Teilprodukte, 7700 412 Summierung; das exakte Produkt ist 0,101111001101 (dual)
 ; #DOK-0001 erwartet <AC> = a*b = 27464000000 (oktal), Teilprodukte b(i)*a in den 32 Zellen der Arbeitsspur 7700
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -31,6 +30,7 @@ d7700:          abs     07700
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3007 AC=27464000000 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3007: 32400000000
 ; 3010: 34400000000
@@ -67,4 +67,5 @@ d7700:          abs     07700
 ; 7731: 32400000000
 ; 7706: 32400000000
 ; 7723: 32400000000
+;#PRUEFE-ENDE
 ;

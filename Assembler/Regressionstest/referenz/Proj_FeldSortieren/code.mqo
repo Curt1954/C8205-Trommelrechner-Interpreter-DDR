@@ -10,7 +10,7 @@
                        004                    *+1                    ; Verschiebe AC 1x links (8)
                        004                    *+1                    ; Verschiebe AC 1x links (9)
                        240                    len                    
-                       605                    04021                  ; 9 mal Linksverschiebung
+                       605                    04013                  ; 9 mal Linksverschiebung
                        000                    firstEntry             
 loop1:                 211                    i                      ; Lade i
                        210                    l0001                  ; Addiere 1 Adreßeinheit zu `i`

@@ -7,3 +7,5 @@ Trommeldatei:
 0000: 00000000020 # 020 0 ; halt
 Tastenfolge:
 H G R
+Prüfungen:
+--pruefe-sw-ausgabe test_vorspann-sw-ausgabe.txt

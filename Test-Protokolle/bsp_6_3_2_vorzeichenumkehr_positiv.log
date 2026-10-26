@@ -15,6 +15,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
   #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; Addition der Konstante 4000 0000 000 kehrt z0 um; bei x<0 entsteht dabei Ueberlauf, der durch den Ueberlaufsprung 3004 geloescht wird; bei x=0 springt 3002 (Vergleicher 3) direkt zum Stopp
   #DOK-0001 erwartet <AC> = -x = 63263146314 (oktal) = -0.699999988079071*2^6; Vergleicher V1=0 V2=1, FUE=0
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

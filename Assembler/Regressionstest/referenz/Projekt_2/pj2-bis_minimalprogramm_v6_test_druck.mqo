@@ -1,0 +1,24 @@
+               equ            02000          
+test_druck:    030            04500          ; Schreibwerk SW1 als Ausgabe anwaehlen
+               dz             $inkb          ; Zeichenlage Kleinbuchstaben (beim Start zufaellig)
+               211            z1             
+               240            adr7773        
+               025            triadendruck   
+               dz             $wrzl          ; Zeilenschaltung
+               211            z2             
+               240            adr7773        
+               025            triadendruck   
+               dz             $wrzl          
+               211            z3             
+               240            adr7773        
+               025            triadendruck   
+               dz             $wrzl          
+               211            z4             
+               240            adr7773        
+               025            triadendruck   
+               dz             $wrzl          
+               020            0              ; unbedingter Stopp
+z1:            dw             01234567012    
+z2:            dw             076543210765   
+z3:            dw             011112222333   
+z4:            dw             070000000007   

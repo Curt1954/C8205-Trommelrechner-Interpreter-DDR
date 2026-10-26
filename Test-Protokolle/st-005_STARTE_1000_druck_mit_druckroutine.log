@@ -14,6 +14,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-1000 Programm ab 1000: Schreibwerk-Ausgabe "XY", dann INTERRUPT mit Druck von BZ und AC durch die Druckroutine (Zelle 0001), dann "xy" und Stopp
   #DOK-1010 Voraussetzung: Minimalprogramm mit Druckroutine ist auf der Trommel (vorher Tests/asm_druck_tastenfolge.txt ausfuehren). Zelle 0001 wird hier NICHT belegt.
   #DOK-1011 Erwartet am Terminal: XY, eine Zeile "BZ 00001004000 AC 00001001000", dann xy. Stopp in 1010, BZ=1011; V1=V2=1 stammen aus der Druckroutine
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #INTERRUPT nach Befehl 1003: H G Ü E H G M+ E M- R
   #PROT STUFE=2
   #STARTE 1000 (Makro: H G M+ 512x E M- R, E 512-mal = dezimal)
@@ -34,7 +35,7 @@ Tastenfolge: (aus #STARTE erzeugt)
   BR=4500 030  (vor Knoten 002)  BZ=1001 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
   BR=0570 030  (vor Knoten 002)  BZ=1002 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
   BR=1470 030  (vor Knoten 002)  BZ=1003 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
---- INTERRUPT nach Befehl 1003 (Testzeile 14): BZ=1004 AC=00001001000 ---
+--- INTERRUPT nach Befehl 1003 (Testzeile 15): BZ=1004 AC=00001001000 ---
   BR=7777 240  (vor Knoten 002)  BZ=1004 AC=00001001000 FÜ=0 V1=0 V2=0 V3=0
   H  : Schalter H-R -> "H", Flag H := 1
   G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, SW nicht gedrueckt -> T := 1; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)

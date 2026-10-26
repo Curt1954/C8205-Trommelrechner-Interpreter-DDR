@@ -67,3 +67,20 @@ feld_b:         dw      0201
                 dw      0204
 b_ende:         dw      0205
                 end
+
+; Sollwerte von Hand hergeleitet. Feld a (ab 3100) und Feld b (ab 3200) sind vertauscht; c = alte letzte Komponente von a; Rücksprung nach 2002.
+;#PRUEFE-START
+; BZ=2004 US=1
+; 3100: 00000000201   # a0 = alter Wert b0
+; 3101: 00000000202
+; 3102: 00000000203
+; 3103: 00000000204
+; 3104: 00000000205
+; 3200: 00000000101   # b0 = alter Wert a0
+; 3201: 00000000102
+; 3202: 00000000103
+; 3203: 00000000104
+; 3204: 00000000105
+; 3036: 00002002000   # RS = Sprung nach 2002
+; 3042: 00000000105   # c
+;#PRUEFE-ENDE

@@ -1,3 +1,8 @@
+; #DOK-0001 Zwei Ziffern ueber SW einlesen, zwischen den Eingaben Anwahlbefehl K2 (Ausgabe); Eingabe: 2, 3
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/sw_zwei_ziffern.txt
+; --k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/sw_zwei_ziffern.txt
+; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
          start  0
 ; sw_zwei_ziffern.asm  --  Beispiel fuer Eingabe ueber das Schreibwerk (SW)
 ;

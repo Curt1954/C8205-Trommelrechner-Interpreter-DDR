@@ -1,11 +1,10 @@
 ; bsp_6_3_2_vorzeichenumkehr_positiv.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_3_2_vorzeichenumkehr_positiv.txt
 ; #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Vorzeichenumkehr (6.3.2), x>0 mit voller Mantissenlaenge, kein Ueberlauf
-; #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1);
-;   z = m*2^e
-; #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; Addition der Konstante 4000 0000 000 kehrt z0 um; bei x<0 entsteht dabei
-;   Ueberlauf, der durch den Ueberlaufsprung 3004 geloescht wird; bei x=0 springt 3002 (Vergleicher 3) direkt zum Stopp
+; #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+; #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; Addition der Konstante 4000 0000 000 kehrt z0 um; bei x<0 entsteht dabei Ueberlauf, der durch den Ueberlaufsprung 3004 geloescht wird; bei x=0 springt 3002 (Vergleicher 3) direkt zum Stopp
 ; #DOK-0001 erwartet <AC> = -x = 63263146314 (oktal) = -0.699999988079071*2^6; Vergleicher V1=0 V2=1, FUE=0
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -30,7 +29,9 @@ d7777:          dw      023263146314             ; x = +0.699999988079071*2^6
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3006 AC=63263146314 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
 ; 3006: 40000000000
 ; 7777: 23263146314
+;#PRUEFE-ENDE
 ;

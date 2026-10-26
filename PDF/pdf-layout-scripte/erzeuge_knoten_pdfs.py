@@ -2025,8 +2025,11 @@ def knotengraph(d, pfad, tmp):
 
     writer.add_metadata({'/Title': 'C8205 Knotengraph', '/Author': 'C8205-Interpreter-Projekt',
                          '/Subject': f'Ablaufplan der Befehlsverarbeitung, Stand {stand}'})
-    try:
-        writer.compress_identical_objects(remove_identicals=True, remove_orphans=True)
+    try:                                    # neue Namen ab pypdf 5.x; die alten sind ab 7.0 entfernt
+        try:
+            writer.compress_identical_objects(remove_duplicates=True, remove_unreferenced=True)
+        except TypeError:                   # ältere pypdf-Version kennt nur die alten Namen
+            writer.compress_identical_objects(remove_identicals=True, remove_orphans=True)
     except Exception:
         pass
     with open(pfad, 'wb') as f:

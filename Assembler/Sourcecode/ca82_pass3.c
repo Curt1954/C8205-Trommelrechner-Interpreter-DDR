@@ -679,7 +679,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
     printFormattedAsmListingX(lineAsmAufgeloestX, lineCountAsmAufgeloestX, dmpFile);
     erzeugeTestDatei(lineAsmAufgeloestX, lineCountAsmAufgeloestX, testFileName);
 
-    if (!absprAktiv) fprintf(machineCodeFile, "/\n");   // bei --ABSPR entfaellt das Endekennzeichen
+    if (!absprAktiv) schreibeLochbilder(machineCodeFile, "/");   // bei --ABSPR entfaellt das Endekennzeichen
     fclose(machineCodeFile);
     fclose(hilfsFile);
     if (dmpFile) fclose(dmpFile);

@@ -10,6 +10,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3000: 37777777777
   3001: 00000000001
   #DOK-0002 Test Ueberlaufsprung 070 bei vorhandenem Ueberlauf: Sprung nach 0010 und Ueberlauf wird geloescht
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

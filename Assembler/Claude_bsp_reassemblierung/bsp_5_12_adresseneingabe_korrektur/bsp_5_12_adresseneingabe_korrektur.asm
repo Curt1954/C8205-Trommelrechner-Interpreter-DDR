@@ -1,7 +1,6 @@
 ; bsp_5_12_adresseneingabe_korrektur.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_12_adresseneingabe_korrektur.txt
 ; #DOK-0001 Adresseneingabe (Programmieranleitung 5.12) mit Korrektur: 1 2 ZWR 5 6 7 Punkt, weniger als vier Ziffern, fuehrende Nullen
-; #DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); 3000 3040 014 liest ein Zeichen, Ziffern werden mit 3 Linksverschiebungen aufgebaut,
-;   ZWR (3052) loescht den AC, Punkt (3073) beendet die Eingabe mit einer Rechtsverschiebung
+; #DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); 3000 3040 014 liest ein Zeichen, Ziffern werden mit 3 Linksverschiebungen aufgebaut, ZWR (3052) loescht den AC, Punkt (3073) beendet die Eingabe mit einer Rechtsverschiebung
 ; #DOK-0001 erwartet <AC> = 00000567000
 ; #SPEI-0001 3000-3003
 ; #SPEI-0001 3040-3047
@@ -9,6 +8,7 @@
 ; #SPEI-0001 3073-3073
 ; --leser1 Test-virtuelleGeraete/Leser1/bsp_5_12_lochstreifen_korrektur.txt
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -51,10 +51,12 @@ m3052:          001     m3000                    ; 3000 001 ; Löschen des Akkum
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3005 AC=00000567000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 00003040014
 ; 3040: 00000000000
 ; 3047: 00000000700
 ; 3052: 00003000001
 ; 3073: 00003003002
+;#PRUEFE-ENDE
 ;

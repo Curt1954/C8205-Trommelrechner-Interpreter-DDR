@@ -8,6 +8,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   2002: 00001120030
   2003: 00000000020
   #DOK-0001 Ausgabe von WR (Ausgabe-Adresse 112) auf dem Schreibwerk: Der Interpreter schreibt <WR>
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

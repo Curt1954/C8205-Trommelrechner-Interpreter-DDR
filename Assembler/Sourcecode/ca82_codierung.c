@@ -271,6 +271,24 @@ static void absprZeile(FILE *f, const char *p) {
     }
 }
 
+// Objektdatei binaer: Jedes Zeichen der Objektzeile wird als ein R300-Lochbild (Spurfolge w v u p 8 4 2 1, 1 = gelocht,
+// ungerade Lochzahl) in einer Zeile aus acht Ziffern 0/1 ausgegeben (Kodetabelle 1, Klbuch; Anfangslage Klbuch, es ist
+// keine Umschaltung noetig). Die Objektzeilen haben kein Zeilenende: die Wortmarke "." trennt die Woerter.
+void schreibeLochbild(FILE *f, char zeichen) {
+    static const unsigned char ziffer[10] = { 020, 001, 002, 023, 004, 025, 026, 007, 010, 031 };
+    int lb;
+    if (zeichen >= '0' && zeichen <= '9') lb = ziffer[zeichen - '0'];
+    else if (zeichen == '.') lb = 073;
+    else if (zeichen == '/') lb = 0141;
+    else return;                       // andere Zeichen kommen in einer Objektzeile nicht vor
+    for (int b = 7; b >= 0; b--) fputc(((lb >> b) & 1) ? '1' : '0', f);
+    fputc('\n', f);
+}
+
+void schreibeLochbilder(FILE *f, const char *text) {
+    for (; *text; text++) schreibeLochbild(f, *text);
+}
+
 void schreibeObjZeile(FILE *objFile, const char *zeile) {
     const char *p = zeile;
     objWortAnzahl++;
@@ -286,11 +304,21 @@ void schreibeObjZeile(FILE *objFile, const char *zeile) {
 
     if (absprAktiv) { absprZeile(objFile, p); return; }
 
+    // Objektzeile ohne Leerzeichen (danach binaer codiert): ein Zwischenraum (ZR) wuerde beim Lesen durch die Eingabe mit Kennzeichen das gerade
+    // gelesene Wort verwerfen. Die Zeile wird deshalb ohne alle Leerzeichen und Tabulatoren ausgegeben.
+    char kompakt[256];
+    size_t n = 0;
     if (p[0] == '0' && p[1] == '1' && (p[2] == ' ' || p[2] == '\0')) {
-        fprintf(objFile, "%02d%s.\n", leitadresseKennzeichen, p + 2);
-    } else {
-        fprintf(objFile, "%s.\n", p);
+        snprintf(kompakt, sizeof(kompakt), "%02d", leitadresseKennzeichen);
+        n = strlen(kompakt);
+        p += 2;
     }
+    for (; *p && n < sizeof(kompakt) - 1; p++) {
+        if (*p != ' ' && *p != '\t') kompakt[n++] = *p;
+    }
+    kompakt[n] = '\0';
+    schreibeLochbilder(objFile, kompakt);
+    schreibeLochbilder(objFile, ".");     // kein Zeilenende: SatzMarke/WRZL wuerde das Minimalprogramm v6 als zusaetzliches Wort 0 speichern
 }
 
 // Auflösen des dt Befehls
@@ -309,7 +337,9 @@ void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
     if (isValueInTable(zeichenfolge, outUmschluesselungsTable, OUT_SIZE, &missingChar) == 0) {
         is_error3 = 1;
         printHell = 1;
-        PRINT_FEHLER("dt Operand enthält unzulässige Zeichen an Position: %i.", missingChar);
+        char schl[64];
+        snprintf(schl, sizeof(schl), "dt Operand unzulässig, Position %i", missingChar);
+        if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("dt Operand enthält unzulässige Zeichen an Position: %i.", missingChar);
         return;
     }
 
@@ -503,7 +533,9 @@ void dzAuswertung(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
     }
     is_error3=1;
     printHell = 1;
-    PRINT_FEHLER ("dz Operand %s nicht gültig.", operand);
+    char schl[256];
+    snprintf(schl, sizeof(schl), "dz Operand %s nicht gültig", operand);
+    if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER ("dz Operand %s nicht gültig.", operand);
 }
 
 int zaehleBackslashes(const char *templine) {

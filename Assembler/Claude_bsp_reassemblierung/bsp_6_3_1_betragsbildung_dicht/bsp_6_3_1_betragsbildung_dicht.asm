@@ -1,10 +1,10 @@
 ; bsp_6_3_1_betragsbildung_dicht.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_3_1_betragsbildung_dicht.txt
 ; #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Betragsbildung (6.3.1), negative Zahl mit voller Mantissenlaenge
-; #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1);
-;   z = m*2^e
+; #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
 ; #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; 7777 215 bildet Vl(x), 3002 002 schiebt zurueck: |x| mit z0=0
 ; #DOK-0001 erwartet <AC> = |x| = 15331617036 (oktal) = +0.8507008254528046*2^-6
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -25,6 +25,8 @@ d7777:          dw      055331617036             ; x = -0.8507008254528046*2^-6
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3003 AC=15331617036 AR=3000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 7777: 55331617036
+;#PRUEFE-ENDE
 ;

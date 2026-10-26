@@ -166,11 +166,17 @@ void cleanLine(char *line) {
 }
 
 void printAdressError(const char *label, char *typ, char *text, char *line) {
+    char schl[300];
+    snprintf(schl, sizeof(schl), "bei Operand: %s %s %s", label, typ, text);
+    if (!fehlerZaehleUndPruefe(schl)) return;   // gleiche Fehler nur einmal, Obergrenze (ca82_fehler.c)
     PRINT_FEHLER("bei Operand: %s %s %s in Zeile: `%s`", label, typ, text, line);
     printf("%s%s%s\n\n",_weiss, line,_normal);
     printf("    ");
 }
 void printLabelError(const char *label, char *typ, char *text, char *line) {
+    char schl[300];
+    snprintf(schl, sizeof(schl), "bei Labeldefinition: %s %s %s", label, typ, text);
+    if (!fehlerZaehleUndPruefe(schl)) return;   // gleiche Fehler nur einmal, Obergrenze (ca82_fehler.c)
     PRINT_FEHLER("bei Labeldefinition: %s %s %s", label, typ, text);
     printf("%s%s%s\n\n",_weiss, line,_normal);
     printf("    ");
@@ -183,6 +189,9 @@ void printMacroParameterWarning(const char *label, char *typ, char *text, char *
     printf("%s%s%s\n",_weiss, line,_normal);
 }
 void printMacroParameterError(const char *label, char *typ, char *text, char *line) {
+    char schl[300];
+    snprintf(schl, sizeof(schl), "bei Macrodefinition: %s %s %s", label ? label : "", typ ? typ : "", text);
+    if (!fehlerZaehleUndPruefe(schl)) return;   // gleiche Fehler nur einmal, Obergrenze (ca82_fehler.c)
     PRINT_FEHLER("bei Macrodefinition: %s %s %s", label ? label : "", typ ? typ : "", text);
     printf("%s%s%s\n",_weiss, line ? line : "" , _normal);
 }

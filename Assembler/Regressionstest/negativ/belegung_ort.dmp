@@ -1,0 +1,4 @@
+0000: 01 0000 000    anf: 000 anf   
+      20 0000 0000        equ 00000 
+0000: 01 0000 000         000 0     
+                     ;*** 3 Fehler: Adresse 0000 doppelt belegt: " 000 0" ueberschneidet sich mit "anf: 000 anf".   

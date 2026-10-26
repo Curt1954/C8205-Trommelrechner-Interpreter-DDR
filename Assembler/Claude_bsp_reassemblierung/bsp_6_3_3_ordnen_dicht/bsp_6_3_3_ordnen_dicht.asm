@@ -1,13 +1,13 @@
 ; bsp_6_3_3_ordnen_dicht.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_6_3_3_ordnen_dicht.txt
-; #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Ordnen eines Zahlenpaares nach dem Betrag (6.3.3), |a|=(1-2^-26)*2^4 knapp kleiner
-;   als |b|=0,5*2^5=16: Exponent entscheidet, Tausch
-; #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1);
-;   z = m*2^e
-; #DOK-0001 Programm wie im Buch ab Zelle 3002; a=<3000>, b=<3001>; der Betragsvergleich |b|<=|a| ist als Ganzzahlvergleich der Betraege
-;   moeglich (Exponent steht vor der Mantisse, z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und
-;   3023 (Sektor 06 und 23 liegen physisch nebeneinander)
+; #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Ordnen eines Zahlenpaares nach dem Betrag (6.3.3), |a|=(1-2^-26)*2^4 knapp kleiner als |b|=0,5*2^5=16: Exponent entscheidet, Tausch
+; #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
+; #DOK-0001 Programm wie im Buch ab Zelle 3002; a=<3000>, b=<3001>; der Betragsvergleich |b|<=|a| ist als Ganzzahlvergleich der Betraege moeglich (Exponent steht vor der Mantisse,
+; #DOK-0001 z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und 3023 (Sektor 06 und 23 liegen physisch nebeneinander)
 ; #DOK-0001 erwartet: Tausch (|b|>|a|); <3000> = 62600000000, <3001> = 22377777777, V1=0 V2=1, <AC> = 22377777777
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
+;   moeglich (Exponent steht vor der Mantisse, z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und
+;   3023 (Sektor 06 und 23 liegen physisch nebeneinander)
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -43,9 +43,11 @@ d3023:          abs     03023
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3020 AC=22377777777 AR=3002 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=1
 ; 3000: 62600000000
 ; 3001: 22377777777
 ; 3006: 22377777777
 ; 3023: 22377777777
+;#PRUEFE-ENDE
 ;

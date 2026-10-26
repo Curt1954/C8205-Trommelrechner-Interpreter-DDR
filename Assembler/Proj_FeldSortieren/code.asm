@@ -101,3 +101,15 @@ i:           db 1           ; Laufvariable für äußere Schleife, Anfangswert
 j:           db 1           ; Laufvariable für innere Schleife, wird immer berechnet
 min_index:   db 1           ; Temporärer Speicher für das Minimum, wird immer berechnet
 tmp_element: db 1           ; Hilfsspeicherplatz für ein Arrayelement beim swap
+
+; Sollwerte von Hand hergeleitet. Feld 4172k0 aufsteigend nach Ausgabebefehl sortiert (Ausgabe 12470k); len = 6 Adresseneinheiten; Halt auf 0211.
+;#PRUEFE-START
+; BZ=0212 US=1
+; 0201: 00000006000   # len
+; 0203: 00000010030   # 1
+; 0204: 00000020030   # 2
+; 0205: 00000040030   # 4
+; 0206: 00000070030   # 7
+; 0207: 00000200030   # 0
+; 0210: 00001220030   # k
+;#PRUEFE-ENDE

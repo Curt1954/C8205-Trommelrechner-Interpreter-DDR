@@ -1,6 +1,6 @@
 ** Bedienpult mit Schaltern **
 
-Version: 0.95-001
+Version: 0.95-003
 
 Im physischen Bedienpult des Rechners C8205 sind sowohl Schalter, Eingabetasten und Lampen,
 die die Flag-Zustände anzeigen, lokalisiert.
@@ -11,9 +11,13 @@ Im Rechner werden die Schalterzustände in gleichnamigen Flags gespeichert als 0
 
 Das Bedienpult heißt in den Originalunterlagen „Tastatur-Anzeige-Einheit“ (Nr. 5 der Gesamtansicht in
 `C8205-Interpreter-Überblick_und_Gesamtaufbau.md`, Abschnitt 2). Oben liegt das Lampenfeld (Abbildung 2). Darunter stehen
-links die Kanalauswahltasten K0 bis K3, paarweise untereinander (K0 über K1, K2 über K3), und rechts die Schalter SP, BS
-und LS sowie die Umschalttaste T-SW (beschriftet „SW“). Unter jeder dieser vier Tasten liegt eine weitere Taste, die auf
-Foto und Zeichnung unbeschriftet ist. Unten liegt die Tastatur (Abbildung 3). Auf dem Foto tragen die Schalter rechts die
+links die Kanalauswahltasten K0 bis K3, paarweise untereinander (K0 über K1, K2 über K3), und rechts die einrastenden Schalter SP, BS
+und LS sowie der Selektor SW (beschriftet „SW“). Unter jeder dieser vier Tasten liegt eine weitere Taste, die auf
+Foto und Zeichnung unbeschriftet ist. Unten liegt die Tastatur (Abbildung 3); auf ihr sitzen die Tasten T und SW der
+Verbundtaste T-SW, von denen immer nur eine gedrückt ist. **Zwei Bedienelemente heißen „SW“:** der Selektor SW (rechts,
+rastet einzeln ein) und die Taste SW der Verbundtaste T-SW (Tastatur). Wo dieses Dokument vom „Schalter SW“, der
+„Stellung SW“ oder dem Token `SW` spricht, ist die Taste SW der Verbundtaste T-SW gemeint; der rechte Schalter heißt
+durchgehend „Selektor SW“ (Wirkung: Abschnitt „Schalter 'LS' und Stellung 'SW'“). Auf dem Foto tragen die Schalter rechts die
 Beschriftung „BSt“ und „LSt“; dieses Regelwerk schreibt durchgehend „BS“ und „LS“.
 
 ![Bedienpult des C 8205](abbildungen/C8205-Abb-Bedienpult_Foto.png)
@@ -41,7 +45,7 @@ Abbildung 3 zeigt die Tasten des Bedienpults nach der Zeichnung „Tastatur des 
 stehen hier nach dem Foto. Gestrichelt umrandet sind die drei Gruppen, die die Zeichnung ausweist:
 
 - **Tasten mit Rollensperre:** E, M, G, Ü,
-- **Schalter mit Rollensperre:** T und SW,
+- **Schalter mit Rollensperre:** T und SW (die Verbundtaste T-SW),
 - **Tasten mit Entriegelung und Rollensperre:** B, +, 1, 3, 5, 7, 9, „.“, „:“, D, −, 0, 2, 4, 6, 8, „,“, ZR, IS, IB und WM.
 
 H und R (gegeneinander verriegelt, s. Schalter „H-R“) und ST (elektronisch verriegelt) gehören keiner Gruppe an. Die
@@ -57,16 +61,20 @@ Zeichnung erklärt die Begriffe „Rollensperre“ und „Entriegelung“ nicht.
 **Stand der Quellen:** Die Zeichnung „Tastatur des C 8205“ weist die Gruppen aus, erklärt die Begriffe aber nicht (siehe oben). Die folgende Erklärung stammt vom Projektinhaber (15.10.2026).
 
 **Rollensperre** bedeutet einfach nur **Sperren**:
-- Die **Taste R** (Rechnen) löst die Rollensperre aus. Solange sie besteht, kann **keine andere Taste der Gruppen mit Rollensperre** bedient werden (E, M, G, Ü sowie die Schalter T und SW der Zeichnung, siehe aber den Hinweis unten).
+- Die **Taste R** (Rechnen) löst die Rollensperre aus. Solange sie besteht, kann **keine andere Taste der Gruppen mit Rollensperre** bedient werden (E, M, G, Ü sowie die Verbundtaste T-SW, also die Tasten T und SW der Zeichnung).
 - **Nur H** kann die Rollensperre aufheben.
 - R **verriegelt gleichzeitig die Eingabetasten** (die Gruppe „Entriegelung und Rollensperre“: B, +, 1, 3, 5, 7, 9, „.“, „:“, D, −, 0, 2, 4, 6, 8, „,“, ZR, IS, IB und WM).
-- Das erklärt die Aussage unten bei „H-R“, dass E, M, G, Ü und SW nur bei Stellung H betätigbar sind.
+- Das erklärt die Aussage unten bei „H-R“, dass E, M, G, Ü und T-SW nur bei Stellung H betätigbar sind.
 
-**Nicht betroffen** von der Rollensperre sind die Kanalwahltasten K0 bis K3 sowie ST, BS, SP und LS.
+**Nicht betroffen** von der Rollensperre sind die Kanalwahltasten K0 bis K3 sowie ST, BS, SP, LS und der Selektor SW.
 
 **Entriegelung (Entscheidung des Projektinhabers, 15.10.2026):** Die von R verriegelten Eingabetasten werden durch einen **aufgestellten Eingabe-Halt-Befehl** entriegelt, auch bei Stellung R. Zeichen lassen sich also auch im laufenden Programm eingeben, sobald es auf eine Eingabe wartet. Ohne Eingabe-Halt bleiben die Eingabetasten verriegelt. Die weiteren Bedingungen (Kanal K0, Schalter T) stehen im Abschnitt „Eingabetasten“ unten.
 
-**Zu klären:** Der Projektinhaber nannte SW unter den nicht betroffenen Bedienelementen. Die Zeichnung führt „T und SW“ als Schalter mit Rollensperre, und der Abschnitt „H-R“ sagt, SW lasse sich nur bei Stellung H betätigen. Ob die Umschalttaste T-SW von der Rollensperre betroffen ist, ist offen.
+**T-SW und Selektor SW (Entscheidung des Projektinhabers, 16.10.2026, bestätigt 25.10.2026):** Die Verbundtaste T-SW
+(Tasten T und SW der Tastatur) ist von der Rollensperre betroffen: bei Stellung R gesperrt, nur bei Stellung H
+bedienbar (`C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitte 4.1 und 4.2). Der Selektor SW rechts neben LS ist ein
+eigener, einrastender Schalter und von der Rollensperre nicht betroffen. Die abweichende Aussage vom 15.10.2026
+(SW nicht betroffen) meinte den Selektor SW.
 
 
 ## Netzschalter
@@ -79,7 +87,7 @@ Der Netzschalter schaltet die Stromversorgung des Rechners ein. Das ist Vorausse
 Schalter mit zwei gegeneinander verriegelten Tasten "H" und "R" (immer nur eine der beiden gedrückt).
 In Stellung "H" geht der Rechner in den Halt- (Stopp-)Zustand über.
 
-"H" und "R" sind gegeneinander verriegelt. Die Tasten "E", "M", "G", "Ü" und der Schalter "SW" lassen
+"H" und "R" sind gegeneinander verriegelt. Die Tasten "E", "M", "G", "Ü" und die Verbundtaste "T-SW" lassen
 sich nur bei Stellung "H" betätigen. Die Taste "ST" ist elektronisch verriegelt.
 Durch Einrasten von "H" kann die Befehlsabwicklung unterbrochen werden; unabhängig vom Zeitpunkt des
 Eingriffs im Phasenablauf wird erst nach der nächsten Phase III gestoppt.
@@ -123,11 +131,12 @@ Diese Tasten/Schalter sind – bis auf "ST" – nur bei Schalter "H-R" in Stellu
   Nach einem Stop-Befehl entsteht stattdessen die Operation 26Z (s. "Fortsetzung nach einem Stopp"): Phase IV läuft
   dann mit dem Befehl "7777 26Z" (Originaldokumentation 4.3.2.3, Ergänzung 04.10.2026).
 
-- **Schalter "SW" (Stellungen "T"/"SW", daher auch als "T-SW" bezeichnet) – Tastatureingabe/Schreibwerkeingabe**
+- **Verbundtaste "T-SW" (Tasten "T" und "SW", Stellungen "T"/"SW") – Tastatureingabe/Schreibwerkeingabe**
   Unterscheidet beim Anwahlkanal K0 zwischen Tastatur- und Schreibwerkeingabe. Drücken von "SW" setzt
   Flag SW; Lösen (Stellung "T") löscht Flag SW und setzt stattdessen Flag T – "T" und "SW" sind
   alternativ. Bei Benutzung des Schreibwerks zur Eingabe muss "SW" gedrückt sein, Tastatureingabe nur bei Stellung
   "T". Der Schalter selbst hat keinen Einfluss auf die Anwahl eines peripheren Gerätes.
+  Nicht zu verwechseln mit dem Selektor SW (Abschnitt „Schalter 'LS' und Stellung 'SW'“).
 
 - **Taste "ST" – Start**
   (Für den Interpreter: nicht an Stellung H gebunden; ohne US/BS ohne Wirkung; Wirkung OR := OR ∨ 240, AR bleibt,
@@ -213,11 +222,16 @@ ständig (sinnvoll bei Stanzvorgängen in kurzen Abständen unterhalb der 3-Seku
 bei nicht gesetztem "LS" läuft der Motor nicht, ein Stanzvorgang beginnt dann erst nach Ablauf der
 Einschaltverzögerung (Hochlauf).
 
-"SW" bezeichnet hier keinen zweiten Schalter, sondern die bereits oben beschriebene Stellung "SW" des
-Schalters "SW"/"T-SW". Auf die Schreibwerk**ausgabe** über Kanal K2 hat die Stellung dieses Schalters
-KEINEN Einfluss; die Ausgabe über K2 ist unabhängig davon jederzeit möglich. Die Stellung "SW" betrifft
-ausschließlich die Eingabeseite (Zeicheneingabe über das Schreibwerk an Kanal K0) – siehe dazu Datei
-"C8205-Interpreter-Lochstreifenleser.md", Abschnitt A5.
+Der **Selektor SW** (rechts neben LS, mit unbeschrifteter Taste darunter) ist ein eigener, einrastender Schalter und nicht
+die Stellung „SW“ der Verbundtaste T-SW. Eingerastet unterdrückt er die Ausgabe auf das Schreibwerk; der Rechner arbeitet
+die Ausgabebefehle dabei weiter ab (Festlegung des Projektinhabers, 16.10.2026; Einzelheiten
+`C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitt 3.7). Auf Stanzer und Leser wirkt er nicht. Im TEST gibt es für
+ihn kein Token.
+
+Die **Stellung „SW“ der Verbundtaste T-SW** hat dagegen auf die Schreibwerk**ausgabe** über Kanal K2 KEINEN Einfluss; die
+Ausgabe über K2 ist unabhängig davon jederzeit möglich. Die Stellung „SW“ betrifft ausschließlich die Eingabeseite
+(Zeicheneingabe über das Schreibwerk an Kanal K0) – siehe dazu Datei "C8205-Interpreter-Lochstreifenleser.md",
+Abschnitt A5.
 
 
 ## Bahnsperrenschalter
@@ -255,6 +269,7 @@ Zeilenende. Groß-/Kleinschreibung ist gleichgültig. Die Wirkungen sind die der
 
 Hinweise:
 - `SW` muss vor `G` gesetzt werden, weil `G` daraus für K0 das Flag T oder SW ableitet.
+- `SW=1` und `SW=0` betreffen die Verbundtaste T-SW (Tasten SW und T). Für den Selektor SW gibt es kein Token.
 - Die Eingabetasten (0…9, +, − usw.) gehören nicht in die Tastenfolge; sie werden als K0-Eingabe während des Ablaufs bedient.
 - Eine Tastenfolge wird bis zur Wirkung der dadurch aufgestellten Instruktion vorausinterpretiert. Sie muss den
   Ausgangszustand vollständig definieren (Gültigkeitsregeln: Dokument "C8205-Interpreter-Durchführung_eines_Tests.md",
@@ -343,8 +358,7 @@ f) Taste "E" anschlagen
 Der Ansprung eines Druckprogramms nach einer Programmunterbrechung endet dagegen mit "SP lösen" und R, siehe Dokument BIS.)
 
 Danach steht im Akkumulator die um 2 Einheiten erhöhte Adresse des nächsten abzuarbeitenden Befehls
-(meist ein Sprung in ein Druckprogramm). Wird in Schritt d) "E" zweimal angeschlagen, steht die um 3
-Einheiten erhöhte Adresse im Akkumulator, Speicherplatz "0002" wird als nächster Befehl aufgestellt.
+(meist ein Sprung in ein Druckprogramm).
 Alternativ kann im Haltzustand durch Niederdrücken von "E" (außer bei X-Befehlen) der
 Befehlszählerstand im Adressteil des Befehlsregisters sichtbar gemacht werden.
 

@@ -1,0 +1,17 @@
+Trommeldatei:
+#DOK-0001 Knotenlimit bei Dauerausgabe: Endlosschleife mit Ausgabebefehl auf SW; Lauf endet am Knotenlimit, gilt aber nicht als Fehler (Ausgabe-Halt aktiv)
+#SPEI-0001 2000-2002
+#PROT STUFE=2
+#TROMMEL=LEER
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/knotenlimit_ausgabeschleife
+0000: 00002000000 # 000 beginn ; Sprung nach 2000
+2000: 00004500030 # 030 04500 ; ANWAHL K2 (Schreibwerk)
+2001: 00000610030 # schleife: dto A ; Ausgabe des Zeichens A
+2002: 00002001000 # 000 schleife ; zurueck zur Ausgabe (Endlosschleife)
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+2001: 00000610030
+2002: 00002001000

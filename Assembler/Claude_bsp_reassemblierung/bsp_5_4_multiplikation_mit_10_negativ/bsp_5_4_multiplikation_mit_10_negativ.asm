@@ -6,6 +6,7 @@
 ; #SPEI-0001 3010-3010
 ; #SPEI-0001 3023-3023
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -30,8 +31,10 @@ d3006:          abs     03006
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3004 AC=77777777742 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3006: 77777777775
 ; 3010: 77777777775
 ; 3023: 77777777772
+;#PRUEFE-ENDE
 ;

@@ -65,6 +65,13 @@ class CProzessSenke:
         pass
 
 
+class CWinmmSenke:
+    """Windows: waveOut (winmm) im C-Modul, vier Puffer zu 10 ms.  Auf anderen Systemen nicht oeffenbar (TM_FEHLER -> SenkeAusfall)."""
+    art, arg = 'winmm', None
+    def schliessen(self):
+        pass
+
+
 class CDateiSenke:
     """Bloecke in eine Datei (Trockenlauf)."""
     art = 'datei'
@@ -202,3 +209,32 @@ def neuer_mischer(spieler=None, bei_ausfall=None, c_bevorzugt=True):
     if c_bevorzugt and lade_ton_modul() is not None:
         return CMischer(CProzessSenke(spieler), bei_ausfall=bei_ausfall), 'C'
     return TM.Mischer(TM.ProzessSenke(spieler), bei_ausfall=bei_ausfall), 'Python'
+
+
+def winmm_pruefen():
+    """Windows: (True, '') wenn das C-Modul mit ton_*-Methoden ladbar ist und die Senke winmm sich oeffnen laesst (Probe, danach wieder
+    geschlossen).  Sonst (False, Grund) mit dem Grund im Klartext; GRAFIK nimmt dann die Rechnertoene ueber winsound.
+    Unter anderen Systemen immer (False, ...) (tm_senke_winmm liefert dort TM_FEHLER)."""
+    C = lade_ton_modul()
+    if C is None:
+        try:
+            import c8205_trommel
+        except Exception as e:                              # ImportError, Fehler beim Laden der DLL
+            return False, f'c8205_trommel nicht ladbar ({e.__class__.__name__}: {e}); gesucht in {MODULVERZ}'
+        return False, f'c8205_trommel ohne ton_*-Methoden (alter Build?) aus {getattr(c8205_trommel, "__file__", "?")}'
+    try:
+        m = CMischer(CWinmmSenke(), modul=C)
+    except (TM.SenkeAusfall, RuntimeError) as e:
+        return False, str(e)
+    m.schliessen()
+    return True, ''
+
+
+def winmm_verfuegbar():
+    return winmm_pruefen()[0]
+
+
+def neuer_mischer_winmm(bei_ausfall=None):
+    """Windows: Mischer des C-Moduls mit der Senke winmm.  Rueckgabe: (mischer, 'C').  Einen Python-Mischer fuer winmm gibt es nicht.
+    Wirft TM.SenkeAusfall, wenn winmm nicht oeffenbar ist, und RuntimeError, wenn das C-Modul fehlt."""
+    return CMischer(CWinmmSenke(), bei_ausfall=bei_ausfall), 'C'

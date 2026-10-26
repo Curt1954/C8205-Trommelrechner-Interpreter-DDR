@@ -19,6 +19,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3020: 00000000060
   3021: 00000000044
   #DOK-0001 Bestimmung des groessten gemeinsamen Teilers nach Euklid (pj2), a=060 (48), b=044 (36), erwartet ggT=014 (12); durchläuft a>b, a<b und a=b
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

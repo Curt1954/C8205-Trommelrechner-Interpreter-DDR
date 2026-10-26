@@ -13,6 +13,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0007 da hat man für jeden logische Speichernummer einen korrekt verschobenen Wert.
   #SPEI-0007 4000-4037
   #SPUR-0007 4000
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

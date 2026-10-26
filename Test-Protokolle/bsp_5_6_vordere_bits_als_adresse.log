@@ -15,6 +15,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 2003 0000 251: R-Lesebefehl, <AC>:=<a1a2a3a4>, also <4000>; erwartet AC = 01234567012
   #SPEI-0001 3000-3037
   #SPEI-0001 4000-4000
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

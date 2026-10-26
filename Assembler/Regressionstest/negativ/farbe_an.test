@@ -1,0 +1,8 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000001040 # 040 ziel
+0001: 00000000001 # ziel: dw 1
+Tastenfolge:
+H G R

@@ -15,6 +15,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Befehl in 3000: beliebige Bits 5252, a=5103, BAZ=523; Konstante in 3001: 0000 7777 000; erwartet <3002> = 0000 5103 000
   #SPEI-0001 3000-3002
   #SPEI-0001 3003-3007
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

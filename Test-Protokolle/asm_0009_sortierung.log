@@ -49,6 +49,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0064: 13300654600
   0065: 11206050000
   #DOK-0001 Test Programmbeispiel 8: Sortierung von 4 Namen (Unterprogramm SORT + Hauptprogramm)
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

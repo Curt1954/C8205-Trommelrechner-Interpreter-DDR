@@ -8,6 +8,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3000: 00000000100
   3001: 00000000045
   #DOK-0001 Ansprung des Speicherplatzes 4 mit dem Makro #STARTE (= H G M+ E E E E M- R)
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
   #STARTE 0004 (Makro: H G M+ 4x E M- R, E 4-mal = dezimal)
 Tastenfolge: (aus #STARTE erzeugt)

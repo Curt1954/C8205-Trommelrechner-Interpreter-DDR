@@ -3,6 +3,7 @@
 ; #SPEI-0001 2012-2027
 ; #SPEI-0002 2012-2016
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -37,6 +38,7 @@ zum_rs:         abs     02021
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=2014 AC=00002012000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ;
 ; 2012: 00000001164
@@ -48,6 +50,7 @@ zum_rs:         abs     02021
 ; 2020: 00000430030
 ; 2021: 00002012000
 ; 2022: 00000000777
+;#PRUEFE-ENDE
 ;
 ;
 ;

@@ -4,6 +4,7 @@ Trommeldatei:
 #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<7777>; 7777 215 bildet Vl(x), 3002 002 schiebt zurueck: |x| mit z0=0
 #DOK-0001 erwartet <AC> = |x| = 15331617036 (oktal) = +0.8507008254528046*2^-6
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
 # Programm 6.3.1

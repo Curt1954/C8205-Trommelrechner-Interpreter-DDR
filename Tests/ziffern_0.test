@@ -3,6 +3,7 @@ Trommeldatei:
 --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/ziffern_0.txt
 --k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/ziffern_0.txt
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
 0001: 00000570030 # dtm \Geben Sie eine Ziffer von 0-3 ein\
 0002: 00000670030

@@ -1,6 +1,7 @@
 Trommeldatei:
 #DOK-0015 Test Ausgabebefehl
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0001: 00007240000
 7240: 00004500030
 7241: 00002720030

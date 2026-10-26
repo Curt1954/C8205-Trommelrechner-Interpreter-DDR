@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 c8205_grafik.py - Treiber des Modus GRAFIK: Stufe 1 "Kern und Trommel", Stufe 2 "Pult-Fenster" und Stufe 3 "SW-Fenster" (ohne Ton des Schreibwerks).
-Version: G4-007 (eigene Zaehlung der GRAFIK-Module; die Konstante VERSION_GRAFIK stimmt damit ueberein; c8205_interp.py zaehlt eigen, siehe dessen Kopf)
+Version: G4-013 (eigene Zaehlung der GRAFIK-Module; die Konstante VERSION_GRAFIK stimmt damit ueberein; c8205_interp.py zaehlt eigen, siehe dessen Kopf)
 
 Aufgaben (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 6), Stufe 1):
   * Rechner: Knotenautomat des C 8205 fuer den Dauerbetrieb am Pult. exec_node und run_e sind KOPIEN der verschachtelten
@@ -32,14 +32,14 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'grafik-interpreter-module'))     # die grafik_*-Module
 import c8205_interp as I
-from c8205_interp import (MASK12, MASK33, KonfigFehler, LaufFehler, Stub, octs, sektor, eintritt_br, FUNCS, Machine)
+from c8205_interp import (AusgabeHaltOhneGeraet, MASK12, MASK33, KonfigFehler, LaufFehler, Stub, octs, sektor, eintritt_br, FUNCS, Machine)
 from grafik_trommel import GrafikTrommel, GrafikAbbruch
 from grafik_k0 import K0Warteschlange
 from grafik_geraete import GrafikLeser, GrafikStanzer, pruefe_verschieden
 from grafik_debuglog import log
 from grafik_haltzeit import HaltZeit, FEHLER, EA, SCHRITT, SCHRITT_ENDE
 
-VERSION_GRAFIK = 'G4-011'      # G4-011 (22.10.2026): Selektor SW laesst die Schreibwerkzeit still weiterlaufen (Schreibwerk G4-004); G4-010 (22.10.2026): Schreibwerk laeuft asynchron (G4-003), Warten auf das beschaeftigte Schreibwerk = E/A-Halt; G4-009 (22.10.2026): virtuelle Trommelzeit (--trommelzeit); G4-008 G4-008 (22.10.2026): Leserton nach dem Benutzen des Lesers (LeserTon G4-005: Einzelton, Dauerton, Aus nach LS_AUS_S); G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
+VERSION_GRAFIK = 'G4-013'      # G4-013 (25.10.2026): Schalter --C8205Z (Zusatztrommeln des C 8205Z ueber das C-Modul zt_modul, grafik_zt.py); G4-012 (23.10.2026): nur Hilfetext von --trommelzeit (kein 'Entwurf' mehr; Inhalt wie G4-011); G4-011 (22.10.2026): Selektor SW laesst die Schreibwerkzeit still weiterlaufen (Schreibwerk G4-004); G4-010 (22.10.2026): Schreibwerk laeuft asynchron (G4-003), Warten auf das beschaeftigte Schreibwerk = E/A-Halt; G4-009 (22.10.2026): virtuelle Trommelzeit (--trommelzeit); G4-008 G4-008 (22.10.2026): Leserton nach dem Benutzen des Lesers (LeserTon G4-005: Einzelton, Dauerton, Aus nach LS_AUS_S); G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
 SPUR_STANDARD = 'c8205_pult_klickspur.txt'
 RC_OK, RC_ABBRUCH, RC_START = 0, 8, 16
 
@@ -249,6 +249,25 @@ class Rechner:
                 nxt = n['wahr'] if r else n['falsch']
             else:
                 raise Stub(f'Knotentyp {typ!r} unbekannt')
+        except AusgabeHaltOhneGeraet as e:
+            # Original 4.3.2.5: Der Ausgabebefehl wartet mit gesetztem Flag A (Lampe A) auf die Anwahl eines Ausgabegeraets; kein Fehler.
+            # Mit Fenster (thread_modus): wie im Eingabe-Halt warten; eine Kanaltaste (K1/K2) setzt den Befehl neu auf (Wiederaufsetzen),
+            # H unterbricht. Ohne Fenster niemand, der eine Taste drueckt: Halt mit Flag A.
+            if self.thread_modus:
+                k0 = m.k0
+                while True:
+                    if getattr(k0, '_abbruch', False):
+                        raise GrafikAbbruch('Warten auf Anwahl abgebrochen')
+                    self._warte_hook()                       # wirft HUnterbrechung (H) oder Wiederaufsetzen (Kanalwechsel)
+                    if hasattr(k0, '_cv'):
+                        with k0._cv:
+                            k0._cv.wait(0.05)
+                    else:
+                        time.sleep(0.05)
+            m.halt_grund = 'Ausgabe-Halt ohne Ausgabegeraet (Flag A)'
+            m.halted = True
+            text = 'ANW 017'
+            nxt = n['out']
         except KonfigFehler as e:
             fe = f'Geraet nicht nutzbar (Knoten {node}): {e}'
             self.zeilen.append(f'K{node:03d} {fe}')
@@ -495,6 +514,7 @@ class Rechner:
                        + ('; der Halt wegen Ueberlauf ist aufgehoben, E- setzt Phase IV und I fort' if fortsetzen else ''))
         elif u == 'G':
             self.e_aufsatz = self.e_ue_test = None
+            self.wiederaufnahme = None      # ein durch H abgebrochener Eingabe-Halt wird nicht mehr fortgesetzt (G stellt BR := 0000 000)
             for k in m.fl:
                 if k not in ('H', 'T', 'SP'):     # das Flag BS (Lampe) wird geloescht, der Schalter BS (m.bs_schalter) bleibt eingerastet
                     m.fl[k] = 0
@@ -847,6 +867,9 @@ class Rechner:
             k0.abbrechen()
         if hasattr(self.trommel, 'abbrechen'):
             self.trommel.abbrechen()
+        zt = getattr(self.m, 'zt', None)             # --C8205Z: laufender Befehl 601/661 der Zusatztrommeln
+        if zt is not None and hasattr(zt, 'abbrechen'):
+            zt.abbrechen()
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -946,6 +969,12 @@ def pult_betrieb(r, args, here):
     import grafik_tonmisch as TM
     f_pult, f_sw, f_ll, f_ls = TM.ton_faktoren(getattr(args, 'TON', None) or TM.parse_ton(TM.TON_STANDARD))         # --TON: Pult SW LL LS (G4-004)
     mischer, spieler, ton_ausfall = None, None, []
+    winmm, winmm_grund = False, ''                          # Windows: Mischer des C-Moduls mit der Senke winmm (statt winsound)
+    if os.name == 'nt' and not args.STUMM:
+        import grafik_tonmisch_c as TC
+        winmm, winmm_grund = TC.winmm_pruefen()
+        if winmm:
+            print('Hinweis: Toene unter Windows ueber den Mischer (winmm).', file=sys.stderr)
     ton_ordner = os.path.join(here, 'ton')
     leser_ton = stanzer_ton = None
     if args.STUMM:
@@ -954,16 +983,18 @@ def pult_betrieb(r, args, here):
         leser_ton = LeserTon(None, None)                    # kein Ton, das Lesetempo (130 Zeichen/s) gilt
         stanzer_ton = StanzerTon(None, None)                # kein Ton, das Stanztempo (ungefaehr 50 Zeichen/s) gilt
     else:
-        if os.name == 'nt':
+        if os.name == 'nt' and not winmm:
             from grafik_ton import RechnerTon
             print('Hinweis: Toene unter Windows noch nicht ueber den Mischer (winmm fehlt): nur Rechnertoene (winsound) und Schreibwerkzeit.', file=sys.stderr)
+            if winmm_grund:
+                print(f'         Grund: {winmm_grund}', file=sys.stderr)
             ton = RechnerTon(ton_ordner, meldung=False)
             r.sw.schreibwerk = Schreibwerk(None, None)
             leser_ton = LeserTon(None, None)
             stanzer_ton = StanzerTon(None, None)
         else:
-            spieler = TM.finde_spieler()
-            if spieler is None:                             # S4-04 (E O4-4): Abbruch vor dem Aufblenden der Fenster
+            spieler = None if winmm else TM.finde_spieler()  # Windows mit winmm: kein Abspielprogramm, die Senke steckt im C-Modul
+            if spieler is None and not winmm:               # S4-04 (E O4-4): Abbruch vor dem Aufblenden der Fenster
                 print('\nFEHLER: Kein Abspielprogramm gefunden (paplay, pw-cat, aplay, ffplay). Ton nicht moeglich; '
                       'mit --STUMM ohne Ton starten.', file=sys.stderr)
                 return RC_START
@@ -1067,7 +1098,7 @@ def pult_betrieb(r, args, here):
         fenster.abbruch_anfordern()
 
     alt = signal.signal(signal.SIGINT, bei_strg_c)
-    if spieler is not None:
+    if spieler is not None or winmm:
         def bei_ausfall(text):                      # Strom im Betrieb ausgefallen: Code 16 wie beim Start (S4-04)
             ton_ausfall.append(text)
             durch_x.append(1)
@@ -1077,7 +1108,10 @@ def pult_betrieb(r, args, here):
                 pass
         try:
             import grafik_tonmisch_c as TC
-            mischer, mischer_art = TC.neuer_mischer(spieler, bei_ausfall=bei_ausfall)
+            if winmm:
+                mischer, mischer_art = TC.neuer_mischer_winmm(bei_ausfall=bei_ausfall)
+            else:
+                mischer, mischer_art = TC.neuer_mischer(spieler, bei_ausfall=bei_ausfall)
             if mischer_art != 'C':
                 print('Hinweis: C-Modul tonmisch nicht gebaut (c-module/python: python3 setup.py build_ext --inplace); es laeuft der Python-Mischer.', file=sys.stderr)
             r.sw.schreibwerk.mischer = mischer
@@ -1138,7 +1172,7 @@ def hauptprogramm(argv=None):
     ap.add_argument('--leser2')
     ap.add_argument('--stanzer1')
     ap.add_argument('--STUMM', action='store_true')
-    ap.add_argument('--trommelzeit', choices=('echt', 'schnell', 'alt'), default='alt', help='G4-009 (Entwurf, noch nicht abgestimmt): Zeitmodell der Trommel: alt = Wartezeiten nach der Wanduhr im C-Modul (Standard), echt = virtuelle Zeit (Wortzeit 104 us je Phase) mit Echtzeit-Anpassung, schnell = virtuelle Zeit ohne Warten')
+    ap.add_argument('--trommelzeit', choices=('echt', 'schnell', 'alt'), default='alt', help='Zeitmodell der Trommel (G4-009): alt = Wartezeiten nach der Wanduhr im C-Modul (Standard), echt = virtuelle Zeit (Wortzeit 104 us je Phase) mit Echtzeit-Anpassung, schnell = virtuelle Zeit ohne Warten')
     ap.add_argument('--TON', '--ton', dest='TON', default=TM_ton_standard(), type=_ton_arg, metavar='pppp',
                     help='Lautstaerke je Gruppe, vier Ziffern 0 bis 9 in der Reihenfolge Pult SW LL LS (Rechnertoene, Schreibwerk, Lochstreifenleser, '
                          'Lochbandstanzer); 5 = Voreinstellung, 0 = stumm. Beispiel: --TON=5955. Wirkungslos mit --STUMM.')
@@ -1147,6 +1181,9 @@ def hauptprogramm(argv=None):
                          'beim echten Tippen gilt die Belegung des Betriebssystems.')
     ap.add_argument('--HWCHECK', '--hwcheck', dest='HWCHECK', action='store_true', help='zweites Fenster mit BZ, BR, Spur/Sektor, AC und <<AR>> (oktal), bleibt aufgeblendet')
     ap.add_argument('--BASP', '--basp', dest='basp', default=None, metavar='abcdef')
+    ap.add_argument('--C8205Z', '--c8205z', dest='c8205z', nargs='?', const='', default=None, metavar='VERZ',
+                    help='Zusatztrommeln des C 8205Z einschalten (Standard: aus): 5k00 030 waehlt ZT k (1..4), zzz0 bbbb 601 gibt die HT-Spur bbbb auf die ZT-Spur zzz0 aus, '
+                         'zzz0 bbbb 661 liest sie zurueck; ein Befehl dauert rund 81 bis 86 ms (Zeitmodell, C-Modul zt_modul). Die Trommeln liegen als zt1.txt .. zt4.txt in VERZ (Standard: Trommel/ZT/)')
     # in GRAFIK wirkungslos, ohne Fehler (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 2.5), Review F-13)
     for name in ('--out', '--pruefe-stanzer1', '--pruefe-sw-ausgabe', '--k0', '--sw-ausgabe', '--zwischenablage',
                  '--lochbandleser1', '--lochbandleser2', '--lochbandstanzer1'):
@@ -1214,6 +1251,7 @@ def hauptprogramm(argv=None):
         log('START', f'Grafik {VERSION_GRAFIK}, Debuglog {DL.VERSION_DEBUGLOG}, Python {sys.version.split()[0]}, {platform.platform()}, Tastatur {args.TASTATUR}, Aufruf: {sys.argv}')
         print(f'Debug-Log wird geschrieben: {os.path.abspath(args.DEBUGLOG)}', file=sys.stderr)
     trommel = None
+    zt = None
     r = None
     rc = RC_OK
     try:
@@ -1223,6 +1261,10 @@ def hauptprogramm(argv=None):
         except KonfigFehler as e:
             print(f'\nFEHLER: {e}', file=sys.stderr)
             return RC_START
+        if args.c8205z is not None:
+            from grafik_zt import GrafikZT
+            zt = GrafikZT(args.c8205z or os.path.join(here, 'Trommel', 'ZT'), trommel)
+            I.ZT = zt                           # Machine.__init__ uebernimmt I.ZT als m.zt (a005: 601/661, a028: 5k00 030)
         r = Rechner(graph, trommel, pult_modus=True)
         richte_geraete_ein(r, args.leser1, args.leser2, args.stanzer1)
         if args.entwickler_k0:
@@ -1249,10 +1291,15 @@ def hauptprogramm(argv=None):
         if r.sw.alles():
             print('SW-Ausgabe:', repr(r.sw.alles()))
         print('Trommel:', trommel.statistik())
+        if zt is not None:
+            print('Zusatztrommeln:', zt.statistik())
     except (KeyboardInterrupt, GrafikAbbruch):
         print('\nABBRUCH durch den Benutzer (Strg+C)', file=sys.stderr)
         rc = RC_ABBRUCH
     finally:
+        if zt is not None:
+            zt.schliessen()                     # vor der Haupttrommel (der Empfaengerthread greift auf sie zu)
+        I.ZT = None
         if trommel is not None:
             trommel.schliessen()
     return rc

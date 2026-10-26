@@ -1,6 +1,7 @@
 ; betrag.asm  -  symbolisches Assemblerprogramm zu Testdatei betrag.test
 ; #DOK-0001 Test betrag: z = -|a+b| + |-b+c| + |-c+d| mit a=5 b=3 c=7 d=2, erwartet z=1
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -56,6 +57,7 @@ rueck:          abs     011
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0042 AC=00000000001 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 0001: 00000000005
 ; 0002: 00000000003
@@ -66,4 +68,5 @@ rueck:          abs     011
 ; 0007: 77777777771
 ; 0010: 00000000005
 ; 0011: 00000036000
+;#PRUEFE-ENDE
 ;

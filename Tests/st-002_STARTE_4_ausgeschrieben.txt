@@ -1,6 +1,7 @@
 Trommeldatei:
 #DOK-0001 Gegenprobe zu st-001: Tastenfolge ausgeschrieben
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0004: 00003000211 # 211 Laden
 0005: 00003001210 # 210 Addieren
 0006: 00000000020 # 020 Stopp

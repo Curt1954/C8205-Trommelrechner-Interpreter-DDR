@@ -1,6 +1,6 @@
 Trommeldatei:
-#DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9
-#DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214,
+#DOK-0001 Dezimaleingabe (Programmieranleitung 5.13) mit Korrektur: 3 ZWR 8 0 9 7 Punkt, Dezimalzahl 8097 = 17641 oktal, Ziffern 8 und 9 und die Null
+#DOK-0001 Eingabe im R 300-Code ueber Leser 1 (K1); Ziffer d: <AC>:=<AC>+d, dann <AC>:=10*<AC> (W-Befehl 7706 644 und 7706 214, Arbeitsspur 7700); ZWR loescht den AC; Punkt liefert <AC>:=<7706>
 #DOK-0001 erwartet <AC> = 00000017641 (oktal)
 #SPEI-0001 3000-3016
 #SPEI-0001 3033-3035
@@ -8,6 +8,7 @@ Trommeldatei:
 #SPEI-0001 7723-7723
 --leser1 Test-virtuelleGeraete/Leser1/bsp_5_13_lochstreifen_korrektur.txt
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00002000000 # m0000: 000 m2000 ; Sprung zum Startstück
 2000: 00004600030 # m2000: 030 04600 ; Anwahl Kanal K1 (Leser 1)
 2001: 00003012000 # 000 m3012 ; Sprung zum Programmanfang (Löschen des Akkumulators)
@@ -31,3 +32,11 @@ Trommeldatei:
 3035: 00000000020 # 020 0 ; unbedingter Stopp
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3036 AC=00000017641 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
+3000: 00000000000
+3011: 00000000011
+3012: 00003013001
+3033: 00007706211
+7706: 00000017641
+7723: 00000037502

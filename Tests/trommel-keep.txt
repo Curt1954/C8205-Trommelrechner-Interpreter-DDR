@@ -1,0 +1,13 @@
+Trommeldatei:
+#DOK-0001 Testmarke #TROMMEL=KEEP: die Trommel bleibt unveraendert (Zelle 3000 nennt der Test selbst)
+#SPEI-0001 3000-3000
+#PROT STUFE=2
+#TROMMEL=KEEP
+0000: 00000000020 # 020 0 ; halt
+3000: 00000000007 # Zelle 3000 = 7
+
+Tastenfolge:
+H G R
+
+Prüfungen:
+3000: 00000000007

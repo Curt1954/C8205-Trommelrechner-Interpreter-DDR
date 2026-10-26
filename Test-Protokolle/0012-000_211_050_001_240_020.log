@@ -12,6 +12,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   5006: 00000000100
   5007: 00000000200
   #DOK-0012 Test Unbedingter Sprung, Ladebefehl und Addition Positiv-Sprung und Speicherbefehl
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

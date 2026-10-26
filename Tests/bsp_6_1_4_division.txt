@@ -1,9 +1,12 @@
 Trommeldatei:
 #DOK-0001 Zahlwort Festkomma vorn: Division positiver Zahlen (Programmieranleitung 6.1.4), Zahlenbeispiel des Buches a=0,010000 b=0,100000 (dual, auf 33 Bit erweitert), exakter Quotient 0,1
-#DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3010>, b=<3011>, Maske <3012>=7777 7777 777, Arbeitsspur 7700; 7700 440 Transport von b/2 auf alle Zellen, 7700 454 Abschneiden der niedrigsten Bits von b, 7700 436 Divisionsvorgang (bedingte Addition/Subtraktion mit zyklischer Linksverschiebung)
-#DOK-0001 Voraussetzung 0 <= a < b < 1; <AC> = 0 beim Start (3000 212 rechnet <AC>:=<AC>+b mit Rechtsverschiebung). Die Quotientenziffern z1...z32 stehen nach 32 Schritten in z1...z32 des AC; z0 ist das zuletzt zyklisch verschobene Vorzeichen des Rests.
+#DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3010>, b=<3011>, Maske <3012>=7777 7777 777, Arbeitsspur 7700;
+#DOK-0001 7700 440 Transport von b/2 auf alle Zellen, 7700 454 Abschneiden der niedrigsten Bits von b, 7700 436 Divisionsvorgang (bedingte Addition/Subtraktion mit zyklischer Linksverschiebung)
+#DOK-0001 Voraussetzung 0 <= a < b < 1; <AC> = 0 beim Start (3000 212 rechnet <AC>:=<AC>+b mit Rechtsverschiebung). Die Quotientenziffern z1...z32 stehen nach 32 Schritten in z1...z32
+#DOK-0001 des AC; z0 ist das zuletzt zyklisch verschobene Vorzeichen des Rests.
 #DOK-0001 erwartet <AC> = 57777777777 (oktal), Fehler gegenueber a/b kleiner als 2^-26
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
 # Programm 6.1.4; Arbeitsspur 7700 (die Zellen der Spur werden vom Gruppenbefehl beschrieben)

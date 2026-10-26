@@ -1,11 +1,11 @@
 ; bsp_5_6_vordere_bits_als_adresse.asm  -  symbolisches Assemblerprogramm zu Testdatei bsp_5_6_vordere_bits_als_adresse.txt
 ; #DOK-0001 Vordere Bits als Adresse (Programmieranleitung 5.6): <3000> = a1a2a3a4 xxxx xxx, a1a2a3a4 = 4000 als Adresse interpretiert
-; #DOK-0001 2001 3000 211: <AC>:=a1a2a3a4 xxxx xxx; 2002 3004 642: W-Befehl, 12 Zellen der Spur 3000 (Sektor 04 bis 23), je Zelle Transport
-;   und Rechtsverschiebung, AC:=0000 a1a2a3a4 xxx
+; #DOK-0001 2001 3000 211: <AC>:=a1a2a3a4 xxxx xxx; 2002 3004 642: W-Befehl, 12 Zellen der Spur 3000 (Sektor 04 bis 23), je Zelle Transport und Rechtsverschiebung, AC:=0000 a1a2a3a4 xxx
 ; #DOK-0001 2003 0000 251: R-Lesebefehl, <AC>:=<a1a2a3a4>, also <4000>; erwartet AC = 01234567012
 ; #SPEI-0001 3000-3037
 ; #SPEI-0001 4000-4000
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -32,6 +32,7 @@ d3004:          abs     03004
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=2006 AC=01234567012 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 40002461357
 ; 3004: 40002461357
@@ -47,4 +48,5 @@ d3004:          abs     03004
 ; 3036: 10000514273
 ; 3037: 00200012305
 ; 4000: 01234567012
+;#PRUEFE-ENDE
 ;

@@ -1,0 +1,6 @@
+rc 16
+stderr 30-mal gleiche Fehlermeldung (Zeile 2, davon 1 einzeln ausgegeben): Symbol 'fehlt' ist nicht definiert
+stderr .asm:32: Fehler: Symbol 'anderes' ist nicht definiert
+stderr 31 Fehler insgesamt, 29 gleiche Wiederholungen zusammengefasst.
+nicht-stderr unterdrückt
+datei-weg obj mqo test

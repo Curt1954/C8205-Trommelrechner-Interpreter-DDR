@@ -1,18 +1,18 @@
 # ** Bausteininterpretationssystem (BIS) **
 
-Version: 0.03-014
+Version: 0.03-025
 
 Dieses Dokument gibt den Inhalt der Quelle wieder und ordnet ihn in das Projekt ein. Die Gliederungsnummern der Quelle werden nicht
 übernommen; Verweise auf Abschnitte oder andere Dokumente enthält dieses Dokument nicht.
 Zusätze dieses Dokuments, die nicht im Wortlaut der Quelle stehen, sind als „Anmerkung" gekennzeichnet. Unsichere Lesestellen und Widersprüche
-zwischen Quellen sind am Ende des Dokuments gesammelt (derzeit keine).
+zwischen Quellen sind am Ende des Dokuments gesammelt (derzeit keine; eine Randnotiz ist in BIS-1.1 als „nicht übernommen“ vermerkt).
 
 Einordnung im Projekt: Das BIS ist das dritte Teilprojekt neben Interpreter und Assembler.
 
 
 ## BIS-1 Allgemeine Beschreibung des BIS
 
-- **Wesen:** Das Bausteininterpretationssystem „BIS" stellt ein **offenes Unterprogrammsystem** dar. Es enthält alle Routinen für
+- **Wesen:** Das vollständige Bausteininterpretationssystem „BIS" stellt ein **offenes Unterprogrammsystem** dar. Es enthält alle Routinen für
   - Ein- und Ausgabe von Dezimalzahlen,
   - Multiplikation und Division von Festkomma- und Gleitkommazahlen,
   - Addition und Subtraktion von Gleitkommazahlen,
@@ -41,16 +41,67 @@ Multiplikation, Division, Gleitkomma, Ausgabe) leisten Programme aus dem BIS. Di
 daher Konventionen des BIS.
 
 
+### BIS-1.1 Zahlendarstellungen des BIS
+
+Anmerkung (Einordnung): Intern verwendet das BIS ganze Festkommazahlen (Komma hinter dem letzten Bit) und Gleitkommazahlen zur
+Basis 2 mit normalisierter Mantisse und um 32 erhöhtem Exponenten. Diese Deutungen des Maschinenwortes beschreibt dieser Abschnitt
+nicht; er beschreibt, was erst das BIS hinzufügt: die externe Darstellung der Gleitkommazahlen und die Tetradendarstellung. Die
+Zahlenbereiche der Eingabe (BIS-2.2.6) sind enger als der Zahlenbereich des Maschinenwortes; so gilt bei K₁ = 5 die Grenze
+2³¹ − 1 für die softwareseitige Festkommaarithmetik des BIS, nicht für das Maschinenwort.
+
+**Gleitkommazahlen, externe Darstellung** (Quelle: BIS-Dokumentation, Ergänzung 07.10.2026)
+- Die Quelle beschreibt das Programmsystem BIS, nicht die Rechner-Hardware. Die externe Darstellung und der Eingabezahlenbereich
+  gelten daher für die Ein- und Ausgabe unter BIS.
+- Die **externe** Darstellung einer Gleitkommazahl (Ein- und Ausgabe) kennt zwei Formen: die übliche Dezimalschreibweise
+  oder die Gleitkommadarstellung, die sich für Mantisse und Exponent auf das Dezimalsystem bezieht: z = ± m · 10ᴱ.
+- Normalisierungsvorschrift: 0,1 ≤ m < 1 (für z ≠ 0). Der Exponent E wird **nicht** erhöht (anders als intern e′ = e + 32);
+  er besteht aus Vorzeichen und Betrag: E = ± |E|.
+- **Form der externen Gleitkommazahl:** Vorzeichen der Mantisse, höchstens acht dezimale Mantissenziffern m₁ m₂ … m₈,
+  Exponentenvorzeichen und Exponent E; Schreibweise z = (±) m₁m₂m₃m₄m₅m₆m₇m₈ (±) E (die Vorzeichen in Klammern sind optional).
+- **Eingabezahlenbereich:** Da E bei der Eingabe nicht größer als 8 sein darf, gilt |z| ≤ (1 − 10⁻⁸) · 10⁸. Die kleinste
+  eingebbare positive Zahl ≠ 0 ist z = 0,1 · 10⁻⁸ = 10⁻⁹. Die Grenzen je Eingabekennzeichen K₁ stehen in BIS-2.2.6.
+- **Dezimalschreibweise:** z = (±) a,b. Der Eingabezahlenbereich ist derselbe: |z| ≤ (1 − 10⁻⁸) · 10⁸. Die größte eingebbare
+  Zahl ist 99 999 999, die kleinste ≠ 0 ist 0,000000001.
+- **Genauigkeit (handschriftlicher Randvermerk der Quelle):** m = 26 Dual = 7 Dezimalstellen; nur 7 Dezimalziffern lassen sich
+  genau verarbeiten. Die achte Mantissenziffer der externen Form ist daher nicht mehr exakt darstellbar.
+- Die externe Darstellung ist wie die interne reine Konvention des Programmsystems (BIS) bzw. des Programms; der Rechner selbst kennt
+  weder Gleitkomma noch Dezimalumwandlung.
+- Anmerkung (nicht übernommen): Die handschriftliche Randnotiz zu Seite 1.3 (Zahlenbeispiele mit „72 Stellen") ist in der Kopie nicht
+  eindeutig lesbar und passt nicht zum Zahlenbereich von 2³¹ ≈ 2 · 10⁹; sie gehört offenbar nicht zur Definition des C 8205.
+
+**Tetradendarstellung** (Quelle: BIS-Dokumentation, Ergänzung 07.10.2026)
+- **Idee:** Bei der Tetradendarstellung von Dezimalzahlen wird jede Dezimalziffer als vierstellige Dualzahl (Tetrade) geschrieben.
+  Sie unterscheidet sich von der reinen Dezimaldarstellung nur dadurch, dass für eine Ziffer nicht ein, sondern vier Zeichen
+  verwendet werden. Handschriftlicher Randvermerk der Quelle (am Rand abgeschnitten, sinngemäß): nur für Ein- und Ausgabe.
+- **Intern:** In den 33 Dualstellen des Maschinenwortes lassen sich 8 Tetraden unterbringen. Zuordnung (höchstwertige Ziffer links):
+
+| Wortstellen | z₀–z₃ | z₄–z₇ | z₈–z₁₁ | z₁₂–z₁₅ | z₁₆–z₁₉ | z₂₀–z₂₃ | z₂₄–z₂₇ | z₂₈–z₃₁ | z₃₂ |
+|---|---|---|---|---|---|---|---|---|---|
+| Tetrade | t₇ | t₆ | t₅ | t₄ | t₃ | t₂ | t₁ | t₀ | – |
+
+- Ein Maschinenwort fasst höchstens 8 Tetraden (8 · 4 = 32 Bit); das 33. Bit, **z₃₂, bleibt frei**. Die Tetraden stehen damit **linksbündig** im Wort: t₇ beginnt bei z₀, die
+  niederwertigste Tetrade t₀ endet bei z₃₁, nicht bei z₃₂. Beim Auswerten eines Tetradenworts bleibt z₃₂ unberücksichtigt.
+- Die Tetraden t₇ … t₀ sind nicht mit den Oktal-Triaden des Maschinenwortes (t₁₀ … t₀, 3 Bit) zu verwechseln; die Bezeichnung t
+  hat hier eine andere Bedeutung. Tetraden und Triaden liegen im Wort nicht deckungsgleich.
+- **Extern:** Die Zahl besteht aus höchstens acht Dezimalziffern **ohne Vorzeichen**. Zahlenbereich: z ≤ 10⁸ − 1 = 99 999 999
+  (Ziffern 0 bis 9, handschriftlicher Zusatz „Dezimal 0–9").
+- **Beispiel der Quelle:** externes Wort 2 8 1 3 6 9 0 5 ergibt das interne Wort `0010 1000 0001 0011 0110 1001 0000 0101 0`
+  (33 Bit, letzte Stelle z₃₂ = 0), oktal `12011551012` (nachgerechnet).
+- **Rechnen:** Im Bausteininterpretationssystem gibt es nur Programme für die Ein- und Ausgabe von Tetraden. Rechenoperationen mit
+  Zahlen in Tetradendarstellung können nicht durchgeführt werden. Der Rechner selbst hat dafür keine Befehle; die Darstellung
+  ist wie die Gleitkommadarstellung reine Programmkonvention.
+- Anmerkung: Der Assembler `c82ass` kennt kein Tetraden-Literal; ein Tetradenwort wird wie jedes andere Wort als Oktalzahl mit
+  führender 0 angegeben (obiges Beispiel: `dw 012011551012`).
+
+
 ## BIS-2 Beschreibung der Bausteine
 
 ### BIS-2.1 Das kleine Eingabeprogramm (KEP): Voraussetzung des BIS
 
 - **Lage:** Das KEP befindet sich auf Spur 0 der Trommel und belegt die Adressen 0000₈ … 0037₈ (die 32 Zellen der Spur 0). Es wird über
   den Speicherplatz 0002 angesprungen.
-- **Zweck:** Es ermöglicht die Eingabe leistungsstarker Programme als bitweise notierte und abgelochte Programme. Ohne dieses
-  Programm wäre die Eingabe nur mit technischen Mitteln unter großem Aufwand möglich. Außerdem dient es dazu, bei einem Wechsel des
-  Interpretationssystems oder beim Übergang vom 5- zum 8-Kanal-Code die meist recht umfangreichen Eingabeprogramme (z. B. die
-  Minimalprogramme für die beiden Codes) eingeben zu können.
+- **Zweck:** Es ermöglicht die Eingabe leistungsstaerkerer Programme als bitweise notierte und abgelochte Programme. Ohne dieses
+  Programm wäre die Eingabe nur mit technischen Mitteln unter großem Aufwand möglich. 
 - **Schutz:** Das KEP sollte durch Sperrung der Spur 0 grundsätzlich gegen Überschreiben geschützt sein (Bahnsperrenschalter; bei
   Hauptschalter EIN ist Spur 0 immer gesperrt). Die Eingabe des KEP selbst ist bei vollständig gelöschtem Speicher nur über eine
   Hilfstastatur möglich (dafür dient die Serviceeinheit).
@@ -82,15 +133,13 @@ Inhalt oktal (11 Ziffern: Adreßteil, dann BAZ); „R 300" und „FS" bezeichnen
 Zellen, die in dieser Wiedergabe fehlen (0001, 0003 bis 0013), sind in dem Beispiel nicht belegt.
 
 Anmerkung (Festlegung des Projektinhabers): Die Tabelle zeigt den Zustand nach dem Laden des KEP auf die Magnettrommel, also vor dem Laden des
-Minimalprogramms. Zelle 0000 enthält dann den Sprung zu 0002 (Anfang des KEP). Erst wenn mit Hilfe des KEP das Minimalprogramm nach 0040 … 0337
-geladen wurde, wird der Inhalt von Zelle 0000 ausgetauscht; dort steht dann ein unbedingter Sprung zum Hauptprogramm des Minimalprogramms
-(Eingabe mit Kennzeichen). Das erklärt, warum HGR (Sprung nach 0000) bei geladenem Minimalprogramm die Eingabe mit Kennzeichen startet.
+Minimalprogramms. Zelle 0000 enthält dann den Sprung zu 0002 (Anfang des KEP). Das Minimalprogramm v6 hat kein Hauptprogramm; es setzt Zelle 0000 auf den Sprung `000 0262` zur Eingabe eines Wortes mit Kennzeichen (Zelle 0001: Sprung zum Druck von BZ und AC), sein Lochstreifen enthält also diesen Sprung nach 0000 (Änderung 24.10.2026). Seine Unterprogramme und Ansprungzellen stehen in BIS-A.4, seine Arbeitszellen in BIS-A.3.
+Die „Hauptprogramm“-Rolle hat die Eingabe mit Kennzeichen (Ansprung 0262/0263, Anfang `kz_anf` 0040).
 Die Zellen 0002 und 0022 bis 0024 bleiben dabei erhalten: Sie sind die Initialisierung des KEP (0022 und 0023 setzen die
 Hauptleitadresse in Zelle 7724 auf `0014 000`, weil sie beim frisch geladenen KEP noch nicht gesetzt ist; 0024 setzt ⟨AC⟩ := 0 und springt zur
 Eingabe).
 Überschrieben wird außerdem die im KEP unbelegte Zelle 0001: Dort steht dann ein unbedingter Sprung zum Druck von BZ und AC
 (Einsprung von HG M↓ E M↑ R, s. BIS-2.2.12). Alle übrigen Zellen des KEP bleiben unverändert.
-Das Hauptprogramm, zu dem Zelle 0000 springt, ruft das Unterprogramm Kennzeicheneingabe auf.
 
 | Zelle | Inhalt | BAZ / Adresse | Bedeutung |
 |---|---|---|---|
@@ -140,8 +189,6 @@ Spur 0 gehört dazu. Zum MP gehören neben anderen Programmen das Kleine Eingabe
 Kennzeichen. Das Programm für die Eingabe mit Kennzeichen besteht aus einer Reihe von Eingabeunterprogrammen. Auf Spur 0 liegt das
 Kleine Eingabeprogramm (KEP).
 
-Anmerkung (Festlegung des Projektinhabers): Das Minimalprogramm umfasst das KEP; daher die Belegung 0000–0337. Das eigentliche, separat ladbare Minimalprogramm, das erst durch das KEP geladen wird, belegt dagegen nur 0040–0337 (die Bahnen 1 bis 6). Das KEP (0000–0037) ist nicht Teil dessen, was geladen wird.
-
 **Bezeichnung.** Das Minimalprogramm als Ganzes ist der Baustein B 1.1. Die Unterprogramm-Bausteinbezeichnungen B 1.1/5 und B 1.1/8
 bezeichnen seine Ausführungen für 5-Kanal-Lochstreifen (Fernschreibcode, FS-Code) und für 8-Kanal-Lochstreifen (R 300-Code). In diesem
 Dokument wird nur die 8-Kanal-Ausführung B 1.1/8 (R 300-Code) beschrieben; die 5-Kanal-Ausführung ist nicht aufgenommen.
@@ -190,9 +237,6 @@ Die vom MP verarbeiteten Kennzeichen K₁ im Überblick:
 
 #### BIS-2.2.1a Bemerkungen zur Eingabe (Ergänzung 11.10.2026)
 
-Quelle: Seite „Bemerkungen zur Eingabe“ der Originaldokumentation (vom Projektinhaber als Bild bereitgestellt). Die Satzeingabe (K₁ = 8 und 9) ist im
-Minimalprogramm nicht vorgesehen; die Bemerkungen zum Satz gelten daher nur für die Eingabebausteine (BIS-A.2) und sind hier der Vollständigkeit halber genannt.
-
 - **Doppelpunkt und Satzschlusszeichen (nur Satzeingabe):** Bei der Satzeingabe im R 300-Code wirkt „:“ wie die Blockmarke „BM“. Die Satzschlusszeichen
   „SM/WRZL“, „BM“ und „:“ schließen die Funktion der Wortmarke nicht ein: Vor der Satzmarke ist die Marke des letzten Wortes anzugeben.
 - **Löschen:** Ein Wort und ein Satz können stets gelöscht werden, solange nicht die entsprechenden Schlusszeichen eingegeben sind. Eine Zahl, ein
@@ -205,11 +249,7 @@ Minimalprogramm nicht vorgesehen; die Bemerkungen zum Satz gelten daher nur für
 - **ZV (Zeilenvorschub) und BM (Blockmarke):** Beide Zeichen stehen seit dem 11.10.2026 in Tabelle 1 (Zeilen 52 und 53, Kodetabellen 1.4). Sie haben dieselbe Eingabeadresse 072 und
   unterscheiden sich im Lochbild (ZV v u p 8 2, BM w v u 8 2) und in der Sprung-Umstellung (ZV nein, BM ja). BM ist im R 300-Code Schlusszeichen (BIS-2.2.9).
 
-**Stand im Minimalprogramm** (Quelltext `pj2-bis_minimalprogramm.asm`, Tests `pj2-bis_kz_*` und `pj2-bis_ps_*`): Jedes in der Eingabe mit Kennzeichen unbesetzte oder
-unzulässige Zeichen (ZR, WR, GB, KB, IS, Doppelpunkt, ZV, Buchstaben) führt zum Sprung auf 0000 (Festlegung F2; bei ZV nur rechnerisch, der Interpreter kennt das Zeichen nicht); das Wort ist damit gelöscht, und die
-Eingabe beginnt mit dem ersten Kennzeichen neu. Zwischen zwei Wörtern bleiben WR, GB und KB ohne Wirkung auf die Daten (das nächste Wort kommt unverändert an), nur der
-Weg führt über das Hauptprogramm. In der Eingabe eines Programmstückes (BIS-2.2.9) führen ZR, WR, GB und KB dagegen nur zum Neustart der Kennzeicheneingabe
-(neues K₁), ohne das Unterprogramm zu verlassen. „Irrung Zeichen“ überspringt der Leser (Kodetabellen 1.7, Punkt 4). Nicht umgesetzt: Satzeingabe und „IB“ (nicht in Tabelle 1). Ein ZV liest die Tabellenzelle als Datum (kein Sprung): In der Adresseneingabe zählt es wie die Ziffer 0 und ist anschließend mit ZR zu löschen, in der Kennzeicheneingabe führt es zu 0000; BM springt in beiden nach 0000.
+**Stand im Minimalprogramm v6** (Quelltext `pj2-bis_minimalprogramm_v6.asm`, Tests `pj2-bis_v6_kz_*`, `pj2-bis_v6_ae_*` und `pj2-bis_v6_ps_*`, Stand 24.10.2026): Es gibt kein Hauptprogramm und keinen Sprung nach 0000 bei unzulässigen Zeichen. ZR verwirft das gerade gelesene Wort bzw. die Adresse und gibt ein neues K₁ frei (das Unterprogramm wird nicht verlassen). Doppelpunkt und BM sind das Schlusszeichen: Sie beenden die Eingabe an jeder Stelle, auch mitten im Wort (das Wort wird dann nicht gespeichert), und kehren zum Aufrufer zurück. „Irrung Zeichen“ überspringt der Leser (Kodetabellen 1.7, Punkt 4); die davor gelesenen Ziffern bleiben. „+“ ist nicht definiert und wirkt wie die Ziffer 0; die Ziffern 8 und 9 zählen als Werte 8 und 9. K₁ = 1 mit sofortigem Punkt ist der Befehl 0 (Sprung nach 0000). „0 .“ und „1 .“ nehmen den Punkt als K₂ = 0, „2 .“ ist wie `20 00000000000` (RA := 0). WR, GB, KB, ZV und IS gibt es auf der Bedienpulttastatur nicht; sie sind im Minimalprogramm v6 nicht vorgesehen. Nicht umgesetzt: Satzeingabe und „IB“ (nicht in Tabelle 1).
 
 #### BIS-2.2.2 Eingabekennzeichen K₁ und K₂
 
@@ -441,25 +481,16 @@ Blockmarke „BM" und Doppelpunkt „:" verwendet.
 
 
 
-Anmerkung (Stand im Quelltext, 11.10.2026): Die **Eingabe eines Programmstückes** (Ansprungzelle 263, Code `ps_anf` ab 0500) ist umgesetzt. Der Code liegt auf 0500 bis 0577 (die Erweiterung „0.“ der Kennzeicheneingabe auf 0600 bis 0613),
-weil der Bereich 0400 bis 0477 nach Vorgabe des Projektinhabers für die Anschlusszellen frei bleibt (das Original belegt nur 0040 bis 0377), die Tabelle `ae_tab` der Adresseneingabe deshalb auf 0700 bis 0777 liegt (nicht benutzte Zellen müssen dort null bleiben) und im Bereich 0040 bis 0337 nur noch
-verstreute Zellen frei sind. Aufruf: Eingabekanal anwählen, `025 eingabeprogst`. Die Regie liegt bei der Kennzeicheneingabe; jedes Wort mit K₁ = 0 oder 1 kehrt
-in die Schleife `ps_ret` zurück (`kz_rs` = `000 ps_ret`).
-- **Voraussetzung (Vorgabe des Projektinhabers):** Die Hauptleitadresse (Zelle 7724) ist bereits gesetzt, oder die erste Eingabe ist eine Hauptleitadresse `2 1 a₁ a₂ a₃ a₄ .`
-  bzw. eine Relativadresse `2 0 a₁ a₂ a₃ a₄ .`. Beim Einsprung wird der Abspeicherbefehl aus der Hauptleitadresse aufgebaut.
-- **K₁ = 0:** Das Wort (mit Adressenänderung nach K₂) wird in die Zelle des Abspeicherbefehls (`ps_ab`, 7761, Befehl `a₁ a₂ a₃ a₄ 240`) abgespeichert, dessen Adresse danach um eins erhöht wird. „0.“ (K₁ = 0 und sofort die Wortmarke) speichert das Wort 0 (s. BIS-2.2.3, Anmerkung).
-- **K₁ = 2:** Bei K₂ = 1 und K₂ = 0 wird der Abspeicherbefehl neu aufgebaut (Adresse a₁ … a₄ der Hauptleitadresse bzw. Hauptleit- plus Relativadresse); die Leitadressen 2 bis 9
-  beeinflussen die Abspeicherstelle nicht. Das gilt auch außerhalb der Programmstück-Eingabe (die Folgezelle `kz_xr` zeigt auf `ps_la`).
-- **K₁ = 1 (Sofortbefehl):** Der Befehl wird in `kz_xw` (7705) ausgeführt. Ein Sprungbefehl verlässt das Unterprogramm (so kehrt man mit einem Sofortbefehl an eine andere Stelle des
-  Hauptprogramms zurück). Ist es kein Sprungbefehl, folgt der Stopp `ps_us` (Zustand US); die Starttaste erhöht die Adresse des Sofortbefehls um eins, führt ihn aus und stoppt erneut.
-  Die Auslegung von „Adresse des Sofortbefehls um eins erhöht“ als Erhöhung des Adressteils um eine Adresseinheit ist eine Folgerung aus BIS-2.2.4, nicht wörtlich dort angegeben.
-- **Schlusszeichen:** Der Doppelpunkt „:“ und das Zeichen BM (Blockmarke, Eingabeadresse 072, Tabelle 1 Zeile 53) beenden das Unterprogramm (Rückkehr zum Aufrufer).
-  ZV hat dieselbe Eingabeadresse, aber keine Sprung-Umstellung; es ist kein Schlusszeichen (Fehler, Sprung nach 0000).
-- **Zeichen ohne Wirkung:** ZR, WR, GB und KB führen zu einem Neustart der Kennzeicheneingabe (neues K₁); im Wort löschen sie das Wort. Alle anderen unzulässigen Zeichen
-  führen wie in der Kennzeicheneingabe nach 0000 (F2); das Hauptprogramm übernimmt, die Programmstück-Eingabe ist beendet.
-- **Eingabetabelle:** Die Zellen für „:“, BM, ZR, WR, GB und KB werden nur in dieser Betriebsart gesetzt (Hook `ps_k1`/`ps_pt`, erkennbar an `kz_rs` = `000 ps_ret`). Die Zellen von KB (7657) und BM (7672)
-  liegen in der Nullspur; sie werden vor jeder Rückkehr (Schlusszeichen, Sofortbefehl) wieder auf null gesetzt und von keiner Nullzellenkette durchlaufen (Positionen 13 und 2, Ketten ab Position 14).
-- **Nicht umgesetzt:** Wörter mit K₁ ≥ 3, +, B, D und BM als Kennzeichen (Anschlussbedingungen) führen wie in der Kennzeicheneingabe nach 0000.
+Anmerkung (Stand im Quelltext v6, 24.10.2026): Die Eingabe eines Programmstückes (0263, `eingabeprogst`) und die Eingabe eines Wortes mit Kennzeichen (0262, `eingabewortkz`) springen beide auf `kz_anf` (0040); es gibt keinen eigenen Code `ps_anf`. Die Unterprogramme enthalten keine Kanalanwahl: Kanal und Hauptleitadresse stellt der Aufrufer bzw. das Band ein (Bedienung `H G K1 R`, Hauptleitadresse `2 1 a₁ a₂ a₃ a₄ .`, Daten vom Lochstreifen). Aufrufe, Parameterstellen und Prüfskripte aller Unterprogramme: BIS-A.4.
+- **Leitbefehl:** `LB` (7600) wird bei jedem Einstieg und nach jeder Änderung neu gebaut: `LB` := (Hauptleitadresse 7611) + Relativadresse `RA` (7742) + 0240.
+- **K₁ = 0:** Das Wort (mit Adressenänderung nach K₂) wird über `LB` abgespeichert; danach wird `RA` um 01000 (eine Adresseinheit) erhöht und `LB` neu gebaut. „0.“ (K₁ = 0 und sofort die Wortmarke) speichert das Wort 0 (s. BIS-2.2.3, Anmerkung). Die Hauptleitadresse ist Speicherort und Basis der Adressänderung K₂ = 1.
+- **K₁ = 2:** K₂ = 1 setzt die Hauptleitadresse und `RA` := 0; K₂ = 0 setzt `RA` := Adresse (Speicherung ab Hauptleitadresse + `RA`); K₂ = 2 bis 9 setzen die Leitadressen 2 bis 9, die die Abspeicherstelle nicht beeinflussen. Das gilt auch außerhalb der Programmstück-Eingabe.
+- **K₁ = 1 (Sofortbefehl):** Der Befehl wird auf `XW` (7602) ausgeführt, dahinter steht auf `XW1` (7603) der Stopp. Die Starttaste (R) führt über `XW2` (7604) zur Anwahl von K0 und zum neuen Kennzeichen. Ein Sprungbefehl verlässt das Unterprogramm (so kehrt man mit einem Sofortbefehl an eine andere Stelle des Hauptprogramms zurück).
+- **Abschluss einer Eingabe:** Nach der letzten Ziffer (elf bei einem Wort, acht bei einer Adresse) muss der Punkt folgen; weitere Ziffern werden ignoriert (`pt_wait`).
+- **Schlusszeichen:** Der Doppelpunkt „:“ und das Zeichen BM (Blockmarke, Eingabeadresse 072, Tabelle 1 Zeile 53) beenden das Unterprogramm (Rückkehr zum Aufrufer über `kz_rs`).
+- **Zeichen ohne Wirkung:** ZR löscht das Wort und führt zu einem neuen K₁ (`kz_neu`); „/“ ist der bedingte Stopp (Schalter BS). „+“ ist nicht definiert und wirkt wie die Ziffer 0. WR, GB, KB, ZV und IS gibt es auf der Bedienpulttastatur nicht und sind im Minimalprogramm nicht enthalten.
+- **„2 .“ (Festlegung des Projektinhabers, 24.10.2026):** Folgt auf K₁ = 2 sofort der Punkt statt K₂, so gilt die Eingabe wie `2 0 00000000000`: Adresse 0 mit K₂ = 0, also Relativadresse RA := 0 (Speicherung weiter ab Hauptleitadresse + 0). `0 .` und `1 .` nehmen den Punkt ebenfalls als K₂ = 0 mit dem Wort 0. Umsetzung: `kz_a2` springt zuerst zu `k2_vor` (0174 bis 0177), das `ae_rs` auf `c_a2n` (0260, Sprung nach `kz_ra0`) stellt und K₂ liest; der Punkt führt über `pt_end` und `ae_end` dorthin, `kz_ra0` setzt RA := 0 und baut den Leitbefehl neu. Test: `pj2-bis_v6_kz_2_punkt`.
+- **Nicht umgesetzt:** Wörter mit K₁ ≥ 3, +, B, D und BM als Kennzeichen (Anschlussbedingungen) bleiben ohne Wirkung; das Programm erwartet ein neues K₁.
 
 #### BIS-2.2.10 Ausgabe
 
@@ -585,7 +616,7 @@ Anmerkung (Folgerung, nicht aus der Quelle): Für Weg 1 gibt der Assembler `c82a
 beliebigen Ordner aus. Der Aufruf im Ordner `Assembler/`, mit dem das Minimalprogramm in den Ordner des Lesers 1 ausgegeben wird, ist:
 
 ```
-$ ./c82ass.sh -p Projekt_2 -s pj2-bis_minimalprogramm.asm -o ../virtuelle_Geraete/Leser1
+$ ./c82ass.sh -p Projekt_2 -s pj2-bis_minimalprogramm_v6.asm -o ../virtuelle_Geraete/Leser1
 ```
 
 (`make_c82ass.sh` erzeugt dagegen nur das Programm `c82ass`, es assembliert nicht.) Ein Lochstreifenleser des Interpreters verlangt
@@ -669,7 +700,7 @@ Ausgabe der Testdatei (Spalten 1,3,4,5 fuer K1=00/01) nach: ../Tests/bsp_5_18_ke
 ```
 
 **Schritt 2: das KEP auf die Trommel laden.** Der TEST-Interpreter überträgt das KEP aus der Testdatei auf die Trommel und führt den Test
-nicht aus (`--LOADONLY`). Im Projektordner:
+nicht aus (`--LOADONLY`). Die Testdatei trägt `#TROMMEL=LEER`: Vorher wird die Trommel geleert, auf ihr steht danach nur das KEP (Zellen 0000, 0002 und 0014 bis 0037; Zelle 0001 und alles Übrige ist 0, also auch kein Rest eines früher geladenen Minimalprogramms). Im Projektordner:
 
 ```
 $ cd ..
@@ -688,20 +719,18 @@ binären R 300-Code, so wie ihn das KEP lesen kann (Dateiendung `.kep`; Aufbau s
 
 ```
 $ cd Assembler
-$ ./c82ass.sh -p Projekt_2 -s pj2-bis_minimalprogramm.asm -o ../virtuelle_Geraete/Leser1 --ABSPR
+$ ./c82ass.sh -p Projekt_2 -s pj2-bis_minimalprogramm_v6.asm -o ../virtuelle_Geraete/Leser1 --ABSPR
 $ ./c82ass.sh -p Projekt_1/namen_raten -s namen_raten.asm -o ../virtuelle_Geraete/Leser1 --ABSPR
 ```
 
 Der erste Aufruf ist der Regelfall: Das Minimalprogramm ist der Grundbaustein des BIS und kommt als erstes über das KEP auf die Trommel.
-Dafür muss `pj2-bis_minimalprogramm.asm` vor `start` die Zeile `;#; LEITADRESSE 00` enthalten (Quelltext ist absolut geschrieben, siehe unten).
-Fehlt sie, läuft der Aufruf ohne Fehlermeldung durch, der Lochstreifen enthält aber bei 118 von 293 Worten falsche Adressen. Ein Merkmal zur
-Kontrolle: Mit Pragma hat die `.kep` 7542 Zeilen, ohne 7182, denn bei Kennzeichen 00 behält `--ABSPR` die führenden Nullbits der Wörter, bei
-Kennzeichen 01 lässt es sie weg. Der zweite Aufruf (`namen_raten`) ist ebenfalls absolut geschrieben und trägt dasselbe Pragma mit `start` ohne Operand: Das Programm steht quasi an
+Dafür muss `pj2-bis_minimalprogramm_v6.asm` vor `start` die Zeile `;#; LEITADRESSE 00` enthalten (Quelltext ist absolut geschrieben, siehe unten).
+Fehlt sie, läuft der Aufruf ohne Fehlermeldung durch, der Lochstreifen enthält aber bei 92 der 210 Zeilen des `.dmp` (v6 hat 218 Worte) falsche Adressen. Die Zeilenzahl der `.kep` unterscheidet sich mit und ohne Pragma, denn bei Kennzeichen 00 behält `--ABSPR` die führenden Nullbits der Wörter, bei
+Kennzeichen 01 lässt es sie weg (für v6 ist keine Kontrollzahl angegeben; sie ist keine Zahl von Zellen). Der zweite Aufruf (`namen_raten`) ist ebenfalls absolut geschrieben und trägt dasselbe Pragma mit `start` ohne Operand: Das Programm steht quasi an
 der Stelle des späteren Minimalprogramms und trägt in Zelle 0000 den Sprung zu seiner Startadresse (hier 02000) ein, genau wie das Minimalprogramm.
 Mit `start 02000` (ohne oder mit Pragma) fehlte Zelle 0000 im Lochstreifen (552 statt 553 Worte).
-Beim Minimalprogramm ist das ebenso: Sein Lochstreifen beginnt mit dem Leitbefehl `0000 240` und setzt die beiden Sprungzellen, Zelle 0000 mit dem
-Sprung zum Hauptprogramm (nach 0040) und Zelle 0001 mit dem Sprung zum Druck von BZ und AC (nach 0150). Dabei wird der KEP-Sprung in Zelle 0000
-(nach 0002) ausgetauscht; das KEP selbst auf 0002 bis 0037 bleibt unberührt. Der Assembler warnt deshalb nur bei Wörtern auf den Zellen 0002 bis 0037.
+Beim Minimalprogramm v6 gibt es keine Sprungzelle 0000: Sein Lochstreifen setzt nur Zelle 0001 mit dem Sprung zum Druck von BZ und AC (nach 0223); der KEP-Sprung in Zelle 0000
+(nach 0002) und das KEP auf 0002 bis 0037 bleiben unberührt. Der Assembler warnt deshalb nur bei Wörtern auf den Zellen 0002 bis 0037.
 Bei Pragma `LEITADRESSE 00` gibt er einen Hinweis aus („Der Quelltext gilt als absolut adressiert, es wird keine Adresse umgerechnet“), keine Warnung.
 Der zweite zeigt, dass auf demselben Weg auch jedes andere absolut adressierte Programm geladen werden kann. Liegen mehrere Dateien im
 Ordner des Lesers 1, rückt die nach Änderungszeit, bei Gleichstand nach Dateiname, nächste nach; für das Laden sollte deshalb nur die
@@ -715,10 +744,10 @@ jeder `equ`-Zeile die dortige Adresse). Zwei Schreibweisen führen zu einem rich
   Zelle 0000 setzen soll, ist diese Schreibweise nicht geeignet (Zelle 0000 fiele aus dem Streifen).
 - **Absolut geschriebener Quelltext** (Adressen stehen schon fest, z. B. das Minimalprogramm und `namen_raten`): Pragma `;#; LEITADRESSE 00` vor `start`,
   `start` ohne Operand. Fehlt das Pragma, wird die Blockbasis zu den schon absoluten Adressen noch einmal addiert (beim Minimalprogramm
-  118 von 293 Worten falsch). Pragma 00 zusammen mit `start <adresse>` ungleich 0 ist falsch gemischt; der Assembler warnt (ab 1.00-028). Ein Wort auf einer Zelle 0002 bis 0037 würde das KEP überschreiben und wird gemeldet (ab 1.00-029); die Sprungzellen 0000 und 0001 sind erlaubt.
+  92 der 218 Worte falsch; v6 hat 218 Worte). Pragma 00 zusammen mit `start <adresse>` ungleich 0 ist falsch gemischt; der Assembler warnt (ab 1.00-028). Ein Wort auf einer Zelle 0002 bis 0037 würde das KEP überschreiben und wird gemeldet (ab 1.00-029); die Sprungzellen 0000 und 0001 sind erlaubt.
 
-Das Laden selbst wurde mit dem Minimalprogramm geprüft: Nach dem Ansprung des KEP und dem Einlesen der `.kep` stimmen alle 293 Worte der
-Trommel mit der `.test`-Datei des Assemblers überein.
+Das Laden selbst wurde mit dem Minimalprogramm geprüft: Nach dem Ansprung des KEP und dem Einlesen der `.kep` stimmen alle 218 Worte der
+Trommel mit der `.test`-Datei des Assemblers überein (nachgestellt am 24.10.2026 für v6 mit `testscripte/kep_laden_v6.sh`; Testdatei `testscripte/kep_laden_v6.test`, Streifen `Test-virtuelleGeraete/Leser1_02/pj2-bis_minimalprogramm_v6.kep`). Der Lauf endet nach dem Streifenende nicht von selbst (der Leser wartet auf eine weitere Datei); das Skript vergleicht deshalb die Trommel und beendet ihn. Die frühere Angabe „293 Worte“ galt der Vorgängerfassung.
 
 Auch `namen_raten` wurde über das KEP geladen und mit `H G R` ausgeführt; der Projektinhaber bestätigt, dass es einwandfrei läuft (22.10.2026,
 von ihm selbst am Gerät-Modell ausgeführt, hier nicht nachgestellt).
@@ -798,7 +827,7 @@ Beim Ansprung des KEP sind folgende Tasten zu drücken:
 
 Danach geht der Automat in den Zustand „Eingabe“ und ist zum bitweisen Einlesen über den angewählten Kanal bereit.
 
-Anmerkung (Lesehilfe, nicht Wortlaut der Quelle): Das zweimalige E unter gehaltenem M ist der Sprung nach Speicherplatz 2; der Akkumulator enthält danach die um 3 Einheiten erhöhte Adresse. Auf 0002 beginnt das eigentliche KEP.
+Anmerkung (Lesehilfe, nicht Wortlaut der Quelle): Das zweimalige E unter gehaltenem M ist der Sprung nach Speicherplatz 2. Auf 0002 beginnt das eigentliche KEP.
 
 ##### BIS-2.2.12.3 Eingabe eines bitweise gelochten Programms
 
@@ -856,7 +885,7 @@ Anmerkung (Festlegung des Projektinhabers): K₁ = D bezeichnet die Taste D der 
 | B 6.3 | Vergleichsprogramm mit B0 | 430 | 02 … 000. |
 
 
-Anmerkung (11.10.2026): Der Bereich 0400 bis 0477 mit den Anschlusszellen 403 bis 410 und 430 ist im Minimalprogramm frei; die Tabelle `ae_tab` der Adresseneingabe liegt auf 0700 bis 0777.
+Anmerkung (24.10.2026, Lieferung 003): Der Bereich 0400 bis 0477 mit den Anschlusszellen 403 bis 410 und 430 ist im Minimalprogramm v6 frei; der Druck von BZ und AC liegt jetzt in 0040 bis 0377 (nicht mehr auf 0500 bis 0533) und druckt ohne die Bezeichnungen „BZ“ und „AC“ (Zeile `0000 bbbb 000 aaaa aaaa aaa`; Annahme, vom Inhaber noch zu bestätigen).
 **Offener Punkt (Beobachtung):** Die Anschlusszellen 203, 205 bis 207, 210, 211, 220 und 224 liegen im Bereich 0040 bis 0377 und sind im Quelltext von Befehlen oder Konstanten der Kennzeicheneingabe belegt;
 nur 204 ist frei. Ein Baustein, der seine Anschlussbedingung dort ablegt, würde diese Zellen überschreiben.
 
@@ -910,8 +939,8 @@ verändert ihn nicht.
 (Festlegung des Projektinhabers)
 
 **Definition: Arbeitsbereich 7600 bis 7777.** Für das BIS stehen die vier Spuren 7600, 7640, 7700 und 7740 als Arbeitszellen zur Verfügung
-(7600 … 7777, je Spur 32 Zellen, zusammen 128 Zellen). Darin liegen auch die oben genannten festen Zellen (Leitbefehl 7723,
-Hauptleitadresse 7724, Register, Transportzelle 7777); diese sind belegt.
+(7600 … 7777, je Spur 32 Zellen, zusammen 128 Zellen). Darin liegen auch die oben genannten festen Zellen (Leitbefehl 7723 und
+Hauptleitadresse 7724 des KEP, Register, Transportzelle 7777); diese sind belegt.
 (Festlegung des Projektinhabers; die Quelle des Projektinhabers nennt „770“, gelesen als Spur 7700, da die vier Spuren den Bereich
 7600 … 7777 lückenlos füllen.)
 
@@ -924,63 +953,54 @@ Hauptleitadresse 7724, Register, Transportzelle 7777); diese sind belegt.
   über aufeinanderfolgende Zellen und verändern oder lesen jede davon; eine belegte Zelle im Feld würde also zerstört bzw. falsch gelesen.
 - **„In Benutzung“:** Eine Zelle gilt als in Benutzung, wenn irgendein Teil des gesamten BIS-Minimalprogramms sie belegt (also
   einschließlich KEP und aller Unterprogramme), nicht nur der Teil, der gerade abläuft. Maßgeblich für die Belegung ist die Tabelle
-  unten bzw. der Quelltext `pj2-bis_minimalprogramm.asm`. Eine Zelle, die kein Teil des Minimalprogramms belegt, ist frei.
-- **Absolute Adressen:** Die Adressen der festen Zellen (insbesondere der Arbeitszellen 7740 bis 7744 und 7756 bis 7760, s. u.) sind
-  absolut (`abs`) und werden nie verschoben.
+  unten bzw. der Quelltext `pj2-bis_minimalprogramm_v6.asm`. Eine Zelle, die kein Teil des Minimalprogramms belegt, ist frei.
+- **Absolute Adressen:** Die Adressen der festen Zellen (die `abs`-Symbole des Quelltextes, Tabelle unten) sind
+  absolut und werden nie verschoben.
+
+**Feste Zellen mit besonderer Bedeutung (Stand v6).**
 
 | Zelle | Bezeichnung | Verwendung | Stand |
 |---|---|---|---|
-| 7723 | Leitbefehl | KEP: „:“ speichert den im Akkumulator aufgebauten Befehl hier (Zelle 0016); „.“ führt ihn aus (Zellen 0033 und 0034) und erhöht seine Adresse um eine Einheit (Zellen 0014 bis 0016). Beispiel: Leitbefehl `40 240` für die Abspeicherung ab Zelle 40. | für das KEP geklärt; Nutzung durch das separat ladbare Minimalprogramm offen |
-| 7724 | Hauptleitadresse (1. Leitadresse) | KEP: Zelle 0023 setzt hier den Anfangswert `0014 000` (aus Zelle 0037 über Zelle 0022), weil die Hauptleitadresse beim frisch geladenen KEP noch nicht gesetzt ist. Das Minimalprogramm setzt sie mit K₁ = 2, K₂ = 1. | geklärt (Angabe des Projektinhabers) |
-| 7777 | Transportzelle für den Akkumulator | Ziel von HGÜE (aufgestellter Befehl `7777 240`, Akkumulatorinhalt wird nach 7777 transportiert). Quelle für die Ausgabe mit D0, D1, D2 und für das Druckprogramm von Befehlszähler und Akkumulator. | geklärt |
-| 7724 | Hauptleitadresse (1. Leitadresse) | s. Zeile 7724 oben. Wird mit K₁ = 2, K₂ = 1 gesetzt und im Allgemeinen erst durch eine neue Hauptleitadresse zerstört. | geklärt |
-| 7725, 7726, 7727, 7730, 7731, 7732, 7733, 7734 | Leitadressen 2 … 9 (in dieser Reihenfolge) | Feste Zellen der Leitadressentabelle `la_tab`; werden mit K₁ = 2, K₂ = 2 … 9 gesetzt. Zusammen mit 7724 (Hauptleitadresse) und 7735 (Relativadresse, K₂ = 0) sind es zehn aufeinanderfolgende Zellen 7724 bis 7735 (Tabelle unten). | festgelegt im Quelltext `pj2-bis_minimalprogramm.asm` (`la_tab` = 7724) |
-| 7761 | Abspeicherbefehl (`ps_ab`) | Feste Zelle; wird mit der Hauptleitadresse aufgebaut und nach jedem abgespeicherten Wort um eins erhöht. Im Quelltext: Arbeitszelle 7761 (`a₁ a₂ a₃ a₄ 240`), Folgezelle 7762 (`ps_ab1`, `000 ps_nx`); gebaut von `ps_la`/`ps_anf`, erhöht von `ps_nx`. | geklärt (Festlegung im Quelltext, 11.10.2026) |
-| 7705 | Zelle des Sofortbefehls | „Feste Zelle des Systems“, in der der Befehl bei K₁ = 1 gespeichert und sofort ausgeführt wird. Beim KEP ist das 7723. Das Minimalprogramm benutzt dafür die Arbeitszelle `kz_xw` (7705) mit der Folgezelle `kz_xr` (7706), die bei Nicht-Sprungbefehlen zum Stopp `ps_us` führt. | geklärt (Festlegung im Quelltext, 11.10.2026) |
-| 7773 | R₁ (Register 1) | Keine feste Verwendung (s. Definition oben). Im jetzigen Stand: Die Ausgabeunterprogramme erwarten beim Aufruf das auszugebende Wort in R₁ und verändern es nicht. Im Assembler als `r1: abs 07773` definiert. | geklärt (Angabe des Projektinhabers) |
-| 7774 | R₃ (Register 3) | Keine feste Verwendung (s. Definition oben); häufig benutzte Arbeitszelle der Programme, spart Speicher im Programmbereich. Im Assembler als `r3: abs 07774`. Das Minimalprogramm benutzt R₃ bisher nicht. | geklärt (Angabe des Projektinhabers) |
-| 7776 | R₂ (Register 2) | Keine feste Verwendung (s. Definition oben); häufig benutzte Arbeitszelle der Programme, spart Speicher im Programmbereich. Im Assembler als `r2: abs 07776`. Das Minimalprogramm benutzt R₂ bisher nicht. | geklärt (Angabe des Projektinhabers) |
+| 7723 | Leitbefehl des KEP | KEP: „:“ speichert den im Akkumulator aufgebauten Befehl hier (Zelle 0016); „.“ führt ihn aus (Zellen 0033 und 0034) und erhöht seine Adresse um eine Einheit (Zellen 0014 bis 0016). Beispiel: Leitbefehl `40 240` für die Abspeicherung ab Zelle 40. Das Minimalprogramm v6 benutzt diese Zelle nicht; sie liegt auf der Druckspur 7700 bis 7737 und wird vom Druck überschrieben (Tabelle unten). | für das KEP geklärt |
+| 7724 | Hauptleitadresse des KEP | KEP: Zelle 0023 setzt hier den Anfangswert `0014 000` (aus Zelle 0037 über Zelle 0022), weil sie beim frisch geladenen KEP noch nicht gesetzt ist. **Das Minimalprogramm v6 setzt seine Hauptleitadresse nicht hier, sondern auf 7611 (`LA`+1).** Die Zelle 7724 dient dem Druck nur noch als Adresse der Spur 7700 bis 7737 (`adr7724`, Befehle 440). | geklärt (Quelltext v6) |
+| 7777 | Transportzelle für den Akkumulator / Übergabezelle | Ziel von HGÜE (aufgestellter Befehl `7777 240`, Akkumulatorinhalt wird nach 7777 transportiert). Quelle für die Ausgabe mit D0, D1, D2 und für das Druckprogramm von Befehlszähler und Akkumulator. In v6 ist 7777 die interne Arbeitszelle der Druckprogramme: Sie kopieren das Wort aus R₁ (7773) hierher und verschieben es dort (`adr7777`); die Übergabe vom Aufrufer erfolgt über R₁. | geklärt |
+| 7773 | R₁ (Register 1) | Keine feste Verwendung (s. Definition oben). Im Assembler als `r1: abs 07773` definiert. **Das Minimalprogramm v6 benutzt R₁ als Übergabezelle** der Druckunterprogramme (Triadendruck, Adressdruck, Befehlsdruck; `adr7773`, BIS-2.2.10): Der Aufrufer legt das Wort in R₁ ab, das Druckprogramm kopiert es nach 7777 und arbeitet dort weiter; R₁ wird nie beschrieben. Der Druck von BZ und AC legt seine Wörter ebenfalls in R₁ ab. | geklärt (Angabe des Projektinhabers); Übergabe in v6 gleich BIS-2.2.10 (Stand 24.10.2026) |
+| 7774 | R₃ (Register 3) | Keine feste Verwendung (s. Definition oben); häufig benutzte Arbeitszelle der Programme, spart Speicher im Programmbereich. Im Assembler als `r3: abs 07774`. Das Minimalprogramm benutzt R₃ nicht. | geklärt (Angabe des Projektinhabers) |
+| 7776 | R₂ (Register 2) | Keine feste Verwendung (s. Definition oben); häufig benutzte Arbeitszelle der Programme, spart Speicher im Programmbereich. Im Assembler als `r2: abs 07776`. Das Minimalprogramm benutzt R₂ nicht. | geklärt (Angabe des Projektinhabers) |
 
-**Belegung des Arbeitsbereichs 7600 bis 7777 im jetzigen Stand des Minimalprogramms** (Quelltext `pj2-bis_minimalprogramm.asm`).
-Die Tabelle führt alle Zellen des Bereichs, die das gesamte Minimalprogramm (einschließlich KEP) belegt. Die Zellen 7723, 7724, 7773, 7774, 7776 und 7777
-sind in der Tabelle oben beschrieben und hier nur der Vollständigkeit halber aufgeführt.
+**Belegung des Arbeitsbereichs 7600 bis 7777 im jetzigen Stand des Minimalprogramms** (Quelltext `pj2-bis_minimalprogramm_v6.asm`, geprüft gegen die `abs`-Symbole und den Code am 24.10.2026).
+Die Tabelle führt alle Zellen des Bereichs, die das gesamte Minimalprogramm belegt. Die Zellen 7773 und 7777 sind in der Tabelle oben beschrieben und hier nur der Vollständigkeit halber aufgeführt.
 
 | Zelle | Name | Verwendung |
 |---|---|---|
-| 7600 | `dr_rs` | Druck von BZ und AC: Fortsetzungsbefehl `000 b` (aus dem um 3 Adresseinheiten verminderten AC gebildet); die Routine springt am Ende mit `000 dr_rs` dorthin. 7600 ist zugleich die Zelle der Ziffer 0 von `kz_tab` (s. u.); `dr_rs` wird bei jedem Neustart der Eingabetabelle überschrieben. Wird eine Eingabe mit H unterbrochen und BZ/AC gedruckt, ist die Ziffer 0 bis zum nächsten Neustart unzulässig |
-| 7600 bis 7677 | `kz_tab` | Kennzeicheneingabe: Eingabetabelle, 64 Zellen (Offset = Eingabeadresse des Zeichens). Bei jedem Neustart (`kz_neu`) setzen zwei Gruppenbefehle 441 alle 64 Zellen auf null; danach werden die Zellen der Ziffern 0 bis 9 (7600 bis 7611) mit (d − 10) · 01000 negativ belegt. Beim Einlesen eines Wortes kommt auf die Zelle des Punktes (7633) der Sprung `000 kz_wend` |
-| 7640 bis 7677 | `nullspur` | Zweite Hälfte der Eingabetabelle. Enthält ausschließlich Nullen (Festlegung F1 im Quelltext), für Anwenderprogramme gesperrt. Auf ihr liegen die Nullzellenketten für die W-Befehle 616: `nz_12` ab 7644 (12 Verschiebungen, Befehls- und Adressendruck) und `nz_20` ab 7674 (20 Verschiebungen, Wortaufbau der Kennzeicheneingabe). Befehlsdruck und Adressendruck nullen sie selbst (441 `nullspur`), damit sie auch vor dem ersten Aufruf der Kennzeicheneingabe null ist; die Trommeldatei muss dort keine Nullen enthalten |
-| 7700 | `kz_rs` | Kennzeicheneingabe: Rückkehrbefehl zum Aufrufer |
-| 7701 | `kz_k1` | Kennzeicheneingabe: K₁ · 01000 (Ergebnis für den Aufrufer) |
-| 7702 | `kz_k2` | Kennzeicheneingabe: K₂ · 01000 (Ergebnis für den Aufrufer) |
-| 7703 | `kz_kw` | Kennzeicheneingabe: Wortsumme (Wortaufbau) |
-| 7704 | `kz_z` | Kennzeicheneingabe: Ziffernzähler (zehn Einsen für elf Ziffern, je Ziffer um 1 Bit nach links geschoben) |
-| 7705 | `kz_xw` | Kennzeicheneingabe: zur Laufzeit gebauter Transportbefehl (Zelle einer Ziffer bzw. einer Leitadresse), Ausführung mit `000 kz_xw`. Er steht hier und nicht im Programmbereich, weil das Programm im Bereich 0040 bis 0477 keine Zelle ändert (Vorgabe des Projektinhabers) In der Programmstück-Eingabe steht hier der Sofortbefehl (K₁ = 1). |
-| 7706 | `kz_xr` | Kennzeicheneingabe: Folgezelle von `kz_xw`, Sprungbefehl `000 ziel` (`kz_g` bzw. `kz_neu`); wird vor jeder Ausführung gesetzt, weil Arbeitszellen nicht mitgeladen werden In der Programmstück-Eingabe steht hier `000 ps_us` (Folge des Sofortbefehls) bzw. `000 ps_la` nach einer Hilfsadresse. |
-| 7707 | `kz_v` | Kennzeicheneingabe: Zuschlag (Leitadresse K₂) beim Wortende |
-| 7723 | – | Leitbefehl des KEP (s. Tabelle oben) |
-| 7724 bis 7735 | `la_tab` | Leitadressentabelle der Kennzeicheneingabe, 10 Zellen: 7724 Hauptleitadresse (K₂ = 1, zugleich die 1. Leitadresse des KEP, s. Tabelle oben), 7725 bis 7734 die 2. bis 9. Leitadresse (K₂ = 2 bis 9), 7735 die Relativadresse (K₂ = 0). Die Zelle für K₂ ist `la_tab` + (K₂ − 1) mod 10. Die Lage von 7725 bis 7735 ist eine Festlegung im Quelltext (Tabelle oben: Zellen der Leitadressen 2 bis 9). 7725, 7730 und 7731 stehen außerdem in der Liste der festen Zellen unten; sie sind damit als `la_tab` belegt und nicht mehr offen |
-| 7740 | `okt_z` | Triadendruck und Befehlsdruck: Zähler der noch zu druckenden Ziffern (Einsen, werden nach links geschoben) |
-| 7741 | `okt_rs` | Triadendruck und Befehlsdruck: Rückkehrbefehl der Ziffernschleife (wird bei der Rückkehr als Befehl ausgeführt) |
-| 7742 | `bd_rs` | Befehlsdruck: Rückkehrbefehl zum Aufrufer |
-| 7743 | `ad_rs` | Adressendruck: Rückkehrbefehl zum Aufrufer |
-| 7744 | `ad_sv` | Adressendruck: Sicherung von R₁ (R₁ wird für die Drehung gebraucht und danach zurückgeholt) |
-| 7756 | `ae_rs` | Adresseneingabe: Rückkehrbefehl zum Aufrufer |
-| 7757 | `ae_sv` | Adresseneingabe: Konstante (Sicherung des AC) |
-| 7760 | `ae_z` | Adresseneingabe: Ziffernzähler (sieben Einsen, je Ziffer um 1 Bit nach links geschoben) |
-| 7761 | `ps_ab` | Programmstück-Eingabe: Abspeicherbefehl `a₁ a₂ a₃ a₄ 240` (feste Zelle, s. Tabelle oben); wird auch von `ps_la` nach einer Hauptleit- oder Relativadresse gesetzt |
-| 7762 | `ps_ab1` | Programmstück-Eingabe: Folgezelle des Abspeicherbefehls, `000 ps_nx` (von `ps_anf` beim Einsprung gesetzt) |
-| 7763 | `ps_rs` | Programmstück-Eingabe: Rückkehrbefehl zum Aufrufer |
-| 7765 | `ps_w` | Programmstück-Eingabe: das eingelesene Wort (während der Prüfung von K₁) |
-| 7773 | `r1` | R₁ (s. Tabelle oben) |
-| 7774 | `r3` | R₃ (s. Tabelle oben; vom Minimalprogramm bisher nicht benutzt, aber reserviert) |
-| 7776 | `r2` | R₂ (s. Tabelle oben; vom Minimalprogramm bisher nicht benutzt, aber reserviert) |
-| 7777 | `ac7777` | Transportzelle für den Akkumulator (s. Tabelle oben) |
+| 7600 | `LB` | Leitbefehl (Abspeicherbefehl `240` mit Adresse): `LB` := (7611) + `RA` + 0240; wird bei jedem Einstieg und nach jeder Änderung neu gebaut (`lb_neu`) |
+| 7601 | `LB1` | Folgezelle des Leitbefehls: Sprung zurück (`kz_sp` setzt hier den Befehl `000 kz_gesp`) |
+| 7602 | `XW` | Arbeitszelle für sofort auszuführende Befehle (K₁ = 1, sowie die Befehle zum Speichern einer Leitadresse K₁ = 2) |
+| 7603 | `XW1` | Folgezelle von `XW`: Stoppbefehl `020` (K₁ = 1) bzw. Sprung zum neuen Kennzeichen (K₁ = 2) |
+| 7604 | `XW2` | Folgezelle von `XW1`: Sprung zum neuen Kennzeichen (`kz_neu`) nach dem Stopp von K₁ = 1 |
+| 7610 | `LA` | Leitadresse 0, immer 0 (`kz_anf` setzt sie auf 0); Basis der Adressrechnung |
+| 7611 bis 7621 | `LA`+1 bis `LA`+9 | Leitadressen 1 bis 9 (x-te Leitadresse auf `LA` + x, also 7611 bis 7617, 7620 und 7621; K₂ = 1 bis 9; Wert = Adresse · 01000). `LA`+1 = 7611 ist die Hauptleitadresse des Minimalprogramms: gesetzt mit K₁ = 2, K₂ = 1 (dabei `RA` := 0), Ablageort und Basis der Adressänderung K₂ = 1. Gelesen wird mit dem R-Lesebefehl 251 |
+| 7630 | `kz_rs` | Kennzeicheneingabe: Rückkehrbefehl zum Aufrufer |
+| 7631 | `kz_k1` | Kennzeicheneingabe: K₁ (Wert der Ziffer, 0 bis 15) |
+| 7632 | `kz_k2` | Kennzeicheneingabe: K₂ |
+| 7633 | `kz_k2s` | Kennzeicheneingabe: Wert der K₂-ten Leitadresse (bei K₂ = 0 gleich 0) |
+| 7634 | `kz_a` | Kennzeicheneingabe: akkumulierte Zahl (Wort bzw. Adresse) |
+| 7635 | `kz_d` | Kennzeicheneingabe: zuletzt gelesene Ziffer |
+| 7636 | `kz_z` | Kennzeicheneingabe: Ziffernzähler (Einsen, je Ziffer um 1 Bit nach links; zehn Einsen für elf Ziffern, sieben Einsen für die acht Ziffern der Adresse) |
+| 7640 bis 7677 | `nullspur` | Spur mit ausschließlich Nullen, für Anwenderprogramme gesperrt. `kz_anf`, `ae_anf` und die Druckprogramme löschen sie (441). Auf ihr liegen die Nullzellenketten des Wiederholungsbefehls 616: `nz_12` auf 7644 (12 Linksverschiebungen), `nz_9` auf 7653 (9) und `nz_3` auf 7671 (3) |
+| 7700 bis 7737 | Druckspur | Der Triadendruck, Adressdruck und Befehlsdruck legen mit 440 eine Spur von Einsen auf diese Spur (Adresse 7724, `adr7724`); die GX-Gruppenbefehle laufen über sie (Adresse 7721, `adr7721`). Sie wird bei jedem Druck überschrieben und kann nicht als Arbeitsspur dienen; auch 7723 und 7724 des KEP gehen dabei verloren. Darin liegen die Arbeitszellen 7717 (`td_g`, Gruppenzähler, kein Sektor des GX-Befehls) und 7720 (`td_z`, Zähler der noch zu druckenden Ziffern; Einsen, werden nach links geschoben), die nach dem Anlegen der Einsen gesetzt werden |
+| 7740 | `ae_rs` | Adresseneingabe: Rückkehrbefehl zum Aufrufer |
+| 7741 | `td_rs` | Triadendruck (und damit Adress- und Befehlsdruck): Rückkehrbefehl zum Aufrufer |
+| 7742 | `RA` | Relativadresse, Wert = Adresse · 01000: nach jedem gespeicherten Wort + 01000; K₁ = 2 / K₂ = 0 setzt `RA` := Adresse, K₂ = 1 setzt `RA` := 0. Der Leitbefehl wird aus Hauptleitadresse + `RA` gebaut |
+| 7743 | `dr_rs` | Druck von BZ und AC (Zelle 0001, Code ab 0223): Fortsetzungsbefehl `000 b`, aus dem um 3 Adresseinheiten verminderten AC gebildet; die Routine springt am Ende mit `000 dr_rs` dorthin |
+| 7744 | `dr_ac` | Druck von BZ und AC: gesicherter AC des unterbrochenen Programms (7777 wird vom Druck überschrieben, deshalb zuerst gesichert) |
+| 7760 | `td_z` | Triadendruck (und Adress-/Befehlsdruck): Ziffernzähler; liegt auf Spur 7740, weil die Einsen-Spur 7700 bis 7737 ihn überschriebe |
+| 7773 | `adr7773` | R₁: Übergabezelle der Druckprogramme (Wort vom Aufrufer, bleibt unverändert; s. Tabelle oben) |
+| 7777 | `adr7777` | Transportzelle des Akkumulators; zugleich Arbeitszelle der Druckprogramme (s. Tabelle oben) |
 
-**Freie Zellen.** Alle übrigen 29 Zellen des Arbeitsbereichs sind frei: 7710 bis 7722, 7736, 7737, 7745 bis 7755, 7764, 7766 bis 7772 und 7775. Davon stehen 7710, 7711, 7713,
-7714, 7722, 7737, 7746, 7750, 7753, 7755, 7764 und 7771 in der Liste der festen Zellen unten (nicht mit „Bereichsausschreiben“ ausschreibbar); ihre Verwendung ist noch zu klären,
-sie sind deshalb als Arbeitszellen mit Vorsicht zu wählen. Als freie Zellen ohne diesen Vorbehalt bleiben 7712, 7715, 7716, 7717, 7720, 7721, 7736, 7745, 7747, 7751, 7752, 7754, 7766
-bis 7770, 7772 und 7775. Zu den Beispieltests, die 7700 bis 7737 als Arbeitsspur belegen, s. die Anmerkung (Änderung) unten.
+Das sind 94 vom Minimalprogramm benutzte Zellen des Arbeitsbereichs (22 auf Spur 7600, 32 Nullspur, 32 Druckspur, 8 auf Spur 7740: 7740 bis 7744, 7760, 7773 und 7777). Sie stehen nicht im `.dmp`, denn dort erscheinen nur die Zellen des Programms (v6: 218 Worte auf 0001 und 0040 bis 0377).
+
+**Freie Zellen.** Alle übrigen 34 Zellen des Arbeitsbereichs sind unbenutzt: 7605 bis 7607, 7622 bis 7627, 7637, 7745 bis 7757, 7761 bis 7772 und 7774 bis 7776. Die Zellen 7746, 7750, 7753, 7755, 7764 und 7771 stehen in der Liste der festen Zellen unten (nicht mit „Bereichsausschreiben“ ausschreibbar); ihre Verwendung ist noch zu klären, sie sind deshalb als Arbeitszellen mit Vorsicht zu wählen. Die Zellen der Druckspur 7700 bis 7737 sind nicht frei (s. o.), obwohl der Quelltext sie nur während des Drucks benutzt. Zu den Beispieltests, die 7700 bis 7737 als Arbeitsspur belegen, s. die Anmerkung (Änderung) unten.
 
 Anmerkung (Folgerung aus der Verlegung, nicht aus der Quelle): Die Zelle `dr_rs` lag früher als `db` unmittelbar hinter dem bedingten Stopp
 (`060 0`) und wurde durch Weiterlaufen ausgeführt. Liegt eine solche Zelle im Arbeitsbereich, muss die Routine sie ausdrücklich anspringen
@@ -990,18 +1010,27 @@ wo die Zelle nicht durch Weiterlaufen ausgeführt wurde.
 **Zellen 7554 bis 7563 (Ansprungzellen der anderen Bausteine).** Diese Zellen sind die Speicherplätze der Ansprungzellen der Ausgabe- und
 Eingabebausteine B 4.x, B 2.x und B 5.1 (BIS-2.2.10, BIS-A.2) und gehören nicht dem Minimalprogramm (Angabe des Projektinhabers). Das
 Minimalprogramm liest und beschreibt sie nicht. Seine Arbeitszellen der Ausgabe- und Eingabeunterprogramme (Triadendruck, Befehlsdruck,
-Adressendruck, Adresseneingabe) liegen im Arbeitsbereich auf 7740 bis 7744 und 7756 bis 7760 (Tabelle oben). Ihre Adressen sind absolut und werden
+Adressendruck, Adresseneingabe) liegen im Arbeitsbereich (Tabelle oben). Ihre Adressen sind absolut und werden
 nie verschoben; Zähler und Rückkehrbefehle dort sparen Speicher im Programmbereich (bei Konstanten, die geladen werden müssen, geht das nicht).
 Im Assembler sind sie als `abs`-Symbole definiert.
-
-Anmerkung (Änderung): Die Arbeitszellen lagen zuvor auf 7554 bis 7563 (`okt_z` 7554, `okt_rs` 7555, `bd_rs` 7556, `ad_rs` 7557, `ad_sv` 7560,
-`ae_rs` 7561, `ae_sv` 7562, `ae_z` 7563). Das widersprach der Belegung dieser Spur durch die Ansprungzellen der anderen Bausteine und ist
-damit behoben. Die Wahl der neuen Zellen: Sie liegen im Arbeitsbereich, in keiner Zelle der Liste unten (nicht mit „Bereichsausschreiben“
-ausschreibbar) und nicht in den Zellen 7700 bis 7737, die die Beispieltests `bsp_6_1_*` und `bsp_6_2_1_*` (Ordner `Tests/`) als Arbeitszellen belegen.
 
 Weitere feste Zellen, deren Verwendung noch zu klären ist: Die Quelle nennt die folgenden Zellen als nicht mit „Bereichsausschreiben“
 ausschreibbar: 7645, 7647, 7657, 7660, 7661, 7705, 7706, 7710, 7711, 7713, 7714, 7722, 7723, 7725, 7730, 7731, 7737, 7746, 7750,
 7753, 7755, 7764, 7771, 7773. Anmerkung: Die Liste enthält auch 7773; das ist das Register R₁. Anmerkung (Folgerung, nicht aus der Quelle): Da 7723 (Leitbefehl) in dieser Liste steht, sind die übrigen
 Zellen Kandidaten für Arbeitszellen des Minimalprogramms. Welche davon tatsächlich dazu gehören und wofür, ist noch zu klären.
-Stand im Quelltext: Von den Zellen dieser Liste belegt das Minimalprogramm bereits 7645, 7647, 7657, 7660 und 7661 (Nullspur 7640 bis 7677), 7705 und 7706 (`kz_xw`, `kz_xr`),
-7725, 7730 und 7731 (`la_tab`), 7723 (Leitbefehl des KEP) und 7773 (R₁). Frei sind 7710, 7711, 7713, 7714, 7722, 7737, 7746, 7750, 7753, 7755, 7764 und 7771.
+Stand im Quelltext v6: Von den Zellen dieser Liste belegt das Minimalprogramm 7645, 7647, 7657, 7660 und 7661 (Nullspur 7640 bis 7677) und überschreibt mit dem Druck 7705, 7706, 7710, 7711, 7713, 7714, 7722, 7723, 7725, 7730, 7731 und 7737
+(Druckspur 7700 bis 7737). Frei sind 7746, 7750, 7753, 7755, 7764 und 7771; 7773 (R₁) ist die Übergabezelle der Druckprogramme.
+
+### BIS-A.4 Funktionen des Minimalprogramms v6 (Stand 24.10.2026)
+
+Quelltext `Assembler/Projekt_2/pj2-bis_minimalprogramm_v6.asm`, Code in 0040 bis 0377 (218 Worte). Aufruf der Unterprogramme mit `025 <Ansprungadresse>`, Rückkehr zum Aufrufer. Es gibt kein Hauptprogramm. „Prüfskript“ nennt die Tests (`Tests/…test`, Soll in `Test-Ergebnisvergleiche/`) und das Prüfprogramm (`testscripte/pj2-bis_minimalprogramm_test.sh`: `druck`, `adresse`, `wort`, `progst`; Tests `Tests/v6_test_*.txt`).
+
+| Name | Ansprungadresse | Kurzbeschreibung | Parameterversorgung | Testscript |
+|---|---|---|---|---|
+| Druck BZ und AC (`druck`) | 0001 (Sprung nach 0223) | druckt BZ- und AC-Wort des unterbrochenen Programms in einer Zeile und setzt es fort | AC des Programms in 7777 (`H G Ü E`), BZ am Pult; Tastenfolge `H G Ü E G M+ E M- R`; Kanal K2 wählt der Druck selbst | `pj2-bis_v6_druck_bz_ac`, `_druck_interrupt`, `_druck_interrupt_neu` |
+| Triadendruck (`triadendruck`) | 0200 | 11 Triaden des Wortes, in Gruppen zu 4 Ziffern | Wort in R1 (7773), Kanal K2 vorher angewählt | `v6_test_druck` (Treiber `Tests/v6_test_druck.txt`) |
+| Adressdruck (`adressdruck`) | 0220 | mittlere 4 Triaden (Adressteil) | Wort in R1 (7773), Kanal K2 angewählt | `pj2-bis_v6_druck_adressdruck` |
+| Befehlsdruck (`befehlsdruck`) | 0240 | untere 7 Triaden (Befehl) | Wort in R1 (7773), Kanal K2 angewählt | `pj2-bis_v6_druck_befehlsdruck` |
+| Eingabe Wort mit Kennzeichen (`eingabewortkz`) | 0262 (→ `kz_anf` 0040) | liest K1 K2 und Ziffern bis Schlusszeichen `:`/BM | Eingabekanal vorher angewählt (z. B. `H G K1 R`); Hauptleitadresse mit `2 1 aaaa .`, Relativadresse mit `2 .` bzw. `2 0 aaaa .` vom Band | `pj2-bis_v6_kz_*` (10 Tests), `v6_test_wort`, `v6_worte`, `v6_leitadressen` |
+| Eingabe Programmstück (`eingabeprogst`) | 0263 (→ `kz_anf` 0040) | wie 0262, Wörter fortlaufend ab Hauptleitadresse + RA | wie 0262 | `pj2-bis_v6_ps_*` (13 Tests), `v6_test_progst`, `v6_programmstueck` |
+| Adresseneingabe (`adresseneingabe`) | 0316 (→ `ae_anf` 0044) | liest bis 8 Oktalziffern mit Punkt, Ergebnis im AC (t3 bis t10) | Eingabekanal angewählt; Rückkehr mit Adresse im AC | `pj2-bis_v6_ae_*` (6 Tests), `v6_test_adresse` |

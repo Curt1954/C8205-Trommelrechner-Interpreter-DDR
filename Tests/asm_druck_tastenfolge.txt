@@ -4,6 +4,7 @@ Trommeldatei:
 #DOK-0003 5000: Ausgabe eines Zeichens (030 0520), 5001: Stopp 1111. Der Stopp in 5001 zeigt, dass ab 5000 fortgesetzt wurde.
 --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0001: 00000150000 # 000 druck ; Zelle 0001: Sprung zum Druck von BZ und AC
 0040: 00000320025 # haupt: 025 kzeingabe ; Aufruf Unterprogramm Kennzeicheneingabe
 0041: 00000000020 # 020 0 ; STUB Fortsetzung nach der Rueckkehr

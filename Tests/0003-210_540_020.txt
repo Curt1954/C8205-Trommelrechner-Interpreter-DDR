@@ -2,6 +2,7 @@ Trommeldatei:
 #DOK-0003 Test Ladebefehl und X-Wiederholungs-Speicherbefehl 
 #SPEI-0003 4000-4037
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000211
 0001: 00004001540
 0002: 00000003164

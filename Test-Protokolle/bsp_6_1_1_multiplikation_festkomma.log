@@ -16,6 +16,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Zahlwort Festkomma vorn: Multiplikation positiver Zahlen (Programmieranleitung 6.1.1), Zahlenbeispiel des Buches a=0,110101 b=0,111001 (dual, auf 33 Bit erweitert)
   #DOK-0001 Programm wie im Buch ab Zelle 3000; a=<3007>, b=<3010>, Arbeitsspur 7700; 7700 440 Transport auf alle Zellen, 7700 472 Teilprodukte, 7700 412 Summierung; das exakte Produkt ist 0,101111001101 (dual)
   #DOK-0001 erwartet <AC> = a*b = 27464000000 (oktal), Teilprodukte b(i)*a in den 32 Zellen der Arbeitsspur 7700
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

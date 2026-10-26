@@ -3,6 +3,7 @@ Trommeldatei:
 #SPEI-0017 3716-3717
 #SPEI-0017 7774-7774
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003710000
 3710: 00003717251
 3711: 00007774240

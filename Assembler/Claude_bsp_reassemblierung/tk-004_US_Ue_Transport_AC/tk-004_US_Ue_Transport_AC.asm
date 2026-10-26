@@ -3,6 +3,7 @@
 ; #DOK-0002 Ausgeführt wird BR = 7777 240: ⟨7777⟩ := AC = 00000002000, AC und danach der Befehlsablauf bei BZ = 1 unverändert.
 ; #DOK-0003 Zelle 0001 (Stopp, Adresse 0010) wird entnommen: BZ = 0002, AR = 0010.
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -18,7 +19,9 @@
 ; H G M+ E M- Ü R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=0002 AC=00000002000 AR=0010 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 0001: 00000010020
 ; 7777: 00000002000
+;#PRUEFE-ENDE
 ;

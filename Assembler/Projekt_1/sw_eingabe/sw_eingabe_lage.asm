@@ -1,3 +1,7 @@
+; #DOK-0001
+; #SPEI-0001 0000-0000
+; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
          start  0
 ; sw_eingabe_lage.asm  --  Eingabeprogramm ueber das Schreibwerk (SW) mit Beruecksichtigung der Zeichenlage KB/GB (SW-Eingabe-003)
 ;

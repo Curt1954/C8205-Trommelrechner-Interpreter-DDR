@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0001 Lochbandeingabe von WR (Wagenrücklauf ohne Zeilenschaltung): Eingabeadresse 0052, Lochbild 01001010, keine Sprung-Umstellung
 --leser1 Test-virtuelleGeraete/Leser1/wr-001_wr.txt
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00002000000 # 000 go
 2000: 00004600030 # 030 4600 ; Anwahl Kanal 1 (Leser 1)

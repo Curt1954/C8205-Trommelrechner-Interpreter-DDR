@@ -1,6 +1,6 @@
 ### Befehlslisten ###
 
-Version: 0.95-001
+Version: 0.95-004
 
 Maschinenbefehle, kurz auch nur Befehle genannt, werden bezüglich des Operationsteiles
 BAZ bitweise dekodiert. Das ist die Grundlage der folgenden generischen Befehlsbeschreibung.
@@ -62,6 +62,7 @@ wird der Inhalt des Vergleicher-Flip-Flop-Paares als zweistellige
 Dualzahl aufgefaßt.
 
 *Vergleichsmechanismus (Details zu 4.1.4):*
+
 - Verglichen wird der Akkumulatorinhalt nach Phase III mit einer Größe
   v. Dabei ist v = ⟨a⟩ für Operationsarten A ≤ 3 mit dem Adreßteil a,
   und es ist v = 0 für Operationsarten A ≥ 4.
@@ -327,6 +328,8 @@ Zeile = laut Original identische Wirkung trotz unterschiedlicher
 Bit-Repräsentation.*
 
 *Ein Befehl dieser Liste ist ausführlich durchgerechnet: Nr. 234, Code 520 (GX-Subtraktion), s. „Beispiel: Befehl 520“ am Ende dieses Abschnitts.*
+
+*Hinweis (experimenteller Prototyp C8205Z): Mit dem Aufrufschalter `--C8205Z` bekommen `601` und `661` (in Nr. 67 „Leer-Operation mit Löschen“) und `5k00 030` eine Wirkung; siehe Abschnitt „Befehle der Zusatztrommeln (experimenteller Prototyp C8205Z)“ am Ende dieses Abschnitts. Ohne den Schalter gilt diese Liste unverändert.*
 
 | Nr. | Code(s) (oktal, B-A-Z) | Original-Beschreibung |
 |---|---|---|
@@ -838,3 +841,107 @@ nur als Datenwort dient.
 - **Gültigkeitsbereich:** Der beschriebene Ablauf gilt für Spuren mit lauter Einsen und 0 ≤ d ≤ 30. Wird der AC erst in
   der letzten Zelle der Spur (der 32.) negativ (d = 31) oder innerhalb der Spur gar nicht (d > 31), gilt die normale
   Abbruchbedingung (Vorrang, 4.1.6), und die Entnahme erfolgt wie beim G-Befehl.
+
+#
+## Befehle der Zusatztrommeln (experimenteller Prototyp C8205Z)
+
+Nur mit dem Schalter `--C8205Z` (Interpreter TEST und GRAFIK); sie sind kein Teil der Original-Quelle der Liste oben. `zzz0` sind die oberen vier Oktalziffern des Befehlswortes (nur die Spur `(zzz0 >> 5) & 0x7F` wirkt), `bbbb` ist die Haupttrommelspur im Adressteil.
+
+| Befehl | Wirkung | Ohne `--C8205Z` |
+|---|---|---|
+| `5k00 030` (k = 1 bis 4) | Anwahl der Zusatztrommel k, gilt bis zur nächsten Anwahl | Ausgabe-Halt ohne Löschen (Nr. 20) bzw. Stub |
+| `zzz0 bbbb 601` | Ausgabe: Haupttrommelspur bbbb → Spur zzz0 der gewählten Zusatztrommel (ganze Spur, 32 Worte, Sektor i auf Sektor i) | Leer-Operation mit Löschen (Nr. 67) |
+| `zzz0 bbbb 661` | Eingabe: Spur zzz0 der gewählten Zusatztrommel → Haupttrommelspur bbbb | Leer-Operation mit Löschen (Nr. 67) |
+
+Ohne Anwahl: Halt mit Flag A (601) bzw. E (661). Zeit: 0 in TEST, in GRAFIK rund 81 bis 86 ms je Befehl. Wiederholungsbefehl: W, B = 6. Einzelheiten: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`, `C8205-Interpreter-Python_Interpreter.md` (Schalterzeile), `C8205-Interpreter-GRAFIK_Beschreibung.md` §7.10.
+
+## Tabellen der zeitoptimalen Sektoren
+#
+
+Die Programmieranleitung (5.19) enthält Nachschlagetabellen dazu. Sie sind
+hier aus den Abständen in "C8205-Interpreter-Überblick_und_Gesamtaufbau.md", Abschnitt 5.1, neu berechnet (Skript `Hilfsprogramme/zeitoptimal_tabelle.py`, abgeleitet) und gegen
+Stichproben des Seitenabbilds geprüft (Zeilen A = 00, 06, 17 und 37 sowie die ganze Spalte F). Alle Sektornummern
+sind oktal, E ist dezimal. Die Spalten bedeuten:
+
+- **A:** Sektornummer der Befehlsadresse.
+- **B:** Sektornummern der Operanden, die bei Einzelbefehlen zeitoptimal greifbar sind (A+07 und A+32).
+- **C:** dasselbe bei Gruppen-, Wiederholungs- und verkürzten Gruppen- oder Wiederholungsbefehlen (A+07, A+24, A+32).
+- **D:** Sektornummern der Zieladressen von Sprungbefehlen mit keiner Wartezeit (D 0, A+24) oder geringer Wartezeit
+  (D 1 bis D 5: 1 bis 5 Wortzeiten).
+- **E:** Anzahl der Operationen eines Wiederholungsbefehls.
+- **F:** Sektornummer der Adresse, in der der Wiederholungsbefehl steht (abgeleitet: bei E Operationen liegt F
+  um E Positionen vor Sektor 00).
+
+Sektoren A bis D:
+
+| A | B +07 | B +32 | C +07 | C +24 | C +32 | D 0 | D 1 | D 2 | D 3 | D 4 | D 5 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 00 | 07 | 32 | 07 | 24 | 32 | 24 | 01 | 16 | 33 | 10 | 25 |
+| 01 | 10 | 33 | 10 | 25 | 33 | 25 | 02 | 17 | 34 | 11 | 26 |
+| 02 | 11 | 34 | 11 | 26 | 34 | 26 | 03 | 20 | 35 | 12 | 27 |
+| 03 | 12 | 35 | 12 | 27 | 35 | 27 | 04 | 21 | 36 | 13 | 30 |
+| 04 | 13 | 36 | 13 | 30 | 36 | 30 | 05 | 22 | 37 | 14 | 31 |
+| 05 | 14 | 37 | 14 | 31 | 37 | 31 | 06 | 23 | 00 | 15 | 32 |
+| 06 | 15 | 00 | 15 | 32 | 00 | 32 | 07 | 24 | 01 | 16 | 33 |
+| 07 | 16 | 01 | 16 | 33 | 01 | 33 | 10 | 25 | 02 | 17 | 34 |
+| 10 | 17 | 02 | 17 | 34 | 02 | 34 | 11 | 26 | 03 | 20 | 35 |
+| 11 | 20 | 03 | 20 | 35 | 03 | 35 | 12 | 27 | 04 | 21 | 36 |
+| 12 | 21 | 04 | 21 | 36 | 04 | 36 | 13 | 30 | 05 | 22 | 37 |
+| 13 | 22 | 05 | 22 | 37 | 05 | 37 | 14 | 31 | 06 | 23 | 00 |
+| 14 | 23 | 06 | 23 | 00 | 06 | 00 | 15 | 32 | 07 | 24 | 01 |
+| 15 | 24 | 07 | 24 | 01 | 07 | 01 | 16 | 33 | 10 | 25 | 02 |
+| 16 | 25 | 10 | 25 | 02 | 10 | 02 | 17 | 34 | 11 | 26 | 03 |
+| 17 | 26 | 11 | 26 | 03 | 11 | 03 | 20 | 35 | 12 | 27 | 04 |
+| 20 | 27 | 12 | 27 | 04 | 12 | 04 | 21 | 36 | 13 | 30 | 05 |
+| 21 | 30 | 13 | 30 | 05 | 13 | 05 | 22 | 37 | 14 | 31 | 06 |
+| 22 | 31 | 14 | 31 | 06 | 14 | 06 | 23 | 00 | 15 | 32 | 07 |
+| 23 | 32 | 15 | 32 | 07 | 15 | 07 | 24 | 01 | 16 | 33 | 10 |
+| 24 | 33 | 16 | 33 | 10 | 16 | 10 | 25 | 02 | 17 | 34 | 11 |
+| 25 | 34 | 17 | 34 | 11 | 17 | 11 | 26 | 03 | 20 | 35 | 12 |
+| 26 | 35 | 20 | 35 | 12 | 20 | 12 | 27 | 04 | 21 | 36 | 13 |
+| 27 | 36 | 21 | 36 | 13 | 21 | 13 | 30 | 05 | 22 | 37 | 14 |
+| 30 | 37 | 22 | 37 | 14 | 22 | 14 | 31 | 06 | 23 | 00 | 15 |
+| 31 | 00 | 23 | 00 | 15 | 23 | 15 | 32 | 07 | 24 | 01 | 16 |
+| 32 | 01 | 24 | 01 | 16 | 24 | 16 | 33 | 10 | 25 | 02 | 17 |
+| 33 | 02 | 25 | 02 | 17 | 25 | 17 | 34 | 11 | 26 | 03 | 20 |
+| 34 | 03 | 26 | 03 | 20 | 26 | 20 | 35 | 12 | 27 | 04 | 21 |
+| 35 | 04 | 27 | 04 | 21 | 27 | 21 | 36 | 13 | 30 | 05 | 22 |
+| 36 | 05 | 30 | 05 | 22 | 30 | 22 | 37 | 14 | 31 | 06 | 23 |
+| 37 | 06 | 31 | 06 | 23 | 31 | 23 | 00 | 15 | 32 | 07 | 24 |
+
+Anzahl der Operationen und Sektor des Wiederholungsbefehls (E, F):
+
+| E | F |
+|---|---|
+| 32 | 00 |
+| 31 | 15 |
+| 30 | 32 |
+| 29 | 07 |
+| 28 | 24 |
+| 27 | 01 |
+| 26 | 16 |
+| 25 | 33 |
+| 24 | 10 |
+| 23 | 25 |
+| 22 | 02 |
+| 21 | 17 |
+| 20 | 34 |
+| 19 | 11 |
+| 18 | 26 |
+| 17 | 03 |
+| 16 | 20 |
+| 15 | 35 |
+| 14 | 12 |
+| 13 | 27 |
+| 12 | 04 |
+| 11 | 21 |
+| 10 | 36 |
+| 9 | 13 |
+| 8 | 30 |
+| 7 | 05 |
+| 6 | 22 |
+| 5 | 37 |
+| 4 | 14 |
+| 3 | 31 |
+| 2 | 06 |
+| 1 | 23 |

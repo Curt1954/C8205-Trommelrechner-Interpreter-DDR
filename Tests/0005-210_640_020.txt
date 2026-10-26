@@ -3,6 +3,7 @@ Trommeldatei:
 #SPEI-0005 4000-4037
 #SPUR-0005 4000
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000211
 0001: 00004001640
 0002: 00000005164

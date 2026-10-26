@@ -36,6 +36,70 @@ static int istTestVorspannText(const char *t) {
     return 0;
 }
 
+// Prueft, ob der Text t (hinter ';' und Leerraum) mit der Marke m als ganzem Wort beginnt.
+static int beginntMitMarke(const char *t, const char *m) {
+    size_t n = strlen(m);
+    if (strncmp(t, m, n) != 0) return 0;
+    char c = t[n];
+    return (c == '\0' || c == ' ' || c == '\t' || c == '\r' || c == '\n');
+}
+
+// Nachspann der .test-Datei (Abschnitt "Pruefungen:"): Die Kommentarzeilen zwischen ";#PRUEFE-START" und
+// ";#PRUEFE-ENDE" des Quelltextes werden ohne das fuehrende ';' (und den Leerraum dahinter) in der
+// Reihenfolge des Quelltextes angehaengt. Die beiden Marken selbst werden nicht uebernommen; davor steht
+// die Zeile "Pruefungen:". Zeilen im Bereich ohne fuehrendes ';' (Befehle) und Zeilen, die danach leer
+// sind, werden uebergangen. Mehrere Bereiche ergeben einen gemeinsamen Abschnitt. Fehlt das Ende, gilt der
+// Bereich nicht (Warnung); ein Ende ohne Start wird gemeldet und ignoriert. Ohne Marke entsteht kein Abschnitt.
+static void schreibePruefungen(FILE *testFile) {
+    FILE *quelle = fopen(inputFileName, "r");
+    if (!quelle) return;
+    char zeile[2048];
+    char *gesammelt = NULL;      // Zeilen des laufenden Bereichs
+    size_t gesLen = 0;
+    int inBereich = 0, startZeile = 0, zeilenNr = 0, abschnittOffen = 0;
+    while (fgets(zeile, sizeof(zeile), quelle)) {
+        zeilenNr++;
+        if (strchr(zeile, '\n') == NULL && !feof(quelle)) {
+            int c;
+            while ((c = fgetc(quelle)) != EOF && c != '\n') { }
+            continue;            // zu lange Zeile: keine Pruefzeile
+        }
+        const char *p = zeile;
+        while (*p == ' ' || *p == '\t') p++;
+        if (*p != ';') continue;
+        p++;
+        while (*p == ' ' || *p == '\t') p++;
+        if (beginntMitMarke(p, "#PRUEFE-START")) {
+            if (inBereich) PRINT_WARNUNG("%s:%d: ;#PRUEFE-START innerhalb eines Pruefbereichs (Start in Zeile %d) wird ignoriert", inputFileName, zeilenNr, startZeile);
+            else { inBereich = 1; startZeile = zeilenNr; gesLen = 0; if (gesammelt) gesammelt[0] = '\0'; }
+            continue;
+        }
+        if (beginntMitMarke(p, "#PRUEFE-ENDE")) {
+            if (!inBereich) { PRINT_WARNUNG("%s:%d: ;#PRUEFE-ENDE ohne ;#PRUEFE-START wird ignoriert", inputFileName, zeilenNr); continue; }
+            inBereich = 0;
+            if (gesammelt && gesLen > 0) {
+                if (!abschnittOffen) { fprintf(testFile, "Pr\xC3\xBC" "fungen:\n"); abschnittOffen = 1; }
+                fputs(gesammelt, testFile);
+            }
+            continue;
+        }
+        if (!inBereich) continue;
+        size_t len = strlen(p);
+        while (len > 0 && (p[len-1] == '\n' || p[len-1] == '\r' || p[len-1] == ' ' || p[len-1] == '\t')) len--;
+        if (len == 0) continue;
+        char *neu = realloc(gesammelt, gesLen + len + 2);
+        if (!neu) { free(gesammelt); fclose(quelle); PRINT_FEHLER("%s", "Speicher fuer die Pruefzeilen fehlt."); return; }
+        gesammelt = neu;
+        memcpy(gesammelt + gesLen, p, len);
+        gesLen += len;
+        gesammelt[gesLen++] = '\n';
+        gesammelt[gesLen] = '\0';
+    }
+    if (inBereich) PRINT_WARNUNG("%s:%d: ;#PRUEFE-START ohne ;#PRUEFE-ENDE, die Pruefzeilen werden nicht uebernommen", inputFileName, startZeile);
+    free(gesammelt);
+    fclose(quelle);
+}
+
 void erzeugeTestDatei(lineElementsX lineAsmAufgeloest_p[], int lineCountAsmAufgeloest_p, const char *testFileName) {
     FILE *testFile = fopen(testFileName, "w");
     if (!testFile) {
@@ -162,6 +226,9 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest_p[], int lineCountAsmAufge
         fprintf(testFile, "Tastenfolge:\n");
         fprintf(testFile, "H G R\n");
     }
+
+    // Nachspann: Abschnitt "Pruefungen:" aus ;#PRUEFE-START ... ;#PRUEFE-ENDE (Dokumentation 3.1c)
+    schreibePruefungen(testFile);
 
     fclose(testFile);
 }

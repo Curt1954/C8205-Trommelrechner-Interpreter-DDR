@@ -9,6 +9,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   2001: 00000000020
   3000: 00000000100
   3001: 00000000045
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #INTERRUPT nach Befehl 0001: H G Ü E
   #PROT STUFE=2
 Tastenfolge: H G R

@@ -1,7 +1,8 @@
                       241                   i                     ; i löschen, damit Programm mehrfach gestartet werden kann.
                       dz                    $ingb                 ; TESTanweisung
-                      211                   len0                  ; Lade len0 in AC und 1x Linksverschiebung
-                      644                   07721                 ; 9 mal Linksverschiebung
+                      441                   nullspur              ; Nullspur selbst bereitstellen: alle 32 Zellen der Spur 0200 mit 0 füllen (löscht auch AC)
+                      211                   len0                  ; Lade len0 in AC (keine Verschiebung)
+                      644                   00213                 ; 9 mal Linksverschiebung
                       240                   len                   
                       000                   firstEntry            
 loop1:                211                   i                     ; Lade i
@@ -58,24 +59,27 @@ ML0002PWD:            dw                    0                     ; Hier steht d
                       211                   tmp_element           ; Lade von Hilfsspeicherplatz:        211 tmp_element
 ML0001PWD:            dw                    0                     ; Hier steht der Speicherbefehl für   240 afeld_base[min_index]
                       000                   loop1                 ; nächster Durchlauf Schleife 1
-                      605                   00005                 ; 5 mal Linksverschiebung
+                      605                   00037                 ; 5 mal Linksverschiebung
                       equ100                00100                     
 len0:                 dw                    feld_ende-feld_base   ; Anzahl der Elemente im Array
 len:                  db                    1                     ; Länge des Array in Adreßeinheiten umgerechnet
 ausgabe:              030                   04500                 ; 4500 oder K2 oder LSL2 oder SW1 Output
+                      dz                    $inkb                 ; Schreibwerk auf Kleinbuchstabenlage (KB) umschalten; TEST hat es mit $ingb auf GB gestellt
 feld_base:            dto                   4172k0                ; Startelement des Arrays, alles Kleinbuchstaben-Ausgabebefehle
 ; 
 ; 
 ; 
 ; 
 ; 
-feld_ende:            equ                   00111                     
+feld_ende:            equ                   00112                     
                       020                                         ; Programm-Ende, Halt-Befehl
 afeld_base:           da                    feld_base             ; Speichert die echte Adresse des Arrays
 i:                    db                    1                     ; Laufvariable für äußere Schleife, Anfangswert
 j:                    db                    1                     ; Laufvariable für innere Schleife, wird immer berechnet
 min_index:            db                    1                     ; Temporärer Speicher für das Minimum, wird immer berechnet
 tmp_element:          db                    1                     ; Hilfsspeicherplatz für ein Arrayelement beim swap
+                      equ40                 00200                  
+nullspur:             db                    32                    ; wird zu Programmbeginn mit 441 gelöscht
 l0001                 dw                    000000001000          
 l0002                 dw                    000000000211          
 l0003                 dw                    000000000330          

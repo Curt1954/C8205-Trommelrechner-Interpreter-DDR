@@ -9,7 +9,7 @@ if [ -z "$layout_script" ]; then
 fi
 shift
 
-# Skript in irgendeinem Ordner pdf-layout-scripte suchen (PDF/, BIS, Assembler, CSV)
+# Skript in irgendeinem Ordner pdf-layout-scripte suchen (PDF/, BIS, Assembler, Testausfuehrungen)
 pfad=$(find . -path "*/pdf-layout-scripte/$layout_script" -print -quit)
 if [ -z "$pfad" ]; then
    echo "Skript $layout_script nicht in einem Ordner pdf-layout-scripte gefunden"

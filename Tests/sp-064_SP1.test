@@ -1,0 +1,12 @@
+Trommeldatei:
+#PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
+0000: 00003000211 # 211 d3000
+0001: 00000010064 # 064 m0010
+0002: 00000000020 # 020 0
+0010: 00000000020 # m0010: 020 0
+3000: 00000000005 # d3000: dw 05
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011 AC=00000002012 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

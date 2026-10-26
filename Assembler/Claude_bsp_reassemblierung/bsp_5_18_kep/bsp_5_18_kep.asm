@@ -4,6 +4,7 @@
 ; #SPEI-0001 3000-3004
 ; #SPEI-0001 7723-7724
 ; #PROT STUFE=2
+; #TROMMEL=LEER                  # Trommel vor dem Test leeren, danach Abschnitt Trommeldatei: (sonst erbt der Test den Stand frueherer Laeufe)
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -44,6 +45,7 @@ d7724:          abs     07724
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3002 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 00000001164
 ; 3001: 00000000020
@@ -52,4 +54,5 @@ d7724:          abs     07724
 ; 3004: 52525252525
 ; 7723: 00003000000
 ; 7724: 00000014000
+;#PRUEFE-ENDE
 ;

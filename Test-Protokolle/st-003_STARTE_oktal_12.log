@@ -6,6 +6,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0013: 00000000020
   3000: 00000000100
   #DOK-0001 #STARTE 12 (oktal) = 10 mal E: Ansprung des Speicherplatzes 12 (oktal)
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
   #STARTE 0012 (Makro: H G M+ 10x E M- R, E 10-mal = dezimal)
 Tastenfolge: (aus #STARTE erzeugt)

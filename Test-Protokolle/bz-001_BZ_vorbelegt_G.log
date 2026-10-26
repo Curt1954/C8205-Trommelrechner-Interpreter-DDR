@@ -8,6 +8,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 #BZ=0100 setzt den Anfangs-BZ vor der ersten Taste. Die danach abgearbeitete Taste G wirkt wie bisher: BZ := 0.
   #DOK-0002 H G R beginnt daher bei Zelle 0000 (Stopp 020), nicht bei 0100.
   #BZ=0100
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

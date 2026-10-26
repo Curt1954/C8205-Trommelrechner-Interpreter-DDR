@@ -3,6 +3,8 @@ Test bsp_6_3_3_ordnen_tausch
 == 1. Ausgangsbedingungen ==
 Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0000: 00003002000
+  3000: 21300000000
+  3001: 61740000000
   3002: 00003000215
   3003: 00003006642
   3004: 00003001215
@@ -16,12 +18,12 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3015: 00003006211
   3016: 00003001240
   3017: 00003002020
-  3000: 21300000000
-  3001: 61740000000
   #DOK-0001 Gleitkommazahlen (Programmieranleitung 6.3): Ordnen eines Zahlenpaares nach dem Betrag (6.3.3), |b|>|a|, Tausch
   #DOK-0001 Format: z0 = Vorzeichen der Mantisse, z1...z6 = Maschinenexponent e'=e+32, z7...z32 = Mantissenbetrag m1...m26 (0,5 <= |m| < 1); z = m*2^e
-  #DOK-0001 Programm wie im Buch ab Zelle 3002; a=<3000>, b=<3001>; der Betragsvergleich |b|<=|a| ist als Ganzzahlvergleich der Betraege moeglich (Exponent steht vor der Mantisse, z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und 3023 (Sektor 06 und 23 liegen physisch nebeneinander)
+  #DOK-0001 Programm wie im Buch ab Zelle 3002; a=<3000>, b=<3001>; der Betragsvergleich |b|<=|a| ist als Ganzzahlvergleich der Betraege moeglich (Exponent steht vor der Mantisse,
+  #DOK-0001 z0=0 nach Rechtsverschiebung); der Wiederholungsbefehl 3006 642 wirkt auf die Zellen 3006 und 3023 (Sektor 06 und 23 liegen physisch nebeneinander)
   #DOK-0001 erwartet: Tausch (|b|>|a|); <3000> = 61740000000, <3001> = 21300000000, V1=0 V2=1, <AC> = 21300000000
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

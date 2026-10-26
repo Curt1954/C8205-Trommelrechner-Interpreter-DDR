@@ -4,6 +4,7 @@ Trommeldatei:
 #SPEI-0001 3000-3002
 #SPEI-0001 3003-3007
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003003000 # 000 3003 ; Sprung zum Programmbeginn der Aufgabe in Zelle 3003
 # Datenbereich der Aufgabe

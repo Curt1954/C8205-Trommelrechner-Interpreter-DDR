@@ -26,3 +26,12 @@ b:              dw      044
                 end
 t:              abs     07774           ; Ergebnis t
 stoppnr:        abs     01111           ; Stoppnummer
+
+; Sollwerte von Hand hergeleitet. ggT(48, 36) = 12 = 014 oktal; Stopp 021 löscht AC, AR = Stoppnummer 1111.
+;#PRUEFE-START
+; BZ=3015 AC=00000000000 AR=1111 US=1
+; 3015: 00000000014   # c (zuletzt a-b = 12)
+; 3020: 00000000014   # a
+; 3021: 00000000014   # b
+; 7774: 00000000014   # t = ggT
+;#PRUEFE-ENDE

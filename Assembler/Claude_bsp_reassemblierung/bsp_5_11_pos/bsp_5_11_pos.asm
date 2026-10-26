@@ -3,6 +3,7 @@
 ; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe
 ; #SPEI-0001 3000-3000
 ; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ; Automatisch vergebene Symbole (Zahl = Adresse im Original): m = Befehlszelle/Sprungziel, d = Daten-/Arbeitszelle, t = Textzelle; Symbole
 ;   ohne Zelle im Programm sind am Ende per abs definiert.
 
@@ -26,7 +27,9 @@ m3010:          020     0                        ; unbedingter Stop
 ; H G R
 ;
 ; Prüfungen:
+;#PRUEFE-START
 ; BZ=3011 AC=00000000005 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0
 ; 3000: 00000000005
 ; --pruefe-sw-ausgabe bsp_5_11_pos-sw-ausgabe.txt
+;#PRUEFE-ENDE
 ;

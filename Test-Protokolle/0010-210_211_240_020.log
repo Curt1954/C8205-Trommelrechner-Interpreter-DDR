@@ -20,6 +20,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0010 Test Unbedingter Sprung, Ladebefehl und Addition und Speicherbefehl
   #SPEI-0010 3777-4001
   #SPEI-0010 5001-5002
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

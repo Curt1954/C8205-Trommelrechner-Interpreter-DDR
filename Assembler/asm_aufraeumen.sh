@@ -7,15 +7,17 @@
 #          ./asm_aufraeumen.sh --loeschen   tatsächlich löschen
 #
 # Das Skript gehört in den Ordner Assembler/ und arbeitet nur unterhalb davon.
-# Nicht angefasst werden Dokumentation/, Sourcecode/, _Linux/ und _Windows/.
+# Nicht angefasst werden Dokumentation/, Regressionstest/ (dort sind .log, .mqo, .obj, .sym
+# die Referenz!), Sourcecode/, _Linux/ und _Windows/.
 # Der Assembler legt die Dateien bei jedem Lauf neu an; nichts geht dauerhaft verloren.
 
 cd "$(dirname "$0")" || exit 1
 
 treffer() {
     find . -type f \
-        \( -name '*.log' -o -name '*.mqo' -o -name '*.obj' -o -name '*.sym' \) \
+        \( -name '*.log' -o -name '*.mqo' -o -name '*.obj' -o -name '*.sym'  -o -name '*.test' -o -name '*.dmp' \) \
         -not -path './Dokumentation/*' \
+        -not -path './Regressionstest/*' \
         -not -path './Sourcecode/*' \
         -not -path './_Linux/*' \
         -not -path './_Windows/*'

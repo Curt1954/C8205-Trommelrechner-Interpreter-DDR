@@ -7,6 +7,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0002: 00000000020
   0010: 00000000020
   3000: 00000000005
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: SP=1 H G R
   SP : Schalter SP gedrueckt (eingerastet) -> Flag SP := 1

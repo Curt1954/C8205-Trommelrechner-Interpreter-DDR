@@ -1,3 +1,4 @@
+; Negativtest: absichtlicher Fehler, Makro DOPPELT wird zweimal definiert (Rueckgabewert 16 erwartet)
         start
 DOPPELT: MACRO
         dz  $ingb

@@ -3,6 +3,7 @@ Trommeldatei:
 #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<3007>, a=<3010>, Maske <3011>=3777 7777 777, Arbeitsspur 7700; der Verfahrensfehler ist stets negativ und kleiner als 2^-27
 #DOK-0001 erwartet <AC> = x*a = 25761027721 (oktal), Verfahrensfehler stets negativ, kleiner als 2^-27
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang der Aufgabe (Programm beginnt in Zelle 3000)
 # Programm 6.1.2; Arbeitsspur 7700 (die Zellen der Spur werden vom Gruppenbefehl beschrieben)

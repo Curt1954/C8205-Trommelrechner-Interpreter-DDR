@@ -3,9 +3,6 @@ Test bsp_5_15_lochband_druck
 == 1. Ausgangsbedingungen ==
 Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   0000: 00003100000
-  3100: 00004500030
-  3101: 00001170030
-  3102: 00003014000
   3000: 00000200030
   3001: 00000010030
   3002: 00000020030
@@ -29,12 +26,16 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   3033: 00003015000
   3040: 00001000030
   3041: 00003015000
+  3061: 00000000020
   3073: 00001530030
   3074: 00003015000
   3075: 00001550030
   3076: 00003015000
-  3061: 00000000020
+  3100: 00004500030
+  3101: 00001170030
+  3102: 00003014000
   #DOK-0001 Abdruck numerischer Texte vom Lochband im R 300-Code (Programmieranleitung 5.15), Leser 2 -> Schreibwerk
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

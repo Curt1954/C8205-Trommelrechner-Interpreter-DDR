@@ -1,6 +1,7 @@
 Trommeldatei:
 #DOK-0011 Test Unbedingter Sprung, Ladebefehl und Addition Subtraktion und Speicherbefehl
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 0000: 00003000000 # 000 m3000
 3000: 00003014211 # m3000: 211 d3014
 3001: 00003015220 # 220 d3015
@@ -19,3 +20,5 @@ Trommeldatei:
 3021: 00000000030 # d3021: dw 030
 Tastenfolge:
 H G R
+Prüfungen:
+BZ=3011 AC=00000000000 AR=0000 FE=0 FUE=0 BS=0 US=1 E=0 A=0 V1=0 V2=0

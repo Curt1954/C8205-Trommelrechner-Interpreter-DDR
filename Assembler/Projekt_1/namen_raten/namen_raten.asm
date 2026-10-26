@@ -1,3 +1,7 @@
+; #DOK-0001
+; #SPEI-0001 0000-0000
+; #PROT STUFE=2
+; #TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 ;#; LEITADRESSE 00   ; absolut geschrieben: zum Laden ueber das KEP (--ABSPR) werden keine Adressen umgerechnet
          start
 ; namen_raten.asm  --  Ratespiel "Rate mal, welchen Namen ich mir gemerkt habe" ueber das Schreibwerk (SW)

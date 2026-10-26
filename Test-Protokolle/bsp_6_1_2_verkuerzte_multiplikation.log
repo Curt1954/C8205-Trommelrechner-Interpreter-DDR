@@ -16,6 +16,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Zahlwort Festkomma vorn: verkuerzte Multiplikation positiver Zahlen (Programmieranleitung 6.1.2), Zahlenbeispiel des Buches a=0,110101 x=0,111001 (dual, auf 33 Bit erweitert)
   #DOK-0001 Programm wie im Buch ab Zelle 3000; x=<3007>, a=<3010>, Maske <3011>=3777 7777 777, Arbeitsspur 7700; 7700 440 Speicherung von x, 7700 462 Ausblendung der Teilprodukte, 7700 432 Abbau von a und Aufbau des Produkts
   #DOK-0001 erwartet <AC> = x*a = 27464000000 (oktal), Verfahrensfehler stets negativ, kleiner als 2^-27
+  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

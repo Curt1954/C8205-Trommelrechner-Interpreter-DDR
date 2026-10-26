@@ -1,0 +1,9 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000002000 # 000 daten
+0001: 00000002211 # 211 daten
+0002: 00000000005 # daten: dw 5
+Tastenfolge:
+H G R

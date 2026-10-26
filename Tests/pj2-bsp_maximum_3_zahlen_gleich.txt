@@ -3,6 +3,7 @@ Trommeldatei:
 # Programmladeadresse (Kennzeichen 01) = 3000, Datenladeadresse (Kennzeichen 02) = 3020; Kennzeichen 00 = absolut
 # Fall: a=b=c, alle Vergleiche gleich (Vergleicher 3); a=00000000200 b=00000000200 c=00000000200
 #PROT STUFE=2
+#TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich
 
 0000: 00003000000 # 000 3000 ; Sprung zum Programmanfang
 3000: 00003020211 # 0000 02 0 211. ; M:=a

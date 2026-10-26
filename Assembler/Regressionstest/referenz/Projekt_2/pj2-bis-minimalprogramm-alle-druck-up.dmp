@@ -1,0 +1,19 @@
+      20 0000 2000          equ 02000        
+2000: 00 4500 030    haupt: 030 04500        ; Schreibwerk SW1 als Ausgabe anwaehlen
+      00 1170 030           dz  $inkb        ; Zeichenlage Kleinbuchstaben (beim Start zufaellig)
+2002: 01 2017 211           211 k_adr        ; AC := Wort fuer den Adressdruck
+2003: 00 7773 240           240 adr7773      ; Uebergabe in R1
+2004: 00 0220 025           025 adressdruck  ; Adressdruck
+      00 2720 030           dz  $wrzl        ; Zeilenschaltung
+2006: 01 2020 211           211 k_bef        ; AC := Wort fuer den Befehlsdruck
+2007: 00 7773 240           240 adr7773      
+2010: 00 0240 025           025 befehlsdruck ; Befehlsdruck
+      00 2720 030           dz  $wrzl        
+2012: 01 2021 211           211 k_tri        ; AC := Wort fuer den Triadendruck
+2013: 00 7773 240           240 adr7773      
+2014: 00 0200 025           025 triadendruck ; Triadendruck
+      00 2720 030           dz  $wrzl        
+2016: 01 0000 020           020 0            ; unbedingter Stopp
+2017: 00 01234567012 k_adr: dw  01234567012  ; Adressdruck: Ziffern 5 bis 8 = 4567
+2020: 00 03210765432 k_bef: dw  03210765432  ; Befehlsdruck: Ziffern 5 bis 11 = 0765 432
+2021: 00 07654321065 k_tri: dw  07654321065  ; Triadendruck: alle Ziffern = 0765 4321 065

@@ -9,12 +9,13 @@ schreibt ihn als Text in einem scrollbaren Fenster aus. Das Fenster entspricht d
 --SW-TERMINAL (Tkinter, 130 x 36 Zeichen, Standardposition rechts unten), bleibt aber offen, bis es mit X
 geschlossen wird, und hat eine Bildlaufleiste.
 
-Aufruf:  python3 c8205_lochstreifen_anzeige.py --LS-LESER PFAD [--lage KB|GB] [--text]
+Aufruf:  python3 c8205_lochstreifen_anzeige.py --LS-LESER PFAD [--lage KB|GB] [--text] [--roh]
          --LS-LESER PFAD   virtueller Lochstreifen: Datei oder Verzeichnis (wie bei --leser1/--leser2 des
                            Interpreters; bei einem Verzeichnis werden alle Dateien ausser Dateien mit fuehrendem
                            Punkt in Namensreihenfolge hintereinander gelesen)
          --lage KB|GB      Zeichenlage am Anfang (Vorgabe KB, wie beim Rechner nach dem Einschalten)
          --text            Ausgabe auf dem Terminal statt im Fenster (auch Rueckfall, wenn kein Fenster moeglich ist)
+         --roh, --dual     keine Aufbereitung der KEP- und Objektstreifen (siehe unten): Zeichen unveraendert in einer Zeile
          --debug           Diagnose: Tasten, Mausereignisse und Kopiervorgaenge auf der Fehlerausgabe (Terminal)
 
 Darstellung (Kodetabelle 1, Spalte "Ausgabe-Adresse"; Darstellung der Zeichen wie beim Schreibwerk des Interpreters):
@@ -24,6 +25,14 @@ Darstellung (Kodetabelle 1, Spalte "Ausgabe-Adresse"; Darstellung der Zeichen wi
     (Satz); beide erscheinen nicht als Marke. Ein Zeilenumbruch wird dadurch nie zurueckgenommen.
   * Sonstige Zeichen ohne Entsprechung als druckbares Zeichen erscheinen als Marke, z. B. <Transport (Relikt)>.
     SatzMarke/WRZL ergibt einen Zeilenumbruch, Tabulator einen Tabulator, Leertaste/ZR ein Leerzeichen.
+  * KEP-Lochstreifen (der ganze Streifen besteht nur aus den Zeichen 0 1 : .): Standardausgabe oktal. Jedes Wort
+    (Dualziffern bis zum naechsten . oder :) wird rechtsbuendig in Oktalziffern umgesetzt (links mit Nullen auf ein
+    Vielfaches von 3 Bit aufgefuellt), danach folgt eine Zeilenschaltung: je Zeile ein Wort, z. B. 10100000: -> 240:
+    (Leitbefehl 240 mit Adresse 0), 10110010010100000: -> 262240:. Mit --roh (= --dual) bleibt die Ausgabe wie bisher
+    (Dualziffern, ohne Zeilenschaltung).
+  * BIS-Objektstreifen (.obj des Assemblers: nur Ziffern und . : /, mit mindestens einem /): die Ziffern stehen
+    schon oktal; es folgt nur eine Zeilenschaltung nach jedem . und :. --roh gibt alles in einer Zeile aus.
+    Streifen mit anderen Zeichen und Fehlermarken bleiben unveraendert.
   * Zeilen ohne Datenlochung (Vorspann) werden ueberlesen.
   * Zeilen mit gerader Zahl gelochter Spuren (ausser "Irrung Zeichen", alle 8 Spuren) sind kein gueltiges Zeichen:
     Marke <Paritaetsfehler 01010101> (rot). Zeilen, die keine 8 Zeichen 0/1 sind, erscheinen als
@@ -33,7 +42,7 @@ import argparse
 import os
 import sys
 
-VERSION = '1.9'   # 1.9: Um. KB/Um. GB werden nicht mehr ausgegeben (wirken nur), Irrung Zeichen/Satz loeschen im Text; 1.8: unter X11 zuerst xsel, dann xclip; 1.7: Option --zwischenablage auto|tk|system; 1.6: xclip wieder mit -t UTF8_STRING (VM-Abgleich uebernimmt sonst nichts); 1.5: gleicher Text wird innerhalb 5 s nicht erneut kopiert; 1.4: Systemprogramm zuerst, Tk nur als Rueckfall, xclip wie im Terminal aufgerufen; 1.3: xclip mit -t UTF8_STRING, Gegenprobe bei --debug; 1.2: Zwischenablage waehlt das Verfahren bei jedem Kopieren (Win32 / Tk + wl-copy, xclip, xsel, pbcopy, clip.exe); 1.1: Zwischenablage auch unter Windows (Win32-API), AltGr-Korrektur; 1.0: Linux
+VERSION = '1.11'   # 1.11: BIS-Objektstreifen (.obj, Ziffern . : /) mit Zeilenschaltung nach jedem . und :, --roh (= --dual) schaltet die Aufbereitung aus; 1.10: KEP-Lochstreifen (nur 0 1 : .) werden standardmaessig oktal mit Zeilenschaltung nach jedem . und : ausgegeben, --dual zeigt die Dualziffern wie bisher; 1.9: Um. KB/Um. GB werden nicht mehr ausgegeben (wirken nur), Irrung Zeichen/Satz loeschen im Text; 1.8: unter X11 zuerst xsel, dann xclip; 1.7: Option --zwischenablage auto|tk|system; 1.6: xclip wieder mit -t UTF8_STRING (VM-Abgleich uebernimmt sonst nichts); 1.5: gleicher Text wird innerhalb 5 s nicht erneut kopiert; 1.4: Systemprogramm zuerst, Tk nur als Rueckfall, xclip wie im Terminal aufgerufen; 1.3: xclip mit -t UTF8_STRING, Gegenprobe bei --debug; 1.2: Zwischenablage waehlt das Verfahren bei jedem Kopieren (Win32 / Tk + wl-copy, xclip, xsel, pbcopy, clip.exe); 1.1: Zwischenablage auch unter Windows (Win32-API), AltGr-Korrektur; 1.0: Linux
 
 # Kodetabelle 1: Ausgabe-Adresse (oktal, 3 Stellen = die 8 Lochspuren w v u p 8 4 2 1) ->
 # (Klbuch, Gbuch, Ascii GB, Ascii KB); entspricht TABELLE1 in c8205_interp.py (ohne Eingabe-Adresse)
@@ -135,6 +144,29 @@ def ausschreiben(pfad, lage='KB'):
     if anzahl == 0 and not any(t == FEHLER for _, t in teile):
         teile.append(('(Der Lochstreifen enthält keine Zeichen.)', MARKE))
     return teile
+
+
+def kep_oktal(teile):
+    """KEP-Lochstreifen (nur 0 1 : . ohne Marken) oktal mit Zeilenschaltung nach jedem . und :; sonst unveraendert."""
+    text = ''.join(t for t, _ in teile)
+    if not text or any(tag != NORMAL for _, tag in teile):
+        return teile
+    if '/' in text and not set(text) - set('01234567.:/'):    # BIS-Objektstreifen: schon oktal, nur Zeilenschaltung
+        return [(text.replace('.', '.\n').replace(':', ':\n') + ('\n' if text[-1] != '/' and text[-1] not in '.:' else ''), NORMAL)]
+    if set(text) - set('01:.'):
+        return teile
+    zeilen, bits = [], ''
+    for c in text:
+        if c in '01':
+            bits += c
+            continue
+        bits = bits.rjust(-(-max(len(bits), 1) // 3) * 3, '0')
+        zeilen.append(''.join(str(int(bits[i:i + 3], 2)) for i in range(0, len(bits), 3)) + c)
+        bits = ''
+    if bits:                                    # Rest ohne abschliessendes . oder :
+        bits = bits.rjust(-(-len(bits) // 3) * 3, '0')
+        zeilen.append(''.join(str(int(bits[i:i + 3], 2)) for i in range(0, len(bits), 3)))
+    return [('\n'.join(zeilen) + '\n', NORMAL)]
 
 
 def fenster_unmoeglich():
@@ -429,6 +461,8 @@ def main():
     ap.add_argument('--lage', choices=('KB', 'GB'), type=str.upper, default='KB',
                     help='Zeichenlage am Anfang (Vorgabe KB)')
     ap.add_argument('--text', action='store_true', help='Ausgabe auf dem Terminal statt im Fenster')
+    ap.add_argument('--roh', '--dual', dest='dual', action='store_true',
+                    help='Streifen unveraendert in einer Zeile ausgeben (keine Oktalumsetzung der KEP-Streifen, keine Zeilenschaltung der Objektstreifen)')
     ap.add_argument('--zwischenablage', choices=('auto', 'tk', 'system'), default='auto',
                     help='Kopierverfahren: auto (Vorgabe: Systemprogramm, sonst Tk), tk (nur Tk), system (nur Systemprogramm bzw. Win32)')
     ap.add_argument('--version', action='version', version=f'%(prog)s {VERSION}')
@@ -443,6 +477,8 @@ def main():
     except (OSError, UnicodeDecodeError) as e:
         print(f'FEHLER: {e}', file=sys.stderr)
         sys.exit(2)
+    if not args.dual:
+        teile = kep_oktal(teile)
 
     if not args.text:
         grund = fenster_unmoeglich()
