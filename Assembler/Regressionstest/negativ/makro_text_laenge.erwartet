@@ -1,0 +1,4 @@
+rc 16
+stderr $TYPTEXT erwartet höchstens eine Längenangabe (1 bis 200)
+datei-weg obj mqo test
+escape-weg

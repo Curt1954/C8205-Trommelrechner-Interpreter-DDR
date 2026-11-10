@@ -1,0 +1,28 @@
+Trommeldatei:
+#DOK-0001 Test lokale und globale Felder: $DIM lokal, $GLOBAL tab vor $DIM tab n macht das Feld global, ein lokales Feld verdeckt das globale
+#PROT STUFE=2
+0000: 00000012000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000014 # dw 12 ; 5 + 7 = 12
+0002: 00000000013 # dw 11 ; 11
+0003: 00000000026 # dw 22 ; 22
+0004: 00000000143 # dw 99 ; 99
+0005: 00000000000 # dw 0 ; 0 (Element des lokalen Feldes)
+0006: 00000000013 # dw 11 ; 11
+0007: 00000000026 # dw 22 ; 22
+0010: 00000000000 # dw 0 ; Zelle 0010: 0 (lokales Feld a ist weg)
+0011: 00000000001 # dw 1 ; Zelle 0011: 1
+0012: 00000001164 # haupt: 164 0001 ; Zelle 0012: Diagnoseausgabe (nur im Test)
+0013: 00000000020 # 020 0 ; Zelle 0013: Halt (Zelle 11 dezimal)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0014 US=1
+0001: 00000000014   # LOKAL: 12
+0002: 00000000013   # LTAB: tab(0) = 11
+0003: 00000000026   # LTAB: tab(1) = 22
+0004: 00000000143   # VERD: lokales tab(2) = 99
+0005: 00000000000   # VERD: lokales tab(0) = 0
+0006: 00000000013   # LTAB: globales tab(0) unveraendert
+0007: 00000000026   # LTAB: globales tab(1) unveraendert
+0010: 00000000000   # $DEFINED(a) = 0
+0011: 00000000001   # $DEFINED(tab) = 1

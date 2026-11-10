@@ -1,0 +1,13 @@
+Trommeldatei:
+#DOK-0001 PRECOMMAND vor dem ersten Wort und POSTCOMMAND hinter dem letzten Wort des .obj, vor dem Endekennzeichen
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000004211 # haupt: 211 wert ; Zelle 0001: AC := wert
+0002: 00000005240 # 240 erg ; Zelle 0002: erg := AC
+0003: 00000000020 # 020 0 ; Zelle 0003: Halt
+0004: 00000000123 # wert: dw 0123 ; Zelle 0004: Konstante
+0005: 00000000000 # erg: dw 0 ; Zelle 0005: Ergebnis
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0004
+0005: 00000000123   # erg = wert

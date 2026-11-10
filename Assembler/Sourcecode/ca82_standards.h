@@ -1,4 +1,4 @@
-//ca82_standards.h - Version 1.00-034 (siehe ca82_version.h)
+//ca82_standards.h - Version 1.01-029 (siehe ca82_version.h)
 #ifndef CA82_STANDARDS_H
 #define CA82_STANDARDS_H
 
@@ -52,39 +52,12 @@
 
 
 // Makros
-#define PRINT_FEHLER(format, ...) \
-    do { \
-        int em_len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
-        char *em = malloc(em_len); \
-        if (em) { \
-            snprintf(em, em_len, format, __VA_ARGS__); \
-            printFehler(em); \
-            free(em); \
-        } \
-    } while (0)
+#define PRINT_FEHLER(format, ...) printFehlerFmt((format), __VA_ARGS__)
 
 
-#define PRINT_WARNUNG(format, ...) \
-    do { \
-        int em_len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
-        char *em = malloc(em_len); \
-        if (em) { \
-            snprintf(em, em_len, format, __VA_ARGS__); \
-            printWarnung(em); \
-            free(em); \
-        } \
-    } while (0)
+#define PRINT_WARNUNG(format, ...) printWarnungFmt((format), __VA_ARGS__)
 
-#define PRINT_MSG(format, ...) \
-    do { \
-        int em_len = snprintf(NULL, 0, format, __VA_ARGS__) + 1; \
-        char *em = malloc(em_len); \
-        if (em) { \
-            snprintf(em, em_len, format, __VA_ARGS__); \
-            printMsg(em); \
-            free(em); \
-        } \
-    } while (0)
+#define PRINT_MSG(format, ...) printMsgFmt((format), __VA_ARGS__)
 
 #define PRINT_X(format, ...) \
 do { \
@@ -101,6 +74,7 @@ do { \
 // Farben: nur bei Ausgabe auf ein Terminal (siehe main: isatty, NO_COLOR, --color, --no-color).
 // Bei Umleitung in Dateien oder Pipes sind alle Farbcodes leer.
 extern int farbeAktiv;
+extern int nurPass0Aktiv;   // 1 = Schalter --pass0: nur Pass 0, Ausgabe wie die Kette 2>&1 >/dev/null | grep -v ... | sed ... (siehe main)
 #define FARBE_(code) (farbeAktiv ? (code) : "")
 #define _violett  FARBE_("\033[35m")
 #define _gruen    FARBE_("\033[32m")
@@ -138,7 +112,7 @@ extern int farbeAktiv;
 int gleichOhneGrossKlein(const char *a, const char *b);        // Vergleich ohne Gross-/Kleinschreibung
 int beginntOhneGrossKlein(const char *text, const char *praefix);  // dito, nur die ersten Zeichen (praefix)
 void pruefeProjektverzeichnis(int argc, char *argv[], char projektVerzeichnis[], void (*printUsage)(const char *)) ;
-int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]);
+int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[], size_t dateinameGroesse);
 //void pruefeDateiX(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]);
 void pruefeLadeadresse(int argc, char *argv[], const char *kennzeichen, unsigned int *ladeadresse);
 void removeParameter(int *argc, char *argv[], const char *kz) ;
@@ -152,6 +126,14 @@ void printMsg(const char *message);
 void printFehler(const char *message);
 int fehlerZaehleUndPruefe(const char *schluessel); // ca82_fehler.c: 1 = Meldung ausgeben, 0 = Wiederholung/Obergrenze (nur gezaehlt)
 void printWarnung(const char *message);
+// Formatierte Meldungen (die Makros PRINT_FEHLER, PRINT_WARNUNG und PRINT_MSG rufen sie auf): die Laenge wird mit vsnprintf
+// genau bestimmt, der Puffer passend angelegt, nichts abgeschnitten; die Meldung geht danach an printFehler, printWarnung bzw. printMsg.
+void printFehlerFmt(const char *format, ...) __attribute__((format(printf, 1, 2)));
+void printWarnungFmt(const char *format, ...) __attribute__((format(printf, 1, 2)));
+void printMsgFmt(const char *format, ...) __attribute__((format(printf, 1, 2)));
+// Wie snprintf (Rueckgabe = Laenge, die der volle Text hat), aber fuer Stellen, an denen das Abschneiden gewollt ist oder der Aufrufer die
+// Rueckgabe prueft; der Compiler untersucht die Ausgabe hier nicht auf Kuerzung (-Wformat-truncation). Der Text wird immer mit '\0' beendet.
+int snprintfGekuerzt(char *ziel, size_t groesse, const char *format, ...) __attribute__((format(printf, 3, 4)));
 // Berichte nach Pass 3 (-WARN=..., --xref): Ausgabe auf STDOUT und, solange berichtLog gesetzt ist, auch ins .log
 extern FILE *berichtLog;
 void berichtPrintf(const char *format, ...) __attribute__((format(printf, 1, 2)));
@@ -209,6 +191,14 @@ void stranhaengen(char *ziel, size_t groesse, const char *quelle);
 #define NUR_ARRAY(x) (sizeof(char[1 - 2 * __builtin_types_compatible_p(__typeof__(x), char *)]) ? sizeof(x) : 0)
 #define STRKOPIE(ziel, quelle)   strkopiere((ziel), NUR_ARRAY(ziel), (quelle))
 #define STRANHANG(ziel, quelle)  stranhaengen((ziel), NUR_ARRAY(ziel), (quelle))
+
+
+// Orte im Quelltext (mit $INCLUDE zaehlt srcLine fortlaufend ueber alle Dateien; Doku 4.14): Datei und Zeile in der Datei
+const char *qDatei(int nr);        // Dateiname zur fortlaufenden Nummer
+int qZeile(int nr);                // Zeile in dieser Datei
+const char *qOrt(int nr);          // "12" (Hauptdatei) oder "3 von 'inc/x.asm'" (eingebundene Datei), nur zum sofortigen Gebrauch
+int quellZeilenAnzahl(void);       // Anzahl der gelesenen Zeilen aller Dateien (fortlaufend gezaehlt)
+const char *quellZeilenText(int nr);
 
 #endif // CA82_STANDARDS_H
 

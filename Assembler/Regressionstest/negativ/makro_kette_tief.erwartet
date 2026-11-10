@@ -1,0 +1,4 @@
+rc 16
+stderr Makroaufrufe sind zu tief verschachtelt (höchstens 32 Ebenen)
+datei-weg obj mqo test
+escape-weg

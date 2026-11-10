@@ -1,0 +1,13 @@
+rc 16
+anzahl-stderr 3 Spur 
+stderr-reihe Spur F1 1: $SET a 1 => a: (neu) -> 1
+stderr-reihe Spur F1 2: $SET a 3 => a: 1 -> 3
+stderr-reihe Spur F1 3: erzeugt dw 1
+stderr-reihe makro_trace_fehler.asm:15: Fehler: F1 $INC: Variable unbekannt ist nicht definiert ($SET fehlt)
+nicht-stderr $INC unbekannt 1 =>
+nicht-stderr Spur NACH
+nicht-stderr Spur F1 4
+datei-weg obj mqo test
+log-weg Spur
+dmp-weg Spur
+escape-weg

@@ -1,0 +1,4 @@
+; Namensdatei zum Test opsymdatei (Projektnamen, Kommentar beginnt mit der Nummer der Einzelbefehlsuebersicht)
+HOLE   211   ; Nr. 78 Einzel-Addition mit Loeschen (ac := <a>)
+SPEI   240   ; Nr. 97 Einzel-Transport (<a> := <AC>)
+LD     211   ; Nr. 78 gleicher Name mit gleichem Code wie in der Standardtabelle ist erlaubt

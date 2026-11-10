@@ -1,0 +1,4 @@
+rc 16
+stderr makro_endwhile_ohne_while.asm:7: Fehler: W2 $ENDWHILE ohne vorheriges $WHILE.
+datei-weg obj mqo test
+escape-weg

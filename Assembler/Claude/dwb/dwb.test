@@ -1,0 +1,48 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000020000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000005 # d5: dwb 101 ; Zelle 0001: Wort 5
+0002: 00000000005 # d5f: dwb 0000101 ; Zelle 0002: ebenso 5 (fuehrende Nullen zaehlen als Stellen)
+0003: 00000000017 # d15: dwb 1111 ; Zelle 0003: Wort 15 = 017 oktal
+0004: 00000000100 # d64: dwb 001000000 ; Zelle 0004: 9 Stellen, Wort 64 = 0100 oktal
+0005: 00000000000 # d0: dwb 0 ; Zelle 0005: Wort 0
+0006: 40000000000 # dz0: dwb 100000000000000000000000000000000 ; Zelle 0006: 33 Stellen, nur z0 = 1: 40000000000
+0007: 52525252525 # dalt: dwb 101010101010101010101010101010101 ; Zelle 0007: 33 Stellen, abwechselnd, z0 = 1: 52525252525
+0010: 77777777777 # dvoll: dwb 111111111111111111111111111111111 ; Zelle 0010: alle 33 Bit: 77777777777
+0011: 00000000002 # d2: dwb 10 ; Zelle 0011: Wort 2
+0012: 00000000002 # d2f: dwb 010 ; Zelle 0012: ebenfalls 2 (nicht oktal gelesen, sonst 8)
+0013: 00000000001 # bl1: dwb 1 ; Zelle 0013: Wort 1
+0014: 00000000002 # bl2: dwb 10 ; Zelle 0014: Wort 2
+0015: 00000000003 # bl3: dwb 11 ; Zelle 0015: Wort 3
+0016: 00000000000 # erg: dw 0 ; Zelle 0016: Ergebnis 1
+0017: 00000000000 # erg2: dw 0 ; Zelle 0017: Ergebnis 2
+0020: 00000010211 # haupt: 211 dvoll ; Zelle 0020: AC := (dvoll) = 77777777777
+0021: 00000016240 # 240 erg ; Zelle 0021: (erg) := AC
+0022: 00000026211 # 211 dspaet ; Zelle 0022: AC := (dspaet), Vorwaertsreferenz auf eine dwb-Marke
+0023: 00000017240 # 240 erg2 ; Zelle 0023: (erg2) := AC
+0024: 00000001164 # 164 0001 ; Zelle 0024: Diagnoseausgabe (nur im Test)
+0025: 00000000020 # 020 0 ; Zelle 0025: Halt
+0026: 00000000014 # dspaet: dwb 1100 ; Zelle 0026: Wort 12 = 014 oktal, nach dem Code
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0026 AC=00000000014 US=1
+0001: 00000000005   # d5
+0002: 00000000005   # d5f
+0003: 00000000017   # d15
+0004: 00000000100   # d64
+0005: 00000000000   # d0
+0006: 40000000000   # dz0
+0007: 52525252525   # dalt
+0010: 77777777777   # dvoll
+0011: 00000000002   # d2
+0012: 00000000002   # d2f
+0013: 00000000001   # bl1
+0014: 00000000002   # bl2
+0015: 00000000003   # bl3
+0016: 77777777777   # erg
+0017: 00000000014   # erg2
+0026: 00000000014   # dspaet

@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 2: ;#MAKROLOKAL=2 ist ungueltig (erlaubt sind ;#MAKROLOKAL=1 und ;#MAKROLOKAL=0).
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,17 @@
+           000        haupt      ; Zelle 0000: Sprung zum Hauptprogramm
+           dw         96         ; 12*8 = 96
+           dw         55         ; 63-8 = 55
+           dw         8          ; 8
+           dw         00014      ; 63&12 = 12, oktal 00014
+           dw         1          ; 12 > 8: wahr
+           dw         36         ; Parameter darf ein Symbol sein: dreifacher Wert
+           dw         24         ; Parameter darf ein Symbol sein: dreifacher Wert
+           dw         39         ; Parameter darf ein Symbol sein: dreifacher Wert
+           dw         12         ; hoehe/4 = 2 Durchlaeufe: 12, 13
+           dw         13         ; hoehe/4 = 2 Durchlaeufe: 12, 13
+           dw         8          ; Symbol steht erst hinter end
+           dw         32         ; equ-Symbole, spur verweist auf lage: 040 = 32
+           dw         07700      ; 07640+040 = 07700
+haupt:     020        0          ; Zelle 0016: Halt
+lage:      equ        07640      ; equ mit festem Zahlenwert
+spur:      equ        07700   ; verweist auf ein anderes equ-Symbol

@@ -1,0 +1,23 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      4       ; CDEF hat 4 Zeichen
+        dw      67      ; C = 67
+        dw      3       ; FGH hat 3 Zeichen
+        dw      66      ; B = 66
+        dw      7       ; immer erzeugt
+        dw      2       ; OK hat 2 Zeichen
+        dw      8       ; immer erzeugt
+        dw      1       ; Text X hat 1 Zeichen
+        dw      9       ; Zahl 9
+        dw      10      ; Zahl 10
+        dw      5       ; lokale z: LOKAL hat 5 Zeichen
+        dw      2       ; lokales Feldelement: YZ hat 2 Zeichen
+        dw      2       ; globale z hat 2 Zeichen
+        dw      11      ; gleich
+        dw      44      ; ungleich (zwei Leerzeichen)
+        dw      65      ; A, B, C = 65, 66, 67
+        dw      66      ; A, B, C = 65, 66, 67
+        dw      67      ; A, B, C = 65, 66, 67
+        dw      200     ; 160 + 40 = 200
+        dw      789     ; letzte drei Zeichen 789
+haupt:  164     0001    ; Zelle 21: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 22: Halt

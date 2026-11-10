@@ -1,0 +1,21 @@
+rc 0
+anzahl-stderr 10 Spur SUMME 
+stderr-reihe Spur SUMME 1: $LOCAL i s => lokal vereinbart: i s
+stderr-reihe Spur SUMME 2: $SET i 1 => i: 0 -> 1 (lokal)
+stderr-reihe Spur SUMME 3: $WHILE 1 <= 2 => wahr (Durchlauf 1)
+stderr-reihe Spur SUMME 4: $INC s 1 => s: 0 -> 1 (lokal)
+stderr-reihe Spur SUMME 5: $INC i => i: 1 -> 2 (lokal)
+stderr-reihe Spur SUMME 6: $ENDWHILE 2 <= 2 => wahr (Durchlauf 2)
+stderr-reihe Spur SUMME 7: $INC s 2 => s: 1 -> 3 (lokal)
+stderr-reihe Spur SUMME 8: $INC i => i: 2 -> 3 (lokal)
+stderr-reihe Spur SUMME 9: $ENDWHILE 3 <= 2 => falsch (Ende nach 2 Durchläufen)
+stderr-reihe Spur SUMME 10: erzeugt dw 3
+nicht-stderr Spur SUMME 11
+nicht-stderr Ablaufspur
+stdout 0000: 00 00000000003  dw 3 ; Summe 1 bis 2
+nicht-stderr Warnung
+nicht-stderr Fehler
+log-weg Spur
+dmp-weg Spur
+datei-da obj mqo test
+escape-weg

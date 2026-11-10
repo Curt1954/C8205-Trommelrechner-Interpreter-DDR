@@ -1,0 +1,2195 @@
+0000: 01 0530 000    anfang:      000 haupt                                 ; rel 0000: Einsprung
+0001: 0              c0:          dw  0                                     
+0002: 00 00000000001 c1:          dw  1                                     
+0003: 00 00000000002 c2:          dw  2                                     
+0004: 00 00000000003 c3:          dw  3                                     
+0005: 00 00000000004 c4:          dw  4                                     
+0006: 00 00000000005 c5:          dw  5                                     
+0007: 00 00000000006 c6:          dw  6                                     
+0010: 00 00000000007 c7:          dw  7                                     
+0011: 00 00000000010 c8:          dw  010                                   ; Status 10 oktal: Name vorhanden
+0012: 00 00000000011 c9:          dw  9                                     
+0013: 00 00000000012 c_zehn:      dw  012                                   ; 10 dezimal: Namenslaenge
+0014: 00 00000000014 c_12:        dw  014                                   ; 12 dezimal
+0015: 00 00000000017 c_15:        dw  017                                   ; 15 dezimal
+0016: 00 00000000020 c_16:        dw  020                                   ; 16 Spuren je Segment
+0017: 00 00000000031 c_25:        dw  031                                   ; 25 Worte je Spur
+0020: 00 00000000040 c_32:        dw  040                                   ; 32 Spuren je Belegungswort
+0021: 00 00000000050 c_40:        dw  050                                   ; 40 dezimal: Obergrenze der Kettenlaenge
+0022: 00 00000000100 c_64:        dw  0100                                  ; 64
+0023: 00 00000000177 c_127:       dw  0177                                  ; Maske Spur in einem Lagewort
+0024: 00 00000000200 c_128:       dw  0200                                  ; 128 Spuren, Lagewort-Schritt je Trommel
+0025: 00 00000007777 c_ungl:      dw  07777                                 ; ungueltiges Lagewort (Puffer ohne Inhalt)
+0026: 00 00000001000 c1e:         dw  01000                                 ; 1 Zelle in Adresseneinheiten
+0027: 00 00000002000 c2e:         dw  02000                                 
+0030: 00 00000003000 c3e:         dw  03000                                 
+0031: 00 00000004000 c4e:         dw  04000                                 
+0032: 00 00000006000 c6e:         dw  06000                                 
+0033: 00 00000040000 c32e:        dw  040000                                ; 32 Zellen: eine Spur
+0034: 00 00000036000 c36e:        dw  036000                                ; Zelle 36 oktal (30 dezimal)
+0035: 00 00000037000 c37a:        dw  037000                                
+0036: 00 00000077000 c77a:        dw  077000                                ; 63 Zellen
+0037: 00 00007700000 cmask77:     dw  07700000                              ; Maske: Adresse durch 0100 teilbar
+0040: 00 00000004000 cz4:         dw  04000                                 ; Zellen 4 bis 7 der Spur 0
+0041: 00 00000005000 cz5:         dw  05000                                 
+0042: 00 00000006000 cz6:         dw  06000                                 
+0043: 00 00000007000 cz7:         dw  07000                                 
+0044: 00 00000000011 c011:        dw  011                                   ; Befehlscode 011 (Eingabe mit Loeschen)
+0045: 00 00000000025 c025:        dw  025                                   ; Befehlscode 025
+0046: 00 00000000240 c240:        dw  0240                                  
+0047: 00 00000000441 c441:        dw  0441                                  
+0050: 00 00000000601 c601:        dw  0601                                  
+0051: 00 00000000661 c661:        dw  0661                                  
+0052: 00 00005100030 c_anw:       dw  05100030                              ; Befehl 030 5100 (Anwahl ZT0); je Trommel + t * 0100000
+0053: 00 00004700030 c_k0anw:     dw  04700030                              ; Anwahl K0
+0054: 00 00004600030 c_k1anw:     dw  04600030                              ; Anwahl K1 (Leser 1)
+0055: 00 25147361025 c_lk:        dw  025147361025                          ; LISTENKENNUNG
+0056: 00 61350247316 c_rk:        dw  061350247316                          ; REPOSITORY_KENNUNG
+0057: 00 34716052613 c_bk:        dw  034716052613                          ; BLOCKKENNUNG
+0060: 00 00000000012 k_zr:        dw  012                                   ; ZR
+0061: 00 00000000032 k_wr:        dw  032                                   ; WRZL
+0062: 00 00000000033 k_pkt:       dw  033                                   ; Punkt
+0063: 00 00000000061 k_sl:        dw  061                                   ; Schraegstrich
+0064: 00 00000000011 k_9:         dw  011                                   ; Ziffer 9
+0065: 00 00000000021 k_a:         dw  021                                   ; a
+0066: 00 00000000024 k_d:         dw  024                                   ; d
+0067: 00 00000000027 k_g:         dw  027                                   ; g
+0070: 00 00000000030 k_h:         dw  030                                   ; h
+0071: 00 00000000043 k_l:         dw  043                                   ; l
+0072: 00 00000000044 k_m:         dw  044                                   ; m
+0073: 00 00000000050 k_q:         dw  050                                   ; q
+0074: 00 00000000077 c77:         dw  077                                   ; Maske 6 Bit
+0075: 01 327000      a_aus:       da  000000000327                          
+0076: 01 427000      a_mtab:      da  000000000427                          
+0077: 01 467000      a_pcode:     da  000000000467                          
+0100: 01 503000      a_pword:     da  000000000503                          
+0101: 01 517000      a_sttab:     da  000000000517                          
+0102: 01 4023000     a_tabraw:    da  000000004023                          
+0103: 01 3773000     a_bel:       da  000000003773                          
+0104: 01 4013000     a_fmt:       da  000000004013                          
+0105: 01 4017000     a_chg:       da  000000004017                          
+0106: 0              dienst:      dw  0                                     ; Sprungwort 000 <Dienst von ZTL>
+0107: 0              pufw:        dw  0                                     ; Adresswort der Arbeitsspur
+0110: 00 00000007777 puf_lage:    dw  07777                                 ; Lagewort der Spur im Puffer (07777 = unbekannt)
+0111: 0              lage:        dw  0                                     ; Lagewort fuer zt_lies/zt_schr
+0112: 0              zt_op:       dw  0                                     ; Befehlscode 661 oder 601
+0113: 0              status:      dw  0                                     ; Status des laufenden Kommandos
+0114: 0              tab_a:       dw  0                                     ; Adresswort der ausgerichteten Eingabetabelle
+0115: 00 00004700030 lz_kan:      dw  04700030                              ; Kanalanwahl fuer lz (K0 oder K1)
+0116: 0              si_a:        dw  0                                     ; sp_ind: Adresswort
+0117: 0              si_w:        dw  0                                     ; sp_ind: Wert
+0120: 0              ak_l:        dw  0                                     ; Lagewort des ersten Namensblocks
+0121: 0              ak_s:        dw  0                                     ; Spur des ersten Blocks (0 = kein Anker)
+0122: 0              ak_fv:       dw  0                                     ; Formatversion
+0123: 0              n_0:         dw  0                                     ; eingegebener Name, Zeichen 1 bis 5
+0124: 0              n_1:         dw  0                                     ; Zeichen 6 bis 10
+0125: 0              e_n0:        dw  0                                     ; Eintrag: Name 1
+0126: 0              e_n1:        dw  0                                     ; Name 2
+0127: 0              e_l:         dw  0                                     ; Laenge
+0130: 0              e_lage:      dw  0                                     ; Lagewort des ersten Segments (0 = frei)
+0131: 0              e_blk:       dw  0                                     ; Block des Eintrags
+0132: 0              e_ps:        dw  0                                     ; Spur im Block
+0133: 0              e_cz:        dw  0                                     ; Zelle im Block (Adresseneinheiten)
+0134: 0              b_lage:      dw  0                                     ; laufender Block
+0135: 0              b_nn:        dw  0                                     
+0136: 0              b_link:      dw  0                                     
+0137: 0              b_cnt:       dw  0                                     ; noch zu liefernde Eintraege des Blocks
+0140: 0              b_ps:        dw  0                                     
+0141: 0              b_cz:        dw  0                                     
+0142: 0              b_n:         dw  0                                     ; Zahl der Bloecke (Schleifenschutz)
+0143: 0              it_r:        dw  0                                     
+0144: 0              sp_r:        dw  0                                     
+0145: 0              lz_r:        dw  0                                     
+0146: 0              zi_r:        dw  0                                     
+0147: 0              zl_r:        dw  0                                     
+0150: 0              zs_r:        dw  0                                     
+0151: 0              pl_r:        dw  0                                     
+0152: 0              in_r:        dw  0                                     
+0153: 0              bk_r:        dw  0                                     
+0154: 0              ex_r:        dw  0                                     
+0155: 0              ew_r:        dw  0                                     
+0156: 0              ng_r:        dw  0                                     
+0157: 0              sn_r:        dw  0                                     
+0160: 0              nl_r:        dw  0                                     
+0161: 0              np_r:        dw  0                                     
+0162: 0              nd_r:        dw  0                                     
+0163: 0              n5_r:        dw  0                                     
+0164: 0              nc_r:        dw  0                                     
+0165: 0              sd_r:        dw  0                                     
+0166: 0              ms_r:        dw  0                                     
+0167: 0              be_r:        dw  0                                     
+0170: 0              bb_r:        dw  0                                     
+0171: 0              lu_r:        dw  0                                     
+0172: 0              sa_r:        dw  0                                     
+0173: 0              bs_r:        dw  0                                     
+0174: 0              bw_r:        dw  0                                     
+0175: 0              we_r:        dw  0                                     
+0176: 0              ge_r:        dw  0                                     
+0177: 0              sc_r:        dw  0                                     
+0200: 0              sn2_r:       dw  0                                     
+0201: 0              se_r:        dw  0                                     
+0202: 0              cm_r:        dw  0                                     
+0203: 0              it_i:        dw  0                                     
+0204: 0              it_a:        dw  0                                     
+0205: 0              it_pc:       dw  0                                     
+0206: 0              it_pw:       dw  0                                     
+0207: 0              in_t:        dw  0                                     
+0210: 0              in_k:        dw  0                                     
+0211: 0              in_fa:       dw  0                                     
+0212: 0              in_ba:       dw  0                                     
+0213: 0              in_pc:       dw  0                                     
+0214: 0              in_f:        dw  0                                     
+0215: 0              zi_rt:       dw  0                                     
+0216: 0              zi_tt:       dw  0                                     
+0217: 0              nl_a:        dw  0                                     
+0220: 0              nl_b:        dw  0                                     
+0221: 0              nl_n:        dw  0                                     
+0222: 0              nl_c:        dw  0                                     
+0223: 0              nd_w:        dw  0                                     
+0224: 0              nd_k:        dw  0                                     
+0225: 0              nd_code:     dw  0                                     
+0226: 0              nd_lg:       dw  0                                     
+0227: 0              ea_a1:       dw  0                                     
+0230: 0              bl_w:        dw  0                                     
+0231: 0              bl_n:        dw  0                                     
+0232: 0              bl_v:        dw  0                                     
+0233: 0              bb_w:        dw  0                                     
+0234: 0              bb_v:        dw  0                                     
+0235: 0              bb_x:        dw  0                                     
+0236: 0              bb_t:        dw  0                                     
+0237: 0              bb_i:        dw  0                                     
+0240: 0              bb_m:        dw  0                                     
+0241: 0              bb_a:        dw  0                                     
+0242: 0              bb_wd:       dw  0                                     
+0243: 0              bb_tst:      dw  0                                     
+0244: 0              lu_t:        dw  0                                     
+0245: 0              lu_n:        dw  0                                     
+0246: 0              lu_lauf:     dw  0                                     
+0247: 0              lu_s:        dw  0                                     
+0250: 0              lu_wa:       dw  0                                     
+0251: 0              lu_tc:       dw  0                                     
+0252: 0              lu_w1:       dw  0                                     
+0253: 0              lu_k:        dw  0                                     
+0254: 0              sa_n:        dw  0                                     
+0255: 0              sa_t:        dw  0                                     
+0256: 0              sa_tl:       dw  0                                     
+0257: 0              sa_fa:       dw  0                                     
+0260: 0              sa_lage:     dw  0                                     
+0261: 0              bs_t:        dw  0                                     
+0262: 0              bs_ca:       dw  0                                     
+0263: 0              bs_ba:       dw  0                                     
+0264: 0              bs_lg:       dw  0                                     
+0265: 0              bs_k:        dw  0                                     
+0266: 0              bs_pc:       dw  0                                     
+0267: 0              bs_ra:       dw  0                                     
+0270: 0              d_lw:        dw  0                                     
+0271: 0              d_n:         dw  0                                     
+0272: 0              d_ca:        dw  0                                     
+0273: 0              sl_ok:       dw  0                                     
+0274: 0              sl_blk:      dw  0                                     
+0275: 0              sl_ps:       dw  0                                     
+0276: 0              sl_cz:       dw  0                                     
+0277: 0              nb_ja:       dw  0                                     
+0300: 0              nb_lage:     dw  0                                     
+0301: 0              nb_t:        dw  0                                     
+0302: 0              lb_lage:     dw  0                                     
+0303: 0              lb_nn:       dw  0                                     
+0304: 0              fs_lage:     dw  0                                     
+0305: 0              sg_lage:     dw  0                                     
+0306: 0              sg_sp:       dw  0                                     
+0307: 0              sp_n:        dw  0                                     
+0310: 0              w_tot:       dw  0                                     
+0311: 0              g_i:         dw  0                                     
+0312: 0              g_kenn:      dw  0                                     
+0313: 0              g_kcell:     dw  0                                     
+0314: 0              g_cell:      dw  0                                     
+0315: 0              bw_cnt:      dw  0                                     
+0316: 0              bw_k1:       dw  0                                     
+0317: 0              bw_k2:       dw  0                                     
+0320: 0              bw_val:      dw  0                                     
+0321: 0              bw_c:        dw  0                                     
+0322: 0              bw_ende:     dw  0                                     
+0323: 0              se_k:        dw  0                                     
+0324: 0              cm_ca:       dw  0                                     
+0325: 0              m_ziel:      dw  0                                     
+0326: 0              m_stat:      dw  0                                     
+0327: 00 00000200030              dw  0200030                               ; 00: 0
+0330: 00 00000010030              dw  010030                                ; 01: 1
+0331: 00 00000020030              dw  020030                                ; 02: 2
+0332: 00 00000230030              dw  0230030                               ; 03: 3
+0333: 00 00000040030              dw  040030                                ; 04: 4
+0334: 00 00000250030              dw  0250030                               ; 05: 5
+0335: 00 00000260030              dw  0260030                               ; 06: 6
+0336: 00 00000070030              dw  070030                                ; 07: 7
+0337: 00 00000100030              dw  0100030                               ; 10: 8
+0340: 00 00000310030              dw  0310030                               ; 11: 9
+0341: 00 00000320030              dw  0320030                               ; 12: ZR
+0342: 0                           dw  0                                     ; 13: -
+0343: 0                           dw  0                                     ; 14: -
+0344: 0                           dw  0                                     ; 15: -
+0345: 0                           dw  0                                     ; 16: -
+0346: 0                           dw  0                                     ; 17: -
+0347: 0                           dw  0                                     ; 20: -
+0350: 00 00000610030              dw  0610030                               ; 21: A
+0351: 00 00000620030              dw  0620030                               ; 22: B
+0352: 00 00000430030              dw  0430030                               ; 23: C
+0353: 00 00000640030              dw  0640030                               ; 24: D
+0354: 00 00000450030              dw  0450030                               ; 25: E
+0355: 00 00000460030              dw  0460030                               ; 26: F
+0356: 00 00000670030              dw  0670030                               ; 27: G
+0357: 00 00000700030              dw  0700030                               ; 30: H
+0360: 00 00000510030              dw  0510030                               ; 31: I
+0361: 0                           dw  0                                     ; 32: -
+0362: 0                           dw  0                                     ; 33: -
+0363: 0                           dw  0                                     ; 34: -
+0364: 0                           dw  0                                     ; 35: -
+0365: 0                           dw  0                                     ; 36: -
+0366: 0                           dw  0                                     ; 37: -
+0367: 0                           dw  0                                     ; 40: -
+0370: 00 00001210030              dw  01210030                              ; 41: J
+0371: 00 00001220030              dw  01220030                              ; 42: K
+0372: 00 00001030030              dw  01030030                              ; 43: L
+0373: 00 00001240030              dw  01240030                              ; 44: M
+0374: 00 00001050030              dw  01050030                              ; 45: N
+0375: 00 00001060030              dw  01060030                              ; 46: O
+0376: 00 00001270030              dw  01270030                              ; 47: P
+0377: 00 00001300030              dw  01300030                              ; 50: Q
+0400: 00 00001110030              dw  01110030                              ; 51: R
+0401: 0                           dw  0                                     ; 52: -
+0402: 0                           dw  0                                     ; 53: -
+0403: 0                           dw  0                                     ; 54: -
+0404: 0                           dw  0                                     ; 55: -
+0405: 0                           dw  0                                     ; 56: -
+0406: 0                           dw  0                                     ; 57: -
+0407: 0                           dw  0                                     ; 60: -
+0410: 0                           dw  0                                     ; 61: -
+0411: 00 00001420030              dw  01420030                              ; 62: S
+0412: 00 00001630030              dw  01630030                              ; 63: T
+0413: 00 00001440030              dw  01440030                              ; 64: U
+0414: 00 00001650030              dw  01650030                              ; 65: V
+0415: 00 00001660030              dw  01660030                              ; 66: W
+0416: 00 00001470030              dw  01470030                              ; 67: X
+0417: 00 00001500030              dw  01500030                              ; 70: Y
+0420: 00 00001710030              dw  01710030                              ; 71: Z
+0421: 0                           dw  0                                     ; 72: -
+0422: 0                           dw  0                                     ; 73: -
+0423: 0                           dw  0                                     ; 74: -
+0424: 0                           dw  0                                     ; 75: -
+0425: 0                           dw  0                                     ; 76: -
+0426: 0                           dw  0                                     ; 77: -
+0427: 00 40000000000              dw  040000000000                          ; Spur 0 (z0)
+0430: 00 20000000000              dw  020000000000                          ; Spur 1 (z1)
+0431: 00 10000000000              dw  010000000000                          ; Spur 2 (z2)
+0432: 00 04000000000              dw  04000000000                           ; Spur 3 (z3)
+0433: 00 02000000000              dw  02000000000                           ; Spur 4 (z4)
+0434: 00 01000000000              dw  01000000000                           ; Spur 5 (z5)
+0435: 00 00400000000              dw  0400000000                            ; Spur 6 (z6)
+0436: 00 00200000000              dw  0200000000                            ; Spur 7 (z7)
+0437: 00 00100000000              dw  0100000000                            ; Spur 8 (z8)
+0440: 00 00040000000              dw  040000000                             ; Spur 9 (z9)
+0441: 00 00020000000              dw  020000000                             ; Spur 10 (z10)
+0442: 00 00010000000              dw  010000000                             ; Spur 11 (z11)
+0443: 00 00004000000              dw  04000000                              ; Spur 12 (z12)
+0444: 00 00002000000              dw  02000000                              ; Spur 13 (z13)
+0445: 00 00001000000              dw  01000000                              ; Spur 14 (z14)
+0446: 00 00000400000              dw  0400000                               ; Spur 15 (z15)
+0447: 00 00000200000              dw  0200000                               ; Spur 16 (z16)
+0450: 00 00000100000              dw  0100000                               ; Spur 17 (z17)
+0451: 00 00000040000              dw  040000                                ; Spur 18 (z18)
+0452: 00 00000020000              dw  020000                                ; Spur 19 (z19)
+0453: 00 00000010000              dw  010000                                ; Spur 20 (z20)
+0454: 00 00000004000              dw  04000                                 ; Spur 21 (z21)
+0455: 00 00000002000              dw  02000                                 ; Spur 22 (z22)
+0456: 00 00000001000              dw  01000                                 ; Spur 23 (z23)
+0457: 00 00000000400              dw  0400                                  ; Spur 24 (z24)
+0460: 00 00000000200              dw  0200                                  ; Spur 25 (z25)
+0461: 00 00000000100              dw  0100                                  ; Spur 26 (z26)
+0462: 00 00000000040              dw  040                                   ; Spur 27 (z27)
+0463: 00 00000000020              dw  020                                   ; Spur 28 (z28)
+0464: 00 00000000010              dw  010                                   ; Spur 29 (z29)
+0465: 00 00000000004              dw  04                                    ; Spur 30 (z30)
+0466: 00 00000000002              dw  02                                    ; Spur 31 (z31)
+0467: 00 00000000012              dw  012                                   ; Code 12 mit Sprung-Umstellung
+0470: 00 00000000015              dw  015                                   ; Code 15 mit Sprung-Umstellung
+0471: 00 00000000016              dw  016                                   ; Code 16 mit Sprung-Umstellung
+0472: 00 00000000032              dw  032                                   ; Code 32 mit Sprung-Umstellung
+0473: 00 00000000033              dw  033                                   ; Code 33 mit Sprung-Umstellung
+0474: 00 00000000037              dw  037                                   ; Code 37 mit Sprung-Umstellung
+0475: 00 00000000040              dw  040                                   ; Code 40 mit Sprung-Umstellung
+0476: 00 00000000057              dw  057                                   ; Code 57 mit Sprung-Umstellung
+0477: 00 00000000060              dw  060                                   ; Code 60 mit Sprung-Umstellung
+0500: 00 00000000072              dw  072                                   ; Code 72 mit Sprung-Umstellung
+0501: 00 00000000073              dw  073                                   ; Code 73 mit Sprung-Umstellung
+0502: 00 00000000075              dw  075                                   ; Code 75 mit Sprung-Umstellung
+0503: 01 3100 000                 000 h_zr                                  ; Sprungwort fuer Code 12
+0504: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 15
+0505: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 16
+0506: 01 3102 000                 000 h_wr                                  ; Sprungwort fuer Code 32
+0507: 01 3104 000                 000 h_pkt                                 ; Sprungwort fuer Code 33
+0510: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 37
+0511: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 40
+0512: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 57
+0513: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 60
+0514: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 72
+0515: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 73
+0516: 01 3106 000                 000 h_ign                                 ; Sprungwort fuer Code 75
+0517: 01 3243 000    sttab:       000 m_ok                                  ; 0
+0520: 01 3260 000                 000 m_s1                                  ; 1
+0521: 01 3315 000                 000 m_s2                                  ; 2
+0522: 01 3341 000                 000 m_s3                                  ; 3
+0523: 01 3371 000                 000 m_s4                                  ; 4
+0524: 01 3414 000                 000 m_s5                                  ; 5
+0525: 01 3443 000                 000 m_s6                                  ; 6
+0526: 01 3465 000                 000 m_s7                                  ; 7
+0527: 01 3521 000                 000 m_s8                                  ; 10 oktal
+0530: 01 0106 240    haupt:       240 dienst                                ; Sprungwort des ZTL-Dienstes sichern (AC beim Start)
+0531: 00 7624 211                 211 adr7624                               ; Arbeitsspur von ZTL
+0532: 01 0107 240                 240 pufw                                  
+0533: 01 3107 025                 025 init_tab                              ; Nullspur loeschen, Eingabetabelle bauen
+0534: 01 3173 025                 025 m_banner                              
+0535: 01 3203 025    befehl:      025 m_prompt                              
+0536: 01 3072 025    b_les:       025 lz                                    ; Kommandobuchstabe
+0537: 01 0061 330                 330 k_wr                                  
+0540: 01 0536 170                 170 b_les                                 ; WRZL: ignorieren
+0541: 01 0060 330                 330 k_zr                                  
+0542: 01 0536 170                 170 b_les                                 ; ZR: ignorieren
+0543: 01 0222 240                 240 nl_c                                  ; Code merken
+0544: 01 3210 025                 025 m_zeil                                ; Zeilenschaltung nach dem Buchstaben
+0545: 01 0222 211                 211 nl_c                                  
+0546: 01 0071 330                 330 k_l                                   
+0547: 01 0606 170                 170 c_l                                   
+0550: 01 0065 330                 330 k_a                                   
+0551: 01 1012 170                 170 c_a                                   
+0552: 01 0066 330                 330 k_d                                   
+0553: 01 0701 170                 170 c_d                                   
+0554: 01 0067 330                 330 k_g                                   
+0555: 01 0574 170                 170 c_g                                   
+0556: 01 0072 330                 330 k_m                                   
+0557: 01 0641 170                 170 c_m                                   
+0560: 01 0073 330                 330 k_q                                   
+0561: 01 0570 170                 170 c_q                                   
+0562: 01 0070 330                 330 k_h                                   
+0563: 01 0572 170                 170 c_h                                   
+0564: 01 3252 025                 025 m_frage                               ; unbekanntes Kommando
+0565: 01 0535 000                 000 befehl                                
+0566: 01 3544 025    fehler:      025 st_druck                              ; Status melden, zurueck zum Kommando
+0567: 01 0535 000                 000 befehl                                
+0570: 00 4700 030    c_q:         030 04700                                 ; K0 wieder anwaehlen (das BIS liest vom angewaehlten Kanal)
+0571: 00 0000 000                 000 adr0000                               ; Sprung nach Zelle 0000 (BIS)
+0572: 01 3554 025    c_h:         025 m_help                                
+0573: 01 0535 000                 000 befehl                                
+0574: 01 3226 025    c_g:         025 m_adr                                 
+0575: 00 4700 030                 030 04700                                 ; K0
+0576: 00 0316 025                 025 adr0316                               ; Adresswort 0 aaaa 000 im AC
+0577: 01 0325 240                 240 m_ziel                                
+0600: 01 3210 025                 025 m_zeil                                
+0601: 01 0325 211                 211 m_ziel                                
+0602: 01 0045 210                 210 c025                                  ; Befehl 025 aaaa
+0603: 01 0604 240                 240 g_gen                                 
+0604: 0              g_gen:       dw  0                                     ; hier steht zur Laufzeit 025 aaaa und wird ausgefuehrt
+0605: 01 0535 000                 000 befehl                                ; das Programm ist zurueckgekehrt
+0606: 01 2640 025    c_l:         025 ini                                   
+0607: 01 0113 211                 211 status                                
+0610: 01 0001 330                 330 c0                                    
+0611: 01 0613 170                 170 l_ok                                  
+0612: 01 0566 000                 000 fehler                                
+0613: 01 2116 025    l_ok:        025 ee_erste                              
+0614: 01 0001 330                 330 c0                                    
+0615: 01 0566 170                 170 fehler                                
+0616: 01 2170 025    l_loop:      025 ee_weiter                             
+0617: 01 0001 330                 330 c0                                    
+0620: 01 0635 170                 170 l_ende                                
+0621: 01 0130 211                 211 e_lage                                
+0622: 01 0001 330                 330 c0                                    
+0623: 01 0616 170                 170 l_loop                                ; freier Eintrag
+0624: 01 1765 025                 025 nm_druck                              ; Name (10 Zeichen), Schreibwerk K2 angewaehlt
+      00 0320 030                 dz  $zr                                   
+0626: 01 0127 211                 211 e_l                                   
+0627: 00 7653 616                 616 rot9                                  ; L * 01000: Adresswort fuer den Adressdruck
+0630: 00 7773 240                 240 adr7773                               ; R1
+      00 1170 030                 dz  $inkb                                 ; Ziffern
+0632: 00 0220 025                 025 adr0220                               ; vier Oktalziffern
+      00 2720 030                 dz  $wrzl                                 
+0634: 01 0616 000                 000 l_loop                                
+0635: 01 0113 211    l_ende:      211 status                                
+0636: 01 0001 330                 330 c0                                    
+0637: 01 0535 170                 170 befehl                                
+0640: 01 0566 000                 000 fehler                                
+0641: 01 2640 025    c_m:         025 ini                                   
+0642: 01 0113 211                 211 status                                
+0643: 01 0001 330                 330 c0                                    
+0644: 01 0646 170                 170 m_ok1                                 
+0645: 01 0566 000                 000 fehler                                
+0646: 01 3214 025    m_ok1:       025 m_name                                
+0647: 01 1702 025                 025 nm_lies                               
+0650: 01 3210 025                 025 m_zeil                                
+0651: 01 2066 025                 025 sn                                    
+0652: 01 0001 330                 330 c0                                    
+0653: 01 0566 170                 170 fehler                                
+0654: 01 3226 025                 025 m_adr                                 
+0655: 00 4700 030                 030 04700                                 
+0656: 00 0316 025                 025 adr0316                               
+0657: 01 0325 240                 240 m_ziel                                
+0660: 01 3210 025                 025 m_zeil                                
+0661: 01 0130 211                 211 e_lage                                ; Uebergabezellen unmittelbar vor dem Aufruf setzen (Format 11.2)
+0662: 00 7622 240                 240 adr7622                               
+0663: 01 0127 211                 211 e_l                                   
+0664: 00 7623 240                 240 adr7623                               
+0665: 01 0325 211                 211 m_ziel                                
+0666: 00 7611 240                 240 adr7611                               ; Hauptleitadresse := Adresse
+0667: 00 7742 241                 241 adr7742                               ; RA := 0
+0670: 00 7625 241                 241 adr7625                               ; Grenze: Vorgabe
+0671: 01 0106 025                 025 dienst                                ; ZTL-Dienst: Programm laden
+0672: 00 7626 211                 211 adr7626                               
+0673: 01 0113 240                 240 status                                
+0674: 01 0001 330                 330 c0                                    
+0675: 01 0677 170                 170 m_fert                                
+0676: 01 0566 000                 000 fehler                                
+0677: 01 3243 025    m_fert:      025 m_ok                                  
+0700: 01 0535 000                 000 befehl                                
+0701: 01 2640 025    c_d:         025 ini                                   
+0702: 01 0113 211                 211 status                                
+0703: 01 0001 330                 330 c0                                    
+0704: 01 0706 170                 170 d_ok1                                 
+0705: 01 0566 000                 000 fehler                                
+0706: 01 3214 025    d_ok1:       025 m_name                                
+0707: 01 1702 025                 025 nm_lies                               
+0710: 01 3210 025                 025 m_zeil                                
+0711: 01 2066 025                 025 sn                                    
+0712: 01 0001 330                 330 c0                                    
+0713: 01 0566 170                 170 fehler                                
+0714: 01 0130 211                 211 e_lage                                
+0715: 01 0270 240                 240 d_lw                                  
+0716: 01 0271 241                 241 d_n                                   
+0717: 01 0270 211    d_l:         211 d_lw                                  
+0720: 01 0001 330                 330 c0                                    
+0721: 01 0752 170                 170 d_fertig                              
+0722: 01 0023 200                 200 c_127                                 ; Spur 0: Ende
+0723: 01 0001 330                 330 c0                                    
+0724: 01 0752 170                 170 d_fertig                              
+0725: 01 0271 211                 211 d_n                                   
+0726: 01 0002 210                 210 c1                                    
+0727: 01 0271 240                 240 d_n                                   
+0730: 01 0021 211                 211 c_40                                  ; Kettenschutz
+0731: 01 0271 220                 220 d_n                                   
+0732: 01 0752 040                 040 d_fertig                              
+0733: 01 0270 211                 211 d_lw                                  
+0734: 01 0230 240                 240 bl_w                                  
+0735: 01 0016 211                 211 c_16                                  
+0736: 01 0231 240                 240 bl_n                                  
+0737: 01 0232 241                 241 bl_v                                  ; freigeben
+0740: 01 2431 025                 025 belege                                
+0741: 01 0270 211                 211 d_lw                                  ; Verkettung: Zelle 36 der 16. Spur
+0742: 01 0015 210                 210 c_15                                  
+0743: 01 0111 240                 240 lage                                  
+0744: 01 3014 025                 025 zt_lies                               
+0745: 01 0034 211                 211 c36e                                  
+0746: 01 0107 210                 210 pufw                                  
+0747: 00 0000 251                 251 0                                     
+0750: 01 0270 240                 240 d_lw                                  
+0751: 01 0717 000                 000 d_l                                   
+0752: 01 0131 211    d_fertig:    211 e_blk                                 ; Eintrag: Lagewort := 0
+0753: 01 0132 210                 210 e_ps                                  
+0754: 01 0111 240                 240 lage                                  
+0755: 01 3014 025                 025 zt_lies                               
+0756: 01 0133 211                 211 e_cz                                  
+0757: 01 0030 210                 210 c3e                                   
+0760: 01 0107 210                 210 pufw                                  
+0761: 01 0116 240                 240 si_a                                  
+0762: 01 0117 241                 241 si_w                                  
+0763: 01 3063 025                 025 sp_ind                                
+0764: 01 0132 211                 211 e_ps                                  
+0765: 01 0001 330                 330 c0                                    
+0766: 01 0773 170                 170 d_gl                                  
+0767: 01 3023 025                 025 zt_schr                               ; Spur mit dem Eintrag
+0770: 01 0131 211                 211 e_blk                                 
+0771: 01 0111 240                 240 lage                                  
+0772: 01 3014 025                 025 zt_lies                               ; erste Spur des Blocks: Zahl der belegten Eintraege
+0773: 01 0030 211    d_gl:        211 c3e                                   
+0774: 01 0107 210                 210 pufw                                  
+0775: 01 0272 240                 240 d_ca                                  
+0776: 00 0000 251                 251 0                                     
+0777: 01 0002 220                 220 c1                                    
+1000: 01 0117 240                 240 si_w                                  
+1001: 01 0272 211                 211 d_ca                                  
+1002: 01 0116 240                 240 si_a                                  
+1003: 01 3063 025                 025 sp_ind                                
+1004: 01 0131 211                 211 e_blk                                 
+1005: 01 0111 240                 240 lage                                  
+1006: 01 3023 025                 025 zt_schr                               
+1007: 01 2552 025                 025 bel_sichern                           
+1010: 01 3243 025                 025 m_ok                                  
+1011: 01 0535 000                 000 befehl                                
+1012: 01 2640 025    c_a:         025 ini                                   
+1013: 01 0113 211                 211 status                                
+1014: 01 0001 330                 330 c0                                    
+1015: 01 1017 170                 170 a_ok1                                 
+1016: 01 0566 000                 000 fehler                                
+1017: 01 3214 025    a_ok1:       025 m_name                                
+1020: 01 1702 025                 025 nm_lies                               
+1021: 01 3210 025                 025 m_zeil                                
+1022: 01 0273 241                 241 sl_ok                                 
+1023: 01 2116 025                 025 ee_erste                              
+1024: 01 0001 330                 330 c0                                    
+1025: 01 0566 170                 170 fehler                                
+1026: 01 2170 025    ca_l:        025 ee_weiter                             
+1027: 01 0001 330                 330 c0                                    
+1030: 01 1057 170                 170 ca_end                                
+1031: 01 0130 211                 211 e_lage                                
+1032: 01 0001 330                 330 c0                                    
+1033: 01 1042 170                 170 ca_frei                               
+1034: 01 2051 025                 025 ng                                    
+1035: 01 0001 330                 330 c0                                    
+1036: 01 1026 170                 170 ca_l                                  
+1037: 01 0011 211                 211 c8                                    ; Status 10 oktal: Name vorhanden
+1040: 01 0113 240                 240 status                                
+1041: 01 0566 000                 000 fehler                                
+1042: 01 0273 211    ca_frei:     211 sl_ok                                 
+1043: 01 0001 330                 330 c0                                    
+1044: 01 1046 170                 170 ca_f1                                 
+1045: 01 1026 000                 000 ca_l                                  
+1046: 01 0002 211    ca_f1:       211 c1                                    
+1047: 01 0273 240                 240 sl_ok                                 
+1050: 01 0131 211                 211 e_blk                                 
+1051: 01 0274 240                 240 sl_blk                                
+1052: 01 0132 211                 211 e_ps                                  
+1053: 01 0275 240                 240 sl_ps                                 
+1054: 01 0133 211                 211 e_cz                                  
+1055: 01 0276 240                 240 sl_cz                                 
+1056: 01 1026 000                 000 ca_l                                  
+1057: 01 0113 211    ca_end:      211 status                                
+1060: 01 0001 330                 330 c0                                    
+1061: 01 1063 170                 170 ca_e1                                 
+1062: 01 0566 000                 000 fehler                                
+1063: 01 0134 211    ca_e1:       211 b_lage                                ; letzter Block
+1064: 01 0302 240                 240 lb_lage                               
+1065: 01 0135 211                 211 b_nn                                  
+1066: 01 0303 240                 240 lb_nn                                 
+1067: 01 0273 211                 211 sl_ok                                 
+1070: 01 0001 330                 330 c0                                    
+1071: 01 1074 170                 170 ca_nb                                 
+1072: 01 0277 241                 241 nb_ja                                 
+1073: 01 1125 000                 000 ca_seg                                
+1074: 01 0002 211    ca_nb:       211 c1                                    ; kein freier Eintrag: neuen Namensblock mit der Groesse des letzten anlegen
+1075: 01 0277 240                 240 nb_ja                                 
+1076: 01 0303 211                 211 lb_nn                                 ; Spuren = aufgerundet (4 nn + 4) / 32
+1077: 01 0303 210                 210 lb_nn                                 
+1100: 01 0303 210                 210 lb_nn                                 
+1101: 01 0303 210                 210 lb_nn                                 
+1102: 01 0005 210                 210 c4                                    
+1103: 01 0020 210                 210 c_32                                  
+1104: 01 0002 220                 220 c1                                    
+1105: 01 0301 241                 241 nb_t                                  
+1106: 01 0020 220    ca_nbl:      220 c_32                                  
+1107: 01 1116 040                 040 ca_nbe                                
+1110: 01 0117 240                 240 si_w                                  ; Rest merken
+1111: 01 0301 211                 211 nb_t                                  
+1112: 01 0002 210                 210 c1                                    
+1113: 01 0301 240                 240 nb_t                                  
+1114: 01 0117 211                 211 si_w                                  
+1115: 01 1106 000                 000 ca_nbl                                
+1116: 01 0301 211    ca_nbe:      211 nb_t                                  
+1117: 01 0254 240                 240 sa_n                                  
+1120: 01 2266 025                 025 suche_alle                            
+1121: 01 0001 330                 330 c0                                    
+1122: 01 0566 170                 170 fehler                                ; Trommeln voll (Status 6)
+1123: 01 0260 211                 211 sa_lage                               
+1124: 01 0300 240                 240 nb_lage                               
+1125: 01 0016 211    ca_seg:      211 c_16                                  ; erstes Segment
+1126: 01 0254 240                 240 sa_n                                  
+1127: 01 2266 025                 025 suche_alle                            
+1130: 01 0001 330                 330 c0                                    
+1131: 01 0566 170                 170 fehler                                
+1132: 01 0260 211                 211 sa_lage                               
+1133: 01 0305 240                 240 sg_lage                               
+1134: 01 0304 240                 240 fs_lage                               
+1135: 01 0306 241                 241 sg_sp                                 
+1136: 01 0310 241                 241 w_tot                                 
+1137: 01 0322 241                 241 bw_ende                               
+1140: 01 1317 025                 025 spur_neu                              
+1141: 01 0054 211                 211 c_k1anw                               ; Eingabe vom Lochstreifenleser 1
+1142: 01 0115 240                 240 lz_kan                                
+1143: 01 1605 025    ca_wort:     025 bw_lies                               
+1144: 01 0002 330                 330 c1                                    
+1145: 01 1153 170                 170 ca_w                                  
+1146: 01 0001 330                 330 c0                                    
+1147: 01 1176 170                 170 ca_fert                               
+1150: 01 0010 211                 211 c7                                    ; Fehler im Band: Status 7
+1151: 01 0113 240                 240 status                                
+1152: 01 1173 000                 000 ca_abbr                               
+1153: 01 0316 211    ca_w:        211 bw_k1                                 
+1154: 01 0001 330                 330 c0                                    
+1155: 01 1161 170                 170 ca_k2                                 
+1156: 01 0010 211                 211 c7                                    
+1157: 01 0113 240                 240 status                                
+1160: 01 1173 000                 000 ca_abbr                               
+1161: 01 0012 211    ca_k2:       211 c9                                    
+1162: 01 0317 220                 220 bw_k2                                 
+1163: 01 1167 050                 050 ca_ein                                
+1164: 01 0010 211                 211 c7                                    
+1165: 01 0113 240                 240 status                                
+1166: 01 1173 000                 000 ca_abbr                               
+1167: 01 1205 025    ca_ein:      025 wort_ein                              
+1170: 01 0001 330                 330 c0                                    
+1171: 01 1173 170                 170 ca_abbr                               
+1172: 01 1143 000                 000 ca_wort                               
+1173: 01 0053 211    ca_abbr:     211 c_k0anw                               
+1174: 01 0115 240                 240 lz_kan                                
+1175: 01 0566 000                 000 fehler                                
+1176: 01 0053 211    ca_fert:     211 c_k0anw                               
+1177: 01 0115 240                 240 lz_kan                                
+1200: 01 1337 025                 025 stream_ende                           
+1201: 01 1407 025                 025 commit                                
+1202: 01 2552 025                 025 bel_sichern                           
+1203: 01 3243 025                 025 m_ok                                  
+1204: 01 0535 000                 000 befehl                                
+1205: 01 0175 240    wort_ein:    240 we_r                                  
+1206: 01 0307 211                 211 sp_n                                  
+1207: 01 0017 330                 330 c_25                                  
+1210: 01 1245 170                 170 we_voll                               
+1211: 01 0314 211    we_ins:      211 g_cell                                
+1212: 01 0116 240                 240 si_a                                  
+1213: 01 0320 211                 211 bw_val                                
+1214: 01 0117 240                 240 si_w                                  
+1215: 01 3063 025                 025 sp_ind                                
+1216: 01 0312 211                 211 g_kenn                                
+1217: 00 7662 616                 616 rot6                                  
+1220: 01 0317 210                 210 bw_k2                                 
+1221: 01 0312 240                 240 g_kenn                                
+1222: 01 0314 211                 211 g_cell                                
+1223: 01 0026 210                 210 c1e                                   
+1224: 01 0314 240                 240 g_cell                                
+1225: 01 0307 211                 211 sp_n                                  
+1226: 01 0002 210                 210 c1                                    
+1227: 01 0307 240                 240 sp_n                                  
+1230: 01 0310 211                 211 w_tot                                 
+1231: 01 0002 210                 210 c1                                    
+1232: 01 0310 240                 240 w_tot                                 
+1233: 01 0311 211                 211 g_i                                   
+1234: 01 0002 210                 210 c1                                    
+1235: 01 0311 240                 240 g_i                                   
+1236: 01 0006 330                 330 c5                                    
+1237: 01 1242 170                 170 we_g                                  
+1240: 01 0002 211                 211 c1                                    
+1241: 01 0175 000                 000 we_r                                  
+1242: 01 1300 025    we_g:        025 grp_ende                              
+1243: 01 0002 211                 211 c1                                    
+1244: 01 0175 000                 000 we_r                                  
+1245: 01 0306 211    we_voll:     211 sg_sp                                 
+1246: 01 0015 330                 330 c_15                                  
+1247: 01 1255 170                 170 we_letzt                              
+1250: 01 1331 025                 025 spur_schr                             
+1251: 01 0306 211                 211 sg_sp                                 
+1252: 01 0002 210                 210 c1                                    
+1253: 01 0306 240                 240 sg_sp                                 
+1254: 01 1274 000                 000 we_neu                                
+1255: 01 0016 211    we_letzt:    211 c_16                                  ; naechstes Segment, Verkettung in Zelle 36 der 16. Spur
+1256: 01 0254 240                 240 sa_n                                  
+1257: 01 2266 025                 025 suche_alle                            
+1260: 01 0001 330                 330 c0                                    
+1261: 01 1276 170                 170 we_f6                                 
+1262: 01 0034 211                 211 c36e                                  
+1263: 01 0107 210                 210 pufw                                  
+1264: 01 0116 240                 240 si_a                                  
+1265: 01 0260 211                 211 sa_lage                               
+1266: 01 0117 240                 240 si_w                                  
+1267: 01 3063 025                 025 sp_ind                                
+1270: 01 1331 025                 025 spur_schr                             
+1271: 01 0260 211                 211 sa_lage                               
+1272: 01 0305 240                 240 sg_lage                               
+1273: 01 0306 241                 241 sg_sp                                 
+1274: 01 1317 025    we_neu:      025 spur_neu                              
+1275: 01 1211 000                 000 we_ins                                
+1276: 01 0001 211    we_f6:       211 c0                                    
+1277: 01 0175 000                 000 we_r                                  
+1300: 01 0176 240    grp_ende:    240 ge_r                                  
+1301: 01 0312 211                 211 g_kenn                                
+1302: 00 7671 616                 616 rot3                                  
+1303: 01 0117 240                 240 si_w                                  
+1304: 01 0313 211                 211 g_kcell                               
+1305: 01 0116 240                 240 si_a                                  
+1306: 01 3063 025                 025 sp_ind                                
+1307: 01 0313 211                 211 g_kcell                               
+1310: 01 0032 210                 210 c6e                                   
+1311: 01 0313 240                 240 g_kcell                               
+1312: 01 0026 210                 210 c1e                                   
+1313: 01 0314 240                 240 g_cell                                
+1314: 01 0312 241                 241 g_kenn                                
+1315: 01 0311 241                 241 g_i                                   
+1316: 01 0176 000                 000 ge_r                                  
+1317: 01 0200 240    spur_neu:    240 sn2_r                                 
+1320: 01 3053 025                 025 puf_leer                              
+1321: 01 0107 211                 211 pufw                                  
+1322: 01 0313 240                 240 g_kcell                               
+1323: 01 0026 210                 210 c1e                                   
+1324: 01 0314 240                 240 g_cell                                
+1325: 01 0312 241                 241 g_kenn                                
+1326: 01 0311 241                 241 g_i                                   
+1327: 01 0307 241                 241 sp_n                                  
+1330: 01 0200 000                 000 sn2_r                                 
+1331: 01 0177 240    spur_schr:   240 sc_r                                  
+1332: 01 0305 211                 211 sg_lage                               
+1333: 01 0306 210                 210 sg_sp                                 
+1334: 01 0111 240                 240 lage                                  
+1335: 01 3023 025                 025 zt_schr                               
+1336: 01 0177 000                 000 sc_r                                  
+1337: 01 0201 240    stream_ende: 240 se_r                                  
+1340: 01 0311 211                 211 g_i                                   
+1341: 01 0001 330                 330 c0                                    
+1342: 01 1366 170                 170 se_sp                                 
+1343: 01 0006 211                 211 c5                                    
+1344: 01 0311 220                 220 g_i                                   
+1345: 01 0323 240                 240 se_k                                  
+1346: 01 0323 211    se_r6:       211 se_k                                  
+1347: 01 0001 330                 330 c0                                    
+1350: 01 1360 170                 170 se_r3                                 
+1351: 01 0312 211                 211 g_kenn                                
+1352: 00 7662 616                 616 rot6                                  
+1353: 01 0312 240                 240 g_kenn                                
+1354: 01 0323 211                 211 se_k                                  
+1355: 01 0002 220                 220 c1                                    
+1356: 01 0323 240                 240 se_k                                  
+1357: 01 1346 000                 000 se_r6                                 
+1360: 01 0312 211    se_r3:       211 g_kenn                                
+1361: 00 7671 616                 616 rot3                                  
+1362: 01 0117 240                 240 si_w                                  
+1363: 01 0313 211                 211 g_kcell                               
+1364: 01 0116 240                 240 si_a                                  
+1365: 01 3063 025                 025 sp_ind                                
+1366: 01 0307 211    se_sp:       211 sp_n                                  
+1367: 01 0001 330                 330 c0                                    
+1370: 01 1375 170                 170 se_nul                                
+1371: 01 1331 025                 025 spur_schr                             
+1372: 01 0306 211                 211 sg_sp                                 
+1373: 01 0002 210                 210 c1                                    
+1374: 01 0306 240                 240 sg_sp                                 
+1375: 01 3053 025    se_nul:      025 puf_leer                              
+1376: 01 0306 211    se_z:        211 sg_sp                                 
+1377: 01 0016 330                 330 c_16                                  
+1400: 01 1406 170                 170 se_ende                               
+1401: 01 1331 025                 025 spur_schr                             
+1402: 01 0306 211                 211 sg_sp                                 
+1403: 01 0002 210                 210 c1                                    
+1404: 01 0306 240                 240 sg_sp                                 
+1405: 01 1376 000                 000 se_z                                  
+1406: 01 0201 000    se_ende:     000 se_r                                  
+1407: 01 0202 240    commit:      240 cm_r                                  
+1410: 01 0277 211                 211 nb_ja                                 
+1411: 01 0001 330                 330 c0                                    
+1412: 01 1525 170                 170 cm_alt                                
+1413: 01 3053 025                 025 puf_leer                              ; neuer Block: erste Spur mit Kopf und Eintrag 0
+1414: 01 0107 211                 211 pufw                                  
+1415: 01 0324 240                 240 cm_ca                                 
+1416: 01 0057 211                 211 c_bk                                  
+1417: 01 0117 240                 240 si_w                                  
+1420: 01 0324 211                 211 cm_ca                                 
+1421: 01 0116 240                 240 si_a                                  
+1422: 01 3063 025                 025 sp_ind                                
+1423: 01 0324 211                 211 cm_ca                                 ; Zelle 2: nn
+1424: 01 0027 210                 210 c2e                                   
+1425: 01 0116 240                 240 si_a                                  
+1426: 01 0303 211                 211 lb_nn                                 
+1427: 01 0117 240                 240 si_w                                  
+1430: 01 3063 025                 025 sp_ind                                
+1431: 01 0324 211                 211 cm_ca                                 ; Zelle 3: belegt = 1
+1432: 01 0030 210                 210 c3e                                   
+1433: 01 0116 240                 240 si_a                                  
+1434: 01 0002 211                 211 c1                                    
+1435: 01 0117 240                 240 si_w                                  
+1436: 01 3063 025                 025 sp_ind                                
+1437: 01 0324 211                 211 cm_ca                                 ; Zellen 4 bis 7: Eintrag 0
+1440: 01 0031 210                 210 c4e                                   
+1441: 01 0116 240                 240 si_a                                  
+1442: 01 0123 211                 211 n_0                                   
+1443: 01 0117 240                 240 si_w                                  
+1444: 01 3063 025                 025 sp_ind                                
+1445: 01 0116 211                 211 si_a                                  
+1446: 01 0026 210                 210 c1e                                   
+1447: 01 0116 240                 240 si_a                                  
+1450: 01 0124 211                 211 n_1                                   
+1451: 01 0117 240                 240 si_w                                  
+1452: 01 3063 025                 025 sp_ind                                
+1453: 01 0116 211                 211 si_a                                  
+1454: 01 0026 210                 210 c1e                                   
+1455: 01 0116 240                 240 si_a                                  
+1456: 01 0310 211                 211 w_tot                                 
+1457: 01 0117 240                 240 si_w                                  
+1460: 01 3063 025                 025 sp_ind                                
+1461: 01 0116 211                 211 si_a                                  
+1462: 01 0026 210                 210 c1e                                   
+1463: 01 0116 240                 240 si_a                                  
+1464: 01 0304 211                 211 fs_lage                               
+1465: 01 0117 240                 240 si_w                                  
+1466: 01 3063 025                 025 sp_ind                                
+1467: 01 0300 211                 211 nb_lage                               
+1470: 01 0111 240                 240 lage                                  
+1471: 01 3023 025                 025 zt_schr                               
+1472: 01 3053 025                 025 puf_leer                              ; restliche Spuren des Blocks: Nullen
+1473: 01 0002 211                 211 c1                                    
+1474: 01 0323 240                 240 se_k                                  
+1475: 01 0323 211    cm_nl:       211 se_k                                  
+1476: 01 0301 330                 330 nb_t                                  
+1477: 01 1510 170                 170 cm_nv                                 ; alle Spuren des Blocks geschrieben
+1500: 01 0300 211                 211 nb_lage                               
+1501: 01 0323 210                 210 se_k                                  
+1502: 01 0111 240                 240 lage                                  
+1503: 01 3023 025                 025 zt_schr                               
+1504: 01 0323 211                 211 se_k                                  
+1505: 01 0002 210                 210 c1                                    
+1506: 01 0323 240                 240 se_k                                  
+1507: 01 1475 000                 000 cm_nl                                 
+1510: 01 0302 211    cm_nv:       211 lb_lage                               ; Verkettung im letzten Block: Zelle 1 := Lagewort des neuen Blocks
+1511: 01 0111 240                 240 lage                                  
+1512: 01 3014 025                 025 zt_lies                               
+1513: 01 0026 211                 211 c1e                                   
+1514: 01 0107 210                 210 pufw                                  
+1515: 01 0116 240                 240 si_a                                  
+1516: 01 0300 211                 211 nb_lage                               
+1517: 01 0117 240                 240 si_w                                  
+1520: 01 3063 025                 025 sp_ind                                
+1521: 01 0302 211                 211 lb_lage                               
+1522: 01 0111 240                 240 lage                                  
+1523: 01 3023 025                 025 zt_schr                               
+1524: 01 0202 000                 000 cm_r                                  
+1525: 01 0274 211    cm_alt:      211 sl_blk                                ; freier Eintrag in vorhandenem Block
+1526: 01 0275 210                 210 sl_ps                                 
+1527: 01 0111 240                 240 lage                                  
+1530: 01 3014 025                 025 zt_lies                               
+1531: 01 0276 211                 211 sl_cz                                 
+1532: 01 0107 210                 210 pufw                                  
+1533: 01 0116 240                 240 si_a                                  
+1534: 01 0123 211                 211 n_0                                   
+1535: 01 0117 240                 240 si_w                                  
+1536: 01 3063 025                 025 sp_ind                                
+1537: 01 0116 211                 211 si_a                                  
+1540: 01 0026 210                 210 c1e                                   
+1541: 01 0116 240                 240 si_a                                  
+1542: 01 0124 211                 211 n_1                                   
+1543: 01 0117 240                 240 si_w                                  
+1544: 01 3063 025                 025 sp_ind                                
+1545: 01 0116 211                 211 si_a                                  
+1546: 01 0026 210                 210 c1e                                   
+1547: 01 0116 240                 240 si_a                                  
+1550: 01 0310 211                 211 w_tot                                 
+1551: 01 0117 240                 240 si_w                                  
+1552: 01 3063 025                 025 sp_ind                                
+1553: 01 0116 211                 211 si_a                                  
+1554: 01 0026 210                 210 c1e                                   
+1555: 01 0116 240                 240 si_a                                  
+1556: 01 0304 211                 211 fs_lage                               
+1557: 01 0117 240                 240 si_w                                  
+1560: 01 3063 025                 025 sp_ind                                
+1561: 01 0275 211                 211 sl_ps                                 
+1562: 01 0001 330                 330 c0                                    
+1563: 01 1570 170                 170 cm_g                                  
+1564: 01 3023 025                 025 zt_schr                               
+1565: 01 0274 211                 211 sl_blk                                
+1566: 01 0111 240                 240 lage                                  
+1567: 01 3014 025                 025 zt_lies                               
+1570: 01 0030 211    cm_g:        211 c3e                                   ; Zahl der belegten Eintraege + 1
+1571: 01 0107 210                 210 pufw                                  
+1572: 01 0324 240                 240 cm_ca                                 
+1573: 00 0000 251                 251 0                                     
+1574: 01 0002 210                 210 c1                                    
+1575: 01 0117 240                 240 si_w                                  
+1576: 01 0324 211                 211 cm_ca                                 
+1577: 01 0116 240                 240 si_a                                  
+1600: 01 3063 025                 025 sp_ind                                
+1601: 01 0274 211                 211 sl_blk                                
+1602: 01 0111 240                 240 lage                                  
+1603: 01 3023 025                 025 zt_schr                               
+1604: 01 0202 000                 000 cm_r                                  
+1605: 01 0174 240    bw_lies:     240 bw_r                                  
+1606: 01 0322 211                 211 bw_ende                               
+1607: 01 0001 330                 330 c0                                    
+1610: 01 1613 170                 170 bw_los                                
+1611: 01 0001 211                 211 c0                                    
+1612: 01 0174 000                 000 bw_r                                  
+1613: 01 0315 241    bw_los:      241 bw_cnt                                
+1614: 01 0316 241                 241 bw_k1                                 
+1615: 01 0317 241                 241 bw_k2                                 
+1616: 01 0320 241                 241 bw_val                                
+1617: 01 3072 025    bw_z:        025 lz                                    
+1620: 01 0062 330                 330 k_pkt                                 
+1621: 01 1663 170                 170 bw_pkt                                
+1622: 01 0063 330                 330 k_sl                                  
+1623: 01 1670 170                 170 bw_sl                                 
+1624: 01 0060 330                 330 k_zr                                  
+1625: 01 1617 170                 170 bw_z                                  
+1626: 01 0061 330                 330 k_wr                                  
+1627: 01 1617 170                 170 bw_z                                  
+1630: 01 0064 330                 330 k_9                                   
+1631: 01 1634 140                 140 bw_dig                                ; Ziffer 0 bis 9
+1632: 01 0003 211                 211 c2                                    ; anderes Zeichen: Fehler
+1633: 01 0174 000                 000 bw_r                                  
+1634: 01 0321 240    bw_dig:      240 bw_c                                  
+1635: 01 0315 211                 211 bw_cnt                                
+1636: 01 0001 330                 330 c0                                    
+1637: 01 1652 170                 170 bw_d0                                 
+1640: 01 0002 330                 330 c1                                    
+1641: 01 1655 170                 170 bw_d1                                 
+1642: 01 0010 211                 211 c7                                    ; Ziffer 8 oder 9 im Wert (nur Oktalziffern): Fehler
+1643: 01 0321 220                 220 bw_c                                  
+1644: 01 1700 040                 040 bw_f                                  
+1645: 01 0320 211                 211 bw_val                                
+1646: 00 7671 616                 616 rot3                                  
+1647: 01 0321 210                 210 bw_c                                  
+1650: 01 0320 240                 240 bw_val                                
+1651: 01 1657 000                 000 bw_inc                                
+1652: 01 0321 211    bw_d0:       211 bw_c                                  
+1653: 01 0316 240                 240 bw_k1                                 
+1654: 01 1657 000                 000 bw_inc                                
+1655: 01 0321 211    bw_d1:       211 bw_c                                  
+1656: 01 0317 240                 240 bw_k2                                 
+1657: 01 0315 211    bw_inc:      211 bw_cnt                                
+1660: 01 0002 210                 210 c1                                    
+1661: 01 0315 240                 240 bw_cnt                                
+1662: 01 1617 000                 000 bw_z                                  
+1663: 01 0315 211    bw_pkt:      211 bw_cnt                                
+1664: 01 0001 330                 330 c0                                    
+1665: 01 1700 170                 170 bw_f                                  ; Punkt ohne Zeichen
+1666: 01 0002 211                 211 c1                                    
+1667: 01 0174 000                 000 bw_r                                  
+1670: 01 0315 211    bw_sl:       211 bw_cnt                                
+1671: 01 0001 330                 330 c0                                    
+1672: 01 1676 170                 170 bw_end                                ; Ende ohne Wort
+1673: 01 0002 211                 211 c1                                    ; Wort und Ende
+1674: 01 0322 240                 240 bw_ende                               
+1675: 01 0174 000                 000 bw_r                                  
+1676: 01 0001 211    bw_end:      211 c0                                    
+1677: 01 0174 000                 000 bw_r                                  
+1700: 01 0003 211    bw_f:        211 c2                                    
+1701: 01 0174 000                 000 bw_r                                  
+1702: 01 0160 240    nm_lies:     240 nl_r                                  
+1703: 01 0053 211                 211 c_k0anw                               
+1704: 01 0115 240                 240 lz_kan                                
+1705: 01 0217 241                 241 nl_a                                  
+1706: 01 0220 241                 241 nl_b                                  
+1707: 01 0221 241                 241 nl_n                                  
+1710: 01 3072 025    nl_z:        025 lz                                    
+1711: 01 0061 330                 330 k_wr                                  
+1712: 01 1726 170                 170 nl_ende                               
+1713: 01 0222 240                 240 nl_c                                  
+1714: 00 7653 616                 616 rot9                                  ; Index * 01000
+1715: 01 0075 210                 210 a_aus                                 
+1716: 00 0000 251                 251 0                                     
+1717: 01 0001 330                 330 c0                                    
+1720: 01 1710 170                 170 nl_z                                  ; kein Zeichen fuer Namen: ignorieren
+1721: 01 0221 211                 211 nl_n                                  
+1722: 01 0013 330                 330 c_zehn                                
+1723: 01 1710 170                 170 nl_z                                  ; schon 10 Zeichen: ignorieren
+1724: 01 1744 025                 025 nl_put                                
+1725: 01 1710 000                 000 nl_z                                  
+1726: 01 0221 211    nl_ende:     211 nl_n                                  
+1727: 01 0013 330                 330 c_zehn                                
+1730: 01 1735 170                 170 nl_fin                                
+1731: 01 0060 211                 211 k_zr                                  
+1732: 01 0222 240                 240 nl_c                                  
+1733: 01 1744 025                 025 nl_put                                
+1734: 01 1726 000                 000 nl_ende                               
+1735: 01 0217 211    nl_fin:      211 nl_a                                  
+1736: 00 7671 616                 616 rot3                                  
+1737: 01 0123 240                 240 n_0                                   
+1740: 01 0220 211                 211 nl_b                                  
+1741: 00 7671 616                 616 rot3                                  
+1742: 01 0124 240                 240 n_1                                   
+1743: 01 0160 000                 000 nl_r                                  
+1744: 01 0161 240    nl_put:      240 np_r                                  
+1745: 01 0221 211                 211 nl_n                                  
+1746: 01 0005 330                 330 c4                                    
+1747: 01 1755 140                 140 np_a                                  
+1750: 01 0220 211                 211 nl_b                                  
+1751: 00 7662 616                 616 rot6                                  
+1752: 01 0222 210                 210 nl_c                                  
+1753: 01 0220 240                 240 nl_b                                  
+1754: 01 1761 000                 000 np_i                                  
+1755: 01 0217 211    np_a:        211 nl_a                                  
+1756: 00 7662 616                 616 rot6                                  
+1757: 01 0222 210                 210 nl_c                                  
+1760: 01 0217 240                 240 nl_a                                  
+1761: 01 0221 211    np_i:        211 nl_n                                  
+1762: 01 0002 210                 210 c1                                    
+1763: 01 0221 240                 240 nl_n                                  
+1764: 01 0161 000                 000 np_r                                  
+1765: 01 0162 240    nm_druck:    240 nd_r                                  
+1766: 00 4500 030                 030 04500                                 
+1767: 01 0003 211                 211 c2                                    
+1770: 01 0226 240                 240 nd_lg                                 ; Zeichenlage unbekannt
+1771: 01 0125 211                 211 e_n0                                  
+1772: 01 0223 240                 240 nd_w                                  
+1773: 01 2000 025                 025 nd_5                                  
+1774: 01 0126 211                 211 e_n1                                  
+1775: 01 0223 240                 240 nd_w                                  
+1776: 01 2000 025                 025 nd_5                                  
+1777: 01 0162 000                 000 nd_r                                  
+2000: 01 0163 240    nd_5:        240 n5_r                                  
+2001: 01 0006 211                 211 c5                                    
+2002: 01 0224 240                 240 nd_k                                  
+2003: 01 0223 211    nd_c:        211 nd_w                                  
+2004: 00 7662 616                 616 rot6                                  
+2005: 01 0223 240                 240 nd_w                                  
+2006: 01 0074 200                 200 c77                                   
+2007: 01 0225 240                 240 nd_code                               
+2010: 01 2020 025                 025 nd_ch                                 
+2011: 01 0224 211                 211 nd_k                                  
+2012: 01 0002 220                 220 c1                                    
+2013: 01 0224 240                 240 nd_k                                  
+2014: 01 0001 330                 330 c0                                    
+2015: 01 2017 170                 170 n5_ret                                
+2016: 01 2003 000                 000 nd_c                                  
+2017: 01 0163 000    n5_ret:      000 n5_r                                  
+2020: 01 0164 240    nd_ch:       240 nc_r                                  
+2021: 01 0225 211                 211 nd_code                               
+2022: 01 0060 330                 330 k_zr                                  
+2023: 01 2042 170                 170 nc_out                                
+2024: 01 0064 330                 330 k_9                                   
+2025: 01 2035 140                 140 nc_kb                                 
+2026: 01 0226 211                 211 nd_lg                                 
+2027: 01 0002 330                 330 c1                                    
+2030: 01 2042 170                 170 nc_out                                
+      00 0570 030                 dz  $ingb                                 
+2032: 01 0002 211                 211 c1                                    
+2033: 01 0226 240                 240 nd_lg                                 
+2034: 01 2042 000                 000 nc_out                                
+2035: 01 0226 211    nc_kb:       211 nd_lg                                 
+2036: 01 0001 330                 330 c0                                    
+2037: 01 2042 170                 170 nc_out                                
+      00 1170 030                 dz  $inkb                                 
+2041: 01 0226 241                 241 nd_lg                                 
+2042: 01 0225 211    nc_out:      211 nd_code                               
+2043: 00 7653 616                 616 rot9                                  
+2044: 01 0075 210                 210 a_aus                                 
+2045: 00 0000 251                 251 0                                     
+2046: 01 2047 240                 240 nc_g                                  
+2047: 0              nc_g:        dw  0                                     ; hier steht zur Laufzeit der Ausgabebefehl und wird ausgefuehrt
+2050: 01 0164 000                 000 nc_r                                  
+2051: 01 0156 240    ng:          240 ng_r                                  
+2052: 01 0125 211                 211 e_n0                                  
+2053: 01 0123 330                 330 n_0                                   
+2054: 01 2057 170                 170 ng_1                                  
+2055: 01 0001 211                 211 c0                                    
+2056: 01 0156 000                 000 ng_r                                  
+2057: 01 0126 211    ng_1:        211 e_n1                                  
+2060: 01 0124 330                 330 n_1                                   
+2061: 01 2064 170                 170 ng_ja                                 
+2062: 01 0001 211                 211 c0                                    
+2063: 01 0156 000                 000 ng_r                                  
+2064: 01 0002 211    ng_ja:       211 c1                                    
+2065: 01 0156 000                 000 ng_r                                  
+2066: 01 0157 240    sn:          240 sn_r                                  
+2067: 01 2116 025                 025 ee_erste                              
+2070: 01 0001 330                 330 c0                                    
+2071: 01 2110 170                 170 sn_f                                  
+2072: 01 2170 025    sn_l:        025 ee_weiter                             
+2073: 01 0001 330                 330 c0                                    
+2074: 01 2105 170                 170 sn_e                                  
+2075: 01 0130 211                 211 e_lage                                
+2076: 01 0001 330                 330 c0                                    
+2077: 01 2072 170                 170 sn_l                                  
+2100: 01 2051 025                 025 ng                                    
+2101: 01 0001 330                 330 c0                                    
+2102: 01 2072 170                 170 sn_l                                  
+2103: 01 0002 211                 211 c1                                    
+2104: 01 0157 000                 000 sn_r                                  
+2105: 01 0113 211    sn_e:        211 status                                
+2106: 01 0001 330                 330 c0                                    
+2107: 01 2112 170                 170 sn_nf                                 
+2110: 01 0001 211    sn_f:        211 c0                                    
+2111: 01 0157 000                 000 sn_r                                  
+2112: 01 0005 211    sn_nf:       211 c4                                    
+2113: 01 0113 240                 240 status                                
+2114: 01 0001 211                 211 c0                                    
+2115: 01 0157 000                 000 sn_r                                  
+2116: 01 0154 240    ee_erste:    240 ex_r                                  
+2117: 01 0142 241                 241 b_n                                   
+2120: 01 0120 211                 211 ak_l                                  
+2121: 01 0134 240                 240 b_lage                                
+2122: 01 2124 025                 025 blk_ein                               
+2123: 01 0154 000                 000 ex_r                                  
+2124: 01 0153 240    blk_ein:     240 bk_r                                  
+2125: 01 0142 211                 211 b_n                                   
+2126: 01 0002 210                 210 c1                                    
+2127: 01 0142 240                 240 b_n                                   
+2130: 01 0021 211                 211 c_40                                  
+2131: 01 0142 220                 220 b_n                                   
+2132: 01 2146 040                 040 bk_f2                                 
+2133: 01 0134 211                 211 b_lage                                
+2134: 01 0023 200                 200 c_127                                 
+2135: 01 0001 330                 330 c0                                    
+2136: 01 2146 170                 170 bk_f2                                 
+2137: 01 0134 211                 211 b_lage                                
+2140: 01 0111 240                 240 lage                                  
+2141: 01 3014 025                 025 zt_lies                               
+2142: 01 0107 211                 211 pufw                                  
+2143: 00 0000 251                 251 0                                     
+2144: 01 0057 330                 330 c_bk                                  
+2145: 01 2152 170                 170 bk_ok                                 
+2146: 01 0003 211    bk_f2:       211 c2                                    
+2147: 01 0113 240                 240 status                                
+2150: 01 0001 211                 211 c0                                    
+2151: 01 0153 000                 000 bk_r                                  
+2152: 01 0026 211    bk_ok:       211 c1e                                   
+2153: 01 0107 210                 210 pufw                                  
+2154: 00 0000 251                 251 0                                     
+2155: 01 0136 240                 240 b_link                                
+2156: 01 0027 211                 211 c2e                                   
+2157: 01 0107 210                 210 pufw                                  
+2160: 00 0000 251                 251 0                                     
+2161: 01 0135 240                 240 b_nn                                  
+2162: 01 0137 240                 240 b_cnt                                 
+2163: 01 0140 241                 241 b_ps                                  
+2164: 01 0031 211                 211 c4e                                   
+2165: 01 0141 240                 240 b_cz                                  
+2166: 01 0002 211                 211 c1                                    
+2167: 01 0153 000                 000 bk_r                                  
+2170: 01 0155 240    ee_weiter:   240 ew_r                                  
+2171: 01 0137 211    ew_a:        211 b_cnt                                 
+2172: 01 0001 330                 330 c0                                    
+2173: 01 2254 170                 170 ew_next                               
+2174: 01 0134 211                 211 b_lage                                
+2175: 01 0140 210                 210 b_ps                                  
+2176: 01 0111 240                 240 lage                                  
+2177: 01 0110 211                 211 puf_lage                              
+2200: 01 0111 330                 330 lage                                  
+2201: 01 2203 170                 170 ew_gel                                
+2202: 01 3014 025                 025 zt_lies                               
+2203: 01 0141 211    ew_gel:      211 b_cz                                  
+2204: 01 0107 210                 210 pufw                                  
+2205: 01 0227 240                 240 ea_a1                                 
+2206: 00 0000 251                 251 0                                     
+2207: 01 0125 240                 240 e_n0                                  
+2210: 01 0227 211                 211 ea_a1                                 
+2211: 01 0026 210                 210 c1e                                   
+2212: 01 0227 240                 240 ea_a1                                 
+2213: 00 0000 251                 251 0                                     
+2214: 01 0126 240                 240 e_n1                                  
+2215: 01 0227 211                 211 ea_a1                                 
+2216: 01 0026 210                 210 c1e                                   
+2217: 01 0227 240                 240 ea_a1                                 
+2220: 00 0000 251                 251 0                                     
+2221: 01 0127 240                 240 e_l                                   
+2222: 01 0227 211                 211 ea_a1                                 
+2223: 01 0026 210                 210 c1e                                   
+2224: 01 0227 240                 240 ea_a1                                 
+2225: 00 0000 251                 251 0                                     
+2226: 01 0130 240                 240 e_lage                                
+2227: 01 0134 211                 211 b_lage                                
+2230: 01 0131 240                 240 e_blk                                 
+2231: 01 0140 211                 211 b_ps                                  
+2232: 01 0132 240                 240 e_ps                                  
+2233: 01 0141 211                 211 b_cz                                  
+2234: 01 0133 240                 240 e_cz                                  
+2235: 01 0137 211                 211 b_cnt                                 
+2236: 01 0002 220                 220 c1                                    
+2237: 01 0137 240                 240 b_cnt                                 
+2240: 01 0141 211                 211 b_cz                                  
+2241: 01 0031 210                 210 c4e                                   
+2242: 01 0141 240                 240 b_cz                                  
+2243: 01 0033 330                 330 c32e                                  
+2244: 01 2246 170                 170 ew_tr                                 
+2245: 01 2252 000                 000 ew_ret                                
+2246: 01 0141 241    ew_tr:       241 b_cz                                  
+2247: 01 0140 211                 211 b_ps                                  
+2250: 01 0002 210                 210 c1                                    
+2251: 01 0140 240                 240 b_ps                                  
+2252: 01 0002 211    ew_ret:      211 c1                                    
+2253: 01 0155 000                 000 ew_r                                  
+2254: 01 0136 211    ew_next:     211 b_link                                
+2255: 01 0001 330                 330 c0                                    
+2256: 01 2264 170                 170 ew_ende                               
+2257: 01 0134 240                 240 b_lage                                
+2260: 01 2124 025                 025 blk_ein                               
+2261: 01 0001 330                 330 c0                                    
+2262: 01 2264 170                 170 ew_ende                               
+2263: 01 2171 000                 000 ew_a                                  
+2264: 01 0001 211    ew_ende:     211 c0                                    
+2265: 01 0155 000                 000 ew_r                                  
+2266: 01 0172 240    suche_alle:  240 sa_r                                  
+2267: 01 0255 241                 241 sa_t                                  
+2270: 01 0256 241                 241 sa_tl                                 
+2271: 01 0104 211                 211 a_fmt                                 
+2272: 01 0257 240                 240 sa_fa                                 
+2273: 01 0257 211    sa_l:        211 sa_fa                                 
+2274: 00 0000 251                 251 0                                     
+2275: 01 0001 330                 330 c0                                    
+2276: 01 2321 170                 170 sa_nx                                 
+2277: 01 0255 211                 211 sa_t                                  
+2300: 01 0244 240                 240 lu_t                                  
+2301: 01 0254 211                 211 sa_n                                  
+2302: 01 0245 240                 240 lu_n                                  
+2303: 01 2342 025                 025 luecke                                
+2304: 01 0001 330                 330 c0                                    
+2305: 01 2321 170                 170 sa_nx                                 
+2306: 01 0256 211                 211 sa_tl                                 
+2307: 01 0247 210                 210 lu_s                                  
+2310: 01 0260 240                 240 sa_lage                               
+2311: 01 0230 240                 240 bl_w                                  
+2312: 01 0254 211                 211 sa_n                                  
+2313: 01 0231 240                 240 bl_n                                  
+2314: 01 0002 211                 211 c1                                    
+2315: 01 0232 240                 240 bl_v                                  
+2316: 01 2431 025                 025 belege                                
+2317: 01 0002 211                 211 c1                                    
+2320: 01 0172 000                 000 sa_r                                  
+2321: 01 0255 211    sa_nx:       211 sa_t                                  
+2322: 01 0002 210                 210 c1                                    
+2323: 01 0255 240                 240 sa_t                                  
+2324: 01 0256 211                 211 sa_tl                                 
+2325: 01 0024 210                 210 c_128                                 
+2326: 01 0256 240                 240 sa_tl                                 
+2327: 01 0257 211                 211 sa_fa                                 
+2330: 01 0026 210                 210 c1e                                   
+2331: 01 0257 240                 240 sa_fa                                 
+2332: 01 0255 211                 211 sa_t                                  
+2333: 01 0005 330                 330 c4                                    
+2334: 01 2336 170                 170 sa_nf                                 
+2335: 01 2273 000                 000 sa_l                                  
+2336: 01 0007 211    sa_nf:       211 c6                                    
+2337: 01 0113 240                 240 status                                
+2340: 01 0001 211                 211 c0                                    
+2341: 01 0172 000                 000 sa_r                                  
+2342: 01 0171 240    luecke:      240 lu_r                                  
+2343: 01 0246 241                 241 lu_lauf                               
+2344: 01 0247 241                 241 lu_s                                  
+2345: 01 0103 211                 211 a_bel                                 
+2346: 01 0250 240                 240 lu_wa                                 
+2347: 01 0244 211                 211 lu_t                                  
+2350: 01 0251 240                 240 lu_tc                                 
+2351: 01 0251 211    lu_a:        211 lu_tc                                 
+2352: 01 0001 330                 330 c0                                    
+2353: 01 2363 170                 170 lu_w                                  
+2354: 01 0250 211                 211 lu_wa                                 
+2355: 01 0031 210                 210 c4e                                   
+2356: 01 0250 240                 240 lu_wa                                 
+2357: 01 0251 211                 211 lu_tc                                 
+2360: 01 0002 220                 220 c1                                    
+2361: 01 0251 240                 240 lu_tc                                 
+2362: 01 2351 000                 000 lu_a                                  
+2363: 01 0250 211    lu_w:        211 lu_wa                                 
+2364: 00 0000 251                 251 0                                     
+2365: 01 0252 240                 240 lu_w1                                 
+2366: 01 0253 241                 241 lu_k                                  
+2367: 01 0252 211    lu_b:        211 lu_w1                                 
+2370: 01 2377 040                 040 lu_bel                                ; Bit z0 gesetzt: belegt
+2371: 01 0246 211                 211 lu_lauf                               
+2372: 01 0002 210                 210 c1                                    
+2373: 01 0246 240                 240 lu_lauf                               
+2374: 01 0245 330                 330 lu_n                                  
+2375: 01 2421 170                 170 lu_ok                                 
+2376: 01 2400 000                 000 lu_nx                                 
+2377: 01 0246 241    lu_bel:      241 lu_lauf                               
+2400: 01 0252 217    lu_nx:       217 lu_w1                                 ; naechstes Bit nach z0
+2401: 01 0252 240                 240 lu_w1                                 
+2402: 01 0247 211                 211 lu_s                                  
+2403: 01 0002 210                 210 c1                                    
+2404: 01 0247 240                 240 lu_s                                  
+2405: 01 0024 330                 330 c_128                                 
+2406: 01 2427 170                 170 lu_nf                                 
+2407: 01 0253 211                 211 lu_k                                  
+2410: 01 0002 210                 210 c1                                    
+2411: 01 0253 240                 240 lu_k                                  
+2412: 01 0020 330                 330 c_32                                  
+2413: 01 2415 170                 170 lu_nw                                 
+2414: 01 2367 000                 000 lu_b                                  
+2415: 01 0250 211    lu_nw:       211 lu_wa                                 
+2416: 01 0026 210                 210 c1e                                   
+2417: 01 0250 240                 240 lu_wa                                 
+2420: 01 2363 000                 000 lu_w                                  
+2421: 01 0247 211    lu_ok:       211 lu_s                                  ; lu_s ist hier die letzte Spur der Folge
+2422: 01 0245 220                 220 lu_n                                  
+2423: 01 0002 210                 210 c1                                    
+2424: 01 0247 240                 240 lu_s                                  
+2425: 01 0002 211                 211 c1                                    
+2426: 01 0171 000                 000 lu_r                                  
+2427: 01 0001 211    lu_nf:       211 c0                                    
+2430: 01 0171 000                 000 lu_r                                  
+2431: 01 0167 240    belege:      240 be_r                                  
+2432: 01 0231 211    be_l:        211 bl_n                                  
+2433: 01 0001 330                 330 c0                                    
+2434: 01 2451 170                 170 be_e                                  
+2435: 01 0230 211                 211 bl_w                                  
+2436: 01 0233 240                 240 bb_w                                  
+2437: 01 0232 211                 211 bl_v                                  
+2440: 01 0234 240                 240 bb_v                                  
+2441: 01 2452 025                 025 bel_bit                               
+2442: 01 0230 211                 211 bl_w                                  
+2443: 01 0002 210                 210 c1                                    
+2444: 01 0230 240                 240 bl_w                                  
+2445: 01 0231 211                 211 bl_n                                  
+2446: 01 0002 220                 220 c1                                    
+2447: 01 0231 240                 240 bl_n                                  
+2450: 01 2432 000                 000 be_l                                  
+2451: 01 0167 000    be_e:        000 be_r                                  
+2452: 01 0170 240    bel_bit:     240 bb_r                                  
+2453: 01 0233 211                 211 bb_w                                  
+2454: 01 0235 240                 240 bb_x                                  
+2455: 01 0236 241                 241 bb_t                                  
+2456: 01 0237 241                 241 bb_i                                  
+2457: 01 0235 211    bb_t1:       211 bb_x                                  
+2460: 01 0024 220                 220 c_128                                 
+2461: 01 2472 040                 040 bb_t2                                 
+2462: 01 0235 240                 240 bb_x                                  
+2463: 01 0236 211                 211 bb_t                                  
+2464: 01 0002 210                 210 c1                                    
+2465: 01 0236 240                 240 bb_t                                  
+2466: 01 0237 211                 211 bb_i                                  
+2467: 01 0005 210                 210 c4                                    
+2470: 01 0237 240                 240 bb_i                                  
+2471: 01 2457 000                 000 bb_t1                                 
+2472: 01 0235 211    bb_t2:       211 bb_x                                  
+2473: 01 0020 220                 220 c_32                                  
+2474: 01 2502 040                 040 bb_t3                                 
+2475: 01 0235 240                 240 bb_x                                  
+2476: 01 0237 211                 211 bb_i                                  
+2477: 01 0002 210                 210 c1                                    
+2500: 01 0237 240                 240 bb_i                                  
+2501: 01 2472 000                 000 bb_t2                                 
+2502: 01 0235 211    bb_t3:       211 bb_x                                  
+2503: 00 7653 616                 616 rot9                                  
+2504: 01 0076 210                 210 a_mtab                                
+2505: 00 0000 251                 251 0                                     
+2506: 01 0240 240                 240 bb_m                                  
+2507: 01 0237 211                 211 bb_i                                  
+2510: 00 7653 616                 616 rot9                                  
+2511: 01 0103 210                 210 a_bel                                 
+2512: 01 0241 240                 240 bb_a                                  
+2513: 00 0000 251                 251 0                                     
+2514: 01 0242 240                 240 bb_wd                                 
+2515: 01 0240 200                 200 bb_m                                  
+2516: 01 0243 240                 240 bb_tst                                
+2517: 01 0234 211                 211 bb_v                                  
+2520: 01 0001 330                 330 c0                                    
+2521: 01 2531 170                 170 bb_frei                               
+2522: 01 0243 211                 211 bb_tst                                
+2523: 01 0001 330                 330 c0                                    
+2524: 01 2526 170                 170 bb_set                                
+2525: 01 2551 000                 000 bb_ende                               
+2526: 01 0242 211    bb_set:      211 bb_wd                                 
+2527: 01 0240 210                 210 bb_m                                  
+2530: 01 2536 000                 000 bb_sp                                 
+2531: 01 0243 211    bb_frei:     211 bb_tst                                
+2532: 01 0001 330                 330 c0                                    
+2533: 01 2551 170                 170 bb_ende                               
+2534: 01 0242 211                 211 bb_wd                                 
+2535: 01 0240 220                 220 bb_m                                  
+2536: 01 0117 240    bb_sp:       240 si_w                                  
+2537: 01 0241 211                 211 bb_a                                  
+2540: 01 0116 240                 240 si_a                                  
+2541: 01 3063 025                 025 sp_ind                                
+2542: 01 0236 211                 211 bb_t                                  
+2543: 00 7653 616                 616 rot9                                  
+2544: 01 0105 210                 210 a_chg                                 
+2545: 01 0116 240                 240 si_a                                  
+2546: 01 0002 211                 211 c1                                    
+2547: 01 0117 240                 240 si_w                                  
+2550: 01 3063 025                 025 sp_ind                                
+2551: 01 0170 000    bb_ende:     000 bb_r                                  
+2552: 01 0173 240    bel_sichern: 240 bs_r                                  
+2553: 01 0261 241                 241 bs_t                                  
+2554: 01 0264 241                 241 bs_lg                                 
+2555: 01 0105 211                 211 a_chg                                 
+2556: 01 0262 240                 240 bs_ca                                 
+2557: 01 0103 211                 211 a_bel                                 
+2560: 01 0263 240                 240 bs_ba                                 
+2561: 01 0262 211    bs_l:        211 bs_ca                                 
+2562: 00 0000 251                 251 0                                     
+2563: 01 0001 330                 330 c0                                    
+2564: 01 2620 170                 170 bs_nx                                 
+2565: 01 0264 211                 211 bs_lg                                 
+2566: 01 0111 240                 240 lage                                  
+2567: 01 3014 025                 025 zt_lies                               
+2570: 01 0263 211                 211 bs_ba                                 
+2571: 01 0267 240                 240 bs_ra                                 
+2572: 01 0266 241                 241 bs_pc                                 
+2573: 01 0265 241                 241 bs_k                                  
+2574: 01 0267 211    bs_k1:       211 bs_ra                                 
+2575: 00 0000 251                 251 0                                     
+2576: 01 0117 240                 240 si_w                                  
+2577: 01 0266 211                 211 bs_pc                                 
+2600: 01 0107 210                 210 pufw                                  
+2601: 01 0116 240                 240 si_a                                  
+2602: 01 3063 025                 025 sp_ind                                
+2603: 01 0267 211                 211 bs_ra                                 
+2604: 01 0026 210                 210 c1e                                   
+2605: 01 0267 240                 240 bs_ra                                 
+2606: 01 0266 211                 211 bs_pc                                 
+2607: 01 0026 210                 210 c1e                                   
+2610: 01 0266 240                 240 bs_pc                                 
+2611: 01 0265 211                 211 bs_k                                  
+2612: 01 0002 210                 210 c1                                    
+2613: 01 0265 240                 240 bs_k                                  
+2614: 01 0005 330                 330 c4                                    
+2615: 01 2617 170                 170 bs_wr                                 
+2616: 01 2574 000                 000 bs_k1                                 
+2617: 01 3023 025    bs_wr:       025 zt_schr                               
+2620: 01 0262 211    bs_nx:       211 bs_ca                                 
+2621: 01 0026 210                 210 c1e                                   
+2622: 01 0262 240                 240 bs_ca                                 
+2623: 01 0263 211                 211 bs_ba                                 
+2624: 01 0031 210                 210 c4e                                   
+2625: 01 0263 240                 240 bs_ba                                 
+2626: 01 0264 211                 211 bs_lg                                 
+2627: 01 0024 210                 210 c_128                                 
+2630: 01 0264 240                 240 bs_lg                                 
+2631: 01 0261 211                 211 bs_t                                  
+2632: 01 0002 210                 210 c1                                    
+2633: 01 0261 240                 240 bs_t                                  
+2634: 01 0005 330                 330 c4                                    
+2635: 01 2637 170                 170 bs_e                                  
+2636: 01 2561 000                 000 bs_l                                  
+2637: 01 0173 000    bs_e:        000 bs_r                                  
+2640: 01 0152 240    ini:         240 in_r                                  
+2641: 01 0113 241                 241 status                                
+2642: 01 0121 241                 241 ak_s                                  
+2643: 01 0207 241                 241 in_t                                  
+2644: 01 0111 241                 241 lage                                  
+2645: 01 0104 211                 211 a_fmt                                 
+2646: 01 0211 240                 240 in_fa                                 
+2647: 01 0103 211                 211 a_bel                                 
+2650: 01 0212 240                 240 in_ba                                 
+2651: 01 0105 211                 211 a_chg                                 ; chg := 0 (vier Zellen)
+2652: 01 0213 240                 240 in_pc                                 
+2653: 01 0210 241                 241 in_k                                  
+2654: 01 0213 211    in_c:        211 in_pc                                 
+2655: 01 0116 240                 240 si_a                                  
+2656: 01 0117 241                 241 si_w                                  
+2657: 01 3063 025                 025 sp_ind                                
+2660: 01 0213 211                 211 in_pc                                 
+2661: 01 0026 210                 210 c1e                                   
+2662: 01 0213 240                 240 in_pc                                 
+2663: 01 0210 211                 211 in_k                                  
+2664: 01 0002 210                 210 c1                                    
+2665: 01 0210 240                 240 in_k                                  
+2666: 01 0005 330                 330 c4                                    
+2667: 01 2671 170                 170 in_l                                  
+2670: 01 2654 000                 000 in_c                                  
+2671: 01 3014 025    in_l:        025 zt_lies                               
+2672: 01 0214 241                 241 in_f                                  
+2673: 01 0040 211                 211 cz4                                   
+2674: 01 0107 210                 210 pufw                                  
+2675: 00 0000 251                 251 0                                     
+2676: 01 0055 330                 330 c_lk                                  
+2677: 01 2701 170                 170 in_f1                                 
+2700: 01 2703 000                 000 in_f2                                 
+2701: 01 0002 211    in_f1:       211 c1                                    
+2702: 01 0214 240                 240 in_f                                  
+2703: 01 0211 211    in_f2:       211 in_fa                                 
+2704: 01 0116 240                 240 si_a                                  
+2705: 01 0214 211                 211 in_f                                  
+2706: 01 0117 240                 240 si_w                                  
+2707: 01 3063 025                 025 sp_ind                                
+2710: 01 0213 241                 241 in_pc                                 
+2711: 01 0210 241                 241 in_k                                  
+2712: 01 0213 211    in_kl:       211 in_pc                                 
+2713: 01 0107 210                 210 pufw                                  
+2714: 00 0000 251                 251 0                                     
+2715: 01 0117 240                 240 si_w                                  
+2716: 01 0212 211                 211 in_ba                                 
+2717: 01 0116 240                 240 si_a                                  
+2720: 01 3063 025                 025 sp_ind                                
+2721: 01 0213 211                 211 in_pc                                 
+2722: 01 0026 210                 210 c1e                                   
+2723: 01 0213 240                 240 in_pc                                 
+2724: 01 0212 211                 211 in_ba                                 
+2725: 01 0026 210                 210 c1e                                   
+2726: 01 0212 240                 240 in_ba                                 
+2727: 01 0210 211                 211 in_k                                  
+2730: 01 0002 210                 210 c1                                    
+2731: 01 0210 240                 240 in_k                                  
+2732: 01 0005 330                 330 c4                                    
+2733: 01 2735 170                 170 in_ke                                 
+2734: 01 2712 000                 000 in_kl                                 
+2735: 01 0214 211    in_ke:       211 in_f                                  
+2736: 01 0001 330                 330 c0                                    
+2737: 01 2764 170                 170 in_n                                  ; nicht formatiert: kein Anker
+2740: 01 0121 211                 211 ak_s                                  
+2741: 01 0001 330                 330 c0                                    
+2742: 01 2744 170                 170 in_a1                                 
+2743: 01 2764 000                 000 in_n                                  ; Anker schon gefunden
+2744: 01 0041 211    in_a1:       211 cz5                                   
+2745: 01 0107 210                 210 pufw                                  
+2746: 00 0000 251                 251 0                                     
+2747: 01 0056 330                 330 c_rk                                  
+2750: 01 2752 170                 170 in_a2                                 
+2751: 01 2764 000                 000 in_n                                  
+2752: 01 0042 211    in_a2:       211 cz6                                   
+2753: 01 0107 210                 210 pufw                                  
+2754: 00 0000 251                 251 0                                     
+2755: 01 0122 240                 240 ak_fv                                 
+2756: 01 0043 211                 211 cz7                                   
+2757: 01 0107 210                 210 pufw                                  
+2760: 00 0000 251                 251 0                                     
+2761: 01 0121 240                 240 ak_s                                  
+2762: 01 0111 210                 210 lage                                  ; Lagewort des ersten Blocks = t * 0200 + Spur
+2763: 01 0120 240                 240 ak_l                                  
+2764: 01 0207 211    in_n:        211 in_t                                  
+2765: 01 0002 210                 210 c1                                    
+2766: 01 0207 240                 240 in_t                                  
+2767: 01 0005 330                 330 c4                                    
+2770: 01 3000 170                 170 in_e                                  
+2771: 01 0111 211                 211 lage                                  
+2772: 01 0024 210                 210 c_128                                 
+2773: 01 0111 240                 240 lage                                  
+2774: 01 0211 211                 211 in_fa                                 
+2775: 01 0026 210                 210 c1e                                   
+2776: 01 0211 240                 240 in_fa                                 
+2777: 01 2671 000                 000 in_l                                  
+3000: 01 0121 211    in_e:        211 ak_s                                  
+3001: 01 0001 330                 330 c0                                    
+3002: 01 3011 170                 170 in_kein                               
+3003: 01 0122 211                 211 ak_fv                                 
+3004: 01 0002 330                 330 c1                                    
+3005: 01 3013 170                 170 in_ok                                 
+3006: 01 0004 211                 211 c3                                    ; Status 3: Formatversion fremd
+3007: 01 0113 240                 240 status                                
+3010: 01 0152 000                 000 in_r                                  
+3011: 01 0003 211    in_kein:     211 c2                                    ; Status 2: kein Repository
+3012: 01 0113 240                 240 status                                
+3013: 01 0152 000    in_ok:       000 in_r                                  
+3014: 01 0147 240    zt_lies:     240 zl_r                                  
+3015: 01 0051 211                 211 c661                                  
+3016: 01 0112 240                 240 zt_op                                 
+3017: 01 3032 025                 025 zt_io                                 
+3020: 01 0111 211                 211 lage                                  
+3021: 01 0110 240                 240 puf_lage                              
+3022: 01 0147 000                 000 zl_r                                  
+3023: 01 0150 240    zt_schr:     240 zs_r                                  
+3024: 01 0050 211                 211 c601                                  
+3025: 01 0112 240                 240 zt_op                                 
+3026: 01 3032 025                 025 zt_io                                 
+3027: 01 0111 211                 211 lage                                  
+3030: 01 0110 240                 240 puf_lage                              
+3031: 01 0150 000                 000 zs_r                                  
+3032: 01 0146 240    zt_io:       240 zi_r                                  
+3033: 01 0111 211                 211 lage                                  ; t * 0200 + Spur
+3034: 00 7656 616                 616 rot26                                 ; Spur * 2^26 + t
+3035: 01 0215 240                 240 zi_rt                                 
+3036: 01 0004 200                 200 c3                                    
+3037: 01 0216 240                 240 zi_tt                                 
+3040: 00 7675 616                 616 rot15                                 ; t * 0100000
+3041: 01 0052 210                 210 c_anw                                 ; Befehl 030 5k00 (k = t + 1)
+3042: 01 3043 240                 240 zi_g1                                 
+3043: 0              zi_g1:       dw  0                                     ; hier steht zur Laufzeit 030 5k00 (k = t + 1) (Anwahl der Trommel t) und wird ausgefuehrt
+3044: 01 0215 211                 211 zi_rt                                 
+3045: 01 0216 220                 220 zi_tt                                 ; Spur * 2^26 = zzz0
+3046: 01 0107 210                 210 pufw                                  ; bbbb = Arbeitsspur
+3047: 01 0112 210                 210 zt_op                                 ; Code 661 oder 601
+3050: 01 3051 240                 240 zi_g2                                 
+3051: 0              zi_g2:       dw  0                                     ; hier steht zur Laufzeit zzz0 bbbb 661/601 und wird ausgefuehrt
+3052: 01 0146 000                 000 zi_r                                  
+3053: 01 0151 240    puf_leer:    240 pl_r                                  
+3054: 01 0107 211                 211 pufw                                  
+3055: 01 0047 210                 210 c441                                  
+3056: 01 3057 240                 240 pl_g                                  
+3057: 0              pl_g:        dw  0                                     ; hier steht zur Laufzeit 441 <Arbeitsspur> und wird ausgefuehrt
+3060: 01 0025 211                 211 c_ungl                                
+3061: 01 0110 240                 240 puf_lage                              
+3062: 01 0151 000                 000 pl_r                                  
+3063: 01 0144 240    sp_ind:      240 sp_r                                  
+3064: 01 0116 211                 211 si_a                                  
+3065: 01 0046 210                 210 c240                                  
+3066: 01 3070 240                 240 si_g                                  
+3067: 01 0117 211                 211 si_w                                  
+3070: 0              si_g:        dw  0                                     ; hier steht zur Laufzeit 240 <Adresse> und wird ausgefuehrt
+3071: 01 0144 000                 000 sp_r                                  
+3072: 01 0145 240    lz:          240 lz_r                                  
+3073: 01 0115 211                 211 lz_kan                                ; Kanalanwahl (030 4700 oder 030 4600) nach lz_ka
+3074: 01 3075 240                 240 lz_ka                                 
+3075: 0              lz_ka:       dw  0                                     ; hier steht zur Laufzeit die Kanalanwahl und wird ausgefuehrt
+3076: 0              lz_rd:       dw  0                                     ; hier steht 011 <Eingabetabelle> (init_tab)
+3077: 01 0145 000    lz_back:     000 lz_r                                  
+3100: 01 0060 211    h_zr:        211 k_zr                                  
+3101: 01 3077 000                 000 lz_back                               
+3102: 01 0061 211    h_wr:        211 k_wr                                  
+3103: 01 3077 000                 000 lz_back                               
+3104: 01 0062 211    h_pkt:       211 k_pkt                                 
+3105: 01 3077 000                 000 lz_back                               
+3106: 01 3075 000    h_ign:       000 lz_ka                                 ; Zeichen ignorieren, Kanal neu waehlen und weiterlesen
+3107: 01 0143 240    init_tab:    240 it_r                                  
+3110: 00 7640 441                 441 nullspur                              
+3111: 01 0102 211                 211 a_tabraw                              
+3112: 01 0036 210                 210 c77a                                  
+3113: 01 0037 200                 200 cmask77                               
+3114: 01 0114 240                 240 tab_a                                 
+3115: 01 0044 210                 210 c011                                  
+3116: 01 3076 240                 240 lz_rd                                 
+3117: 01 0203 241                 241 it_i                                  
+3120: 01 0114 211                 211 tab_a                                 
+3121: 01 0204 240                 240 it_a                                  
+3122: 01 0204 211    it_l:        211 it_a                                  
+3123: 01 0116 240                 240 si_a                                  
+3124: 01 0203 211                 211 it_i                                  
+3125: 01 0117 240                 240 si_w                                  
+3126: 01 3063 025                 025 sp_ind                                
+3127: 01 0204 211                 211 it_a                                  
+3130: 01 0026 210                 210 c1e                                   
+3131: 01 0204 240                 240 it_a                                  
+3132: 01 0203 211                 211 it_i                                  
+3133: 01 0002 210                 210 c1                                    
+3134: 01 0203 240                 240 it_i                                  
+3135: 01 0022 330                 330 c_64                                  
+3136: 01 3140 170                 170 it_p                                  
+3137: 01 3122 000                 000 it_l                                  
+3140: 01 0203 241    it_p:        241 it_i                                  
+3141: 01 0077 211                 211 a_pcode                               
+3142: 01 0205 240                 240 it_pc                                 
+3143: 01 0100 211                 211 a_pword                               
+3144: 01 0206 240                 240 it_pw                                 
+3145: 01 0205 211    it_pl:       211 it_pc                                 
+3146: 00 0000 251                 251 0                                     
+3147: 00 7653 616                 616 rot9                                  
+3150: 01 0114 210                 210 tab_a                                 
+3151: 01 0116 240                 240 si_a                                  
+3152: 01 0206 211                 211 it_pw                                 
+3153: 00 0000 251                 251 0                                     
+3154: 01 0117 240                 240 si_w                                  
+3155: 01 3063 025                 025 sp_ind                                
+3156: 01 0205 211                 211 it_pc                                 
+3157: 01 0026 210                 210 c1e                                   
+3160: 01 0205 240                 240 it_pc                                 
+3161: 01 0206 211                 211 it_pw                                 
+3162: 01 0026 210                 210 c1e                                   
+3163: 01 0206 240                 240 it_pw                                 
+3164: 01 0203 211                 211 it_i                                  
+3165: 01 0002 210                 210 c1                                    
+3166: 01 0203 240                 240 it_i                                  
+3167: 01 0014 330                 330 c_12                                  
+3170: 01 3172 170                 170 it_e                                  
+3171: 01 3145 000                 000 it_pl                                 
+3172: 01 0143 000    it_e:        000 it_r                                  
+3173: 01 0166 240    m_banner:    240 ms_r                                  
+3174: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm ZTD                                   
+      00 1710 030    ;    
+      00 1630 030    ;    
+      00 0640 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3202: 01 0166 000                 000 ms_r                                  
+3203: 01 0166 240    m_prompt:    240 ms_r                                  
+3204: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm >                                     
+      00 0250 030    ;    
+3207: 01 0166 000                 000 ms_r                                  
+3210: 01 0166 240    m_zeil:      240 ms_r                                  
+3211: 00 4500 030                 030 04500                                 
+      00 2720 030                 dz  $wrzl                                 
+3213: 01 0166 000                 000 ms_r                                  
+3214: 01 0166 240    m_name:      240 ms_r                                  
+3215: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm NAME:                                 
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 0150 030    ;    
+3225: 01 0166 000                 000 ms_r                                  
+3226: 01 0166 240    m_adr:       240 ms_r                                  
+3227: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm ADRESSE:                              
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 0150 030    ;    
+3242: 01 0166 000                 000 ms_r                                  
+3243: 01 0166 240    m_ok:        240 ms_r                                  
+3244: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm OK                                    
+      00 1060 030    ;    
+      00 1220 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3251: 01 0166 000                 000 ms_r                                  
+3252: 01 0166 240    m_frage:     240 ms_r                                  
+3253: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm ?                                     
+      00 1530 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3257: 01 0166 000                 000 ms_r                                  
+3260: 01 0166 240    m_s1:        240 ms_r                                  
+3261: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm TROMMEL NICHT FORMATIERT              
+      00 1630 030    ;    
+      00 1110 030    ;    
+      00 1060 030    ;    
+      00 1240 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 0460 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 1240 030    ;    
+      00 0610 030    ;    
+      00 1630 030    ;    
+      00 0510 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 1630 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3314: 01 0166 000                 000 ms_r                                  
+3315: 01 0166 240    m_s2:        240 ms_r                                  
+3316: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm KEIN REPOSITORY                       
+      00 1220 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1270 030    ;    
+      00 1060 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 1630 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 1500 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3340: 01 0166 000                 000 ms_r                                  
+3341: 01 0166 240    m_s3:        240 ms_r                                  
+3342: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm FORMATVERSION FREMD                   
+      00 0460 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 1240 030    ;    
+      00 0610 030    ;    
+      00 1630 030    ;    
+      00 1650 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 1060 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0460 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1240 030    ;    
+      00 0640 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3370: 01 0166 000                 000 ms_r                                  
+3371: 01 0166 240    m_s4:        240 ms_r                                  
+3372: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm NAME UNBEKANNT                        
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1440 030    ;    
+      00 1050 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 1220 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 1050 030    ;    
+      00 1630 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3413: 01 0166 000                 000 ms_r                                  
+3414: 01 0166 240    m_s5:        240 ms_r                                  
+3415: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm PLATZ REICHT NICHT                    
+      00 1270 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 1630 030    ;    
+      00 1710 030    ;    
+      00 0320 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3442: 01 0166 000                 000 ms_r                                  
+3443: 01 0166 240    m_s6:        240 ms_r                                  
+3444: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm TROMMELN VOLL                         
+      00 1630 030    ;    
+      00 1110 030    ;    
+      00 1060 030    ;    
+      00 1240 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1650 030    ;    
+      00 1060 030    ;    
+      00 1030 030    ;    
+      00 1030 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3464: 01 0166 000                 000 ms_r                                  
+3465: 01 0166 240    m_s7:        240 ms_r                                  
+3466: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm KENNZEICHEN UNZULAESSIG               
+      00 1220 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 1050 030    ;    
+      00 1710 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1440 030    ;    
+      00 1050 030    ;    
+      00 1710 030    ;    
+      00 1440 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 0670 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3520: 01 0166 000                 000 ms_r                                  
+3521: 01 0166 240    m_s8:        240 ms_r                                  
+3522: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm NAME VORHANDEN                        
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1650 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 0700 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3543: 01 0166 000                 000 ms_r                                  
+3544: 01 0165 240    st_druck:    240 sd_r                                  
+3545: 01 0113 211                 211 status                                
+3546: 00 7653 616                 616 rot9                                  
+3547: 01 0101 210                 210 a_sttab                               
+3550: 01 0045 210                 210 c025                                  
+3551: 01 3552 240                 240 sd_g                                  
+3552: 0              sd_g:        dw  0                                     ; hier steht zur Laufzeit 025 <Meldung> und wird ausgefuehrt
+3553: 01 0165 000                 000 sd_r                                  
+3554: 01 0166 240    m_help:      240 ms_r                                  
+3555: 00 4500 030                 030 04500                                 
+      00 0570 030                 dtm L  LISTE                              
+      00 1030 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 0510 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0450 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+      00 0570 030                 dtm A  NAME, DANN LOCHSTREIFEN IN LESER 1 
+      00 0610 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 1530 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0640 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 1060 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 0460 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 0320 030    ;    
+      00 1170 030    ;    
+      00 0010 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+      00 0570 030                 dtm D  NAME LOESCHEN                      
+      00 0640 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 1060 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+      00 0570 030                 dtm M  NAME, ADRESSE. LADEN               
+      00 1240 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 1530 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 0730 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+      00 0570 030                 dtm G  ADRESSE. SPRUNG                    
+      00 0670 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1170 030    ;    
+      00 0730 030    ;    
+      00 0320 030    ;    
+      00 0570 030    ;    
+      00 1420 030    ;    
+      00 1270 030    ;    
+      00 1110 030    ;    
+      00 1440 030    ;    
+      00 1050 030    ;    
+      00 0670 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+      00 0570 030                 dtm Q  ENDE                               
+      00 1300 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+      00 0570 030                 dtm H  HILFE                              
+      00 0700 030    ;    
+      00 0320 030    ;    
+      00 0320 030    ;    
+      00 0700 030    ;    
+      00 0510 030    ;    
+      00 1030 030    ;    
+      00 0460 030    ;    
+      00 0450 030    ;    
+      00 2720 030                 dz  $wrzl                                 
+3772: 01 0166 000                 000 ms_r                                  
+3773: 00 0           bel:         dbn 020                                   ; Belegungslisten ZT0 bis ZT3 (je 4 Worte)
+3774: 00 0           ;    
+3775: 00 0           ;    
+3776: 00 0           ;    
+3777: 00 0           ;    
+4000: 00 0           ;    
+4001: 00 0           ;    
+4002: 00 0           ;    
+4003: 00 0           ;    
+4004: 00 0           ;    
+4005: 00 0           ;    
+4006: 00 0           ;    
+4007: 00 0           ;    
+4010: 00 0           ;    
+4011: 00 0           ;    
+4012: 00 0           ;    
+4013: 00 0           fmt:         dbn 4                                     ; Trommel formatiert (1) oder nicht (0)
+4014: 00 0           ;    
+4015: 00 0           ;    
+4016: 00 0           ;    
+4017: 00 0           chg:         dbn 4                                     ; Belegungsliste der Trommel geaendert
+4020: 00 0           ;    
+4021: 00 0           ;    
+4022: 00 0           ;    
+4023: 00 0           tabraw:      dbn 0200                                  ; Platz fuer die Eingabetabelle (64 Zellen, auf 0100 ausgerichtet)
+4024: 00 0           ;    
+4025: 00 0           ;    
+4026: 00 0           ;    
+4027: 00 0           ;    
+4030: 00 0           ;    
+4031: 00 0           ;    
+4032: 00 0           ;    
+4033: 00 0           ;    
+4034: 00 0           ;    
+4035: 00 0           ;    
+4036: 00 0           ;    
+4037: 00 0           ;    
+4040: 00 0           ;    
+4041: 00 0           ;    
+4042: 00 0           ;    
+4043: 00 0           ;    
+4044: 00 0           ;    
+4045: 00 0           ;    
+4046: 00 0           ;    
+4047: 00 0           ;    
+4050: 00 0           ;    
+4051: 00 0           ;    
+4052: 00 0           ;    
+4053: 00 0           ;    
+4054: 00 0           ;    
+4055: 00 0           ;    
+4056: 00 0           ;    
+4057: 00 0           ;    
+4060: 00 0           ;    
+4061: 00 0           ;    
+4062: 00 0           ;    
+4063: 00 0           ;    
+4064: 00 0           ;    
+4065: 00 0           ;    
+4066: 00 0           ;    
+4067: 00 0           ;    
+4070: 00 0           ;    
+4071: 00 0           ;    
+4072: 00 0           ;    
+4073: 00 0           ;    
+4074: 00 0           ;    
+4075: 00 0           ;    
+4076: 00 0           ;    
+4077: 00 0           ;    
+4100: 00 0           ;    
+4101: 00 0           ;    
+4102: 00 0           ;    
+4103: 00 0           ;    
+4104: 00 0           ;    
+4105: 00 0           ;    
+4106: 00 0           ;    
+4107: 00 0           ;    
+4110: 00 0           ;    
+4111: 00 0           ;    
+4112: 00 0           ;    
+4113: 00 0           ;    
+4114: 00 0           ;    
+4115: 00 0           ;    
+4116: 00 0           ;    
+4117: 00 0           ;    
+4120: 00 0           ;    
+4121: 00 0           ;    
+4122: 00 0           ;    
+4123: 00 0           ;    
+4124: 00 0           ;    
+4125: 00 0           ;    
+4126: 00 0           ;    
+4127: 00 0           ;    
+4130: 00 0           ;    
+4131: 00 0           ;    
+4132: 00 0           ;    
+4133: 00 0           ;    
+4134: 00 0           ;    
+4135: 00 0           ;    
+4136: 00 0           ;    
+4137: 00 0           ;    
+4140: 00 0           ;    
+4141: 00 0           ;    
+4142: 00 0           ;    
+4143: 00 0           ;    
+4144: 00 0           ;    
+4145: 00 0           ;    
+4146: 00 0           ;    
+4147: 00 0           ;    
+4150: 00 0           ;    
+4151: 00 0           ;    
+4152: 00 0           ;    
+4153: 00 0           ;    
+4154: 00 0           ;    
+4155: 00 0           ;    
+4156: 00 0           ;    
+4157: 00 0           ;    
+4160: 00 0           ;    
+4161: 00 0           ;    
+4162: 00 0           ;    
+4163: 00 0           ;    
+4164: 00 0           ;    
+4165: 00 0           ;    
+4166: 00 0           ;    
+4167: 00 0           ;    
+4170: 00 0           ;    
+4171: 00 0           ;    
+4172: 00 0           ;    
+4173: 00 0           ;    
+4174: 00 0           ;    
+4175: 00 0           ;    
+4176: 00 0           ;    
+4177: 00 0           ;    
+4200: 00 0           ;    
+4201: 00 0           ;    
+4202: 00 0           ;    
+4203: 00 0           ;    
+4204: 00 0           ;    
+4205: 00 0           ;    
+4206: 00 0           ;    
+4207: 00 0           ;    
+4210: 00 0           ;    
+4211: 00 0           ;    
+4212: 00 0           ;    
+4213: 00 0           ;    
+4214: 00 0           ;    
+4215: 00 0           ;    
+4216: 00 0           ;    
+4217: 00 0           ;    
+4220: 00 0           ;    
+4221: 00 0           ;    
+4222: 00 0           ;    

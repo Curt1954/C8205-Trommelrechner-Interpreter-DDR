@@ -1,0 +1,4 @@
+rc 16
+stderr kat6 Operand enthält unzulässige Zeichen an Position: 1.
+datei-weg obj mqo test
+escape-weg

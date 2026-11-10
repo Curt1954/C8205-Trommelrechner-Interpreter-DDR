@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_rept.asm:10: Fehler: L8 $REPT $V(n): Variable n ist nicht definiert ($SET fehlt)
+datei-weg obj mqo test
+escape-weg

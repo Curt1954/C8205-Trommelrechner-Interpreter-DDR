@@ -1,0 +1,213 @@
+Trommeldatei:
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/kat5_sort1
+0000: 00000003000 # kat5_sort1: 000 *+3 ; Zelle 0 des UP: Sprung ueber die zwei Parameter
+0003: 00000060240 # 240 ML0001DKR ; erste Codezelle: Rueckkehrwort sichern
+0004: 00000002211 # 211 ML0017DKR ; AC := n
+0005: 00000275330 # 330 l0001 ; AC mit 1 vergleichen
+0006: 00000060140 # 140 ML0001DKR ; n <= 1: nichts zu sortieren, Rueckkehr
+0007: 00000061240 # 240 ML0002DKR ; zz := n (Zaehler)
+0010: 00000276211 # 211 l0002 ; AC := 0
+0011: 00000062240 # 240 ML0003DKR ; sn := 0 (n in Adresseneinheiten, 01000 je Element)
+0012: 00000062211 # ML0007DKR: 211 ML0003DKR ; AC := sn
+0013: 00000277210 # 210 l0003 ; AC := sn + 01000
+0014: 00000062240 # 240 ML0003DKR ; sn := AC
+0015: 00000061211 # 211 ML0002DKR ; AC := Zaehler
+0016: 00000275220 # 220 l0001 ; AC := Zaehler - 1
+0017: 00000061240 # 240 ML0002DKR ; zz := AC
+0020: 00000276330 # 330 l0002 ; AC mit 0 vergleichen
+0021: 00000023170 # 170 ML0008DKR ; Zaehler = 0: sn fertig, AC = 0, weiter
+0022: 00000012000 # 000 ML0007DKR ; sonst naechste Adresseneinheit
+0023: 00000063240 # ML0008DKR: 240 ML0004DKR ; i := 0 (AC = 0), spaeter i := i + 1
+0024: 00000277210 # 210 l0003 ; AC := i + 1
+0025: 00000064240 # ML0009DKR: 240 ML0005DKR ; k := i + 1
+0026: 00000001210 # 210 ML0016DKR ; AC := AC + Feldanfang
+0027: 00000300210 # 210 l0004 ; Befehl 240 a(k) bauen
+0030: 00000042240 # 240 ML0014DKR ; Befehlszelle 1 := AC
+0031: 00000000251 # 251 0 ; AC := a(k)
+0032: 00000065240 # 240 ML0006DKR ; H := a(k)
+0033: 00000063211 # 211 ML0004DKR ; AC := i
+0034: 00000001210 # 210 ML0016DKR ; AC := AC + Feldanfang
+0035: 00000300210 # 210 l0004 ; Befehl 240 a(i) bauen
+0036: 00000044240 # 240 ML0015DKR ; Befehlszelle 2 := AC
+0037: 00000000251 # 251 0 ; AC := a(i)
+0040: 00000065330 # 330 ML0006DKR ; AC mit H vergleichen
+0041: 00000045140 # 140 ML0010DKR ; a(i) <= H: nicht tauschen
+0043: 00000065211 # 211 ML0006DKR ; AC := alter Wert a(k)
+0045: 00000064211 # ML0010DKR: 211 ML0005DKR ; AC := k
+0046: 00000277210 # 210 l0003 ; AC := k + 1
+0047: 00000062330 # 330 ML0003DKR ; AC mit sn vergleichen
+0050: 00000052170 # 170 ML0011DKR ; k + 1 = n: innere Schleife fertig
+0051: 00000025000 # 000 ML0009DKR ; weiter (AC = k + 1)
+0052: 00000063211 # ML0011DKR: 211 ML0004DKR ; AC := i
+0053: 00000301210 # 210 l0005 ; AC := i + 2
+0054: 00000062330 # 330 ML0003DKR ; AC mit sn vergleichen
+0055: 00000060170 # 170 ML0001DKR ; i + 2 = n: Rueckkehr
+0056: 00000277220 # 220 l0003 ; AC := i + 1
+0057: 00000023000 # 000 ML0008DKR ; weiter bei i := i + 1
+0066: 00000302211 # haupt: .LD l0006 ; AC := Adresse des Feldes
+0067: 00000001240 # .STO kat5_sort1+1 ; Parameter 1 eintragen (Zelle Marke+1)
+0070: 00000303211 # .LD l0007 ; AC := 20 (Anzahl der Texte)
+0071: 00000002240 # .STO kat5_sort1+2 ; Parameter 2 eintragen (Zelle Marke+2)
+0072: 00000000025 # 025 kat5_sort1 ; Aufruf des Unterprogramms
+0073: 00000304211 # .LD l0008 ; AC := Adresse der KB/GB-Zelle des Schreibwerks
+0074: 00007774240 # .STO r3 ; R3 := Adresse der Zustandszelle (Festlegung 030)
+0075: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0076: 00000305211 # .LD l0009 ; AC := Adresse des Wortes Zeilenschaltung + Um. KB
+0077: 00007773240 # .STO r1 ; R1 := Adresse von init
+0100: 00000156025 # 025 ausgabe ; neue Zeile und Um. KB drucken (das BIS laesst das Schreibwerk auf GB)
+0101: 00000302211 # .LD l0006 ; AC := Adresse des (sortierten) Feldes
+0102: 00000154240 # .STO pa ; pa := Adresse des ersten Textes
+0103: 00000303211 # .LD l0007 ; AC := 20 (Anzahl der Texte)
+0104: 00000155240 # .STO pz ; pz := Zaehler der noch zu druckenden Texte
+0105: 00000154211 # pl: .LD pa ; AC := Adresse des aktuellen Textes
+0106: 00007773240 # .STO r1 ; R1 := Adresse des Textes
+0107: 00000156025 # 025 ausgabe ; Text drucken (KAT5AUSGABE)
+0110: 00000306211 # .LD l0010 ; AC := Adresse des Wortes Zeilenschaltung
+0111: 00007773240 # .STO r1 ; R1 := Adresse von zeil
+0112: 00000156025 # 025 ausgabe ; Zeilenschaltung drucken
+0113: 00000154211 # .LD pa ; AC := Adresse des aktuellen Textes
+0114: 00000277210 # .ADD l0003 ; AC := Adresse des naechsten Textes (eine Adresseinheit weiter)
+0115: 00000154240 # .STO pa ; pa := Adresse des naechsten Textes
+0116: 00000155211 # .LD pz ; AC := Zaehler
+0117: 00000275220 # .SUB l0001 ; AC := Zaehler - 1
+0120: 00000155240 # .STO pz ; pz := AC
+0121: 00000276330 # .CMP l0002 ; AC mit 0 vergleichen
+0122: 00000124170 # .JVG3 halt ; Zaehler = 0: alle Texte gedruckt, Halt
+0123: 00000105000 # .JMP pl ; sonst naechster Text
+0124: 00000000020 # halt: .STOP 0 ; Halt: Feld ist sortiert und gedruckt
+0125: 04700000000 # feld: kat5 w ; Text[0] = w, Wort 04700000000
+0126: 01733000000 # kat5 8k ; Text[1] = 8k, Wort 01733000000
+0127: 01552000000 # kat5 6z ; Text[2] = 6z, Wort 01552000000
+0130: 04200000000 # kat5 r ; Text[3] = r, Wort 04200000000
+0131: 05000000000 # kat5 x ; Text[4] = x, Wort 05000000000
+0132: 01041511500 # kat5 1qy6 ; Text[5] = 1qy6, Wort 01041511500
+0133: 03345462100 # kat5 kuva ; Text[6] = kuva, Wort 03345462100
+0134: 01500000000 # kat5 6 ; Text[7] = 6, Wort 01500000000
+0135: 01310000000 # kat5 41 ; Text[8] = 41, Wort 01310000000
+0136: 03546510000 # kat5 mvy ; Text[9] = mvy, Wort 03546510000
+0137: 03635210000 # kat5 nma ; Text[10] = nma, Wort 03635210000
+0140: 03000000000 # kat5 h ; Text[11] = h, Wort 03000000000
+0141: 02721000000 # kat5 ga ; Text[12] = ga, Wort 02721000000
+0142: 02214502200 # kat5 b5xb ; Text[13] = b5xb, Wort 02214502200
+0143: 02651000000 # kat5 fy ; Text[14] = fy, Wort 02651000000
+0144: 01347300000 # kat5 4wh ; Text[15] = 4wh, Wort 01347300000
+0145: 04133000000 # kat5 qk ; Text[16] = qk, Wort 04133000000
+0146: 03500000000 # kat5 m ; Text[17] = m, Wort 03500000000
+0147: 01345200000 # kat5 4u9 ; Text[18] = 4u9, Wort 01345200000
+0150: 01427000000 # kat5 5g ; Text[19] = 5g, Wort 01427000000
+0151: 05300000000 # zeil: kat5 $wrzl ; Wort Zeilenschaltung (kat5 053), steht hinter dem Feld
+0152: 05354000000 # init: kat5 $wrzl$inkb ; Wort Zeilenschaltung und Um. KB (kat5 053, 054): Anfang des Drucks
+0153: 00000000000 # kbaus: dw 0 ; KB/GB-Zustand des Schreibwerks (0 = KB, 1 = GB), anfangs KB (Festlegung 030)
+0156: 00000204240 # ausgabe: 240 ML0001JQX ; Rueckkehrwort sichern
+0157: 00007773211 # 211 ML0014JQX ; AC := Adresse des Wortes (R1 bleibt unveraendert)
+0160: 00000000251 # 251 0 ; R-Lesebefehl: AC := Wort (Adresse im AC)
+0161: 00000216240 # 240 ML0004JQX ; rest := Wort (nie negativ, z0 bis z2 sind 0)
+0162: 00000276330 # ML0007JQX: 330 l0002 ; Vergleich des Rests mit 0 (keine Operation), der AC bleibt der Rest
+0163: 00000204170 # 170 ML0001JQX ; Rest 0: Wort fertig, Rueckkehr
+0164: 00007675642 # 642 07675 ; 15 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0165: 00000307200 # 200 l0011 ; nur das Zeichen behalten
+0166: 00000217240 # 240 ML0005JQX ; zeichen := Code mal 01000
+0167: 00000310330 # 330 l0012 ; Vergleich mit kat5 054 (Um. KB)
+0170: 00000205170 # 170 ML0011JQX ; Um. KB: Zustand := KB
+0171: 00000311330 # 330 l0013 ; Vergleich mit kat5 055 (Um. GB)
+0172: 00000205170 # 170 ML0011JQX ; Um. GB: Zustand := GB
+0173: 00000312210 # ML0008JQX: 210 l0014 ; plus Adresse der Tabelle, Code 01 steht auf ML0013%
+0174: 00000000251 # 251 0 ; R-Lesebefehl: AC := fertiger Ausgabebefehl des Zeichens
+0175: 00000176240 # 240 ML0009JQX ; Ausgabebefehl auf die naechste Zelle speichern
+0177: 00000216211 # 211 ML0004JQX ; AC := Zeichenrest
+0200: 00000313200 # 200 l0015 ; erstes Zeichen entfernen (die unteren 24 Bit bleiben)
+0201: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0202: 00000216240 # 240 ML0004JQX ; rest := Rest
+0203: 00000162000 # 000 ML0007JQX ; naechstes Zeichen (der AC ist der Rest)
+0205: 00007774211 # ML0011JQX: 211 ML0015JQX ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0206: 00000300210 # 210 l0004 ; plus Operationscode 240: Speicherbefehl
+0207: 00000213240 # 240 ML0012JQX ; Speicherbefehl auf die uebernaechste Zelle
+0210: 00000217211 # 211 ML0005JQX ; AC := Code mal 01000 (054000 oder 055000)
+0211: 00000310220 # 220 l0012 ; AC := 0 (Um. KB) oder 01000 (Um. GB)
+0212: 00007653642 # 642 07653 ; 9 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0214: 00000217211 # 211 ML0005JQX ; AC := Code mal 01000, zurueck zur Ausgabe des Zeichens
+0215: 00000173000 # 000 ML0008JQX ; Zeichen ausgeben
+0220: 00000320030 # ML0013JQX: dto \ \ ; Tabelle, Code 01: Leerzeichen
+0221: 00001530030 # dz , ; Code 02: Komma
+0222: 00001000030 # dz - ; Code 03: Minus
+0223: 00000730030 # dz . ; Code 04: Punkt
+0224: 00000400030 # dz + ; Code 05: + und =
+0225: 00000150030 # dz : ; Code 06: Doppelpunkt
+0226: 00000200030 # dto 0123456789 ; Codes 07 bis 020: 0 bis 9
+0227: 00000010030
+0230: 00000020030
+0231: 00000230030
+0232: 00000040030
+0233: 00000250030
+0234: 00000260030
+0235: 00000070030
+0236: 00000100030
+0237: 00000310030
+0240: 00000610030 # dto abcdefghijklmnopqrstuvwxyz ; Codes 021 bis 052: a bis z
+0241: 00000620030
+0242: 00000430030
+0243: 00000640030
+0244: 00000450030
+0245: 00000460030
+0246: 00000670030
+0247: 00000700030
+0250: 00000510030
+0251: 00001210030
+0252: 00001220030
+0253: 00001030030
+0254: 00001240030
+0255: 00001050030
+0256: 00001060030
+0257: 00001270030
+0260: 00001300030
+0261: 00001110030
+0262: 00001420030
+0263: 00001630030
+0264: 00001440030
+0265: 00001650030
+0266: 00001660030
+0267: 00001470030
+0270: 00001500030
+0271: 00001710030
+0272: 00002720030 # dz $wrzl ; Code 053: Zeilenschaltung (Satzmarke)
+0273: 00001170030 # dz $inkb ; Code 054: Um. KB
+0274: 00000570030 # dz $ingb ; Code 055: Um. GB
+0275: 00000000001 # l0001 dw 000000000001
+0276: 00000000000 # l0002 dw 000000000000
+0277: 00000001000 # l0003 dw 000000001000
+0300: 00000000240 # l0004 dw 000000000240
+0301: 00000002000 # l0005 dw 000000002000
+0302: 00000125000 # l0006 da feld
+0303: 00000000024 # l0007 dw 000000000024
+0304: 00000153000 # l0008 da kbaus
+0305: 00000152000 # l0009 da init
+0306: 00000151000 # l0010 da zeil
+0307: 00000077000 # l0011 dw 000000077000
+0310: 00000054000 # l0012 dw 000000054000
+0311: 00000055000 # l0013 dw 000000055000
+0312: 00000217000 # l0014 da ML0013JQX-1
+0313: 00077777777 # l0015 dw 000077777777
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=2125 US=1
+2125: 01041511500   # feld+0
+2126: 01310000000   # feld+1
+2127: 01345200000   # feld+2
+2130: 01347300000   # feld+3
+2131: 01427000000   # feld+4
+2132: 01500000000   # feld+5
+2133: 01552000000   # feld+6
+2134: 01733000000   # feld+7
+2135: 02214502200   # feld+8
+2136: 02651000000   # feld+9
+2137: 02721000000   # feld+10
+2140: 03000000000   # feld+11
+2141: 03345462100   # feld+12
+2142: 03500000000   # feld+13
+2143: 03546510000   # feld+14
+2144: 03635210000   # feld+15
+2145: 04133000000   # feld+16
+2146: 04200000000   # feld+17
+2147: 04700000000   # feld+18
+2150: 05000000000   # feld+19

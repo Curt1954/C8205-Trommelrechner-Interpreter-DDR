@@ -1,0 +1,27 @@
+0000: 01 0002 000          000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0              erg:  dw  0     ; Zelle 0001: Ergebnis (initialisiert)
+0002: 01 7550 211    haupt 211 l0001 ; Zelle 0002: AC := 5 (Literal)
+0003: 01 7551 210          210 l0002 ; Zelle 0003: AC := AC + 6 (Literal)
+0004: 01 7552 210          210 l0003 ; Zelle 0004: AC := AC + 7 (Literal)
+0005: 01 7400 210          210 a1    ; Zelle 0005: AC := AC + (a1), Block A
+0006: 01 7300 210          210 b1    ; Zelle 0006: AC := AC + (b1), Block B
+0007: 01 7240 210          210 c1    ; Zelle 0007: AC := AC + (c1), Block C
+0010: 01 7140 210          210 d1    ; Zelle 0010: AC := AC + (d1), Block D
+0011: 01 0001 240          240 erg   ; Zelle 0011: (erg) := AC speichern
+0012: 01 0001 164          164 0001  ; Zelle 0012: Diagnoseausgabe (nur im Test)
+0013: 01 0000 020          020 0     ; Zelle 0013: Halt
+      20 0000 7400   blkA: equ 07400 ; vorher equ100 *    erste Anweisung: Gruppe 1
+7400: 00 00000000011 a1:   dw  011   ; erste Zelle von Block A
+7401: 20 7550              db  0147  ; Rest von Block A: 0147 Zellen, zusammen 0150
+7550: 00 00000000005 l0001 dw  5     
+7551: 00 00000000006 l0002 dw  6     
+7552: 00 00000000007 l0003 dw  7     
+      20 0000 7300   blkB: equ 07300 ; vorher equ100 *    Gruppe 1
+7300: 00 00000000022 b1:   dw  022   ; erste Zelle von Block B
+7301: 20 7340              db  037   ; Rest von Block B, zusammen 040 Zellen
+      20 0000 7240   blkC: equ 07240 ; vorher equ40 *    Gruppe 2
+7240: 00 00000000033 c1:   dw  033   ; erste Zelle von Block C
+7241: 20 7260              db  017   ; Rest von Block C, zusammen 020 Zellen
+      20 0000 7140   blkD: equ 07140 ; vorher equ40 *    Gruppe 2
+7140: 00 00000000044 d1:   dw  044   ; erste Zelle von Block D
+7141: 20 7210              db  047   ; Rest von Block D, zusammen 050 Zellen

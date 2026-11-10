@@ -1,0 +1,29 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000017 # wert: dw 017 ; Zelle 0001
+0002: 00000000005 # wert2: dw 05 ; Zelle 0002
+0003: 00000000000 # erg: dw 0 ; Zelle 0003
+0004: 00000000000 # erg2: dw 0 ; Zelle 0004
+0005: 00000002211 # haupt: 211 wert2 ; Zelle 0005: AC := 5
+0006: 00000017240 # 240 hilf ; Zelle 0006: (hilf) := 5
+0007: 00000001211 # 211 wert ; Zelle 0007: AC := 017
+0010: 00000020240 # 240 hilf2 ; Zelle 0010: (hilf2) := 017
+0011: 00000017211 # 211 hilf ; Zelle 0011: AC := (hilf) = 5
+0012: 00000003240 # 240 erg ; Zelle 0012: (erg) := 5
+0013: 00000020211 # 211 hilf2 ; Zelle 0013: AC := (hilf2) = 017
+0014: 00000004240 # 240 erg2 ; Zelle 0014: (erg2) := 017
+0015: 00000001164 # 164 0001 ; Zelle 0015: Diagnoseausgabe (nur im Test)
+0016: 00000000020 # 020 0 ; Zelle 0016: Halt
+0017: 00000000000 # hilf dbn 1
+0020: 00000000000 # hilf2 dbn 1
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0017 AC=00000000017 US=1
+0003: 00000000005   # erg
+0004: 00000000017   # erg2
+0017: 00000000005   # hilf
+0020: 00000000017   # hilf2

@@ -1,0 +1,4 @@
+; Namensdatei zum Test opsymalias: mehrere Namen fuer denselben Code
+A1     211   ; Nr. 78 Einzel-Addition mit Loeschen
+A2     211   ; Nr. 78 Alias von A1
+A1     211   ; Nr. 78 derselbe Name noch einmal mit demselben Code ist erlaubt

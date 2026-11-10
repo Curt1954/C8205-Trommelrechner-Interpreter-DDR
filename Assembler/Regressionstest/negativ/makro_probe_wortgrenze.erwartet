@@ -1,0 +1,2 @@
+rc 0
+stderr x=$PROBEX y=$PROBE1 z=$PROBE_ w=0

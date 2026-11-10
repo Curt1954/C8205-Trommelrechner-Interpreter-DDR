@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_calch_klammer.asm:6: Fehler: $CALCH: Klammer ) fehlt
+datei-weg obj mqo test
+escape-weg

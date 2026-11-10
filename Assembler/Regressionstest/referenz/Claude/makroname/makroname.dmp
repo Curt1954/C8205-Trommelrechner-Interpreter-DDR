@@ -1,0 +1,46 @@
+0000: 01 0054 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000003        dw  3     ; erstes Wort 3
+0002: 00 00000000007        dw  7     ; Summe beider Parameter
+0003: 00 00000000012        dw  10    ; Parameter 10 (Name zehn)
+0004: 00 00000000007        dw  7     ; Parameter 11 oder Vorgabe 7
+0005: 00 00000000010        dw  8     ; Parameter 12 oder Vorgabe 8
+0006: 00 00000000012        dw  10    ; Zahl der uebergebenen Parameter
+0007: 00 00000000021        dw  17    ; zehn plus elf
+0010: 00 00000000003        dw  3     ; Zeichenzahl von zehn plus Zeichenzahl von a1
+0011: 00 00000000012        dw  10    ; $P mit Namen: Parameter 10
+0012: 00 00000000011        dw  9     ; Parameter 9 mit Namen
+0013: 00 00000000002        dw  2     ; Parameter 2 mit Nummer
+0014: 00 00000000012        dw  10    ; Parameter 10 (Name zehn)
+0015: 00 00000000013        dw  11    ; Parameter 11 oder Vorgabe 7
+0016: 00 00000000014        dw  12    ; Parameter 12 oder Vorgabe 8
+0017: 00 00000000014        dw  12    ; Zahl der uebergebenen Parameter
+0020: 00 00000000025        dw  21    ; zehn plus elf
+0021: 00 00000000003        dw  3     ; Zeichenzahl von zehn plus Zeichenzahl von a1
+0022: 00 00000000012        dw  10    ; $P mit Namen: Parameter 10
+0023: 00 00000000011        dw  9     ; Parameter 9 mit Namen
+0024: 00 00000000002        dw  2     ; Parameter 2 mit Nummer
+0025: 00 00000000062        dw  50    ; geprueften Wert ausgeben
+0026: 00 00000000001        dw  1     ; Modus EIN
+0027: 00 00000000007        dw  7     ; geprueften Wert ausgeben
+0030: 0                     dw  0     ; Modus AUS
+0031: 00 00000000005        dw  5     ; ein Wort je Wiederholung von anzahl
+0032: 00 00000000005        dw  5     ; ein Wort je Wiederholung von anzahl
+0033: 00 00000000006        dw  6     ; ein Wort je Zeichen von text
+0034: 00 00000000006        dw  6     ; ein Wort je Zeichen von text
+0035: 00 00000000006        dw  6     ; ein Wort je Zeichen von text
+0036: 00 00000000006        dw  6     ; ein Wort je Zeichen von text
+0037: 00 00000000004        dw  4     ; Zahl der uebergebenen Parameter
+0040: 00 00000000003        dw  3     ; Summe der beiden benannten Parameter
+0041: 00 00000000004        dw  4     ; vierter Parameter, ohne Namen
+0042: 00 00000000052        dw  42    ; Produkt
+0043: 00 00000000003        dw  3     ; erster Parameter
+0044: 00 00000000005        dw  5     ; zweiter Parameter
+0045: 00 00000000005        dw  5     ; Zeichenzahl von Parameter 1
+0046: 00 00000000012        dw  10    ; doppelte Zeichenzahl
+0047: 00 00000000040        dw  32    ; Parameter 32 (Name p32)
+0050: 00 00000000037        dw  31    ; Parameter 31 ueber $P mit Namen
+0051: 00 00000000041        dw  33    ; Parameter 1 plus Parameter 32
+0052: 00 00000000062        dw  50    ; Summe von breite und hoehe
+0053: 00 00000000036        dw  30    ; hoehe allein
+0054: 01 0001 164    haupt: 164 0001  ; Zelle 0054: Diagnoseausgabe (nur im Test)
+0055: 01 0000 020           020 0     ; Zelle 0055: Halt

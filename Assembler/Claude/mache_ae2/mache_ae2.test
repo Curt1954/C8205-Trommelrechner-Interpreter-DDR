@@ -1,0 +1,30 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000005 # w1: dw 5 ; Zelle 0001: Wert 5
+0002: 00000000003 # w2: dw 3 ; Zelle 0002: Wert 3
+0003: 00000000007 # w3: dw 07 ; Zelle 0003: Wert 7
+0004: 00000000000 # e1: dw 0 ; Zelle 0004: Ergebnis 1
+0005: 00000000000 # e2: dw 0 ; Zelle 0005: Ergebnis 2
+0006: 00000000000 # e3: dw 0 ; Zelle 0006: Ergebnis 3
+0007: 00000001211 # haupt: 211 w1 ; Lade w1 in AC (keine Verschiebung)
+0010: 00007653644 # 644 07653 ; 9 mal Linksverschiebung (Operand nach Festlegung 026)
+0011: 00000004240 # 240 e1
+0012: 00000002211 # 211 w2 ; Lade w2 in AC (keine Verschiebung)
+0013: 00007663644 # 644 07663 ; 1 mal Linksverschiebung (Operand nach Festlegung 026)
+0014: 00000005240 # 240 e2
+0015: 00000003211 # 211 w3 ; Lade w3 in AC (keine Verschiebung)
+0016: 00007671644 # 644 07671 ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0017: 00000006240 # 240 e3
+0020: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0021: 00000000020 # 020 0 ; Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0022 AC=00000000070 US=1
+0004: 00000005000   # e1
+0005: 00000000006   # e2
+0006: 00000000070   # e3

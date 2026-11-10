@@ -1,0 +1,22 @@
+Trommeldatei:
+#DOK-0001 Test $GLOBAL: globaler Zaehler ohne vorheriges $SET, Ergebnis eines Makros an den Quelltext, lokale Hilfsvariablen verschwinden
+#PROT STUFE=2
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Zaehlerstand nach der Erhoehung
+0002: 00000000002 # dw 2 ; Zaehlerstand nach der Erhoehung
+0003: 00000000003 # dw 3 ; Zaehlerstand nach der Erhoehung
+0004: 00000000012 # dw 10 ; Zelle 0004: 10 (der Quelltext liest die globale Variable)
+0005: 00000000000 # dw 0 ; Zelle 0005: 0 (s war lokal in SUMME und ist weg)
+0006: 00000000001 # dw 1 ; Zelle 0006: 1
+0007: 00000001164 # haupt: 164 0001 ; Zelle 0007: Diagnoseausgabe (nur im Test)
+0010: 00000000020 # 020 0 ; Zelle 0010: Halt (Zelle 8 dezimal)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011 US=1
+0001: 00000000001   # NUMMER erster Aufruf
+0002: 00000000002   # NUMMER zweiter Aufruf
+0003: 00000000003   # NUMMER dritter Aufruf (nach SUMME)
+0004: 00000000012   # gesamt = 10
+0005: 00000000000   # $DEFINED(s) = 0
+0006: 00000000001   # $DEFINED(gesamt) = 1

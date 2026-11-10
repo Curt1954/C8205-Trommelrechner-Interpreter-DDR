@@ -1,0 +1,10 @@
+args --probeausgabe
+rc 16
+stderr-reihe Probelauf 1: Hinweis: Makro CHK
+stderr-reihe Probelauf 1 fuer adr/abstand fehlgeschlagen (Rueckgabewert 16).
+stderr-reihe Abbruch.
+stderr vor dem Fehler abstand=0
+anzahl-stderr 1 vor dem Fehler abstand=0
+stderr Fehler: CHK $ERROR: Abstand ist null
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog adrdbg
+escape-weg

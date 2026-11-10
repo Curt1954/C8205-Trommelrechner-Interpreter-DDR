@@ -1,0 +1,20 @@
+0000: 01 0005 000          000  haupt ; Zelle 0000: Sprung zum Hauptprogramm
+      00 0570 030    t0:   dt   =     ; Zellen 0001 und 0002: Umschaltzeichen und =; danach hat sich der KB/GB-Zustand der Textzaehlung geaendert
+      00 0400 030    ;    
+0003: 0              erg:  dw   0     ; Zelle 0003: Ergebnis 1
+0004: 0              erg2: dw   0     ; Zelle 0004: Ergebnis 2
+0005: 01 7500 211    haupt 211  ba    ; Zelle 0005: AC := erstes Wort von Block A
+0006: 01 0003 240          240  erg   ; Zelle 0006: (erg) := AC
+0007: 01 7504 211          211  l0001 ; Zelle 0007: AC := Literal 5 (der Assembler legt es in die Luecke von Block A)
+0010: 01 0004 240          240  erg2  ; Zelle 0010: (erg2) := AC
+0011: 01 0000 020          020  0     ; Zelle 0011: Halt
+      20 0000 7500         equ  07500 ; vorher equ100 *    Rasterung 0100
+      00 1170 030    ba:   dt   1     ; im geaenderten Zustand zwei Zellen (Umschaltzeichen, Ziffer 1)
+      00 0010 030    ;    
+      00 0010 030          dt   1     ; eine Zelle
+      00 40000000001       kat4 1     ; eine Zelle
+7504: 00 00000000005 l0001 dw   5     
+      20 0000 7440         equ  07440 ; vorher equ40 *    Rasterung 040
+      00 0010 030    bb:   dto  1     ; eine Zelle: dto setzt kein Umschaltzeichen
+      00 1170 030          dtm  1     ; zwei Zellen: dtm setzt immer das Umschaltzeichen
+      00 0010 030    ;    

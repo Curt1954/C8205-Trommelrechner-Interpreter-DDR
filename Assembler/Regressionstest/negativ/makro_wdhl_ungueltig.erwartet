@@ -1,0 +1,4 @@
+rc 16
+stderr makro_wdhl_ungueltig.asm:5: Fehler: WDU !$wdhl: Resultatsbehandlung "XX" ungültig (LI, RE, ZL oder OHNE)
+datei-weg obj mqo test
+escape-weg

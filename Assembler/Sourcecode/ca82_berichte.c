@@ -1,4 +1,4 @@
-// ca82_berichte.c - Version 1.00-034 (siehe ca82_version.h)
+// ca82_berichte.c - Version 1.03-009 (siehe ca82_version.h)
 // Aufrufhilfe (Usage), Versionszeile und die Berichte nach dem Lauf: -WARN=SYM und --xref.
 // Aus ca82ass.c ausgelagert; benutzt nur die Symboltabelle (ca82_symbole.h) und ca82_standards.
 #include "ca82_standards.h"
@@ -6,10 +6,11 @@
 #include "ca82_symbole.h"
 #include "ca82_berichte.h"
 #include "ca82_fluss.h"
+#include "ca82_makros.h"
 #include <errno.h>
 
 void printUsage(const char *programName) {
-    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE] [--xref] [--ABSPR] [--color | --no-color]\n", programName);
+    printf("Usage: %s -p Projektverzeichnis -s Quellcode-Datei [-o Objektdatei] [-t Testdatei] [-m Makrodatei] [-WARN=SYM,SPR,TOT,ALLE,NOSLIT] [--xref] [--makros] [--opsyms] [--ABSPR] [--no-opt] [--pass0] [--color | --no-color]\n", programName);
     printf("       %s -h | --help | --version\n", programName);
     printf("\n");
     printf("  -p Projektverzeichnis  Verzeichnis mit dem Quelltext; dorthin werden auch die Ausgabedateien\n");
@@ -26,15 +27,46 @@ void printUsage(const char *programName) {
     printf("                         ersatzweise 'Sourcecode/'). Mit -m wird nur dieser Pfad benutzt.\n");
     printf("  -WARN=liste            Zusaetzliche Warnungen; Werte durch Komma getrennt (Gross-/Kleinschreibung egal):\n");
     printf("                           SYM  Symbole, die definiert, aber nirgends verwendet werden.\n");
-    printf("                           SPR  Sprungbefehle, deren Ziel ein Datenwort (dw, da) oder ein unbelegtes Wort ist.\n");
+    printf("                           SPR  Sprungbefehle, deren Ziel ein Datenwort (dw, dwb, dwh, dwf, dwg, da) oder ein unbelegtes Wort ist.\n");
     printf("                           TOT  Befehle hinter einem unbedingten Sprung, auf die nichts verweist.\n");
     printf("                           ALLE alle drei.\n");
+    printf("                           NOSLIT schaltet die (sonst immer eingeschaltete) Warnung ab, dass ein Symbol-Literal !x in einem\n");
+    printf("                                Rechenausdruck steht; gehoert nicht zu ALLE.\n");
     printf("                         Die Meldungen stehen auch im .log (hinter der Symboltabelle).\n");
     printf("  --xref                 Gibt nach fehlerfreiem Lauf eine Querverweisliste aus: je Symbol Wert,\n");
     printf("                         Definitionszeile und alle Zeilen des Quelltexts, die es verwenden. Sie steht auch im .log.\n");
+    printf("  --makros               Gibt nach fehlerfreiem Lauf die Makroliste aus: je aufgerufenem Makro die Zahl der\n");
+    printf("                         Aufrufe und die Herkunft (Quelltext, c82ass.makros oder Projektdatei mit Zeile);\n");
+    printf("                         dazu nicht aufgerufene Makros aus Quelltext und Projektdateien. Auch im .log.\n");
+    printf("  ;#MACRODATEI1= bis ;#MACRODATEI9=<Pfad>\n");
+    printf("                         Anweisung im Quelltext (keine Option): projektspezifische Makrodatei; Pfad relativ\n");
+    printf("                         zur Quelldatei. Suchreihenfolge: Quelltext, Datei 1 bis 9, c82ass.makros.\n");
+    printf("  ;#MAKROLOKAL=1         Anweisung im Quelltext (keine Option, nur einmal): $SET und $DIM in einem Makroaufruf legen lokale\n");
+    printf("                         Variablen und Felder an (wie beim IBM-Makroassembler); $GLOBAL <name> vereinbart global. Ohne die Zeile\n");
+    printf("                         (oder mit =0) sind sie global wie bisher.\n");
+    printf("  ;#MAKROUMORDNEN=NO     Anweisung im Quelltext (keine Option, nur einmal): schaltet die Umordnung der Makro-Rumpfbloecke ab.\n");
+    printf("                         Vorgabe ist an: der Optimierer verlegt die Rumpfbloecke der Makros mit $SPEC TYP=M hinter end und\n");
+    printf("                         packt sie dicht (groesste zuerst), wenn die Endadresse dadurch kleiner wird; =YES nennt die Vorgabe.\n");
+    printf("  ;#PRECOMMAND=<Wert>    Anweisung im Quelltext (keine Option, mehrfach erlaubt): <Wert> (Ziffern und Punkte, endet mit Punkt, z. B. 212000.) wird\n");
+    printf("                         als Lochbilder vor das erste Wort des .obj-Streifens geschrieben, mehrere in der Reihenfolge des Quelltexts.\n");
+    printf("  ;#POSTCOMMAND=<Wert>   wie PRECOMMAND, aber hinter das letzte Wort, noch vor das Endekennzeichen /. Bei --ABSPR ohne Wirkung.\n");
+    printf("  --opsyms               Gibt die Standardtabelle der Namen fuer Operationscodes (c82ass.opsym) aus, ohne Assemblerlauf:\n");
+    printf("                         je Name Code, Triaden B-A-Z, Nummer der Einzelbefehlsuebersicht und Bedeutung.\n");
+    printf("                         Im Quelltext schreibt man einen Namen mit vorangestelltem Punkt im Operationscode-Feld (.LD).\n");
+    printf("  ;#OPSYM=<Pfad>         Anweisung im Quelltext (keine Option, bis 9 Zeilen): weitere Namensdatei; Pfad relativ zur Quelldatei.\n");
+    printf("                         Im Quelltext selbst vereinbart  NAME: opsym <code>  einen Namen ab dieser Zeile.\n");
     printf("  --ABSPR                Statt der .obj-Datei einen absolut adressierten, binaer im R300-Code codierten\n");
     printf("                         Lochstreifen <name>.kep fuer das Kleine Eingabeprogramm (KEP) erzeugen:\n");
     printf("                         Leitbefehl <start> 240: und Worte als Dualziffern (auch --ABSOLUTPROGRAMM, --ASBPR).\n");
+    printf("  --no-opt, --NOOPT      Optimierer ausschalten: Literale bleiben hinter dem ersten end, dw-Zeilen an\n");
+    printf("                         ihrer Adresse (sonst werden Literale in freie Zellen vor dem Programmende verlegt);\n");
+    printf("                         keine Blockverschiebung (begin RELOC-EQU, RELOC-ALL), die Bloecke bleiben an ihrer Stelle.\n");
+    printf("  --pass0                Nur Pass 0 (Makroaufloesung) ausfuehren, ohne Pass 1 bis 3, ohne Ausgabedateien (vorhandene bleiben\n");
+    printf("                         liegen), ohne Berichte (-WARN, --xref, --makros). Farblos; alles, was sonst auf STDERR steht, geht auf\n");
+    printf("                         STDOUT, die uebrige Ausgabe entfaellt. Es fehlen die Kopfmeldungen (Projektverzeichnis, Benutze fuer ...),\n");
+    printf("                         und bei $NOTE steht nur der Text, ohne \"Hinweis: Makro <Name> (<Datei>:<Zeile>): \".\n");
+    printf("  --probeausgabe         Zeigt die Ausgabe von $NOTE, $TRACE und $DUMP auch fuer die Probelaeufe von adr und abstand (sonst\n");
+    printf("                         erscheint nur die des eigentlichen Laufs): je Zeile \"Probelauf <n>: \" davor. Ohne adr/abstand ohne Wirkung.\n");
     printf("  --color, --no-color    Farbige Ausgabe erzwingen bzw. abschalten. Ohne Angabe nur, wenn STDOUT und\n");
     printf("                         STDERR ein Terminal sind und die Umgebungsvariable NO_COLOR fehlt.\n");
     printf("  -h, --help             Diese Hilfe ausgeben.\n");
@@ -46,10 +78,12 @@ void printUsage(const char *programName) {
 // ------------------------------------------
 
 int xrefAktiv = 0; // 1 = Aufruf mit --xref (Querverweisliste)
+int makrolisteAktiv = 0;   // 1 = Aufruf mit --makros (Makroliste und Herkunft je Aufruf im Listing)
 int warnSym = 0;   // 1 = Aufruf mit -WARN=SYM
+int warnNoSlit = 0;   // 1 = Aufruf mit -WARN=NOSLIT: keine Warnung, wenn ein Symbol-Literal !x in einem Ausdruck steht (ab 1.03-006)
 
 // Wertet alle Parameter der Form -WARN=<liste> aus. <liste> sind durch Komma getrennte Schluesselwoerter
-// (Gross-/Kleinschreibung egal). Bisher gibt es nur SYM.
+// (Gross-/Kleinschreibung egal): SYM, SPR, TOT, ALLE und NOSLIT.
 void verarbeiteWarnOptionen(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
         if (argv[i] == NULL || !beginntOhneGrossKlein(argv[i], "-WARN=")) continue;
@@ -63,10 +97,12 @@ void verarbeiteWarnOptionen(int argc, char *argv[]) {
                 warnSpr = 1;
             } else if (gleichOhneGrossKlein(wort, "TOT")) {
                 warnTot = 1;
+            } else if (gleichOhneGrossKlein(wort, "NOSLIT")) {
+                warnNoSlit = 1;
             } else if (gleichOhneGrossKlein(wort, "ALLE")) {
                 warnSym = warnSpr = warnTot = 1;
             } else {
-                PRINT_WARNUNG("Unbekannter Wert '%s' bei -WARN= (erlaubt: SYM, SPR, TOT, ALLE).", wort);
+                PRINT_WARNUNG("Unbekannter Wert '%s' bei -WARN= (erlaubt: SYM, SPR, TOT, ALLE, NOSLIT).", wort);
             }
         }
     }
@@ -83,19 +119,18 @@ static int istErzeugtesSymbol(const char *name) {
         for (int k = 6; k < 9; k++) if (!isupper((unsigned char)name[k])) ok = 0;
         if (ok) return 1;
     }
+    if (makroIstErzeugtesLabel(name)) return 1;   // aus einem lesbaren lokalen Label <name>% erzeugt (Doku 4.3)
     return 0;
 }
 
 // Sucht die Zeile im Quelltext, in der das Symbol als Label (erstes Wort in Spalte 1) definiert wird.
 // Rueckgabe: Zeilennummer (ab 1) oder 0, wenn nicht gefunden (z. B. Label stammt aus einem Makro).
 static int findeDefinitionszeile(const char *name) {
-    FILE *f = fopen(inputFileName, "r");
-    if (!f) return 0;
-    char zeile[2048];
-    int nr = 0, gefunden = 0;
+    // Quelltext einschliesslich der mit $INCLUDE eingebundenen Dateien (fortlaufende Nummern, Doku 4.14)
+    int gefunden = 0, nr = 0;
     size_t len = strlen(name);
-    while (fgets(zeile, sizeof(zeile), f)) {
-        nr++;
+    for (nr = 1; nr <= quellZeilenAnzahl(); nr++) {
+        const char *zeile = quellZeilenText(nr);
         if (zeile[0] == ' ' || zeile[0] == '\t' || zeile[0] == ';' || zeile[0] == '#' ||
             zeile[0] == '\n' || zeile[0] == '\r' || zeile[0] == '\0') continue;
         if (strncmp(zeile, name, len) == 0 &&
@@ -104,7 +139,6 @@ static int findeDefinitionszeile(const char *name) {
             break;
         }
     }
-    fclose(f);
     return gefunden ? nr : 0;
 }
 
@@ -142,13 +176,13 @@ void pruefeUnbenutzteSymbole(void) {
     fflush(stdout);   // stdout (gepuffert) und stderr (Warnungen) sollen auch bei Umleitung in der richtigen Reihenfolge erscheinen
     berichtPrintf("Pruefung auf unbenutzte Symbole (-WARN=SYM)\n");
     fflush(stdout);
-    const char *quelle = strrchr(inputFileName, '/');
-    quelle = quelle ? quelle + 1 : inputFileName;
     for (int k = 0; k < anzahl; k++) {
         const Symbol *sym = &symbolTable[liste[k].index];
         if (liste[k].zeile > 0) {
+            const char *quelle = strrchr(qDatei(liste[k].zeile), '/');
+            quelle = quelle ? quelle + 1 : qDatei(liste[k].zeile);
             PRINT_WARNUNG("Symbol '%s' (%04o, %s Zeile %d) ist definiert, wird aber nie verwendet.",
-                          sym->symbol, (unsigned)(sym->address & ~BITMASK), quelle, liste[k].zeile);
+                          sym->symbol, (unsigned)(sym->address & ~BITMASK), quelle, qZeile(liste[k].zeile));
         } else {
             PRINT_WARNUNG("Symbol '%s' (%04o) ist definiert, wird aber nie verwendet.",
                           sym->symbol, (unsigned)(sym->address & ~BITMASK));
@@ -175,6 +209,13 @@ typedef struct {
     int kapazitaet;
     int *zeilen;     // Zeilennummern der Verwendungen (je Zeile hoechstens einmal)
 } XrefEintrag;
+
+// Ort in der Querverweisliste: Zeile der Hauptdatei als Zahl, Zeile einer eingebundenen Datei (Doku 4.14) als <Datei>:<Zeile>.
+// Die Makro-Zeilen aus Makrodateien tragen keine Quelltextzeile (nr <= 0 wird nicht gezeigt).
+static void xrefOrtText(int nr, char *ziel, size_t n) {
+    if (strcmp(qDatei(nr), inputFileName) == 0) snprintf(ziel, n, "%d", qZeile(nr));
+    else snprintf(ziel, n, "%s:%d", qDatei(nr), qZeile(nr));
+}
 
 static int vergleicheXrefName(const void *a, const void *b) {
     return strcmp(symbolTable[((const XrefEintrag *)a)->index].symbol, symbolTable[((const XrefEintrag *)b)->index].symbol);
@@ -262,21 +303,14 @@ void erzeugeQuerverweisliste(void) {
     }
     qsort(liste, n, sizeof(liste[0]), vergleicheXrefName);
 
-    FILE *f = fopen(inputFileName, "r");
-    if (!f) {
-        PRINT_WARNUNG("Querverweisliste: Quelltext '%s' kann nicht gelesen werden.", inputFileName);
-        free(liste);
-        return;
-    }
+    // Der Quelltext liegt zeilenweise im Speicher (alle Dateien, auch die mit $INCLUDE eingebundenen)
     char zeile[2048];
-    int nr = 0;
-    while (fgets(zeile, sizeof(zeile), f)) {
-        nr++;
+    for (int nr = 1; nr <= quellZeilenAnzahl(); nr++) {
+        snprintf(zeile, sizeof(zeile), "%s", quellZeilenText(nr));
         char *kom = strchr(zeile, ';');
         if (kom) *kom = '\0';
         xrefScanne(liste, n, zeile, nr, 1);
     }
-    fclose(f);
     for (int k = 0; k < makroOperandenAnzahl; k++) {
         xrefScanne(liste, n, makroOperanden[k].text, makroOperanden[k].zeile, 0);
         free(makroOperanden[k].text);
@@ -290,14 +324,18 @@ void erzeugeQuerverweisliste(void) {
     berichtPrintf("%-*s %-5s %-6s %s\n", MAX_SYMBOL_LENGTH - 1, "Symbol", "Wert", "Def.", "Verwendet in Zeile");
     for (int k = 0; k < n; k++) {
         const Symbol *sym = &symbolTable[liste[k].index];
-        char defText[16];
-        if (liste[k].defZeile > 0) snprintf(defText, sizeof(defText), "%d", liste[k].defZeile);
+        char defText[1200];
+        if (liste[k].defZeile > 0) xrefOrtText(liste[k].defZeile, defText, sizeof(defText));
         else snprintf(defText, sizeof(defText), "-");
         berichtPrintf("%-*s %04o  %-6s", MAX_SYMBOL_LENGTH - 1, sym->symbol, (unsigned)(sym->address & ~BITMASK), defText);
         if (liste[k].anzahl == 0) {
             berichtPrintf(" (nie verwendet)");
         } else {
-            for (int z = 0; z < liste[k].anzahl; z++) berichtPrintf(" %d", liste[k].zeilen[z]);
+            for (int z = 0; z < liste[k].anzahl; z++) {
+                char ortText[1200];
+                xrefOrtText(liste[k].zeilen[z], ortText, sizeof(ortText));
+                berichtPrintf(" %s", ortText);
+            }
         }
         berichtPrintf("\n");
         free(liste[k].zeilen);

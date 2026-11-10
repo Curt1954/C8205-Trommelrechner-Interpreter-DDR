@@ -1,0 +1,9 @@
+ZWEI: MACRO
+         dw 03
+         MEND
+DREI: MACRO
+         dw 04
+         MEND
+VIER: MACRO
+         dw 05
+         MEND

@@ -1,0 +1,27 @@
+rc 0
+anzahl-stderr 3 Hinweis: Makro SUMME (
+stderr-reihe makro_note.asm:39): i=1 s=1 q3=9
+stderr-reihe makro_note.asm:39): i=2 s=3 q3=9
+stderr-reihe makro_note.asm:39): i=3 s=6 q3=9
+anzahl-stderr 5 Hinweis: Makro RAND (
+stderr-reihe makro_note.asm:40): ; Semikolon gehoert zum Text, 1 ist ersetzt
+stderr-reihe makro_note.asm:40): nur bei Eins
+stderr-reihe makro_note.asm:40): rept 0 calc 42
+stderr-reihe makro_note.asm:40): rept 1 calc 42
+stderr-reihe Hinweis: Makro AUSSEN (
+stderr makro_note.asm:40): aussen fertig
+anzahl-stderr 1 Hinweis: Makro LANG (
+stderr xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+nicht-stderr xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+nicht-stderr nur bei Null
+nicht-stderr nach EXIT
+stderr-reihe Hinweis: Quelltext (
+stderr makro_note.asm:41): ausserhalb des Makros
+nicht-stderr Warnung
+nicht-stderr Fehler
+nicht-stderr Spur
+stdout 0000: 00 00000000006  dw 6
+stdout 0001: 00 00000000001  dw 1
+nicht-stdout dw 99
+datei-da obj mqo test
+escape-weg

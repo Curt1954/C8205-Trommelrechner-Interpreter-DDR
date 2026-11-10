@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_valb_leerzeichen.asm:6: Fehler: M1 $VALB n: Der Text "1 0" ist keine binäre ganze Zahl (erlaubt sind die Ziffern 0 und 1, davor ein einzelnes -)
+datei-weg obj mqo test
+escape-weg

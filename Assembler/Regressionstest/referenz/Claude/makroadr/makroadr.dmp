@@ -1,0 +1,11 @@
+0000: 01 0003 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000010        dw  8     ; Abstand der beiden Marken
+0002: 00 00000000015        dw  13    ; Adresse der Marke
+0003: 01 0001 164    haupt: 164 0001  ; Zelle 0003: Diagnoseausgabe (nur im Test)
+0004: 01 0000 020           020 0     ; Zelle 0004: Halt
+0005: 20 0012        tab_a: db  5     ; Zellen 0005 bis 0011 (fuenf Zellen)
+0012: 00 00000000001        dw  1     ; erstes Wort des Makros
+0013: 00 00000000002        dw  2     ; zweites Wort des Makros
+0014: 00 00000000003        dw  3     ; Zelle 0014 (dezimal 12)
+0015: 00 00000000004 tab_e: dw  4     ; Zelle 0015 (dezimal 13)
+0016: 00 00000000003        dw  3     ; Adresse der Marke

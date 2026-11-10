@@ -1,0 +1,3 @@
+rc 16
+stderr begin: RELOC-ALL muss vor FILL stehen.
+datei-weg obj mqo test

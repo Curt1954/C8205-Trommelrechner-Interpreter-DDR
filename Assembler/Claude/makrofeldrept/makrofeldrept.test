@@ -1,0 +1,25 @@
+Trommeldatei:
+#DOK-0001 Anzahl in $REPT aus Feldelement, auch mit $CALC; der Stand gilt zu Beginn des Makroaufrufs
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000010000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000007 # dw 7 ; zweimal
+0002: 00000000007 # dw 7 ; zweimal
+0003: 00000000000 # dw 0 ; 0, 1, 2
+0004: 00000000001 # dw 1 ; 0, 1, 2
+0005: 00000000002 # dw 2 ; 0, 1, 2
+0006: 00000000011 # dw 9 ; zweimal
+0007: 00000000011 # dw 9 ; zweimal
+0010: 00000001164 # haupt: 164 0001 ; Zelle 0010: Diagnoseausgabe (nur im Test)
+0011: 00000000020 # 020 0 ; Zelle 0011: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0012 US=1
+0001: 00000000007   # erste Wiederholung
+0002: 00000000007   # zweite Wiederholung
+0003: 00000000000   # $Z1 = 0
+0004: 00000000001   # $Z1 = 1
+0005: 00000000002   # $Z1 = 2
+0006: 00000000011   # 3 - 1 = 2 mal
+0007: 00000000011   # zweite Wiederholung

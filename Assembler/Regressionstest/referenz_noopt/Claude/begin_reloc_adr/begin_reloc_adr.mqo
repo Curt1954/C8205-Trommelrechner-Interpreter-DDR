@@ -1,0 +1,8 @@
+            000         haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+haupt:      020         0           ; Zelle 0001: Halt
+blk:        equ100      00100           ; Gruppe 1
+b1:         dw          1           ; erste Zelle, 07500
+            db          3           ; 07501 bis 07503
+b2:         dw          2           ; 07504
+            dw          4           ; Abstand
+            dw          68          ; Adresse

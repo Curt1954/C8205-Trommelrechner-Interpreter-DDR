@@ -1,0 +1,13 @@
+Trommeldatei:
+#PROT STUFE=2
+0000: 00000003000 # .JMP haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000007 # hol: dw 7 ; Zelle 0001: Label hol (Symbol) neben dem Namen .HOL
+0002: 00000000000 # erg: dw 0 ; Zelle 0002: Ergebnis
+0003: 00000001211 # haupt: .HOL hol ; Zelle 0003: AC := 7
+0004: 00000002240 # .SPE erg ; Zelle 0004: erg := 7
+0005: 00000000020 # .STOP 0 ; Zelle 0005: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0006 AC=00000000007 US=1
+0002: 00000000007   # erg

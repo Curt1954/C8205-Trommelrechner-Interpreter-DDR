@@ -1,0 +1,7 @@
+args --pass0
+rc 16
+stdout pass0_fehler.asm:3: Fehler: (Quelltext) $ERROR: Abbruch hier
+stdout Compilierung endete mit FEHLERn.
+nicht-stdout Projektverzeichnis:
+datei-weg obj mqo test sym log dmp
+escape-weg

@@ -1,0 +1,33 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      65      ; A = 65
+        dw      98      ; b = 98
+        dw      99      ; c = 99
+        dw      32      ; Leerzeichen = 32
+        dw      126     ; Tilde = 126
+        dw      195     ; erstes Byte des ae mit Umlaut = 195
+        dw      164     ; zweites Byte = 164
+        dw      1       ; ein Zeichen: 1
+        dw      0       ; gleich A: 0
+        dw      97      ; Code als Rechenausdruck, 97
+        dw      32      ; Leerzeichen, 32
+        dw      1       ; ein Zeichen: 1
+        dw      126     ; Tilde, 126
+        dw      66      ; Code aus dem Parameter, 66
+        dw      42      ; 42
+        dw      0       ; 0
+        dw      7       ; 7
+        dw      83      ; -17 + 100 = 83
+        dw      88      ; -12 + 100 = 88
+        dw      2       ; Text 57 hat 2 Zeichen
+        dw      57      ; zurueck zur Zahl 57
+        dw      7       ; abcd-xy hat 7 Zeichen
+        dw      0       ; spaetere Aenderung von a aendert c nicht: 0
+        dw      4       ; 1212 hat 4 Zeichen
+        dw      1212    ; Zahl 1212
+        dw      8       ; Text mit Leerzeichen: 8
+        dw      0       ; gleich: 0
+        dw      4       ; zwei Umlaute sind 4 Bytes
+        dw      2       ; ein Umlaut: 2 Bytes
+        dw      195     ; erstes Byte: 195
+haupt:  164     0001    ; Zelle 31: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 32: Halt

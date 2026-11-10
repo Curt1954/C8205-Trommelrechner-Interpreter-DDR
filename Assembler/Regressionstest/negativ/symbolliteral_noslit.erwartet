@@ -1,0 +1,5 @@
+args -WARN=NOSLIT
+rc 0
+nicht-stderr Symbol-Literal x steht
+nicht-stderr Unbekannter Wert
+escape-weg

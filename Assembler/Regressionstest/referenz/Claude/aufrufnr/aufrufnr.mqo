@@ -1,0 +1,11 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      1       ; eigene Nummer
+        dw      1       ; Nummer des aeusseren Aufrufs (als Parameter weitergereicht)
+        dw      2       ; eigene Nummer des inneren Aufrufs
+        dw      1       ; nach der Rueckkehr gilt wieder die eigene Nummer
+        dw      3       ; eigene Nummer
+        dw      3       ; Nummer des aeusseren Aufrufs (als Parameter weitergereicht)
+        dw      4       ; eigene Nummer des inneren Aufrufs
+        dw      3       ; nach der Rueckkehr gilt wieder die eigene Nummer
+        dw      50      ; Nummer mal 10
+haupt:  020     0       ; Zelle 0012: Halt

@@ -1,0 +1,215 @@
+Trommeldatei:
+#DOK-0001 typ10ein: Projektmakro TYP10EINGABE: 9 Eingaben vom Leser 1, Wort 1 und Wort 2 je Eingabe, KBGB nach jeder Eingabe, R1 unveraendert
+#SPEI-0001 0001-0034
+#PROT STUFE=2
+--leser1 Test-virtuelleGeraete/Leser1/typ10ein.txt
+0000: 00000035000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0035: 00007775241 # haupt 241 kbgb ; KBGB := 0 (Anfangszustand KB), AC := 0
+0036: 00004600030 # 030 04600 ; 4600 oder K1 oder LSL1 oder LSS1
+0037: 00000120211 # 211 a0 ; AC := Adresse des Bereichs der Eingabe 1
+0040: 00007773240 # 240 r1 ; R1 := Bereich
+0041: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 1 lesen
+0042: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0043: 00000023240 # 240 kb+0 ; Zelle kb+0 := KBGB
+0044: 00000121211 # 211 a1 ; AC := Adresse des Bereichs der Eingabe 2
+0045: 00007773240 # 240 r1 ; R1 := Bereich
+0046: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 2 lesen
+0047: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0050: 00000024240 # 240 kb+1 ; Zelle kb+1 := KBGB
+0051: 00000122211 # 211 a2 ; AC := Adresse des Bereichs der Eingabe 3
+0052: 00007773240 # 240 r1 ; R1 := Bereich
+0053: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 3 lesen
+0054: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0055: 00000025240 # 240 kb+2 ; Zelle kb+2 := KBGB
+0056: 00000123211 # 211 a3 ; AC := Adresse des Bereichs der Eingabe 4
+0057: 00007773240 # 240 r1 ; R1 := Bereich
+0060: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 4 lesen
+0061: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0062: 00000026240 # 240 kb+3 ; Zelle kb+3 := KBGB
+0063: 00000124211 # 211 a4 ; AC := Adresse des Bereichs der Eingabe 5
+0064: 00007773240 # 240 r1 ; R1 := Bereich
+0065: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 5 lesen
+0066: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0067: 00000027240 # 240 kb+4 ; Zelle kb+4 := KBGB
+0070: 00000125211 # 211 a5 ; AC := Adresse des Bereichs der Eingabe 6
+0071: 00007773240 # 240 r1 ; R1 := Bereich
+0072: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 6 lesen
+0073: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0074: 00000030240 # 240 kb+5 ; Zelle kb+5 := KBGB
+0075: 00000126211 # 211 a6 ; AC := Adresse des Bereichs der Eingabe 7
+0076: 00007773240 # 240 r1 ; R1 := Bereich
+0077: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 7 lesen
+0100: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0101: 00000031240 # 240 kb+6 ; Zelle kb+6 := KBGB
+0102: 00000127211 # 211 a7 ; AC := Adresse des Bereichs der Eingabe 8
+0103: 00007773240 # 240 r1 ; R1 := Bereich
+0104: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 8 lesen
+0105: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0106: 00000032240 # 240 kb+7 ; Zelle kb+7 := KBGB
+0107: 00000130211 # 211 a8 ; AC := Adresse des Bereichs der Eingabe 9
+0110: 00007773240 # 240 r1 ; R1 := Bereich
+0111: 00000131025 # 025 eingabe ; UP eingabe: Eingabe 9 lesen
+0112: 00007775211 # 211 kbgb ; AC := KBGB nach der Eingabe
+0113: 00000033240 # 240 kb+8 ; Zelle kb+8 := KBGB
+0114: 00007773211 # 211 r1 ; AC := R1
+0115: 00000130220 # 220 a8 ; minus Soll (Bereich der letzten Eingabe): 0, wenn R1 unveraendert
+0116: 00000034240 # 240 dif1 ; dif1 := Abweichung
+0117: 00000000020 # 020 0 ; Halt (normales Ende)
+0120: 00000001000 # a0: da erg+0 ; Adresse des Bereichs der Eingabe 1 (Adressfeld)
+0121: 00000003000 # a1: da erg+2 ; Adresse des Bereichs der Eingabe 2 (Adressfeld)
+0122: 00000005000 # a2: da erg+4 ; Adresse des Bereichs der Eingabe 3 (Adressfeld)
+0123: 00000007000 # a3: da erg+6 ; Adresse des Bereichs der Eingabe 4 (Adressfeld)
+0124: 00000011000 # a4: da erg+8 ; Adresse des Bereichs der Eingabe 5 (Adressfeld)
+0125: 00000013000 # a5: da erg+10 ; Adresse des Bereichs der Eingabe 6 (Adressfeld)
+0126: 00000015000 # a6: da erg+12 ; Adresse des Bereichs der Eingabe 7 (Adressfeld)
+0127: 00000017000 # a7: da erg+14 ; Adresse des Bereichs der Eingabe 8 (Adressfeld)
+0130: 00000021000 # a8: da erg+16 ; Adresse des Bereichs der Eingabe 9 (Adressfeld)
+0131: 00000207240 # eingabe 240 ML0001GNU ; Rueckkehrwort sichern
+0132: 00000313241 # 241 ML0013GNU ; Wort 1 := 0, AC := 0
+0133: 00000314241 # 241 ML0014GNU ; Wort 2 := 0
+0134: 00000215211 # 211 l0001 ; zwei Kennzeichen sind noch zu lesen
+0135: 00000317240 # 240 ML0017GNU ; zaehler := 2
+0136: 00000300011 # ML0003GNU 011 ML0012GNU ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+0137: 00000141040 # 040 ML0004GNU ; z0 gesetzt: Ziffer oder +
+0140: 00000136000 # 000 ML0003GNU ; sonst: Zeichen ignorieren, weiterlesen
+0141: 00000216200 # ML0004GNU 200 l0002 ; AC := Code des Zeichens (6 Bit)
+0142: 00000334240 # 240 ML0016GNU ; code := Code
+0143: 00000317211 # 211 ML0017GNU ; AC := noch zu lesende Kennzeichen
+0144: 00000217330 # 330 l0003 ; Vergleich mit 0 (keine Operation)
+0145: 00000155170 # 170 ML0005GNU ; 0: Ziffernteil
+0146: 00000220220 # 220 l0004 ; AC := zaehler - 1
+0147: 00000317240 # 240 ML0017GNU ; zaehler := zaehler - 1
+0150: 00000314211 # 211 ML0014GNU ; AC := Wort 2 bisher
+0151: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0152: 00000334210 # 210 ML0016GNU ; plus Code des neuen Kennzeichens
+0153: 00000314240 # 240 ML0014GNU ; Wort 2 := neues Wort 2
+0154: 00000136000 # 000 ML0003GNU ; naechstes Zeichen
+0155: 00000334211 # ML0005GNU 211 ML0016GNU ; Ziffernteil: AC := Code
+0156: 00000221200 # 200 l0005 ; Bits ausser den drei unteren: 0 nur bei Oktalziffern 0 bis 7
+0157: 00000220220 # 220 l0004 ; AC := AC - 1 (negativ, wenn Oktalziffer)
+0160: 00000136050 # 050 ML0003GNU ; AC >= 0: 8, 9 oder +: ignorieren
+0161: 00000313211 # 211 ML0013GNU ; AC := Wort 1 bisher
+0162: 00007671644 # 644 07671 ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0163: 00000334210 # 210 ML0016GNU ; plus Code der neuen Ziffer
+0164: 00000313240 # 240 ML0013GNU ; Wort 1 := neues Wort 1
+0165: 00000136000 # 000 ML0003GNU ; naechstes Zeichen
+0166: 00000317211 # ML0006GNU 211 ML0017GNU ; Ende (. oder :): AC := noch zu lesende Kennzeichen
+0167: 00000220330 # 330 l0004 ; Vergleich mit 1 (keine Operation)
+0170: 00000172170 # 170 ML0007GNU ; 1: nur ein Kennzeichen gelesen, es gehoert nach Kennzeichen 1
+0171: 00000175000 # 000 ML0008GNU ; sonst: Wort 2 ist richtig (0 oder 2 Kennzeichen; bei 2 ist Wort 2 = 0)
+0172: 00000314211 # ML0007GNU 211 ML0014GNU ; AC := Wort 2 (ein Kennzeichen)
+0173: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0174: 00000314240 # 240 ML0014GNU ; Wort 2 := Kennzeichen 1 und 0
+0175: 00007773211 # ML0008GNU 211 ML0050GNU ; AC := R1 (Adresse des Bereichs)
+0176: 00000222210 # 210 l0006 ; plus Operationscode 240: Befehl 240 <Wort 1>
+0177: 00000201240 # 240 ML0009GNU ; Speicherbefehl auf die naechste Zelle
+0200: 00000313211 # 211 ML0013GNU ; AC := Wort 1
+0202: 00007773211 # 211 ML0050GNU ; AC := R1
+0203: 00000223210 # 210 l0007 ; plus eine Adresseneinheit und 240: Befehl 240 <Bereich + 1>
+0204: 00000206240 # 240 ML0010GNU ; Speicherbefehl auf die naechste Zelle
+0205: 00000314211 # 211 ML0014GNU ; AC := Wort 2 (nichtnegativ)
+0210: 00000220211 # ML0011GNU 211 l0004 ; Um. GB: AC := 1
+0211: 00007775240 # 240 ML0051GNU ; KBGB := 1
+0212: 00000136000 # 000 ML0003GNU ; weiterlesen
+0213: 00007775241 # ML0018GNU 241 ML0051GNU ; Um. KB: KBGB := 0
+0214: 00000136000 # 000 ML0003GNU ; weiterlesen
+0215: 00000000002 # l0001 dw 2
+0216: 00000000077 # l0002 dw 000000000077
+0217: 00000000000 # l0003 dw 000000000000
+0220: 00000000001 # l0004 dw 1
+0221: 00000000070 # l0005 dw 000000000070
+0222: 00000000240 # l0006 dw 000000000240
+0223: 00000001240 # l0007 dw 000000001240
+0300: 40000000000 # dw 040000000000 ; 00: 0: gueltig, z0 gesetzt, Code 00
+0301: 40000000001 # dw 040000000001 ; 01: 1: gueltig, z0 gesetzt, Code 01
+0302: 40000000002 # dw 040000000002 ; 02: 2: gueltig, z0 gesetzt, Code 02
+0303: 40000000003 # dw 040000000003 ; 03: 3: gueltig, z0 gesetzt, Code 03
+0304: 40000000004 # dw 040000000004 ; 04: 4: gueltig, z0 gesetzt, Code 04
+0305: 40000000005 # dw 040000000005 ; 05: 5: gueltig, z0 gesetzt, Code 05
+0306: 40000000006 # dw 040000000006 ; 06: 6: gueltig, z0 gesetzt, Code 06
+0307: 40000000007 # dw 040000000007 ; 07: 7: gueltig, z0 gesetzt, Code 07
+0310: 40000000010 # dw 040000000010 ; 10: 8: gueltig, z0 gesetzt, Code 10
+0311: 40000000011 # dw 040000000011 ; 11: 9: gueltig, z0 gesetzt, Code 11
+0312: 00000136000 # 000 ML0003GNU ; 12: Leertaste: ignorieren
+0315: 00000166000 # 000 ML0006GNU ; 15: : beendet die Eingabe
+0316: 00000136000 # 000 ML0003GNU ; 16: Irrung Satz: ignorieren
+0320: 40000000020 # dw 040000000020 ; 20: +: gueltig, z0 gesetzt, Code 20
+0321: 00000000000 # dw 0 ; 21: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0322: 00000000000 # dw 0 ; 22: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0323: 00000000000 # dw 0 ; 23: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0324: 00000000000 # dw 0 ; 24: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0325: 00000000000 # dw 0 ; 25: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0326: 00000000000 # dw 0 ; 26: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0327: 00000000000 # dw 0 ; 27: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0330: 00000000000 # dw 0 ; 30: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0331: 00000000000 # dw 0 ; 31: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0332: 00000136000 # 000 ML0003GNU ; 32: WRZL: ignorieren
+0333: 00000166000 # 000 ML0006GNU ; 33: . beendet die Eingabe
+0335: 00000000000 # dw 0 ; 35: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0336: 00000000000 # dw 0 ; 36: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0337: 00000210000 # 000 ML0011GNU ; 37: Um. GB: KBGB := 1
+0340: 00000136000 # 000 ML0003GNU ; 40: - / Dreieck: ignorieren
+0341: 00000000000 # dw 0 ; 41: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0342: 00000000000 # dw 0 ; 42: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0343: 00000000000 # dw 0 ; 43: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0344: 00000000000 # dw 0 ; 44: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0345: 00000000000 # dw 0 ; 45: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0346: 00000000000 # dw 0 ; 46: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0347: 00000000000 # dw 0 ; 47: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0350: 00000000000 # dw 0 ; 50: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0351: 00000000000 # dw 0 ; 51: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0352: 00000000000 # dw 0 ; 52: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0353: 00000000000 # dw 0 ; 53: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0354: 00000000000 # dw 0 ; 54: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0355: 00000000000 # dw 0 ; 55: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0356: 00000000000 # dw 0 ; 56: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0357: 00000213000 # 000 ML0018GNU ; 57: Um. KB: KBGB := 0
+0360: 00000136000 # 000 ML0003GNU ; 60: ` / ;: ignorieren
+0361: 00000000000 # dw 0 ; 61: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0362: 00000000000 # dw 0 ; 62: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0363: 00000000000 # dw 0 ; 63: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0364: 00000000000 # dw 0 ; 64: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0365: 00000000000 # dw 0 ; 65: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0366: 00000000000 # dw 0 ; 66: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0367: 00000000000 # dw 0 ; 67: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0370: 00000000000 # dw 0 ; 70: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0371: 00000000000 # dw 0 ; 71: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0372: 00000136000 # 000 ML0003GNU ; 72: BM: ignorieren
+0373: 00000136000 # 000 ML0003GNU ; 73: , / ?: ignorieren
+0374: 00000000000 # dw 0 ; 74: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0375: 00000136000 # 000 ML0003GNU ; 75: Tabulator: ignorieren
+0376: 00000000000 # dw 0 ; 76: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0377: 00000000000 # dw 0 ; 77: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+Tastenfolge:
+H G R
+Prüfungen:
+US=1
+0001: 71234567012   # Eingabe 1 Wort 1
+0002: 00000002000   # Eingabe 1 Wort 2
+0003: 00000000123   # Eingabe 2 Wort 1
+0004: 00000002000   # Eingabe 2 Wort 2
+0005: 00000000000   # Eingabe 3 Wort 1
+0006: 00000000200   # Eingabe 3 Wort 2
+0007: 00000000000   # Eingabe 4 Wort 1
+0010: 00000000000   # Eingabe 4 Wort 2
+0011: 00000000345   # Eingabe 5 Wort 1
+0012: 00000000102   # Eingabe 5 Wort 2
+0013: 00000000000   # Eingabe 6 Wort 1
+0014: 00000000304   # Eingabe 6 Wort 2
+0015: 00000000071   # Eingabe 7 Wort 1
+0016: 00000000506   # Eingabe 7 Wort 2
+0017: 77777777777   # Eingabe 8 Wort 1
+0020: 00000000000   # Eingabe 8 Wort 2
+0021: 00000000000   # Eingabe 9 Wort 1
+0022: 00000002000   # Eingabe 9 Wort 2
+0023: 00000000000   # KBGB nach Eingabe 1
+0024: 00000000000   # KBGB nach Eingabe 2
+0025: 00000000000   # KBGB nach Eingabe 3
+0026: 00000000000   # KBGB nach Eingabe 4
+0027: 00000000000   # KBGB nach Eingabe 5
+0030: 00000000001   # KBGB nach Eingabe 6
+0031: 00000000000   # KBGB nach Eingabe 7
+0032: 00000000000   # KBGB nach Eingabe 8
+0033: 00000000000   # KBGB nach Eingabe 9
+0034: 00000000000   # dif1: R1 unveraendert
+7775: 00000000000   # KBGB am Ende

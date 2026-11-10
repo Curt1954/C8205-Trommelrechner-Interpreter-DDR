@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_gleich.asm:6: Fehler: $CALC(zellen(a,a)): zellen(a,a): Die Marke "a" muss im Quelltext hinter der Marke "a" stehen (bei "zellen(a,a)")
+datei-weg obj mqo test
+escape-weg

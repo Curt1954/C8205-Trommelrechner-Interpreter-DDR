@@ -1,0 +1,35 @@
+Trommeldatei:
+#DOK-0001 Test lokale Variablen: eigener Zaehler im verschachtelten Makro, Ueberdeckung einer globalen, Neubeginn je Aufruf, $EXIT, $LOCAL im $IF
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000015000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Summe 1 bis 1
+0002: 00000000003 # dw 3 ; Summe 1 bis 2
+0003: 00000000006 # dw 6 ; Summe 1 bis 3
+0004: 00000000012 # dw 10 ; Summe 1 bis 4
+0005: 00000000007 # dw 7 ; globale g
+0006: 00000000144 # dw 100 ; lokale g
+0007: 00000000002 # dw 2 ; immer 2
+0010: 00000000002 # dw 2 ; immer 2
+0011: 00000000005 # dw 5 ; lokale x
+0012: 00000000006 # dw 6 ; doppelter Parameter
+0013: 00000000007 # dw 7 ; global g = 7
+0014: 00000000011 # dw 9 ; global x = 9
+0015: 00000001164 # haupt: 164 0001 ; Zelle 13: Diagnoseausgabe (nur im Test)
+0016: 00000000020 # 020 0 ; Zelle 14: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0017 US=1
+0001: 00000000001   # Summe 1 bis 1
+0002: 00000000003   # Summe 1 bis 2
+0003: 00000000006   # Summe 1 bis 3
+0004: 00000000012   # Summe 1 bis 4 = 10
+0005: 00000000007   # UEBER: globale g
+0006: 00000000144   # UEBER: lokale g = 100
+0007: 00000000002   # ZAEHL erster Aufruf
+0010: 00000000002   # ZAEHL zweiter Aufruf
+0011: 00000000005   # FRUEHL 5 (FRUEHL 0 erzeugt nichts)
+0012: 00000000006   # BEDING 3 (BEDING 0 erzeugt nichts)
+0013: 00000000007   # GLOB: g unveraendert
+0014: 00000000011   # GLOB: x unveraendert = 9

@@ -10,14 +10,22 @@
 # Optionen:
 #   --seit <zip>   Vergleichsstand (das hochgeladene Zip). Erzeugte Dateien werden übergangen:
 #                  Test-Protokolle/, Trommel/trommel.txt, Assembler/projekdetails, .log .mqo .obj .sym,
-#                  __pycache__, frühere Lieferungen. Zusätzlich zu --seit dürfen Dateien genannt werden.
+#                  __pycache__, frühere Lieferungen. Ausnahme: .obj unter virtuelle_Geraete/ und
+#                  Lochstreifen/ sind Bänder (keine Assembler-Ausgabe) und werden mitgenommen.
+#                  Gelöschte Dateien (im Vergleichs-Zip, aber nicht mehr im Projektstamm) werden
+#                  angezeigt, lassen sich im Zip aber nicht darstellen (Löschung beim Inhaber von Hand).
+#                  Zusätzlich zu --seit dürfen Dateien genannt werden.
 #   -d <Ordner>    Zielordner (Vorgabe: /mnt/user-data/outputs, sonst der aktuelle Ordner)
 #   -o <Name.zip>  Dateiname (Vorgabe: C8205_Lieferung_NNN.zip, NNN = nächste freie Nummer im Zielordner)
 #   -l             nur anzeigen, was gepackt würde (kein Zip)
 #   -h             diese Hilfe
 #
 # Regeln: Keine Binaries (nichts unter Assembler/_Linux/ und _Windows/, keine ELF-/EXE-Dateien).
-#         Fehlt eine genannte Datei, wird nichts gepackt. Ausführbare .sh-Dateien bleiben ausführbar.
+#         Fehlt eine genannte Datei, wird nichts gepackt.
+#         Rechte im Zip: jede .sh-Datei wird mit 0755 gepackt (auch wenn sie im Arbeitsbereich kein X-Bit hat),
+#         eine .py-Datei nur, wenn sie dort ausführbar ist; alles andere mit 0644. Mit --seit gilt eine .sh-Datei,
+#         deren Inhalt unverändert ist, die aber im Vergleichs-Zip kein X-Bit trägt und im Arbeitsbereich
+#         ausführbar ist (chmod +x), als geändert (Kennzeichen "Rechte").
 # Rückgabe: 0 Zip erzeugt (oder -l), 1 nichts zu packen, 2 Aufruf falsch oder Datei fehlt, 3 Binary verweigert.
 # Nach dem Packen nur die neueste Lieferung an den Nutzer senden.
 
@@ -63,10 +71,12 @@ if not dateien and not seit:
 ERZEUGT_VERZ = ('Test-Protokolle/', '__pycache__/')
 ERZEUGT_DATEI = ('Trommel/trommel.txt', 'Assembler/projekdetails')
 ERZEUGT_ENDUNG = ('.log', '.mqo', '.obj', '.sym', '.pyc')
+BAND_VERZ = ('virtuelle_Geraete/', 'Lochstreifen/')   # dort sind .obj Bänder, keine Assembler-Ausgabe
 
 def erzeugt(rel):
     if any(rel.startswith(v) or ('/' + v) in rel for v in ERZEUGT_VERZ): return True
     if rel in ERZEUGT_DATEI or rel.startswith('Assembler/projekdetails'): return True
+    if rel.endswith('.obj') and rel.startswith(BAND_VERZ): return False
     if rel.endswith(ERZEUGT_ENDUNG) and not rel.startswith('Assembler/Regressionstest/'): return True
     if re.match(r'(C8205_Lieferung.*|C8205 Simulator.*)\.zip$', os.path.basename(rel)): return True
     return False
@@ -86,7 +96,7 @@ def rel_von(d):
     return p.replace(os.sep, '/')
 
 liste = {}   # rel -> Kennzeichen
-fehlend, verweigert = [], []
+fehlend, verweigert, geloescht = [], [], []
 
 for d in dateien:
     rel = rel_von(d)
@@ -110,6 +120,9 @@ if seit:
             try: n = n.encode('cp437').decode('utf-8')
             except (UnicodeEncodeError, UnicodeDecodeError): pass
         alt[n] = zi
+    for n in alt:
+        if not erzeugt(n) and not os.path.isfile(os.path.join(stamm, n)):
+            geloescht.append(n)
     for wurzel, verz, fs in os.walk(stamm):
         verz[:] = [v for v in verz if v not in ('.git', '__pycache__')]
         for fn in fs:
@@ -120,8 +133,14 @@ if seit:
                 kz = 'neu'
             else:
                 with open(pfad, 'rb') as f: neu = f.read()
-                if neu == zf.read(alt[rel]): continue
-                kz = 'geändert'
+                if neu == zf.read(alt[rel]):
+                    # Inhalt gleich: nur eine .sh-Datei, die jetzt ausführbar ist, im Vergleichs-Zip aber nicht, wird geliefert
+                    if rel.endswith('.sh') and os.access(pfad, os.X_OK) and not ((alt[rel].external_attr >> 16) & 0o111):
+                        kz = 'Rechte'
+                    else:
+                        continue
+                else:
+                    kz = 'geändert'
             if binary(rel, pfad):
                 if kz == 'geändert' or rel.startswith(('Assembler/_Linux/', 'Assembler/_Windows/')):
                     verweigert.append(rel + ' (' + kz + ')')
@@ -136,13 +155,20 @@ if verweigert:
     print('Binaries werden nie geliefert, nichts gepackt:')
     for r in verweigert: print('  ' + r)
     sys.exit(3)
+def zeige_geloescht():
+    if geloescht:
+        print('gelöscht (im Zip nicht darstellbar, beim Inhaber von Hand löschen):')
+        for r in sorted(geloescht): print('  gelöscht  ' + r)
+
 if not liste:
     print('Nichts zu packen: keine Änderung gegenüber dem Vergleichsstand.')
+    zeige_geloescht()
     sys.exit(1)
 
 for rel in sorted(liste):
     print('  %-9s %s' % (liste[rel], rel))
 
+zeige_geloescht()
 if nur_liste:
     print('%d Dateien (nur Anzeige, kein Zip).' % len(liste)); sys.exit(0)
 
@@ -159,7 +185,8 @@ with zipfile.ZipFile(ziel_zip, 'w', zipfile.ZIP_DEFLATED) as z:
         pfad = os.path.join(stamm, rel)
         zi = zipfile.ZipInfo.from_file(pfad, rel)
         zi.compress_type = zipfile.ZIP_DEFLATED
-        zi.external_attr = (0o755 if os.access(pfad, os.X_OK) and rel.endswith(('.sh', '.py')) else 0o644) << 16
+        # .sh immer ausführbar (der Arbeitsbereich verliert X-Bits leicht); .py nur, wenn dort ausführbar
+        zi.external_attr = (0o755 if rel.endswith('.sh') or (rel.endswith('.py') and os.access(pfad, os.X_OK)) else 0o644) << 16
         with open(pfad, 'rb') as f: z.writestr(zi, f.read())
 print('Zip: %s (%d Dateien)' % (ziel_zip, len(liste)))
 PY

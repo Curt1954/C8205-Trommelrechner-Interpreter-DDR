@@ -1,6 +1,6 @@
 # ** Datenstrukturen **
 
-Version: 0.95-002
+Version: 0.95-004
 
 Namensbereiche: Flags, Register, Felder des Befehlswortes sowie die Knoten und
    Konnektoren der Knotentabelle sind getrennte Beschreibungsbereiche. Innerhalb
@@ -53,9 +53,11 @@ Ganze Festkommazahlen (Programmieranleitung 6.2)
 - Multiplikation und Division (anders als Addition und Subtraktion) sind nicht verdrahtet, sondern werden durch
   Programme mit Gruppenbefehlen gebildet; die Stellung des Kommas legt dort die Programmierung fest
   (gebrochen: Programmieranleitung 6.1, ganz: 6.2). Testaufträge: `Tests/bsp_6_1_*.txt`, `Tests/bsp_6_2_*.txt`.
+- Der Assembler `c82ass` schreibt eine gebrochene Festkommazahl (Komma zwischen z₀ und z₁) mit `dwf` aus einem Dezimalbruch
+  (ab c82ass 1.01-004; Assemblerdokumentation 3.3.20): `dwf 0.5` ergibt `20000000000`, `dwf -0.5` `60000000000`; Bereich −1 ≤ x ≤ 1 − 2⁻³².
 
 Gleitkommazahlen, interne Darstellung (Programmieranleitung 6.3, Abb. 28; ergänzt 07.10.2026 um die Definitionen des
-Bausteininterpretationssystems BIS; die externe Darstellung steht in `C8205-Interpreter-BIS.md`, Abschnitt BIS-1.1)
+Bausteininterpretiersystems BIS; die externe Darstellung steht in `C8205-Interpreter-BIS.md`, Abschnitt BIS-1.1)
 - **Allgemeine halblogarithmische Schreibweise:** Jede Zahl lässt sich als Produkt aus Mantisse m und Basispotenz mit dem
   Exponenten e darstellen: z = ± m · Bᵉ (B = Basis des Zahlensystems). Damit die Darstellung eindeutig wird, gilt die
   Normalisierungsvorschrift B⁻¹ ≤ m < 1 (für z ≠ 0). Die Mantisse m bestimmt die Ziffernfolge von z, der Exponent e legt fest,
@@ -89,9 +91,10 @@ Bausteininterpretationssystems BIS; die externe Darstellung steht in `C8205-Inte
   (positive Null, z₀ = 0). Die Bitkombination „negative Null" (z₀ = 1, Rest 0) ist keine gültige Darstellung.
 - Beispiel: z = −16 = −0,5 · 2⁵ ist `1 100101 10000000000000000000000000` (Vorzeichen, Exponent e′ = 37, Mantissenbetrag),
   oktal `62600000000`. Zum Vergleich z = +16 ist `22600000000`.
-- Der Assembler `c82ass` kennt keine Gleitkomma- oder Dezimalbruch-Literale (Zahlen nur als Oktal- oder ganze Dezimalzahl,
-  Assemblerdokumentation 3.2); ein Gleitkommawort wird als Oktalzahl mit führender 0 mit `dw` angegeben (z. B. −16:
-  `dw 062600000000`, wie `dw 004000000000` in den Beispielprogrammen).
+- Der Assembler `c82ass` schreibt Gleitkommawörter mit `dwg` (ab c82ass 1.01-004; Assemblerdokumentation 3.3.21): `dwg -16` ergibt
+  `62600000000`, `dwg 1.5E3` das Wort für 1500, `dwg 0` die Null (nie die „negative Null“). Er rechnet den Dezimalwert exakt um und rundet die
+  Mantisse auf 26 Bit (genau in der Mitte weg von 0); Zahlenbereich 2⁻³³ ≤ |z| ≤ 2³¹ − 2⁵ und 0. Ein Gleitkommawort lässt sich auch
+  weiter als Oktalzahl mit führender 0 mit `dw` angeben (z. B. −16: `dw 062600000000`, wie `dw 004000000000` in den Beispielprogrammen).
 - Folgerungen aus dem Aufbau (genutzt in den Beispielprogrammen 6.3.1 bis 6.3.3):
   - **Betrag:** Linksverschiebung (V¹) wirft z₀ heraus, anschließende Rechtsverschiebung setzt z₀ = 0 ein: |x|.
   - **Vorzeichenumkehr:** Addition der Konstante `40000000000` (nur z₀ gesetzt) kehrt z₀ um. Bei x < 0 entsteht dabei

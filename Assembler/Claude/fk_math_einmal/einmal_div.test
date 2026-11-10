@@ -1,0 +1,152 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung ueber die Daten zum Hauptprogramm
+0001: 10000000000 # wa: dw 010000000000 ; Zelle 0001: a = 0,25 (2^30)
+0002: 14000000000 # wb: dw 014000000000 ; Zelle 0002: b = 0,375 (3 * 2^29)
+0003: 00000000000 # res_mul: dw 0 ; Ergebnis mul
+0004: 00000000000 # res_div: dw 0 ; Ergebnis div
+0005: 00000001211 # haupt: 211 wa ; AC := a
+0006: 00007773240 # 240 r1 ; R1 := a
+0007: 00000002211 # 211 wb ; AC := b
+0010: 00007776240 # 240 r2 ; R2 := b
+0011: 00000207025 # 025 fk_mul ; Aufruf fk_mul, Ergebnis im AC
+0012: 00000003240 # 240 res_mul ; Ergebnis ablegen
+0013: 00000001211 # 211 wa ; AC := a
+0014: 00007773240 # 240 r1 ; R1 := a
+0015: 00000002211 # 211 wb ; AC := b
+0016: 00007776240 # 240 r2 ; R2 := b
+0017: 00000033025 # 025 fk_div ; Aufruf fk_div, Ergebnis im AC
+0020: 00000004240 # 240 res_div ; Ergebnis ablegen
+0021: 00000000020 # 020 0 ; Halt
+0033: 00000206240 # fk_div: 240 fkm_rueck ; Eintritt: Rueckkehrwort sichern
+0034: 00000222211 # 211 l0001 ; AC := 1
+0035: 00000022240 # 240 fkm_fl ; fl := 1 (Division)
+0036: 00007773211 # fkm_md: 211 fkm_r1 ; R1
+0037: 00000023240 # 240 fkm_xa ; Operand a
+0040: 00007776211 # 211 fkm_r2 ; R2
+0041: 00000024240 # 240 fkm_xb ; Operand b
+0042: 00000024311 # 311 fkm_xb ; AC := b, V3 bei b = 0
+0043: 00000163170 # 170 fkm_b0 ; b = 0
+0044: 00000023311 # 311 fkm_xa ; AC := a, V3 bei a = 0
+0045: 00000170170 # 170 fkm_null ; a = 0: Ergebnis 0
+0046: 00000024211 # 211 fkm_xb ; b
+0047: 00000223330 # 330 l0002 ; mit -1 vergleichen
+0050: 00000154170 # 170 fkm_mb ; b = -1: Ergebnis -a
+0051: 00000023211 # 211 fkm_xa ; a
+0052: 00000223330 # 330 l0002 ; mit -1 vergleichen
+0053: 00000156170 # 170 fkm_ma ; a = -1
+0054: 00000025241 # 241 fkm_sg ; sg := 0, AC := 0
+0055: 00000023211 # 211 fkm_xa ; a
+0056: 00000063050 # 050 fkm_a1 ; a >= 0: Betrag steht schon da
+0057: 00000023221 # 221 fkm_xa ; AC := -a
+0060: 00000023240 # 240 fkm_xa ; Betrag von a
+0061: 00000222211 # 211 l0001 ; AC := 1
+0062: 00000025240 # 240 fkm_sg ; sg := 1
+0063: 00000024211 # fkm_a1: 211 fkm_xb ; b
+0064: 00000072050 # 050 fkm_b1 ; b >= 0: Betrag steht schon da
+0065: 00000024221 # 221 fkm_xb ; AC := -b
+0066: 00000024240 # 240 fkm_xb ; Betrag von b
+0067: 00000025211 # 211 fkm_sg ; sg
+0070: 00000222210 # 210 l0001 ; sg + 1 (0, 1 oder 2; 1 heisst: Ergebnis negativ)
+0071: 00000025240 # 240 fkm_sg ; merken
+0072: 00000022311 # fkm_b1: 311 fkm_fl ; AC := fl, V3 bei Multiplikation
+0073: 00000171170 # 170 fkm_mu ; fl = 0: Multiplikation
+0074: 00000023211 # 211 fkm_xa ; Betrag a
+0075: 00000024330 # 330 fkm_xb ; mit Betrag b vergleichen
+0076: 00000146170 # 170 fkm_gl ; gleich
+0077: 00000165150 # 150 fkm_fue ; Betrag a > Betrag b: Ueberlauf
+0100: 00000026240 # 240 fkm_r ; Rest := Betrag a
+0101: 00000027241 # 241 fkm_y ; Quotient := 0
+0102: 00000224211 # 211 l0003 ; 32 Durchlaeufe (31 bis 0)
+0103: 00000031240 # 240 fkm_cn ; Zaehler
+0104: 00000024211 # fkm_dl: 211 fkm_xb ; Betrag b
+0105: 00000026220 # 220 fkm_r ; - r
+0106: 00000030240 # 240 fkm_t ; t := Betrag b - r
+0107: 00000026211 # 211 fkm_r ; r
+0110: 00000030330 # 330 fkm_t ; mit t vergleichen
+0111: 00000120150 # 150 fkm_dg ; r >= t: Bit 1
+0112: 00000026211 # 211 fkm_r ; r
+0113: 00000026210 # 210 fkm_r ; 2 r
+0114: 00000026240 # 240 fkm_r ; merken
+0115: 00000027211 # 211 fkm_y ; y
+0116: 00000027210 # 210 fkm_y ; 2 y
+0117: 00000126000 # 000 fkm_dn ; weiter
+0120: 00000026211 # fkm_dg: 211 fkm_r ; r
+0121: 00000030220 # 220 fkm_t ; r - t = 2 r - Betrag b
+0122: 00000026240 # 240 fkm_r ; merken
+0123: 00000027211 # 211 fkm_y ; y
+0124: 00000027210 # 210 fkm_y ; 2 y
+0125: 00000222210 # 210 l0001 ; + 1
+0126: 00000027240 # fkm_dn: 240 fkm_y ; merken
+0127: 00000031211 # 211 fkm_cn ; Zaehler
+0130: 00000222220 # 220 l0001 ; - 1
+0131: 00000031240 # 240 fkm_cn ; merken
+0132: 00000104050 # 050 fkm_dl ; noch nicht negativ: weiter
+0133: 00000024211 # 211 fkm_xb ; 33. Schritt: Rundungsbit
+0134: 00000026220 # 220 fkm_r ; - r
+0135: 00000030240 # 240 fkm_t ; t
+0136: 00000026211 # 211 fkm_r ; r
+0137: 00000030330 # 330 fkm_t ; mit t vergleichen
+0140: 00000144140 # 140 fkm_dz ; r < t: Bit 0
+0141: 00000027211 # 211 fkm_y ; y
+0142: 00000222210 # 210 l0001 ; + 1 (aufrunden, Mitte weg von 0)
+0143: 00000177000 # 000 fkm_fin ; weiter zum Vorzeichen
+0144: 00000027211 # fkm_dz: 211 fkm_y ; y
+0145: 00000177000 # 000 fkm_fin ; weiter zum Vorzeichen
+0146: 00000025211 # fkm_gl: 211 fkm_sg ; Betrag a = Betrag b: sg
+0147: 00000222330 # 330 l0001 ; mit 1 vergleichen
+0150: 00000152170 # 170 fkm_m1 ; verschiedene Vorzeichen: a / b = -1
+0151: 00000165000 # 000 fkm_fue ; gleiche Vorzeichen: +1, Ueberlauf
+0152: 00000223211 # fkm_m1: 211 l0002 ; Wort -1
+0153: 00000206000 # 000 fkm_rueck ; zurueck
+0154: 00000023221 # fkm_mb: 221 fkm_xa ; b = -1: Ergebnis -a (Multiplikation und Division; a = -1: Ueberlauf der Maschine)
+0155: 00000206000 # 000 fkm_rueck ; zurueck
+0156: 00000022311 # fkm_ma: 311 fkm_fl ; a = -1: AC := fl, V3 bei Multiplikation
+0157: 00000161170 # 170 fkm_ma1 ; Multiplikation
+0160: 00000165000 # 000 fkm_fue ; Division: Betrag >= 1, Ueberlauf
+0161: 00000024221 # fkm_ma1: 221 fkm_xb ; Ergebnis -b
+0162: 00000206000 # 000 fkm_rueck ; zurueck
+0163: 00000022311 # fkm_b0: 311 fkm_fl ; AC := fl, V3 bei Multiplikation
+0164: 00000170170 # 170 fkm_null ; Multiplikation mit 0: Ergebnis 0
+0165: 00000225211 # fkm_fue: 211 l0004 ; kuenstlicher Ueberlauf: 2^32 - 1
+0166: 00000222210 # 210 l0001 ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+0167: 00000206000 # 000 fkm_rueck ; (nie erreicht)
+0170: 00000206001 # fkm_null: 001 fkm_rueck ; Ergebnis 0: AC loeschen, zurueck
+0171: 00000023211 # fkm_mu: 211 fkm_xa ; Betrag a
+0172: 00007640440 # 440 07640 ; in alle Zellen der Arbeitsspur
+0173: 00000024211 # 211 fkm_xb ; Betrag b (Multiplikator)
+0174: 00007640472 # 472 07640 ; Teilprodukte
+0175: 00000226211 # 211 l0005 ; Rundungskonstante 2^31 (halbe letzte Stelle)
+0176: 00007640412 # 412 07640 ; AC := Summe der Teilprodukte
+0177: 00000032240 # fkm_fin: 240 fkm_z ; Betrag merken
+0200: 00000025211 # 211 fkm_sg ; sg
+0201: 00000222330 # 330 l0001 ; mit 1 vergleichen
+0202: 00000205170 # 170 fkm_ng ; 1: Ergebnis negativ
+0203: 00000032211 # 211 fkm_z ; Betrag
+0204: 00000206000 # 000 fkm_rueck ; zurueck
+0205: 00000032221 # fkm_ng: 221 fkm_z ; AC := -Betrag
+0207: 00000206240 # fk_mul: 240 fkm_rueck ; Eintritt: Rueckkehrwort sichern
+0210: 00000022241 # 241 fkm_fl ; fl := 0 (Multiplikation), AC := 0
+0211: 00000036000 # 000 fkm_md ; weiter zum gemeinsamen Anfang
+0212: 00000206240 # fk_add: 240 fkm_rueck ; Eintritt: Rueckkehrwort sichern
+0213: 00007773211 # 211 fkm_r1 ; AC := R1
+0214: 00007776210 # 210 fkm_r2 ; + R2 (Ueberlauf: FUE, Halt beim naechsten Befehl)
+0215: 00000206000 # 000 fkm_rueck ; zurueck
+0216: 00000206240 # fk_sub: 240 fkm_rueck ; Eintritt: Rueckkehrwort sichern
+0217: 00007773211 # 211 fkm_r1 ; AC := R1
+0220: 00007776220 # 220 fkm_r2 ; - R2 (Ueberlauf: FUE, Halt beim naechsten Befehl)
+0221: 00000206000 # 000 fkm_rueck ; zurueck
+0222: 00000000001 # l0001 dw 1
+0223: 40000000000 # l0002 dw 040000000000
+0224: 00000000037 # l0003 dw 31
+0225: 37777777777 # l0004 dw 037777777777
+0226: 20000000000 # l0005 dw 020000000000
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0022 US=1
+0003: 03000000000   # mul
+0004: 25252525253   # div

@@ -1,0 +1,4 @@
+rc 16
+stderr Symbol "x" ist im Quelltext weder mit abs noch mit equ <Zahl> definiert
+datei-weg obj mqo test
+escape-weg

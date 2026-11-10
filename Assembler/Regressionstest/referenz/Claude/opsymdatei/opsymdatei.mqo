@@ -1,0 +1,8 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+a:      dw      5       ; Zelle 0001: Konstante 5
+b:      dw      3       ; Zelle 0002: Konstante 3
+erg:    dw      0       ; Zelle 0003: Ergebnis
+haupt:  211     a       ; Zelle 0004: Projektname: AC := 5
+        210     b       ; Zelle 0005: Standardname: AC := 8
+        240     erg     ; Zelle 0006: Projektname: erg := 8
+        020     0       ; Zelle 0007: Halt

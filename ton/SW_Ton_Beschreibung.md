@@ -1,14 +1,12 @@
 # SW-Ton und LS-Ton
 
-Version: 0.01-005
+Version: 0.01-006
 
 Geräusche von Schreibwerk und Lochstreifenleser für den C 8205-Interpreter: Anforderungen, Ergebnisse, Diskussion
 
-Stand: 19.10.2026 (Nachführung Stufe 4: Schreibwerkzeit 80 ms, Zeichenklang 100 ms, ein TAB-Klang; Teil D Rechner- und Stanzertöne vom 15.10.2026) · Programm: `sw_ton.py` · Klänge: Ordner `sw_toene/`
+Stand: 22.10.2026 · Programm: `sw_ton.py` · Klänge: Ordner `sw_toene/`
 
 > **Stand Stufe 4 (19.10.2026).** Die Abschnitte 7, 11 und 16 beschreiben `sw_ton.py` nach den Entscheidungen vom 16. und 18.10.2026: **Schreibwerkzeit 80 ms (70 bis 90 ms, gleichverteilt), Zeichenklang 100 ms, TAB nur noch `tab_400.wav` (400 ms), WRZL 360 ms.** Wo die Teile B bis D noch „120 ms ±10 %“, `tab_kurz`/`tab_lang` oder „Einbau später“ nennen, ist das der Stand vom 14./15.10.2026 (Messwerte der Aufnahmen bleiben gültig) und durch dieses Feld überholt. In GRAFIK spielt `grafik_schreibwerk.py` diese Zeiten über den Mischer `tonmisch` (`C8205-Interpreter-GRAFIK_Beschreibung.md` §6); `sw_ton.py` bleibt der selbständige Testrahmen für die Klänge. Die Hörprüfung (S4-16) steht noch aus.
->
-> **Nachführung 21.10.2026 (Abgleich OP-30 (b)).** Teil D (Abschnitte 17 bis 21) trägt den Stand vom 15.10.2026. Seitdem gilt: Die Töne des Rechners, des Schreibwerks, des Lesers und des Stanzers sind in GRAFIK eingebaut (Rechnertöne Stufe 2, 17.10.2026; Rest Stufe 4, 19.10.2026) und laufen über den Mischer `tonmisch`; alle Klänge liegen als WAV vor (Ordner `ton/` und `ton/toene_rechner_stanzer/`), die Umwandlung aus MP3 ist erfolgt; die Hörprüfung 2 am 19.10.2026 ist als „ok“ gemeldet. Damit sind in Abschnitt 21.2 D-1, D-10, D-11 und D-12 beantwortet (je mit Zusatz vermerkt). Der Abschnitt 19 „Wartezeit = 0“ gilt für den Modus TEST; in GRAFIK gilt das Stanztempo von etwa 50 Zeichen/s. Maßgeblich ist `C8205-Interpreter-GRAFIK_Beschreibung.md` §6. **Aus dem Abgleich (erledigt 21.10.2026, OP-42):** Der Testrahmen spielte für `WR` den WRZL-Klang, GRAFIK den Zeichenklang. Entschieden: WR hat einen eigenen kurzen Klang, `sw_toene/wr.wav` (120 ms, erste Hälfte des WRZL-Klangs vor dem markanten Ton); der Testrahmen und GRAFIK spielen ihn für `<WR>` (§7.1, §7.2, §14.1).
 
 ## 1 Zweck und Abgrenzung
 
@@ -177,7 +175,7 @@ ls_ton() -> float
 
 Die Funktion wird **bei jedem Eingabe-Halt von Kanal K1 oder K2** einmal aufgerufen, ohne Parameter. Bei 130 Zeichen/s (7,7 ms je Zeichen) wären einzelne Töne nicht mehr unterscheidbar. Deshalb richtet sich der Klang nach dem **Abstand der Aufrufe**, und der Ton läuft im Hintergrund.
 
-> **Nachführung 22.10.2026 (G4-005, Wunsch des Projektinhabers; ersetzt die Tabelle 9.1 und die Schwelle von 100 ms in GRAFIK):** Der Ton hängt am tatsächlichen Benutzen des Lesers (ein Zeichen wird geliefert), nicht am Warten im Eingabe-Halt. Läuft kein Ton, startet der Einzelton (148 ms bis zu seinem Ende); die Befehlsschleife ist nach 1/10 s wieder frei. Kommt dann der nächste Zugriff und der Einzelton läuft noch, wird er abgebrochen und durch den Dauerton ersetzt, der ab diesem Moment läuft; die Befehlsschleife ist danach je Zeichen nach 1/130 s frei. Läuft der Einzelton nicht mehr, beginnt wieder ein Einzelton. Folgt `LS_AUS_S` (3 s, geschätzt, nachzustellen) lang kein Zugriff, geht der Ton aus (Dauerton mit 60 ms Auslaufen) und der Ablauf beginnt von vorn. Umgesetzt in `grafik_geraeteton.LeserTon`; `sw_ton.py` ist unverändert.
+**Verhalten in GRAFIK** (`grafik_geraeteton.LeserTon`, G4-005, Wunsch des Projektinhabers; ersetzt dort die Tabelle 9.1 und die Schwelle von 100 ms): Der Ton hängt am tatsächlichen Benutzen des Lesers (ein Zeichen wird geliefert), nicht am Warten im Eingabe-Halt. Läuft kein Ton, startet der Einzelton (148 ms bis zu seinem Ende); die Befehlsschleife ist nach 1/10 s wieder frei. Kommt dann der nächste Zugriff und der Einzelton läuft noch, wird er abgebrochen und durch den Dauerton ersetzt, der ab diesem Moment läuft; die Befehlsschleife ist danach je Zeichen nach 1/130 s frei. Läuft der Einzelton nicht mehr, beginnt wieder ein Einzelton. Folgt `LS_AUS_S` (3 s, geschätzt, nachzustellen) lang kein Zugriff, geht der Ton aus (Dauerton mit 60 ms Auslaufen) und der Ablauf beginnt von vorn. Umgesetzt in `grafik_geraeteton.LeserTon`; `sw_ton.py` ist unverändert.
 
 ### 9.1 Verhalten
 
@@ -458,15 +456,3 @@ Vorliegende Töne: `LS_Motor_läuft-ohne-stanzen.mp3` (Motor) und `LS-Stanzer-Da
 | D-11 | **Hörprüfung** aller Aufnahmen und ihrer Zuordnung zu den Dateinamen. *(Hörprüfung 2 am 19.10.2026 vom Projektinhaber als „ok“ gemeldet, ohne Einzelbefunde; eine eigene Prüfung der Zuordnung Dateiname zu Klang ist nicht belegt.)* |
 | D-12 | **Einbau:** Die fünf Aufnahmen sind noch nirgends eingebaut (Netzschalter-Ein/-Aus, Rechner-arbeitet-Schleife, Stanzer-Motor, Dauerstanzen). Der Einbau folgt nach den Entscheidungen D-1 bis D-11 (Stand 15.10.2026: keine davon getroffen). *(Erledigt: eingebaut, Rechnertöne Stufe 2, Schreibwerk, Leser, Stanzer und Mischer Stufe 4; Windows offen, Beschreibung §6.8.)* |
 | D-13 | **Modi (15.10.2026):** `--MODUS=TEST` läuft ohne Töne und ohne Wartezeit des Hochlaufs (vorgegeben, D-3 ist damit für TEST erledigt); Töne gibt es nur im Modus `--MODUS=GRAFIK`. Entschieden 15.10.2026: In GRAFIK schaltet `--STUMM` die Töne ab, dann entfällt auch die Hochlaufwartezeit. Siehe GRAFIK_Beschreibung §1 und §6. |
-
-## 22 Änderungsverzeichnis
-
-| Stand | Änderung |
-|---|---|
-| 14.10.2026 | Teile A bis C: Schreibwerk und Lochstreifenleser |
-| 15.10.2026 | Punkt D-13 ergänzt: Modi `--MODUS=TEST` und `--MODUS=GRAFIK` des Python-Interpreters; Modus TEST ohne Töne und ohne Hochlaufwartezeit (vorgegeben) |
-| 15.10.2026 | Aufnahmen unter neuen Dateinamen übernommen (Inhalt unverändert), Punkt D-12 und Anmerkung zu D-9 ergänzt |
-| 15.10.2026 | Teil D ergänzt: Rechner- und Stanzertöne, Entscheidungen zum Netzablauf (B rot → `fade_in` → B grün, Interpreter läuft erst bei B grün), offene Punkte |
-| 19.10.2026 | Nachführung Stufe 4 (B-8): `sw_ton.py` und Beschreibung auf Schreibwerkzeit 80 ms (70 bis 90 ms), Zeichenklang 100 ms (gekürzt, 10 ms Ausblendung, Überlappung), ein TAB-Klang `tab_400.wav`; `tab_lang`, `TAB_LANG_VORGABE`, `ZEICHEN_STREUUNG` und `--tab-lang` entfallen, neu `--zeit`, `--streuung` in ms; Hinweis auf den Einbau über `grafik_schreibwerk.py` und `--TON`. Hörprüfung offen. Abschnitte 8, 12 bis 15 und Teil D nicht umgeschrieben (Stand der Messungen 14./15.10.2026) |
-| 21.10.2026 | Abgleich mit `C8205-Interpreter-GRAFIK_Beschreibung.md` §6, dem Code, den WAV-Dateien und einem Lauf von `sw_ton.py` (OP-30 (b)): Konstanten und Beispiele aus Teil B stimmen; Nachführungsvermerk und Zusätze in Teil D (§17, §19, §21.1, §21.2); neuer Befund zu `WR` (Beschreibung OP-42; am selben Tag entschieden, siehe nächste Zeile). Messwerte und Texte der Teile A bis C unverändert. Dok. 03 lag nicht vor |
-| 21.10.2026 | OP-42 entschieden und umgesetzt (0.01-005): vierte Klangart WR (`<WR>`, `sw_toene/wr.wav`, 120 ms, erste Hälfte des WRZL-Klangs vor dem markanten Ton); §7.1, §7.2, §14.1, Tabelle der Dateien und A-SW-2 nachgeführt; `sw_ton.py` und `erzeuge_wr_klang.py` angepasst bzw. neu. Messwerte und Texte der Teile A bis C sonst unverändert |

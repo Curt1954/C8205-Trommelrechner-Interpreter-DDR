@@ -1,6 +1,6 @@
 # Testübersicht
 
-Version: 0.95-005
+Version: 0.95-006
 
 Übersicht aller Testdateien in `Tests/`, erzeugt von `test_tabelle.py`. Die Spalte „Inhalt des Tests“ nennt die erste `#DOK`-Zeile der Testdatei (höchstens 140 Zeichen; haben mehrere Tests denselben Text, sind weitere `#DOK`-Zeilen angehängt); fehlt sie, steht die Tastenfolge in eckigen Klammern oder ein Hinweis in runden Klammern.
 
@@ -193,6 +193,9 @@ Die Spalte „ASM-Zuordnung“ ist leer, wenn die ASM-Datei denselben Namen wie 
 | int-005_Sprung_uebersprungen.txt | TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich [Tastenfolge: H G R] |  |  |  |
 | int-006_mehrere_Zeilen.txt | TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich [Tastenfolge: H G R] |  |  |  |
 | k1_leser_stanzer.test | TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich [Tastenfolge: H G R] | Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle.txt | Projekt_1/sw_eingabe/k1_leser_stanzer.asm |  |
+| kat4.test | [Tastenfolge: H G R] |  | Claude/kat4/kat4.asm |  |
+| kat4ausgabe.test | Ausgabe von abcde ueber KAT4AUSGABE | virtuelle_Geraete/SW-Ausgabe | Claude/kat4ausgabe/kat4ausgabe.asm |  |
+| kat4eingabe.test | KAT4EINGABE: Eingabe abcdefgh ueber K0 (8 Zeichen, volle Zeichenzahl), Ausgabe mit KAT4AUSGABE | Test-virtuelleGeraete/T-SW-Eingabe/kat4eingabe_8.txt<br>Test-virtuelleGeraete/SW-Ausgabe/kat4eingabe_8 | Claude/kat4eingabe/kat4eingabe.asm |  |
 | knotenlimit_ausgabeschleife.txt | Knotenlimit bei Dauerausgabe: Endlosschleife mit Ausgabebefehl auf SW; Lauf endet am Knotenlimit, gilt aber nicht als Fehler (Ausgabe-Halt … | Test-virtuelleGeraete/SW-Ausgabe/knotenlimit_ausgabeschleife |  |  |
 | lb-001_Irrung_Zeichen_uebersprungen.test | Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp | Test-virtuelleGeraete/Leser1/lb-001_irrung_zeichen_dann_1.txt | Claude_bsp_reassemblierung/lb-001_Irrung_Zeichen_uebersprungen/lb-001_Irrung_Zeichen_uebersprungen.asm |  |
 | lb-001_Irrung_Zeichen_uebersprungen.txt | Lochbandeingabe: Anwahl K1, ein Eingabe-Halt, unbedingter Stopp | Test-virtuelleGeraete/Leser1/lb-001_irrung_zeichen_dann_1.txt | Claude_bsp_reassemblierung/lb-001_Irrung_Zeichen_uebersprungen/lb-001_Irrung_Zeichen_uebersprungen.asm |  |
@@ -309,6 +312,7 @@ Die Spalte „ASM-Zuordnung“ ist leer, wenn die ASM-Datei denselben Namen wie 
 | tk-008_US_Ue_E_Einzelschritt.txt | Tastenfolge H G Ü E: BR = 7777 240. E (ohne M) führt Phase IV (⟨7777⟩ := AC = 0), Phase I, Phase II (Zelle 0000) und Phase III aus und hält … |  | Claude_bsp_reassemblierung/tk-008_US_Ue_E_Einzelschritt/tk-008_US_Ue_E_Einzelschritt.asm |  |
 | trommel-001_leer.txt | #TROMMEL=LEER: Die Trommel wird vor dem Test geleert; danach gelten nur die Zeilen dieses Abschnitts. |  |  |  |
 | trommel-keep.txt | Testmarke #TROMMEL=KEEP: die Trommel bleibt unveraendert (Zelle 3000 nennt der Test selbst) |  |  |  |
+| typ10eingabe_zwei.test | typ10eingabe_zwei: Doppelpunkt beendet Zelle 1, nur ein Zeichen in Zelle 2 (Vornull), Um. GB als letztes Umschaltzeichen | Test-virtuelleGeraete/T-SW-Eingabe/typ10eingabe_zwei.txt<br>Test-virtuelleGeraete/SW-Ausgabe/typ10eingabe_zwei | Claude/typ10eingabe_zwei/typ10eingabe_zwei.asm |  |
 | v6_leitadressen.txt | Leitadresseneingabe 1..9 | Test-virtuelleGeraete/T-SW-Eingabe/leitadressen.txt |  |  |
 | v6_programmstueck.txt | TROMMEL=KEEP                # Trommel unveraendert (Stand des vorigen Laufs), ausdruecklich | Test-virtuelleGeraete/T-SW-Eingabe/progst.txt |  |  |
 | v6_test_adresse.txt | BIS v6: Pruefprogramm adresse (Quelltext pj2-bis_minimalprogramm_v6_test_adresse.asm), Eingabe von K0, Ausgabe auf SW | Test-virtuelleGeraete/T-SW-Eingabe/v6_test_adresse.txt<br>Test-virtuelleGeraete/SW-Ausgabe/v6_test_adresse<br>Test-Ergebnisvergleiche/v6_test_adresse-sw-ausgabe.txt |  |  |
@@ -324,3 +328,6 @@ Die Spalte „ASM-Zuordnung“ ist leer, wenn die ASM-Datei denselben Namen wie 
 | ziffern_2.test | Ziffer 0-3 einlesen und auswerten, Eingabe: 2 | Test-virtuelleGeraete/SW-Ausgabe/ziffern_2.txt<br>Test-virtuelleGeraete/T-SW-Eingabe/ziffern_2.txt<br>Test-Ergebnisvergleiche/ziffern_2-sw-ausgabe.txt | Projekt_1/ziffern/ziffern.asm | über Namen |
 | ziffern_3.test | Ziffer 0-3 einlesen und auswerten, Eingabe: 3 | Test-virtuelleGeraete/SW-Ausgabe/ziffern_3.txt<br>Test-virtuelleGeraete/T-SW-Eingabe/ziffern_3.txt<br>Test-Ergebnisvergleiche/ziffern_3-sw-ausgabe.txt | Projekt_1/ziffern/ziffern.asm | über Namen |
 | ziffern_uebergehen.test | Ziffer 0-3 einlesen und auswerten, Eingabe: 4 5 6 7 8 9 2 | Test-virtuelleGeraete/SW-Ausgabe/ziffern_uebergehen.txt<br>Test-virtuelleGeraete/T-SW-Eingabe/ziffern_uebergehen.txt<br>Test-Ergebnisvergleiche/ziffern_uebergehen-sw-ausgabe.txt | Projekt_1/ziffern/ziffern.asm | über Namen |
+| zil.test | zil (Prototyp): Repository vorhanden, Antwort J (nach einem kleinen j und n, die uebergangen werden): UP ztinit, Ja-Weg bis ZTD geladen … | Test-virtuelleGeraete/T-SW-Eingabe/zil.txt<br>Test-virtuelleGeraete/SW-Ausgabe/zil |  |  |
+| zt_feld.test | [Tastenfolge: H G R] |  | Claude/zt_feld/zt_feld.asm |  |
+| ztl.test | [Tastenfolge: H G R] |  | Claude/ztl/ztl.asm |  |

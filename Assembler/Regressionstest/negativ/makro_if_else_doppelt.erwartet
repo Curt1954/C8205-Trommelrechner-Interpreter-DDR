@@ -1,0 +1,4 @@
+rc 16
+stderr makro_if_else_doppelt.asm:11: Fehler: E1 Zweites $ELSE im selben $IF.
+datei-weg obj mqo test
+escape-weg

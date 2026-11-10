@@ -1,0 +1,187 @@
+Trommeldatei:
+#DOK-0001 ztinit_vor: nur die Vorbelegung der Zusatztrommeln, ztinit wird nicht aufgerufen
+#SPEI-0001 0001-0001
+#PROT STUFE=2
+#TROMMEL=LEER
+#ZTROMMEL=LEER
+0000: 00000200211 # 211 l0001 ; ZT3 Spur 127 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0001: 00000131240 # 240 zc_adr ; ZT3 Spur 127 mit spuf00 belegen: Pufferspur merken
+0002: 00000201211 # 211 l0002 ; ZT3 Spur 127 mit spuf00 belegen: AC := Trommel t
+0003: 00000126240 # 240 zt_t ; ZT3 Spur 127 mit spuf00 belegen: Trommel merken
+0004: 00000107025 # 025 zt_anw ; ZT3 Spur 127 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0005: 00000202211 # 211 l0003 ; ZT3 Spur 127 mit spuf00 belegen: AC := Spur
+0006: 00000127240 # 240 zc_spur ; ZT3 Spur 127 mit spuf00 belegen: Spur merken
+0007: 00000203211 # 211 l0004 ; ZT3 Spur 127 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0010: 00000130240 # 240 zc_op ; ZT3 Spur 127 mit spuf00 belegen: Operationscode merken
+0011: 00000116025 # 025 zt_ausf ; ZT3 Spur 127 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0012: 00000200211 # 211 l0001 ; ZT3 Spur 63 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0013: 00000131240 # 240 zc_adr ; ZT3 Spur 63 mit spuf00 belegen: Pufferspur merken
+0014: 00000201211 # 211 l0002 ; ZT3 Spur 63 mit spuf00 belegen: AC := Trommel t
+0015: 00000126240 # 240 zt_t ; ZT3 Spur 63 mit spuf00 belegen: Trommel merken
+0016: 00000107025 # 025 zt_anw ; ZT3 Spur 63 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0017: 00000204211 # 211 l0005 ; ZT3 Spur 63 mit spuf00 belegen: AC := Spur
+0020: 00000127240 # 240 zc_spur ; ZT3 Spur 63 mit spuf00 belegen: Spur merken
+0021: 00000203211 # 211 l0004 ; ZT3 Spur 63 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0022: 00000130240 # 240 zc_op ; ZT3 Spur 63 mit spuf00 belegen: Operationscode merken
+0023: 00000116025 # 025 zt_ausf ; ZT3 Spur 63 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0024: 00000200211 # 211 l0001 ; ZT2 Spur 64 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0025: 00000131240 # 240 zc_adr ; ZT2 Spur 64 mit spuf00 belegen: Pufferspur merken
+0026: 00000205211 # 211 l0006 ; ZT2 Spur 64 mit spuf00 belegen: AC := Trommel t
+0027: 00000126240 # 240 zt_t ; ZT2 Spur 64 mit spuf00 belegen: Trommel merken
+0030: 00000107025 # 025 zt_anw ; ZT2 Spur 64 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0031: 00000206211 # 211 l0007 ; ZT2 Spur 64 mit spuf00 belegen: AC := Spur
+0032: 00000127240 # 240 zc_spur ; ZT2 Spur 64 mit spuf00 belegen: Spur merken
+0033: 00000203211 # 211 l0004 ; ZT2 Spur 64 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0034: 00000130240 # 240 zc_op ; ZT2 Spur 64 mit spuf00 belegen: Operationscode merken
+0035: 00000116025 # 025 zt_ausf ; ZT2 Spur 64 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0036: 00000200211 # 211 l0001 ; ZT1 Spur 0 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0037: 00000131240 # 240 zc_adr ; ZT1 Spur 0 mit spuf00 belegen: Pufferspur merken
+0040: 00000207211 # 211 l0008 ; ZT1 Spur 0 mit spuf00 belegen: AC := Trommel t
+0041: 00000126240 # 240 zt_t ; ZT1 Spur 0 mit spuf00 belegen: Trommel merken
+0042: 00000107025 # 025 zt_anw ; ZT1 Spur 0 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0043: 00000210211 # 211 l0009 ; ZT1 Spur 0 mit spuf00 belegen: AC := Spur
+0044: 00000127240 # 240 zc_spur ; ZT1 Spur 0 mit spuf00 belegen: Spur merken
+0045: 00000203211 # 211 l0004 ; ZT1 Spur 0 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0046: 00000130240 # 240 zc_op ; ZT1 Spur 0 mit spuf00 belegen: Operationscode merken
+0047: 00000116025 # 025 zt_ausf ; ZT1 Spur 0 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0050: 00000200211 # 211 l0001 ; ZT0 Spur 1 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0051: 00000131240 # 240 zc_adr ; ZT0 Spur 1 mit spuf00 belegen: Pufferspur merken
+0052: 00000210211 # 211 l0009 ; ZT0 Spur 1 mit spuf00 belegen: AC := Trommel t
+0053: 00000126240 # 240 zt_t ; ZT0 Spur 1 mit spuf00 belegen: Trommel merken
+0054: 00000107025 # 025 zt_anw ; ZT0 Spur 1 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0055: 00000207211 # 211 l0008 ; ZT0 Spur 1 mit spuf00 belegen: AC := Spur
+0056: 00000127240 # 240 zc_spur ; ZT0 Spur 1 mit spuf00 belegen: Spur merken
+0057: 00000203211 # 211 l0004 ; ZT0 Spur 1 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0060: 00000130240 # 240 zc_op ; ZT0 Spur 1 mit spuf00 belegen: Operationscode merken
+0061: 00000116025 # 025 zt_ausf ; ZT0 Spur 1 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0062: 00000200211 # 211 l0001 ; ZT0 Spur 127 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0063: 00000131240 # 240 zc_adr ; ZT0 Spur 127 mit spuf00 belegen: Pufferspur merken
+0064: 00000210211 # 211 l0009 ; ZT0 Spur 127 mit spuf00 belegen: AC := Trommel t
+0065: 00000126240 # 240 zt_t ; ZT0 Spur 127 mit spuf00 belegen: Trommel merken
+0066: 00000107025 # 025 zt_anw ; ZT0 Spur 127 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0067: 00000202211 # 211 l0003 ; ZT0 Spur 127 mit spuf00 belegen: AC := Spur
+0070: 00000127240 # 240 zc_spur ; ZT0 Spur 127 mit spuf00 belegen: Spur merken
+0071: 00000203211 # 211 l0004 ; ZT0 Spur 127 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0072: 00000130240 # 240 zc_op ; ZT0 Spur 127 mit spuf00 belegen: Operationscode merken
+0073: 00000116025 # 025 zt_ausf ; ZT0 Spur 127 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0074: 00000200211 # 211 l0001 ; ZT0 Spur 0 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0075: 00000131240 # 240 zc_adr ; ZT0 Spur 0 mit spuf00 belegen: Pufferspur merken
+0076: 00000210211 # 211 l0009 ; ZT0 Spur 0 mit spuf00 belegen: AC := Trommel t
+0077: 00000126240 # 240 zt_t ; ZT0 Spur 0 mit spuf00 belegen: Trommel merken
+0100: 00000107025 # 025 zt_anw ; ZT0 Spur 0 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0101: 00000210211 # 211 l0009 ; ZT0 Spur 0 mit spuf00 belegen: AC := Spur
+0102: 00000127240 # 240 zc_spur ; ZT0 Spur 0 mit spuf00 belegen: Spur merken
+0103: 00000203211 # 211 l0004 ; ZT0 Spur 0 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0104: 00000130240 # 240 zc_op ; ZT0 Spur 0 mit spuf00 belegen: Operationscode merken
+0105: 00000116025 # 025 zt_ausf ; ZT0 Spur 0 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0106: 00000000020 # 020 0 ; Halt
+0107: 00000115240 # zt_anw: 240 rueck_zt_anw ; Rueckkehrwort sichern: Zusatztrommel zt_t anwaehlen (5k00 030, k = t + 1; 5100 = ZT0 bis 5400 = ZT3)
+0110: 00000126211 # 211 zt_t ; AC := t
+0111: 00007675646 # 646 07675 ; um 15 Bit nach links: AC um 15 Bit zyklisch links
+0112: 00000211210 # 210 l0010 ; plus Befehl 5100 030
+0113: 00000114240 # 240 zw_x ; Befehl ablegen
+0116: 00000125240 # zt_ausf: 240 rueck_zt_ausf ; Rueckkehrwort sichern: Befehl zzz0 bbbb 601/661 aus zc_spur, zc_adr und zc_op bilden und ausfuehren
+0117: 00000127211 # 211 zc_spur ; AC := Spur
+0120: 00007656646 # 646 07656 ; um 26 Bit nach links (zzz0): AC um 26 Bit zyklisch links
+0121: 00000131210 # 210 zc_adr ; plus Adresse der Pufferspur
+0122: 00000130210 # 210 zc_op ; plus Operationscode
+0123: 00000124240 # 240 za_x ; Befehl ablegen
+0140: 00000000111 # spuf00: dw 0111 ; spuf00[0] = 73
+0141: 00000000222 # dw 0222 ; spuf00[1] = 146
+0142: 00000000000 # dw 0 ; spuf00[2] = 0
+0143: 00000000000 # dw 0 ; spuf00[3] = 0
+0144: 00000000000 # dw 0 ; spuf00[4] = 0
+0145: 00000000777 # dw 0777 ; spuf00[5] = 511
+0146: 00000000000 # dw 0 ; spuf00[6] = 0
+0147: 00000000000 # dw 0 ; spuf00[7] = 0
+0150: 00000000000 # dw 0 ; spuf00[8] = 0
+0151: 00000000000 # dw 0 ; spuf00[9] = 0
+0152: 00000000000 # dw 0 ; spuf00[10] = 0
+0153: 00000000000 # dw 0 ; spuf00[11] = 0
+0154: 00000000000 # dw 0 ; spuf00[12] = 0
+0155: 00000000000 # dw 0 ; spuf00[13] = 0
+0156: 00000000000 # dw 0 ; spuf00[14] = 0
+0157: 00000000000 # dw 0 ; spuf00[15] = 0
+0160: 00000000000 # dw 0 ; spuf00[16] = 0
+0161: 00000000444 # dw 0444 ; spuf00[17] = 292
+0162: 00000000666 # dw 0666 ; spuf00[18] = 438
+0163: 00000000000 # dw 0 ; spuf00[19] = 0
+0164: 00000000000 # dw 0 ; spuf00[20] = 0
+0165: 00000000000 # dw 0 ; spuf00[21] = 0
+0166: 00000000000 # dw 0 ; spuf00[22] = 0
+0167: 00000000555 # dw 0555 ; spuf00[23] = 365
+0170: 00000000000 # dw 0 ; spuf00[24] = 0
+0171: 00000000000 # dw 0 ; spuf00[25] = 0
+0172: 00000000000 # dw 0 ; spuf00[26] = 0
+0173: 00000000000 # dw 0 ; spuf00[27] = 0
+0174: 00000000000 # dw 0 ; spuf00[28] = 0
+0175: 00000000000 # dw 0 ; spuf00[29] = 0
+0176: 00000000000 # dw 0 ; spuf00[30] = 0
+0177: 00000000333 # dw 0333 ; spuf00[31] = 219
+0200: 00000140000 # l0001 da spuf00
+0201: 00000000003 # l0002 dw 000000000003
+0202: 00000000177 # l0003 dw 000000000177
+0203: 00000000601 # l0004 dw 000000000601
+0204: 00000000077 # l0005 dw 000000000077
+0205: 00000000002 # l0006 dw 000000000002
+0206: 00000000100 # l0007 dw 000000000100
+0207: 00000000001 # l0008 dw 000000000001
+0210: 00000000000 # l0009 dw 000000000000
+0211: 00005100030 # l0010 dw 000005100030
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0107 US=1
+ZT-Zellen-Pruefung:
+3-7740: 00000000111   # vorbelegt
+3-7741: 00000000222   # vorbelegt
+3-7745: 00000000777   # vorbelegt
+3-7761: 00000000444   # vorbelegt
+3-7762: 00000000666   # vorbelegt
+3-7767: 00000000555   # vorbelegt
+3-7777: 00000000333   # vorbelegt
+3-3740: 00000000111   # vorbelegt
+3-3741: 00000000222   # vorbelegt
+3-3745: 00000000777   # vorbelegt
+3-3761: 00000000444   # vorbelegt
+3-3762: 00000000666   # vorbelegt
+3-3767: 00000000555   # vorbelegt
+3-3777: 00000000333   # vorbelegt
+2-4000: 00000000111   # vorbelegt
+2-4001: 00000000222   # vorbelegt
+2-4005: 00000000777   # vorbelegt
+2-4021: 00000000444   # vorbelegt
+2-4022: 00000000666   # vorbelegt
+2-4027: 00000000555   # vorbelegt
+2-4037: 00000000333   # vorbelegt
+1-0000: 00000000111   # vorbelegt
+1-0001: 00000000222   # vorbelegt
+1-0005: 00000000777   # vorbelegt
+1-0021: 00000000444   # vorbelegt
+1-0022: 00000000666   # vorbelegt
+1-0027: 00000000555   # vorbelegt
+1-0037: 00000000333   # vorbelegt
+0-0040: 00000000111   # vorbelegt
+0-0041: 00000000222   # vorbelegt
+0-0045: 00000000777   # vorbelegt
+0-0061: 00000000444   # vorbelegt
+0-0062: 00000000666   # vorbelegt
+0-0067: 00000000555   # vorbelegt
+0-0077: 00000000333   # vorbelegt
+0-7740: 00000000111   # vorbelegt
+0-7741: 00000000222   # vorbelegt
+0-7745: 00000000777   # vorbelegt
+0-7761: 00000000444   # vorbelegt
+0-7762: 00000000666   # vorbelegt
+0-7767: 00000000555   # vorbelegt
+0-7777: 00000000333   # vorbelegt
+0-0000: 00000000111   # vorbelegt
+0-0001: 00000000222   # vorbelegt
+0-0005: 00000000777   # vorbelegt
+0-0021: 00000000444   # vorbelegt
+0-0022: 00000000666   # vorbelegt
+0-0027: 00000000555   # vorbelegt
+0-0037: 00000000333   # vorbelegt
+1-0040: 00000000000   # nie beschrieben
+3-0000: 00000000000   # nie beschrieben
+0-0100: 00000000000   # nie beschrieben

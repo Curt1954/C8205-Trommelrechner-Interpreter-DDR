@@ -1,0 +1,47 @@
+Trommeldatei:
+#DOK-0001 Test von $DEFAULT (fehlende Parameter am Ende erhalten Vorgabewerte) und $# (Zahl der uebergebenen Parameter, auch in $CALC und $REPT)
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000023000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Zahl der uebergebenen Parameter
+0002: 00000000005 # dw 5 ; zweiter Parameter (oder Vorgabe)
+0003: 00000000000 # dw 0 ; dritter Parameter (oder Vorgabe)
+0004: 00000000013 # dw 11 ; erster Parameter plus Anzahl
+0005: 00000000077 # dw 077 ; je uebergebenem Parameter ein Wort
+0006: 00000000002 # dw 2 ; Zahl der uebergebenen Parameter
+0007: 00000000006 # dw 6 ; zweiter Parameter (oder Vorgabe)
+0010: 00000000000 # dw 0 ; dritter Parameter (oder Vorgabe)
+0011: 00000000014 # dw 12 ; erster Parameter plus Anzahl
+0012: 00000000077 # dw 077 ; je uebergebenem Parameter ein Wort
+0013: 00000000077 # dw 077 ; je uebergebenem Parameter ein Wort
+0014: 00000000003 # dw 3 ; Zahl der uebergebenen Parameter
+0015: 00000000006 # dw 6 ; zweiter Parameter (oder Vorgabe)
+0016: 00000000007 # dw 7 ; dritter Parameter (oder Vorgabe)
+0017: 00000000015 # dw 13 ; erster Parameter plus Anzahl
+0020: 00000000077 # dw 077 ; je uebergebenem Parameter ein Wort
+0021: 00000000077 # dw 077 ; je uebergebenem Parameter ein Wort
+0022: 00000000077 # dw 077 ; je uebergebenem Parameter ein Wort
+0023: 00000001164 # haupt: 164 0001 ; Zelle 0023: Diagnoseausgabe (nur im Test)
+0024: 00000000020 # 020 0 ; Zelle 0024: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0025 US=1
+0001: 00000000001   # Anzahl uebergeben: 1
+0002: 00000000005   # Vorgabe $2 = 5
+0003: 00000000000   # Vorgabe $3 = 0
+0004: 00000000013   # $1+$# = 10+1 = 11 = 013
+0005: 00000000077   # $REPT $# = 1 Wort
+0006: 00000000002   # Anzahl: 2
+0007: 00000000006   # $2 uebergeben = 6
+0010: 00000000000   # Vorgabe $3 = 0
+0011: 00000000014   # 10+2 = 12 = 014
+0012: 00000000077   # Wort 1 von 2
+0013: 00000000077   # Wort 2 von 2
+0014: 00000000003   # Anzahl: 3
+0015: 00000000006   # $2 = 6
+0016: 00000000007   # $3 = 7
+0017: 00000000015   # 10+3 = 13 = 015
+0020: 00000000077   # Wort 1 von 3
+0021: 00000000077   # Wort 2 von 3
+0022: 00000000077   # Wort 3 von 3

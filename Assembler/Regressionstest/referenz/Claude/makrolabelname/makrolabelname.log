@@ -1,0 +1,56 @@
+
+
+Symboltabelle
+
+Symbol                             | RelAddr |    Adresse      | original Operation
+-----------------------------------| ------- | --------------- | ----------------
+eins                               |   0001  |  000000000001   | 1
+ende                               |   0000  |  000000000105   | 
+endeJQX                            |   0000  |  000000000022   | fehler
+endeMTA                            |   0000  |  000000000027   | fehler
+fehler                             |   0000  |  000000000006   | 0
+haupt                              |   0000  |  000000000007   | weiterDKR
+naechstPWD_0                       |   0000  |  000000000035   | zahl3
+naechstPWD_1                       |   0000  |  000000000042   | zahl3
+naechstPWD_2                       |   0000  |  000000000047   | zahl3
+naechstSZG_0                       |   0000  |  000000000054   | zahl3
+naechstSZG_1                       |   0000  |  000000000061   | zahl3
+naechstSZG_2                       |   0000  |  000000000066   | zahl3
+weiterDKR                          |   0000  |  000000000011   | zahl
+weiterGNU                          |   0000  |  000000000016   | zahl
+weiterendeJQX                      |   0000  |  000000000023   | zahl2
+weiterendeMTA                      |   0000  |  000000000030   | zahl2
+zahl                               |   0000  |  000000000002   | 0
+zahl2                              |   0000  |  000000000003   | 0
+zahl3                              |   0000  |  000000000004   | 0
+zahl4                              |   0000  |  000000000005   | 0
+zielBIP                            |   0000  |  000000000100   | zahl4
+zielVCJ                            |   0000  |  000000000073   | zahl4
+
+
+Adresstabelle
+
+Symbol                             | RelAddr |    Adresse
+-----------------------------------| ------- | ---------------
+eins                               |   0001  | 000000000001
+zahl                               |   0000  | 000000000002
+zahl2                              |   0000  | 000000000003
+zahl3                              |   0000  | 000000000004
+zahl4                              |   0000  | 000000000005
+fehler                             |   0000  | 000000000006
+haupt                              |   0000  | 000000000007
+weiterDKR                          |   0000  | 000000000011
+weiterGNU                          |   0000  | 000000000016
+endeJQX                            |   0000  | 000000000022
+weiterendeJQX                      |   0000  | 000000000023
+endeMTA                            |   0000  | 000000000027
+weiterendeMTA                      |   0000  | 000000000030
+naechstPWD_0                       |   0000  | 000000000035
+naechstPWD_1                       |   0000  | 000000000042
+naechstPWD_2                       |   0000  | 000000000047
+naechstSZG_0                       |   0000  | 000000000054
+naechstSZG_1                       |   0000  | 000000000061
+naechstSZG_2                       |   0000  | 000000000066
+zielVCJ                            |   0000  | 000000000073
+zielBIP                            |   0000  | 000000000100
+ende                               |   0000  | 000000000105

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_feld_anzahl.asm:6: Fehler: L4 $LOCAL q: Anzahl 0 ist ungültig (erlaubt sind 1 bis 256)
+datei-weg obj mqo test
+escape-weg

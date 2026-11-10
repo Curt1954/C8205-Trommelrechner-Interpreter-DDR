@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zahl_str_calc.asm:7: Fehler: M1 $STRCMP r: Argument 1: $CALC(1/0): Division durch 0 (bei "")
+datei-weg obj mqo test
+escape-weg

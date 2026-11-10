@@ -1,0 +1,30 @@
+Trommeldatei:
+#DOK-0001 Gruppe 2 und Phase B: Gruppe-4-Makros fuellen die Luecke bis zur 040-Grenze (Endadresse 0152 statt 0156)
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # haupt: 020 0 ; Zelle 0001: Halt (die UP werden nicht aufgerufen, nur erzeugt)
+0002: 00000003000 # kopf: da 000000000003 ; Zelle 0002: Adresse der Marke am Aufruf von M2A (Wert der Marke mal 01000)
+0040: 00000000731 # dw 0731 ; erste Rumpfzelle (Marke fuer den Test)
+0051: 00000000732 # dw 0732 ; letzte Rumpfzelle (Marke fuer den Test)
+0052: 00000000701 # dw 0701 ; erste Rumpfzelle (Marke fuer den Test)
+0057: 00000000702 # dw 0702 ; letzte Rumpfzelle (Marke fuer den Test)
+0100: 00000000741 # dw 0741 ; erste Rumpfzelle (Marke fuer den Test)
+0147: 00000000742 # dw 0742 ; letzte Rumpfzelle (Marke fuer den Test)
+0150: 00000000711 # dw 0711 ; erste Rumpfzelle (Marke fuer den Test)
+0153: 00000000712 # dw 0712 ; letzte Rumpfzelle (Marke fuer den Test)
+0154: 00000000111 # t1: dw 0111 ; Programmrest, Zelle 1
+0155: 00000000222 # t2: dw 0222 ; Programmrest, Zelle 2
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0002
+0002: 00000110000   # kopf: da m2a, m2a = 0110 (Zaehler vor dem Aufrunden hinter M2B)
+0003: 00000000111   # t1: Programmrest rueckt auf 0003
+0004: 00000000222   # t2
+0005: 00000000701   # M4A, erste Zelle (Luecke vor M2B)
+0012: 00000000702   # M4A, letzte Zelle
+0013: 00000000711   # M4B, erste Zelle
+0016: 00000000712   # M4B, letzte Zelle
+0040: 00000000741   # M2B, erste Zelle auf der 040-Grenze
+0107: 00000000742   # M2B, letzte Zelle
+0140: 00000000731   # M2A, erste Zelle auf der naechsten 040-Grenze
+0151: 00000000732   # M2A, letzte Zelle

@@ -1,0 +1,11 @@
+0000: 01 0011 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000013        dw  11    ; Wort 11 dezimal (013 oktal)
+0002: 00 00000000007        dw  3+4   ; Summe der beiden Parameter
+0003: 00 00000000014        dw  3*4   ; Produkt der beiden Parameter
+0004: 00 00000000005        dw  5     ; erster Parameter
+0005: 00 00000000006        dw  6     ; erster Parameter
+0006: 00 00000000006        dw  1+2+3 ; Summe der drei Parameter
+0007: 00 00000000025        dw  21    ; Wort 21 dezimal (025 oktal)
+0010: 00 00000000036        dw  10+20 ; Summe der beiden Parameter
+0011: 01 0001 164    haupt: 164 0001  ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 01 0000 020           020 0     ; Zelle 0012: Halt

@@ -1,0 +1,8 @@
+0000: 01 0001 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 0000 020    haupt: 020 0     ; Zelle 0001: Halt
+0002: 00 00000000004        dw  4     ; Abstand
+0003: 00 00000007504        dw  3908  ; Adresse
+      20 0000 7500   blk:   equ 07500 ; vorher equ100 *    Gruppe 1
+7500: 00 00000000001 b1:    dw  1     ; erste Zelle, 07500
+7501: 20 7504               db  3     ; 07501 bis 07503
+7504: 00 00000000002 b2:    dw  2     ; 07504

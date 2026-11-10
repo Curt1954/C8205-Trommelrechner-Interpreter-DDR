@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_zweiter_name.asm:6: Fehler: $CALC(zellen(a,)): zellen(von,bis): Der zweite Symbolname fehlt (erlaubt: Buchstaben, Ziffern und _, nicht mit einer Ziffer beginnend) (bei "zellen(a,)")
+datei-weg obj mqo test
+escape-weg

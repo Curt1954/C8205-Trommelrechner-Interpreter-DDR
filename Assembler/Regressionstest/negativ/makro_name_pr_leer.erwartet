@@ -1,0 +1,4 @@
+rc 16
+stderr Makro M1: $PR( ) erwartet einen Parameternamen (Zeile: $PR() $TYPADR) [im Quelltext Zeile 3]
+datei-weg obj mqo test
+escape-weg

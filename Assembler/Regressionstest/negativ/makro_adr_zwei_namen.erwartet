@@ -1,0 +1,5 @@
+rc 16
+stderr makro_adr_zwei_namen.asm:6: Fehler: $CALC(adr(a,b)): adr: Das Argument ist kein einzelner Symbolname
+nicht-stderr Probelauf
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

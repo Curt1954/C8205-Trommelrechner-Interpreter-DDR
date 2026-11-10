@@ -1,0 +1,729 @@
+Trommeldatei:
+#TROMMEL=LEER
+#DOK-0001 Pruefprogramm c82gen: Schieben, UP, Kurzidiome, Felder, Ausgabe, Eingabetafel (Archivmodus)
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/gen_lib_test_archiv040.txt
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/gen_lib_test.txt
+0000: 00000140000 # 000 0140 ; Zelle 0000: Sprung auf die Testbasis (der Start H G R beginnt bei 0000)
+0140: 00000141000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0141: 00000732211 # haupt: 211 pn ; AC := pn
+0142: 00007663646 # 646 07663 ; AC um 1 Bit zyklisch links
+0143: 00000734240 # 240 l1 ; l1 := AC
+0144: 00000732211 # 211 pn ; AC := pn
+0145: 00007646646 # 646 07646 ; AC um 2 Bit zyklisch links
+0146: 00000735240 # 240 l2 ; l2 := AC
+0147: 00000732211 # 211 pn ; AC := pn
+0150: 00007671646 # 646 07671 ; AC um 3 Bit zyklisch links
+0151: 00000736240 # 240 l3 ; l3 := AC
+0152: 00000732211 # 211 pn ; AC := pn
+0153: 00007654646 # 646 07654 ; AC um 4 Bit zyklisch links
+0154: 00000737240 # 240 l4 ; l4 := AC
+0155: 00000732211 # 211 pn ; AC := pn
+0156: 00007677646 # 646 07677 ; AC um 5 Bit zyklisch links
+0157: 00001040240 # 240 l5 ; l5 := AC
+0160: 00000732211 # 211 pn ; AC := pn
+0161: 00007662646 # 646 07662 ; AC um 6 Bit zyklisch links
+0162: 00001041240 # 240 l6 ; l6 := AC
+0163: 00000732211 # 211 pn ; AC := pn
+0164: 00007645646 # 646 07645 ; AC um 7 Bit zyklisch links
+0165: 00001042240 # 240 l7 ; l7 := AC
+0166: 00000732211 # 211 pn ; AC := pn
+0167: 00007670646 # 646 07670 ; AC um 8 Bit zyklisch links
+0170: 00001043240 # 240 l8 ; l8 := AC
+0171: 00000732211 # 211 pn ; AC := pn
+0172: 00007653646 # 646 07653 ; AC um 9 Bit zyklisch links
+0173: 00001044240 # 240 l9 ; l9 := AC
+0174: 00000732211 # 211 pn ; AC := pn
+0175: 00007676646 # 646 07676 ; AC um 10 Bit zyklisch links
+0176: 00001045240 # 240 l10 ; l10 := AC
+0177: 00000732211 # 211 pn ; AC := pn
+0200: 00007661646 # 646 07661 ; AC um 11 Bit zyklisch links
+0201: 00001046240 # 240 l11 ; l11 := AC
+0202: 00000732211 # 211 pn ; AC := pn
+0203: 00007644646 # 646 07644 ; AC um 12 Bit zyklisch links
+0204: 00001047240 # 240 l12 ; l12 := AC
+0205: 00000732211 # 211 pn ; AC := pn
+0206: 00007667646 # 646 07667 ; AC um 13 Bit zyklisch links
+0207: 00001050240 # 240 l13 ; l13 := AC
+0210: 00000732211 # 211 pn ; AC := pn
+0211: 00007652646 # 646 07652 ; AC um 14 Bit zyklisch links
+0212: 00001051240 # 240 l14 ; l14 := AC
+0213: 00000732211 # 211 pn ; AC := pn
+0214: 00007675646 # 646 07675 ; AC um 15 Bit zyklisch links
+0215: 00001052240 # 240 l15 ; l15 := AC
+0216: 00000732211 # 211 pn ; AC := pn
+0217: 00007660646 # 646 07660 ; AC um 16 Bit zyklisch links
+0220: 00001053240 # 240 l16 ; l16 := AC
+0221: 00000732211 # 211 pn ; AC := pn
+0222: 00007643646 # 646 07643 ; AC um 17 Bit zyklisch links
+0223: 00001054240 # 240 l17 ; l17 := AC
+0224: 00000732211 # 211 pn ; AC := pn
+0225: 00007666646 # 646 07666 ; AC um 18 Bit zyklisch links
+0226: 00001055240 # 240 l18 ; l18 := AC
+0227: 00000732211 # 211 pn ; AC := pn
+0230: 00007651646 # 646 07651 ; AC um 19 Bit zyklisch links
+0231: 00001056240 # 240 l19 ; l19 := AC
+0232: 00000732211 # 211 pn ; AC := pn
+0233: 00007674646 # 646 07674 ; AC um 20 Bit zyklisch links
+0234: 00001057240 # 240 l20 ; l20 := AC
+0235: 00000732211 # 211 pn ; AC := pn
+0236: 00007657646 # 646 07657 ; AC um 21 Bit zyklisch links
+0237: 00001060240 # 240 l21 ; l21 := AC
+0240: 00000732211 # 211 pn ; AC := pn
+0241: 00007642646 # 646 07642 ; AC um 22 Bit zyklisch links
+0242: 00001061240 # 240 l22 ; l22 := AC
+0243: 00000732211 # 211 pn ; AC := pn
+0244: 00007665646 # 646 07665 ; AC um 23 Bit zyklisch links
+0245: 00001062240 # 240 l23 ; l23 := AC
+0246: 00000732211 # 211 pn ; AC := pn
+0247: 00007650646 # 646 07650 ; AC um 24 Bit zyklisch links
+0250: 00001063240 # 240 l24 ; l24 := AC
+0251: 00000732211 # 211 pn ; AC := pn
+0252: 00007673646 # 646 07673 ; AC um 25 Bit zyklisch links
+0253: 00001064240 # 240 l25 ; l25 := AC
+0254: 00000732211 # 211 pn ; AC := pn
+0255: 00007656646 # 646 07656 ; AC um 26 Bit zyklisch links
+0256: 00001065240 # 240 l26 ; l26 := AC
+0257: 00000732211 # 211 pn ; AC := pn
+0260: 00007641646 # 646 07641 ; AC um 27 Bit zyklisch links
+0261: 00001066240 # 240 l27 ; l27 := AC
+0262: 00000732211 # 211 pn ; AC := pn
+0263: 00007664646 # 646 07664 ; AC um 28 Bit zyklisch links
+0264: 00001067240 # 240 l28 ; l28 := AC
+0265: 00000732211 # 211 pn ; AC := pn
+0266: 00007647646 # 646 07647 ; AC um 29 Bit zyklisch links
+0267: 00001070240 # 240 l29 ; l29 := AC
+0270: 00000732211 # 211 pn ; AC := pn
+0271: 00007672646 # 646 07672 ; AC um 30 Bit zyklisch links
+0272: 00001071240 # 240 l30 ; l30 := AC
+0273: 00000732211 # 211 pn ; AC := pn
+0274: 00007655646 # 646 07655 ; AC um 31 Bit zyklisch links
+0275: 00001072240 # 240 l31 ; l31 := AC
+0276: 00000732211 # 211 pn ; AC := pn
+0277: 00007640646 # 646 07640 ; AC um 32 Bit zyklisch links
+0300: 00001073240 # 240 l32 ; l32 := AC
+0301: 00000733211 # 211 pr ; AC := pr
+0302: 00007663642 # 642 07663 ; AC um 1 Bit nach rechts
+0303: 00001074240 # 240 r1 ; r1 := AC
+0304: 00000733211 # 211 pr ; AC := pr
+0305: 00007646642 # 642 07646 ; AC um 2 Bit nach rechts
+0306: 00001075240 # 240 r2 ; r2 := AC
+0307: 00000733211 # 211 pr ; AC := pr
+0310: 00007671642 # 642 07671 ; AC um 3 Bit nach rechts
+0311: 00001076240 # 240 r3 ; r3 := AC
+0312: 00000733211 # 211 pr ; AC := pr
+0313: 00007654642 # 642 07654 ; AC um 4 Bit nach rechts
+0314: 00001077240 # 240 r4 ; r4 := AC
+0315: 00000733211 # 211 pr ; AC := pr
+0316: 00007677642 # 642 07677 ; AC um 5 Bit nach rechts
+0317: 00001200240 # 240 r5 ; r5 := AC
+0320: 00000733211 # 211 pr ; AC := pr
+0321: 00007662642 # 642 07662 ; AC um 6 Bit nach rechts
+0322: 00001201240 # 240 r6 ; r6 := AC
+0323: 00000733211 # 211 pr ; AC := pr
+0324: 00007645642 # 642 07645 ; AC um 7 Bit nach rechts
+0325: 00001202240 # 240 r7 ; r7 := AC
+0326: 00000733211 # 211 pr ; AC := pr
+0327: 00007670642 # 642 07670 ; AC um 8 Bit nach rechts
+0330: 00001203240 # 240 r8 ; r8 := AC
+0331: 00000733211 # 211 pr ; AC := pr
+0332: 00007653642 # 642 07653 ; AC um 9 Bit nach rechts
+0333: 00001204240 # 240 r9 ; r9 := AC
+0334: 00000733211 # 211 pr ; AC := pr
+0335: 00007676642 # 642 07676 ; AC um 10 Bit nach rechts
+0336: 00001205240 # 240 r10 ; r10 := AC
+0337: 00000733211 # 211 pr ; AC := pr
+0340: 00007661642 # 642 07661 ; AC um 11 Bit nach rechts
+0341: 00001206240 # 240 r11 ; r11 := AC
+0342: 00000733211 # 211 pr ; AC := pr
+0343: 00007644642 # 642 07644 ; AC um 12 Bit nach rechts
+0344: 00001207240 # 240 r12 ; r12 := AC
+0345: 00000733211 # 211 pr ; AC := pr
+0346: 00007667642 # 642 07667 ; AC um 13 Bit nach rechts
+0347: 00001210240 # 240 r13 ; r13 := AC
+0350: 00000733211 # 211 pr ; AC := pr
+0351: 00007652642 # 642 07652 ; AC um 14 Bit nach rechts
+0352: 00001211240 # 240 r14 ; r14 := AC
+0353: 00000733211 # 211 pr ; AC := pr
+0354: 00007675642 # 642 07675 ; AC um 15 Bit nach rechts
+0355: 00001212240 # 240 r15 ; r15 := AC
+0356: 00000733211 # 211 pr ; AC := pr
+0357: 00007660642 # 642 07660 ; AC um 16 Bit nach rechts
+0360: 00001213240 # 240 r16 ; r16 := AC
+0361: 00000733211 # 211 pr ; AC := pr
+0362: 00007643642 # 642 07643 ; AC um 17 Bit nach rechts
+0363: 00001214240 # 240 r17 ; r17 := AC
+0364: 00000733211 # 211 pr ; AC := pr
+0365: 00007666642 # 642 07666 ; AC um 18 Bit nach rechts
+0366: 00001215240 # 240 r18 ; r18 := AC
+0367: 00000733211 # 211 pr ; AC := pr
+0370: 00007651642 # 642 07651 ; AC um 19 Bit nach rechts
+0371: 00001216240 # 240 r19 ; r19 := AC
+0372: 00000733211 # 211 pr ; AC := pr
+0373: 00007674642 # 642 07674 ; AC um 20 Bit nach rechts
+0374: 00001217240 # 240 r20 ; r20 := AC
+0375: 00000733211 # 211 pr ; AC := pr
+0376: 00007657642 # 642 07657 ; AC um 21 Bit nach rechts
+0377: 00001220240 # 240 r21 ; r21 := AC
+0400: 00000733211 # 211 pr ; AC := pr
+0401: 00007642642 # 642 07642 ; AC um 22 Bit nach rechts
+0402: 00001221240 # 240 r22 ; r22 := AC
+0403: 00000733211 # 211 pr ; AC := pr
+0404: 00007665642 # 642 07665 ; AC um 23 Bit nach rechts
+0405: 00001222240 # 240 r23 ; r23 := AC
+0406: 00000733211 # 211 pr ; AC := pr
+0407: 00007650642 # 642 07650 ; AC um 24 Bit nach rechts
+0410: 00001223240 # 240 r24 ; r24 := AC
+0411: 00000733211 # 211 pr ; AC := pr
+0412: 00007673642 # 642 07673 ; AC um 25 Bit nach rechts
+0413: 00001224240 # 240 r25 ; r25 := AC
+0414: 00000733211 # 211 pr ; AC := pr
+0415: 00007656642 # 642 07656 ; AC um 26 Bit nach rechts
+0416: 00001225240 # 240 r26 ; r26 := AC
+0417: 00000733211 # 211 pr ; AC := pr
+0420: 00007641642 # 642 07641 ; AC um 27 Bit nach rechts
+0421: 00001226240 # 240 r27 ; r27 := AC
+0422: 00000733211 # 211 pr ; AC := pr
+0423: 00007664642 # 642 07664 ; AC um 28 Bit nach rechts
+0424: 00001227240 # 240 r28 ; r28 := AC
+0425: 00000733211 # 211 pr ; AC := pr
+0426: 00007647642 # 642 07647 ; AC um 29 Bit nach rechts
+0427: 00001230240 # 240 r29 ; r29 := AC
+0430: 00000733211 # 211 pr ; AC := pr
+0431: 00007672642 # 642 07672 ; AC um 30 Bit nach rechts
+0432: 00001231240 # 240 r30 ; r30 := AC
+0433: 00000733211 # 211 pr ; AC := pr
+0434: 00007655642 # 642 07655 ; AC um 31 Bit nach rechts
+0435: 00001232240 # 240 r31 ; r31 := AC
+0436: 00000733211 # 211 pr ; AC := pr
+0437: 00007640642 # 642 07640 ; AC um 32 Bit nach rechts
+0440: 00001233240 # 240 r32 ; r32 := AC
+0441: 00001235241 # 241 px ; px := 0, AC := 0
+0442: 00000641025 # 025 outer ; Aufruf outer
+0443: 00001234211 # 211 k_7 ; AC := k_7
+0444: 00001235240 # 240 px ; px := AC
+0445: 00000626025 # 025 inner ; Aufruf inner
+0446: 00001236211 # 211 ri ; AC := ri
+0447: 00001242240 # 240 rd ; rd := AC
+0450: 00001243211 # 211 k_5 ; AC := k_5
+0451: 00001246240 # 240 x ; x := AC
+0452: 00001234211 # 211 k_7 ; AC := k_7
+0453: 00001247240 # 240 y ; y := AC
+0454: 00001244211 # 211 k_m3 ; AC := k_m3
+0455: 00001250240 # 240 neg ; neg := AC
+0456: 00001251241 # 241 cnt ; cnt := 0, AC := 0
+0457: 00001245210 # 210 k_1 ; AC := AC + k_1
+0460: 00001251240 # 240 cnt ; cnt := AC
+0461: 00001245210 # 210 k_1 ; AC := AC + k_1
+0462: 00001251240 # 240 cnt ; cnt := AC
+0463: 00001245210 # 210 k_1 ; AC := AC + k_1
+0464: 00001251240 # 240 cnt ; cnt := AC
+0465: 00001247211 # 211 y ; AC := y
+0466: 00001246220 # 220 x ; AC := AC - x
+0467: 00001252240 # 240 dif ; dif := AC
+0470: 00001253240 # 240 dif2 ; dif2 := AC
+0471: 00001246211 # 211 x ; AC := x
+0472: 00001247330 # 330 y ; AC mit y vergleichen
+0473: 00000476140 # 140 t_1 ; kleiner oder gleich: weiter bei t_1
+0474: 00001254241 # 241 c1 ; c1 := 0, AC := 0
+0475: 00000500000 # 000 w_2 ; weiter bei w_2
+0476: 00001245211 # t_1: 211 k_1 ; AC := k_1
+0477: 00001254240 # 240 c1 ; c1 := AC
+0500: 00001246211 # w_2: 211 x ; AC := x
+0501: 00001247330 # 330 y ; AC mit y vergleichen
+0502: 00000505150 # 150 t_3 ; groesser oder gleich: weiter bei t_3
+0503: 00001255241 # 241 c2 ; c2 := 0, AC := 0
+0504: 00000507000 # 000 w_4 ; weiter bei w_4
+0505: 00001245211 # t_3: 211 k_1 ; AC := k_1
+0506: 00001255240 # 240 c2 ; c2 := AC
+0507: 00001246211 # w_4: 211 x ; AC := x
+0510: 00001247330 # 330 y ; AC mit y vergleichen
+0511: 00000514170 # 170 t_5 ; gleich: weiter bei t_5
+0512: 00001256241 # 241 c3 ; c3 := 0, AC := 0
+0513: 00000516000 # 000 w_6 ; weiter bei w_6
+0514: 00001245211 # t_5: 211 k_1 ; AC := k_1
+0515: 00001256240 # 240 c3 ; c3 := AC
+0516: 00001247211 # w_6: 211 y ; AC := y
+0517: 00001234330 # 330 k_7 ; AC mit k_7 vergleichen
+0520: 00000523170 # 170 t_7 ; gleich: weiter bei t_7
+0521: 00001257241 # 241 c4 ; c4 := 0, AC := 0
+0522: 00000525000 # 000 w_8 ; weiter bei w_8
+0523: 00001245211 # t_7: 211 k_1 ; AC := k_1
+0524: 00001257240 # 240 c4 ; c4 := AC
+0525: 00001250211 # w_8: 211 neg ; AC := neg
+0526: 00000531040 # 040 t_9 ; AC < 0: weiter bei t_9
+0527: 00001260241 # 241 c5 ; c5 := 0, AC := 0
+0530: 00000533000 # 000 w_10 ; weiter bei w_10
+0531: 00001245211 # t_9: 211 k_1 ; AC := k_1
+0532: 00001260240 # 240 c5 ; c5 := AC
+0533: 00001250211 # w_10: 211 neg ; AC := neg
+0534: 00000537050 # 050 t_11 ; AC >= 0: weiter bei t_11
+0535: 00001261241 # 241 c6 ; c6 := 0, AC := 0
+0536: 00000541000 # 000 w_12 ; weiter bei w_12
+0537: 00001245211 # t_11: 211 k_1 ; AC := k_1
+0540: 00001261240 # 240 c6 ; c6 := AC
+0541: 00001246211 # w_12: 211 x ; AC := x
+0542: 00000545050 # 050 t_13 ; AC >= 0: weiter bei t_13
+0543: 00001262241 # 241 c7 ; c7 := 0, AC := 0
+0544: 00000547000 # 000 w_14 ; weiter bei w_14
+0545: 00001245211 # t_13: 211 k_1 ; AC := k_1
+0546: 00001262240 # 240 c7 ; c7 := AC
+0547: 00001267211 # w_14: 211 k_2000 ; AC := k_2000
+0550: 00001273240 # 240 ix ; ix := AC
+0551: 00001270211 # 211 k_123 ; AC := k_123
+0552: 00001274240 # 240 wv ; wv := AC
+0553: 00001273211 # 211 ix ; AC := Index ix
+0554: 00001271210 # 210 a_fe ; AC := Index + Anfangsadresse fe
+0555: 00001272210 # 210 k_240 ; AC := Befehl 240 fe[Index]
+0556: 00000560240 # 240 fs_15 ; Befehl auf Zelle fs_15 ablegen
+0557: 00001274211 # 211 wv ; AC := wv
+0560: 00000000000 # fs_15: dbn 01 ; zur Laufzeit 240 fe[Index]
+0561: 00001273211 # 211 ix ; AC := Index ix
+0562: 00001271210 # 210 a_fe ; AC := Index + Anfangsadresse fe
+0563: 00000000251 # 251 0 ; AC := fe[Index] (R-Lesebefehl)
+0564: 00001275240 # 240 fr ; fr := AC
+0565: 00004500030 # 030 04500 ; Kanal K2 anwaehlen
+0566: 00000570030 # dtm Test ; Text 'Test'
+0567: 00001630030
+0570: 00001170030
+0571: 00000450030
+0572: 00001420030
+0573: 00001630030
+0574: 00002720030 # dz $wrzl ; Zeilenschaltung
+0575: 00001276211 # 211 k_1234 ; AC := k_1234
+0576: 00001301240 # 240 zahl ; zahl := AC
+0577: 00001277240 # 240 po_wert ; Parameter po_wert
+0600: 00004500030 # 030 04500 ; Kanal K2 anwaehlen
+0601: 00001170030 # dz $inkb ; Kleinbuchstabenzustand fuer Ziffern
+0602: 00000667025 # 025 prt_okt4 ; Aufruf prt_okt4
+0603: 00002720030 # dz $wrzl ; Zeichen $wrzl
+0604: 00001243211 # 211 k_5 ; AC := k_5
+0605: 00001302240 # 240 d5 ; d5 := AC
+0606: 00001300240 # 240 pz_wert ; Parameter pz_wert
+0607: 00000657025 # 025 prt_ziff ; Aufruf prt_ziff
+0610: 00002720030 # dz $wrzl ; Zeichen $wrzl
+0611: 00004700030 # 030 04700 ; Kanal K0 anwaehlen
+0612: 00000714025 # 025 eing_init_tk ; Eingabetafel tk waehlen: Aufruf eing_init_tk
+0613: 00000000000 # ein_16: dbn 01 ; Zeichen lesen (Tafel tk): zur Laufzeit 011 <Tafel tk>
+0614: 00001304240 # 240 z1 ; z1 := AC
+0615: 00000000000 # ein_17: dbn 01 ; Zeichen lesen (Tafel tk): zur Laufzeit 011 <Tafel tk>
+0616: 00001305240 # 240 z2 ; z2 := AC
+0617: 00000000000 # ein_18: dbn 01 ; Zeichen lesen (Tafel tk): zur Laufzeit 011 <Tafel tk>
+0620: 00001303211 # 211 k_777 ; AC := k_777
+0621: 00001306240 # 240 z3 ; z3 := AC
+0622: 00001245211 # ja: 211 k_1 ; AC := k_1
+0623: 00001306240 # 240 z3 ; z3 := AC
+0624: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0625: 00000000020 # 020 0 ; Halt
+0626: 00000640240 # inner: 240 rueck_inner ; Rueckkehrwort sichern: px = 0: ri := 100, sonst ri := px + 1
+0627: 00001235211 # 211 px ; AC := px
+0630: 00001307330 # 330 k_0 ; AC mit k_0 vergleichen
+0631: 00000636170 # 170 in_null ; gleich: weiter bei in_null
+0632: 00001235211 # 211 px ; AC := px
+0633: 00001245210 # 210 k_1 ; AC := AC + k_1
+0634: 00001236240 # 240 ri ; ri := AC
+0635: 00000640000 # 000 rueck_inner ; Ausgang px <> 0 aus inner
+0636: 00001310211 # in_null: 211 k_144 ; AC := k_144
+0637: 00001236240 # 240 ri ; ri := AC
+0640: 00000000000 # rueck_inner: dbn 01 ; Rueckkehrzelle von inner: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0641: 00000656240 # outer: 240 rueck_outer ; Rueckkehrwort sichern: inner zweimal rufen: px = 0 und px = 5
+0642: 00001235241 # 241 px ; px := 0, AC := 0
+0643: 00000626025 # 025 inner ; Aufruf inner
+0644: 00001236211 # 211 ri ; AC := ri
+0645: 00001237240 # 240 ra ; ra := AC
+0646: 00001243211 # 211 k_5 ; AC := k_5
+0647: 00001235240 # 240 px ; px := AC
+0650: 00000626025 # 025 inner ; Aufruf inner
+0651: 00001236211 # 211 ri ; AC := ri
+0652: 00001240240 # 240 rb ; rb := AC
+0653: 00001237211 # 211 ra ; AC := ra
+0654: 00001240210 # 210 rb ; AC := AC + rb
+0655: 00001241240 # 240 rs ; rs := AC
+0656: 00000000000 # rueck_outer: dbn 01 ; Rueckkehrzelle von outer: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0657: 00000666240 # prt_ziff: 240 rueck_prt_ziff ; Rueckkehrwort sichern: Ziffer ausgeben
+0660: 00001300211 # 211 pz_wert ; AC := Ziffer
+0661: 00007653646 # 646 07653 ; mal 01000 (Adresseneinheiten): AC um 9 Bit zyklisch links
+0662: 00001311210 # 210 a_pz_tab ; plus Anfang der Ausgabebefehle
+0663: 00000000251 # 251 0 ; AC := Ausgabebefehl der Ziffer (R-Lesebefehl)
+0664: 00000665240 # 240 pz_x ; Befehl ablegen
+0665: 00000000000 # pz_x: dbn 01 ; hier steht der Ausgabebefehl 030 xxxx
+0666: 00000000000 # rueck_prt_ziff: dbn 01 ; Rueckkehrzelle von prt_ziff: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0667: 00000713240 # prt_okt4: 240 rueck_prt_okt4 ; Rueckkehrwort sichern: Zahl mit 4 Oktalziffern ausgeben
+0670: 00001277211 # 211 po_wert ; AC := Zahl
+0671: 00007653642 # 642 07653 ; Ziffer 1 nach unten: AC um 9 Bit nach rechts
+0672: 00001234200 # 200 k_7 ; Ziffer 1 ausblenden (Maske 7)
+0673: 00001300240 # 240 pz_wert ; Ziffer 1
+0674: 00000657025 # 025 prt_ziff ; Ziffer 1: Aufruf prt_ziff
+0675: 00001277211 # 211 po_wert ; AC := Zahl
+0676: 00007662642 # 642 07662 ; Ziffer 2 nach unten: AC um 6 Bit nach rechts
+0677: 00001234200 # 200 k_7 ; Ziffer 2 ausblenden (Maske 7)
+0700: 00001300240 # 240 pz_wert ; Ziffer 2
+0701: 00000657025 # 025 prt_ziff ; Ziffer 2: Aufruf prt_ziff
+0702: 00001277211 # 211 po_wert ; AC := Zahl
+0703: 00007671642 # 642 07671 ; Ziffer 3 nach unten: AC um 3 Bit nach rechts
+0704: 00001234200 # 200 k_7 ; Ziffer 3 ausblenden (Maske 7)
+0705: 00001300240 # 240 pz_wert ; Ziffer 3
+0706: 00000657025 # 025 prt_ziff ; Ziffer 3: Aufruf prt_ziff
+0707: 00001277211 # 211 po_wert ; AC := Zahl
+0710: 00001234200 # 200 k_7 ; Ziffer 4 ausblenden (Maske 7)
+0711: 00001300240 # 240 pz_wert ; Ziffer 4
+0712: 00000657025 # 025 prt_ziff ; Ziffer 4: Aufruf prt_ziff
+0713: 00000000000 # rueck_prt_okt4: dbn 01 ; Rueckkehrzelle von prt_okt4: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0714: 00000731240 # eing_init_tk: 240 rueck_eing_init_tk ; Rueckkehrwort sichern: Eingabetafel tk waehlen
+0715: 00001322211 # 211 a_tk_a ; AC := Adresse Tafel A
+0716: 00001325200 # 200 k_40000 ; Adressbit 040 von Tafel A (Ladeadresse ist Vielfaches von 040)
+0717: 00001307330 # 330 k_0 ; Bit 0 ?
+0720: 00000724170 # 170 wa_19 ; ja: Tafel A liegt auf Vielfachem von 0100 (Ladeadresse ist Vielfaches von 0100)
+0721: 00001323211 # 211 a_tk_b ; nein: AC := Adresse Tafel B
+0722: 00001324210 # 210 k_11 ; plus Operationscode 011
+0723: 00000726000 # 000 sp_20 ; weiter
+0724: 00001322211 # wa_19: 211 a_tk_a ; AC := Adresse Tafel A
+0725: 00001324210 # 210 k_11 ; plus Operationscode 011
+0726: 00000613240 # sp_20: 240 ein_16 ; Eingabebefehl auf Stelle ein_16
+0727: 00000615240 # 240 ein_17 ; Eingabebefehl auf Stelle ein_17
+0730: 00000617240 # 240 ein_18 ; Eingabebefehl auf Stelle ein_18
+0731: 00000000000 # rueck_eing_init_tk: dbn 01 ; Rueckkehrzelle von eing_init_tk: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0732: 57012345671 # pn: dw -020765432107 ; Muster mit Vorzeichenbit
+0733: 07123456701 # pr: dw 07123456701 ; Muster positiv
+0734: 00000000000 # l1: dbn 01 ; Ergebnis links 1
+0735: 00000000000 # l2: dbn 01 ; Ergebnis links 2
+0736: 00000000000 # l3: dbn 01 ; Ergebnis links 3
+0737: 00000000000 # l4: dbn 01 ; Ergebnis links 4
+0740: 00000000077 # tk_a: dw 077 ; 00 : Wert
+0741: 00000000077 # dw 077 ; 01 : Wert
+0742: 00000000002 # dw 02 ; 02 2: Wert
+0743: 00000000077 # dw 077 ; 03 : Wert
+0744: 00000000077 # dw 077 ; 04 : Wert
+0745: 00000000077 # dw 077 ; 05 : Wert
+0746: 00000000077 # dw 077 ; 06 : Wert
+0747: 00000000077 # dw 077 ; 07 : Wert
+0750: 00000000077 # dw 077 ; 10 : Wert
+0751: 00000000077 # dw 077 ; 11 : Wert
+0752: 00000000077 # dw 077 ; 12 : Wert
+0753: 00000000077 # dw 077 ; 13 : Wert
+0754: 00000000077 # dw 077 ; 14 : Wert
+0755: 00000000077 # dw 077 ; 15 : Wert
+0756: 00000000077 # dw 077 ; 16 : Wert
+0757: 00000000077 # dw 077 ; 17 : Wert
+0760: 00000000077 # dw 077 ; 20 : Wert
+0761: 00000622000 # 000 ja ; 21 A: Sprung
+0762: 00000000077 # dw 077 ; 22 : Wert
+0763: 00000000077 # dw 077 ; 23 : Wert
+0764: 00000000077 # dw 077 ; 24 : Wert
+0765: 00000000077 # dw 077 ; 25 : Wert
+0766: 00000000077 # dw 077 ; 26 : Wert
+0767: 00000000077 # dw 077 ; 27 : Wert
+0770: 00000000077 # dw 077 ; 30 : Wert
+0771: 00000000077 # dw 077 ; 31 : Wert
+0772: 00000000077 # dw 077 ; 32 : Wert
+0773: 00000000077 # dw 077 ; 33 : Wert
+0774: 00000000077 # dw 077 ; 34 : Wert
+0775: 00000000077 # dw 077 ; 35 : Wert
+0776: 00000000077 # dw 077 ; 36 : Wert
+0777: 00000000077 # dw 077 ; 37 : Wert
+1000: 00000000077 # dw 077 ; 40 : Wert
+1001: 00000000077 # dw 077 ; 41 : Wert
+1002: 00000000077 # dw 077 ; 42 : Wert
+1003: 00000000077 # dw 077 ; 43 : Wert
+1004: 00000000077 # dw 077 ; 44 : Wert
+1005: 00000000077 # dw 077 ; 45 : Wert
+1006: 00000000077 # dw 077 ; 46 : Wert
+1007: 00000000077 # dw 077 ; 47 : Wert
+1010: 00000000077 # dw 077 ; 50 : Wert
+1011: 00000000077 # dw 077 ; 51 : Wert
+1012: 00000000077 # dw 077 ; 52 : Wert
+1013: 00000000077 # dw 077 ; 53 : Wert
+1014: 00000000077 # dw 077 ; 54 : Wert
+1015: 00000000077 # dw 077 ; 55 : Wert
+1016: 00000000077 # dw 077 ; 56 : Wert
+1017: 00000000077 # dw 077 ; 57 : Wert
+1020: 00000000077 # dw 077 ; 60 : Wert
+1021: 00000000077 # dw 077 ; 61 : Wert
+1022: 00000000077 # dw 077 ; 62 : Wert
+1023: 00000000077 # dw 077 ; 63 : Wert
+1024: 00000000077 # dw 077 ; 64 : Wert
+1025: 00000000077 # dw 077 ; 65 : Wert
+1026: 00000000077 # dw 077 ; 66 : Wert
+1027: 00000000077 # dw 077 ; 67 : Wert
+1030: 00000000077 # dw 077 ; 70 : Wert
+1031: 00000000077 # dw 077 ; 71 : Wert
+1032: 00000000077 # dw 077 ; 72 : Wert
+1033: 00000000077 # dw 077 ; 73 : Wert
+1034: 00000000077 # dw 077 ; 74 : Wert
+1035: 00000000077 # dw 077 ; 75 : Wert
+1036: 00000000077 # dw 077 ; 76 : Wert
+1037: 00000000077 # dw 077 ; 77 : Wert
+1040: 00000000000 # l5: dbn 01 ; Ergebnis links 5
+1041: 00000000000 # l6: dbn 01 ; Ergebnis links 6
+1042: 00000000000 # l7: dbn 01 ; Ergebnis links 7
+1043: 00000000000 # l8: dbn 01 ; Ergebnis links 8
+1044: 00000000000 # l9: dbn 01 ; Ergebnis links 9
+1045: 00000000000 # l10: dbn 01 ; Ergebnis links 10
+1046: 00000000000 # l11: dbn 01 ; Ergebnis links 11
+1047: 00000000000 # l12: dbn 01 ; Ergebnis links 12
+1050: 00000000000 # l13: dbn 01 ; Ergebnis links 13
+1051: 00000000000 # l14: dbn 01 ; Ergebnis links 14
+1052: 00000000000 # l15: dbn 01 ; Ergebnis links 15
+1053: 00000000000 # l16: dbn 01 ; Ergebnis links 16
+1054: 00000000000 # l17: dbn 01 ; Ergebnis links 17
+1055: 00000000000 # l18: dbn 01 ; Ergebnis links 18
+1056: 00000000000 # l19: dbn 01 ; Ergebnis links 19
+1057: 00000000000 # l20: dbn 01 ; Ergebnis links 20
+1060: 00000000000 # l21: dbn 01 ; Ergebnis links 21
+1061: 00000000000 # l22: dbn 01 ; Ergebnis links 22
+1062: 00000000000 # l23: dbn 01 ; Ergebnis links 23
+1063: 00000000000 # l24: dbn 01 ; Ergebnis links 24
+1064: 00000000000 # l25: dbn 01 ; Ergebnis links 25
+1065: 00000000000 # l26: dbn 01 ; Ergebnis links 26
+1066: 00000000000 # l27: dbn 01 ; Ergebnis links 27
+1067: 00000000000 # l28: dbn 01 ; Ergebnis links 28
+1070: 00000000000 # l29: dbn 01 ; Ergebnis links 29
+1071: 00000000000 # l30: dbn 01 ; Ergebnis links 30
+1072: 00000000000 # l31: dbn 01 ; Ergebnis links 31
+1073: 00000000000 # l32: dbn 01 ; Ergebnis links 32
+1074: 00000000000 # r1: dbn 01 ; Ergebnis rechts 1
+1075: 00000000000 # r2: dbn 01 ; Ergebnis rechts 2
+1076: 00000000000 # r3: dbn 01 ; Ergebnis rechts 3
+1077: 00000000000 # r4: dbn 01 ; Ergebnis rechts 4
+1100: 00000000077 # tk_b: dw 077 ; 00 : Wert
+1101: 00000000077 # dw 077 ; 01 : Wert
+1102: 00000000002 # dw 02 ; 02 2: Wert
+1103: 00000000077 # dw 077 ; 03 : Wert
+1104: 00000000077 # dw 077 ; 04 : Wert
+1105: 00000000077 # dw 077 ; 05 : Wert
+1106: 00000000077 # dw 077 ; 06 : Wert
+1107: 00000000077 # dw 077 ; 07 : Wert
+1110: 00000000077 # dw 077 ; 10 : Wert
+1111: 00000000077 # dw 077 ; 11 : Wert
+1112: 00000000077 # dw 077 ; 12 : Wert
+1113: 00000000077 # dw 077 ; 13 : Wert
+1114: 00000000077 # dw 077 ; 14 : Wert
+1115: 00000000077 # dw 077 ; 15 : Wert
+1116: 00000000077 # dw 077 ; 16 : Wert
+1117: 00000000077 # dw 077 ; 17 : Wert
+1120: 00000000077 # dw 077 ; 20 : Wert
+1121: 00000622000 # 000 ja ; 21 A: Sprung
+1122: 00000000077 # dw 077 ; 22 : Wert
+1123: 00000000077 # dw 077 ; 23 : Wert
+1124: 00000000077 # dw 077 ; 24 : Wert
+1125: 00000000077 # dw 077 ; 25 : Wert
+1126: 00000000077 # dw 077 ; 26 : Wert
+1127: 00000000077 # dw 077 ; 27 : Wert
+1130: 00000000077 # dw 077 ; 30 : Wert
+1131: 00000000077 # dw 077 ; 31 : Wert
+1132: 00000000077 # dw 077 ; 32 : Wert
+1133: 00000000077 # dw 077 ; 33 : Wert
+1134: 00000000077 # dw 077 ; 34 : Wert
+1135: 00000000077 # dw 077 ; 35 : Wert
+1136: 00000000077 # dw 077 ; 36 : Wert
+1137: 00000000077 # dw 077 ; 37 : Wert
+1140: 00000000077 # dw 077 ; 40 : Wert
+1141: 00000000077 # dw 077 ; 41 : Wert
+1142: 00000000077 # dw 077 ; 42 : Wert
+1143: 00000000077 # dw 077 ; 43 : Wert
+1144: 00000000077 # dw 077 ; 44 : Wert
+1145: 00000000077 # dw 077 ; 45 : Wert
+1146: 00000000077 # dw 077 ; 46 : Wert
+1147: 00000000077 # dw 077 ; 47 : Wert
+1150: 00000000077 # dw 077 ; 50 : Wert
+1151: 00000000077 # dw 077 ; 51 : Wert
+1152: 00000000077 # dw 077 ; 52 : Wert
+1153: 00000000077 # dw 077 ; 53 : Wert
+1154: 00000000077 # dw 077 ; 54 : Wert
+1155: 00000000077 # dw 077 ; 55 : Wert
+1156: 00000000077 # dw 077 ; 56 : Wert
+1157: 00000000077 # dw 077 ; 57 : Wert
+1160: 00000000077 # dw 077 ; 60 : Wert
+1161: 00000000077 # dw 077 ; 61 : Wert
+1162: 00000000077 # dw 077 ; 62 : Wert
+1163: 00000000077 # dw 077 ; 63 : Wert
+1164: 00000000077 # dw 077 ; 64 : Wert
+1165: 00000000077 # dw 077 ; 65 : Wert
+1166: 00000000077 # dw 077 ; 66 : Wert
+1167: 00000000077 # dw 077 ; 67 : Wert
+1170: 00000000077 # dw 077 ; 70 : Wert
+1171: 00000000077 # dw 077 ; 71 : Wert
+1172: 00000000077 # dw 077 ; 72 : Wert
+1173: 00000000077 # dw 077 ; 73 : Wert
+1174: 00000000077 # dw 077 ; 74 : Wert
+1175: 00000000077 # dw 077 ; 75 : Wert
+1176: 00000000077 # dw 077 ; 76 : Wert
+1177: 00000000077 # dw 077 ; 77 : Wert
+1200: 00000000000 # r5: dbn 01 ; Ergebnis rechts 5
+1201: 00000000000 # r6: dbn 01 ; Ergebnis rechts 6
+1202: 00000000000 # r7: dbn 01 ; Ergebnis rechts 7
+1203: 00000000000 # r8: dbn 01 ; Ergebnis rechts 8
+1204: 00000000000 # r9: dbn 01 ; Ergebnis rechts 9
+1205: 00000000000 # r10: dbn 01 ; Ergebnis rechts 10
+1206: 00000000000 # r11: dbn 01 ; Ergebnis rechts 11
+1207: 00000000000 # r12: dbn 01 ; Ergebnis rechts 12
+1210: 00000000000 # r13: dbn 01 ; Ergebnis rechts 13
+1211: 00000000000 # r14: dbn 01 ; Ergebnis rechts 14
+1212: 00000000000 # r15: dbn 01 ; Ergebnis rechts 15
+1213: 00000000000 # r16: dbn 01 ; Ergebnis rechts 16
+1214: 00000000000 # r17: dbn 01 ; Ergebnis rechts 17
+1215: 00000000000 # r18: dbn 01 ; Ergebnis rechts 18
+1216: 00000000000 # r19: dbn 01 ; Ergebnis rechts 19
+1217: 00000000000 # r20: dbn 01 ; Ergebnis rechts 20
+1220: 00000000000 # r21: dbn 01 ; Ergebnis rechts 21
+1221: 00000000000 # r22: dbn 01 ; Ergebnis rechts 22
+1222: 00000000000 # r23: dbn 01 ; Ergebnis rechts 23
+1223: 00000000000 # r24: dbn 01 ; Ergebnis rechts 24
+1224: 00000000000 # r25: dbn 01 ; Ergebnis rechts 25
+1225: 00000000000 # r26: dbn 01 ; Ergebnis rechts 26
+1226: 00000000000 # r27: dbn 01 ; Ergebnis rechts 27
+1227: 00000000000 # r28: dbn 01 ; Ergebnis rechts 28
+1230: 00000000000 # r29: dbn 01 ; Ergebnis rechts 29
+1231: 00000000000 # r30: dbn 01 ; Ergebnis rechts 30
+1232: 00000000000 # r31: dbn 01 ; Ergebnis rechts 31
+1233: 00000000000 # r32: dbn 01 ; Ergebnis rechts 32
+1234: 00000000007 # k_7: dw 07 ; Konstante 7
+1235: 00000000000 # px: dbn 01 ; Zelle px
+1236: 00000000000 # ri: dbn 01 ; Zelle ri
+1237: 00000000000 # ra: dbn 01 ; Zelle ra
+1240: 00000000000 # rb: dbn 01 ; Zelle rb
+1241: 00000000000 # rs: dbn 01 ; Zelle rs
+1242: 00000000000 # rd: dbn 01 ; Zelle rd
+1243: 00000000005 # k_5: dw 05 ; Konstante 5
+1244: 77777777775 # k_m3: dw -03 ; Konstante -3
+1245: 00000000001 # k_1: dw 01 ; Konstante 1
+1246: 00000000000 # x: dbn 01 ; Zelle x
+1247: 00000000000 # y: dbn 01 ; Zelle y
+1250: 00000000000 # neg: dbn 01 ; Zelle neg
+1251: 00000000000 # cnt: dbn 01 ; Zelle cnt
+1252: 00000000000 # dif: dbn 01 ; Zelle dif
+1253: 00000000000 # dif2: dbn 01 ; Zelle dif2
+1254: 00000000000 # c1: dbn 01 ; Sprungergebnis c1
+1255: 00000000000 # c2: dbn 01 ; Sprungergebnis c2
+1256: 00000000000 # c3: dbn 01 ; Sprungergebnis c3
+1257: 00000000000 # c4: dbn 01 ; Sprungergebnis c4
+1260: 00000000000 # c5: dbn 01 ; Sprungergebnis c5
+1261: 00000000000 # c6: dbn 01 ; Sprungergebnis c6
+1262: 00000000000 # c7: dbn 01 ; Sprungergebnis c7
+1263: 00000000013 # fe: dw 013 ; Feld[0] = 11
+1264: 00000000026 # dw 026 ; Feld[1] = 22
+1265: 00000000041 # dw 041 ; Feld[2] = 33
+1266: 00000000054 # dw 054 ; Feld[3] = 44
+1267: 00000002000 # k_2000: dw 02000 ; Konstante 1024
+1270: 00000000123 # k_123: dw 0123 ; Konstante 83
+1271: 00001263000 # a_fe: da fe ; Anfangsadresse von fe
+1272: 00000000240 # k_240: dw 0240 ; Konstante 160
+1273: 00000000000 # ix: dbn 01 ; Zelle ix
+1274: 00000000000 # wv: dbn 01 ; Zelle wv
+1275: 00000000000 # fr: dbn 01 ; Zelle fr
+1276: 00000001234 # k_1234: dw 01234 ; Konstante 668
+1277: 00000000000 # po_wert: dbn 01 ; auszugebende Zahl
+1300: 00000000000 # pz_wert: dbn 01 ; auszugebende Ziffer
+1301: 00000000000 # zahl: dbn 01 ; auszugebende Zahl
+1302: 00000000000 # d5: dbn 01 ; auszugebende Ziffer
+1303: 00000000777 # k_777: dw 0777 ; Konstante 511
+1304: 00000000000 # z1: dbn 01 ; Eingabeergebnis z1
+1305: 00000000000 # z2: dbn 01 ; Eingabeergebnis z2
+1306: 00000000000 # z3: dbn 01 ; Eingabeergebnis z3
+1307: 00000000000 # k_0: dw 0 ; Konstante 0
+1310: 00000000144 # k_144: dw 0144 ; Konstante 100
+1311: 00001312000 # a_pz_tab: da 000000001312 ; Anfangsadresse von pz_tab
+1312: 00000200030 # pz_tab: dto 0 ; Ausgabebefehl Ziffer 0
+1313: 00000010030 # dto 1 ; Ausgabebefehl Ziffer 1
+1314: 00000020030 # dto 2 ; Ausgabebefehl Ziffer 2
+1315: 00000230030 # dto 3 ; Ausgabebefehl Ziffer 3
+1316: 00000040030 # dto 4 ; Ausgabebefehl Ziffer 4
+1317: 00000250030 # dto 5 ; Ausgabebefehl Ziffer 5
+1320: 00000260030 # dto 6 ; Ausgabebefehl Ziffer 6
+1321: 00000070030 # dto 7 ; Ausgabebefehl Ziffer 7
+1322: 00000740000 # a_tk_a: da tk_a ; Anfangsadresse von tk_a
+1323: 00001100000 # a_tk_b: da tk_b ; Anfangsadresse von tk_b
+1324: 00000000011 # k_11: dw 011 ; Konstante 9
+1325: 00000040000 # k_40000: dw 040000 ; Konstante 16384
+Tastenfolge:
+H SW=1 G R
+Prüfungen:
+BZ=0626 US=1
+0734: 36024713563   # l1
+0735: 74051627346   # l2
+0736: 70123456715   # l3
+0737: 60247135633   # l4
+1040: 40516273467   # l5
+1041: 01234567157   # l6
+1042: 02471356336   # l7
+1043: 05162734674   # l8
+1044: 12345671570   # l9
+1045: 24713563360   # l10
+1046: 51627346740   # l11
+1047: 23456715701   # l12
+1050: 47135633602   # l13
+1051: 16273467405   # l14
+1052: 34567157012   # l15
+1053: 71356336024   # l16
+1054: 62734674051   # l17
+1055: 45671570123   # l18
+1056: 13563360247   # l19
+1057: 27346740516   # l20
+1060: 56715701234   # l21
+1061: 35633602471   # l22
+1062: 73467405162   # l23
+1063: 67157012345   # l24
+1064: 56336024713   # l25
+1065: 34674051627   # l26
+1066: 71570123456   # l27
+1067: 63360247135   # l28
+1070: 46740516273   # l29
+1071: 15701234567   # l30
+1072: 33602471356   # l31
+1073: 67405162734   # l32
+1074: 03451627340   # r1
+1075: 01624713560   # r2
+1076: 00712345670   # r3
+1077: 00345162734   # r4
+1200: 00162471356   # r5
+1201: 00071234567   # r6
+1202: 00034516273   # r7
+1203: 00016247135   # r8
+1204: 00007123456   # r9
+1205: 00003451627   # r10
+1206: 00001624713   # r11
+1207: 00000712345   # r12
+1210: 00000345162   # r13
+1211: 00000162471   # r14
+1212: 00000071234   # r15
+1213: 00000034516   # r16
+1214: 00000016247   # r17
+1215: 00000007123   # r18
+1216: 00000003451   # r19
+1217: 00000001624   # r20
+1220: 00000000712   # r21
+1221: 00000000345   # r22
+1222: 00000000162   # r23
+1223: 00000000071   # r24
+1224: 00000000034   # r25
+1225: 00000000016   # r26
+1226: 00000000007   # r27
+1227: 00000000003   # r28
+1230: 00000000001   # r29
+1231: 00000000000   # r30
+1232: 00000000000   # r31
+1233: 00000000000   # r32
+1236: 00000000010   # ri
+1237: 00000000144   # ra
+1240: 00000000006   # rb
+1241: 00000000152   # rs
+1242: 00000000010   # rd
+1250: 77777777775   # neg
+1251: 00000000003   # cnt
+1252: 00000000002   # dif
+1253: 00000000002   # dif2
+1254: 00000000001   # c1
+1255: 00000000000   # c2
+1256: 00000000000   # c3
+1257: 00000000001   # c4
+1260: 00000000001   # c5
+1261: 00000000000   # c6
+1262: 00000000001   # c7
+1263: 00000000013   # fe+0
+1264: 00000000026   # fe+1
+1265: 00000000123   # fe+2
+1266: 00000000054   # fe+3
+1275: 00000000123   # fr
+1304: 00000000002   # z1
+1305: 00000000077   # z2
+1306: 00000000001   # z3
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/gen_lib_test-sw-ausgabe.txt

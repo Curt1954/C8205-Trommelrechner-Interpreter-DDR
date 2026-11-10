@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Test von $SET, $INC (mit Schrittweite) und $V(name), auch in $CALC; die Variable bleibt ueber mehrere Makroaufrufe erhalten
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # dw 0 ; Zaehlerstand vor der Erhoehung
+0002: 00000000012 # dw 10 ; Zehnfaches des neuen Standes
+0003: 00000000001 # dw 1 ; Zaehlerstand vor der Erhoehung
+0004: 00000000024 # dw 20 ; Zehnfaches des neuen Standes
+0005: 00000000002 # dw 2 ; Zaehlerstand vor der Erhoehung
+0006: 00000000036 # dw 30 ; Zehnfaches des neuen Standes
+0007: 00000000010 # dw 8 ; Zaehlerstand nach Erhoehung um 5
+0010: 00000000015 # dw 13 ; Zaehlerstand nach Erhoehung um 5
+0011: 00000001164 # haupt: 164 0001 ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 00000000020 # 020 0 ; Zelle 0012: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 00000000000   # NUMMER 1: $V(zahl) = 0
+0002: 00000000012   # $CALC($V(zahl)*10) nach $INC = 1*10
+0003: 00000000001   # NUMMER 2: 1
+0004: 00000000024   # 2*10 = 20
+0005: 00000000002   # NUMMER 3: 2
+0006: 00000000036   # 3*10 = 30
+0007: 00000000010   # STEP: 3 + 5 = 8
+0010: 00000000015   # STEP: 8 + 5 = 13

@@ -1,0 +1,4 @@
+rc 16
+stderr Makro M1: 33 Parameternamen angegeben, zulaessig sind maximal 32 [im Quelltext Zeile 2]
+datei-weg obj mqo test
+escape-weg

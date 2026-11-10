@@ -1,0 +1,22 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000004000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # a: dw 0 ; Zelle 0001
+0002: 00000000002 # dw 2 ; Abstand der beiden Marken
+0003: 00000000011 # b: dw 9 ; Zelle 0003
+0004: 00000000020 # haupt: 020 0 ; Zelle 0004: Halt
+0005: 00000000000 # dw 0 ; im eigentlichen Lauf 0
+0006: 00000000336 # dw 222 ; im eigentlichen Lauf (oktal 336)
+0007: 00000000005 # dw 5 ; im eigentlichen Lauf 5
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0005 US=1
+0002: 00000000002   # CHK a b
+0003: 00000000011   # b: dw 9
+0005: 00000000000   # PW
+0006: 00000000336   # WAHL
+0007: 00000000005   # SUMME

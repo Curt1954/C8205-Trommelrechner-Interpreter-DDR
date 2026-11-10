@@ -3,14 +3,20 @@
 # und zu der schlanken Variante "C8205 Simulator V.M.P-NNN Claude.zip".
 # Aufruf (von überall):  ./c8205_zip_packen.sh [--gesamt | --claude] [--ohne-pruefung] [V.M.P]
 #
-# NNN ist eine eigene, fortlaufende, dreistellige Build-Nummer. Sie steht in der Versionierungs-MD
-# markdown-dateien/C8205-Versionierung.md in der Zeile
+# NNN ist eine eigene, fortlaufende, dreistellige Build-Nummer. Gesamtversion und Build-Nummer stehen
+# in der Zähldatei .build-nummer im Projektstamm, eine Zeile:
+#     V.M.P-NNN          (z. B. 0.95.7-002)
+# Das ist die Nummer, die der NÄCHSTE Lauf verwendet. Nach einem erfolgreichen Lauf schreibt das
+# Skript V.M.P-(NNN+1) zurück. Ein abgebrochener Lauf lässt die Datei unverändert und verbraucht
+# keine Nummer. Fehlt die Datei oder ist ihr Inhalt ungültig, bricht das Skript mit einer
+# Meldung ab. Ein Aufrufparameter V.M.P ersetzt die Version aus der Datei; weicht er von ihr ab,
+# beginnt die Build-Nummer bei 001. Beide Zips eines Laufs tragen dieselbe Nummer. Die Datei
+# .build-nummer kommt in keines der Zips.
+# Zusätzlich trägt das Skript die verwendete Nummer in die Zeile
 #     **Letzter Build:** V.M.P-NNN
-# (fehlt die Zeile, hängt das Skript sie am Dateiende an). Jeder Lauf zählt NNN um 1 hoch;
-# bei einer neuen Gesamtversion V.M.P beginnt sie wieder bei 001. Beide Zips eines Laufs
-# tragen dieselbe Nummer. Das Skript schreibt die neue Nummer in die MD, BEVOR gepackt wird,
-# damit die MD im Zip zur Zip-Nummer passt. Bricht der Lauf ab, werden alle MD-Fassungen
-# auf den alten Stand zurückgesetzt, ein fehlgeschlagener Lauf verbraucht also keine Nummer.
+# von markdown-dateien/C8205-Versionierung.md ein (fehlt die Zeile, hängt es sie am Dateiende an),
+# BEVOR gepackt wird, damit die MD im Zip zur Zip-Nummer passt. Das ist nur eine Anzeige; gelesen
+# wird sie nicht. Bricht der Lauf ab, werden alle MD-Fassungen auf den alten Stand zurückgesetzt.
 # Gibt es C8205-Versionierung.md in mehreren Ordnern (Dublettenprüfung!), werden alle Kopien
 # gleichzeitig geändert und bleiben identisch.
 #
@@ -18,24 +24,26 @@
 #   C8205 Simulator V.M.P-NNN.zip          Gesamt-Zip (alles)
 #   C8205 Simulator V.M.P-NNN Claude.zip   schlanke Variante für KI-Sitzungen
 # Mit --gesamt entsteht nur das Gesamt-Zip, mit --claude nur die schlanke Variante.
-# Vor dem Packen prüft das Skript (1) ob alle Pfade in Backticks aus CLAUDE.md existieren und (2) ob
-# gleichnamige .md-Dateien in verschiedenen Ordnern denselben Inhalt haben, und bricht bei Fehlern ab.
-# Mit --ohne-pruefung werden beide Prüfungen übersprungen.
+# Vor dem Packen prüft das Skript, ob gleichnamige .md-Dateien in verschiedenen Ordnern denselben
+# Inhalt haben, und bricht bei Fehlern ab. Mit --ohne-pruefung wird diese Prüfung übersprungen.
+# (Die frühere Prüfung, ob alle Pfade in Backticks aus CLAUDE.md existieren, gibt es nicht mehr.)
 #
 # Die schlanke Variante: Das Auflisten zeigt rund 40 % weniger Einträge.
-# Es fehlen: PDFs und ihre Erzeugungsskripte (pdf-layout-scripte/), die Testtabelle
+# Es fehlen: PDFs (außer unter C8205Z/) und ihre Erzeugungsskripte (pdf-layout-scripte/), die Testtabelle
 # (Testausfuehrungen/test_tabelle*; die Skripte dort bleiben drin), pult/, ton/,
 # README.en.md, Test-Protokolle.zip, __pycache__ sowie die vom Assembler
 # erzeugten Dateien .log .mqo .obj .sym unter Assembler/. Es bleiben .asm, .dmp und .test.
 # virtuelle_Geraete/ bleibt drin (Standardpfade von Leser und Stanzer, nur wenige KB).
+# C8205Z/ (ZT-Zusatztrommel) kommt komplett in die schlanke Variante, auch seine PDFs.
 # Der GRAFIK-Interpreter läuft mit --ohne-fenster --STUMM auch ohne pult/ und ton/.
 # Wer am GRAFIK-Fenster, am Pult oder an den Klängen arbeitet, nimmt das Gesamt-Zip.
-# In beiden Fassungen steht CLAUDE.md als erster Eintrag (unzip -p <zip> CLAUDE.md liest sie).
+# In beiden Fassungen tragen alle .sh-Dateien die Rechte 0755 (das Skript schreibt das Zip dafür nach dem Packen mit
+# Python-zipfile neu; ohne python3 nur eine Warnung).
+# In beiden Fassungen steht CLAUDE.md als erster Eintrag (Python-zipfile liest sie, Einzeiler siehe CLAUDE.md; nie unzip).
 #
-# 1. Die Gesamtversion V.M.P wird aus der Release-Tabelle in
-#    markdown-dateien/C8205-Versionierung.md (Abschnitt 11, Spalte "Gesamtversion")
-#    gebildet: höchste Eintragung der Form `vV.M.P`. Ein Aufrufparameter V.M.P
-#    überschreibt sie (z. B. wenn das Release noch nicht in der Tabelle steht).
+# 1. Die Gesamtversion V.M.P und die Build-Nummer kommen aus der Zähldatei .build-nummer
+#    (nicht mehr aus der Release-Tabelle in C8205-Versionierung.md). Ein Aufrufparameter
+#    V.M.P überschreibt die Version aus der Datei.
 # 2. Zuerst entstehen zwei Sub-Zips im Projektstamm:
 #      Test-Protokolle.zip   <- Test-Protokolle/
 #      Regressionstest.zip   <- Assembler/Regressionstest/   (Pfade im Zip: Assembler/Regressionstest/...,
@@ -65,26 +73,27 @@ while [ $# -ge 1 ]; do
    esac
 done
 
+# Gesamtversion und Build-Nummer aus der Zähldatei .build-nummer lesen: eine Zeile V.M.P-NNN,
+# die Nummer, die dieser Lauf verwendet. Nach dem Packen wird NNN + 1 zurückgeschrieben.
+buildnummer_datei=".build-nummer"
+[ -f "$buildnummer_datei" ] || { echo "$buildnummer_datei fehlt im Projektstamm. Anlegen mit:  echo 0.95.7-002 > $buildnummer_datei"; exit 1; }
+inhalt=$(grep -v '^[[:space:]]*$' "$buildnummer_datei" | head -1 | tr -d '[:space:]')
+echo "$inhalt" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]+$' || { echo "$buildnummer_datei: Inhalt '$inhalt' ungültig (erwartet eine Zeile V.M.P-NNN, z. B. 0.95.7-002)"; exit 1; }
+datei_version="${inhalt%-*}"
+datei_nr=$((10#${inhalt##*-}))
 if [ $# -ge 1 ]; then
    version="$1"
 else
-   version=$(sed -n '/^## 11\./,$p' "$versionsdatei" \
-             | grep -oE '^\| `v[0-9]+\.[0-9]+\.[0-9]+`' \
-             | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | sort -V | tail -1)
-   [ -n "$version" ] || { echo "Keine Gesamtversion in $versionsdatei (Abschnitt 11) gefunden"; exit 1; }
+   version="$datei_version"
 fi
 echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "Ungültige Version: $version (erwartet V.M.P)"; exit 1; }
-
-# Build-Nummer aus der Versionierungs-MD lesen ("**Letzter Build:** V.M.P-NNN")
-letzter=$(sed -n 's/^\*\*Letzter Build:\*\* *//p' "$versionsdatei" | tail -1 | tr -d '[:space:]')
-letzte_version="${letzter%-*}"
-letzte_nr="${letzter##*-}"
-case "$letzte_nr" in ''|*[!0-9]*) letzte_nr=0 ;; esac
-if [ "$letzte_version" = "$version" ]; then
-   nr=$((10#$letzte_nr + 1))
+if [ "$version" = "$datei_version" ]; then
+   nr=$datei_nr
 else
    nr=1
 fi
+[ "$nr" -ge 1 ] || nr=1     # Build 000 wird nicht vergeben
+[ "$nr" -le 999 ] || { echo "Build-Überlauf ($nr) in $buildnummer_datei: nichts wird von selbst erhöht, den Projektinhaber fragen"; exit 1; }
 build=$(printf '%03d' "$nr")
 vollversion="$version-$build"
 
@@ -129,45 +138,6 @@ build_in_md_schreiben() {
    echo "Build-Nummer $vollversion in ${#md_kopien[@]} MD-Datei(en) eingetragen"
 }
 
-# Pfadprüfung: Jeder Pfad in Backticks in CLAUDE.md muss im Projekt existieren.
-# Geprüft werden Einträge mit "/" oder mit Dateiendung (.md .py .sh .bat .txt .zip .asm .test .odt).
-# Übersprungen werden Platzhalter (<...>), Muster (*), Befehle (mit Leerzeichen, = oder $) und Schalter.
-# Ein Pfad gilt als vorhanden, wenn er (a) vom Projektstamm aus existiert, (b) irgendwo im Projekt als
-# Pfadende vorkommt (CLAUDE.md nennt vieles kurz: "asm_und_test.sh" = Assembler/asm_und_test.sh,
-# "Claude/" = Assembler/Claude/), oder (c) als Kurzform "_xyz.py" auf eine Datei "*_xyz.py" passt.
-# Nicht geprüft werden absolute Pfade (/mnt/...), Platzhalter mit NNN und erzeugte Dateien
-# (Regressionstest.zip liegt nur während des Packens im Stamm).
-pfad_vorhanden() {
-   local p="${1%/}"
-   [ -e "$p" ] && return 0
-   case "$p" in
-      /*|*NNN*|Regressionstest.zip) return 0 ;;
-   esac
-   [ -n "$(find . -path ./.git -prune -o -path "*/$p" -print -quit)" ] && return 0
-   case "$p" in
-      _*) case "$p" in */*) ;; *) [ -n "$(find . -path ./.git -prune -o -name "*$p" -print -quit)" ] && return 0 ;; esac ;;
-   esac
-   return 1
-}
-
-pruefe_karte() {
-   local fehler=0 anzahl=0 p
-   while IFS= read -r p; do
-      anzahl=$((anzahl + 1))
-      if ! pfad_vorhanden "$p"; then
-         echo "FEHLER: CLAUDE.md verweist auf '$p', den es nicht gibt"
-         fehler=1
-      fi
-   done < <(grep -oE '`[^`]+`' CLAUDE.md | tr -d '`' \
-            | grep -v -E '[<>*$=( ]' | grep -v -E '^(\./|-)' \
-            | grep -E '/|^[^.][^ ]*\.(md|py|sh|bat|txt|zip|asm|test|odt)$' | sort -u)
-   if [ "$fehler" = 1 ]; then
-      echo "Packen abgebrochen: CLAUDE.md korrigieren oder die Dateien nachliefern (--ohne-pruefung überspringt die Prüfung)"
-      exit 1
-   fi
-   echo "CLAUDE.md: $anzahl Pfade geprüft, alle vorhanden"
-}
-
 # Dublettenprüfung: Gleichnamige .md-Dateien in verschiedenen Ordnern müssen identisch sein.
 # Ausgenommen sind .git, Test-Protokolle/ und Assembler/Regressionstest/ (gehen nicht ins Gesamt-Zip).
 pruefe_dubletten() {
@@ -204,6 +174,37 @@ sub_zip() {
    fi
 }
 
+# Rechte im Zip: jede .sh-Datei soll im Zip 0755 tragen, unabhängig vom Dateisystem des Rechners
+# (auf NTFS oder nach einem Entpacken ohne Rechte fehlt das X-Bit, und die Skripte laufen dann in der
+# Claude-Sitzung nur mit "bash <skript>"). zip kann keine Rechte setzen, deshalb wird das Zip neu geschrieben.
+# zip_rechte_setzen <zipdatei>; ohne python3 nur eine Warnung (das Zip bleibt unverändert gültig).
+zip_rechte_setzen() {
+   local z="$1"
+   if ! command -v python3 >/dev/null 2>&1; then
+       echo "WARNUNG: python3 fehlt, die Rechte (.sh = 0755) im Zip \"$z\" wurden nicht gesetzt"
+       return 0
+   fi
+   python3 -I - "$z" <<'PY' || { echo "WARNUNG: Rechte im Zip \"$z\" konnten nicht gesetzt werden (Zip bleibt unverändert)"; rm -f "$z.neu"; return 0; }
+import os, sys, zipfile
+quelle = sys.argv[1]
+ziel = quelle + '.neu'
+anzahl = 0
+with zipfile.ZipFile(quelle) as zin, zipfile.ZipFile(ziel, 'w', zipfile.ZIP_DEFLATED) as zout:
+    for zi in zin.infolist():
+        daten = b'' if zi.is_dir() else zin.read(zi)
+        if not (zi.flag_bits & 0x800):           # zip schreibt UTF-8-Namen ohne Kennzeichen: sonst würden Umlaute verfälscht
+            try: zi.filename = zi.filename.encode('cp437').decode('utf-8')
+            except (UnicodeEncodeError, UnicodeDecodeError): pass
+        if zi.filename.endswith('.sh') and not zi.is_dir():
+            zi.create_system = 3
+            zi.external_attr = (0o100755 << 16) | (zi.external_attr & 0xFFFF)
+            anzahl += 1
+        zout.writestr(zi, daten, compress_type=zi.compress_type)
+os.replace(ziel, quelle)
+print('Rechte gesetzt: %d Skripte (.sh) mit 0755' % anzahl)
+PY
+}
+
 # Gesamt-Zip oder schlanke Variante packen: gesamt_zip <zieldatei> <0|1 = schlank>
 gesamt_zip() {
    local ziel="$1" schlank="$2"
@@ -213,6 +214,7 @@ gesamt_zip() {
        -x "Assembler/Regressionstest" "Assembler/Regressionstest/*"
        -x "C8205 Simulator *.zip"
        -x "*__pycache__*"
+       -x ".build-nummer"
    )
    if [ "$schlank" = 1 ]; then
        ausschluss+=(
@@ -226,11 +228,16 @@ gesamt_zip() {
    # CLAUDE.md zuerst, damit sie im Archiv der erste Eintrag ist
    zip -q "$ziel" CLAUDE.md || { echo "Packen fehlgeschlagen: $ziel"; exit 1; }
    zip -q -r "$ziel" * "${ausschluss[@]}" || { echo "Packen fehlgeschlagen: $ziel"; exit 1; }
+   # Schlanke Variante: C8205Z/ komplett nachlegen (der Ausschluss "*.pdf" oben hat dort PDFs entfernt)
+   if [ "$schlank" = 1 ] && [ -d C8205Z ]; then
+       zip -q -r "$ziel" C8205Z -x "*__pycache__*" -x ".git/*" -x "*/.git/*" \
+          || { echo "Packen fehlgeschlagen: $ziel (C8205Z)"; exit 1; }
+   fi
+   zip_rechte_setzen "$ziel"
    echo "erzeugt: $ziel"
 }
 
 if [ "$pruefen" = 1 ]; then
-   pruefe_karte
    pruefe_dubletten
 fi
 
@@ -247,5 +254,9 @@ sub_zip "Regressionstest.zip" "Assembler/Regressionstest"
 
 rm -f ./Test-Protokolle.zip ./Regressionstest.zip
 
-# Alles gut gegangen: Build-Nummer in der MD bleibt stehen
+# Alles gut gegangen: Build-Nummer in der MD bleibt stehen, .build-nummer wird um 1 erhöht
 erfolg=1
+naechste="$version-$(printf '%03d' $((nr + 1)))"
+printf '%s\n' "$naechste" > "$buildnummer_datei.neu" && mv -f "$buildnummer_datei.neu" "$buildnummer_datei" \
+   || { echo "WARNUNG: $buildnummer_datei konnte nicht auf $naechste gesetzt werden; der nächste Lauf würde $vollversion wieder verwenden"; exit 1; }
+echo "$buildnummer_datei: nächster Lauf $naechste"

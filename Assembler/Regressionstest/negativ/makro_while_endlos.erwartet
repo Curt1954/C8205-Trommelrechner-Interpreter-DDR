@@ -1,0 +1,4 @@
+rc 16
+stderr makro_while_endlos.asm:9: Fehler: W3 $WHILE: mehr als 4096 Durchläufe (Endlosschleife?).
+datei-weg obj mqo test
+escape-weg

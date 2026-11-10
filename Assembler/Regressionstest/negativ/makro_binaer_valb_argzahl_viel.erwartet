@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_valb_argzahl_viel.asm:6: Fehler: M1 $VALB n: hinter dem letzten Argument darf nur ein Kommentar stehen: "0" (Form: $VALB <Ziel> "<Text>")
+datei-weg obj mqo test
+escape-weg

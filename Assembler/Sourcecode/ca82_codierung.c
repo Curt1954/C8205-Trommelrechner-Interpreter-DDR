@@ -152,7 +152,9 @@ void copyAndIncrementLineElementsX(int i, char *buffer) {
     lineAsmAufgeloestX[lineCountAsmAufgeloestX].adrValid = 0;
     STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, buffer);
     STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, lineAsmAufgeloest[i].sp1);
-    STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, lineAsmAufgeloest[i].sp2);
+    // Listing, .dmp und .test zeigen den Namen (.LD), .mqo und .obj den Code (OPSYM, O-21)
+    const char *opAnzeige = opsymAnzeigeName(&lineAsmAufgeloest[i]);
+    STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, opAnzeige != NULL ? opAnzeige : lineAsmAufgeloest[i].sp2);
     STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp3, lineAsmAufgeloest[i].sp3);
     STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp4, lineAsmAufgeloest[i].sp4);
     
@@ -399,6 +401,424 @@ void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const 
         }
         snprintf(buffer, sizeof(buffer), "      00 %04o 030", code);
         ausgabeWort(buffer);
+    }
+}
+
+// ---------
+// kat4 (Doku 3.3.14): komprimierter Text, 4 Ausgabezeichen je Maschinenwort.
+// Je Zeichen wird die Ausgabeadresse der Kodetabelle ohne das abschliessende x (3 Oktalziffern = 9 Bit)
+// ohne das werthoechste Bit (8 Bit) abgelegt; das erste Zeichen steht rechts (Bit 0 bis 7), das zweite
+// links daneben usw. Fehlende Zeichen des letzten Wortes bleiben 0. Das letzte Wort traegt z0 = 1
+// (Bit 32 = 040000000000, linkes Bit des 33-Bit-Wortes). Umschaltzeichen werden nicht eingefuegt.
+// Liefert Anfang und Laenge des Textes ohne umschliessende \-Zeichen (der Operand bleibt unveraendert).
+static const char *kat4Text(const char *operand, size_t *laenge) {
+    const char *t = operand;
+    size_t n;
+    if (t[0] == '\\') t++;
+    n = strlen(t);
+    if (n > 0 && t[n - 1] == '\\') n--;
+    *laenge = n;
+    return t;
+}
+
+// Gemeinsamer Helfer fuer kat4 und kat5: schreibt ein Maschinenwort in die Objektdatei, die Hilfsdatei und
+// das Listing. Das erste Wort traegt die Quellzeile, jedes weitere Wort steht in einer Folgezeile. Die
+// Adresse (textPC, vom Aufrufer gesetzt) wird je Wort um 1 weitergezaehlt.
+static void katAusgabeWort(FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii, const char *wort, int *ersteAusgabe) {
+    schreibeObjZeile(machineCodeFile, wort);
+    pruefeZeilenfeld(lineCountAsmAufgeloestX);
+    lineElementsX *z = &lineAsmAufgeloestX[lineCountAsmAufgeloestX];
+    if (*ersteAusgabe == 1) {
+        fprintf(hilfsFile, "%s\n", line);
+        STRKOPIE(z->sp0, wort);
+        STRKOPIE(z->sp1, lineAsmAufgeloest[iii].sp1);
+        STRKOPIE(z->sp2, lineAsmAufgeloest[iii].sp2);
+        STRKOPIE(z->sp3, lineAsmAufgeloest[iii].sp3);
+        STRKOPIE(z->sp4, lineAsmAufgeloest[iii].sp4);
+        *ersteAusgabe = 0;
+    } else {
+        fprintf(hilfsFile, "%s\n", "; ");
+        STRKOPIE(z->sp0, wort);
+        STRKOPIE(z->sp1, "; ");
+        STRKOPIE(z->sp2, "");
+        STRKOPIE(z->sp3, "");
+        STRKOPIE(z->sp4, "");
+    }
+    z->adr = textPC++;
+    z->adrValid = 1;
+    lineCountAsmAufgeloestX++;
+}
+
+int zaehleKat4(const char operand[]) {
+    size_t n;
+    kat4Text(operand, &n);
+    return (int)((n + 3) / 4);
+}
+
+void erzeugenKat4(const char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii) {
+    size_t n;
+    const char *text = kat4Text(operand, &n);
+    char zeichenfolge[1024];
+    int missingChar;
+    int ersteAusgabe = 1;
+
+    if (n >= sizeof(zeichenfolge)) n = sizeof(zeichenfolge) - 1;
+    memcpy(zeichenfolge, text, n);
+    zeichenfolge[n] = '\0';
+
+    if (isValueInTable(zeichenfolge, outUmschluesselungsTable, OUT_SIZE, &missingChar) == 0) {
+        is_error3 = 1;
+        printHell = 1;
+        char schl[64];
+        snprintf(schl, sizeof(schl), "kat4 Operand unzulässig, Position %i", missingChar);
+        if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("kat4 Operand enthält unzulässige Zeichen an Position: %i.", missingChar);
+        return;
+    }
+
+    size_t woerter = (n + 3) / 4;
+    for (size_t w = 0; w < woerter; w++) {
+        unsigned long long wert = 0;
+        for (size_t k = 0; k < 4 && w * 4 + k < n; k++) {
+            int asciiWert = (unsigned char)zeichenfolge[w * 4 + k];
+            unsigned int code = 0;
+            int gefunden = 0;
+            for (size_t j = 0; j < OUT_SIZE && !gefunden; j++) {
+                if (outUmschluesselungsTable[j].spalte2 == (unsigned int)asciiWert) { code = outUmschluesselungsTable[j].spalte1; gefunden = 1; }
+            }
+            for (size_t j = 0; j < OUT_SIZE && !gefunden; j++) {
+                if (outUmschluesselungsTable[j].spalte3 == (unsigned int)asciiWert) { code = outUmschluesselungsTable[j].spalte1; gefunden = 1; }
+            }
+            wert |= (unsigned long long)(((code >> 3) & 0377)) << (8 * k);
+        }
+        if (w + 1 == woerter) wert |= 040000000000ULL;    // z0 = 1 am letzten Wort
+        char buffer[40];
+        snprintf(buffer, sizeof(buffer), "      00 %011llo", wert);
+        katAusgabeWort(machineCodeFile, hilfsFile, line, iii, buffer, &ersteAusgabe);
+    }
+}
+
+// ---------
+// kat5 (Doku 3.3.15, neues Format ab c82ass 1.03-001): komprimierter Text in genau einem Maschinenwort, 1 bis 5 Zeichen, je Zeichen ein
+// 6-Bit-Code (Tabelle der Doku, in Sortierreihenfolge numeriert, unabhaengig von der Ausgabeadresse der Kodetabelle). Das Wort ist
+// linksbuendig: das erste Zeichen steht in z3 bis z8 (Bit 29 bis 24), das fuenfte in z27 bis z32 (Bit 5 bis 0); z0 bis z2 bleiben 0, ein
+// Endekennzeichen gibt es nicht. Fehlende Zeichen rechts bleiben Code 00 (Fuellung). Mehr als 5 Zeichen und ein leerer Operand sind ein
+// Fehler. Umschaltzeichen werden nicht eingefuegt. Vorrat: a bis z, 0 bis 9, Leerzeichen, . , - : + = und die Marken $wrzl, $inkb, $ingb
+// (ohne Beachtung der Gross-/Kleinschreibung, je Marke ein Zeichen).
+
+#define KAT5_MAXZEICHEN 5
+#define KAT5_WRZL 053
+#define KAT5_INKB 054
+#define KAT5_INGB 055
+
+// Erkennt an Stelle i des Textes eine Marke. Liefert die Laenge der Marke und setzt *code, sonst 0.
+static size_t kat5Marke(const char *t, size_t n, size_t i, int *code) {
+    static const struct { const char *name; int code; } marken[] = {
+        { "$wrzl", KAT5_WRZL }, { "$inkb", KAT5_INKB }, { "$ingb", KAT5_INGB }
+    };
+    for (size_t m = 0; m < sizeof(marken) / sizeof(marken[0]); m++) {
+        size_t l = strlen(marken[m].name);
+        size_t k = 0;
+        if (i + l > n) continue;
+        while (k < l && tolower((unsigned char)t[i + k]) == marken[m].name[k]) k++;
+        if (k == l) { *code = marken[m].code; return l; }
+    }
+    return 0;
+}
+
+// Code eines einzelnen Zeichens ohne Marken; -1, wenn das Zeichen nicht zum Vorrat gehoert.
+static int kat5Zeichencode(unsigned char c) {
+    if (c >= 'a' && c <= 'z') return 021 + (int)(c - 'a');    // a bis z: 021 bis 052
+    if (c >= '0' && c <= '9') return 07 + (int)(c - '0');     // 0 bis 9: 07 bis 020
+    switch (c) {
+        case ' ': return 01;
+        case ',': return 02;
+        case '-': return 03;
+        case '.': return 04;
+        case '+':
+        case '=': return 05;
+        case ':': return 06;
+        default:  return -1;
+    }
+}
+
+// Zerlegt den Text in Zeichen. Eine Marke zaehlt als ein Zeichen, ein unzulaessiges Zeichen (auch ein $ ohne
+// gueltigen Markennamen) zaehlt ebenfalls als eines. codes darf NULL sein; sonst muss er n Plaetze haben
+// (unzulaessige Zeichen erhalten dort den Code 0). *fehlerPos erhaelt die Position (0-basiert wie bei kat4)
+// des ersten unzulaessigen Zeichens, sonst -1; *fehlerDollar ist 1, wenn dieses Zeichen ein $ ohne gueltigen
+// Markennamen ist.
+static size_t kat5Zerlegen(const char *t, size_t n, int *codes, int *fehlerPos, int *fehlerDollar) {
+    size_t anzahl = 0;
+    size_t i = 0;
+    *fehlerPos = -1;
+    *fehlerDollar = 0;
+    while (i < n) {
+        int code = 0;
+        size_t laenge = 1;
+        if (t[i] == '$') {
+            laenge = kat5Marke(t, n, i, &code);
+            if (laenge == 0) {
+                laenge = 1;
+                code = 0;
+                if (*fehlerPos < 0) { *fehlerPos = (int)i; *fehlerDollar = 1; }
+            }
+        } else {
+            code = kat5Zeichencode((unsigned char)t[i]);
+            if (code < 0) {
+                code = 0;
+                if (*fehlerPos < 0) *fehlerPos = (int)i;
+            }
+        }
+        if (codes) codes[anzahl] = code;
+        anzahl++;
+        i += laenge;
+    }
+    return anzahl;
+}
+
+// kat5 belegt immer genau eine Zelle (Doku 3.3.15), unabhaengig vom Text; Fehler im Text meldet erzeugenKat5 in Pass 3.
+int zaehleKat5(const char operand[]) {
+    (void)operand;
+    return 1;
+}
+
+void erzeugenKat5(const char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii) {
+    size_t n;
+    const char *text = kat4Text(operand, &n);
+    int codes[1024];
+    int fehlerPos, fehlerDollar;
+    int ersteAusgabe = 1;
+
+    if (n >= sizeof(codes) / sizeof(codes[0])) n = sizeof(codes) / sizeof(codes[0]) - 1;
+
+    if (n == 0) {
+        is_error3 = 1;
+        printHell = 1;
+        if (fehlerZaehleUndPruefe("kat5 ohne Text")) PRINT_FEHLER("%s", "kat5 ohne Text: der Operand ist leer.");
+        return;
+    }
+
+    size_t zeichen = kat5Zerlegen(text, n, codes, &fehlerPos, &fehlerDollar);
+    if (fehlerPos >= 0) {
+        is_error3 = 1;
+        printHell = 1;
+        char schl[64];
+        if (fehlerDollar) {
+            snprintf(schl, sizeof(schl), "kat5 $ ohne Markenname, Position %i", fehlerPos);
+            if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("kat5 Operand enthält $ ohne gültigen Markennamen ($wrzl, $inkb, $ingb) an Position: %i.", fehlerPos);
+        } else {
+            snprintf(schl, sizeof(schl), "kat5 Operand unzulässig, Position %i", fehlerPos);
+            if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("kat5 Operand enthält unzulässige Zeichen an Position: %i.", fehlerPos);
+        }
+        return;
+    }
+    if (zeichen > KAT5_MAXZEICHEN) {
+        is_error3 = 1;
+        printHell = 1;
+        char schl[64];
+        snprintf(schl, sizeof(schl), "kat5 Operand zu lang, %i Zeichen", (int)zeichen);
+        if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("kat5 Operand hat %i Zeichen, erlaubt sind höchstens %i (ein Wort); längere Texte stehen in mehreren kat5-Zeilen oder in kat6.", (int)zeichen, KAT5_MAXZEICHEN);
+        return;
+    }
+
+    // Warnung bei Zustandsunstimmigkeit KB/GB (Doku 3.3.15): Der Zustand wird nur innerhalb des Operanden
+    // gefuehrt, ist am Textanfang unbekannt, $inkb setzt KB, $ingb setzt GB.
+    {
+        int zustand = -1;   // -1 unbekannt, 0 KB, 1 GB
+        size_t i = 0;
+        while (i < n) {
+            int code = 0;
+            size_t laenge = 1;
+            char text_w[160];
+            if (text[i] == '$') {
+                laenge = kat5Marke(text, n, i, &code);
+                if (code == KAT5_INKB) zustand = 0;
+                if (code == KAT5_INGB) zustand = 1;
+            } else {
+                char c = text[i];
+                if (zustand == 1 && (isdigit((unsigned char)c) || c == '.' || c == ',' || c == '-' || c == ':' || c == '+')) {
+                    snprintf(text_w, sizeof(text_w), "kat5: Zeichen '%c' an Position %i erscheint im Zustand GB (nach $ingb) als anderes Zeichen.", c, (int)i);
+                    meldeWarnungOrt(lineAsmAufgeloest[iii].srcLine, text_w);
+                } else if (zustand == 0 && c == '=') {
+                    snprintf(text_w, sizeof(text_w), "kat5: Zeichen '=' an Position %i erscheint im Zustand KB (nach $inkb) als '+'.", (int)i);
+                    meldeWarnungOrt(lineAsmAufgeloest[iii].srcLine, text_w);
+                }
+            }
+            i += laenge;
+        }
+    }
+
+    unsigned long long wert = 0;
+    for (size_t k = 0; k < zeichen; k++) {
+        wert |= (unsigned long long)codes[k] << (6 * (KAT5_MAXZEICHEN - 1 - k));   // erstes Zeichen links (Bit 29 bis 24)
+    }
+    char buffer[40];
+    snprintf(buffer, sizeof(buffer), "      00 %011llo", wert);
+    katAusgabeWort(machineCodeFile, hilfsFile, line, iii, buffer, &ersteAusgabe);
+}
+
+// ---------
+// kat6 (Doku 3.3.18): komprimierter Text, 5 Zeichen je Maschinenwort, je Zeichen der 6-Bit-Eingabecode der
+// Kodetabelle (Bits v u 8 4 2 1, Spalte "Eingabe Adresse"). Das erste Zeichen steht rechts (Bit 0 bis 5), das
+// zweite links daneben usw., das fuenfte in Bit 24 bis 29; Bit 31 (z1) bleibt 0. Der Code 00 ist die Ziffer 0,
+// deshalb gibt es keine Fuellung: In jedem Wort steht unmittelbar links vom letzten Zeichen ein Stoppbit 1
+// (voll: Bit 30 = z2; bei m Zeichen im letzten Wort: Bit 6*m). Das letzte Wort traegt zusaetzlich z0 = 1
+// (Bit 32 = 040000000000). Umschaltzeichen werden nicht eingefuegt. Vorrat: a bis z, 0 bis 9, Leerzeichen,
+// . , - : + = / % ` und die Marken $wrzl (032), $inkb (057), $ingb (037) (ohne Beachtung der Gross-/Klein-
+// schreibung, je Marke ein Zeichen). + und = haben denselben Code 020.
+
+#define KAT6_WRZL 032
+#define KAT6_INKB 057
+#define KAT6_INGB 037
+
+// Erkennt an Stelle i des Textes eine Marke. Liefert die Laenge der Marke und setzt *code, sonst 0.
+static size_t kat6Marke(const char *t, size_t n, size_t i, int *code) {
+    static const struct { const char *name; int code; } marken[] = {
+        { "$wrzl", KAT6_WRZL }, { "$inkb", KAT6_INKB }, { "$ingb", KAT6_INGB }
+    };
+    for (size_t m = 0; m < sizeof(marken) / sizeof(marken[0]); m++) {
+        size_t l = strlen(marken[m].name);
+        size_t k = 0;
+        if (i + l > n) continue;
+        while (k < l && tolower((unsigned char)t[i + k]) == marken[m].name[k]) k++;
+        if (k == l) { *code = marken[m].code; return l; }
+    }
+    return 0;
+}
+
+// Code eines einzelnen Zeichens ohne Marken; -1, wenn das Zeichen nicht zum Vorrat gehoert.
+static int kat6Zeichencode(unsigned char c) {
+    if (c >= '0' && c <= '7') return (int)(c - '0');          // 0 bis 7: 00 bis 07
+    if (c == '8') return 010;
+    if (c == '9') return 011;
+    if (c >= 'a' && c <= 'i') return 021 + (int)(c - 'a');     // a bis i: 021 bis 031
+    if (c >= 'j' && c <= 'r') return 041 + (int)(c - 'j');     // j bis r: 041 bis 051
+    if (c >= 's' && c <= 'z') return 062 + (int)(c - 's');     // s bis z: 062 bis 071
+    switch (c) {
+        case ' ': return 012;
+        case ':': return 015;
+        case '+':
+        case '=': return 020;
+        case '.': return 033;
+        case '-': return 040;
+        case '`': return 060;
+        case '/': return 061;
+        case ',': return 073;
+        case '%': return 074;
+        default:  return -1;
+    }
+}
+
+// Zerlegt den Text in Zeichen (wie kat5Zerlegen): Marke = ein Zeichen, unzulaessiges Zeichen (auch $ ohne
+// gueltigen Markennamen) = ein Zeichen, damit Pass 2 und Pass 3 gleich zaehlen. codes darf NULL sein.
+static size_t kat6Zerlegen(const char *t, size_t n, int *codes, int *fehlerPos, int *fehlerDollar) {
+    size_t anzahl = 0;
+    size_t i = 0;
+    *fehlerPos = -1;
+    *fehlerDollar = 0;
+    while (i < n) {
+        int code = 0;
+        size_t laenge = 1;
+        if (t[i] == '$') {
+            laenge = kat6Marke(t, n, i, &code);
+            if (laenge == 0) {
+                laenge = 1;
+                code = 0;
+                if (*fehlerPos < 0) { *fehlerPos = (int)i; *fehlerDollar = 1; }
+            }
+        } else {
+            code = kat6Zeichencode((unsigned char)t[i]);
+            if (code < 0) {
+                code = 0;
+                if (*fehlerPos < 0) *fehlerPos = (int)i;
+            }
+        }
+        if (codes) codes[anzahl] = code;
+        anzahl++;
+        i += laenge;
+    }
+    return anzahl;
+}
+
+int zaehleKat6(const char operand[]) {
+    size_t n;
+    int fehlerPos, fehlerDollar;
+    const char *text = kat4Text(operand, &n);   // gleiche Behandlung der \-Zeichen wie bei kat4 und kat5
+    return (int)((kat6Zerlegen(text, n, NULL, &fehlerPos, &fehlerDollar) + 4) / 5);
+}
+
+void erzeugenKat6(const char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii) {
+    size_t n;
+    const char *text = kat4Text(operand, &n);
+    int codes[1024];
+    int fehlerPos, fehlerDollar;
+    int ersteAusgabe = 1;
+
+    if (n >= sizeof(codes) / sizeof(codes[0])) n = sizeof(codes) / sizeof(codes[0]) - 1;
+
+    if (n == 0) {
+        is_error3 = 1;
+        printHell = 1;
+        if (fehlerZaehleUndPruefe("kat6 ohne Text")) PRINT_FEHLER("%s", "kat6 ohne Text: der Operand ist leer.");
+        return;
+    }
+
+    size_t zeichen = kat6Zerlegen(text, n, codes, &fehlerPos, &fehlerDollar);
+    if (fehlerPos >= 0) {
+        is_error3 = 1;
+        printHell = 1;
+        char schl[64];
+        if (fehlerDollar) {
+            snprintf(schl, sizeof(schl), "kat6 $ ohne Markenname, Position %i", fehlerPos);
+            if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("kat6 Operand enthält $ ohne gültigen Markennamen ($wrzl, $inkb, $ingb) an Position: %i.", fehlerPos);
+        } else {
+            snprintf(schl, sizeof(schl), "kat6 Operand unzulässig, Position %i", fehlerPos);
+            if (fehlerZaehleUndPruefe(schl)) PRINT_FEHLER("kat6 Operand enthält unzulässige Zeichen an Position: %i.", fehlerPos);
+        }
+        return;
+    }
+
+    // Warnung bei Zustandsunstimmigkeit KB/GB (Doku 3.3.18): Der Zustand wird nur innerhalb des Operanden
+    // gefuehrt, ist am Textanfang unbekannt, $inkb setzt KB, $ingb setzt GB. Im Zustand GB zeigen Ziffern,
+    // . , - : + / % und der Akzent ein anderes Zeichen, im Zustand KB zeigt = ein +.
+    {
+        int zustand = -1;   // -1 unbekannt, 0 KB, 1 GB
+        size_t i = 0;
+        while (i < n) {
+            int code = 0;
+            size_t laenge = 1;
+            char text_w[160];
+            if (text[i] == '$') {
+                laenge = kat6Marke(text, n, i, &code);
+                if (code == KAT6_INKB) zustand = 0;
+                if (code == KAT6_INGB) zustand = 1;
+            } else {
+                char c = text[i];
+                if (zustand == 1 && (isdigit((unsigned char)c) || c == '.' || c == ',' || c == '-' || c == ':' || c == '+'
+                                     || c == '/' || c == '%' || c == '`')) {
+                    snprintf(text_w, sizeof(text_w), "kat6: Zeichen '%c' an Position %i erscheint im Zustand GB (nach $ingb) als anderes Zeichen.", c, (int)i);
+                    meldeWarnungOrt(lineAsmAufgeloest[iii].srcLine, text_w);
+                } else if (zustand == 0 && c == '=') {
+                    snprintf(text_w, sizeof(text_w), "kat6: Zeichen '=' an Position %i erscheint im Zustand KB (nach $inkb) als '+'.", (int)i);
+                    meldeWarnungOrt(lineAsmAufgeloest[iii].srcLine, text_w);
+                }
+            }
+            i += laenge;
+        }
+    }
+
+    size_t woerter = (zeichen + 4) / 5;
+    for (size_t w = 0; w < woerter; w++) {
+        unsigned long long wert = 0;
+        size_t m = 0;                                        // Zahl der Zeichen in diesem Wort (1 bis 5)
+        for (size_t k = 0; k < 5 && w * 5 + k < zeichen; k++) {
+            wert |= (unsigned long long)codes[w * 5 + k] << (6 * k);
+            m++;
+        }
+        wert |= 1ULL << (6 * m);                             // Stoppbit links vom letzten Zeichen (bei m = 5: Bit 30 = z2)
+        if (w + 1 == woerter) wert |= 040000000000ULL;       // z0 = 1 am letzten Wort
+        char buffer[40];
+        snprintf(buffer, sizeof(buffer), "      00 %011llo", wert);
+        katAusgabeWort(machineCodeFile, hilfsFile, line, iii, buffer, &ersteAusgabe);
     }
 }
 

@@ -1,0 +1,6 @@
+rc 16
+stderr makro_note_var.asm:7: Fehler: N1 $NOTE:
+stderr nix
+nicht-stderr Hinweis:
+datei-weg obj mqo test
+escape-weg

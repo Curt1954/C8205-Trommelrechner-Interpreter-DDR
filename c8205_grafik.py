@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 c8205_grafik.py - Treiber des Modus GRAFIK: Stufe 1 "Kern und Trommel", Stufe 2 "Pult-Fenster" und Stufe 3 "SW-Fenster" (ohne Ton des Schreibwerks).
-Version: G4-013 (eigene Zaehlung der GRAFIK-Module; die Konstante VERSION_GRAFIK stimmt damit ueberein; c8205_interp.py zaehlt eigen, siehe dessen Kopf)
+Version: G4-026 (eigene Zaehlung der GRAFIK-Module; die Konstante VERSION_GRAFIK stimmt damit ueberein; c8205_interp.py zaehlt eigen, siehe dessen Kopf)
 
 Aufgaben (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 6), Stufe 1):
-  * Rechner: Knotenautomat des C 8205 fuer den Dauerbetrieb am Pult. exec_node und run_e sind KOPIEN der verschachtelten
+  * Rechner: Knotenautomat des C 8205 fuer den Dauerbetrieb am Pult. exec_node (ab G4-017 mit Plantabelle wie in lauf()) und run_e sind KOPIEN der verschachtelten
     Funktionen aus lauf() in c8205_interp.py (Entscheidung Punkt 18: erst kopieren, nach bestandenen Tests herausloesen);
     jede Aenderung am Knotenablauf ist in beiden Fassungen nachzuziehen. Die Pult-Tastenlogik (H, G, M, E, R, ST, Ue, SW, BS, SP,
     K0..K3) ist die Logik von tastenfolge(), aber mit dauerhaftem Zustand und je Taste einzeln aufrufbar.
@@ -32,6 +32,12 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'grafik-interpreter-module'))     # die grafik_*-Module
 import c8205_interp as I
+
+# G4-014: Endlosschleifen-Schutz in GRAFIK als Rechenzeit statt fester Knotenzahl. Annahme: 1000 Knoten = 1 ms (Wert von Claude bestimmt,
+# Auftrag des Inhabers), Grenze 18 000 000 ms (5 Stunden) je lauf(); das sind 18 000 000 000 Knoten. Der Schalter --max-knoten gilt nur in TEST.
+KNOTEN_JE_MS = 1000
+MAX_ZEIT_MS = 18_000_000   # 5 Stunden
+MAX_KNOTEN_GRAFIK = KNOTEN_JE_MS * MAX_ZEIT_MS
 from c8205_interp import (AusgabeHaltOhneGeraet, MASK12, MASK33, KonfigFehler, LaufFehler, Stub, octs, sektor, eintritt_br, FUNCS, Machine)
 from grafik_trommel import GrafikTrommel, GrafikAbbruch
 from grafik_k0 import K0Warteschlange
@@ -39,9 +45,12 @@ from grafik_geraete import GrafikLeser, GrafikStanzer, pruefe_verschieden
 from grafik_debuglog import log
 from grafik_haltzeit import HaltZeit, FEHLER, EA, SCHRITT, SCHRITT_ENDE
 
-VERSION_GRAFIK = 'G4-013'      # G4-013 (25.10.2026): Schalter --C8205Z (Zusatztrommeln des C 8205Z ueber das C-Modul zt_modul, grafik_zt.py); G4-012 (23.10.2026): nur Hilfetext von --trommelzeit (kein 'Entwurf' mehr; Inhalt wie G4-011); G4-011 (22.10.2026): Selektor SW laesst die Schreibwerkzeit still weiterlaufen (Schreibwerk G4-004); G4-010 (22.10.2026): Schreibwerk laeuft asynchron (G4-003), Warten auf das beschaeftigte Schreibwerk = E/A-Halt; G4-009 (22.10.2026): virtuelle Trommelzeit (--trommelzeit); G4-008 G4-008 (22.10.2026): Leserton nach dem Benutzen des Lesers (LeserTon G4-005: Einzelton, Dauerton, Aus nach LS_AUS_S); G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
+VERSION_GRAFIK = 'G4-026'      # G4-026 (08.11.2026): ohne Pult-Fenster (--ohne-fenster, --entwickler-tasten, --entwickler-k0) Netz-Ein automatisch am Anfang, Netz-Aus automatisch nach 15 s ohne Befehlsgrenze (NetzAutoAus; kein neuer Schalter; Rueckgabecode dann 0 statt 8); G4-025 (08.11.2026): abschaltbare Taktmitschrift --taktprotokoll DATEI [--takt-max N] (grafik_takt.py TP-001, grafik_trommel.py G5-002; nur --trommelzeit echt/schnell; ohne Schalter Verhalten unveraendert; Knotenablauf unveraendert, daher kein Nachziehen in c8205_interp.py); G4-024 (07.11.2026): Leserton je Lesertyp (--LS-LESER-TYP=FS751 spielt ton/sw_toene/ls_fs751_*.wav, grafik_geraeteton.py G4-007); G4-023 (30.10.2026): Tasten im Halt (H) ohne aktiven 011: nur Klang, nichts gepuffert, vorgepufferte verfallen (grafik_sw.py G4-011); G4-022 (30.10.2026): Schalter --LS-LESER-TYP=303|FS751 (Lesetempo 130 bzw. 750 Zeichen/s, beide Leser; Ton ab G4-024 je Typ; grafik_geraeteton.py G4-006); G4-021 (29.10.2026): Vorzustand des SW nach dem Einschalten ist KB (grafik_sw.py G4-010, Festlegung des Projektinhabers); G4-020 (28.10.2026): Hilfetext --C8205Z: Anwahl 5d00 030 waehlt ZT d (0..3); G4-019 (27.10.2026): G stellt den Kanal der eingerasteten Kanaltaste ein (nicht immer K0; Rechner.kanaltaste); G4-018 (27.10.2026): Tastengeraeusche des Pults (grafik_pultton.py G4-001, ton/pult_toene/, Gruppe Pult von --TON), kein Loslass-Ton; G4-017 (27.10.2026): Tempo, Knotengraph beim Start in eine Tabelle uebersetzt (Rechner._baue_plan; exec_node fuer Normalknoten ohne Neuaufloesung, Sonderfaelle in exec_node_lang, Ausgabe-Halt in _ausgabe_halt), Verhalten unveraendert; G4-016 (26.10.2026): R nach H im Eingabe-Halt und anschliessenden E-Schritten setzt nicht mehr im alten Eingabeknoten fort, sondern beim aufgestellten BR (lauf(): wiederaufnahme nur ohne aufgestellten BR); G4-015 (26.10.2026): Grenze 18 000 000 ms = 5 Stunden = 18 000 000 000 Knoten (Auftrag: GRAFIK muss 5 Stunden am Stueck laufen); G4-014 (26.10.2026): Knotenlimit zeitbezogen (KNOTEN_JE_MS = 1000 Knoten je ms, Grenze MAX_ZEIT_MS = 1 000 000 ms = 1 000 000 000 Knoten je lauf()); G4-013 (25.10.2026): Schalter --C8205Z (Zusatztrommeln des C 8205Z ueber das C-Modul zt_modul, grafik_zt.py); G4-012 (23.10.2026): nur Hilfetext von --trommelzeit (kein 'Entwurf' mehr; Inhalt wie G4-011); G4-011 (22.10.2026): Selektor SW laesst die Schreibwerkzeit still weiterlaufen (Schreibwerk G4-004); G4-010 (22.10.2026): Schreibwerk laeuft asynchron (G4-003), Warten auf das beschaeftigte Schreibwerk = E/A-Halt; G4-009 (22.10.2026): virtuelle Trommelzeit (--trommelzeit); G4-008 G4-008 (22.10.2026): Leserton nach dem Benutzen des Lesers (LeserTon G4-005: Einzelton, Dauerton, Aus nach LS_AUS_S); G4-007 (21.10.2026): nur Kopfkommentar, Standardannahmen (1) bis (3) als bestaetigt vermerkt (OP-13), kein Verhalten geaendert; G4-006 (21.10.2026): OP-20 (E nach Abbruch des E-Schritts im Eingabe-Halt wieder wirksam); G4-005: OP-10, OP-11 (AR-Lampen bei E+, G bei gehaltenem E); G4-004: Haltzeit im Einzelschritt (HZ-004)
 SPUR_STANDARD = 'c8205_pult_klickspur.txt'
 RC_OK, RC_ABBRUCH, RC_START = 0, 8, 16
+
+
+_K_KON, _K_KON63, _K_PHA, _K_PHA4, _K_ANW, _K_TST = range(6)     # Arten der Knoten im Plan (Rechner._baue_plan)
 
 
 class Wiederaufsetzen(Exception):
@@ -135,8 +144,9 @@ class Rechner:
        pult_modus=True  : GRAFIK (Standardannahmen 1 bis 3 oben).
        pult_modus=False : Verhalten wie lauf()/tastenfolge() in TEST (fuer den Gleichwertigkeitstest)."""
 
-    def __init__(self, graph, trommel, pult_modus=True, knotentest=False, max_knoten=2_000_000, k0=None):
+    def __init__(self, graph, trommel, pult_modus=True, knotentest=False, max_knoten=MAX_KNOTEN_GRAFIK, k0=None):
         self.graph = graph
+        self._plan = self._baue_plan(graph)   # Tempo (G4-017): Graph einmal in eine Tabelle uebersetzt, siehe exec_node
         self.trommel = trommel
         self._tick = getattr(trommel, 'tick', None)
         self.pult_modus = pult_modus
@@ -164,6 +174,7 @@ class Rechner:
         self.e_nieder_unter_m = False         # M war beim Niederdruecken von E gehalten (dann entfaellt Phase II, das Loslassen bleibt ohne Wirkung)
         self.e_ue_test = None                 # OP-11: Pruefknoten (28, 44, 55, 65, 80), hinter dem E+ im Halt wegen Ueberlauf stehen blieb
         self.e_aufsatz = None                 # OP-11: nach G bei gehaltenem E (Ueberlauf geloescht): Pruefknoten, bei dem E- Phase IV und I fortsetzt
+        self.kanaltaste = 0                   # G4-019: Nummer (0 bis 3) der eingerasteten Kanaltaste K0 bis K3 (Start: K0); G stellt DIESEN Kanal ein, nicht immer K0; ein Anwahlbefehl im Programm aendert die Taste nicht (OP-35a)
         self.sw_gedrueckt = False             # Property: Schalterstellung SW liegt in m.sw_schalter (a028 liest sie beim Anwahlbefehl K0)
         # Ablaufsteuerung
         self.start_gewuenscht = False
@@ -201,7 +212,7 @@ class Rechner:
                            f'BZ={octs(m.BZ,4)} AC={octs(m.AC,11)} FÜ={f["FUE"]} '
                            f'V1={f["V1"]} V2={f["V2"]} V3={f["V1"] & f["V2"]}')
 
-    def exec_node(self, node):
+    def exec_node_lang(self, node):
         m, graph = self.m, self.graph
         n = graph[node]
         typ = n['typ']
@@ -212,14 +223,7 @@ class Rechner:
         try:
             if typ == 'Konnektor':
                 bez = n['text']
-                ziel = n['out']
-                if ziel is None:
-                    for k, o in graph.items():
-                        if o['typ'] == 'Konnektor' and o['text'] == bez and o['out'] is not None and k != node:
-                            ziel = o['out']
-                            if k == 7:
-                                br_nach = 7
-                            break
+                ziel, br_nach = self._plan[node][5], self._plan[node][6]     # vorab aufgeloest (gleiche Suche wie frueher je Aufruf)
                 text = f'KON {bez}'
                 if node == 63 and self._tick is not None:
                     self._tick()                                  # G4-009: Sprung/Organisationsbefehl (Knoten 63 -> 6): Phase I (Knoten 2) wird uebersprungen, kostet aber eine Wortzeit
@@ -250,24 +254,8 @@ class Rechner:
             else:
                 raise Stub(f'Knotentyp {typ!r} unbekannt')
         except AusgabeHaltOhneGeraet as e:
-            # Original 4.3.2.5: Der Ausgabebefehl wartet mit gesetztem Flag A (Lampe A) auf die Anwahl eines Ausgabegeraets; kein Fehler.
-            # Mit Fenster (thread_modus): wie im Eingabe-Halt warten; eine Kanaltaste (K1/K2) setzt den Befehl neu auf (Wiederaufsetzen),
-            # H unterbricht. Ohne Fenster niemand, der eine Taste drueckt: Halt mit Flag A.
-            if self.thread_modus:
-                k0 = m.k0
-                while True:
-                    if getattr(k0, '_abbruch', False):
-                        raise GrafikAbbruch('Warten auf Anwahl abgebrochen')
-                    self._warte_hook()                       # wirft HUnterbrechung (H) oder Wiederaufsetzen (Kanalwechsel)
-                    if hasattr(k0, '_cv'):
-                        with k0._cv:
-                            k0._cv.wait(0.05)
-                    else:
-                        time.sleep(0.05)
-            m.halt_grund = 'Ausgabe-Halt ohne Ausgabegeraet (Flag A)'
-            m.halted = True
             text = 'ANW 017'
-            nxt = n['out']
+            nxt = self._ausgabe_halt(n)
         except KonfigFehler as e:
             fe = f'Geraet nicht nutzbar (Knoten {node}): {e}'
             self.zeilen.append(f'K{node:03d} {fe}')
@@ -283,6 +271,109 @@ class Rechner:
         if n.get('end'):
             return None
         return nxt
+
+    def _ausgabe_halt(self, n):
+        m = self.m
+        # Original 4.3.2.5: Der Ausgabebefehl wartet mit gesetztem Flag A (Lampe A) auf die Anwahl eines Ausgabegeraets; kein Fehler.
+        # Mit Fenster (thread_modus): wie im Eingabe-Halt warten; eine Kanaltaste (K1/K2) setzt den Befehl neu auf (Wiederaufsetzen),
+        # H unterbricht. Ohne Fenster niemand, der eine Taste drueckt: Halt mit Flag A.
+        if self.thread_modus:
+            k0 = m.k0
+            while True:
+                if getattr(k0, '_abbruch', False):
+                    raise GrafikAbbruch('Warten auf Anwahl abgebrochen')
+                self._warte_hook()                       # wirft HUnterbrechung (H) oder Wiederaufsetzen (Kanalwechsel)
+                if hasattr(k0, '_cv'):
+                    with k0._cv:
+                        k0._cv.wait(0.05)
+                else:
+                    time.sleep(0.05)
+        m.halt_grund = 'Ausgabe-Halt ohne Ausgabegeraet (Flag A)'
+        m.halted = True
+        return n['out']
+
+    def _baue_plan(self, graph):
+        """Tempo (G4-017, 27.10.2026): Der Knotengraph wird weiter wortlautgetreu aus der .md gelesen (load_graph), hier aber einmal in eine Tabelle
+        uebersetzt: je Knoten (Art, Funktion, Ausgang bzw. Wahr-Ausgang, Falsch-Ausgang, Sonderweg?, aufgeloester Konnektor-Sprung, BR-Zeile nach).
+        Normalknoten laufen in exec_node ohne Neuaufloesung; Knoten 2, Konnektor mit BR-Zeile, Endknoten, Phase IV nicht noetig (eigene Art),
+        Knoten ohne Funktion und alle Knoten bei knotentest gehen unveraendert ueber exec_node_lang."""
+        plan = {}
+        for nr, n in graph.items():
+            typ = n['typ']
+            f = FUNCS.get(n['anw']) if typ in ('Anweisung', 'Test') else None
+            ziel = n['out']
+            br_nach = None
+            if typ == 'Konnektor' and ziel is None:
+                for k, o in graph.items():
+                    if o['typ'] == 'Konnektor' and o['text'] == n['text'] and o['out'] is not None and k != nr:
+                        ziel = o['out']
+                        if k == 7:
+                            br_nach = 7
+                        break
+            sonder = (nr == 2 or br_nach is not None or bool(n.get('end'))
+                      or (typ in ('Anweisung', 'Test') and f is None)
+                      or typ not in ('Konnektor', 'Phasenzuordnung', 'Anweisung', 'Test'))
+            if typ == 'Konnektor':
+                art = _K_KON63 if nr == 63 else _K_KON
+            elif typ == 'Phasenzuordnung':
+                art = _K_PHA4 if 'Phase IV' in n['text'] else _K_PHA
+            elif typ == 'Anweisung':
+                art = _K_ANW
+            elif typ == 'Test':
+                art = _K_TST
+            else:
+                art = None
+            plan[nr] = (art, f, n['wahr'] if typ == 'Test' else ziel, n['falsch'], sonder, ziel, br_nach)
+        return plan
+
+    def takt_einhaengen(self, prot):
+        """G4-025: Taktmitschrift einschalten (grafik_takt.TaktProtokoll). Umhuellt exec_node NUR an dieser Instanz; ohne Aufruf bleibt alles unveraendert.
+        Setzt vor jedem Knoten Knotennummer und Phase im Protokoll; die Zeilen schreibt die Trommel (tick, Zugriffe)."""
+        phasen = {nr: n['text'].replace('Beginn Phase ', '') for nr, n in self.graph.items() if n['typ'] == 'Phasenzuordnung'}
+        orig = self.exec_node
+
+        def exec_node_takt(node):
+            prot.knoten = node
+            p = phasen.get(node)
+            if p is not None:
+                prot.phase = p
+            return orig(node)
+        prot.m = self.m
+        self.trommel.takt = prot
+        self.exec_node = exec_node_takt
+
+    def exec_node(self, node):
+        art, f, out, falsch, sonder, _z, _b = self._plan[node]
+        if sonder or self.knotentest:
+            return self.exec_node_lang(node)
+        m = self.m
+        try:
+            if art == _K_ANW:
+                f(m)
+            elif art == _K_TST:
+                return out if f(m) else falsch
+            elif art == _K_PHA:
+                if self._tick is not None:
+                    self._tick()                                  # G4-009: jede Phase kostet eine Wortzeit (virtuelle Trommelzeit)
+            elif art == _K_PHA4:
+                if self._tick is not None:
+                    self._tick()
+                m.zaehler = 0
+                m.start_sek = sektor(m.AR)
+            elif art == _K_KON63:
+                if self._tick is not None:
+                    self._tick()                                  # G4-009: Sprung/Organisationsbefehl (Knoten 63 -> 6)
+        except AusgabeHaltOhneGeraet:
+            return self._ausgabe_halt(self.graph[node])
+        except KonfigFehler as e:
+            fe = f'Geraet nicht nutzbar (Knoten {node}): {e}'
+            self.zeilen.append(f'K{node:03d} {fe}')
+            raise LaufFehler(fe)
+        except Stub as e:
+            fe = f'STUB bei Knoten {node}: {e}'
+            self.zeilen.append(f'K{node:03d} {fe}')
+            raise LaufFehler(fe)
+        return out
 
     def ar_lampen(self):
         """Wert der Lampenreihe AR am Pult (OP-10, entschieden 21.10.2026). E+ ohne M, solange E gehalten ist (Phase IV und I sind gelaufen,
@@ -518,7 +609,13 @@ class Rechner:
             for k in m.fl:
                 if k not in ('H', 'T', 'SP'):     # das Flag BS (Lampe) wird geloescht, der Schalter BS (m.bs_schalter) bleibt eingerastet
                     m.fl[k] = 0
-            m.fl['T'], m.fl['SW'] = (0, 1) if self.sw_gedrueckt else (1, 0)
+            kn = self.kanaltaste                # G4-019: Kanal der eingerasteten Kanaltaste (K0 nur, wenn K0 die eingerastete ist)
+            for k in (1, 2, 3):
+                m.fl[f'K{k}'] = 1 if k == kn else 0
+            if kn == 0:
+                m.fl['T'], m.fl['SW'] = (0, 1) if self.sw_gedrueckt else (1, 0)
+            else:
+                m.fl['T'] = m.fl['SW'] = 0
             m.AR = 0
             m.adr = 0
             self.or_basis = 0
@@ -529,8 +626,8 @@ class Rechner:
             m.vor_phase2 = False
             m.vor_phase1 = False
             m.fl['US'] = 1
-            eff.append('G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; K0 angewaehlt, '
-                       + ('SW gedrueckt -> SW := 1' if self.sw_gedrueckt else 'SW nicht gedrueckt -> T := 1')
+            eff.append('G  : alle Flags ausser H,T,BS,SP := 0 (BS, SP: eingerastete Schalter); BR := 0000 000 (AR:=0000, OR:=000); US := 1; Kanal der eingerasteten Kanaltaste angewaehlt: '
+                       + (f'K{kn}, SW gedrueckt -> SW := 1' if kn == 0 and self.sw_gedrueckt else (f'K{kn}, SW nicht gedrueckt -> T := 1' if kn == 0 else f'K{kn}'))
                        + '; BZ bleibt unveraendert (BZ := 0 erst bei Ausfuehrung des Sprungs nach 0000)')
         elif u.startswith('SW') and (u.find('DRUECK') >= 0 or u in ('SW=1', 'SW+')):
             self.sw_gedrueckt = True
@@ -602,6 +699,7 @@ class Rechner:
             ok = self._e_taste(u, eff)
         elif u in ('K0', 'K1', 'K2', 'K3'):
             kn = int(u[1])
+            self.kanaltaste = kn                # G4-019: G stellt spaeter diesen Kanal ein
             for k in (1, 2, 3):
                 m.fl[f'K{k}'] = 1 if k == kn else 0
             if kn == 0:
@@ -782,9 +880,15 @@ class Rechner:
         fehler = None
         ende_grund = None
         try:
-            if self.wiederaufnahme is not None:
+            if self.wiederaufnahme is not None and not m.br_aufgestellt:
                 node = self.wiederaufnahme
                 self.wiederaufnahme = None
+            elif self.wiederaufnahme is not None:
+                # Ein durch H im Eingabe-Halt abgebrochener Befehl wird nur fortgesetzt, solange kein neuer BR aufgestellt wurde. Nach E, M, ST oder Ue
+                # (br_aufgestellt) ist der halbe Befehl verbraucht bzw. ueberholt: R beginnt beim aufgestellten BR, nicht im alten Eingabeknoten.
+                self.wiederaufnahme = None
+                node = eintritt_br(m)
+                m.br_aufgestellt = False
             else:
                 node = eintritt_br(m) if m.br_aufgestellt else 1
                 m.br_aufgestellt = False
@@ -965,7 +1069,9 @@ def pult_betrieb(r, args, here):
     # (C-Modul tonmisch ueber grafik_tonmisch_c; Rueckfall: Python-Mischer grafik_tonmisch). Windows: winmm ist noch nicht getestet, dort bleiben die
     # Stufe-2-Rechnertoene (winsound).
     from grafik_schreibwerk import Schreibwerk
-    from grafik_geraeteton import LeserTon, StanzerTon, lade_leserklaenge, lade_stanzerklaenge
+    from grafik_geraeteton import LeserTon, StanzerTon, lade_leserklaenge, lade_stanzerklaenge, LESETEMPO_JE_TYP
+    ls_tempo = LESETEMPO_JE_TYP[getattr(args, 'ls_leser_typ', '303')]           # G4-022: Lesetempo des gewaehlten Lochbandlesers (303: 130, FS751: 750 Zeichen/s)
+    from grafik_pultton import PultTastenTon, lade_pultklaenge
     import grafik_tonmisch as TM
     f_pult, f_sw, f_ll, f_ls = TM.ton_faktoren(getattr(args, 'TON', None) or TM.parse_ton(TM.TON_STANDARD))         # --TON: Pult SW LL LS (G4-004)
     mischer, spieler, ton_ausfall = None, None, []
@@ -976,11 +1082,11 @@ def pult_betrieb(r, args, here):
         if winmm:
             print('Hinweis: Toene unter Windows ueber den Mischer (winmm).', file=sys.stderr)
     ton_ordner = os.path.join(here, 'ton')
-    leser_ton = stanzer_ton = None
+    leser_ton = stanzer_ton = pult_ton = None
     if args.STUMM:
         ton = None
         r.sw.schreibwerk = Schreibwerk(None, None)
-        leser_ton = LeserTon(None, None)                    # kein Ton, das Lesetempo (130 Zeichen/s) gilt
+        leser_ton = LeserTon(None, None, tempo=ls_tempo)    # kein Ton, das Lesetempo (303: 130, FS751: 750 Zeichen/s) gilt
         stanzer_ton = StanzerTon(None, None)                # kein Ton, das Stanztempo (ungefaehr 50 Zeichen/s) gilt
     else:
         if os.name == 'nt' and not winmm:
@@ -990,7 +1096,7 @@ def pult_betrieb(r, args, here):
                 print(f'         Grund: {winmm_grund}', file=sys.stderr)
             ton = RechnerTon(ton_ordner, meldung=False)
             r.sw.schreibwerk = Schreibwerk(None, None)
-            leser_ton = LeserTon(None, None)
+            leser_ton = LeserTon(None, None, tempo=ls_tempo)
             stanzer_ton = StanzerTon(None, None)
         else:
             spieler = None if winmm else TM.finde_spieler()  # Windows mit winmm: kein Abspielprogramm, die Senke steckt im C-Modul
@@ -1003,8 +1109,9 @@ def pult_betrieb(r, args, here):
                 ton = MischerRechnerTon(ton_ordner, faktor=f_pult)
                 r.sw.schreibwerk = Schreibwerk.laden(ton_ordner, None)
                 r.sw.schreibwerk.pegel = f_sw
-                leser_ton = LeserTon(None, lade_leserklaenge(ton_ordner), pegel=f_ll)
+                leser_ton = LeserTon(None, lade_leserklaenge(ton_ordner, getattr(args, 'ls_leser_typ', '303')), pegel=f_ll, tempo=ls_tempo)
                 stanzer_ton = StanzerTon(None, lade_stanzerklaenge(ton_ordner), pegel=f_ls)
+                pult_ton = PultTastenTon(None, lade_pultklaenge(ton_ordner), faktor=f_pult)          # G4-018: Tastengeraeusche des Pults
             except (OSError, ValueError) as e:
                 print(f'\nFEHLER: Klaenge nicht ladbar: {e}', file=sys.stderr)
                 return RC_START
@@ -1023,7 +1130,8 @@ def pult_betrieb(r, args, here):
         hoch = aus = 0.3
     st = PultSteuerung(pult_ordner, r, hochlauf_s=hoch, auslauf_s=aus,
                        bei_betrieb=bei_betrieb, bei_ende=bei_ende, ton=ton,
-                       bei_ls=(stanzer_ton.ls_taste if stanzer_ton is not None else None))
+                       bei_ls=(stanzer_ton.ls_taste if stanzer_ton is not None else None),
+                       taste_ton=(pult_ton.taste if pult_ton is not None else None))
     if args.pult_protokoll or args.DEBUGLOG:
         def klicklog(z):
             log('KLICK', z)
@@ -1118,6 +1226,7 @@ def pult_betrieb(r, args, here):
             ton.mischer = mischer
             leser_ton._mischer_ein(mischer)
             stanzer_ton._mischer_ein(mischer)
+            pult_ton._mischer_ein(mischer)
             mischer.starten()
         except TM.SenkeAusfall as e:
             ton_ausfall.append(str(e))
@@ -1162,6 +1271,40 @@ def _ton_arg(text):
         raise argparse.ArgumentTypeError(str(e))
 
 
+NETZ_AUS_NACH_S = 15.0       # G4-026: ohne Pult-Fenster schaltet GRAFIK das Netz nach so vielen Sekunden ohne Befehlsgrenze aus
+
+
+class NetzAutoAus(threading.Thread):
+    """G4-026: Netz-Aus-Automatik fuer --ohne-fenster/--entwickler-tasten. Beobachtet die Befehlsgrenzen des Rechners (beobachter_befehl).
+    Ist der Rechner NETZ_AUS_NACH_S Sekunden lang an keiner Befehlsgrenze mehr vorbeigekommen, beendet sie jedes Warten (Rechner.abbrechen,
+    Leser abbrechen: eine teilgelesene Datei bleibt im Ordner, wie bei Netz-Aus am Pult). Der Treiber meldet das dann als Netz-Aus, nicht als Strg+C."""
+
+    def __init__(self, rechner, nach_s):
+        super().__init__(name='netz-auto-aus', daemon=True)
+        self.r, self.nach_s = rechner, nach_s
+        self._zeit = time.monotonic()
+        self._stop_ev = threading.Event()
+        self.ausgeloest = False
+        rechner.beobachter_befehl = lambda _r: self.lebenszeichen()
+
+    def lebenszeichen(self):
+        self._zeit = time.monotonic()
+
+    def stop(self):
+        self._stop_ev.set()
+        self.r.beobachter_befehl = None
+
+    def run(self):
+        while not self._stop_ev.wait(0.25):
+            if time.monotonic() - self._zeit >= self.nach_s:
+                self.ausgeloest = True
+                for l in getattr(self.r.m, 'leser', {}).values():
+                    if l is not None and hasattr(l, 'abbrechen'):
+                        l.abbrechen()
+                self.r.abbrechen()
+                return
+
+
 def hauptprogramm(argv=None):
     here = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser(prog='c8205_grafik.py', description='C 8205, Modus GRAFIK, Stufe 1 (Kern und Trommel, ohne Fenster und Ton)')
@@ -1173,16 +1316,24 @@ def hauptprogramm(argv=None):
     ap.add_argument('--stanzer1')
     ap.add_argument('--STUMM', action='store_true')
     ap.add_argument('--trommelzeit', choices=('echt', 'schnell', 'alt'), default='alt', help='Zeitmodell der Trommel (G4-009): alt = Wartezeiten nach der Wanduhr im C-Modul (Standard), echt = virtuelle Zeit (Wortzeit 104 us je Phase) mit Echtzeit-Anpassung, schnell = virtuelle Zeit ohne Warten')
+    ap.add_argument('--taktprotokoll', dest='takt_pfad', default=None, metavar='DATEI',
+                    help='Taktmitschrift (G4-025, grafik_takt.py): schreibt die virtuelle Trommelzeit je Phase und je Trommelzugriff in DATEI (Tabulator-getrennt, Kopf siehe grafik_takt.py). '
+                         'Nur mit --trommelzeit echt oder schnell; Standard: aus.')
+    ap.add_argument('--takt-max', dest='takt_max', type=int, default=5_000_000, metavar='N',
+                    help='Hoechstzahl der Zeilen des Taktprotokolls (Standard 5000000; 0 = unbegrenzt). Danach laeuft die Uhr weiter, nur die Mitschrift endet.')
     ap.add_argument('--TON', '--ton', dest='TON', default=TM_ton_standard(), type=_ton_arg, metavar='pppp',
                     help='Lautstaerke je Gruppe, vier Ziffern 0 bis 9 in der Reihenfolge Pult SW LL LS (Rechnertoene, Schreibwerk, Lochstreifenleser, '
                          'Lochbandstanzer); 5 = Voreinstellung, 0 = stumm. Beispiel: --TON=5955. Wirkungslos mit --STUMM.')
+    ap.add_argument('--LS-LESER-TYP', '--ls-leser-typ', dest='ls_leser_typ', default='303', type=I.ls_leser_typ_arg, metavar='303|FS751',
+                    help='Lochbandleser-Typ (gilt fuer beide Leser): 303 = elektrisch ueber Metallbuersten, 130 Zeichen/s (Standard), FS751 = optoelektronisch, 750 Zeichen/s. '
+                         'Mit FS751 klingt auch der Leser anders (ton/sw_toene/ls_fs751_*.wav, G4-024).')
     ap.add_argument('--TASTATUR', '--tastatur', dest='TASTATUR', default='de', metavar='de|en',
                     help='Tastaturbelegung des Rechners (Standard de). Wirkt beim Abspielen einer Klickspur (AltGr-Zeichen unter X11) und im Protokoll; '
                          'beim echten Tippen gilt die Belegung des Betriebssystems.')
     ap.add_argument('--HWCHECK', '--hwcheck', dest='HWCHECK', action='store_true', help='zweites Fenster mit BZ, BR, Spur/Sektor, AC und <<AR>> (oktal), bleibt aufgeblendet')
     ap.add_argument('--BASP', '--basp', dest='basp', default=None, metavar='abcdef')
     ap.add_argument('--C8205Z', '--c8205z', dest='c8205z', nargs='?', const='', default=None, metavar='VERZ',
-                    help='Zusatztrommeln des C 8205Z einschalten (Standard: aus): 5k00 030 waehlt ZT k (1..4), zzz0 bbbb 601 gibt die HT-Spur bbbb auf die ZT-Spur zzz0 aus, '
+                    help='Zusatztrommeln des C 8205Z einschalten (Standard: aus): 5k00 030 waehlt ZT d = k - 1 (k = 1..4: 5100 = ZT0 ... 5400 = ZT3), zzz0 bbbb 601 gibt die HT-Spur bbbb auf die ZT-Spur zzz0 aus, '
                          'zzz0 bbbb 661 liest sie zurueck; ein Befehl dauert rund 81 bis 86 ms (Zeitmodell, C-Modul zt_modul). Die Trommeln liegen als zt1.txt .. zt4.txt in VERZ (Standard: Trommel/ZT/)')
     # in GRAFIK wirkungslos, ohne Fehler (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 2.5), Review F-13)
     for name in ('--out', '--pruefe-stanzer1', '--pruefe-sw-ausgabe', '--k0', '--sw-ausgabe', '--zwischenablage',
@@ -1204,6 +1355,12 @@ def hauptprogramm(argv=None):
     ap.add_argument('--netz-schnell', action='store_true', help='Entwickler: Hochlauf und Auslauf auf 0,3 s verkuerzen (nur fuer Pruefungen)')
     ap.add_argument('tests', nargs='*')            # entfaellt in GRAFIK: ignoriert
     args = ap.parse_args(argv)
+    if args.takt_pfad and args.trommelzeit == 'alt':
+        print('\nFEHLER: --taktprotokoll braucht die virtuelle Zeit: --trommelzeit echt oder schnell (in "alt" gibt es sie nicht)', file=sys.stderr)
+        return RC_START
+    if args.takt_max < 0:
+        print('\nFEHLER: --takt-max darf nicht negativ sein', file=sys.stderr)
+        return RC_START
 
     if args.modus.upper() != 'GRAFIK':
         print(f'FEHLER: unbekannter Modus {args.modus!r} (dieses Programm kennt nur GRAFIK)', file=sys.stderr)
@@ -1253,6 +1410,7 @@ def hauptprogramm(argv=None):
     trommel = None
     zt = None
     r = None
+    takt = None
     rc = RC_OK
     try:
         try:
@@ -1266,6 +1424,14 @@ def hauptprogramm(argv=None):
             zt = GrafikZT(args.c8205z or os.path.join(here, 'Trommel', 'ZT'), trommel)
             I.ZT = zt                           # Machine.__init__ uebernimmt I.ZT als m.zt (a005: 601/661, a028: 5k00 030)
         r = Rechner(graph, trommel, pult_modus=True)
+        if args.takt_pfad:                      # G4-025: Taktmitschrift (nur mit virtueller Zeit, oben geprueft)
+            import grafik_takt as TP
+            try:
+                takt = TP.TaktProtokoll(args.takt_pfad, maximum=args.takt_max, zeitmodell=args.trommelzeit, vt0=trommel.vt)
+            except OSError as e:
+                print(f'\nFEHLER: Taktprotokoll nicht schreibbar: {e}', file=sys.stderr)
+                return RC_START
+            r.takt_einhaengen(takt)
         richte_geraete_ein(r, args.leser1, args.leser2, args.stanzer1)
         if args.entwickler_k0:
             for z in open(args.entwickler_k0, encoding='utf-8'):
@@ -1279,24 +1445,42 @@ def hauptprogramm(argv=None):
             print('Hinweis: --AUFZEICHNUNG/--WIEDERGABE wirken nur mit dem Pult-Fenster.', file=sys.stderr)
         if args.HWCHECK:
             print('Hinweis: --HWCHECK wirkt nur mit dem Pult-Fenster (nicht mit --ohne-fenster, --entwickler-tasten, --entwickler-k0).', file=sys.stderr)       # finally unten schliesst die Trommel
-        if args.entwickler_tasten:
-            for t in args.entwickler_tasten.split():
-                r.taste(t)
-                res = r.lauf_wenn_gewuenscht()
-                if res is not None and not res['ok']:
-                    print('LAUF NICHT ORDNUNGSGEMAESS BEENDET:', res['grund'], file=sys.stderr)
+        # G4-026: Ohne Pult-Fenster schaltet GRAFIK das Netz selbst: Netz-Ein am Anfang (hier gibt es keinen Hochlauf), Netz-Aus, sobald der Rechner
+        # NETZ_AUS_NACH_S Sekunden keine Befehlsgrenze mehr durchlaufen hat (z. B. wartet er im Eingabe-Halt auf einen leeren Leser). Kein Schalter.
+        print('Netz ein (automatisch, ohne Pult-Fenster)', file=sys.stderr)
+        netz_wache = NetzAutoAus(r, NETZ_AUS_NACH_S)
+        netz_wache.start()
+        try:
+            if args.entwickler_tasten:
+                for t in args.entwickler_tasten.split():
+                    netz_wache.lebenszeichen()
+                    r.taste(t)
+                    res = r.lauf_wenn_gewuenscht()
+                    if res is not None and not res['ok']:
+                        print('LAUF NICHT ORDNUNGSGEMAESS BEENDET:', res['grund'], file=sys.stderr)
+        except (KeyboardInterrupt, GrafikAbbruch):
+            if not netz_wache.ausgeloest:
+                raise
+            print(f'Netz aus (automatisch): der Rechner hat {NETZ_AUS_NACH_S:g} s keinen Befehl mehr ausgefuehrt (Eingabe-Halt ohne Zeichen).', file=sys.stderr)
+        finally:
+            netz_wache.stop()
         m = r.m
         print(f'Ende: {r.letzter_grund} | BZ={octs(m.BZ,4)} AC={octs(m.AC,11)} AR={octs(m.AR,4)} | '
               + ' '.join(f'{k}={m.fl[k]}' for k in ('FE', 'FUE', 'BS', 'US', 'E', 'A', 'V1', 'V2')))
         if r.sw.alles():
             print('SW-Ausgabe:', repr(r.sw.alles()))
         print('Trommel:', trommel.statistik())
+        if takt is not None:
+            takt.schliessen()
+            print('Taktprotokoll:', takt.zusammenfassung())
         if zt is not None:
             print('Zusatztrommeln:', zt.statistik())
     except (KeyboardInterrupt, GrafikAbbruch):
         print('\nABBRUCH durch den Benutzer (Strg+C)', file=sys.stderr)
         rc = RC_ABBRUCH
     finally:
+        if takt is not None:
+            takt.schliessen()                   # idempotent; schreibt die Endzeile auch bei Abbruch oder Pult-Betrieb
         if zt is not None:
             zt.schliessen()                     # vor der Haupttrommel (der Empfaengerthread greift auf sie zu)
         I.ZT = None

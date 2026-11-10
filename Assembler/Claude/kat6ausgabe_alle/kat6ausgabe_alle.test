@@ -1,0 +1,119 @@
+Trommeldatei:
+#DOK-0001 KAT6AUSGABE: alle Zeichen in KB und GB, Zeilenschaltung
+#SPEI-0001 0001-0033
+#PROT STUFE=2
+#TROMMEL=LEER
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/kat6ausgabe_alle
+0000: 00000034000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 12524232221 # text1: kat6 abcdefghijklmnopqrstuvwxyz 0123456789.,-+:/%` ; Zellen 0001 bis 0011: 45 Zeichen, 9 Worte
+0002: 14131302726
+0003: 14645444342
+0004: 16362515047
+0005: 17067666564
+0006: 10201001271
+0007: 10706050403
+0010: 14073331110
+0011: 56074611520
+0012: 12423222137 # text2: kat6 $ingbabcdefghijklmnopqrstuvwxyz ; Zellen 0012 bis 0017: Um. GB und a bis z, 6 Worte
+0013: 13130272625
+0014: 14544434241
+0015: 16251504746
+0016: 16766656463
+0017: 40000017170
+0020: 10504020100 # text3: kat6 01245689 .,=:/%` ; Zellen 0020 bis 0023: 16 Zeichen, 4 Worte
+0021: 13312111006
+0022: 17461152073
+0023: 40000000160
+0024: 12332222157 # text4: kat6 $inkbab$wrzlcd ; Zellen 0024 bis 0025: Um. KB, a, b, Zeilenschaltung, c, d
+0025: 40000000124
+0026: 00000001000 # radr1: da text1 ; Zelle 0026: Adresse von Text 1 (Adressfeld)
+0027: 00000012000 # radr2: da text2 ; Zelle 0027: Adresse von Text 2 (Adressfeld)
+0030: 00000020000 # radr3: da text3 ; Zelle 0030: Adresse von Text 3 (Adressfeld)
+0031: 00000024000 # radr4: da text4 ; Zelle 0031: Adresse von Text 4 (Adressfeld)
+0032: 00000000000 # kbaus: dw 0 ; Zelle 0032: KB/GB-Zustand (0 = KB, 1 = GB), initial KB
+0033: 00000032000 # rkb: da kbaus ; Zelle 0033: Adresse der Zustandszelle (Adressfeld)
+0034: 00000033211 # haupt: 211 rkb ; AC := Adresse der Zustandszelle
+0035: 00007774240 # 240 r3 ; R3 := Adresse der Zustandszelle
+0036: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0037: 00000026211 # 211 radr1 ; AC := Adresse von Text 1
+0040: 00007773240 # 240 r1 ; R1 := Adresse von Text 1
+0041: 00000054025 # 025 ausgabe ; Aufruf KAT6AUSGABE (Text 1)
+0042: 00000027211 # 211 radr2 ; AC := Adresse von Text 2
+0043: 00007773240 # 240 r1 ; R1 := Adresse von Text 2
+0044: 00000054025 # 025 ausgabe ; Aufruf KAT6AUSGABE (Text 2)
+0045: 00000030211 # 211 radr3 ; AC := Adresse von Text 3
+0046: 00007773240 # 240 r1 ; R1 := Adresse von Text 3
+0047: 00000054025 # 025 ausgabe ; Aufruf KAT6AUSGABE (Text 3)
+0050: 00000031211 # 211 radr4 ; AC := Adresse von Text 4
+0051: 00007773240 # 240 r1 ; R1 := Adresse von Text 4
+0052: 00000054025 # 025 ausgabe ; Aufruf KAT6AUSGABE (Text 4)
+0053: 00000000020 # 020 0 ; Halt
+0054: 00000120240 # ausgabe: 240 ML0001GNU ; Rueckkehrwort sichern
+0055: 00007773211 # 211 ML0014GNU ; AC := Startadresse des Textes
+0056: 00000136220 # 220 l0001 ; eine Adresseneinheit weniger, weil ML0006% sie gleich wieder dazuzaehlt
+0057: 00000133240 # 240 ML0002GNU ; zeiger := Adresse des Wortes vor dem ersten (R1 bleibt unveraendert)
+0060: 00000133211 # ML0006GNU: 211 ML0002GNU ; neues Wort: Zeiger auf das naechste Wort
+0061: 00000136210 # 210 l0001 ; plus eine Adresseneinheit
+0062: 00000133240 # 240 ML0002GNU ; zeiger := Adresse des aktuellen Wortes
+0063: 00000000251 # 251 0 ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0064: 00000131240 # 240 ML0003GNU ; tw := Textwort (mit z0)
+0065: 00000137200 # 200 l0002 ; z0 ausblenden, nur 32 Bit (Zeichen und Stoppbit)
+0066: 00000132240 # 240 ML0004GNU ; rest := Zeichenrest mit Stoppbit
+0067: 00000140330 # ML0007GNU: 330 l0003 ; Vergleich des Rests mit 1 (keine Operation), der AC bleibt der Rest
+0070: 00000116170 # 170 ML0010GNU ; Rest 1: nur noch das Stoppbit uebrig, Wort fertig
+0071: 00000141200 # 200 l0004 ; unterstes Zeichen (6 Bit) ausblenden
+0072: 00000134240 # 240 ML0005GNU ; zeichen := kat6-Code
+0073: 00000142330 # 330 l0005 ; Vergleich mit kat6 037 (Um. GB)
+0074: 00000121170 # 170 ML0011GNU ; Um. GB: Zustand := GB
+0075: 00000143330 # 330 l0006 ; Vergleich mit kat6 057 (Um. KB)
+0076: 00000121170 # 170 ML0011GNU ; Um. KB: Zustand := KB
+0077: 00000134211 # ML0008GNU: 211 ML0005GNU ; AC := kat6-Code (auch nach der Zustandsuebergabe)
+0100: 00000144200 # 200 l0007 ; Bits u und v (020 und 040) ausblenden
+0101: 00000135240 # 240 ML0015GNU ; hilf := Code UND 060
+0102: 00000134211 # 211 ML0005GNU ; AC := kat6-Code
+0103: 00000145200 # 200 l0008 ; Bits 8 4 2 1
+0104: 00000135210 # 210 ML0015GNU ; plus (Code UND 060)
+0105: 00000135210 # 210 ML0015GNU ; plus (Code UND 060) noch einmal: AC := Zeichen (8 Bit, p = w = 0)
+0106: 00007644644 # 644 07644 ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0107: 00000146210 # 210 l0009 ; plus Operationscode 030 (Ausgabe)
+0110: 00000111240 # 240 ML0009GNU ; Ausgabebefehl auf die naechste Zelle speichern
+0112: 00000132211 # 211 ML0004GNU ; AC := Zeichenrest
+0113: 00007662642 # 642 07662 ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0114: 00000132240 # 240 ML0004GNU ; rest := Rest
+0115: 00000067000 # 000 ML0007GNU ; naechstes Zeichen (der AC ist der Rest)
+0116: 00000131211 # ML0010GNU: 211 ML0003GNU ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0117: 00000060050 # 050 ML0006GNU ; kein z0: naechstes Wort
+0121: 00007774211 # ML0011GNU: 211 ML0016GNU ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0122: 00000147210 # 210 l0010 ; plus Operationscode 240: Speicherbefehl
+0123: 00000127240 # 240 ML0012GNU ; Speicherbefehl auf die uebernaechste Zelle
+0124: 00000134211 # 211 ML0005GNU ; AC := kat6-Code (037 oder 057)
+0125: 00000150200 # 200 l0011 ; Bit u: 037 hat es (Um. GB), 057 nicht (Um. KB)
+0126: 00007654642 # 642 07654 ; 4 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0130: 00000077000 # 000 ML0008GNU ; Zeichen ausgeben
+0136: 00000001000 # l0001 dw 000000001000
+0137: 37777777777 # l0002 dw 037777777777
+0140: 00000000001 # l0003 dw 1
+0141: 00000000077 # l0004 dw 000000000077
+0142: 00000000037 # l0005 dw 000000000037
+0143: 00000000057 # l0006 dw 000000000057
+0144: 00000000060 # l0007 dw 000000000060
+0145: 00000000017 # l0008 dw 000000000017
+0146: 00000000030 # l0009 dw 000000000030
+0147: 00000000240 # l0010 dw 000000000240
+0150: 00000000020 # l0011 dw 000000000020
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0054 AC=40000000124
+0001: 12524232221
+0011: 56074611520
+0012: 12423222137
+0017: 40000017170
+0020: 10504020100
+0023: 40000000160
+0024: 12332222157
+0025: 40000000124
+0032: 00000000000
+7773: 00000024000
+7774: 00000032000
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/kat6ausgabe_alle-sw-ausgabe.txt

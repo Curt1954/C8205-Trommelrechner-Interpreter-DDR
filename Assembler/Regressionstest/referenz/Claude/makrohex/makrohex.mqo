@@ -1,0 +1,46 @@
+               000            haupt          ; Zelle 0000: Sprung zum Hauptprogramm
+               dwh            FF             ; 255 = FF = 0377 oktal
+               dwh            0              ; 0 ergibt die Ziffer 0
+               dwh            000000FF       ; mit Breite 8: 000000FF = 0377
+               dwh            FFFFFFFF       ; 2^32-1: FFFFFFFF = 37777777777 oktal
+               dwh            A              ; Breite 1: Ziffer A = 012
+               dwh            E              ; 14 = E = 016 oktal
+               dwh            BEEF           ; BEEF = 0137357 oktal
+               dw             255            ; 255 = 0377
+               dw             342            ; grosses X, Kleinbuchstaben: 171*2 = 342 = 0526
+               dw             1048576        ; 2^20 = 04000000
+               dw             13             ; 5 ODER 010 (oktal 8) = 13 = 015
+               dwh            100            ; 255+1 = 256 = 100 hexadezimal = 0400
+               dw             171            ; fuehrende Nullen zaehlen nicht: 171 = 0253
+               dw             90             ; -10 + 100 = 90 = 0132
+               dw             12             ; 0xb ist 11 (b als Hexziffer), 0b1 ist 1: 12 = 014
+               dw             33             ; E ist Hexziffer, kein Exponent: 30+3 = 33 = 041
+               dw             255            ; FF hexadezimal = 255 = 0377
+               dw             255            ; Kleinbuchstaben: 255
+               dw             255            ; fuehrende Nullen: 255
+               dw             90             ; -10 + 100 = 90 = 0132
+               dw             0              ; 0
+               dw             1              ; 1
+               dw             511            ; 2^63-1 durch 2^54 geteilt = 511 = 0777
+               dw             101            ; $VAL liest unveraendert dezimal: 101 = 0145
+               dw             16             ; 10 hexadezimal = 16 = 020
+               dw             3              ; 3 Zeichen = 03
+               dw             1234           ; 1234 = 02322
+               dw             8              ; 8 Zeichen = 010
+               dw             1234           ; 1234 = 02322
+               dw             202            ; 101 Werte, je zwei Pruefungen: 202 = 0312
+               dw             16             ; 16 Zeichen = 020
+               dw             0              ; gleiche Zahl zurueck: Unterschied 0
+               dw             65             ; Code des ersten Zeichens: A = 65 = 0101
+               dwh            0              ; Wort 0
+               dwh            1              ; Wort 1
+               dwh            00000001       ; 8 Stellen, fuehrende Nullen: Wort 1
+               dwh            7FFFFFFF       ; 2^31-1 = 17777777777 oktal
+               dwh            80000000       ; 2^31 = 20000000000 oktal
+               dwh            abcdef01       ; Kleinbuchstaben: 25363367401 oktal
+               dwh            DEADBEEF       ; Grossbuchstaben: 33653337357 oktal
+hx1:           da             000000000052   ; Vorwaertsverweis auf ein Symbol, dessen Name nur aus Hexziffern besteht (spaetes Symbol)
+cafe:          dw             0              ; die Zelle, auf die hx1 zeigt
+               dwh            cafe           ; hier ist cafe eine Hexzahl und kein Symbol: 0xCAFE = 0145376 oktal
+haupt:         164            0001           ; Zelle 44: Diagnoseausgabe (nur im Test)
+               020            0              ; Zelle 45: Halt

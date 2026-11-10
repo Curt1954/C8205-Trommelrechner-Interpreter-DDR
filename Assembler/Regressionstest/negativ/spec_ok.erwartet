@@ -1,0 +1,9 @@
+rc 0
+nicht-stderr Warnung
+nicht-stderr Fehler
+anzahl-stderr 0 $SPEC
+datei-da obj dmp
+dmp-da 00000000005
+dmp-da 00000000006
+dmp-da 00000000007
+dmp-da 00000000011

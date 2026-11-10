@@ -1,0 +1,4 @@
+rc 16
+stderr makro_global_nach_set.asm:8: Fehler: G4 $GLOBAL a: Der Name ist in diesem Makroaufruf schon lokal angelegt oder vereinbart
+datei-weg obj mqo test
+escape-weg

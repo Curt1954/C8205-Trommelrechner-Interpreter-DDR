@@ -1,0 +1,4 @@
+rc 16
+stderr Code '218' ist kein dreistelliger Oktalcode (000 bis 777).
+datei-weg obj mqo test
+escape-weg

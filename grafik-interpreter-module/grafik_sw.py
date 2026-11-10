@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_sw.py - Logik des SW-Fensters im Modus GRAFIK (Stufe 3), ohne Tkinter.
-Version: G4-008
+Version: G4-011  (G4-011, 30.10.2026: im H-Zustand ohne aktiven 011 werden Tasten nicht mehr vorgemerkt (klingen nur) und vorgemerkte verfallen; G4-010, 29.10.2026: Vorzustand des SW nach dem Einschalten ist KB, nicht mehr unbestimmt; Festlegung des Projektinhabers)
 
 Zwei Teile:
   SwAnzeige  - Darstellung der Schreibwerk-Ausgabe mit Schreibposition (Spalte 0 bis 130), Tabulatorstopp alle 12 Spalten,
@@ -28,17 +28,18 @@ Standardannahmen dieser Datei (zur Abnahme, in der GRAFIK_Beschreibung nicht aus
 Regel des Projektinhabers (18.10.2026, G3-004): Fuer die Eingabe am SW zaehlt NUR die Zeichenlage des SW selbst, nie die des Rechners
 (Machine.zeichenlage). Die Umschalttasten der Computertastatur werden nicht gesondert ausgewertet: das Fenster erkennt am getippten Zeichen,
 welche Lage es braucht. Der BENUTZER tippt frei, mit oder ohne Umschalttaste; weitere Festlegungen gibt es nicht, den Rest erledigt das Fenster.
-Der Vorzustand des SW ist nach dem Einschalten UNBESTIMMT (SwEingabe.lage = None). Fuer das ERSTE Zeichen mit bestimmter Lage geht deshalb
-IMMER das Umschaltzeichen zum Rechner (Umschaltzeichen, dann Zeichen: 'A' -> Um. GB, A, das SW steht auf GB; 'a' -> Um. KB, a, das SW steht
-auf KB). Bei den folgenden Zeichen entscheidet das vorhergehende Zeichen: gleiche Lage -> nur das Zeichen, andere Lage -> Umschaltzeichen
-und Zeichen. Zeichen mit gleichem Code in beiden Lagen (ZR, TAB, WRZL) gehen allein und aendern die Lage nicht (G3-008, Antwort 18.10.2026).
+Festlegung des Projektinhabers (29.10.2026, G4-010): Nach dem Einschalten steht das SW IMMER auf KB (SwEingabe.lage = 'KB'). Grund: die
+Hardware der Host-Tastaturen ist verschieden (es gibt dort kein KB per Taste, nur GB/Umschalten); ein zufaelliger oder unbestimmter Vorzustand
+liess Ziffern und Sonderzeichen scheinbar verschwinden. Ein Umschaltzeichen geht nur noch bei Abweichung von der Lage des SW an den Rechner:
+'a' oder '1' als erstes Zeichen gehen allein, 'A' oder '!' als erstes Zeichen als Um. GB, Zeichen. Die Zeichenfolgen mit Umschaltzeichen werden vom Rechner
+mitgezaehlt (Speicherung), der Lage des SW folgt die Anzeige. Zeichen mit gleichem Code in beiden Lagen (ZR, TAB, WRZL) gehen allein und aendern die Lage nicht (G3-008).
 """
 import threading
 import time
 
 import c8205_interp as I
 
-VERSION_SW = 'G4-008'
+VERSION_SW = 'G4-011'
 BREITE = 130          # rechter Anschlag
 TAB_ABSTAND = 12      # Tabulatorstopp alle 12 Zeichen
 _ECHO = {'WRZL': '\n', 'TAB': '\t', 'ZR': ' '}      # K0-Zeichen -> Text fuer die Anzeige der Eingabe (alle anderen Zeichen: sie selbst)
@@ -156,9 +157,8 @@ def lage_des_zeichens(zeichen):
 def abbilden(zeichen, lage):
     """Getipptes Computertastatur-Zeichen -> Liste von K0-Zeichen, die der Rechner nacheinander erhalten muss
     (ggf. zuerst das Umschaltzeichen), oder None, wenn das Zeichen im R300-Code nicht vorkommt (nicht angenommen).
-    lage: aktuelle Zeichenlage des SW selbst, 'KB' oder 'GB' (SwEingabe.lage), NICHT die Lage des Rechners; None = Vorzustand unbestimmt
-    (nach dem Einschalten): das Fenster kennt die Lage nicht und sendet daher bei jedem Zeichen mit bestimmter Lage zuerst das
-    Umschaltzeichen (Regel des Projektinhabers 18.10.2026, G3-008). Zeichen mit gleichem Code in beiden Lagen (ZR, TAB, WRZL) gehen allein."""
+    lage: aktuelle Zeichenlage des SW selbst, 'KB' oder 'GB' (SwEingabe.lage), NICHT die Lage des Rechners; None = Lage unbekannt (nur noch fuer Pruefungen):
+    das Fenster sendet dann bei jedem Zeichen mit bestimmter Lage zuerst das Umschaltzeichen. Nach dem Einschalten ist die Lage KB (G4-010). Zeichen mit gleichem Code in beiden Lagen (ZR, TAB, WRZL) gehen allein."""
     if len(zeichen) != 1:
         return None
     if zeichen == '\r' or zeichen == '\n':
@@ -172,7 +172,7 @@ def abbilden(zeichen, lage):
     if not _zeilen_fuer(zeichen) or all(r[0] in (25, 26) for r in _zeilen_fuer(zeichen)):
         return None
     need = lage_des_zeichens(zeichen)
-    if need is None or lage == need:                  # lage None (erstes Zeichen nach dem Einschalten) ist ungleich need: Umschaltzeichen geht immer mit
+    if need is None or lage == need:                  # lage None (nur Pruefungen) ist ungleich need: Umschaltzeichen geht immer mit
         return [zeichen]
     return ['Um. KB' if need == _KB else 'Um. GB', zeichen]
 
@@ -221,7 +221,7 @@ class SwEingabe:
         self.rueck = rueck              # Aufruf ohne Argument: Rücktaste im Anzeigefenster ausführen (G4-006); None = keine Anzeige (Prüfungen)
         self.puffer = []                # [[Token, frei_ab, zweite_haelfte], ...]; frei_ab = Zeitpunkt, ab dem die Eingabe gesendet werden darf; None = erst nach loslassen();
         #                                 zweite_haelfte = True beim Zeichen eines Paares (Umschaltzeichen, Zeichen)
-        self.lage = None                # Zeichenlage des SW selbst (nach dem zuletzt GELIEFERTEN Token); nach dem Einschalten unbestimmt (None).
+        self.lage = _KB                 # Zeichenlage des SW selbst (nach dem zuletzt GELIEFERTEN Token); nach dem Einschalten KB (Festlegung 29.10.2026, G4-010).
         #                                 Die Lage des Rechners (m.zeichenlage) spielt hier keine Rolle
         self.verworfen_zaehler = 0      # Eingaben, die der Puffer bei Kanalwechsel verworfen hat (Protokoll, Pruefungen)
         self._kanal_stand = getattr(maschine, 'kanal_wechsel', 0)
@@ -233,10 +233,17 @@ class SwEingabe:
         fl = getattr(self.m, 'fl', None)
         return bool(fl.get('SW')) if fl is not None else True
 
+    def _h_ohne_011(self):
+        """G4-011 (Fehler des Projektinhabers 30.10.2026): True im H-Zustand (Flag H, Schalter H), solange KEIN 011 auf das SW wartet. Dann arbeitet der
+        Rechner keinen Eingabebefehl ab: die Taste klingt (SW ist freigegeben), geht aber nicht in den Puffer und es erscheint nichts; auch nach R nicht.
+        Mit aktivem 011 (Einzelschritt E im H-Zustand) gilt das nicht: das Zeichen wird wie sonst angenommen."""
+        fl = getattr(self.m, 'fl', None)
+        return bool(fl.get('H')) if fl is not None and not self.k0.offen('SW') else False
+
     def _kanal_pruefen(self):
-        """Kanalwechsel seit dem Fuellen (Zaehler) oder K0/SW nicht mehr angewaehlt: Puffer verwerfen."""
+        """Kanalwechsel seit dem Fuellen (Zaehler), K0/SW nicht mehr angewaehlt oder H-Zustand ohne aktiven 011: Puffer verwerfen."""
         stand = getattr(self.m, 'kanal_wechsel', 0)
-        if stand != self._kanal_stand or not self._kanal_sw():
+        if stand != self._kanal_stand or not self._kanal_sw() or self._h_ohne_011():
             self._kanal_stand = stand
             if self.puffer:
                 # Ausnahme: die zweite Haelfte eines Paares, dessen erste (Umschaltzeichen) schon beim Rechner ist, bleibt. Umschaltzeichen und
@@ -317,6 +324,7 @@ class SwEingabe:
         'folgt'       das Umschaltzeichen ist angenommen, das Zeichen folgt mit dem echten Tastenabstand (liefern()) oder beim Loslassen (loslassen());
         'vorgemerkt'  der Rechner ist noch nicht bei einem 011: die Eingabe wartet im Puffer (Anzeige erst bei Annahme);
         'voll'        Puffer voll: die Taste geht verloren;
+        'angehalten'  H-Zustand ohne aktiven 011 (G4-011): nur der Klang, keine Eingabe, keine Anzeige, nichts im Puffer (auch nicht fuer nach R);
         'blockiert'   K0/SW nicht angewaehlt: Taste gesperrt, keine Eingabe, keine Anzeige, nichts im Puffer;
         'verworfen'   Zeichen nicht im R300-Code."""
         with self._lock:
@@ -326,6 +334,10 @@ class SwEingabe:
             tok = abbilden(zeichen, self._lage_vorschau())
             if tok is None:
                 return 'verworfen'
+            if self._h_ohne_011():                  # G4-011: H-Zustand, kein 011 aktiv: nur der Klang, nichts vormerken, nichts anzeigen
+                if self.klick is not None and not tok[-1].startswith('Um.'):
+                    self.klick(_ECHO.get(tok[-1], tok[-1]))
+                return 'angehalten'
             for eintrag in self.puffer:             # keine Zeichen dazwischen: eine ausstehende zweite Eingabe ist jetzt frei
                 if eintrag[1] is None:
                     eintrag[1] = 0.0

@@ -1,0 +1,11 @@
+0000: 01 0011 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000011        dw  9     ; Quadrat, von hinten
+0002: 00 00000000004        dw  4     ; Quadrat, von hinten
+0003: 00 00000000001        dw  1     ; Quadrat, von hinten
+0004: 0                     dw  0     ; Quadrat, von hinten
+0005: 00 00000000001        dw  1     ; Quadrat, von hinten
+0006: 0                     dw  0     ; Quadrat, von hinten
+0007: 00 00000000052        dw  42    ; 42
+0010: 00 00000000003        dw  3     ; Anzahl der Elemente des globalen Felds
+0011: 01 0001 164    haupt: 164 0001  ; Zelle 9: Diagnoseausgabe (nur im Test)
+0012: 01 0000 020           020 0     ; Zelle 10: Halt

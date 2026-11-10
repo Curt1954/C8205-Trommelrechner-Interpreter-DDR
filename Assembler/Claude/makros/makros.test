@@ -1,0 +1,332 @@
+Trommeldatei:
+#DOK-0001 Test der Makros SCHIEBE_LI, SCHIEBE_RE, ARRAY_ADD, ARRAY_SUB, ARRAY_SWAP, ERHOEHE, ZEIGER_NAECHST
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000362211 # haupt: 211 i1 ; Lade `i1`
+0002: 00000360210 # 210 afeld ; Addiere Anfangsadresse des Arrays
+0003: 00000473210 # 210 l0001 ; Füge den Additionsbefehls-Operationscode zur Adresse hinzu
+0004: 00000006240 # 240 badd ; Speichere den Additionsbefehl für `afeld[i1]` nach badd
+0005: 00000353211 # 211 eins ; AC := 1
+0007: 00000370240 # 240 eadd ; eadd := 8
+0010: 00000363211 # 211 i2 ; Lade `i2`
+0011: 00000360210 # 210 afeld ; Addiere Anfangsadresse des Arrays
+0012: 00000474210 # 210 l0002 ; Füge den Subtraktionsbefehls-Operationscode zur Adresse hinzu
+0013: 00000015240 # 240 bsub ; Speichere den Subtraktionsbefehl für `afeld[i2]` nach bsub
+0014: 00000364211 # 211 hundert ; AC := 64
+0016: 00000371240 # 240 esub ; esub := 55
+0017: 00000361211 # 211 i0 ; Lade `i0`
+0020: 00000360210 # 210 afeld ; Addiere Anfangsadresse des Arrays
+0021: 00000475210 # 210 l0003 ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
+0022: 00000035240 # 240 ML0004JQX ; Speichere den vollständigen Ladebefehl für `afeld[i0]`
+0023: 00000476200 # 200 l0004 ; Operationscode 211 ausblenden
+0024: 00000477210 # 210 l0005 ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu
+0025: 00000040240 # 240 ML0002JQX ; Speichere Speicherbefehl für `afeld[i0]` zum Umladen temporäres Element
+0026: 00000363211 # 211 i2 ; Lade `i2`
+0027: 00000360210 # 210 afeld ; Addiere Anfangsadresse des Arrays
+0030: 00000477210 # 210 l0005 ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu
+0031: 00000042240 # 240 ML0001JQX ; Speichere Speicherbefehl für `afeld[i2]` zum Umladen temporäres Element
+0032: 00000476200 # 200 l0004 ; Operationscode 240 ausblenden
+0033: 00000475210 # 210 l0003 ; Füge den Ladebefehls-Operationscode zur Adresse hinzu
+0034: 00000037240 # 240 ML0003JQX ; Speichere den Ladebefehl für `afeld[i2]`
+0035: 00000000000 # ML0004JQX: dw 0 ; Hier steht der Ladebefehl für       211 afeld[i0]
+0036: 00000367240 # 240 tmp ; Speichere auf Hilfsspeicherplatz:   240 tmp
+0037: 00000000000 # ML0003JQX: dw 0 ; Hier steht der Ladebefehl für       211 afeld[i2]
+0040: 00000000000 # ML0002JQX: dw 0 ; Hier steht der Speicherbefehl       240 afeld[i0]
+0041: 00000367211 # 211 tmp ; Lade von Hilfsspeicherplatz:        211 tmp
+0042: 00000000000 # ML0001JQX: dw 0 ; Hier steht der Speicherbefehl für   240 afeld[i2]
+0043: 00000372240 # 240 eswap ; AC nach ARRAY_SWAP (= altes feld[0]) sichern
+0044: 00000366211 # 211 idx ; Lade `idx`
+0045: 00000500210 # 210 l0006 ; Addiere eine Adresseneinheit
+0046: 00000366240 # 240 idx ; Speichere zurück nach `idx`
+0047: 00000365211 # 211 zeiger ; Lade den Zeiger `zeiger`
+0050: 00000500210 # 210 l0006 ; Addiere eine Adresseneinheit (nächstes Wort)
+0051: 00000365240 # 240 zeiger ; Speichere den Zeiger zurück nach `zeiger`
+0052: 00000353211 # 211 eins ; AC := 1
+0053: 00007663644 # 644 07663 ; 1 mal Linksverschiebung (Operand nach Festlegung 026)
+0054: 00000373240 # 240 l01 ; Ergebnis ablegen
+0055: 00000353211 # 211 eins ; AC := 1
+0056: 00007646644 # 644 07646 ; 2 mal Linksverschiebung (Operand nach Festlegung 026)
+0057: 00000374240 # 240 l02 ; Ergebnis ablegen
+0060: 00000353211 # 211 eins ; AC := 1
+0061: 00007671644 # 644 07671 ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0062: 00000375240 # 240 l03 ; Ergebnis ablegen
+0063: 00000353211 # 211 eins ; AC := 1
+0064: 00007654644 # 644 07654 ; 4 mal Linksverschiebung (Operand nach Festlegung 026)
+0065: 00000376240 # 240 l04 ; Ergebnis ablegen
+0066: 00000353211 # 211 eins ; AC := 1
+0067: 00007677644 # 644 07677 ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+0070: 00000377240 # 240 l05 ; Ergebnis ablegen
+0071: 00000353211 # 211 eins ; AC := 1
+0072: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0073: 00000400240 # 240 l06 ; Ergebnis ablegen
+0074: 00000353211 # 211 eins ; AC := 1
+0075: 00007645644 # 644 07645 ; 7 mal Linksverschiebung (Operand nach Festlegung 026)
+0076: 00000401240 # 240 l07 ; Ergebnis ablegen
+0077: 00000353211 # 211 eins ; AC := 1
+0100: 00007670644 # 644 07670 ; 8 mal Linksverschiebung (Operand nach Festlegung 026)
+0101: 00000402240 # 240 l08 ; Ergebnis ablegen
+0102: 00000353211 # 211 eins ; AC := 1
+0103: 00007653644 # 644 07653 ; 9 mal Linksverschiebung (Operand nach Festlegung 026)
+0104: 00000403240 # 240 l09 ; Ergebnis ablegen
+0105: 00000353211 # 211 eins ; AC := 1
+0106: 00007676644 # 644 07676 ; 10 mal Linksverschiebung (Operand nach Festlegung 026)
+0107: 00000404240 # 240 l10 ; Ergebnis ablegen
+0110: 00000353211 # 211 eins ; AC := 1
+0111: 00007661644 # 644 07661 ; 11 mal Linksverschiebung (Operand nach Festlegung 026)
+0112: 00000405240 # 240 l11 ; Ergebnis ablegen
+0113: 00000353211 # 211 eins ; AC := 1
+0114: 00007644644 # 644 07644 ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0115: 00000406240 # 240 l12 ; Ergebnis ablegen
+0116: 00000353211 # 211 eins ; AC := 1
+0117: 00007667644 # 644 07667 ; 13 mal Linksverschiebung (Operand nach Festlegung 026)
+0120: 00000407240 # 240 l13 ; Ergebnis ablegen
+0121: 00000353211 # 211 eins ; AC := 1
+0122: 00007652644 # 644 07652 ; 14 mal Linksverschiebung (Operand nach Festlegung 026)
+0123: 00000410240 # 240 l14 ; Ergebnis ablegen
+0124: 00000353211 # 211 eins ; AC := 1
+0125: 00007675644 # 644 07675 ; 15 mal Linksverschiebung (Operand nach Festlegung 026)
+0126: 00000411240 # 240 l15 ; Ergebnis ablegen
+0127: 00000353211 # 211 eins ; AC := 1
+0130: 00007660644 # 644 07660 ; 16 mal Linksverschiebung (Operand nach Festlegung 026)
+0131: 00000412240 # 240 l16 ; Ergebnis ablegen
+0132: 00000353211 # 211 eins ; AC := 1
+0133: 00007643644 # 644 07643 ; 17 mal Linksverschiebung (Operand nach Festlegung 026)
+0134: 00000413240 # 240 l17 ; Ergebnis ablegen
+0135: 00000353211 # 211 eins ; AC := 1
+0136: 00007666644 # 644 07666 ; 18 mal Linksverschiebung (Operand nach Festlegung 026)
+0137: 00000414240 # 240 l18 ; Ergebnis ablegen
+0140: 00000353211 # 211 eins ; AC := 1
+0141: 00007651644 # 644 07651 ; 19 mal Linksverschiebung (Operand nach Festlegung 026)
+0142: 00000415240 # 240 l19 ; Ergebnis ablegen
+0143: 00000353211 # 211 eins ; AC := 1
+0144: 00007674644 # 644 07674 ; 20 mal Linksverschiebung (Operand nach Festlegung 026)
+0145: 00000416240 # 240 l20 ; Ergebnis ablegen
+0146: 00000353211 # 211 eins ; AC := 1
+0147: 00007657644 # 644 07657 ; 21 mal Linksverschiebung (Operand nach Festlegung 026)
+0150: 00000417240 # 240 l21 ; Ergebnis ablegen
+0151: 00000353211 # 211 eins ; AC := 1
+0152: 00007642644 # 644 07642 ; 22 mal Linksverschiebung (Operand nach Festlegung 026)
+0153: 00000420240 # 240 l22 ; Ergebnis ablegen
+0154: 00000353211 # 211 eins ; AC := 1
+0155: 00007665644 # 644 07665 ; 23 mal Linksverschiebung (Operand nach Festlegung 026)
+0156: 00000421240 # 240 l23 ; Ergebnis ablegen
+0157: 00000353211 # 211 eins ; AC := 1
+0160: 00007650644 # 644 07650 ; 24 mal Linksverschiebung (Operand nach Festlegung 026)
+0161: 00000422240 # 240 l24 ; Ergebnis ablegen
+0162: 00000353211 # 211 eins ; AC := 1
+0163: 00007673644 # 644 07673 ; 25 mal Linksverschiebung (Operand nach Festlegung 026)
+0164: 00000423240 # 240 l25 ; Ergebnis ablegen
+0165: 00000353211 # 211 eins ; AC := 1
+0166: 00007656644 # 644 07656 ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0167: 00000424240 # 240 l26 ; Ergebnis ablegen
+0170: 00000353211 # 211 eins ; AC := 1
+0171: 00007641644 # 644 07641 ; 27 mal Linksverschiebung (Operand nach Festlegung 026)
+0172: 00000425240 # 240 l27 ; Ergebnis ablegen
+0173: 00000353211 # 211 eins ; AC := 1
+0174: 00007664644 # 644 07664 ; 28 mal Linksverschiebung (Operand nach Festlegung 026)
+0175: 00000426240 # 240 l28 ; Ergebnis ablegen
+0176: 00000353211 # 211 eins ; AC := 1
+0177: 00007647644 # 644 07647 ; 29 mal Linksverschiebung (Operand nach Festlegung 026)
+0200: 00000427240 # 240 l29 ; Ergebnis ablegen
+0201: 00000353211 # 211 eins ; AC := 1
+0202: 00007672644 # 644 07672 ; 30 mal Linksverschiebung (Operand nach Festlegung 026)
+0203: 00000430240 # 240 l30 ; Ergebnis ablegen
+0204: 00000353211 # 211 eins ; AC := 1
+0205: 00007655644 # 644 07655 ; 31 mal Linksverschiebung (Operand nach Festlegung 026)
+0206: 00000431240 # 240 l31 ; Ergebnis ablegen
+0207: 00000353211 # 211 eins ; AC := 1
+0210: 00007640644 # 644 07640 ; 32 mal Linksverschiebung (Operand nach Festlegung 026)
+0211: 00000432240 # 240 l32 ; Ergebnis ablegen
+0212: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0213: 00007663642 # 642 07663 ; 1 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0214: 00000433240 # 240 r01 ; Ergebnis ablegen
+0215: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0216: 00007646642 # 642 07646 ; 2 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0217: 00000434240 # 240 r02 ; Ergebnis ablegen
+0220: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0221: 00007671642 # 642 07671 ; 3 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0222: 00000435240 # 240 r03 ; Ergebnis ablegen
+0223: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0224: 00007654642 # 642 07654 ; 4 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0225: 00000436240 # 240 r04 ; Ergebnis ablegen
+0226: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0227: 00007677642 # 642 07677 ; 5 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0230: 00000437240 # 240 r05 ; Ergebnis ablegen
+0231: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0232: 00007662642 # 642 07662 ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0233: 00000440240 # 240 r06 ; Ergebnis ablegen
+0234: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0235: 00007645642 # 642 07645 ; 7 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0236: 00000441240 # 240 r07 ; Ergebnis ablegen
+0237: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0240: 00007670642 # 642 07670 ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0241: 00000442240 # 240 r08 ; Ergebnis ablegen
+0242: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0243: 00007653642 # 642 07653 ; 9 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0244: 00000443240 # 240 r09 ; Ergebnis ablegen
+0245: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0246: 00007676642 # 642 07676 ; 10 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0247: 00000444240 # 240 r10 ; Ergebnis ablegen
+0250: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0251: 00007661642 # 642 07661 ; 11 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0252: 00000445240 # 240 r11 ; Ergebnis ablegen
+0253: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0254: 00007644642 # 642 07644 ; 12 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0255: 00000446240 # 240 r12 ; Ergebnis ablegen
+0256: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0257: 00007667642 # 642 07667 ; 13 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0260: 00000447240 # 240 r13 ; Ergebnis ablegen
+0261: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0262: 00007652642 # 642 07652 ; 14 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0263: 00000450240 # 240 r14 ; Ergebnis ablegen
+0264: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0265: 00007675642 # 642 07675 ; 15 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0266: 00000451240 # 240 r15 ; Ergebnis ablegen
+0267: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0270: 00007660642 # 642 07660 ; 16 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0271: 00000452240 # 240 r16 ; Ergebnis ablegen
+0272: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0273: 00007643642 # 642 07643 ; 17 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0274: 00000453240 # 240 r17 ; Ergebnis ablegen
+0275: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0276: 00007666642 # 642 07666 ; 18 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0277: 00000454240 # 240 r18 ; Ergebnis ablegen
+0300: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0301: 00007651642 # 642 07651 ; 19 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0302: 00000455240 # 240 r19 ; Ergebnis ablegen
+0303: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0304: 00007674642 # 642 07674 ; 20 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0305: 00000456240 # 240 r20 ; Ergebnis ablegen
+0306: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0307: 00007657642 # 642 07657 ; 21 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0310: 00000457240 # 240 r21 ; Ergebnis ablegen
+0311: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0312: 00007642642 # 642 07642 ; 22 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0313: 00000460240 # 240 r22 ; Ergebnis ablegen
+0314: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0315: 00007665642 # 642 07665 ; 23 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0316: 00000461240 # 240 r23 ; Ergebnis ablegen
+0317: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0320: 00007650642 # 642 07650 ; 24 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0321: 00000462240 # 240 r24 ; Ergebnis ablegen
+0322: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0323: 00007673642 # 642 07673 ; 25 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0324: 00000463240 # 240 r25 ; Ergebnis ablegen
+0325: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0326: 00007656642 # 642 07656 ; 26 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0327: 00000464240 # 240 r26 ; Ergebnis ablegen
+0330: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0331: 00007641642 # 642 07641 ; 27 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0332: 00000465240 # 240 r27 ; Ergebnis ablegen
+0333: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0334: 00007664642 # 642 07664 ; 28 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0335: 00000466240 # 240 r28 ; Ergebnis ablegen
+0336: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0337: 00007647642 # 642 07647 ; 29 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0340: 00000467240 # 240 r29 ; Ergebnis ablegen
+0341: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0342: 00007672642 # 642 07672 ; 30 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0343: 00000470240 # 240 r30 ; Ergebnis ablegen
+0344: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0345: 00007655642 # 642 07655 ; 31 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0346: 00000471240 # 240 r31 ; Ergebnis ablegen
+0347: 00000354211 # 211 bit31 ; AC := 2 hoch 31
+0350: 00007640642 # 642 07640 ; 32 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0351: 00000472240 # 240 r32 ; Ergebnis ablegen
+0352: 00000000020 # halt: 020 0 ; Halt
+0353: 00000000001 # eins: dw 01 ; Konstante 1 (Ausgang fuer SCHIEBE_LI)
+0354: 20000000000 # bit31: dw 020000000000 ; Konstante 2 hoch 31 (Ausgang fuer SCHIEBE_RE)
+0355: 00000000005 # feld: dw 05 ; feld[0] = 5
+0356: 00000000007 # dw 07 ; feld[1] = 7
+0357: 00000000011 # dw 011 ; feld[2] = 9
+0360: 00000355000 # afeld: da feld ; Feldadresse im Adressfeld ($1 der ARRAY-Makros, nicht das Feld selbst)
+0361: 00000000000 # i0: dw 0 ; Index 0 in Adresseinheiten
+0362: 00000001000 # i1: dw 01000 ; Index 1 in Adresseinheiten
+0363: 00000002000 # i2: dw 02000 ; Index 2 in Adresseinheiten
+0364: 00000000100 # hundert: dw 0100 ; Konstante 64 (Minuend fuer ARRAY_SUB)
+0365: 00000003000 # zeiger: dw 03000 ; Zeigerzelle, Wert 3 Adresseinheiten
+0366: 00000005000 # idx: dw 05000 ; Indexzelle, Wert 5 Adresseinheiten
+0473: 00000000210 # l0001 dw 000000000210
+0474: 00000000220 # l0002 dw 000000000220
+0475: 00000000211 # l0003 dw 000000000211
+0476: 77777777000 # l0004 dw 077777777000
+0477: 00000000240 # l0005 dw 000000000240
+0500: 00000001000 # l0006 dw 000000001000
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0353 US=1
+0370: 00000000010   # eadd
+0371: 00000000067   # esub
+0372: 00000000005   # eswap
+0367: 00000000005   # tmp
+0355: 00000000011   # feld[0]
+0356: 00000000007   # feld[1]
+0357: 00000000005   # feld[2]
+0366: 00000006000   # idx
+0365: 00000004000   # zeiger
+0373: 00000000002   # l01 = SCHIEBE_LI 1
+0374: 00000000004   # l02 = SCHIEBE_LI 2
+0375: 00000000010   # l03 = SCHIEBE_LI 3
+0376: 00000000020   # l04 = SCHIEBE_LI 4
+0377: 00000000040   # l05 = SCHIEBE_LI 5
+0400: 00000000100   # l06 = SCHIEBE_LI 6
+0401: 00000000200   # l07 = SCHIEBE_LI 7
+0402: 00000000400   # l08 = SCHIEBE_LI 8
+0403: 00000001000   # l09 = SCHIEBE_LI 9
+0404: 00000002000   # l10 = SCHIEBE_LI 10
+0405: 00000004000   # l11 = SCHIEBE_LI 11
+0406: 00000010000   # l12 = SCHIEBE_LI 12
+0407: 00000020000   # l13 = SCHIEBE_LI 13
+0410: 00000040000   # l14 = SCHIEBE_LI 14
+0411: 00000100000   # l15 = SCHIEBE_LI 15
+0412: 00000200000   # l16 = SCHIEBE_LI 16
+0413: 00000400000   # l17 = SCHIEBE_LI 17
+0414: 00001000000   # l18 = SCHIEBE_LI 18
+0415: 00002000000   # l19 = SCHIEBE_LI 19
+0416: 00004000000   # l20 = SCHIEBE_LI 20
+0417: 00010000000   # l21 = SCHIEBE_LI 21
+0420: 00020000000   # l22 = SCHIEBE_LI 22
+0421: 00040000000   # l23 = SCHIEBE_LI 23
+0422: 00100000000   # l24 = SCHIEBE_LI 24
+0423: 00200000000   # l25 = SCHIEBE_LI 25
+0424: 00400000000   # l26 = SCHIEBE_LI 26
+0425: 01000000000   # l27 = SCHIEBE_LI 27
+0426: 02000000000   # l28 = SCHIEBE_LI 28
+0427: 04000000000   # l29 = SCHIEBE_LI 29
+0430: 10000000000   # l30 = SCHIEBE_LI 30
+0431: 20000000000   # l31 = SCHIEBE_LI 31
+0432: 40000000000   # l32 = SCHIEBE_LI 32
+0433: 10000000000   # r01 = SCHIEBE_RE 1
+0434: 04000000000   # r02 = SCHIEBE_RE 2
+0435: 02000000000   # r03 = SCHIEBE_RE 3
+0436: 01000000000   # r04 = SCHIEBE_RE 4
+0437: 00400000000   # r05 = SCHIEBE_RE 5
+0440: 00200000000   # r06 = SCHIEBE_RE 6
+0441: 00100000000   # r07 = SCHIEBE_RE 7
+0442: 00040000000   # r08 = SCHIEBE_RE 8
+0443: 00020000000   # r09 = SCHIEBE_RE 9
+0444: 00010000000   # r10 = SCHIEBE_RE 10
+0445: 00004000000   # r11 = SCHIEBE_RE 11
+0446: 00002000000   # r12 = SCHIEBE_RE 12
+0447: 00001000000   # r13 = SCHIEBE_RE 13
+0450: 00000400000   # r14 = SCHIEBE_RE 14
+0451: 00000200000   # r15 = SCHIEBE_RE 15
+0452: 00000100000   # r16 = SCHIEBE_RE 16
+0453: 00000040000   # r17 = SCHIEBE_RE 17
+0454: 00000020000   # r18 = SCHIEBE_RE 18
+0455: 00000010000   # r19 = SCHIEBE_RE 19
+0456: 00000004000   # r20 = SCHIEBE_RE 20
+0457: 00000002000   # r21 = SCHIEBE_RE 21
+0460: 00000001000   # r22 = SCHIEBE_RE 22
+0461: 00000000400   # r23 = SCHIEBE_RE 23
+0462: 00000000200   # r24 = SCHIEBE_RE 24
+0463: 00000000100   # r25 = SCHIEBE_RE 25
+0464: 00000000040   # r26 = SCHIEBE_RE 26
+0465: 00000000020   # r27 = SCHIEBE_RE 27
+0466: 00000000010   # r28 = SCHIEBE_RE 28
+0467: 00000000004   # r29 = SCHIEBE_RE 29
+0470: 00000000002   # r30 = SCHIEBE_RE 30
+0471: 00000000001   # r31 = SCHIEBE_RE 31
+0472: 00000000000   # r32 = SCHIEBE_RE 32

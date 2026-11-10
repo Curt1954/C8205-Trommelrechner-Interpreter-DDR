@@ -1,0 +1,4 @@
+rc 16
+stderr Fehler: Name HOLE ist doppelt mit verschiedenem Code vergeben: 211
+datei-weg obj mqo test
+escape-weg

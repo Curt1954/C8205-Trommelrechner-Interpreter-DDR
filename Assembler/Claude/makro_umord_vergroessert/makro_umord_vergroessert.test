@@ -1,0 +1,18 @@
+Trommeldatei:
+#TROMMEL=LEER
+#DOK-0001 Vergroesserung der Endadresse (fester Sprung): Umordnung verworfen, Rumpf bleibt auf 0002
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # haupt: 020 0 ; Zelle 0001: Halt (das UP wird nicht aufgerufen, nur erzeugt)
+0002: 00000000701 # m4a: dw 0701 ; erste Rumpfzelle (Marke fuer den Test)
+0007: 00000000702 # dw 0702 ; letzte Rumpfzelle (Marke fuer den Test)
+0100: 00000000111 # d1: dw 0111 ; Datenzelle 1
+0101: 00000000222 # d2: dw 0222 ; Datenzelle 2
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0002
+0002: 00000000701   # M4A, erste Zelle: bleibt am Aufruf
+0007: 00000000702   # M4A, letzte Zelle
+0100: 00000000111   # d1: fester Sprung
+0101: 00000000222   # d2
+0102: 00000000000   # hinter den Daten steht nichts (M4A waere sonst hier)

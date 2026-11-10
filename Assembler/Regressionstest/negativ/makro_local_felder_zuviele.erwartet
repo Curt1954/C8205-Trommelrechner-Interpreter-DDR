@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_felder_zuviele.asm:8: Fehler: L7 $LOCAL f17: mehr als 16 lokale Felder in einem Makroaufruf (auch die mit $DIM angelegten zählen)
+datei-weg obj mqo test
+escape-weg

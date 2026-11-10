@@ -1,0 +1,21 @@
+args --probeausgabe
+rc 0
+stdout Adressen fuer adr/abstand: 2 Probelaeufe, 2 Marken.
+stderr-reihe Probelauf 1: Hinweis: Makro CHK
+stderr Probelauf 1: Hinweis: Makro CHK (
+stderr chk probe=1 abstand=0
+stderr Probelauf 1: Spur CHK 1: $SET x 5 => x: (neu) -> 5
+stderr Probelauf 1: Hinweis: Makro CHK (
+stderr Probelauf 1:   x = 5  (global)
+stderr Probelauf 1: Spur CHK 2: erzeugt dw 0
+stderr-reihe Probelauf 2: Hinweis: Makro CHK
+stderr chk probe=1 abstand=2
+stderr Probelauf 2: Spur CHK 2: erzeugt dw 2
+stderr-reihe chk probe=0 abstand=2
+anzahl-stderr 2 chk probe=1
+anzahl-stderr 1 chk probe=0
+nicht-stderr Probelauf 3
+nicht-stderr fehlgeschlagen
+datei-da obj
+datei-weg adr1 adr2 adrlog adrdbg
+escape-weg

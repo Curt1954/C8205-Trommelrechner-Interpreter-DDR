@@ -1,0 +1,4 @@
+rc 16
+stderr makro_name_default_doppelt.asm:7: Fehler: $DEFAULT für Parameter $zweiter steht mehrfach
+datei-weg obj mqo test
+escape-weg

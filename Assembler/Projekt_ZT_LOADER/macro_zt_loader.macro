@@ -1,0 +1,534 @@
+# macro_zt_loader.macro -- projektspezifische Makrodatei fuer die Programme des Zusatztrommel-Laders (ZT)
+#
+# Einbindung im Quelltext:  ;#MACRODATEI1=<Pfad>   (relativ zum Verzeichnis der Quelldatei, sonst zum Arbeitsverzeichnis)
+# Suchreihenfolge der Makros: 1. im Quelltext, 2. in den Dateien ;#MACRODATEI1 bis ;#MACRODATEI9, 3. in c82ass.makros.
+#
+# Uebersicht
+#   Unterprogramm:      TYP10EINGABE  KAT4AUSGABE_G  ZTINIT  PNAME  NEUANL  HSCHL
+#   Konstanten:         ZTKONST (erzeugt keine Zelle: ZT_EINTRAGSZELLEN, ZT_VERZSPUREN, ZT_PROGSPUR1)
+#
+# Zahlen des Verzeichnisses (seit 09.11.2026, ZT-Namen_kat5_Aufgabenstellung; Quelle: ZT-Repository_Aufgabenstellung 3.4 und 4): Eintrag = 2 Zellen (Wort 1 = Programmname als kat5, 1 bis 5 Zeichen, Wort 0 = unbenutzt;
+#   Wort 2 = Typ, ID, Trommel, Spur, Laenge, geloescht). Eintrag ID n liegt in den Zellen 2 * (n - 1) und 2 * (n - 1) + 1 des Verzeichnisses; das Verzeichnis belegt die Spuren 1 bis 32 (ID 1 bis 511 = 1022 Zellen),
+#   die erste Programmspur ist 33 (041 oktal), Zelle 19 von Spur 0 steht nach ZTINIT auf 32 dezimal = 040 oktal, SPUF-PN (2 Spuren = 64 Zellen) fasst ID 1 bis 32. Ein Leseprogramm (Auflisten, Suche, Laden) benutzt dieselben Zahlen.
+#   Diese Zahlen stehen zusaetzlich als benannte Konstanten im Makro ZTKONST (siehe dort); ein Leseprogramm ruft `ZTKONST` auf und schreibt die Namen statt der Zahlen.
+#
+# Konventionen: wie in c82ass.makros (Zeilen mit `#` sind nur Kommentar der Definition; generische Labels ML0001% ...).
+
+ZTKONST: MACRO
+         $SPEC TYP=E ACTION=None
+# ZTKONST: erzeugt KEINE Zelle, nur drei benannte abs-Konstanten fuer das Verzeichnis der Zusatztrommel (ZT-Namen_kat5_Aufgabenstellung 5 Punkt 5; Quelle der Zahlen: ZT-Repository_Aufgabenstellung 3.4 und 4).
+# Aufruf:     ZTKONST   (ohne Marke, ohne Parameter; an beliebiger Stelle des Quelltexts, auch mehrfach: der Rumpf entsteht nur beim ersten Aufruf im Lauf, globale Variable zt_konst_da; braucht c82ass ab 1.02-001 ($GLOBAL)).
+#             ZTINIT ruft ZTKONST selbst auf, und zwar NACH der ersten Zelle: steht der Aufruf vor der ersten Zelle, wird die Marke auf der Aufrufzeile von ZTINIT zu einem equ (`automatisch generiert`) statt zur Zelle (es benutzt denselben Wert als Zahl `#$V(zt_verzspuren_w)`, damit das Literal 32 mit einem gleichen Literal des Programms eine Zelle teilt wie vorher `#040`); ein Programm, das die Namen sonst benutzt (zil.asm: ZT_PROGSPUR1; ein Leseprogramm), ruft es ebenfalls einmal auf, am besten vor der ersten Verwendung.
+# Konstanten: ZT_EINTRAGSZELLEN = 2   Zellen je Verzeichniseintrag (Wort 1 = Name kat5, Wort 2 = Typ, ID, Trommel, Spur, Laenge, geloescht); Eintrag ID n beginnt in der Zelle ZT_EINTRAGSZELLEN * (n - 1).
+#             ZT_VERZSPUREN     = 32  Spuren des Verzeichnisses (Spuren 1 bis 32 von ZT 0); Spur 0 ist der Kopf. Zelle 19 von Spur 0 steht nach ZTINIT auf diesem Wert (letzte belegte Spur, 32 dezimal = 040 oktal).
+#             ZT_PROGSPUR1      = 33  erste Programmspur = ZT_VERZSPUREN + 1 (041 oktal).
+# Anwendung:  Operand `#ZT_PROGSPUR1` (dezimales Literal) oder im Ausdruck; ein Literal mit Symbol (`#ZT_VERZSPUREN`) teilt sich keine Zelle mit einem gleichen Zahlenliteral des Programms, ein Makro nimmt deshalb die Zahl `#$V(zt_verzspuren_w)`; die Konstanten belegen keine Zelle, ein Befehl mit der Konstante erzeugt dieselbe Zelle wie mit dem Zahlenliteral.
+# Grenzen:    PNAME bildet 2 * Z als Z + Z (Linksschieben um 9 Stellen nach dem Addieren) und ist damit fest auf ZT_EINTRAGSZELLEN = 2 gebaut; auch die Puffergroesse SPUF-PN (2 Spuren = 64 Zellen = 32 Eintraege) haengt an der Eintragsgroesse.
+#             Eine Aenderung von ZT_EINTRAGSZELLEN verlangt daher auch eine Aenderung von PNAME und der Puffer; ZT_VERZSPUREN und ZT_PROGSPUR1 folgen dagegen aus der Aenderung einer einzigen Zeile (Pruefung: Programme zil, ztinit, pname und die Regressionsreferenz).
+         $GLOBAL zt_konst_da                      ; Konstanten schon erzeugt? (0 = nein)
+         $IF $V(zt_konst_da) = 0
+         $SET zt_konst_da 1                       ; ab jetzt gilt: die Konstanten sind da
+ZT_EINTRAGSZELLEN: abs 2                          ; Zellen je Verzeichniseintrag
+         $GLOBAL zt_verzspuren_w                  ; Zahl der Verzeichnisspuren, einzige Stelle (die abs-Kette ZT_VERZSPUREN+1 geht in einem Literal nicht)
+         $SET zt_verzspuren_w 32
+ZT_VERZSPUREN:     abs $V(zt_verzspuren_w)        ; Verzeichnisspuren (Spuren 1 bis 32)
+ZT_PROGSPUR1:      abs $CALC($V(zt_verzspuren_w)+1) ; erste Programmspur (33)
+         $ENDIF
+         MEND
+
+TYP10EINGABE: MACRO 1
+         $SPEC TYP=E ACTION=None
+$DEFAULT 1 0
+# TYP10EINGABE: Unterprogramm (Rumpf), liest EINE Typ-10-Eingabe vom angewaehlten Eingabekanal (z. B. K1 = Lochbandleser 1, K0 = SW) und bildet daraus die 2 Maschinenworte (ZT-Repository_Aufgabenstellung 7a, FEST).
+# Aufruf:     eingabe: TYP10EINGABE [ende]   (Marke steht auf der ersten Zelle des UP); optionaler Parameter ende = Marke des Streifenende-Ausgangs im AUFRUFENDEN Programm (siehe Streifenende); der Aufrufer waehlt den Kanal an, traegt R1 ein und ruft mit 025 auf: AC = Rueckkehrwort. Die Lage bestimmt der Lader (Programm relativ zu 0000).
+#             R1 = Register 7773 (abs 07773): Adresse des Bereichs aus 2 Zellen (Adressfeld, `da bereich`). R1 bleibt unveraendert. KB/GB: die globale Zelle KBGB = 7775 (0 = KB, 1 = GB), kein R3 (7a, 3.3).
+# Eingabe:    zuerst die zwei Kennzeichen (Zeichen 0 bis 9 und +), dann die Ziffern, dann `.` oder `:` (Ende, wird nicht gespeichert). Der Punkt beendet die Eingabe sofort auch vor dem 2. Kennzeichen (z. B. `2 .`).
+# Wort 1:     (Bereich + 0) Ziffern 0 bis 7 als Oktalziffern (je 3 Bit), aeltere gehen links verloren (die letzten 11 bleiben), weniger als 11 ergeben Vornullen; 8, 9 und + im Ziffernteil werden uebergangen.
+# Wort 2:     (Bereich + 1) Kennzeichen 1 (erstes Zeichen) in z21 bis z26, Kennzeichen 2 in z27 bis z32, je als Eingabeadresse der Kodetabelle R 300 (6 Bit); fehlende Kennzeichen = 0; z0 bis z20 = 0.
+# Streifenende (nur mit Parameter ende, Festlegung Inhaber 01.11.2026): das Zeichen / (Eingabeadresse 61) springt sofort nach ende (kein Ruecksprung zum Aufrufer, wie ein Fehlerausgang), egal ob vor dem ersten Kennzeichen oder mitten in einer Eingabe; eine begonnene Eingabe wird verworfen (es wird nichts in den Bereich geschrieben). Ohne Parameter wird / wie jedes andere Zeichen ignoriert (Verhalten wie bisher).
+# Ignoriert:  alle anderen Zeichen (Leertaste, WRZL, Irrung, Buchstaben, ...): nicht gespeichert, nicht gezaehlt, beenden nichts. Um. GB und Um. KB fuehren nur KBGB nach (Um. GB := 1, Um. KB := 0).
+# AC:         bei der Rueckkehr nichtnegativ (Wort 2); nicht auswerten. Zerstoert: die Zellen des UP (Arbeitszellen in der Tabelle: Zelle 13 Wort 1, 14 Wort 2, 17 Kennzeichenzaehler, 34 Code; Befehlszellen ML0009% und ML0010%) und die Spur 7640 (Schiebebefehle, Festlegung 026).
+# Rueckkehr:  der Aufrufer (025) liefert das Rueckkehrwort im AC; das UP sichert es auf die Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (Festlegung 010).
+# Tabelle:    ML0012% (64 Zellen, Eingabeadresse = Zellenadresse ODER ML0012%) liegt als ein Block (begin/bend) auf einer 0100-Grenze (`equ100 *`, davor bleiben bis zu 77 Zellen frei).
+#             ML0050% und ML0051% sind nur die abs-Marken von R1 und KBGB und belegen keine Zelle.
+# Arbeitsweise: 011 liest ein Zeichen und liefert die Tabellenzelle: Zeichen 0 bis 9 und + mit z0 und Code (6 Bit) in den unteren 6 Bit, alle anderen Zeichen ohne z0 (ignoriert). Zeichen mit Sprungumstellung (Leertaste, :, Irrung, WRZL, Punkt, Um. GB, -, Um. KB, ...)
+#             fuehren ihre Tabellenzelle als Sprung aus: `:` und `.` beenden (ML0006%), Um. GB und Um. KB fuehren KBGB nach, alle anderen springen zurueck zum Lesen (ML0003%). Zaehler ML0017% = noch zu lesende Kennzeichen (2, 1, 0); bei 0 folgen die Ziffern.
+                240     ML0001%              ; Rueckkehrwort sichern
+                241     ML0013%              ; Wort 1 := 0, AC := 0
+                241     ML0014%              ; Wort 2 := 0
+                211     #2                   ; zwei Kennzeichen sind noch zu lesen
+                240     ML0017%              ; zaehler := 2
+ML0003%:        011     ML0012%              ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+                040     ML0004%              ; z0 gesetzt: Ziffer oder +
+$IF $# > 0
+                330     ML0022%              ; Vergleich mit der Tabellenzelle 61 (/), keine Operation
+                170     $1                   ; gleich: Streifenende, Sprung zum Ausgang des Aufrufers
+$ENDIF
+                000     ML0003%              ; sonst: Zeichen ignorieren, weiterlesen
+ML0004%:        200     #077                 ; AC := Code des Zeichens (6 Bit)
+                240     ML0016%              ; code := Code
+                211     ML0017%              ; AC := noch zu lesende Kennzeichen
+                330     #0                   ; Vergleich mit 0 (keine Operation)
+                170     ML0005%              ; 0: Ziffernteil
+                220     #1                   ; AC := zaehler - 1
+                240     ML0017%              ; zaehler := zaehler - 1
+                211     ML0014%              ; AC := Wort 2 bisher
+                SCHIEBE_LI 6                 ; Kennzeichen 6 Bit nach links
+                210     ML0016%              ; plus Code des neuen Kennzeichens
+                240     ML0014%              ; Wort 2 := neues Wort 2
+                000     ML0003%              ; naechstes Zeichen
+ML0005%:        211     ML0016%              ; Ziffernteil: AC := Code
+                200     #070                 ; Bits ausser den drei unteren: 0 nur bei Oktalziffern 0 bis 7
+                220     #1                   ; AC := AC - 1 (negativ, wenn Oktalziffer)
+                050     ML0003%              ; AC >= 0: 8, 9 oder +: ignorieren
+                211     ML0013%              ; AC := Wort 1 bisher
+                SCHIEBE_LI 3                 ; Ziffer 3 Bit nach links (aeltere gehen links verloren)
+                210     ML0016%              ; plus Code der neuen Ziffer
+                240     ML0013%              ; Wort 1 := neues Wort 1
+                000     ML0003%              ; naechstes Zeichen
+ML0006%:        211     ML0017%              ; Ende (. oder :): AC := noch zu lesende Kennzeichen
+                330     #1                   ; Vergleich mit 1 (keine Operation)
+                170     ML0007%              ; 1: nur ein Kennzeichen gelesen, es gehoert nach Kennzeichen 1
+                000     ML0008%              ; sonst: Wort 2 ist richtig (0 oder 2 Kennzeichen; bei 2 ist Wort 2 = 0)
+ML0007%:        211     ML0014%              ; AC := Wort 2 (ein Kennzeichen)
+                SCHIEBE_LI 6                 ; Kennzeichen 1 nach z21 bis z26, Kennzeichen 2 = 0
+                240     ML0014%              ; Wort 2 := Kennzeichen 1 und 0
+ML0008%:        211     ML0050%              ; AC := R1 (Adresse des Bereichs)
+                210     #0240                ; plus Operationscode 240: Befehl 240 <Wort 1>
+                240     ML0009%              ; Speicherbefehl auf die naechste Zelle
+                211     ML0013%              ; AC := Wort 1
+ML0009%:        db      1                    ; Laufzeit: 240 <Bereich>, Wort 1 in die erste Zelle
+                211     ML0050%              ; AC := R1
+                210     #01240               ; plus eine Adresseneinheit und 240: Befehl 240 <Bereich + 1>
+                240     ML0010%              ; Speicherbefehl auf die naechste Zelle
+                211     ML0014%              ; AC := Wort 2 (nichtnegativ)
+ML0010%:        db      1                    ; Laufzeit: 240 <Bereich + 1>, Wort 2 in die zweite Zelle
+ML0001%:        db      1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0011%:        211     #1                   ; Um. GB: AC := 1
+                240     ML0051%              ; KBGB := 1
+                000     ML0003%              ; weiterlesen
+ML0018%:        241     ML0051%              ; Um. KB: KBGB := 0
+                000     ML0003%              ; weiterlesen
+
+; ---- Zeichentabelle (64 Zellen auf einer 0100-Grenze, Eingabeadresse = Zellenadresse ODER ML0012%), als ein Block (Festlegung 027)
+                equ100  *                    ; ML0012% muss durch 0100 teilbar sein
+ML0012%:        begin                        ; Beginn des Tabellenblocks (nichts darf verlegt werden)
+                dw      040000000000  ; 00: 0: gueltig, z0 gesetzt, Code 00
+                dw      040000000001  ; 01: 1: gueltig, z0 gesetzt, Code 01
+                dw      040000000002  ; 02: 2: gueltig, z0 gesetzt, Code 02
+                dw      040000000003  ; 03: 3: gueltig, z0 gesetzt, Code 03
+                dw      040000000004  ; 04: 4: gueltig, z0 gesetzt, Code 04
+                dw      040000000005  ; 05: 5: gueltig, z0 gesetzt, Code 05
+                dw      040000000006  ; 06: 6: gueltig, z0 gesetzt, Code 06
+                dw      040000000007  ; 07: 7: gueltig, z0 gesetzt, Code 07
+                dw      040000000010  ; 10: 8: gueltig, z0 gesetzt, Code 10
+                dw      040000000011  ; 11: 9: gueltig, z0 gesetzt, Code 11
+                000     ML0003%          ; 12: Leertaste: ignorieren
+ML0013%:       db      1             ; 13: Arbeitszelle: Wort 1, das gerade aufgebaut wird
+ML0014%:       db      1             ; 14: Arbeitszelle: Wort 2 (Kennzeichen)
+                000     ML0006%          ; 15: : beendet die Eingabe
+                000     ML0003%          ; 16: Irrung Satz: ignorieren
+ML0017%:       db      1             ; 17: Arbeitszelle: noch zu lesende Kennzeichen (2, 1, 0)
+                dw      040000000020  ; 20: +: gueltig, z0 gesetzt, Code 20
+                dw      0             ; 21: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 22: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 23: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 24: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 25: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 26: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 27: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 30: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 31: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                000     ML0003%          ; 32: WRZL: ignorieren
+                000     ML0006%          ; 33: . beendet die Eingabe
+ML0016%:       db      1             ; 34: Arbeitszelle: Code (6 Bit) des gelesenen Zeichens
+                dw      0             ; 35: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 36: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                000     ML0011%          ; 37: Um. GB: KBGB := 1
+                000     ML0003%          ; 40: - / Dreieck: ignorieren
+                dw      0             ; 41: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 42: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 43: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 44: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 45: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 46: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 47: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 50: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 51: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 52: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 53: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 54: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 55: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 56: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                000     ML0018%          ; 57: Um. KB: KBGB := 0
+                000     ML0003%          ; 60: ` / ;: ignorieren
+$IF $# > 0
+ML0022%:       dw      020000000000  ; 61: /: Streifenende-Kennung (z1 gesetzt, z0 nicht), nur zum Vergleich; Sprung nach ende
+$ELSE
+                dw      0             ; 61: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+$ENDIF
+                dw      0             ; 62: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 63: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 64: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 65: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 66: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 67: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 70: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 71: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                000     ML0003%          ; 72: BM: ignorieren
+                000     ML0003%          ; 73: , / ?: ignorieren
+                dw      0             ; 74: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                000     ML0003%          ; 75: Tabulator: ignorieren
+                dw      0             ; 76: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                dw      0             ; 77: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                bend                         ; Ende des Tabellenblocks
+ML0050%:        abs     07773                ; R1 (nur Marke)
+ML0051%:        abs     07775                ; KBGB, globale KB/GB-Zelle des Projekts (nur Marke)
+         MEND
+
+KAT4AUSGABE_G: MACRO
+         $SPEC TYP=E ACTION=None
+# AC: bei der Rueckkehr das letzte Textwort (mit z0). Zerstoerte Zellen: die Zellen des UP (Arbeitszellen ML0007% bis ML0009%, ML0011% und ML0001%) und die Zellen der Spur 7640 (ueber SCHIEBE_LI/SCHIEBE_RE). R1 = 7773 bleibt unveraendert; die globale KB/GB-Zelle KBGB (7775) wird gelesen und nachgefuehrt.
+# KAT4AUSGABE_G: Unterprogramm (Rumpf), gibt einen mit kat4 komprimierten Text (4 Zeichen je Wort, z0 am letzten Wort) auf dem angewaehlten Ausgabekanal aus und fuehrt dabei die globale KB/GB-Zelle des Projekts nach.
+#             Es ist eine Abwandlung von KAT4AUSGABE (c82ass.makros) fuer das Projekt ZT-Loader: die Zustandszelle kommt nicht ueber R3, sondern ist die EINE globale Zelle KBGB = Zelle 7775 (0 = KB, 1 = GB).
+# Aufruf:     ausgabe: KAT4AUSGABE_G   (Marke steht auf der ersten Zelle des UP)
+#             Startadresse des Textes: R1 = Register 7773 (abs 07773), im Adressfeld (da text); der Aufrufer traegt sie vorher ein (z. B. 211 radr, 240 07773). R1 bleibt unveraendert.
+#             Der Aufrufer waehlt vorher den Kanal an (z. B. ANWAHL K2) und ruft mit 025 auf: AC = Rueckkehrwort. R3 wird nicht benutzt.
+# Textanfang: Der Text ist so geschrieben, als stuende das Geraet bei seinem ersten Zeichen in KB. Das UP liest vor dem ersten Zeichen KBGB: steht sie auf GB (1), gibt es zuerst Um. KB aus und setzt KBGB := 0.
+#             Danach laeuft der Text unveraendert ab; die weiteren Umschaltzeichen stehen im Text (der Assembler fuegt bei kat4 keine ein).
+# Nachfuehren: Beim Ausgeben des Zeichens Um. GB (kat4 057) setzt das UP KBGB := 1, bei Um. KB (kat4 0117) KBGB := 0. KBGB hat bei der Rueckkehr den Zustand, den das Geraet nach dem letzten Zeichen hat.
+# Rueckkehr:  Das Rueckkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Ruecksprung, Festlegung 010).
+# Zellen:     ML0004% Ausgabebefehl, ML0007% Textwort, ML0008% Zeichenrest, ML0009% Zeiger, ML0011% Zeichen (Arbeitszellen im UP); ML0010% und ML0017% sind nur die abs-Marken von R1 und KBGB und belegen keine Zelle.
+             240 ML0001%              ; Rueckkehrwort sichern
+             211 ML0017%              ; AC := KBGB (0 = KB, 1 = GB)
+             330 #0                   ; Vergleich mit 0 (keine Operation)
+             170 ML0018%              ; KB: nichts auszugeben, der Text beginnt in KB
+             dz  $inkb                ; GB: erst Um. KB ausgeben
+             241 ML0017%              ; KBGB := 0 (241 loescht den AC und speichert 0)
+ML0018%:     211 ML0010%              ; AC := Startadresse des Textes
+             240 ML0009%              ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+ML0002%:     251 0                    ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+             240 ML0007%              ; tw := Textwort (mit z0)
+             200 #037777777777        ; z0 ausblenden, nur 32 Bit Zeichen
+             240 ML0008%              ; wort := Zeichenrest
+ML0003%:     211 ML0008%              ; AC := Zeichenrest
+             330 #0                   ; Vergleich mit 0 (keine Operation)
+             170 ML0005%              ; Rest 0: Wort fertig
+             200 #0377                ; unterstes Zeichen ausblenden
+             240 ML0011%              ; zeichen := Zeichen
+             330 #057                 ; Vergleich mit kat4 057 (Um. GB)
+             170 ML0012%              ; Um. GB: KBGB := 1
+             330 #0117                ; Vergleich mit kat4 117 (Um. KB)
+             170 ML0013%              ; Um. KB: KBGB := 0
+ML0014%:     211 ML0011%              ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+             SCHIEBE_LI 12            ; 12 Stellen links: Zeichen auf die Adresse des Ausgabebefehls
+             210 #030                 ; Operationscode 030 (Ausgabe) dazu
+             240 ML0004%              ; Ausgabebefehl auf die naechste Zelle speichern
+ML0004%:     db  1                    ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+             211 ML0008%              ; AC := Zeichenrest
+             SCHIEBE_RE 8             ; 8 Stellen rechts: naechstes Zeichen nach unten
+             240 ML0008%              ; wort := Rest
+             000 ML0003%              ; naechstes Zeichen
+ML0005%:     211 ML0007%              ; AC := Textwort mit z0 (negativ beim letzten Wort)
+             050 ML0006%              ; kein z0: naechstes Wort
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0006%:     211 ML0009%              ; AC := Adresse des Textwortes
+             210 #01000               ; plus eine Adresseneinheit
+             240 ML0009%              ; zeiger := Adresse des naechsten Wortes
+             000 ML0002%              ; AC ist der Zeiger, Textwort lesen
+ML0007%:     db  1                    ; Arbeitszelle: aktuelles Textwort
+ML0008%:     db  1                    ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0009%:     db  1                    ; Arbeitszelle: Adresse des aktuellen Textwortes
+ML0011%:     db  1                    ; Arbeitszelle: aktuelles Zeichen (waehrend der Zustandspruefung)
+ML0012%:     211 #1                   ; Um. GB: AC := 1 (Zustand GB)
+             240 ML0017%              ; KBGB := 1
+             000 ML0014%              ; zurueck zur Ausgabe des Zeichens
+ML0013%:     241 ML0017%              ; Um. KB: KBGB := 0 (241 loescht den AC und speichert 0)
+             000 ML0014%              ; zurueck zur Ausgabe des Zeichens
+ML0010%:     abs 07773                ; R1 (nur Marke)
+ML0017%:     abs 07775                ; KBGB, globale KB/GB-Zelle des Projekts (nur Marke)
+         MEND
+
+ZTINIT: MACRO
+         $SPEC TYP=E ACTION=None
+# ZTINIT: Unterprogramm (Rumpf) ztinit des Urladers (ZT-Repository_Aufgabenstellung 6a): loescht alle vier Zusatztrommeln (4 * 128 Spuren) und legt Spur 0 von ZT 0 an. Nur mit --C8205Z lauffaehig (Befehle 5k00 030 (k = d + 1) und 601).
+# Aufruf:     ztinit: ZTINIT   (Marke steht auf der ersten Zelle des UP); der Aufrufer traegt R1 ein und ruft mit 025 auf: AC = Rueckkehrwort.
+#             R1 = Register 7773 (abs 07773): Adresse von SPUF-00 im Adressfeld (`da spuf00`), SPUF-00 liegt auf einer Spurgrenze (Vielfaches von 040). R1 bleibt unveraendert (das UP ruft kein UP auf).
+# Rueckgabe:  keine. SPUF-00 enthaelt danach Spur 0 wie auf ZT 0 geschrieben (Zelle 0 = 52525252525, Zelle 16 = 1, Zelle 19 = 40 oktal (= 32 dezimal: Verzeichnis Spuren 1 bis 32, kat5-Name, Eintrag zu 2 Zellen), alle anderen 0). ZT 0 ist am Ende angewaehlt. Keine Ausschrift, KBGB wird nicht beruehrt.
+# Ablauf:     SPUF-00 := 0 (Gruppenbefehl 441, Nullpuffer). Schleife g = 0 bis 511 (g = 128 * d + s, beginnend mit Spur 0 von ZT 0): Anwahl der Trommel d = g div 128 (Wort 05100030 + d * 0100000) und Ausgabe des
+#             Nullpuffers auf Spur s = g mod 128 (Wort s * 2^26 + R1 + 601). Danach Spur 0 in SPUF-00 aufbauen, ZT 0 anwaehlen (030 05100) und Spur 0 von ZT 0 schreiben = 513 Ausgaben.
+# Befehlswoerter: Das Spurfeld zzz0 des Ausgabebefehls (s * 040, 12 Bit auf Bit 21 bis 32) wird durch Linksschieben von s um 26 Stellen gebildet (SCHIEBE_LI), nicht durch Addieren von 0400000000 je Spur: ab Spur 64
+#             wird das Wort negativ, und die Addition ueber diese Grenze erzeugte einen Ueberlauf (Halt wegen Ueberlauf). Schieben erzeugt keinen Ueberlauf; negativ + R1 + 601 ebenso nicht.
+# AC:         bei der Rueckkehr unbestimmt. Zerstoert: die Zellen des UP (Arbeitszelle ML0003% = g und die Befehlszellen ML0002%, ML0005%, ML0006%, ML0008%, ML0009%, ML0011%, ML0012%), die Spur 7640 (Schiebebefehle, Festlegung 026)
+#             und SPUF-00. ML0010% ist nur die abs-Marke von R1 und belegt keine Zelle.
+# Rueckkehr:  das Rueckkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (Festlegung 010).
+# Dauer:      513 Ausgaben zu je 82,5 bis 85,6 ms (Zeitmodell) = rund 43,9 s; im TEST-Interpreter sind alle Zeiten 0.
+             240 ML0001%              ; Rueckkehrwort sichern
+             ZTKONST                  ; benannte Konstanten, erzeugt keine Zelle (setzt die Variable zt_verzspuren_w)
+             $GLOBAL zt_verzspuren_w  ; Zahl der Verzeichnisspuren (aus ZTKONST)
+             211 ML0010%              ; AC := R1 (Adresse SPUF-00, Adressfeld)
+             210 #0441                ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen der Spur := 0)
+             240 ML0002%              ; Befehl 441 <SPUF-00> auf die naechste Zelle
+ML0002%:     db  1                    ; Laufzeit: 441 <SPUF-00>, SPUF-00 := 0 (Nullpuffer), AC := 0
+             241 ML0003%              ; g := 0 (laufende Spur 0 bis 511)
+ML0004%:     211 ML0003%              ; AC := g
+             200 #0600                ; nur d (Bit 7 und 8 von g, d * 0200)
+             SCHIEBE_LI 8             ; d * 0100000 (8 Stellen links)
+             210 #05100030            ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+             240 ML0005%              ; Anwahlbefehl auf die naechste Zelle
+ML0005%:     db  1                    ; Laufzeit: 5k00 030 (k = d + 1), ZT d anwaehlen
+             211 ML0003%              ; AC := g
+             200 #0177                ; nur s (Bit 0 bis 6 von g)
+             SCHIEBE_LI 26            ; s * 2^26 = zzz0 auf Bit 21 bis 32 (26 Stellen links, kein Ueberlauf)
+             210 ML0010%              ; plus R1 (Adresse SPUF-00)
+             210 #0601                ; plus Operationscode 601 (Ausgabe HT -> ZT)
+             240 ML0006%              ; Ausgabebefehl auf die naechste Zelle
+ML0006%:     db  1                    ; Laufzeit: zzz0 bbbb 601, Nullpuffer auf Spur s der gewaehlten ZT
+             211 ML0003%              ; AC := g
+             210 #1                   ; plus 1
+             240 ML0003%              ; g := g + 1
+             330 #01000               ; Vergleich mit 512 (keine Operation)
+             170 ML0007%              ; g = 512: alle 512 Spuren geloescht
+             000 ML0004%              ; naechste Spur
+ML0007%:     211 ML0010%              ; Spur 0 aufbauen: AC := R1
+             210 #0240                ; plus Operationscode 240 (Speichern), Zelle 0 von SPUF-00
+             240 ML0008%              ; Speicherbefehl auf die naechste Zelle
+             211 #052525252525        ; AC := Repository-Kennzeichen
+ML0008%:     db  1                    ; Laufzeit: 240 <SPUF-00 Zelle 0>
+             211 ML0010%              ; AC := R1
+             210 #020240              ; plus 16 Adresseneinheiten (16 * 01000 = 020000) und 240: Zelle 16
+             240 ML0009%              ; Speicherbefehl auf die naechste Zelle
+             211 #1                   ; AC := 1 (Repository-Kopf)
+ML0009%:     db  1                    ; Laufzeit: 240 <SPUF-00 Zelle 16>
+             211 ML0010%              ; AC := R1
+             210 #023240              ; plus 19 Adresseneinheiten (023 * 01000) und 240: Zelle 19
+             240 ML0011%              ; Speicherbefehl auf die naechste Zelle
+             211 #$V(zt_verzspuren_w) ; AC := 32 (ZT_VERZSPUREN, 040 oktal: letzte belegte Spur, Verzeichnis Spuren 1 bis 32)
+ML0011%:     db  1                    ; Laufzeit: 240 <SPUF-00 Zelle 19>
+             030 05100                ; Anwahl ZT 0 (5100 030)
+             211 ML0010%              ; AC := R1
+             210 #0601                ; plus 601, zzz0 = 0000: Spur 0
+             240 ML0012%              ; Ausgabebefehl auf die naechste Zelle
+ML0012%:     db  1                    ; Laufzeit: 0000 bbbb 601, Spur 0 von ZT 0 schreiben (513. Ausgabe)
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0003%:     db  1                    ; Arbeitszelle g: laufende Spur 0 bis 511 (g = 128 * d + s)
+ML0010%:     abs 07773                ; R1 (nur Marke)
+         MEND
+
+PNAME: MACRO
+         $SPEC TYP=E ACTION=None
+# PNAME: Unterprogramm (Rumpf) "Programmname eintragen" (Element 13 des ZIL, ZT-Repository_Aufgabenstellung 6 Punkt 6 und 6b). Allgemein nutzbar: es kennt weder das ZIL noch das Hauptprogramm.
+# Aufruf:     pname: PNAME   (Marke steht auf der ersten Zelle des UP); der Aufrufer traegt R1, R2 und R3 ein und ruft mit 025 auf: AC = Rueckkehrwort.
+#             R1 = Register 7773 (abs 07773): Adresse SPUF-PN im Adressfeld (`da spufpn`), 2-Spur-Puffer (64 Zellen) auf einer Spurgrenze.
+#             R2 = Register 7776 (abs 07776): Adresse EINER Namenszelle im Adressfeld (kat5-Name nach 4.4: ein Wort, 1 bis 5 Zeichen, Wort 0 = unbenutzter Eintrag; bis zur Umstellung am 09.11.2026 waren es zwei kat4-Zellen).
+#             R3 = Register 7774 (abs 07774): Adresse SPUF-00 im Adressfeld (Spurpuffer Spur 0 von ZT 0, auf einer Spurgrenze). R1, R2, R3 bleiben unveraendert (das UP ruft kein UP auf).
+# Rueckgabe:  keine. Keine Ausschrift, KBGB unberuehrt, keine Kanalanwahl, kein Zugriff auf die ZT (nur die Puffer werden bearbeitet).
+# Wirkung:    Z := SPUF-00 Zelle 17 (Zaehler = zuletzt vergebene ID); neue ID = Z + 1; der Eintrag (2 Zellen) beginnt in SPUF-PN bei Zelle 2 * Z (= 2 * (ID - 1)).
+#             Wort 1 := die Namenszelle (ganzes Wort, kat5). Wort 2 (bis 09.11.2026 Wort 3): NUR die Felder Typ (z1-z2 := 10), ID (z3-z11 := Z + 1), Trommel (z12-z13) und Spur (z14-z20); die Felder z0 und Laenge (z21-z32)
+#             bleiben unveraendert (altes Wort 2 lesen, Felder ausblenden, neue Felder einsetzen). Trommel und Spur sind die Spur NACH der letzten belegten (SPUF-00 Zelle 18 = Trommel T, Zelle 19 = Spur S):
+#             p = 128 * T + S + 1 (bei S = 127 ergibt der Uebertrag die Spur 0 der naechsten Trommel). Danach SPUF-00 Zelle 17 := Z + 1. Die Zellen 18 und 19 aendert das UP nicht.
+#             Wort 2 neu = Typ 2 * 2^30, ID * 2^21, p * 2^12 (p belegt die Felder Trommel und Spur zusammen: 2 + 7 Bit).
+# Grenzen:    Nicht geprueft (VERMERK, Speicher): doppelte Namen (4.4), ID > 32 (der Eintrag liegt dann nicht mehr ganz in SPUF-PN, 2 Spuren = 64 Zellen = 32 Eintraege; bis 09.11.2026 war die Grenze 21), Trommel > 3. Eine Fehlermeldung gibt es nicht (Aus: keine).
+# AC:         bei der Rueckkehr unbestimmt. Zerstoert: die Arbeitszellen des UP (ML0002% bis ML0004%), die Befehlszellen ML0008%, ML0010%, ML0011% und die Spur 7640 (Schiebebefehle, Festlegung 026).
+#             ML0012% bis ML0014% sind nur die abs-Marken von R1, R2, R3 und belegen keine Zelle. ML0009% entfaellt (die zweite Namenszelle gibt es nicht mehr).
+# Rueckkehr:  das Rueckkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (Festlegung 010).
+# Zellen:     ML0001% Rueckkehrwort, ML0002% Z (alter Zaehler), ML0003% Adresse des Eintrags (Wort 1, Adressfeld), ML0004% Wort 2 neu (Arbeitszelle), ML0008%, ML0010%, ML0011% Speicherbefehle fuer Wort 1, Wort 2 und den Zaehler.
+             240 ML0001%              ; Rueckkehrwort sichern
+             211 ML0013%              ; AC := R3 (Adresse SPUF-00)
+             210 #021000              ; plus 17 Zellen (17 dez = 021 okt): Zelle 17 = Zaehler
+             251 0                    ; R-Lesebefehl: AC := Z
+             240 ML0002%              ; Z merken
+             210 ML0002%              ; AC := 2 * Z (Zellen des Eintrags vor dem neuen; Eintrag = 2 Zellen)
+             SCHIEBE_LI 9             ; 2 * Z Adresseneinheiten (9 Stellen links = mal 01000)
+             210 ML0012%              ; plus R1: Adresse von Wort 1 des neuen Eintrags
+             240 ML0003%              ; Adresse des Eintrags merken
+             210 #0240                ; plus Operationscode 240 (Speichern): Befehl 240 <Wort 1>
+             240 ML0008%              ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+             211 ML0014%              ; AC := R2 (Adresse der Namenszelle)
+             251 0                    ; AC := Namenszelle (kat5-Wort)
+ML0008%:     db  1                    ; Laufzeit: 240 <Wort 1>, Wort 1 := Name
+             211 ML0002%              ; AC := Z
+             210 #1                   ; AC := ID = Z + 1
+             SCHIEBE_LI 2             ; ID * 4: Platz fuer die Trommel (2 Bit)
+             240 ML0004%              ; Zwischenwert
+             211 ML0013%              ; AC := R3
+             210 #022000              ; plus 18 Zellen (022 okt): Zelle 18 = letzte belegte Trommel T
+             251 0                    ; AC := T
+             210 ML0004%              ; AC := ID * 4 + T
+             SCHIEBE_LI 7             ; Platz fuer die Spur (7 Bit)
+             240 ML0004%              ; Zwischenwert
+             211 ML0013%              ; AC := R3
+             210 #023000              ; plus 19 Zellen (023 okt): Zelle 19 = letzte belegte Spur S
+             251 0                    ; AC := S
+             210 ML0004%              ; AC := (ID * 4 + T) * 128 + S
+             210 #1                   ; plus 1: naechste Spur (Uebertrag S = 127 in die Trommel)
+             SCHIEBE_LI 12            ; Felder ID, Trommel, Spur an ihre Stelle in Wort 2 (Spur ab z20, Laenge 12 Bit rechts frei)
+             210 #020000000000        ; plus Typ 10 (2 * 2^30)
+             240 ML0004%              ; neue Felder von Wort 2
+             211 ML0003%              ; AC := Adresse von Wort 1
+             210 #01000               ; plus 1 Zelle: Adresse von Wort 2
+             251 0                    ; AC := altes Wort 2
+             200 #040000007777        ; nur z0 und Laenge behalten (Typ, ID, Trommel, Spur ausblenden)
+             210 ML0004%              ; neue Felder einsetzen
+             240 ML0004%              ; Wort 2 fertig
+             211 ML0003%              ; AC := Adresse von Wort 1
+             210 #01240               ; plus 1 Zelle (01000) und 240: Befehl 240 <Wort 2>
+             240 ML0010%              ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+             211 ML0004%              ; AC := Wort 2 fertig
+ML0010%:     db  1                    ; Laufzeit: 240 <Wort 2>, Wort 2 := neu
+             211 ML0013%              ; AC := R3
+             210 #021240              ; plus 17 Zellen und 240: Befehl 240 <SPUF-00 Zelle 17>
+             240 ML0011%              ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+             211 ML0002%              ; AC := Z
+             210 #1                   ; AC := Z + 1 = neue ID
+ML0011%:     db  1                    ; Laufzeit: 240 <Zelle 17>, Zaehler := neue ID
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002%:     db  1                    ; Arbeitszelle Z: alter Zaehler
+ML0003%:     db  1                    ; Arbeitszelle: Adresse des Eintrags (Wort 1, Adressfeld)
+ML0004%:     db  1                    ; Arbeitszelle: Zwischenwert und neue Felder von Wort 2
+ML0012%:     abs 07773                ; R1 (nur Marke)
+ML0013%:     abs 07774                ; R3 (nur Marke)
+ML0014%:     abs 07776                ; R2 (nur Marke)
+         MEND
+
+NEUANL: MACRO
+         $SPEC TYP=M CLASS=ZTLOADER ACTION=None
+# NEUANL: Unterprogramm (Rumpf) "neuanlage Programm" (Element 14 des ZIL, ZT-Repository_Aufgabenstellung 6 Punkt 7). Allgemein nutzbar: es kennt weder das ZIL noch das Hauptprogramm. Nur mit --C8205Z lauffaehig (Befehle 5k00 030 (k = d + 1) und 601).
+# Aufruf:     neuanl: NEUANL   (Marke steht auf der ersten Zelle des UP); der Aufrufer traegt R1, R2 und R3 ein und ruft mit 025 auf: AC = Rueckkehrwort.
+#             R1 = Register 7773 (abs 07773): Adresse SPUF-PN im Adressfeld (`da spufpn`), 2-Spur-Puffer (64 Zellen) auf einer Spurgrenze (Vielfaches von 040).
+#             R2 = Register 7776 (abs 07776): Trommelnummer d = 0 bis 3 (ZAHL, nicht Adressfeld) der ersten der beiden Spuren.
+#             R3 = Register 7774 (abs 07774): Spurnummer s = 0 bis 126 (ZAHL, nicht Adressfeld) der ersten der beiden Spuren; die zweite Spur ist s + 1 derselben Trommel. R1, R2, R3 bleiben unveraendert (das UP ruft kein UP auf).
+# Rueckgabe:  keine. Keine Ausschrift, KBGB unberuehrt, keine Kanalanwahl. Die Trommel d bleibt angewaehlt.
+# Wirkung:    Anwahl der ZT d (Wort 05100030 + d * 0100000), dann SPUF-PN Zellen 0 bis 31 auf Spur s und Zellen 32 bis 63 auf Spur s + 1 ausgeben (Ausgabe HT -> ZT, Befehlswort s * 2^26 + Adresse + 601; Adresse der
+#             zweiten Haelfte = R1 + 32 Zellen = R1 + 040000). Das UP schreibt den Puffer unveraendert, es aendert nichts im Puffer. Fuer das Verzeichnis: Trommel 0, Spur 1 (Spuren 1 und 2).
+# Grenzen:    Nicht geprueft (VERMERK, wie bei PNAME): d > 3, s > 126 (bei s = 127 laege die zweite Spur auf der naechsten Trommel; der Uebertrag liefe in das Trommelfeld). Eine Fehlermeldung gibt es nicht (Aus: keine).
+# Befehlswoerter: Das Spurfeld wird durch Linksschieben um 26 Stellen gebildet (SCHIEBE_LI), nicht durch Addieren (Ueberlauf ab Spur 64, siehe ZTINIT); der Trommelschritt d * 0100000 durch Linksschieben von d um 15 Stellen.
+# AC:         bei der Rueckkehr unbestimmt. Zerstoert: die Befehlszellen ML0002% und ML0003% und ML0004%, die Spur 7640 (Schiebebefehle, Festlegung 026). ML0010% bis ML0012% sind nur die abs-Marken von R1, R2, R3 und belegen keine Zelle.
+# Rueckkehr:  das Rueckkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (Festlegung 010).
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable neuanl_da, $GLOBAL); jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP: alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spaetere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL neuanl_da                        ; UP schon erzeugt? (0 = nein)
+         $IF $V(neuanl_da) = 0
+         $SET neuanl_da 1                         ; ab jetzt gilt: Rumpf ist da
+             240 ML0001%              ; Rueckkehrwort sichern
+             211 ML0011%              ; AC := R2 (Trommelnummer d)
+             SCHIEBE_LI 15            ; d * 0100000 (15 Stellen links)
+             210 #05100030            ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+             240 ML0002%              ; Anwahlbefehl auf die naechste Zelle
+ML0002%:     db  1                    ; Laufzeit: 5k00 030 (k = d + 1), ZT d anwaehlen
+             211 ML0012%              ; AC := R3 (Spurnummer s)
+             SCHIEBE_LI 26            ; s * 2^26 = zzz0 auf Bit 21 bis 32 (26 Stellen links, kein Ueberlauf)
+             210 ML0010%              ; plus R1 (Adresse SPUF-PN)
+             210 #0601                ; plus Operationscode 601 (Ausgabe HT -> ZT)
+             240 ML0003%              ; Ausgabebefehl auf die naechste Zelle
+ML0003%:     db  1                    ; Laufzeit: s zzz0 bbbb 601, Zellen 0 bis 31 von SPUF-PN auf Spur s
+             211 ML0012%              ; AC := R3 (Spurnummer s)
+             210 #1                   ; plus 1: zweite Spur
+             SCHIEBE_LI 26            ; (s + 1) * 2^26
+             210 ML0010%              ; plus R1 (Adresse SPUF-PN)
+             210 #040601              ; plus 32 Zellen (040 * 01000 = 040000) und Operationscode 601
+             240 ML0004%              ; Ausgabebefehl auf die naechste Zelle
+ML0004%:     db  1                    ; Laufzeit: (s + 1) zzz0 bbbb 601, Zellen 32 bis 63 von SPUF-PN auf Spur s + 1
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0010%:     abs 07773                ; R1 (nur Marke)
+ML0011%:     abs 07776                ; R2 (nur Marke)
+ML0012%:     abs 07774                ; R3 (nur Marke)
+         $ENDIF
+         MEND
+
+HSCHL: MACRO 3
+         $SPEC TYP=E ACTION=None
+$PR1 $TYPSYM
+$PR2 $TYPSYM
+$PR3 $TYPSYM
+# HSCHL fehlerzulang eingabeup namensteil: Unterprogramm (Rumpf) hschl "Hauptschleife Ls nach ZT" (Element 15 des ZIL, ZT-Repository_Aufgabenstellung 6 Punkt 10 und 6c). Nur mit --C8205Z lauffaehig (Befehle 5k00 030 und 601).
+#             Seit 01.11.2026 (Auftrag Inhaber): der Streifen wird NICHT mehr als kat4 abgelegt, sondern als TYP 10 (Eingaben zu je 2 Worten, 5a und 7a); gelesen wird mit dem Projektmakro TYP10EINGABE (Aufruf als Unterprogramm, 025).
+# Aufruf:     hschl: HSCHL fe_zulang eingabe ende   (Marke steht auf der ersten Zelle des UP); der Aufrufer waehlt K1 an (Lochbandleser 1), traegt R1, R2, R3 ein und ruft mit 025 auf: AC = Rueckkehrwort.
+#             Das Programm des Aufrufers enthaelt ausserdem das UP  eingabe: TYP10EINGABE hs_ende  (zweiter Parameter = Marke dieses UP, dritter Parameter = Namensteil; HSCHL setzt die Marke hs_<dritter Parameter> (hier hs_ende) auf seinen Streifenende-Zweig, und diese Marke bekommt TYP10EINGABE als Endeausgang: eingabe: TYP10EINGABE hs_ende).
+#             R1 = Register 7773 (abs 07773): Adresse des Spurpuffers Programmcode im Adressfeld (`da spufpc`), 1 Spur = 32 Zellen auf einer Spurgrenze (Vielfaches von 040).
+#             R2 = Register 7776 (abs 07776): Trommelnummer d = 0 bis 3 der ersten Zielspur (ZAHL).   R3 = Register 7774 (abs 07774): Spurnummer s der ersten Zielspur (ZAHL, wie bei NEUANL).
+# Rueckgabe:  R2 = Sektoranzahl (= 2 * Zahl der Eingaben, gerade, 0 bis 4094). R1 und R3 bleiben unveraendert (R1 wird waehrend des Laufs je Eingabe auf die Pufferstelle gesetzt und am Ende zurueckgestellt). KBGB bleibt unveraendert (TYP10EINGABE fuehrt KBGB bei Um. KB und Um. GB des Streifens nach; HSCHL sichert KBGB am Anfang und stellt es am Ende zurueck).
+# Fehler:     nur noch einer, keine Rueckgabe: fehlerzulang (Parameter 1) = Marke des Fehlerausgangs im AUFRUFENDEN Programm (Sprung 050): 2048 Eingaben = 4096 Sektoren, also mehr als 4095 ("lochstreifen zu lang"). Dort gibt das Programm die Meldung aus und haelt an; hschl kehrt in diesem Fall nie zurueck (R1 darf dort ueberschrieben sein).
+#             Den frueheren Fehler "Ziffer 8 oder 9" gibt es nicht mehr: 8 und 9 sind als Kennzeichen gueltig, im Ziffernteil werden sie uebergangen (TYP10EINGABE).
+# Streifen:   Folge von Eingaben im Format des BIS-Objektcodes: zwei Kennzeichen, Oktalziffern, Punkt oder Doppelpunkt (7a). Jede Eingabe ergibt 2 aufeinanderfolgende Zellen im Spurpuffer: Wort 1 = Datenwert, Wort 2 = Kennzeichen (Typ 10, 5a). / beendet den Streifen
+#             (Streifenende-Ausgang von TYP10EINGABE); eine mit / abgebrochene Eingabe wird verworfen. Ohne Eingabe (nur /) wird nichts geschrieben, R2 = 0.
+# Ablauf:     Je 16 Eingaben (Spurpuffer voll) wird die Spur mit Anwahl 5k00 030 (k = d + 1) und Ausgabe s * 2^26 + R1 + 601 auf die ZT geschrieben, dann zaehlt der Spurzaehler p = 128 * d + s weiter
+#             (Uebertrag Spur 127 -> Spur 0 der naechsten Trommel). Die letzte, teilvolle Spur wird bei / geschrieben (keine leere Spur nach einer vollen). Der Spurpuffer wird je Spur mit 441 geloescht (der Rest der letzten Spur ist 0). Die Trommel bleibt angewaehlt, K1 bleibt angewaehlt.
+# Grenzen:    Nicht geprueft (VERMERK): Trommel d > 3.
+# AC:         bei der Rueckkehr unbestimmt. Zerstoert: der Spurpuffer R1, die Arbeitszellen und Befehlszellen des UP, die Spur 7640 (Schiebebefehle, Festlegung 026) und die Zellen des UP eingabe (TYP10EINGABE).
+# Zellen:     ML0001% Rueckkehrwort, ML0002% Spurzaehler p, ML0003% Sektorzaehler, ML0004% Ende-Merker (0 = weiter, -1 = / gelesen), ML0006% Zeiger auf die naechste Eingabe im Puffer (Adressfeld), ML0030% Adresse des Spurpuffers (R1 am Anfang), ML0031% KBGB am Anfang;
+#             ML0007%, ML0016%, ML0017% Befehlszellen; ML0050% bis ML0053% sind nur die abs-Marken von R1, R2, R3 und KBGB.
+# Rueckkehr:  das Rueckkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (Festlegung 010).
+             240     ML0001%              ; Rueckkehrwort sichern
+             211     ML0050%              ; AC := R1 (Adresse des Spurpuffers)
+             240     ML0030%              ; Adresse des Spurpuffers merken (R1 wird je Eingabe veraendert)
+             211     ML0053%              ; AC := KBGB
+             240     ML0031%              ; KBGB merken (der Streifen fuehrt KBGB nach, am Ende wird zurueckgestellt)
+             211     ML0051%              ; AC := R2 (Trommelnummer d)
+             SCHIEBE_LI 7                 ; d * 128
+             210     ML0052%              ; plus R3 (Spurnummer s)
+             240     ML0002%              ; p := 128 * d + s (laufende Zielspur)
+             241     ML0003%              ; Sektorzaehler := 0, AC := 0
+             240     ML0004%              ; Ende-Merker := 0 (Streifen laeuft noch)
+ML0005%:     211     ML0030%              ; neue Spur im Puffer: AC := Adresse des Spurpuffers
+             240     ML0006%              ; Zeiger := erste Pufferstelle
+             210     #0441                ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen := 0)
+             240     ML0007%              ; Befehl 441 <Spurpuffer> auf die naechste Zelle
+ML0007%:     db      1                    ; Laufzeit: 441 <Spurpuffer>, Spurpuffer := 0, AC := 0
+ML0008%:     211     ML0006%              ; naechste Eingabe: AC := Zeiger auf die Pufferstelle
+             240     ML0050%              ; R1 := Pufferstelle (2 Zellen fuer diese Eingabe)
+             025     $2                   ; UP TYP10EINGABE: liest eine Eingabe, legt Wort 1 und Wort 2 ab; bei / Sprung nach ML0009% (Streifenende)
+             211     ML0003%              ; AC := Sektorzaehler
+             210     #2                   ; plus 2 (eine Eingabe = 2 Sektoren)
+             240     ML0003%              ; Sektorzaehler := Zahl der Sektoren
+             220     #010000              ; minus 4096
+             050     $1                   ; >= 0: mehr als 4095 Sektoren -> Fehlerausgang des Aufrufers
+             211     ML0006%              ; AC := Zeiger
+             210     #02000               ; plus zwei Adresseneinheiten (2 Zellen)
+             240     ML0006%              ; Zeiger := naechste Pufferstelle
+             220     ML0030%              ; minus Adresse des Spurpuffers
+             330     #040000              ; Vergleich mit 32 Zellen (keine Operation)
+             170     ML0015%              ; Puffer voll: Spur schreiben
+             000     ML0008%              ; naechste Eingabe
+hs_$3:       221     #1                   ; Streifenende (Sprung aus TYP10EINGABE), Marke hs_ + dritter Parameter: AC := -1
+             240     ML0004%              ; Ende-Merker := -1
+             211     ML0006%              ; AC := Zeiger
+             220     ML0030%              ; minus Adresse des Spurpuffers
+             330     #0                   ; Vergleich mit 0 (keine Operation)
+             170     ML0020%              ; Puffer leer: keine Spur mehr zu schreiben
+ML0015%:     211     ML0002%              ; Spur schreiben: AC := p
+             200     #0600                ; nur die Trommelnummer (Bit 7 und 8 von p)
+             SCHIEBE_LI 8                 ; d * 0100000
+             210     #05100030            ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+             240     ML0016%              ; Anwahlbefehl auf die naechste Zelle
+ML0016%:     db      1                    ; Laufzeit: 5k00 030, ZT d anwaehlen (K1 bleibt angewaehlt)
+             211     ML0002%              ; AC := p
+             200     #0177                ; nur die Spur s (Bit 0 bis 6 von p)
+             SCHIEBE_LI 26                ; s * 2^26 = zzz0 (kein Ueberlauf)
+             210     ML0030%              ; plus Adresse des Spurpuffers
+             210     #0601                ; plus Operationscode 601 (Ausgabe HT -> ZT)
+             240     ML0017%              ; Ausgabebefehl auf die naechste Zelle
+ML0017%:     db      1                    ; Laufzeit: zzz0 bbbb 601, Spurpuffer auf Spur s der gewaehlten ZT
+             211     ML0002%              ; AC := p
+             210     #1                   ; plus 1
+             240     ML0002%              ; p := naechste Zielspur (127 -> Spur 0 der naechsten Trommel)
+             211     ML0004%              ; AC := Ende-Merker
+             040     ML0020%              ; < 0: letzte Spur geschrieben, fertig
+             000     ML0005%              ; sonst neue Spur im Puffer
+ML0020%:     211     ML0003%              ; fertig: AC := Sektoranzahl
+             240     ML0051%              ; R2 := Sektoranzahl
+             211     ML0030%              ; AC := Adresse des Spurpuffers
+             240     ML0050%              ; R1 := urspruenglicher Wert
+             211     ML0031%              ; AC := KBGB am Anfang
+             240     ML0053%              ; KBGB zurueckgestellt
+ML0001%:     db      1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002%:     db      1                    ; Arbeitszelle p: laufende Zielspur (128 * Trommel + Spur)
+ML0003%:     db      1                    ; Arbeitszelle: Sektorzaehler (2 je Eingabe)
+ML0004%:     db      1                    ; Arbeitszelle: Ende-Merker (0 = weiter, -1 = / gelesen)
+ML0006%:     db      1                    ; Arbeitszelle: Zeiger auf die naechste Eingabestelle im Spurpuffer (Adressfeld)
+ML0030%:     db      1                    ; Arbeitszelle: Adresse des Spurpuffers (R1 am Anfang)
+ML0031%:     db      1                    ; Arbeitszelle: KBGB am Anfang
+ML0050%:     abs     07773                ; R1 (nur Marke)
+ML0051%:     abs     07776                ; R2 (nur Marke)
+ML0052%:     abs     07774                ; R3 (nur Marke)
+ML0053%:     abs     07775                ; KBGB (nur Marke)
+         MEND

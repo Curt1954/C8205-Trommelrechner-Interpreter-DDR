@@ -1,0 +1,7 @@
+args --pass0 --probeausgabe
+rc 0
+stdout probe=1
+nicht-stderr Probelauf
+nicht-stdout Probelauf
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog adrdbg
+escape-weg

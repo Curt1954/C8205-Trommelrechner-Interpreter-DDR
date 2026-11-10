@@ -255,8 +255,9 @@ unsigned int sternadresseBearbeiten(char *xoperand, char *line, int *errorFlag, 
 }
 
 unsigned int evaluateAddress(char *operand, char *line, int *errorFlag, int *raAdr, char *label, unsigned int programCounter, unsigned int *absolutadresse_p) {
-    unsigned int values[MAX_LINE_LENGTH];
-    values[0] = 0;
+    // Ganzes Feld nullen: bei einem Operanden mit Vorzeichen am Anfang (z. B. "-1") liest die Auswertung unten values[1], das nie
+    // gesetzt wird. Vorher hing das Ergebnis vom Stack-Inhalt ab (RelAddr von `minus1: dw -1` in namen_raten.log, Checkpoint 004).
+    unsigned int values[MAX_LINE_LENGTH] = {0};
     char operators[MAX_LINE_LENGTH];
     int valueIndex = 0, operatorIndex = 0, symbolCount_p = 0;
 

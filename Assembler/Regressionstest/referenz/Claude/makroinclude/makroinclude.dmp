@@ -1,0 +1,7 @@
+0000: 01 0005 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000005        dw  5     ; erste Zeile vor dem Include
+0002: 00 00000000012        dw  10    ; aus a.inc
+0003: 00 00000000017        dw  15    ; aus b.inc
+0004: 00 00000000151        dw  105   ; letzte Zeile nach dem Include
+0005: 01 0001 164    haupt: 164 0001  ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 01 0000 020           020 0     ; Zelle 0006: Halt

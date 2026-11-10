@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_endif_ohne_if.asm:3: Fehler: (Quelltext) $ENDIF ohne vorheriges $IF.
+datei-weg obj mqo test
+escape-weg

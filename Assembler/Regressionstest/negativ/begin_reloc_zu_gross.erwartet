@@ -1,0 +1,3 @@
+rc 16
+stderr Die Blöcke mit begin RELOC-EQU oder RELOC-ALL passen nicht unter 07600
+datei-weg obj mqo test

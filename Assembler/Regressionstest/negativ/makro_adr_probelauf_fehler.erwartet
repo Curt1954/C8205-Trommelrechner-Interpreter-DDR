@@ -1,0 +1,7 @@
+rc 16
+stderr Probelauf 1 fuer adr/abstand fehlgeschlagen (Rueckgabewert 16).
+stderr Kommandozeile:
+stderr makro_adr_probelauf_fehler.asm:10: Fehler: CHK $ERROR: Abstand ist null
+stderr Abbruch.
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

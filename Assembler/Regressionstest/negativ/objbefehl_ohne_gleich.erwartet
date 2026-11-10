@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 2: ;#PRECOMMAND ohne '=' (Syntax ;#PRECOMMAND=<Ziffern und Punkte>, z. B. ;#PRECOMMAND=212000.).
+datei-weg obj mqo test
+escape-weg

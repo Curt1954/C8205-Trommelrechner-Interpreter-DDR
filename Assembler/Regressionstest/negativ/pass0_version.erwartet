@@ -1,0 +1,4 @@
+args --pass0 --version
+ohne-p-s
+rc 0
+stdout C8205 Assembler C82aas Version

@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0001 Makro INCTEST bindet teil/a.inc ein, diese bindet b.inc ein (relativ zur jeweiligen Datei)
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000005 # dw 5 ; erste Zeile vor dem Include
+0002: 00000000012 # dw 10 ; aus a.inc
+0003: 00000000017 # dw 15 ; aus b.inc
+0004: 00000000151 # dw 105 ; letzte Zeile nach dem Include
+0005: 00000001164 # haupt: 164 0001 ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 00000000020 # 020 0 ; Zelle 0006: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 US=1
+0001: 00000000005   # $1 = 5
+0002: 00000000012   # 5*2 = 10 = 012 (a.inc)
+0003: 00000000017   # 5*3 = 15 = 017 (b.inc)
+0004: 00000000151   # 5+100 = 105 = 0151

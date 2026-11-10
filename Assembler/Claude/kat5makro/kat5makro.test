@@ -1,0 +1,13 @@
+Trommeldatei:
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000003000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 02122530000 # m1: kat5 ab$wrzl ; Text mit Marke fest im Makro
+0002: 04725344400 # m2: kat5 welt ; Text aus dem Aufrufparameter
+0003: 00000000020 # haupt: 020 0 ; Zelle 0003: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0004
+0001: 02122530000   # m1
+0002: 04725344400   # m2

@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '5.' ist ungültig (dwf erwartet [+|-]Ziffern[.Ziffern])
+datei-weg obj mqo test
+escape-weg

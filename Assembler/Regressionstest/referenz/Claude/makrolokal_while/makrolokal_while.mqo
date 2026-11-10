@@ -1,0 +1,6 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      13      ; 10 + (4 - 1)
+        dw      10      ; 10 + (1 - 1)
+        dw      1       ; 1
+haupt:  164     0001    ; Zelle 0004: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0005: Halt

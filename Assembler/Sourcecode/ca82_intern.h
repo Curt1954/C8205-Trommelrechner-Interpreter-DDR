@@ -9,6 +9,7 @@
 //   ca82_ausdruck.c   Ausdrucksauswertung        ca82_codierung.c Operationscodes, Text, dz
 //   ca82_pass3.c      Objektcode (.obj/.mqo/.dmp) ca82_testdatei.c .test-Datei
 //   ca82_listing.c    Listing                    ca82_hilfen.c   Zeilenfelder, Meldungen, Textwerkzeuge
+//   ca82_opsym.c      Namen fuer Operationscodes (.LD, Standardtabelle c82ass.opsym)
 //   ca82_zustand.c    globale Zustandsvariablen
 #ifndef CA82_INTERN_H
 #define CA82_INTERN_H
@@ -97,6 +98,7 @@ typedef struct {
 } TableRow;
 
 // ---- globale Zustandsvariablen (definiert in ca82_zustand.c) ----
+extern int makroLetzteInstanz;                          // siehe ca82_makros.c (Herkunftsfeld makroInst, Doku 5.6)
 extern lineElements linesAsm[PROGRAMMZEILEN];              // Quelltextzeilen nach dem Einlesen
 extern int lineCountAsm;
 extern lineElements lineAsmAufgeloest[PROGRAMMZEILEN];     // Zeilen nach Pass 0 bzw. Pass 2
@@ -137,6 +139,12 @@ void fehlerZusammenfassung(void);
 FILE *oeffneAusgabedatei(const char *pfad, const char *modus);
 void resetParsedLinesArrays(lineElements lineAsmAufgeloest[], int lineCountAsmAufgeloest);
 void copyLineElements(lineElements *output, lineElements *ergebnis, int i);
+
+// ca82_opsym.c: Namen fuer Operationscodes (.LD usw.)
+void opsymErsetzeNamen(void);                          // Ende von Pass 0: markierte Namen durch den Code ersetzen
+const char *opsymAnzeigeName(const lineElements *z);   // Name fuer Listing/.dmp/.test oder NULL
+int opsymAusgabe(void);                                // Option --opsyms: Standardtabelle auf STDOUT
+void opsymProgrammpfadSetzen(const char *argv0);       // Verzeichnis des Programms merken (Standardtabelle auch neben dem Binary suchen)
 bool isValidLabel(const char *label);
 void copyAndIncrementLineElements(int i);
 void meldeFehlerP2(lineElements lineAsmAufgeloestTemp_p[], lineElements lineAsmAufgeloest_p[], int *lineCountAsmAufgeloest_p, int *i, const char *message);
@@ -160,7 +168,7 @@ void meldeListingFehlerAufStderr(lineElements zeilen[], int anzahl);
 /* ---- ca82_quelle.c: Einlesen der Quelltextzeilen (Pragmas, Kommentare, Wiederholungsadressen) ---- */
 int istTextAnweisung(const char *operation);
 void processLine(char *line, lineElements linesAsm_p[], int *lineCount);
-void ladeAssemblerZeilen(const char *inputFileName_p);
+void ladeAssemblerZeilen(const char *inputFileName_p); // Text der Zeile nr (ohne Zeilenende)
 unsigned int berechneWiederholAdr(int anzahl, unsigned int basisAdr);
 int berechneOperand(const char *operand_str);
 void verarbeiteZeile_wdhl_adr_e(char *tempLine);
@@ -180,6 +188,17 @@ void processLiteralEntry(lineElements lineAsmAufgeloestTemp_p[], int *lineCountA
 int pruefeDbOperand(const char *operation, const char *operand, long *wert, char *meldung, size_t groesse);
 int pruefeSpaOperand(const char *operand, long *wert, char *meldung, size_t groesse);
 unsigned int spaAdresse(unsigned int befehlszaehler, long wert);
+
+/* ---- ca82_opt.c: Optimierer (Dokumentation Abschnitt 5) ---- */
+extern int optAktiv;
+extern int optLiteralsymbolImQuelltext;
+extern int pass2Wiederholung;
+extern int pass2Stumm;                       // 1 = Probelauf der Makro-Umordnung (Doku 5.6): ein Fehler druckt das Listing nicht (ca82_pass2.c)
+extern unsigned int *optAdrVor;
+extern unsigned int *optAdrNach;
+int optHatLiteralsymbol(const char *s);
+int beginSchluesselwoerter(const char *operand, int *reloc, int *fill, char *meldung, size_t groesse);   // begin [RELOC-EQU] [FILL] (Doku 5.4, ab 1.01-030); 0 = in Ordnung, 1 = Fehler mit Text
+void pass2MitOptimierer(char *logName, char *symName);
 void pass1(char *symbolLogFile);
 const char* addLiteral(char *literalName, char *literalValue, unsigned int relativAdresse);
 
@@ -209,6 +228,12 @@ void schreibeObjZeile(FILE *objFile, const char *zeile);
 void schreibeLochbilder(FILE *f, const char *text);
 void erzeugenText(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int no_kbgb ,int iii);
 int zaehleText(char operand[], int no_kbgb);
+int zaehleKat4(const char operand[]);
+void erzeugenKat4(const char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii);
+int zaehleKat5(const char operand[]);
+void erzeugenKat5(const char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii);
+int zaehleKat6(const char operand[]);
+void erzeugenKat6(const char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii);
 void dzAuswertung(char operand[], FILE *machineCodeFile, FILE *hilfsFile, const char *line, int iii);
 int zaehleBackslashes(const char *templine);
 void replaceSubstring(char *line, size_t lineSize, const char *operand, unsigned int dwValue);
@@ -222,5 +247,8 @@ void erzeugeTestDatei(lineElementsX lineAsmAufgeloest_p[], int lineCountAsmAufge
 
 /* ---- ca82_main.c: Hauptprogramm: Optionen, Dateinamen, Ablauf der Paesse ---- */
 void ensureFileExtension(char *fileName, const char *defaultExtension, size_t maxSize);
+int adrWert(const char *name, long long *wert, char *grund, size_t gg);   // Adresse einer Marke fuer adr(s) und abstand(s,t) (Doku 4.23); 0 = ok, 1 = Fehler mit Grund
+int adrNochImLauf(void);   // $PROBE (ab 1.01-020, Doku 4.23): 1 im Probelauf und bei --pass0, sonst 0
+int adrDebugZeile(const char *zeile);   // --probeausgabe (ab 1.01-021, Doku 4.24): legt eine Zeile von $NOTE, $TRACE oder $DUMP im Probelauf in die Debugdatei; 1 = abgelegt, 0 = nicht
 
 #endif

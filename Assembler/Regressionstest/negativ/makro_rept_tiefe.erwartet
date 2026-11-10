@@ -1,0 +1,4 @@
+rc 16
+stderr makro_rept_tiefe.asm:15: Fehler: R3 $REPT darf höchstens 4-fach geschachtelt werden.
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,17 @@
+; makrokommentar.macro - Projektmakrodatei fuer den Test "Kommentar hinter MACRO" (Assemblerdokumentation 4.9, ab c82ass 1.01-007)
+; Bis 1.01-006 zaehlte in einer Makrodatei jedes Wort hinter MACRO als Parameter, auch ein Kommentar; ab 1.01-007 endet die Zeile beim ersten ";"
+MKNULL:         MACRO   ; Kommentar hinter MACRO, keine Parameterangabe
+                dw      11              ; Wort 11 dezimal (013 oktal)
+                MEND                    ; Ende von MKNULL
+MKZWEI:         MACRO 2         ; Kommentar hinter der Parameterzahl mit sehr vielen Woertern, mehr als neun Woerter waeren als Parameter ein Fehler
+                dw      $1+$2           ; Summe der beiden Parameter
+                MEND                    ; Ende von MKZWEI
+MKDICHT:        MACRO 2;Kommentar ohne Leerzeichen vor dem Semikolon
+                dw      $1*$2           ; Produkt der beiden Parameter
+                MEND                    ; Ende von MKDICHT
+MKVAR:          MACRO 1+        ; mindestens ein Parameter, danach beliebig viele
+                dw      $1              ; erster Parameter
+                MEND                    ; Ende von MKVAR
+MKTAB:          MACRO	3	; Kommentar nach Tabulatoren
+                dw      $1+$2+$3        ; Summe der drei Parameter
+                MEND                    ; Ende von MKTAB

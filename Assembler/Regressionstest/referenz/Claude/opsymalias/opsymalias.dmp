@@ -1,0 +1,9 @@
+0000: 01 0004 000           .JMP  haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000005 a:     dw    5     ; Zelle 0001: Konstante 5
+0002: 00 00000000003 b:     dw    3     ; Zelle 0002: Konstante 3
+0003: 0              erg:   dw    0     ; Zelle 0003: Ergebnis
+0004: 01 0001 211    haupt: .LD   a     ; Zelle 0004: AC := 5
+0005: 01 0001 211           .A1   a     ; Zelle 0005: AC := 5 (Laden mit Loeschen, keine Addition)
+0006: 01 0002 211           .A2   b     ; Zelle 0006: AC := 3
+0007: 01 0003 240           .STO  erg   ; Zelle 0007: erg := 3
+0010: 01 0000 020           .STOP 0     ; Zelle 0010: Halt

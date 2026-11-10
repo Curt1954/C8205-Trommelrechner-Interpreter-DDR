@@ -1,0 +1,10 @@
+0000: 01 0010 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000001        dw  1     ; Zaehler kleiner 3
+0002: 00 00000000001        dw  1     ; Zaehler kleiner 3
+0003: 00 00000000002        dw  2     ; Zaehler gleich 3
+0004: 00 00000000003        dw  3     ; Zaehler groesser 3
+0005: 00 00000000077        dw  077   ; doppelter Zaehler groesser 6
+0006: 00 00000000003        dw  3     ; Zaehler groesser 3
+0007: 00 00000000077        dw  077   ; doppelter Zaehler groesser 6
+0010: 01 0001 164    haupt: 164 0001  ; Zelle 0008: Diagnoseausgabe (nur im Test)
+0011: 01 0000 020           020 0     ; Zelle 0009: Halt

@@ -88,10 +88,14 @@ static int istNullOperand(int zeile) {
     return *p == '\0' || *p == ' ' || *p == '\t' || *p == ';';
 }
 
+// Von Pass 3 gesetzt: 1, wenn das zuletzt erzeugte Wort von dwf oder dwg 0 ist (auch bei 0.0, -0, 0E5 und einem Wert, der zu 0 rundet).
+int flussZahlwortIstNull = 0;
+
 void flussMerkeDaten(int von, int bis, const char *operation, int zeile) {
     int art;
-    if (strcmp(operation, "dw") == 0)        art = istNullOperand(zeile) ? PLATZHALTER : DATEN;
-    else if (strcmp(operation, "da") == 0)   art = DATEN;
+    if (strcmp(operation, "dwf") == 0 || strcmp(operation, "dwg") == 0)   art = flussZahlwortIstNull ? PLATZHALTER : DATEN;
+    else if (strcmp(operation, "dw") == 0 || strcmp(operation, "dwb") == 0 || strcmp(operation, "dwh") == 0)   art = istNullOperand(zeile) ? PLATZHALTER : DATEN;
+    else if (strcmp(operation, "da") == 0 || strcmp(operation, "kat4") == 0 || strcmp(operation, "kat5") == 0 || strcmp(operation, "kat6") == 0)   art = DATEN;
     else if (strcmp(operation, "db") == 0 || strcmp(operation, "dbn") == 0) art = PLATZHALTER;
     else                                     art = AUSGABE;   // dz, dt, dto, dtm
     for (int a = von; a < bis && a < TROMMEL; a++) {
@@ -179,7 +183,7 @@ void pruefeSprungziele(void) {
         m->zeile = quellzeileVon(w->zeile);
         m->adresse = a;
         char ort[80] = "";
-        if (z->art != LEER && quellzeileVon(z->zeile) > 0) snprintf(ort, sizeof(ort), ", Zeile %d", quellzeileVon(z->zeile));
+        if (z->art != LEER && quellzeileVon(z->zeile) > 0) snprintf(ort, sizeof(ort), ", Zeile %s", qOrt(quellzeileVon(z->zeile)));
         snprintf(m->text, sizeof(m->text), "Sprung '%03o %s' (Adresse %04o) fuehrt auf %04o: dort liegt kein Befehl, sondern %s%s.",
                  w->opcode, operandVon(w->zeile), (unsigned)a, (unsigned)w->ziel, datenartText(z), ort);
     }
@@ -220,7 +224,7 @@ void pruefeToterCode(void) {
         if (marke) snprintf(zusatz, sizeof(zusatz), " (die Marke '%.40s' wird nirgends verwendet)", marke);
         int vorZeile = quellzeileVon(vor->zeile);
         char vorText[60] = "";
-        if (vorZeile > 0) snprintf(vorText, sizeof(vorText), " in Zeile %d", vorZeile);
+        if (vorZeile > 0) snprintf(vorText, sizeof(vorText), " in Zeile %s", qOrt(vorZeile));
         if (ende == a + 1)
             snprintf(m->text, sizeof(m->text), "Befehl bei %04o ist vermutlich nicht erreichbar: er steht hinter dem unbedingten Sprung%s und nichts verweist darauf%s; ebenso der folgende Befehl bei %04o.",
                      (unsigned)a, vorText, zusatz, (unsigned)ende);

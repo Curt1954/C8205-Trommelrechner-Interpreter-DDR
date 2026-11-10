@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_ergebnis_1001.asm:8: Fehler: M1 $UPPER z: Das Ergebnis hat 1001 Zeichen, erlaubt sind höchstens 1000
+datei-weg obj mqo test
+escape-weg

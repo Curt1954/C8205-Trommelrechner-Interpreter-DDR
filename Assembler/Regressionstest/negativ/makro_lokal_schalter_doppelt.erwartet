@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 3: ;#MAKROLOKAL steht schon in Zeile 2 (die Anweisung darf nur einmal vorkommen).
+datei-weg obj mqo test
+escape-weg

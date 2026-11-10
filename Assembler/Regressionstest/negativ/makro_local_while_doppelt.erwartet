@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_while_doppelt.asm:10: Fehler: L10 $LOCAL a: Der Name ist in diesem Makroaufruf schon lokal vereinbart
+datei-weg obj mqo test
+escape-weg

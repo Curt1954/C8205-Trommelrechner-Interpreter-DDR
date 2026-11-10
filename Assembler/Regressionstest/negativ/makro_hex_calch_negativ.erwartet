@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_calch_negativ.asm:6: Fehler: $CALCH(0-5): negatives Ergebnis -5 ist hexadezimal nicht darstellbar
+datei-weg obj mqo test
+escape-weg

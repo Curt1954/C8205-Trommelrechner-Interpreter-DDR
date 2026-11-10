@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '1E10' ist ungültig (dwg: Betrag größer als 2^31-2^5)
+datei-weg obj mqo test
+escape-weg

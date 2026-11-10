@@ -1,0 +1,73 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      7       ; Positionsparameter
+        dw      1       ; Schluesselwort anzahl
+        dw      1       ; Richtung LI
+        dw      1       ; Zahl der Positionsoperanden
+        dw      7       ; Positionsparameter
+        dw      3       ; Schluesselwort anzahl
+        dw      1       ; Richtung LI
+        dw      1       ; Zahl der Positionsoperanden
+        dw      7       ; Positionsparameter
+        dw      1       ; Schluesselwort anzahl
+        dw      2       ; Richtung RE
+        dw      1       ; Zahl der Positionsoperanden
+        dw      6       ; Positionsparameter
+        dw      4       ; Schluesselwort anzahl
+        dw      2       ; Richtung RE
+        dw      1       ; Zahl der Positionsoperanden
+        dw      5       ; Positionsparameter
+        dw      2       ; Schluesselwort anzahl
+        dw      1       ; Richtung LI
+        dw      1       ; Zahl der Positionsoperanden
+        dw      7       ; Positionsparameter
+        dw      1       ; Schluesselwort anzahl
+        dw      1       ; Richtung LI
+        dw      1       ; Zahl der Positionsoperanden
+        dw      5       ; Positionsparameter
+        dw      2       ; Schluesselwort n
+        dw      0       ; Zeichenzahl von text
+        dw      5       ; Positionsparameter
+        dw      3       ; Schluesselwort n
+        dw      1       ; Zeichenzahl von text
+        dw      4       ; Positionsparameter
+        dw      7       ; Schluesselwort n
+        dw      1       ; Zeichenzahl von text
+        dw      3       ; Positionsparameter
+        dw      2       ; Schluesselwort n
+        dw      0       ; Zeichenzahl von text
+        dw      1       ; Positionsparameter
+        dw      0       ; Zeichenzahl von text
+        dw      2       ; Positionsparameter
+        dw      1       ; Zeichenzahl von text
+        dw      1       ; Positionsparameter
+        dw      3       ; Zeichenzahl von t
+        dw      2       ; Positionsparameter
+        dw      5       ; Zeichenzahl von t
+        dw      1       ; Positionsparameter
+        dw      4       ; Schluesselwort k
+        dw      2       ; erster weiterer Positionsoperand
+        dw      3       ; zweiter weiterer Positionsoperand
+        dw      3       ; Zahl der Positionsoperanden
+        dw      6       ; Positionsparameter
+        dw      9       ; Schluesselwort k
+        dw      7       ; erster weiterer Positionsoperand
+        dw      8       ; zweiter weiterer Positionsoperand
+        dw      3       ; Zahl der Positionsoperanden
+        dw      1       ; Positionsparameter a
+        dw      8       ; Positionsparameter b oder Vorgabe 8
+        dw      3       ; Schluesselwort w
+        dw      1       ; Positionsparameter a
+        dw      2       ; Positionsparameter b oder Vorgabe 8
+        dw      9       ; Schluesselwort w
+        dw      1       ; Positionsparameter a
+        dw      8       ; Positionsparameter b oder Vorgabe 8
+        dw      5       ; Schluesselwort w
+        dw      7       ; Positionsparameter
+        dw      2       ; Schluesselwort anzahl
+        dw      1       ; Richtung LI
+        dw      1       ; Zahl der Positionsoperanden
+        dw      5       ; Positionsparameter
+        dw      4       ; Schluesselwort anzahl
+        dw      1       ; Richtung LI
+        dw      1       ; Zahl der Positionsoperanden
+haupt:  020     0       ; Halt

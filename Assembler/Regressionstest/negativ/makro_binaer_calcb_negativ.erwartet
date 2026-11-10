@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_calcb_negativ.asm:6: Fehler: $CALCB(0-5): negatives Ergebnis -5 ist binär nicht darstellbar
+datei-weg obj mqo test
+escape-weg

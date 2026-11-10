@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Erzeugt PDF/C8205-Zusatztrommeln_A4.pdf nach C8205-Interpreter-PDF.md (4.6, 6a, 3a).
 
-Quelle:  C8205Z/zt/Zusatztrommel_Zeitmodell.md   (Wortlaut-PDF, Abschnitt 6a; experimenteller Prototyp C8205Z)
+Quelle:  C8205Z/zt/Zusatztrommel_Zeitmodell.md  (Wortlaut-PDF, Abschnitt 6a; experimenteller Prototyp C8205Z)
 Aufruf:  python3 PDF/pdf-layout-scripte/erzeuge_zusatztrommel_pdf.py [--stand TT.MM.JJJJ] [--quelle PFAD] [--ziel PFAD]
 
 Das Skript legt die Deckblattdaten aus PDF.md 4.6 fest (Titel, Untertitel, Art, Bereich) und ruft

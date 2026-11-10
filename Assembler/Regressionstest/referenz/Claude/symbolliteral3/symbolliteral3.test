@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000002000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000006000 # zeiger: da 000000000006 ; Zelle 0001: Adresse der Arbeitszelle zg
+0002: 00000007211 # haupt: 211 l0001 ; Zelle 0002: AC := 5 (Literal l0001; das Symbol-Literal zg zaehlt nicht mit)
+0003: 00000006240 # 240 000000000006 ; Zelle 0003: (zg) := 5
+0004: 00000001164 # 164 0001 ; Zelle 0004: Diagnoseausgabe (nur im Test)
+0005: 00000000020 # 020 0 ; Zelle 0005: Halt
+0006: 00000000000 # zg dbn 1
+0007: 00000000005 # l0001 dw 5
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0006 AC=00000000005 US=1
+0006: 00000000005   # zg
+0007: 00000000005   # l0001

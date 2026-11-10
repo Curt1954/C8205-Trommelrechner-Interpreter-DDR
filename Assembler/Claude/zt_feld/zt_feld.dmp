@@ -1,7 +1,7 @@
 0000: 01 0001 000           000 haupt        ; Zelle 0000: Sprung zum Hauptprogramm
-0001: 00 5200 030    haupt: 030 05200        ; Anwahl ZT2 (5200 030, Festlegung 5k00 = ZTk)
-0002: 00 10000100601        dw  010000100601 ; Ausgabe 601: HT-Spur 0100 -> ZT2 Adresse 01000 (zzz0 = 1000)
-0003: 00 10000200661        dw  010000200661 ; Eingabe 661: ZT2 Adresse 01000 -> HT-Spur 0200 (bbbb = 0200)
+0001: 00 5200 030    haupt: 030 05200        ; Anwahl der Zusatztrommel ZT1 = Datei zt2.txt (5200 030 = 5k00 mit k = 2)
+0002: 00 10000100601        dw  010000100601 ; Ausgabe 601: HT-Spur 0100 -> ZT1 Adresse 01000 (zzz0 = 1000)
+0003: 00 10000200661        dw  010000200661 ; Eingabe 661: ZT1 Adresse 01000 -> HT-Spur 0200 (bbbb = 0200)
 0004: 01 0001 164           164 0001         ; Diagnoseausgabe (nur im Test)
 0005: 01 0000 020           020 0            ; Halt
       20 0000 0100          equ 00100        ; Feld beginnt auf Spur 0100 (Zellen 0100 bis 0137)

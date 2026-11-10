@@ -1,6 +1,6 @@
 # C 8205 – Simulation eines DDR-Kleinrechners von 1968
 
-Version: 0.95-009
+Version: 0.95-012
 
 **Deutsch** | [English](README.en.md)
 
@@ -46,7 +46,7 @@ sich Läufe als Regressionstests wiederholen.
 | `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik-interpreter-module/grafik_*.py` | Modus GRAFIK: Pult-Fenster, Schreibwerk-Fenster, Töne (Mischer, Schreibwerk, Leser, Stanzer, Rechner) |
 | `c-module/` | C-Module: Trommel, Bahnsperre, Unterbrechung, Tonmischer `tonmisch`; Erweiterungsmodul in `c-module/python/` |
 | `C8205Z/` | **Experimenteller Prototyp** der vier Zusatztrommeln des C 8205Z (einziger Zusatzpfad): Zeitmodell `zt/`, C-Modul `zt_modul/`, Tests `Tests_Z/`, Pultzeichnung `pult_z/`; wirkt nur mit dem Schalter `--C8205Z` |
-| `ton/` | Klänge (`sw_toene/`, `toene_rechner_stanzer/`, Netzgeräusche), Testrahmen `sw_ton.py`, `SW_Ton_Beschreibung.md` |
+| `ton/` | Klänge (`sw_toene/`, `toene_rechner_stanzer/`, `pult_toene/` Tastengeräusche des Pults, Netzgeräusche), Testrahmen `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | Prüfungen und Testskripte, u. a. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
 | `Hilfsprogramme/` | `c8205_lochstreifen_anzeige.py` (virtuellen Lochstreifen als Klartext in einem Fenster ausschreiben), `c8205_lochstreifen_eingabe.py` (virtuellen Lochstreifen aus Tastatureingaben erzeugen), `c8205_lochstreifen_umwandlung.py` (Textdatei in binär kodierten R300-Lochstreifen umwandeln und zurück) |
 | `testscripte/` | Testskripte; jedes wechselt selbst ins Projektverzeichnis und darf von überall gestartet werden: `compute_all_tests.sh` (alle Testdefinitionen in `Tests/`), `c8205_bis_test.sh` (Tests künftiger BIS-Bausteine: lädt zuerst das Minimalprogramm `Tests/pj2-bis_minimalprogramm_v6.test` mit `--LOADONLY`, dann die angegebene Testdatei; die Tests des Minimalprogramms selbst, `Tests/pj2-bis_v6_*.test`, tragen ihr Abbild und laufen über `compute_all_tests.sh`), `c8205_befehlssweep.py` (Vollständigkeitstest über alle 512 Operationscodes; Aufruf aus dem Projektordner mit `--interp c8205_interp.py` bzw. aus `testscripte/` mit `--interp ../c8205_interp.py`), `erzeuge_leere_trommel.py` (erzeugt die leere Trommeldatei `Trommel/trommel.txt`, setzt auch eine benutzte Trommel zurück) |
@@ -59,6 +59,7 @@ sich Läufe als Regressionstests wiederholen.
 | `Test-Protokolle/` | Protokolle (`.log`) der Läufe |
 | `Test-virtuelleGeraete/` | Virtuelle Geräte des TEST-Interpreters (Lochstreifenleser, Stanzer, Schreibwerk-Ausgabe, Tastatureingabe) |
 | `virtuelle_Geraete/` | Virtuelle Geräte des GRAFIK-Interpreters (`Leser1/`, `Leser2/`, `Stanzer1/`) |
+| `Lochstreifen/` | Fertige Lochstreifen- und Ladedateien, nach Format geordnet (`im_KEP-Format/`, `im_BIS-Format/`, `das_KEP_im_TEST-Format/`, `Datenformat/`) |
 | `Trommel/` | Die Trommeldatei `trommel.txt`, gemeinsam für beide Interpreter |
 | `Testausfuehrungen/` | Test ausführen und Tests überblicken: `testwahl.sh` (Test aus der Liste wählen und ausführen), `kep_test.sh`, `interpreter_test.sh` und `bis_test.sh` (Vorführläufe mit KEP, TEST-Interpreter und BIS); dazu die Übersichtstabelle aller Tests (`test_tabelle.py` erzeugt `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` öffnet sie in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Teilprojekt BIS (derzeit nur Dokumentation) |
@@ -87,6 +88,7 @@ C8205/
 ├── Test-Protokolle/                Protokolle der Läufe (.log); im Gesamt-Zip nur als Test-Protokolle.zip (im Projektstamm entpacken, wird sonst vom Interpreter neu angelegt)
 ├── Testausfuehrungen/              Testausführung (testwahl.sh u. a.) und Übersichtstabelle aller Tests (test_tabelle.py)
 ├── Bausteininterpretiersystem BIS/ Teilprojekt BIS (derzeit nur Dokumentation)
+├── Lochstreifen/                   fertige Lochstreifen- und Ladedateien, nach Format geordnet
 ├── Trommel/                        Trommeldatei trommel.txt (gemeinsam für TEST und GRAFIK)
 ├── Test-virtuelleGeraete/          virtuelle Geräte des TEST-Interpreters
 │   ├── Leser1/, Leser1_02/, Leser2/   Lochstreifen-Eingabe
@@ -176,7 +178,7 @@ python3 c8205_interp.py --MODUS=TEST --C8205Z C8205Z/Tests_Z/zt-001_hin_zurueck.
 ./c8205_grafik.sh --HWCHECK --C8205Z            # zusammen mit dem HW-Check-Fenster
 ```
 
-- Befehle: `5k00 030` wählt die Zusatztrommel k (1 bis 4), `zzz0 bbbb 601` gibt eine Haupttrommelspur auf die Zusatztrommel aus, `zzz0 bbbb 661` liest sie zurück (je ganze Spur, 32 Worte). Die Trommeln liegen als `zt1.txt` bis `zt4.txt` in `Trommel/ZT/`.
+- Befehle: `5k00 030` wählt die Zusatztrommel k (1 bis 4; 5100 = Trommel 0 bis 5400 = Trommel 3), `zzz0 bbbb 601` gibt eine Haupttrommelspur auf die Zusatztrommel aus, `zzz0 bbbb 661` liest sie zurück (je ganze Spur, 32 Worte). Die Trommeln liegen als `zt1.txt` bis `zt4.txt` in `Trommel/ZT/`.
 - Für GRAFIK einmal das Erweiterungsmodul bauen: `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace` (das C-Modul selbst prüft `cd C8205Z/zt_modul && make test`).
 - Tests: `bash C8205Z/Tests_Z/zt_tests.sh` und `bash C8205Z/Tests_Z/zt_grafik_tests.sh` (TEST gegen GRAFIK).
 - Einzelheiten: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`, `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` §7.10.
@@ -209,7 +211,7 @@ Assembler/asm_alle.sh [Basisverzeichnis]   # Vorgabe: Assembler/; darf von über
 Zum Selbstbauen aus dem Quellcode: `Assembler/make_c82ass.sh` (Linux) bzw. `Assembler/make_c82ass.bat`
 (Windows, MinGW-w64).
 
-Der Assembler erzeugt unter anderem den Objektcode (`.obj`), eine Speicherbelegung (`.dmp`) und eine `.test`-Datei.
+Der Assembler erzeugt unter anderem den Objektcode (`.obj`, ein binär codierter R300-Lochstreifen, unmittelbar in den Lochbandleser legbar), eine Speicherbelegung (`.dmp`) und eine `.test`-Datei.
 Diese enthält die Trommeldatei im Testformat des Interpreters und lässt sich nach Ergänzung der Testmarken und der
 Tastenfolge als Testauftrag in `Tests/` verwenden. Sprache, Anweisungen und Makros stehen in
 `Assembler/Dokumentation/` (die `.odt` ist maßgeblich).

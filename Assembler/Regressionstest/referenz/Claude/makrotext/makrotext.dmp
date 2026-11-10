@@ -1,0 +1,23 @@
+0000: 01 0025 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000007        dw  7     ; Zeichenzahl des Textes (Parameter 1)
+0002: 00 00000000012        dw  10    ; Zeichenzahl plus Parameter 2
+0003: 00 00000000002        dw  2     ; Zahl der Parameter: der Text zaehlt als ein Parameter
+0004: 00 00000000003        dw  3     ; Zeichenzahl des Textes (Parameter 1)
+0005: 00 00000000015        dw  13    ; Zeichenzahl plus Parameter 2
+0006: 00 00000000002        dw  2     ; Zahl der Parameter: der Text zaehlt als ein Parameter
+0007: 00 00000000005        dw  5     ; Zeichenzahl des Textes (Parameter 1)
+0010: 00 00000000006        dw  6     ; Zeichenzahl plus Parameter 2
+0011: 00 00000000002        dw  2     ; Zahl der Parameter: der Text zaehlt als ein Parameter
+0012: 00 00000000001        dw  1     ; Text laenger als 5 Zeichen
+0013: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0014: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0015: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0016: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0017: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0020: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0021: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0022: 00 00000000002        dw  2     ; Text hoechstens 5 Zeichen
+0023: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0024: 00 00000000003        dw  3     ; je Zeichen ein Wort
+0025: 01 0001 164    haupt: 164 0001  ; Zelle 0025: Diagnoseausgabe (nur im Test)
+0026: 01 0000 020           020 0     ; Zelle 0026: Halt

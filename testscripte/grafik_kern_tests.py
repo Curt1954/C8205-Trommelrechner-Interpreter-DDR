@@ -142,6 +142,31 @@ class Dauerbetrieb(Basis):
         self.assertIn('e', fehler)
 
 
+class GKanal(Basis):
+    """G4-019: G stellt den Kanal der eingerasteten Kanaltaste ein; nur ist keine andere eingerastet, gilt K0."""
+    def neu(self):
+        if getattr(self, 'trommel', None):              # die Trommel eines frueheren Rechners im selben Test zuerst schliessen
+            self.trommel.schliessen(); self.trommel = None
+        return self.rechner({})
+    def kanal(self, r):
+        m = r.m
+        return ('K0' if not (m.fl['K1'] or m.fl['K2'] or m.fl['K3']) else [f'K{k}' for k in (1, 2, 3) if m.fl[f'K{k}']][0], m.fl['T'], m.fl['SW'])
+    def test_g_stellt_den_kanal_der_gedrueckten_kanaltaste_ein(self):
+        for kn in (1, 2, 3):
+            r = self.neu(); self.tasten(r, 'H', f'K{kn}', 'G')
+            self.assertEqual(self.kanal(r), (f'K{kn}', 0, 0), kn)
+    def test_g_ohne_andere_kanaltaste_k0_mit_t_oder_sw(self):
+        r = self.neu(); self.tasten(r, 'H', 'G'); self.assertEqual(self.kanal(r), ('K0', 1, 0))
+        r = self.neu(); self.tasten(r, 'H', 'SW=1', 'G'); self.assertEqual(self.kanal(r), ('K0', 0, 1))
+    def test_kanaltaste_zurueck_auf_k0_dann_g_k0(self):
+        r = self.neu(); self.tasten(r, 'H', 'K2', 'G', 'K0', 'G'); self.assertEqual(self.kanal(r), ('K0', 1, 0))
+    def test_g_nach_kanalwechsel_mehrfach_bleibt_der_kanal(self):
+        r = self.neu(); self.tasten(r, 'H', 'K3', 'G', 'G', 'G'); self.assertEqual(self.kanal(r), ('K3', 0, 0))
+        self.tasten(r, 'K1', 'G'); self.assertEqual(self.kanal(r), ('K1', 0, 0))
+    def test_g_bei_gehaltenem_e_aendert_den_kanal_nicht(self):
+        r = self.neu(); self.tasten(r, 'H', 'K2', 'E+', 'G'); self.assertEqual(self.kanal(r)[0], 'K2')
+
+
 class TrommelUndBahnsperre(Basis):
     def test_schalterdatei_und_sperre(self):
         r = self.rechner({0o100: 7}, basp='100000')

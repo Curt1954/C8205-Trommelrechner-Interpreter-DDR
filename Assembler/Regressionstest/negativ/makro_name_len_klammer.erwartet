@@ -1,0 +1,4 @@
+rc 16
+stderr makro_name_len_klammer.asm:5: Fehler: $LEN: Klammer ) fehlt
+datei-weg obj mqo test
+escape-weg

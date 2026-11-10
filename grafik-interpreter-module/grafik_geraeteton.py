@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 grafik_geraeteton.py - Toene von Lochstreifenleser und Lochbandstanzer fuer GRAFIK (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-09, S4-10).
-Version: G4-005.  Nur Standardbibliothek.
+Version: G4-007.  Nur Standardbibliothek.
 
 Beides sind Zustandsautomaten mit ersetzbarer Uhr (`uhr`) und ersetzbarem Warten (`schlafe`), damit die Pruefungen ohne Audiogeraet
 und ohne Echtzeit laufen.  Zeitgeber: tick() wird vom Mischer nach jedem Block (alle 10 ms) aufgerufen (mischer.takt_haken).
 
-LeserTon (S4-09, neu G4-005 am 22.10.2026): zeichen() bei jedem Zeichen, das ein Leser tatsaechlich liefert (echtes Benutzen, nicht das Warten im Eingabe-Halt).
+LeserTon (S4-09, G4-007: je Lesertyp eigene Klaenge, FS751 = ls_fs751_*.wav; neu G4-005 am 22.10.2026): zeichen() bei jedem Zeichen, das ein Leser tatsaechlich liefert (echtes Benutzen, nicht das Warten im Eingabe-Halt).
   Laeuft kein Ton: Einzelton (ls_einzel.wav, 148 ms), Befehlsschleife nach 1/10 s frei.  Laeuft er noch beim naechsten Zugriff: abgebrochen, Dauerton
   (ls_dauer.wav, Schleife) ab jetzt, Freigabe je Zeichen nach 1/130 s.  LS_AUS_S ohne Zugriff: Ton aus (60 ms Auslaufen, ls_ende.wav), Ablauf zurueck.
 
@@ -23,26 +23,33 @@ import time
 
 import grafik_tonmisch as TM
 
-VERSION_GERAETETON = 'G4-005'
+VERSION_GERAETETON = 'G4-007'
 LS_PAUSE_S = 0.100          # (bis G4-004: Schwelle des Lesers; ab G4-005 ersetzt durch EINZEL_FREIGABE_S und LS_AUS_S)
 EINZEL_FREIGABE_S = 0.100   # G4-005: Befehlsschleife nach dem Einzelton-Beginn nach 1/10 s wieder frei
 LS_EINZEL_S = 0.148         # Laenge von ls_einzel.wav, wenn der Klang nicht bekannt ist
 LS_AUS_S = 3.0              # G4-005: so lange ohne Zugriff auf den Leser -> Ton aus, Ablauf zurueckgesetzt (Wert geschaetzt, nachzustellen)
-LESETEMPO = 130.0           # Zeichen je Sekunde
+LESETEMPO_303 = 130.0       # Lochbandleser Modell 303 (elektrisch, Metallbuersten, Standardleser des C 8205): Zeichen je Sekunde
+LESETEMPO_FS751 = 750.0     # Lochbandleser FS751 (optoelektronisch): Zeichen je Sekunde (G4-006, Wunsch des Projektinhabers 30.10.2026)
+LESETEMPO = LESETEMPO_303   # Standard (Typ 303); der Schalter --LS-LESER-TYP waehlt das Tempo und Leserton (G4-007)
+LESETEMPO_JE_TYP = {'303': LESETEMPO_303, 'FS751': LESETEMPO_FS751}
 STANZTEMPO = 50.0           # Zeichen je Sekunde (Antwort F-62 Nr. 4: ungefaehr so; Mindestabstand 20 ms, Rechenzeit angerechnet)
 STANZ_DAUER_S = 0.050       # Abstand zweier Zeichen, unter dem Dauerstanzen beginnt, und Frist bis zum Ende von Dauerstanzen (S4-10)
 STANZ_AUS_S = 5.0           # Abschalten des Geraeuschs ohne Zeichen (S4-10)
 PEGEL = 1.0
 
 LS_EINZEL, LS_DAUER, LS_ENDE = 'ls_einzel.wav', 'ls_dauer.wav', 'ls_ende.wav'
+LS_KLAENGE_JE_TYP = {'303': (LS_EINZEL, LS_DAUER, LS_ENDE),     # G4-007: Klangdateien in ton/sw_toene/ je Lesertyp
+                     'FS751': ('ls_fs751_einzel.wav', 'ls_fs751_dauer.wav', 'ls_fs751_ende.wav')}
 ST_MOTOR, ST_DAUER = 'ls_motor.wav', 'ls_dauerstanzen.wav'
 
 
-def lade_leserklaenge(ordner):
+def lade_leserklaenge(ordner, typ='303'):
+    """G4-007: Klaenge des Lesers; typ '303' (Metallbuersten, Standard) oder 'FS751' (optoelektronisch, eigene Aufnahme)."""
     import os
     sw = os.path.join(ordner, 'sw_toene')
-    return {'einzel': TM.lade_klang(os.path.join(sw, LS_EINZEL)), 'dauer': TM.lade_klang(os.path.join(sw, LS_DAUER)),
-            'ende': TM.lade_klang(os.path.join(sw, LS_ENDE))}
+    einzel, dauer, ende = LS_KLAENGE_JE_TYP[typ]
+    return {'einzel': TM.lade_klang(os.path.join(sw, einzel)), 'dauer': TM.lade_klang(os.path.join(sw, dauer)),
+            'ende': TM.lade_klang(os.path.join(sw, ende))}
 
 
 def lade_stanzerklaenge(ordner):

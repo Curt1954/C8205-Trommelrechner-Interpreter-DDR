@@ -1,0 +1,65 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      1       ; 1  Variable gesetzt
+        dw      0       ; 0  Name unbekannt, kein Fehler
+        dw      1       ; 1  Feld sichtbar
+        dw      1       ; 1  Feld
+        dw      0       ; 0  einfache Variable ist kein Feld
+        dw      0       ; 0  Name unbekannt
+        dw      1       ; 1  letztes Element
+        dw      0       ; 0  Index ausserhalb, kein Fehler
+        dw      1       ; 1  Index als Rechenausdruck
+        dw      0       ; 0  glob ist kein Feld
+        dw      0       ; 0  vor $LOCAL
+        dw      1       ; 1  lokal vereinbart, ohne $SET
+        dw      1       ; 1  lokales Feld
+        dw      1       ; 1  Element 1
+        dw      0       ; 0  ausserhalb
+        dw      0       ; 0  lok ist kein Feld
+        dw      0       ; 0  Wert einer lokalen Variable ohne $SET
+        dw      0       ; 0  lokale Variable des Aufrufers unsichtbar
+        dw      0       ; 0  lokales Feld des Aufrufers unsichtbar
+        dw      1       ; 1  globale Variable sichtbar
+        dw      5       ; 5  globaler Wert
+        dw      0       ; 0  die lokale verdeckt die globale
+        dw      8       ; 8  lokaler Wert
+        dw      1       ; 1  lokale Variable
+        dw      0       ; 0  das globale Feld ist verdeckt
+        dw      0       ; 0  ebenso das Element
+        dw      0       ; 0  die lokale von DFLOK ist mit dessen Ende verschwunden
+        dw      5       ; 5  globale Variable unberuehrt
+        dw      1       ; 1  globales Feld wieder sichtbar
+        dw      0       ; 0  a2 ist noch nicht gesetzt
+        dw      1       ; 1  jetzt gesetzt
+        dw      1       ; 1  Klammer um das ganze Argument
+        dw      1       ; 1  Element 2 des Feldes fe
+        dw      0       ; 0  Element 3 gibt es nicht
+        dw      2       ; 2  1+1+0
+        dw      11      ; erzeugt: a2 vorhanden
+        dw      22      ; erzeugt: der ELIF-Zweig
+        dw      4       ; 4  vier Elemente vorhanden
+        dw      7       ; dreimal: 1+2
+        dw      7       ; dreimal: 1+2
+        dw      7       ; dreimal: 1+2
+M1:     dw      9       ; Marke M1; 1 im Kommentar und 1
+        dw      1       ; 1  Makro im Quelltext
+        dw      1       ; 1  Makro in der Projektdatei
+        dw      1       ; 1  Makro aus c82ass.makros
+        dw      0       ; 0  unbekannt, kein Fehler
+        dw      1       ; 1  Makro erst hinter dem Aufruf definiert
+        dw      1       ; 1  in Quelltext und Datei, zaehlt einmal
+        dw      0       ; 0  Variable ist kein Makro
+        dw      0       ; 0  Anweisung ist kein Makro
+        dw      0       ; 0  Symbol des Quelltexts ist kein Makro
+        dw      1       ; 1  das laufende Makro selbst
+        dw      0       ; 0  Kleinschreibung zaehlt
+        dw      7       ; 100 oder der vorher gesetzte Wert
+        dw      7       ; 100 oder der vorher gesetzte Wert
+        dw      100     ; 100
+        dw      100     ; 100
+        dw      77      ; Wort 77 dezimal
+        dw      7       ; in jedem Fall
+        dw      7       ; in jedem Fall
+        dw      41      ; Wort 41 dezimal (051 oktal)
+        dw      62      ; Wort 62 dezimal
+haupt:  164     0001    ; Zelle 0077: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0100: Halt

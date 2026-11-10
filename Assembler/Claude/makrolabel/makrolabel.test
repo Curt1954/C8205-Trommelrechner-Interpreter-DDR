@@ -1,0 +1,188 @@
+Trommeldatei:
+#DOK-0001 Test: 30 Aufrufe von ZAEHL und 4 von ZAEHL2, beide mit dem Label ML0001%; fruehere Fassung: Label-Kollision ab dem 27. Aufruf
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # eins: dw 1 ; Zelle 0001: Konstante 1
+0002: 00000000000 # zahl: dw 0 ; Zelle 0002: Zaehler von ZAEHL
+0003: 00000000000 # zahl2: dw 0 ; Zelle 0003: Zaehler von ZAEHL2
+0004: 00000000000 # fehler: dw 0 ; Zelle 0004: bleibt 0, wenn nur die richtigen Spruenge ausgefuehrt werden
+0005: 00000007000 # haupt: 000 ML0001DKR ; Sprung ueber die naechste Zelle
+0006: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0007: 00000002211 # ML0001DKR: 211 zahl ; AC := zahl
+0010: 00000001210 # 210 eins ; AC := zahl + 1
+0011: 00000002240 # 240 zahl ; zahl := AC
+0012: 00000014000 # 000 ML0001GNU ; Sprung ueber die naechste Zelle
+0013: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0014: 00000002211 # ML0001GNU: 211 zahl ; AC := zahl
+0015: 00000001210 # 210 eins ; AC := zahl + 1
+0016: 00000002240 # 240 zahl ; zahl := AC
+0017: 00000021000 # 000 ML0001JQX ; Sprung ueber die naechste Zelle
+0020: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0021: 00000002211 # ML0001JQX: 211 zahl ; AC := zahl
+0022: 00000001210 # 210 eins ; AC := zahl + 1
+0023: 00000002240 # 240 zahl ; zahl := AC
+0024: 00000026000 # 000 ML0001MTA ; Sprung ueber die naechste Zelle
+0025: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0026: 00000002211 # ML0001MTA: 211 zahl ; AC := zahl
+0027: 00000001210 # 210 eins ; AC := zahl + 1
+0030: 00000002240 # 240 zahl ; zahl := AC
+0031: 00000033000 # 000 ML0001PWD ; Sprung ueber die naechste Zelle
+0032: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0033: 00000002211 # ML0001PWD: 211 zahl ; AC := zahl
+0034: 00000001210 # 210 eins ; AC := zahl + 1
+0035: 00000002240 # 240 zahl ; zahl := AC
+0036: 00000040000 # 000 ML0001SZG ; Sprung ueber die naechste Zelle
+0037: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0040: 00000002211 # ML0001SZG: 211 zahl ; AC := zahl
+0041: 00000001210 # 210 eins ; AC := zahl + 1
+0042: 00000002240 # 240 zahl ; zahl := AC
+0043: 00000045000 # 000 ML0001VCJ ; Sprung ueber die naechste Zelle
+0044: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0045: 00000002211 # ML0001VCJ: 211 zahl ; AC := zahl
+0046: 00000001210 # 210 eins ; AC := zahl + 1
+0047: 00000002240 # 240 zahl ; zahl := AC
+0050: 00000052000 # 000 ML0001YFM ; Sprung ueber die naechste Zelle
+0051: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0052: 00000002211 # ML0001YFM: 211 zahl ; AC := zahl
+0053: 00000001210 # 210 eins ; AC := zahl + 1
+0054: 00000002240 # 240 zahl ; zahl := AC
+0055: 00000057000 # 000 ML0001BIP ; Sprung ueber die naechste Zelle
+0056: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0057: 00000002211 # ML0001BIP: 211 zahl ; AC := zahl
+0060: 00000001210 # 210 eins ; AC := zahl + 1
+0061: 00000002240 # 240 zahl ; zahl := AC
+0062: 00000064000 # 000 ML0001ELS ; Sprung ueber die naechste Zelle
+0063: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0064: 00000002211 # ML0001ELS: 211 zahl ; AC := zahl
+0065: 00000001210 # 210 eins ; AC := zahl + 1
+0066: 00000002240 # 240 zahl ; zahl := AC
+0067: 00000071000 # 000 ML0001HOV ; Sprung ueber die naechste Zelle
+0070: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0071: 00000002211 # ML0001HOV: 211 zahl ; AC := zahl
+0072: 00000001210 # 210 eins ; AC := zahl + 1
+0073: 00000002240 # 240 zahl ; zahl := AC
+0074: 00000076000 # 000 ML0001KRY ; Sprung ueber die naechste Zelle
+0075: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0076: 00000002211 # ML0001KRY: 211 zahl ; AC := zahl
+0077: 00000001210 # 210 eins ; AC := zahl + 1
+0100: 00000002240 # 240 zahl ; zahl := AC
+0101: 00000103000 # 000 ML0001NUB ; Sprung ueber die naechste Zelle
+0102: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0103: 00000002211 # ML0001NUB: 211 zahl ; AC := zahl
+0104: 00000001210 # 210 eins ; AC := zahl + 1
+0105: 00000002240 # 240 zahl ; zahl := AC
+0106: 00000110000 # 000 ML0001QXE ; Sprung ueber die naechste Zelle
+0107: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0110: 00000002211 # ML0001QXE: 211 zahl ; AC := zahl
+0111: 00000001210 # 210 eins ; AC := zahl + 1
+0112: 00000002240 # 240 zahl ; zahl := AC
+0113: 00000115000 # 000 ML0001TAH ; Sprung ueber die naechste Zelle
+0114: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0115: 00000002211 # ML0001TAH: 211 zahl ; AC := zahl
+0116: 00000001210 # 210 eins ; AC := zahl + 1
+0117: 00000002240 # 240 zahl ; zahl := AC
+0120: 00000122000 # 000 ML0001WDK ; Sprung ueber die naechste Zelle
+0121: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0122: 00000002211 # ML0001WDK: 211 zahl ; AC := zahl
+0123: 00000001210 # 210 eins ; AC := zahl + 1
+0124: 00000002240 # 240 zahl ; zahl := AC
+0125: 00000127000 # 000 ML0001ZGN ; Sprung ueber die naechste Zelle
+0126: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0127: 00000002211 # ML0001ZGN: 211 zahl ; AC := zahl
+0130: 00000001210 # 210 eins ; AC := zahl + 1
+0131: 00000002240 # 240 zahl ; zahl := AC
+0132: 00000134000 # 000 ML0001CJQ ; Sprung ueber die naechste Zelle
+0133: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0134: 00000002211 # ML0001CJQ: 211 zahl ; AC := zahl
+0135: 00000001210 # 210 eins ; AC := zahl + 1
+0136: 00000002240 # 240 zahl ; zahl := AC
+0137: 00000141000 # 000 ML0001FMT ; Sprung ueber die naechste Zelle
+0140: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0141: 00000002211 # ML0001FMT: 211 zahl ; AC := zahl
+0142: 00000001210 # 210 eins ; AC := zahl + 1
+0143: 00000002240 # 240 zahl ; zahl := AC
+0144: 00000146000 # 000 ML0001IPW ; Sprung ueber die naechste Zelle
+0145: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0146: 00000002211 # ML0001IPW: 211 zahl ; AC := zahl
+0147: 00000001210 # 210 eins ; AC := zahl + 1
+0150: 00000002240 # 240 zahl ; zahl := AC
+0151: 00000153000 # 000 ML0001LSZ ; Sprung ueber die naechste Zelle
+0152: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0153: 00000002211 # ML0001LSZ: 211 zahl ; AC := zahl
+0154: 00000001210 # 210 eins ; AC := zahl + 1
+0155: 00000002240 # 240 zahl ; zahl := AC
+0156: 00000160000 # 000 ML0001OVC ; Sprung ueber die naechste Zelle
+0157: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0160: 00000002211 # ML0001OVC: 211 zahl ; AC := zahl
+0161: 00000001210 # 210 eins ; AC := zahl + 1
+0162: 00000002240 # 240 zahl ; zahl := AC
+0163: 00000165000 # 000 ML0001RYF ; Sprung ueber die naechste Zelle
+0164: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0165: 00000002211 # ML0001RYF: 211 zahl ; AC := zahl
+0166: 00000001210 # 210 eins ; AC := zahl + 1
+0167: 00000002240 # 240 zahl ; zahl := AC
+0170: 00000172000 # 000 ML0001UBI ; Sprung ueber die naechste Zelle
+0171: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0172: 00000002211 # ML0001UBI: 211 zahl ; AC := zahl
+0173: 00000001210 # 210 eins ; AC := zahl + 1
+0174: 00000002240 # 240 zahl ; zahl := AC
+0175: 00000177000 # 000 ML0001XEL ; Sprung ueber die naechste Zelle
+0176: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0177: 00000002211 # ML0001XEL: 211 zahl ; AC := zahl
+0200: 00000001210 # 210 eins ; AC := zahl + 1
+0201: 00000002240 # 240 zahl ; zahl := AC
+0202: 00000204000 # 000 ML0001AIO ; Sprung ueber die naechste Zelle
+0203: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0204: 00000002211 # ML0001AIO: 211 zahl ; AC := zahl
+0205: 00000001210 # 210 eins ; AC := zahl + 1
+0206: 00000002240 # 240 zahl ; zahl := AC
+0207: 00000211000 # 000 ML0001DLR ; Sprung ueber die naechste Zelle
+0210: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0211: 00000002211 # ML0001DLR: 211 zahl ; AC := zahl
+0212: 00000001210 # 210 eins ; AC := zahl + 1
+0213: 00000002240 # 240 zahl ; zahl := AC
+0214: 00000216000 # 000 ML0001GOU ; Sprung ueber die naechste Zelle
+0215: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0216: 00000002211 # ML0001GOU: 211 zahl ; AC := zahl
+0217: 00000001210 # 210 eins ; AC := zahl + 1
+0220: 00000002240 # 240 zahl ; zahl := AC
+0221: 00000223000 # 000 ML0001JRX ; Sprung ueber die naechste Zelle
+0222: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0223: 00000002211 # ML0001JRX: 211 zahl ; AC := zahl
+0224: 00000001210 # 210 eins ; AC := zahl + 1
+0225: 00000002240 # 240 zahl ; zahl := AC
+0226: 00000230000 # 000 ML0001MUA ; Sprung ueber die naechste Zelle
+0227: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0230: 00000002211 # ML0001MUA: 211 zahl ; AC := zahl
+0231: 00000001210 # 210 eins ; AC := zahl + 1
+0232: 00000002240 # 240 zahl ; zahl := AC
+0233: 00000235000 # 000 ML0001PXD ; Sprung ueber die naechste Zelle
+0234: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0235: 00000003211 # ML0001PXD: 211 zahl2 ; AC := zahl2
+0236: 00000001210 # 210 eins ; AC := zahl2 + 1
+0237: 00000003240 # 240 zahl2 ; zahl2 := AC
+0240: 00000242000 # 000 ML0001SAG ; Sprung ueber die naechste Zelle
+0241: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0242: 00000003211 # ML0001SAG: 211 zahl2 ; AC := zahl2
+0243: 00000001210 # 210 eins ; AC := zahl2 + 1
+0244: 00000003240 # 240 zahl2 ; zahl2 := AC
+0245: 00000247000 # 000 ML0001VDJ ; Sprung ueber die naechste Zelle
+0246: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0247: 00000003211 # ML0001VDJ: 211 zahl2 ; AC := zahl2
+0250: 00000001210 # 210 eins ; AC := zahl2 + 1
+0251: 00000003240 # 240 zahl2 ; zahl2 := AC
+0252: 00000254000 # 000 ML0001YGM ; Sprung ueber die naechste Zelle
+0253: 00000004240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0254: 00000003211 # ML0001YGM: 211 zahl2 ; AC := zahl2
+0255: 00000001210 # 210 eins ; AC := zahl2 + 1
+0256: 00000003240 # 240 zahl2 ; zahl2 := AC
+0257: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0260: 00000000020 # 020 0 ; Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0261 AC=00000000004 US=1
+0002: 00000000036   # zahl: 30 Aufrufe von ZAEHL
+0003: 00000000004   # zahl2: 4 Aufrufe von ZAEHL2
+0004: 00000000000   # fehler: keine uebersprungene Zelle wurde ausgefuehrt

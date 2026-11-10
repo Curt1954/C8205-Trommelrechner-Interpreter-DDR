@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_marke_makro.asm:11: Fehler: $CALC(zellen(a,erz)): zellen(a,erz): Symbol "erz" hat ein Makro erzeugt und steht nicht im Quelltext (ein Block braucht Marken im Quelltext) (bei "zellen(a,erz)")
+datei-weg obj mqo test
+escape-weg

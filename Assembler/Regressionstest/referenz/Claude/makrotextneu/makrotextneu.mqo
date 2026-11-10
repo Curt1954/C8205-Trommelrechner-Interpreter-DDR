@@ -1,0 +1,50 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      7       ; Parameter Nummer i
+        dw      1       ; Zeichenzahl des Parameters i
+        dw      14      ; Doppelte
+        dw      11      ; Parameter Nummer i
+        dw      2       ; Zeichenzahl des Parameters i
+        dw      22      ; Doppelte
+        dw      2       ; nur wenn das Doppelte ueber 20 liegt: der Index
+        dw      13      ; Parameter Nummer i
+        dw      2       ; Zeichenzahl des Parameters i
+        dw      26      ; Doppelte
+        dw      3       ; nur wenn das Doppelte ueber 20 liegt: der Index
+        dw      14      ; Element mit dem Index aus dem Parameter i
+        dw      28      ; Element mit dem Index aus dem Parameter i
+        dw      35      ; Element mit dem Index aus dem Parameter i
+        dw      5       ; Parameter 1
+        dw      9       ; Parameter 2
+        dw      7       ; Parameter 1 des aeusseren Aufrufs
+        dw      20      ; Parameter n des inneren Aufrufs
+        dw      2       ; Zeichenzahl des Parameters n des inneren Aufrufs
+        dw      7       ; nach der Rueckkehr wieder der aeussere Aufruf
+        dw      300     ; Parameter n des inneren Aufrufs
+        dw      3       ; Zeichenzahl des Parameters n des inneren Aufrufs
+        dw      11      ; aussen: Parameter 2
+        dw      0       ; Laenge 0
+        dw      0       ; Laenge 0
+        dw      0       ; Laenge 0
+        dw      0       ; Laenge 0
+        dw      2       ; Laenge 2
+        dw      0       ; Laenge 0
+        dw      1       ; z ist leer
+        dw      3       ; Laenge 3
+        dw      2       ; 2
+        dw      3       ; 3
+        dw      1       ; Laenge 1
+        dw      59      ; 59
+        dw      7       ; Laenge 7
+        dw      3       ; 3
+        dw      300     ; 300
+        dw      900     ; 900
+        dw      1000    ; 1000
+        dw      2       ; 2
+        dw      4567    ; 4567
+        dw      10      ; 10
+        dw      903     ; 903
+        dw      901     ; 901
+        dw      901     ; 901
+        dw      903     ; 903
+haupt:  164     0001    ; Zelle 0060: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0061: Halt

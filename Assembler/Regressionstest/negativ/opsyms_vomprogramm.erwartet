@@ -1,0 +1,9 @@
+args --opsyms
+ohne-p-s
+vorher-weg c82ass.opsym
+binary-mit-tabelle
+rc 0
+stdout Namen für Operationscodes (Standardtabelle
+stdout Einzel-Addition mit Löschen (ac := <a>)
+nicht-stderr Fehler
+escape-weg

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_global_ohne_name.asm:6: Fehler: G1 $GLOBAL erwartet mindestens einen Namen: $GLOBAL <Name> [<Name>] ...
+datei-weg obj mqo test
+escape-weg

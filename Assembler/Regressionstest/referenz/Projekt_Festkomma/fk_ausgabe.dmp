@@ -1,0 +1,103 @@
+0000: EE 0000 XXX                                                          FK_AUSGABE 9            ; UP fk_ausgabe, fk_eingabe und Zeichentabelle aus c82ass.makros (nur einmal erzeugt), relativ ab 0000
+                     bei Operand: FK_AUSGABE Operationscode  ist ungültig                         
+      20 0000 2000                                                         equ        02000        ; relative Adresse 02000
+2000: 00 4500 030    haupt:                                                030        04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 1170 030                                                          dz         $inkb        ; Umschaltung in Kleinbuchstabe
+      00 2720 030                                                          dz         $wrzl        ; Zeilenschaltung
+2003: 00 4700 030                                                          030        04700        ; 4700 oder K0 oder SW1 Input oder KON Input
+2004: 01 2100 211    lese:                                                 211        kk           ; Stellenzahl (Teil 1: 9, Teil 2: 3)
+2005: EE 0000 240                                                          240        fk_es        ; Parameter von fk_eingabe
+                     bei Operand: fk_es Symbol ist nicht definiert                                 
+2006: 01 2075 211                                                          211        rwe          ; Rueckkehrwort der Eingabe
+2007: EE 0000 240                                                          240        fk_rueck_ein ; in die Rueckkehrzelle von fk_eingabe
+                     bei Operand: fk_rueck_ein Symbol ist nicht definiert                          
+2010: EE 0000 000                                                          000        fk_eingabe   ; Zahl einlesen, Ergebnis im AC
+                     bei Operand: fk_eingabe Symbol ist nicht definiert                            
+2011: 01 2101 240    nache:                                                240        zw           ; fk-Zahl merken
+2012: 01 2100 211                                                          211        kk           ; Stellenzahl
+2013: EE 0000 240                                                          240        fk_as        ; Parameter von fk_ausgabe
+                     bei Operand: fk_as Symbol ist nicht definiert                                 
+2014: 00 4500 030                                                          030        04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 1170 030                                                          dz         $inkb        ; Umschaltung in Kleinbuchstabe
+2016: 01 2076 211                                                          211        rwa          ; Rueckkehrwort der Ausgabe
+2017: EE 0000 240                                                          240        fk_rueck     ; in die Rueckkehrzelle von fk_ausgabe
+                     bei Operand: fk_rueck Symbol ist nicht definiert                              
+2020: 01 2101 211                                                          211        zw           ; fk-Zahl in den AC
+2021: EE 0000 000                                                          000        fk_ausgabe   ; Zahl ausgeben
+                     bei Operand: fk_ausgabe Symbol ist nicht definiert                            
+      00 2720 030    nacha:                                                dz         $wrzl        ; Zeilenschaltung
+2023: 00 4700 030                                                          030        04700        ; 4700 oder K0 oder SW1 Input oder KON Input
+2024: 01 2102 211                                                          211        zn           ; Zaehler
+2025: 01 2126 220                                                          220        l0001        ; - 1
+2026: 01 2102 240                                                          240        zn           ; merken
+2027: 01 2004 050                                                          050        lese         ; noch nicht fertig: naechste Zahl
+2030: 01 2103 211                                                          211        ph           ; Teil 1 oder Teil 2 fertig: Teil
+2031: 01 2127 330                                                          330        l0002        ; Teil 1?
+2032: 01 2034 170                                                          170        teil2        ; ja: Teil 2 vorbereiten
+2033: 01 2043 000                                                          000        teil3        ; nein: Teil 3
+2034: 01 2126 211    teil2:                                                211        l0001        ; Teil 2
+2035: 01 2103 240                                                          240        ph           ; merken
+2036: 01 2130 211                                                          211        l0003        ; 3 Stellen
+2037: 01 2100 240                                                          240        kk           ; fuer Teil 2 merken
+2040: 01 2130 211                                                          211        l0003        ; 4 Zahlen
+2041: 01 2102 240                                                          240        zn           ; Zaehler
+2042: 01 2004 000                                                          000        lese         ; lesen
+2043: 01 2131 211    teil3:                                                211        l0004        ; Zeiger auf die Tabelle
+2044: 01 2104 240                                                          240        tp           ; merken
+2045: 01 2104 211    dl:                                                   211        tp           ; Tabellenzeiger
+2046: 00 0000 251                                                          251        0            ; AC := Stellenzahl
+2047: EE 0000 240                                                          240        fk_as        ; Parameter von fk_ausgabe
+                     bei Operand: fk_as Symbol ist nicht definiert                                 
+2050: 01 2104 211                                                          211        tp           ; Zeiger
+2051: 01 2132 210                                                          210        l0005        ; naechstes Wort
+2052: 01 2104 240                                                          240        tp           ; merken
+2053: 00 0000 251                                                          251        0            ; AC := Wort
+2054: 01 2101 240                                                          240        zw           ; merken
+2055: 01 2104 211                                                          211        tp           ; Zeiger
+2056: 01 2132 210                                                          210        l0005        ; naechstes Paar
+2057: 01 2104 240                                                          240        tp           ; merken
+2060: 00 4500 030                                                          030        04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 1170 030                                                          dz         $inkb        ; Umschaltung in Kleinbuchstabe
+2062: 01 2077 211                                                          211        rwa3         ; Rueckkehrwort der Ausgabe
+2063: EE 0000 240                                                          240        fk_rueck     ; in die Rueckkehrzelle von fk_ausgabe
+                     bei Operand: fk_rueck Symbol ist nicht definiert                              
+2064: 01 2101 211                                                          211        zw           ; Wort in den AC
+2065: EE 0000 000                                                          000        fk_ausgabe   ; Zahl ausgeben
+                     bei Operand: fk_ausgabe Symbol ist nicht definiert                            
+      00 2720 030    nach3:                                                dz         $wrzl        ; Zeilenschaltung
+2067: 00 4700 030                                                          030        04700        ; 4700 oder K0 oder SW1 Input oder KON Input
+2070: 01 2105 211                                                          211        tz           ; Zaehler
+2071: 01 2126 220                                                          220        l0001        ; - 1
+2072: 01 2105 240                                                          240        tz           ; merken
+2073: 01 2045 050                                                          050        dl           ; noch nicht fertig: naechstes Paar
+2074: 01 0000 020                                                          020        0            ; Halt
+2075: 01 2011000     rwe:                                                  da         nache        ; Rueckkehrwort der Eingabe
+2076: 01 2022000     rwa:                                                  da         nacha        ; Rueckkehrwort der Ausgabe
+2077: 01 2066000     rwa3:                                                 da         nach3        ; Rueckkehrwort der Ausgabe (Teil 3)
+2100: 00 00000000011 kk:                                                   dw         9            ; Stellenzahl fuer Teil 1 und 2
+2101: 20 2102        zw:                                                   db         1            ; gelesene fk-Zahl
+2102: 00 00000000016 zn:                                                   dw         14           ; Zaehler: 15 Zahlen
+2103: 0              ph:                                                   dw         0            ; Teil: 0 Teil 1, 1 Teil 2
+2104: 20 2105        tp:                                                   db         1            ; Zeiger auf die Tabelle tbl
+2105: 00 00000000007 tz:                                                   dw         7            ; Zaehler: 8 Paare
+2106: 00 00000000011 tbl:                                                  dw         9            ; Paar 1: Stellenzahl 9
+2107: 00 37777777777                                                       dw         037777777777 ; Wort 1 - 2^-32
+2110: 00 00000000011                                                       dw         9            ; Paar 2: Stellenzahl 9
+2111: 00 40000000001                                                       dw         040000000001 ; Wort -1 + 2^-32
+2112: 0                                                                    dw         0            ; Paar 3: Stellenzahl 0
+2113: 00 37777777777                                                       dw         037777777777 ; Wort 1 - 2^-32
+2114: 0                                                                    dw         0            ; Paar 4: Stellenzahl 0
+2115: 00 20000000000                                                       dw         020000000000 ; Wort 0,5
+2116: 0                                                                    dw         0            ; Paar 5: Stellenzahl 0
+2117: 00 10000000000                                                       dw         010000000000 ; Wort 0,25
+2120: 00 00000000002                                                       dw         2            ; Paar 6: Stellenzahl 2
+2121: 00 03146314632                                                       dw         03146314632  ; Wort 0,1
+2122: 00 00000000001                                                       dw         1            ; Paar 7: Stellenzahl 1
+2123: 00 74631463146                                                       dw         074631463146 ; Wort -0,1
+2124: 00 00000000005                                                       dw         5            ; Paar 8: Stellenzahl 5
+2125: 00 20000000000                                                       dw         020000000000 ; Wort 0,5
+2126: 00 00000000001 l0001                                                 dw         1            
+2127: 0              l0002                                                 dw         000000000000 
+2130: 00 00000000003 l0003                                                 dw         3            
+2131: 01 2106000     l0004                                                 da         tbl          
+2132: 00 00000001000 l0005                                                 dw         000000001000 

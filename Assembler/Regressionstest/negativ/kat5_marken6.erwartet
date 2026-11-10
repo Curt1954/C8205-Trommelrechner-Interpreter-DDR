@@ -1,0 +1,4 @@
+rc 16
+stderr kat5 Operand hat 6 Zeichen, erlaubt sind höchstens 5 (ein Wort)
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,36 @@
+ZTD: Vergleich der Programmierweisen (Python-Makrosprache gegen handgeschriebenen Assemblertext)
+
+Stand 29.10.2026, gegen Zip 0.95.7-050 (Arbeitsnotiz, bewusst keine .md: die alten Programme ztl, ztc, ztd gehoeren nach Festlegung des Inhabers nicht zum Projekt ZT-Loader und duerfen in den .md nicht vorkommen).
+Fassung A: ZTD aus dem Generator (Assembler/Claude/ztd_py/gen/ztd_py_gen.py, Bibliothek gen_lib/c82gen.py 0.01-002), Programm ztd_py.asm, Test C8205Z/Tests_Z/ztd_py_tests.py.
+Fassung B: ZTD, wie bisher üblich programmiert, von einem anderen Claude-Konto: Assembler/Claude/ztd/ztd.asm, Test C8205Z/Tests_Z/ztd_tests.py, Dialog war in der frueheren ZT-Repository_Format.md 11.6 beschrieben (aus dem Projekt entfernt).
+A wurde allein und ohne Kenntnis von B fertiggestellt; erst danach ist B in das Projekt gekommen und hier nur nach Größe und Umfang gemessen, nicht Zeile für Zeile bewertet.
+
+
+Messwerte
+
+Messwerte (Fassung A | Fassung B), je Zeile:
+Kommandos l, a, d, g, m, q, h l, a, d, g, m, q, h
+Zellen 2257 (04321) 2195 (04223)
+Zeilen der .asm 1754 1873
+Quelle der .asm Generator, rund 1100 Zeilen Python von Hand
+Test 114 Prüfungen in 16 Fällen, Zustand der Trommeln Wort für Wort oder logisch gegen zt_repo.py 17 Fälle einschließlich der Kette ZTC, ZTL, ZTD, Trommeln Zelle für Zelle gegen zt_repo.py
+Hilfen aus dem BIS keine (Adresseneingabe, Ziffern, Schieben, Eingabetafel im Programm) Adresseneingabe 0316, Adressdruck 0220, Nullspur 7640
+Eingabetafel zwei gleiche Tafeln (160 Zellen), weil ZTL auf Vielfache von 040 lädt eine Tafel, zur Laufzeit in einem Platz tabraw ausgerichtet
+Dialog Kommando und Angaben in einer Zeile (M NAME ADRESSE), Aufforderung > Kommando sofort, danach Rückfragen (NAME:, ADRESSE:)
+
+Fassung A ist 62 Zellen (dezimal) größer, obwohl sie keine BIS-Hilfen nutzt und B die Tafel nur einmal anlegt. Die Zeilenzahl der .asm ist ähnlich; was der Generator spart, steht im Generator selbst, nicht im erzeugten Text.
+Zeit und Zahl der Testläufe bis wahr sind für B unbekannt. Für A wurden sie nicht gemessen (Uhr des Rechners unzuverlässig); eine Zeitangabe wäre geraten. Bei der nächsten Aufgabe Beginn und Ende notieren.
+
+
+Gefundene Fehler (Fassung A)
+
+Bibliothek (4): dbn 32 zählte im Layout als 1 Zelle; falsches Adressbit (0100 statt 040) bei der Wahl der Eingabetafel, fiel nur bei anderer Ladeadresse auf; db und Ausrichtung sind im Archiv nicht ladbar (erkannt vor dem Einsatz); die Trommelanwahl war nach der Interpreteränderung 0.95-013 (5d00 030, d = 0 bis 3 statt k = 1 bis 4) um eins verschoben, im Test sofort sichtbar (Fälle d, a, Blockkette).
+Generator (4): zwei Sprungbedingungen verkehrt (leeres Band, kein freier Eintrag); das Schlusszeichen / am Wortanfang verkehrt geprüft; / als Sprungzelle in der Tafel eingetragen (nur Zeichen mit Sprungumstellung springen, ZTC trägt / als Wert ein).
+Prüfstand (5): Zelle 0000 im BIS-Abbild; Pultschalter SW; Endezeichen für K0 und für den Leser; Trommelbelegung im Testaufbau; Zeitgrenzen. Mit dem Leser wartet der Interpreter still, der Lauf hängt ohne Protokoll: die Suche dauerte lange, bis das Warten im Leser als Ursache feststand.
+
+
+Einschränkungen des Vergleichs
+
+- Die Bibliothek hatte für Text, Ein- und Ausgabe, Spurlage und Zusatztrommeln keine Idiome; ein Teil der Arbeit ging in ihren Aufbau. Diese Idiome stehen jetzt für die nächste Aufgabe bereit; erst dann misst der Vergleich die Methode und nicht den Aufbau.
+- Die Programmierfestlegungen (Handbuch 5.8, 001 bis 030) sind in A nur zum Teil umgesetzt: 001, 019, 021. Nicht umgesetzt sind 003 (Literale), 004 und 026 (Schieben mit G- oder W-Befehlen über 7640 statt einer Nullspur im Programm, das wären 32 Zellen), 007 (Eingabetafel mit Bitmuster), 013 und 014, 017, 018 und 028 (Makros), 022, 025, 027 und 030 (KB/GB-Merkmal). Nicht anwendbar im Archiv sind 002, 015 und 023, solange K1 im Archiv 0 sein muss (db, equ, spa erzeugen Adressmarken). A müsste nach diesen Regeln kleiner sein; der Größenvergleich gilt deshalb für den heutigen Stand, nicht für das Ziel.
+- Der Dialog ist in beiden Fassungen eine Annahme (das frühere Format 11.6 nannte sie für B; A hat eine andere Syntax). Deshalb laufen die beiden Abnahmetests nicht gegeneinander.

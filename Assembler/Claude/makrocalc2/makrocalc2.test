@@ -1,0 +1,43 @@
+Trommeldatei:
+#DOK-0001 Test von min, max, Vergleichsoperatoren (Ergebnis 1 oder 0), $CALCO4 und $IF mit Zahlen ueber 32 Bit
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000021000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000003 # dw 3 ; Minimum
+0002: 00000000005 # dw 5 ; Maximum
+0003: 00000000001 # dw 1 ; kleiner
+0004: 00000000000 # dw 0 ; groesser oder gleich
+0005: 00000000000 # dw 0 ; gleich
+0006: 00000000001 # dw 1 ; ungleich
+0007: 00000000030 # dw 00030 ; oktal mit vier Ziffern (Wert 8 mal 3)
+0010: 00000000007 # dw 7 ; Minimum
+0011: 00000000007 # dw 7 ; Maximum
+0012: 00000000000 # dw 0 ; kleiner
+0013: 00000000001 # dw 1 ; groesser oder gleich
+0014: 00000000001 # dw 1 ; gleich
+0015: 00000000000 # dw 0 ; ungleich
+0016: 00000000070 # dw 00070 ; oktal mit vier Ziffern (Wert 8 mal 7)
+0017: 00000000001 # dw 1 ; groesser als 2999999999 (ueber 32 Bit)
+0020: 00000000000 # dw 0 ; nicht groesser
+0021: 00000001164 # haupt: 164 0001 ; Zelle 0021: Diagnoseausgabe (nur im Test)
+0022: 00000000020 # 020 0 ; Zelle 0022: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0023 US=1
+0001: 00000000003   # min(3,5) = 3
+0002: 00000000005   # max(3,5) = 5
+0003: 00000000001   # 3<5 = 1
+0004: 00000000000   # 3>=5 = 0
+0005: 00000000000   # 3==5 = 0
+0006: 00000000001   # 3!=5 = 1
+0007: 00000000030   # $CALCO4(3*8) = 00030 = 24
+0010: 00000000007   # min(7,7) = 7
+0011: 00000000007   # max(7,7) = 7
+0012: 00000000000   # 7<7 = 0
+0013: 00000000001   # 7>=7 = 1
+0014: 00000000001   # 7==7 = 1
+0015: 00000000000   # 7!=7 = 0
+0016: 00000000070   # $CALCO4(7*8) = 00070 = 56
+0017: 00000000001   # $IF 3000000000 > 2999999999 (64 Bit): wahr
+0020: 00000000000   # $IF 5 > 2999999999: falsch

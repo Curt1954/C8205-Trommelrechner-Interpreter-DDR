@@ -1,39 +1,74 @@
+# c82ass.makros -- Makrodatei des Assemblers c82ass
+#
+# Übersicht
+#   Ausgabe, Anwahl:    WRZL  KB  GB  ANWAHL  TANWAHL  TROUT  TRIN
+#   Wiederholung:       WDHL  MACHE_ADRESSEINHEIT  MACHE_ADRESSEINHEIT2  SCHIEBE_LI  SCHIEBE_RE
+#   Feldzugriff:        ARRAY_LOAD  ARRAY_STORE  ARRAY_ADD  ARRAY_SUB  ARRAY_VGL  ARRAY_SWAP
+#   Index, Zeiger:      ERHOEHE  ZEIGER_NAECHST
+#   Unterprogramm:      KAT4AUSGABE  KAT4EINGABE  KAT5AUSGABE  KAT5EINGABE  KAT5SORT  KAT5SORT2  KAT6AUSGABE  KAT6EINGABE
+#   Gleitkomma-UP:      GK_MATH (gk_add, gk_sub, gk_mul, gk_div; jeder Teil des Codes wird nur einmal erzeugt, auch bei mehreren Aufrufen)  GK_SIN (gk_sin und gk_cos, Sinus und Kosinus; ruft GK_MATH selbst auf; wird nur einmal erzeugt)
+#   Festkomma-UP:       FK_MATH (fk_add, fk_sub, fk_mul, fk_div; jeder Teil des Codes wird nur einmal erzeugt, auch bei mehreren Aufrufen)
+#
+# Konventionen
+#   - Zeilen mit `#` sind Kommentar nur der Makrodefinition und erscheinen nicht im erzeugten Code; Kommentare mit `;` werden
+#     in Listing und Quelltext übernommen.
+#   - Je Makro stehen als `#`-Zeilen: Wirkung auf den AC, zerstörte Zellen und Benutzung der Arbeitsspur.
+#   - Arbeitsspur 7600 bis 7677 (Festlegung 025): Dort darf nichts stehen, was über das Ende einer Befehlsfolge hinaus erhalten
+#     bleiben muss. Makros mit Spuroperand (SCHIEBE_*, MACHE_ADRESSEINHEIT2) überschreiben Zellen der Spur 7640.
+#   - ARRAY_*: `$1` ist die Zelle, die die Feldadresse enthält (angelegt mit `da feld`), nicht das Feld selbst. `$2` ist eine
+#     Indexzelle in Adresseinheiten (Wert mal 01000, siehe MACHE_ADRESSEINHEIT). Das Makro bildet nur den Befehl und speichert
+#     ihn auf die Zelle `$3`; `$3` muss im Programmablauf unmittelbar dort stehen, wo der Befehl ablaufen soll (`db 1`, Festlegung 023).
+#   - UP-Makros (KAT4AUSGABE bis KAT6EINGABE, auch KAT5SORT und KAT5SORT2): Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable `<name>_da`, `$GLOBAL`, c82ass ab 1.02-001; Doku 4.25, Beispiel 3). Marke und `025` nur auf den ersten Aufruf.
+#   - Spezifikationszeile `$SPEC` (c82ass ab 1.03-002, Doku 4.32): je Makro als erste Zeile hinter `MACRO`. TYP=M (Macro) mit CLASS: Rumpf nur einmal je Lauf
+#     (Merker mit `$GLOBAL`); TYP=A (Aufruf): jeder Aufruf erzeugt Code, kein Merker. Tabelle: C8205_Standardmakros_c82ass.md, Abschnitt 10.
+#   - Generische Labels im Makro haben die Form `ML0001%`; jeder Aufruf erhält eigene Labels.
+#   - Parameter mit genau vier Ziffern bekommen eine Vornull (Beispiel: `ANWAHL 4600` erzeugt `030 04600`).
+#   - WDHL hat benannte Parameter (`MACRO loeschen resultat operation anzahl spur`, c82ass ab 1.01-014, Doku 4.26); der Aufruf ist unverändert. Die übrigen Makros zählen weiter mit Nummern.
+
 WRZL:    MACRO
+         $SPEC   TYP=A ACTION=None
+# Wirkung: Zeilenschaltung ausgeben (`dz $wrzl`), danach Kanal 0 anwählen (ANWAHL 4700).
+# AC: unverändert (Ausgabe-Halt 030 ohne Löschen). Zerstörte Zellen: keine. Arbeitsspur: nicht benutzt.
          dz $wrzl  ; Zeilenschaltung
          ANWAHL  4700
          MEND
 
 KB:      MACRO
+         $SPEC   TYP=A ACTION=None
+# Wirkung: Umschaltung in Kleinbuchstaben ausgeben (`dz $inkb`).
+# AC: unverändert. Zerstörte Zellen: keine. Arbeitsspur: nicht benutzt.
          dz $inkb  ; Umschaltung in Kleinbuchstabe
          MEND
 
 GB:      MACRO
+         $SPEC   TYP=A ACTION=None
+# Wirkung: Umschaltung in Großbuchstaben ausgeben (`dz $ingb`).
+# AC: unverändert. Zerstörte Zellen: keine. Arbeitsspur: nicht benutzt.
          dz $ingb  ; Umschaltung in Großbuchstabe
          MEND
 
-TEST:    MACRO 1
-$PR1:    $TYPADR
-;$PR1:    1111A  2222B 3333C
-         dz $ingb  ; TESTanweisung
-         MEND
-
-WDHL:  MACRO 5
+WDHL:  MACRO loeschen resultat operation anzahl spur
+         $SPEC   TYP=A ACTION=None
+# AC: Ergebnis der `$anzahl`-fachen Operation `$operation` mit den Zellen der Spur ab dem berechneten Sektor, danach verschoben nach `$resultat`; bei `$loeschen` = JA
+#     wird der AC vor der Operation gelöscht. Zerstörte Zellen: keine (die Zellen werden gelesen). Arbeitsspur: liest die Spur ab Adresse `$spur`.
 ; WDHL: Durchführen der `Operation` bezüglich `Speicher` und `Resultatsbehandlung`
 ;       im AC. Mit Wiederholung `anzahl` mal.
 ; Löschen  Resultatsbehandlung  Operation  Anzahl  Adresse
 # Löschen = { JA | NE }
 # Resultatsbehandlung = { LI | RE | ZL | OHNE }
 # Operation = { KON | ADD | SUB | BADD }
-$PR1 JA NE
-$PR2 LI RE ZL OHNE
-$PR3 KON ADD SUB BADD 
-$PR4 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
-$PR5 $ADRESSE
-             !$wdhl   $5     ; `$4` mal `Operation $3` ausführen und Resultatsbehandlung 
+$PR(loeschen) JA NE
+$PR(resultat) LI RE ZL OHNE
+$PR(operation) KON ADD SUB BADD 
+$PR(anzahl) 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
+$PR(spur) $ADRESSE
+             !$wdhl   $spur     ; `$anzahl` mal `Operation $operation` ausführen und Resultatsbehandlung 
          MEND
 
 
 TANWAHL:  MACRO 1
+         $SPEC   TYP=A ACTION=None
+# AC: unverändert (Ausgabe-Halt 030 ohne Löschen). Zerstörte Zellen: keine. Arbeitsspur: nicht benutzt.
 # Anwahl Zusatztrommel
       $PR1 5100 5200 5300 5400 ZTR1 ZTR2 ZTR3 ZTR4
       $IF    $1  =  5100 | $1 = ZTR1
@@ -44,9 +79,12 @@ TANWAHL:  MACRO 1
          030 05300  ; 5300 oder ZTR3
       $ELIF  $1  =  5400 | $1 = ZTR4
          030 05400  ; 5400 oder ZTR4
+      $ENDIF
          MEND
 
 ANWAHL:  MACRO 1
+         $SPEC   TYP=A ACTION=None
+# AC: unverändert (Ausgabe-Halt 030 ohne Löschen). Zerstörte Zellen: keine. Arbeitsspur: nicht benutzt.
       $PR1 4000 4100 4200 4300 4400 4500 4600 4700 K0 K1 K2 K3 K4 K5 K6 K7 LSL1 LSL2 LKL1 LKS1 LSS1 SW1I SW1O SW2O KONI
   # Anwahl Einzelzeichen EA
       $IF    $1  =  4000 | $1 = K7
@@ -69,21 +107,30 @@ ANWAHL:  MACRO 1
          MEND
 
 TROUT:   MACRO 2
-# Ausgabe von Haupttrommel auf Zusatztrommel
-# TROUT  <haupttrommeladresse> <zusatztrommeladresse>
-         032   $2
-         401   $1
+         $SPEC   TYP=A ACTION=None
+# AC: gelöscht (601 hat Z = 1). Zerstörte Zellen: die Spur `$2` der Zusatztrommel wird überschrieben. Arbeitsspur: nicht benutzt.
+# Ausgabe von Haupttrommel auf Zusatztrommel: ein Befehlswort `zzz0 bbbb 601` (nur mit --C8205Z wirksam; Anwahl der Zusatztrommel vorher mit TANWAHL, `5k00 030`).
+# TROUT  <haupttrommeladresse> <zusatztrommeladresse>   (beide Zahlen oder abs-Symbole, Spuranfang, Vielfache von 040; `$2` = zzz0, `$1` = bbbb)
+$PR1 $TYPZAHL 0 07777
+$PR2 $TYPZAHL 0 07777
+         dw    $CALCO($2*010000000+$1*01000+0601)  ; Ausgabe Haupttrommel `$1` -> Zusatztrommel `$2` (zzz0 bbbb 601)
          MEND
  
 TRIN:   MACRO 2
-# Eingabe von Zusatztrommel auf Haupttrommel
-# TRIN  <zusatztrommeladresse> <haupttrommeladresse>
-         032   $1
-         461   $2
+         $SPEC   TYP=A ACTION=None
+# AC: gelöscht (661 hat Z = 1). Zerstörte Zellen: die Spur ab `$2` der Haupttrommel wird überschrieben. Arbeitsspur: nicht benutzt.
+# Eingabe von Zusatztrommel auf Haupttrommel: ein Befehlswort `zzz0 bbbb 661` (nur mit --C8205Z wirksam; Anwahl der Zusatztrommel vorher mit TANWAHL, `5k00 030`).
+# TRIN  <zusatztrommeladresse> <haupttrommeladresse>   (beide Zahlen oder abs-Symbole, Spuranfang, Vielfache von 040; `$1` = zzz0, `$2` = bbbb)
+$PR1 $TYPZAHL 0 07777
+$PR2 $TYPZAHL 0 07777
+         dw    $CALCO($1*010000000+$2*01000+0661)  ; Eingabe Zusatztrommel `$1` -> Haupttrommel `$2` (zzz0 bbbb 661)
          MEND
 
 
 ARRAY_LOAD: MACRO 3
+         $SPEC   TYP=A ACTION=None
+# AC: der fertige Befehl (Adresse = `$1` + `$2`, Operationscode 211 = laden); er steht zusätzlich in `$3`.
+# Zerstörte Zellen: nur `$3`. Arbeitsspur: nicht benutzt. `$1` ist die Zelle mit der Feldadresse (da feld), nicht das Feld selbst.
 ; ARRAY_LOAD; Ladebefehl für Arrayzugriff über Indexvariable bilden
 ; Arrayadresse Indexvar1 AdrSpeicherbef1 
              211 $2          ; Lade `$2` 
@@ -94,6 +141,9 @@ ARRAY_LOAD: MACRO 3
 
 
 ARRAY_STORE: MACRO 3
+         $SPEC   TYP=A ACTION=None
+# AC: der fertige Befehl (Adresse = `$1` + `$2`, Operationscode 240 = speichern); er steht zusätzlich in `$3`.
+# Zerstörte Zellen: nur `$3`. Arbeitsspur: nicht benutzt. `$1` ist die Zelle mit der Feldadresse (da feld), nicht das Feld selbst.
 ; ARRAY_STORE; Speicherbefehl für Arrayzugriff über Indexvariable bilden
 ; Arrayadresse Indexvar1 AdrSpeicherbef1 
              211 $2          ; Lade `$2` 
@@ -103,7 +153,60 @@ ARRAY_STORE: MACRO 3
          MEND
 
 
+ARRAY_ADD: MACRO 3
+         $SPEC   TYP=A ACTION=None
+# AC: der fertige Befehl (Adresse = `$1` + `$2`, Operationscode 210 = addieren); er steht zusätzlich in `$3`.
+# Zerstörte Zellen: nur `$3`. Arbeitsspur: nicht benutzt. `$1` ist die Zelle mit der Feldadresse (da feld), nicht das Feld selbst.
+; ARRAY_ADD; Additionsbefehl für Arrayzugriff über Indexvariable bilden
+; Arrayadresse Indexvar1 AdrSpeicherbef1 
+             211 $2          ; Lade `$2` 
+             210 $1          ; Addiere Anfangsadresse des Arrays 
+             210 #0210       ; Füge den Additionsbefehls-Operationscode zur Adresse hinzu
+             240 $3          ; Speichere den Additionsbefehl für `$1[$2]` nach $3
+         MEND
+
+
+ARRAY_SUB: MACRO 3
+         $SPEC   TYP=A ACTION=None
+# AC: der fertige Befehl (Adresse = `$1` + `$2`, Operationscode 220 = subtrahieren); er steht zusätzlich in `$3`.
+# Zerstörte Zellen: nur `$3`. Arbeitsspur: nicht benutzt. `$1` ist die Zelle mit der Feldadresse (da feld), nicht das Feld selbst.
+; ARRAY_SUB; Subtraktionsbefehl für Arrayzugriff über Indexvariable bilden
+; Arrayadresse Indexvar1 AdrSpeicherbef1 
+             211 $2          ; Lade `$2` 
+             210 $1          ; Addiere Anfangsadresse des Arrays 
+             210 #0220       ; Füge den Subtraktionsbefehls-Operationscode zur Adresse hinzu
+             240 $3          ; Speichere den Subtraktionsbefehl für `$1[$2]` nach $3
+         MEND
+
+
+ERHOEHE: MACRO 1
+         $SPEC   TYP=A ACTION=None
+; ERHOEHE; Index- oder Zeigerzelle um eine Adresseneinheit (01000) erhöhen
+; Indexvar1
+# AC: der neue Wert. Zerstörte Zellen: nur `$1` (Index in Adresseinheiten, Wert wird um 01000 größer). Arbeitsspur: nicht benutzt.
+             211 $1          ; Lade `$1`
+             210 #01000      ; Addiere eine Adresseneinheit
+             240 $1          ; Speichere zurück nach `$1`
+         MEND
+
+
+ZEIGER_NAECHST: MACRO 1
+         $SPEC   TYP=A ACTION=None
+; ZEIGER_NAECHST; Zeigerzelle auf das nächste Wort weiterstellen (+ 01000 im Adreßfeld)
+; Zeigervar1
+# AC: der neue Zeiger. Zerstörte Zellen: nur `$1` (Zeiger im Adreßfeld, Wert wird um 01000 größer). Arbeitsspur: nicht benutzt.
+# Gleiche Befehlsfolge wie ERHOEHE; der Name zeigt nur, dass `$1` ein Zeiger (da text) ist.
+             211 $1          ; Lade den Zeiger `$1`
+             210 #01000      ; Addiere eine Adresseneinheit (nächstes Wort)
+             240 $1          ; Speichere den Zeiger zurück nach `$1`
+         MEND
+
+
+
 ARRAY_VGL: MACRO 3
+         $SPEC   TYP=A ACTION=None
+# AC: der fertige Befehl (Adresse = `$1` + `$2`, Operationscode 330 = vergleichen); er steht zusätzlich in `$3`.
+# Zerstörte Zellen: nur `$3`. Arbeitsspur: nicht benutzt. `$1` ist die Zelle mit der Feldadresse (da feld), nicht das Feld selbst.
 ; ARRAY_VGL; Vergleicherbefehl für Arrayzugriff über Indexvariable bilden
 ; Arrayadresse Indexvar1 AdrSpeicherbef1 
              211 $2          ; Lade `$2` in den Akkumulator
@@ -114,6 +217,10 @@ ARRAY_VGL: MACRO 3
 
 
 ARRAY_SWAP: MACRO 4
+         $SPEC   TYP=A ACTION=None
+# AC: das ursprüngliche Element `$1[$2]` (zuletzt wird es nach `$1[$3]` gespeichert). Läuft ohne Sprung durch (20 Zellen).
+# Zerstörte Zellen: `$4` (Hilfszelle), die vier Befehlszellen ML0001% bis ML0004% und die beiden Feldelemente (vertauscht). Arbeitsspur: nicht benutzt.
+# `$1` ist die Zelle mit der Feldadresse (da feld), nicht das Feld selbst; `$2` und `$3` sind Indexzellen in Adresseinheiten.
 ; ARRAY_SWAP;  Indiziertes Arrayelement umspeichern (swap)
 ; Arrayadresse Indexvar1 Indexvar2 Arbeitsspeicher
              211 $2            ; Lade `$2`
@@ -121,16 +228,16 @@ ARRAY_SWAP: MACRO 4
              210 #0211         ; Füge den Ladebefehl-Operationscode zur Adresse hinzu
              240 ML0004%       ; Speichere den vollständigen Ladebefehl für `$1[$2]`
 
-             200 #077777777000 ; Operationscoede 211 ausblenden
+             200 #077777777000 ; Operationscode 211 ausblenden
              210 #0240         ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu                                                           
-             240 ML0002%       ; Speichere Speicherbefehl für `$1[$3]` zum Umladen temporäres Element
+             240 ML0002%       ; Speichere Speicherbefehl für `$1[$2]` zum Umladen temporäres Element
 
              211 $3            ; Lade `$3`
              210 $1            ; Addiere Anfangsadresse des Arrays 
              210 #0240         ; Füge den Speicherbefehl-Operationscode zur Adresse hinzu
-             240 ML0001%       ; Speichere Speicherbefehl für `$1[$2]` zum Umladen temporäres Element
+             240 ML0001%       ; Speichere Speicherbefehl für `$1[$3]` zum Umladen temporäres Element
 
-             200 #077777777000 ; Operationscoede 240 ausblenden
+             200 #077777777000 ; Operationscode 240 ausblenden
              210 #0211         ; Füge den Ladebefehls-Operationscode zur Adresse hinzu
              240 ML0003%       ; Speichere den Ladebefehl für `$1[$3]`
 
@@ -138,7 +245,7 @@ ML0004%:     dw  0             ; Hier steht der Ladebefehl für       211 $1[$2]
              240 $4            ; Speichere auf Hilfsspeicherplatz:   240 $4
 
 ML0003%:     dw  0             ; Hier steht der Ladebefehl für       211 $1[$3]
-ML0002%:     dw  0             ; Hier steht der Speicherbefehl       240`$1[$2]
+ML0002%:     dw  0             ; Hier steht der Speicherbefehl       240 $1[$2]
 
              211 $4            ; Lade von Hilfsspeicherplatz:        211 $4
 ML0001%:     dw  0             ; Hier steht der Speicherbefehl für   240 $1[$3]
@@ -147,32 +254,1725 @@ ML0001%:     dw  0             ; Hier steht der Speicherbefehl für   240 $1[$3]
 
 
 
+SCHIEBE_LI: MACRO 1
+         $SPEC   TYP=A ACTION=None
+# Wirkung: ⟨AC⟩ um `$1` Stellen verschieben (Wiederholungsbefehl 644 auf der Arbeitsspur 7640, Operandentabelle der Festlegung 026, n = 1 bis 32).
+# AC: n-fach links verschoben (nicht zyklisch, herausgeschobene Bits gehen verloren). Zerstörte Zellen: die Zellen der Spur 7640 vom Operandsektor bis Spurende (nur Arbeitsspur, Festlegung 025).
+$PR1 $TYPZAHL 1 32
+         644 $CALCO(07640+19*$1%32)  ; $CALC($1) mal Linksverschiebung (Operand nach Festlegung 026)
+         MEND
+
+
+SCHIEBE_RE: MACRO 1
+         $SPEC   TYP=A ACTION=None
+# Wirkung: ⟨AC⟩ um `$1` Stellen verschieben (Wiederholungsbefehl 642 auf der Arbeitsspur 7640, Operandentabelle der Festlegung 026, n = 1 bis 32).
+# AC: n-fach rechts verschoben (logisch, von links wird mit 0 aufgefüllt). Zerstörte Zellen: die Zellen der Spur 7640 vom Operandsektor bis Spurende (nur Arbeitsspur, Festlegung 025).
+$PR1 $TYPZAHL 1 32
+         642 $CALCO(07640+19*$1%32)  ; $CALC($1) mal Rechtsverschiebung (Operand nach Festlegung 026)
+         MEND
+
+
 MACHE_ADRESSEINHEIT:  MACRO 2
+         $SPEC   TYP=A ACTION=None
+# AC: 0 (der abschließende WDHL JA löscht den AC). Zerstörte Zellen: nur `$2`. Arbeitsspur: nicht benutzt (liest nur Zellen ab 04013).
 ; MACHE_ADRESSEINHEIT: Wert Laden und in Adreßeinheiten umrechnen (9 mal Linksverschiebung); Speichern
 ; Werteadresse Adreß-Adresse
              215 $1            ; Lade $1 in AC und 1x Linksverschiebung
-             004 *+1           ; Verschiebe AC 1x links (2)
-             004 *+1           ; Verschiebe AC 1x links (3)
-             004 *+1           ; Verschiebe AC 1x links (4)
-             004 *+1           ; Verschiebe AC 1x links (5)
-             004 *+1           ; Verschiebe AC 1x links (6)
-             004 *+1           ; Verschiebe AC 1x links (7) 
-             004 *+1           ; Verschiebe AC 1x links (8)
-             004 *+1           ; Verschiebe AC 1x links (9)
+             $REPT 8
+             004 *+1           ; Verschiebe AC 1x links ($CALC($Z1+2))
+             $ENDREPT
              240 $2
              WDHL JA LI KON 9   004000
          MEND
 
-MACHE_ADRESSEINHEIT2:  MACRO 4
+MACHE_ADRESSEINHEIT2:  MACRO 3
+         $SPEC   TYP=A ACTION=None
+# AC: der verschobene Wert (auch in `$2`). Zerstörte Zellen: `$2` und die Zellen der Arbeitsspur 7640 ab dem Operandsektor bis Spurende (über SCHIEBE_LI, Festlegung 025). Eine eigene Nullspur braucht das Makro nicht.
 ; MACHE_ADRESSEINHEIT2: Wert Laden und in Adreßeinheiten umrechnen (`anzahl` mal Linksverschiebung); Speichern
-;                       Benutzung Wiederholungsbefehl 644 auf einer Spur, die nur Nullen enthalten muß.
-;                       Diese Nullspur stellt das Programm selbst bereit (z. B. 32 freie Zellen ab einer durch 040 teilbaren
-;                       Adresse, zu Programmbeginn mit `441 spur` gelöscht); es wird keine Vorarbeit anderer Programme vorausgesetzt.
-# Werteadresse Adreß-Adresse Anzahl Nullspur-Anfang (Zahl, oktal mit führender 0; Vielfaches von 040)
+;                       Die Verschiebung macht SCHIEBE_LI (Wiederholungsbefehl 644 auf der Arbeitsspur 7640, Festlegung 026: der Befehl schreibt den AC in die Spur und liest sie nicht, Nullen sind nicht nötig).
+# Werteadresse Adreß-Adresse Anzahl (Zahl 1 bis 32; für Adreßeinheiten 9)
              211 $1            ; Lade $1 in AC (keine Verschiebung)
-             !$wdhl_adr_e $3 $4 ; `anzahl` mal Linksverschiebung über die Nullspur ab $4
+             SCHIEBE_LI $3     ; `anzahl` mal Linksverschiebung (Arbeitsspur 7640)
              240 $2
          MEND
 
 
 
+KAT4AUSGABE: MACRO
+         $SPEC   TYP=M CLASS=KAT4 ACTION=None
+# AC: bei der Rückkehr das letzte Textwort (mit z0). Zerstörte Zellen: die 47 Zellen des UP (Arbeitszellen ML0007% bis ML0009%, ML0011%, ML0016%, ML0004%, ML0018% und ML0001%) und die Zellen der Spur 7640 (über SCHIEBE_LI/SCHIEBE_RE). R1 = 7773 bleibt unverändert.
+# KAT4AUSGABE: Unterprogramm (Rumpf), gibt einen mit kat4 komprimierten Text aus (4 Zeichen je Wort, z0 am letzten Wort).
+# Aufruf:     ausgabe: KAT4AUSGABE   (Marke steht auf der ersten Zelle des UP)
+#             Startadresse des Textes: R1 = Register 7773 (abs 07773, wie im BIS), im Adreßfeld (da text); der Aufrufer trägt sie vorher ein
+#             (z. B. 211 radr, 240 07773). R1 bleibt unverändert. ML0010% ist nur die abs-Marke von R1 und belegt keine Zelle.
+#             Der Aufrufer wählt vorher den Kanal an (z. B. ANWAHL K2) und ruft mit 025 auf: AC = Rückkehrwort.
+#             R3 = Register 3 (abs 07774): Adresse der KB/GB-Zelle des Ausgabegeräts (Adreßfeld, `da kbgb`; Festlegung 030). Das Hauptprogramm
+#             verwaltet die Zelle (0 = KB, 1 = GB, anfangs KB), trägt die Adresse vorher in R3 ein und gibt den Zustand so an das UP weiter.
+#             Das UP zieht den Zustand nach: gibt es das Zeichen Um. GB (kat4 057) aus, setzt es die Zelle auf 1, bei Um. KB (kat4 117) auf 0.
+#             Es gibt selbst keine Umschaltzeichen aus und liest den Anfangszustand nicht; die Zelle hat bei der Rückkehr den erreichten Zustand. R3 bleibt unverändert.
+# Rückkehr:   Das Rückkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Rücksprung).
+# Zellen:     ML0004% Ausgabebefehl, ML0007% Textwort, ML0008% Zeichenrest, ML0009% Zeiger, ML0011% Zeichen, ML0016% Zustandswert, ML0018% Speicherbefehl für den Zustand (Arbeitszellen im UP)
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat4ausgabe_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat4ausgabe_da                   ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat4ausgabe_da) = 0
+         $SET kat4ausgabe_da 1               ; ab jetzt gilt: Rumpf ist da
+             240 ML0001%              ; Rueckkehrwort sichern
+             211 ML0010%              ; AC := Startadresse des Textes
+             240 ML0009%              ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+ML0002%:     251 0                    ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+             240 ML0007%              ; tw := Textwort (mit z0)
+             200 #037777777777        ; z0 ausblenden, nur 32 Bit Zeichen
+             240 ML0008%              ; wort := Zeichenrest
+ML0003%:     211 ML0008%              ; AC := Zeichenrest
+             330 #0                   ; Vergleich mit 0 (keine Operation)
+             170 ML0005%              ; Rest 0: Wort fertig
+             200 #0377                ; unterstes Zeichen ausblenden
+             240 ML0011%              ; zeichen := Zeichen (der AC wird fuer die Zustandsuebergabe gebraucht)
+             330 #057                 ; Vergleich mit kat4 057 (Um. GB)
+             170 ML0012%              ; Um. GB: Zustand := GB
+             330 #0117                ; Vergleich mit kat4 117 (Um. KB)
+             170 ML0013%              ; Um. KB: Zustand := KB
+ML0014%:     211 ML0011%              ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+             SCHIEBE_LI 12            ; 12 Stellen links: Zeichen auf die Adresse des Ausgabebefehls
+             210 #030                 ; Operationscode 030 (Ausgabe) dazu
+             240 ML0004%              ; Ausgabebefehl auf die naechste Zelle speichern
+ML0004%:     db  1                    ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+             211 ML0008%              ; AC := Zeichenrest
+             SCHIEBE_RE 8             ; 8 Stellen rechts: naechstes Zeichen nach unten
+             240 ML0008%              ; wort := Rest
+             000 ML0003%              ; naechstes Zeichen
+ML0005%:     211 ML0007%              ; AC := Textwort mit z0 (negativ beim letzten Wort)
+             050 ML0006%              ; kein z0: naechstes Wort
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0006%:     211 ML0009%              ; AC := Adresse des Textwortes
+             210 #01000               ; plus eine Adresseneinheit
+             240 ML0009%              ; zeiger := Adresse des naechsten Wortes
+             000 ML0002%              ; AC ist der Zeiger, Textwort lesen
+ML0007%:     db  1                    ; Arbeitszelle: aktuelles Textwort
+ML0008%:     db  1                    ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0009%:     db  1                    ; Arbeitszelle: Adresse des aktuellen Textwortes
+ML0011%:     db  1                    ; Arbeitszelle: aktuelles Zeichen (waehrend der Zustandspruefung)
+ML0012%:     211 #1                   ; Um. GB: AC := 1 (Zustand GB)
+             000 ML0015%              ; Zustand setzen
+ML0013%:     211 #0                   ; Um. KB: AC := 0 (Zustand KB)
+ML0015%:     240 ML0016%              ; wert := Zustand (0 = KB, 1 = GB)
+             211 ML0017%              ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+             210 #0240                ; plus Operationscode 240: Speicherbefehl
+             240 ML0018%              ; Speicherbefehl auf die naechste Zelle
+             211 ML0016%              ; AC := Zustand
+ML0018%:     db  1                    ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+             000 ML0014%              ; zurueck zur Ausgabe des Zeichens
+ML0016%:     db  1                    ; Arbeitszelle: Zustand, der gespeichert wird
+ML0010%:     abs 07773
+ML0017%:     abs 07774
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT4EINGABE: MACRO
+         $SPEC   TYP=M CLASS=KAT4 ACTION=None
+# AC: bei der Rückkehr der Zeichenrest (negativ, der Rückkehrsprung ändert den AC nicht). Zerstörte Zellen: die Zellen des UP (Arbeitszellen ML0002% bis ML0005%, Speicherbefehl ML0013% und ML0001%), die Zellen der Spur 7640 (über SCHIEBE_RE) und die Zeichentabelle samt Behandlern. R1 = 7773 und R2 = 7776 bleiben unverändert.
+# KAT4EINGABE: Unterprogramm (Rumpf), liest Zeichen über den angewählten Eingabekanal (K0 = SW / T-SW) und legt sie als kat4-Text ab (4 Zeichen je Wort, erstes Zeichen rechts im Wort, z0 am letzten Wort).
+# Aufruf:     eingabe: KAT4EINGABE   (Marke steht auf der ersten Zelle des UP)
+#             R1 = Register 7773 (abs 07773): Adresse des Bereichs (Adreßfeld, `da text`); R2 = Register 7776 (abs 07776): höchste Zeichenzahl (mindestens 1).
+#             Der Aufrufer trägt beides vorher ein (z. B. 211 radr, 240 07773 und 211 #8, 240 07776), wählt den Kanal an (ANWAHL K0) und ruft mit 025 auf: AC = Rückkehrwort.
+#             R3 = Register 3 (abs 07774): Adresse der KB/GB-Zelle des Eingabegeräts (Adreßfeld, `da kbgb`; Festlegung 030). Das Hauptprogramm verwaltet die Zelle
+#             (0 = KB, 1 = GB, anfangs KB), trägt die Adresse vorher in R3 ein und gibt den Zustand so an das UP weiter. Das UP zieht den Zustand nach: wird das
+#             Zeichen Um. GB eingegeben, setzt es die Zelle auf 1, bei Um. KB auf 0 (das Zeichen wird wie bisher gespeichert und gezählt). Es liest den Anfangszustand nicht;
+#             die Zelle hat bei der Rückkehr den erreichten Zustand. R3 bleibt unverändert.
+# Ende:       Die Eingabe endet mit dem Zeichen WRZL (SatzMarke, wird nicht gespeichert) oder sobald R2 Zeichen angenommen sind (volle Zeichenzahl gilt als Eingabeende). Das letzte Wort bekommt z0.
+#             Gespeichert wird in (R2 + 3) / 4 Worten; mit WRZL nach genau 4, 8, ... Zeichen steht ein leeres Endwort (nur z0) hinter dem letzten vollen Wort. Umschaltzeichen (Um. KB, Um. GB) werden gespeichert und zählen mit.
+# Rückkehr:   Das Rückkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Rücksprung, Festlegung 010).
+# Tabelle:    Die Zeichentabelle ML0026% (64 Zellen, Eingabeadresse = Zellenadresse ODER ML0026%) liegt auf einer 0100-Grenze (`equ100 *`, davor bleiben bis zu 77 Zellen frei).
+#             Umfang: gemessen im Test Claude/kat4eingabe (Start 0032): bis zur Tabellengrenze 0200 sind es 0146 Zellen (Programm, Behandler, Zustandsübergabe, Füllzellen/Literale), dann 0100 Zellen Tabelle bis 0277; je nach Lage zur 0100-Grenze 0 bis 077 Füllzellen mehr oder weniger.
+#             ML0027% und ML0028% sind nur die abs-Marken von R1 und R2 und belegen keine Zelle.
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat4eingabe_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat4eingabe_da                   ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat4eingabe_da) = 0
+         $SET kat4eingabe_da 1               ; ab jetzt gilt: Rumpf ist da
+             240     ML0001%              ; Rueckkehrwort sichern
+             211     ML0028%              ; AC := hoechste Zeichenzahl
+             220     #1                   ; AC := n - 1
+             240     ML0004%              ; zaehl := n - 1 (negativ, wenn alle Zeichen angenommen sind)
+             211     ML0027%              ; AC := Adresse des Bereichs
+             220     #01000               ; eine Adresseneinheit weniger, weil weiter sie gleich wieder dazuzaehlt
+             240     ML0002%              ; zeiger := Adresse des Wortes vor dem ersten
+ML0006%:     211     ML0002%              ; neues Wort beginnen: zeiger auf das naechste Wort
+             210     #01000               ; plus eine Adresseneinheit
+             240     ML0002%              ; zeiger := Adresse des aktuellen Wortes
+             211     #3                   ; AC := 3
+             240     ML0005%              ; m := 3 (Zeichen noch zu uebernehmen minus 1)
+             241     ML0003%              ; wort := 0, AC := 0
+             211     ML0004%              ; AC := Rest
+             050     ML0007%              ; Rest >= 0: Zeichen lesen
+ML0008%:     211     ML0005%              ; Eingabeende: m + 1 Zeichen fehlen im Wort; m < 0 heisst Wort voll
+             040     ML0009%              ; Wort voll: fertig ausgerichtet
+             211     ML0005%              ; AC := m
+             220     #1                   ; AC := AC - 1
+             240     ML0005%              ; m := AC
+             211     ML0003%              ; AC := Wort
+             SCHIEBE_RE 8                 ; ein fehlendes Zeichen: Wort 8 Stellen nach rechts (erstes Zeichen nach rechts)
+             240     ML0003%              ; wort := ausgerichtetes Wort
+             000     ML0008%              ; naechstes fehlendes Zeichen
+ML0009%:     211     ML0003%              ; AC := ausgerichtetes Wort
+             210     #040000000000        ; z0 setzen: Endwort
+             240     ML0003%              ; wort := Endwort mit z0
+             000     ML0010%              ; Wort speichern
+ML0007%:     211     ML0003%              ; AC := bisheriges Wort
+             SCHIEBE_RE 8                 ; ein Zeichen nach rechts, links wird Platz fuer das neue Zeichen
+             010     ML0026%              ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+ML0012%:     240     ML0003%              ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+             211     ML0004%              ; AC := zaehl
+             220     #1                   ; AC := AC - 1
+             240     ML0004%              ; zaehl := AC
+             211     ML0005%              ; AC := m
+             220     #1                   ; AC := AC - 1
+             240     ML0005%              ; m := AC
+             040     ML0011%              ; m < 0: Wort voll
+             211     ML0004%              ; AC := Rest
+             050     ML0007%              ; Rest >= 0: weiter lesen
+             000     ML0008%              ; alle Zeichen angenommen: Eingabeende
+ML0011%:     211     ML0004%              ; Wort voll: AC := Rest
+             040     ML0008%              ; Rest < 0: das volle Wort ist das Endwort (ausr ist dann ohne Schieben, setzt z0)
+ML0010%:     211     ML0002%              ; AC := Adresse des Wortes im Bereich
+             210     #0240                ; plus Operationscode 240: Speicherbefehl
+             240     ML0013%              ; Speicherbefehl auf die naechste Zelle
+             211     ML0003%              ; AC := Wort
+ML0013%:     db      1                    ; Laufzeit: 240 <Adresse des Wortes>, speichert das Wort in den Bereich
+             211     ML0004%              ; AC := Rest
+             050     ML0006%              ; Rest >= 0: naechstes Wort beginnen
+ML0001%:     db      1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002%:     db      1                    ; Arbeitszelle: Adresse des aktuellen Wortes im Bereich
+ML0003%:     db      1                    ; Arbeitszelle: Wort, das gerade aufgebaut wird
+ML0004%:     db      1                    ; Arbeitszelle: noch anzunehmende Zeichen minus 1
+ML0005%:     db      1                    ; Arbeitszelle: noch fehlende Zeichen im Wort minus 1
+ML0014%:     221     #1                   ; AC := -1
+             240     ML0004%              ; zaehl := -1: Eingabe zu Ende
+             000     ML0008%              ; Wort ausrichten, z0 setzen, speichern
+ML0015%:     210     #003200000000        ; Sprungzeichen 12 (Leertaste / ZWR): kat4 032 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0016%:     210     #001500000000        ; Sprungzeichen 15 (:  /  (): kat4 015 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0017%:     210     #001600000000        ; Sprungzeichen 16 (Irrung Satz): kat4 016 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0018%:     210     #007300000000        ; Sprungzeichen 33 (. / !): kat4 073 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0019%:     210     #005700000000        ; Sprungzeichen 37 (Um. GB): kat4 057 << 24 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+             211     #1                   ; AC := 1 (Zustand GB)
+             000     ML0029%              ; Zustand setzen
+ML0020%:     210     #010000000000        ; Sprungzeichen 40 (- / Dreieck): kat4 100 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0021%:     210     #011700000000        ; Sprungzeichen 57 (Um. KB): kat4 117 << 24 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+             211     #0                   ; AC := 0 (Zustand KB)
+             000     ML0029%              ; Zustand setzen
+ML0022%:     210     #016000000000        ; Sprungzeichen 60 (` / ;): kat4 160 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0023%:     210     #035200000000        ; Sprungzeichen 72 (BM): kat4 352 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0024%:     210     #015300000000        ; Sprungzeichen 73 (, / ?): kat4 153 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0025%:     210     #015500000000        ; Sprungzeichen 75 (Tabulator): kat4 155 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0029%:     240     ML0030%              ; wert := Zustand (0 = KB, 1 = GB)
+             211     ML0031%              ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+             210     #0240                ; plus Operationscode 240: Speicherbefehl
+             240     ML0032%              ; Speicherbefehl auf die naechste Zelle
+             211     ML0030%              ; AC := Zustand
+ML0032%:     db      1                    ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+             211     ML0003%              ; AC := Wort mit dem Umschaltzeichen
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0030%:     db      1                    ; Arbeitszelle: Zustand, der gespeichert wird
+             equ100  *                    ; ztab muss durch 0100 teilbar sein
+ML0026%:
+             dw      002000000000         ; 00: 0, kat4 020 << 24
+             dw      000100000000         ; 01: 1, kat4 001 << 24
+             dw      000200000000         ; 02: 2, kat4 002 << 24
+             dw      002300000000         ; 03: 3, kat4 023 << 24
+             dw      000400000000         ; 04: 4, kat4 004 << 24
+             dw      002500000000         ; 05: 5, kat4 025 << 24
+             dw      002600000000         ; 06: 6, kat4 026 << 24
+             dw      000700000000         ; 07: 7, kat4 007 << 24
+             dw      001000000000         ; 10: 8, kat4 010 << 24
+             dw      003100000000         ; 11: 9, kat4 031 << 24
+             000     ML0015%              ; 12: Leertaste / ZWR (Sprung-Umstellung)
+             spa     015                  ; unbelegte Eingabeadressen 13 bis 14 auslassen
+             000     ML0016%              ; 15: :  /  ( (Sprung-Umstellung)
+             000     ML0017%              ; 16: Irrung Satz (Sprung-Umstellung)
+             spa     020                  ; unbelegte Eingabeadressen 17 bis 17 auslassen
+             dw      004000000000         ; 20: + / =, kat4 040 << 24
+             dw      006100000000         ; 21: a, kat4 061 << 24
+             dw      006200000000         ; 22: b, kat4 062 << 24
+             dw      004300000000         ; 23: c, kat4 043 << 24
+             dw      006400000000         ; 24: d, kat4 064 << 24
+             dw      004500000000         ; 25: e, kat4 045 << 24
+             dw      004600000000         ; 26: f, kat4 046 << 24
+             dw      006700000000         ; 27: g, kat4 067 << 24
+             dw      007000000000         ; 30: h, kat4 070 << 24
+             dw      005100000000         ; 31: i, kat4 051 << 24
+             000     ML0014%              ; 32: SatzMarke / WRZL = Eingabeende
+             000     ML0018%              ; 33: . / ! (Sprung-Umstellung)
+             spa     037                  ; unbelegte Eingabeadressen 34 bis 36 auslassen
+             000     ML0019%              ; 37: Um. GB (Sprung-Umstellung)
+             000     ML0020%              ; 40: - / Dreieck (Sprung-Umstellung)
+             dw      012100000000         ; 41: j, kat4 121 << 24
+             dw      012200000000         ; 42: k, kat4 122 << 24
+             dw      010300000000         ; 43: l, kat4 103 << 24
+             dw      012400000000         ; 44: m, kat4 124 << 24
+             dw      010500000000         ; 45: n, kat4 105 << 24
+             dw      010600000000         ; 46: o, kat4 106 << 24
+             dw      012700000000         ; 47: p, kat4 127 << 24
+             dw      013000000000         ; 50: q, kat4 130 << 24
+             dw      011100000000         ; 51: r, kat4 111 << 24
+             dw      011200000000         ; 52: WR, kat4 112 << 24
+             spa     057                  ; unbelegte Eingabeadressen 53 bis 56 auslassen
+             000     ML0021%              ; 57: Um. KB (Sprung-Umstellung)
+             000     ML0022%              ; 60: ` / ; (Sprung-Umstellung)
+             dw      014100000000         ; 61: / / ), kat4 141 << 24
+             dw      014200000000         ; 62: s, kat4 142 << 24
+             dw      016300000000         ; 63: t, kat4 163 << 24
+             dw      014400000000         ; 64: u, kat4 144 << 24
+             dw      016500000000         ; 65: v, kat4 165 << 24
+             dw      016600000000         ; 66: w, kat4 166 << 24
+             dw      014700000000         ; 67: x, kat4 147 << 24
+             dw      015000000000         ; 70: y, kat4 150 << 24
+             dw      017100000000         ; 71: z, kat4 171 << 24
+             000     ML0023%              ; 72: BM (Sprung-Umstellung)
+             000     ML0024%              ; 73: , / ? (Sprung-Umstellung)
+             dw      017400000000         ; 74: Prozentzeichen / *, kat4 174 << 24
+             000     ML0025%              ; 75: Tabulator (Sprung-Umstellung)
+             spa     077                  ; unbelegte Eingabeadressen 76 bis 76 auslassen
+             dw      017700000000         ; 77: Transport, kat4 177 << 24
+ML0027%:     abs 07773
+ML0028%:     abs 07776
+ML0031%:     abs 07774
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT5EINGABE: MACRO
+         $SPEC   TYP=M CLASS=KAT5 ACTION=None
+# AC: bei der Rückkehr das gespeicherte Wort (nie negativ). Zerstörte Zellen: die Arbeitszellen des UP (ML0003%, ML0004%), der Speicherbefehl ML0013%, der Zustandswert ML0030%, der Speicherbefehl ML0032%, die Rückkehrzelle ML0001% und die Zellen der Spur 7640 (über SCHIEBE_LI). R1 = 7773 und R3 = 7774 bleiben unverändert; R2 = 7776 wird nicht benutzt.
+# KAT5EINGABE: Unterprogramm (Rumpf), liest Zeichen über den angewählten Eingabekanal (K0 = SW / T-SW) und legt sie als genau ein kat5-Wort ab (bis zu 5 Zeichen zu 6 Bit, erstes Zeichen links in z3 bis z8, Füllung 00 rechts, kein z0; Format: Assemblerdokumentation 3.3.15, Anweisung kat5; Codes 01 bis 055).
+# Aufruf:     eingabe: KAT5EINGABE   (Marke steht auf der ersten Zelle des UP)
+#             R1 = Register 7773 (abs 07773): Adresse des Wortes (Adreßfeld, `da wort`). Der Aufrufer trägt sie vorher ein (z. B. 211 radr, 240 07773), wählt den Kanal an (ANWAHL K0) und ruft mit 025 auf: AC = Rückkehrwort.
+#             Jeder Aufruf liest genau ein Wort. Für einen längeren Text ruft der Aufrufer das UP mehrfach auf und stellt R1 jedes Mal um 01000 (eine Adresseinheit) weiter; was nach dem Eingabeende noch auf dem Gerät steht, liest der nächste Aufruf.
+#             R3 = Register 3 (abs 07774): Adresse der KB/GB-Zelle des Eingabegeräts (Adreßfeld, `da kbgb`; Festlegung 030). Das Hauptprogramm verwaltet die Zelle
+#             (0 = KB, 1 = GB, anfangs KB), trägt die Adresse vorher in R3 ein und gibt den Zustand so an das UP weiter. Das UP zieht den Zustand nach: wird das
+#             Zeichen Um. GB eingegeben, setzt es die Zelle auf 1, bei Um. KB auf 0 (das Zeichen wird wie ein anderes Zeichen gespeichert und gezählt). Es liest den Anfangszustand nicht;
+#             die Zelle hat bei der Rückkehr den erreichten Zustand.
+# Zeichen:    Gespeichert werden a bis z, 0 bis 9, Leertaste, . , - + (die Taste + / = hat nur einen Code), : sowie Um. KB und Um. GB (kat5-Codes laut Tabelle der Doku 3.3.15). Der Doppelpunkt ist ein gewöhnliches Zeichen und beendet die Eingabe nicht mehr.
+#             Alle anderen Tasten (Irrung Satz, ` / ;, BM, Tabulator, WR, / / ), % / *) werden überlesen: nicht gespeichert, nicht gezählt.
+# Ende:       Die Eingabe endet (1) sobald 5 Zeichen angenommen sind (das Wort ist voll) oder (2) mit dem Zeichen WRZL (SatzMarke, wird nicht gespeichert und nicht gezählt).
+#             Bei (2) stehen die gelesenen Zeichen nach links ausgerichtet im Wort, rechts mit 00 aufgefüllt; WRZL als erste Taste ergibt das Wort 0. Bei (1) bleibt eine folgende Taste (auch WRZL) für den nächsten Aufruf stehen. Umschaltzeichen zählen mit.
+# Rückkehr:   Das Rückkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Rücksprung, Festlegung 010).
+# Tabelle:    Die Zeichentabelle ML0026% (64 Zellen, Eingabeadresse = Zellenadresse ODER ML0026%) liegt auf einer 0100-Grenze (`equ100 *`, davor bleiben bis zu 77 Zellen frei). Die Einträge sind die kat5-Codes selbst (nicht verschoben).
+#             Tasten ohne kat5-Zeichen tragen in der Tabelle z0 (AC wird negativ, das Zeichen wird überlesen) oder bei Sprung-Umstellung einen Sprung zurück zum Lesen.
+#             ML0027% und ML0031% sind nur die abs-Marken von R1 und R3 und belegen keine Zelle.
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat5eingabe_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat5eingabe_da                   ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat5eingabe_da) = 0
+         $SET kat5eingabe_da 1               ; ab jetzt gilt: Rumpf ist da
+             240     ML0001%              ; Rueckkehrwort sichern
+             241     ML0003%              ; wort := 0, AC := 0
+             211     #4                   ; AC := 4
+             240     ML0004%              ; zaehl := 4 (noch anzunehmende Zeichen minus 1)
+ML0007%:     211     ML0003%              ; Zeichen lesen: AC := bisheriges Wort
+             SCHIEBE_LI 6                 ; ein Zeichen nach links, rechts wird Platz fuer das neue Zeichen
+             010     ML0026%              ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+             040     ML0007%              ; AC negativ (z0 aus der Tabelle): Taste ohne kat5-Zeichen, ueberlesen
+ML0012%:     240     ML0003%              ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+             211     ML0004%              ; AC := zaehl
+             220     #1                   ; AC := AC - 1
+             240     ML0004%              ; zaehl := AC
+             050     ML0007%              ; zaehl >= 0: weiter lesen
+ML0008%:     211     ML0004%              ; Eingabeende: zaehl + 1 Zeichen fehlen im Wort (WRZL springt hierher)
+             040     ML0010%              ; zaehl < 0: Wort voll, fertig ausgerichtet
+             220     #1                   ; AC := zaehl - 1
+             240     ML0004%              ; zaehl := AC
+             211     ML0003%              ; AC := Wort
+             SCHIEBE_LI 6                 ; ein fehlendes Zeichen: Wort 6 Stellen nach links (Fuellung 00 rechts)
+             240     ML0003%              ; wort := ausgerichtetes Wort
+             000     ML0008%              ; naechstes fehlendes Zeichen
+ML0010%:     211     ML0027%              ; AC := R1 = Adresse des Wortes (Adressfeld)
+             210     #0240                ; plus Operationscode 240: Speicherbefehl
+             240     ML0013%              ; Speicherbefehl auf die naechste Zelle
+             211     ML0003%              ; AC := Wort
+ML0013%:     db      1                    ; Laufzeit: 240 <Adresse des Wortes>, speichert das Wort
+ML0001%:     db      1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0003%:     db      1                    ; Arbeitszelle: Wort, das gerade aufgebaut wird
+ML0004%:     db      1                    ; Arbeitszelle: noch anzunehmende Zeichen minus 1
+ML0015%:     210     #01                  ; Sprungzeichen 12 (Leertaste / ZWR): kat5 01 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0016%:     210     #06                  ; Sprungzeichen 15 (:  /  (): kat5 06 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0018%:     210     #04                  ; Sprungzeichen 33 (. / !): kat5 04 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0019%:     210     #055                 ; Sprungzeichen 37 (Um. GB): kat5 055 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+             211     #1                   ; AC := 1 (Zustand GB)
+             000     ML0029%              ; Zustand setzen
+ML0020%:     210     #03                  ; Sprungzeichen 40 (- / Dreieck): kat5 03 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0021%:     210     #054                 ; Sprungzeichen 57 (Um. KB): kat5 054 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+             211     #0                   ; AC := 0 (Zustand KB)
+             000     ML0029%              ; Zustand setzen
+ML0024%:     210     #02                  ; Sprungzeichen 73 (, / ?): kat5 02 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0029%:     240     ML0030%              ; wert := Zustand (0 = KB, 1 = GB)
+             211     ML0031%              ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+             210     #0240                ; plus Operationscode 240: Speicherbefehl
+             240     ML0032%              ; Speicherbefehl auf die naechste Zelle
+             211     ML0030%              ; AC := Zustand
+ML0032%:     db      1                    ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+             211     ML0003%              ; AC := Wort mit dem Umschaltzeichen
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0030%:     db      1                    ; Arbeitszelle: Zustand, der gespeichert wird
+             equ100  *                    ; ztab muss durch 0100 teilbar sein
+ML0026%:
+             dw      07                   ; 00: 0, kat5 07
+             dw      010                  ; 01: 1, kat5 010
+             dw      011                  ; 02: 2, kat5 011
+             dw      012                  ; 03: 3, kat5 012
+             dw      013                  ; 04: 4, kat5 013
+             dw      014                  ; 05: 5, kat5 014
+             dw      015                  ; 06: 6, kat5 015
+             dw      016                  ; 07: 7, kat5 016
+             dw      017                  ; 10: 8, kat5 017
+             dw      020                  ; 11: 9, kat5 020
+             000     ML0015%              ; 12: Leertaste / ZWR (Sprung-Umstellung)
+             spa     015                  ; unbelegte Eingabeadressen 13 bis 14 auslassen
+             000     ML0016%              ; 15: :  /  ( (Sprung-Umstellung)
+             000     ML0007%              ; 16: Irrung Satz (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+             spa     020                  ; unbelegte Eingabeadressen 17 bis 17 auslassen
+             dw      05                   ; 20: + / =, kat5 05
+             dw      021                  ; 21: a, kat5 021
+             dw      022                  ; 22: b, kat5 022
+             dw      023                  ; 23: c, kat5 023
+             dw      024                  ; 24: d, kat5 024
+             dw      025                  ; 25: e, kat5 025
+             dw      026                  ; 26: f, kat5 026
+             dw      027                  ; 27: g, kat5 027
+             dw      030                  ; 30: h, kat5 030
+             dw      031                  ; 31: i, kat5 031
+             000     ML0008%              ; 32: SatzMarke / WRZL = Eingabeende (nicht gespeichert), Wort ausrichten
+             000     ML0018%              ; 33: . / ! (Sprung-Umstellung)
+             spa     037                  ; unbelegte Eingabeadressen 34 bis 36 auslassen
+             000     ML0019%              ; 37: Um. GB (Sprung-Umstellung)
+             000     ML0020%              ; 40: - / Dreieck (Sprung-Umstellung)
+             dw      032                  ; 41: j, kat5 032
+             dw      033                  ; 42: k, kat5 033
+             dw      034                  ; 43: l, kat5 034
+             dw      035                  ; 44: m, kat5 035
+             dw      036                  ; 45: n, kat5 036
+             dw      037                  ; 46: o, kat5 037
+             dw      040                  ; 47: p, kat5 040
+             dw      041                  ; 50: q, kat5 041
+             dw      042                  ; 51: r, kat5 042
+             dw      040000000000         ; 52: WR, kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+             spa     057                  ; unbelegte Eingabeadressen 53 bis 56 auslassen
+             000     ML0021%              ; 57: Um. KB (Sprung-Umstellung)
+             000     ML0007%              ; 60: ` / ; (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+             dw      040000000000         ; 61: / / ), kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+             dw      043                  ; 62: s, kat5 043
+             dw      044                  ; 63: t, kat5 044
+             dw      045                  ; 64: u, kat5 045
+             dw      046                  ; 65: v, kat5 046
+             dw      047                  ; 66: w, kat5 047
+             dw      050                  ; 67: x, kat5 050
+             dw      051                  ; 70: y, kat5 051
+             dw      052                  ; 71: z, kat5 052
+             000     ML0007%              ; 72: BM (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+             000     ML0024%              ; 73: , / ? (Sprung-Umstellung)
+             dw      040000000000         ; 74: Prozentzeichen / *, kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+             000     ML0007%              ; 75: Tabulator (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+             spa     077                  ; unbelegte Eingabeadressen 76 bis 76 auslassen
+             dw      040000000000         ; 77: Transport, kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+ML0027%:     abs 07773
+ML0031%:     abs 07774
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT5AUSGABE: MACRO
+         $SPEC   TYP=M CLASS=KAT5 ACTION=None
+# AC: bei der Rückkehr 0 (der Zeichenrest des Wortes ist leer). Zerstörte Zellen: die Zellen des UP (Arbeitszellen ML0004% und ML0005%, Ausgabebefehl ML0009%, Speicherbefehl ML0012%, Rückkehrzelle ML0001%), die Tabelle ML0013% (45 Zellen, nur gelesen) und die Zellen der Spur 7640 (über SCHIEBE_LI/SCHIEBE_RE). R1 = 7773 und R3 = 7774 bleiben unverändert.
+# KAT5AUSGABE: Unterprogramm (Rumpf), gibt die Zeichen genau eines kat5-Wortes aus (bis zu 5 Zeichen zu 6 Bit, erstes Zeichen links in z3 bis z8, Füllung 00 rechts, kein z0; Format: Assemblerdokumentation 3.3.15, Codes 01 bis 055).
+# Aufruf:     ausgabe: KAT5AUSGABE   (Marke steht auf der ersten Zelle des UP)
+#             Adresse des Wortes: R1 = Register 7773 (abs 07773), im Adreßfeld (da wort); der Aufrufer trägt sie vorher ein (z. B. 211 radr, 240 07773). R1 bleibt unverändert.
+#             Jeder Aufruf gibt genau ein Wort aus. Für einen längeren Text ruft der Aufrufer das UP mehrfach auf und stellt R1 jedes Mal um 01000 (eine Adresseinheit) weiter.
+#             Der Aufrufer wählt vorher den Kanal an (z. B. ANWAHL K2) und ruft mit 025 auf: AC = Rückkehrwort.
+#             R3 = Register 3 (abs 07774): Adresse der KB/GB-Zelle des Ausgabegeräts (Adreßfeld, `da kbgb`; Festlegung 030). Das Hauptprogramm verwaltet die Zelle
+#             (0 = KB, 1 = GB, anfangs KB), trägt die Adresse vorher in R3 ein und gibt den Zustand so an das UP weiter.
+#             Das UP zieht den Zustand nach: gibt es das Zeichen Um. GB (kat5 055) aus, setzt es die Zelle auf 1, bei Um. KB (kat5 054) auf 0. Beide Zeichen werden auch ausgegeben.
+#             Es gibt selbst keine Umschaltzeichen aus und liest den Anfangszustand nicht; die Zelle hat bei der Rückkehr den erreichten Zustand.
+# Ende:       Das Wort ist zu Ende, sobald der Rest nach dem letzten Zeichen 0 ist (Füllung 00 gibt nichts aus); nach 5 Zeichen ist der Rest immer 0. Das Wort 0 gibt nichts aus. Ein Wort mit dem Code 00 vor einem Zeichen, die Codes 056 bis 077 und ein gesetztes z0, z1 oder z2 sind nicht zulässig und werden nicht geprüft (Festlegung 005).
+# Rückkehr:   Das Rückkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Rücksprung, Festlegung 010).
+# Tabelle:    ML0013% (45 Zellen, Index = kat5-Code, Code 01 steht auf ML0013%): je Code der fertige Ausgabebefehl `0000 xxxx 030` (dto/dz nach R300-Code Ausgabeadresse). Sie liegt hinter dem UP und wird nicht durchlaufen.
+# Zellen:     ML0004% Zeichenrest, ML0005% Zeichen mal 01000 (Arbeitszellen im UP), ML0009% Ausgabebefehl, ML0012% Speicherbefehl für den Zustand
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat5ausgabe_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat5ausgabe_da                   ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat5ausgabe_da) = 0
+         $SET kat5ausgabe_da 1               ; ab jetzt gilt: Rumpf ist da
+             240 ML0001%              ; Rueckkehrwort sichern
+             211 ML0014%              ; AC := Adresse des Wortes (R1 bleibt unveraendert)
+             251 0                    ; R-Lesebefehl: AC := Wort (Adresse im AC)
+             240 ML0004%              ; rest := Wort (nie negativ, z0 bis z2 sind 0)
+ML0007%:     330 #0                   ; Vergleich des Rests mit 0 (keine Operation), der AC bleibt der Rest
+             170 ML0001%              ; Rest 0: Wort fertig, Rueckkehr
+             SCHIEBE_RE 15            ; erstes Zeichen (z3 bis z8) auf die Bits 9 bis 14: Code mal 01000
+             200 #077000              ; nur das Zeichen behalten
+             240 ML0005%              ; zeichen := Code mal 01000
+             330 #054000              ; Vergleich mit kat5 054 (Um. KB)
+             170 ML0011%              ; Um. KB: Zustand := KB
+             330 #055000              ; Vergleich mit kat5 055 (Um. GB)
+             170 ML0011%              ; Um. GB: Zustand := GB
+ML0008%:     210 @ML0013%-1           ; plus Adresse der Tabelle, Code 01 steht auf ML0013%
+             251 0                    ; R-Lesebefehl: AC := fertiger Ausgabebefehl des Zeichens
+             240 ML0009%              ; Ausgabebefehl auf die naechste Zelle speichern
+ML0009%:     db  1                    ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+             211 ML0004%              ; AC := Zeichenrest
+             200 #077777777           ; erstes Zeichen entfernen (die unteren 24 Bit bleiben)
+             SCHIEBE_LI 6             ; 6 Stellen links: naechstes Zeichen nach oben
+             240 ML0004%              ; rest := Rest
+             000 ML0007%              ; naechstes Zeichen (der AC ist der Rest)
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0011%:     211 ML0015%              ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+             210 #0240                ; plus Operationscode 240: Speicherbefehl
+             240 ML0012%              ; Speicherbefehl auf die uebernaechste Zelle
+             211 ML0005%              ; AC := Code mal 01000 (054000 oder 055000)
+             220 #054000              ; AC := 0 (Um. KB) oder 01000 (Um. GB)
+             SCHIEBE_RE 9             ; AC := 0 oder 1
+ML0012%:     db  1                    ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+             211 ML0005%              ; AC := Code mal 01000, zurueck zur Ausgabe des Zeichens
+             000 ML0008%              ; Zeichen ausgeben
+ML0004%:     db  1                    ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0005%:     db  1                    ; Arbeitszelle: aktueller kat5-Code mal 01000
+ML0013%:     dto \ \                  ; Tabelle, Code 01: Leerzeichen
+             dz  ,                    ; Code 02: Komma
+             dz  -                    ; Code 03: Minus
+             dz  .                    ; Code 04: Punkt
+             dz  +                    ; Code 05: + und =
+             dz  :                    ; Code 06: Doppelpunkt
+             dto 0123456789           ; Codes 07 bis 020: 0 bis 9
+             dto abcdefghijklmnopqrstuvwxyz ; Codes 021 bis 052: a bis z
+             dz  $wrzl                ; Code 053: Zeilenschaltung (Satzmarke)
+             dz  $inkb                ; Code 054: Um. KB
+             dz  $ingb                ; Code 055: Um. GB
+ML0014%:     abs 07773
+ML0015%:     abs 07774
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT5SORT: MACRO
+         $SPEC   TYP=M CLASS=KAT5 ACTION=None
+# AC: bei der Rückkehr ohne Bedeutung (n <= 1: das Rückkehrwort wird nicht verändert; sonst der letzte Vergleichswert). Zerstörte Zellen: die Zellen des UP (Arbeitszellen ML0002% bis ML0006%, Rückkehrzelle ML0001%, die zwei Befehlszellen ML0014% und ML0015%) und die Feldzellen selbst (das Feld wird sortiert). R1 und R3 werden nicht benutzt. Die Arbeitsspur wird nicht benutzt.
+# KAT5SORT: Unterprogramm (Rumpf), sortiert ein Feld von kat5-Wörtern aufsteigend auf denselben Zellen (Sortierreihenfolge = Zahlenwert der Wörter, ein Wort je Adresseinheit; Verfahren: Austauschsortierung mit zwei Schleifen, Vergleich mit Vergleichersprung 1 und 3, ohne z0).
+# Aufruf:     sort: KAT5SORT   (Marke steht auf der ersten Zelle des UP = Zelle 0000 des UP; das UP beginnt dort mit einem Sprung über die zwei Parameter)
+#             Parameter 1 (Zelle Marke+1): Anfangsadresse des Feldes, der Aufrufer trägt sie vorher ein (z. B. `211 @feld`, `240 sort+1`).
+#             Parameter 2 (Zelle Marke+2): Füllänge = Anzahl der Wörter als gewöhnliche Zahl (z. B. `211 #024`, `240 sort+2`); das UP rechnet selbst in Adresseneinheiten (01000 je Wort) um.
+#             Aufruf mit 025 auf die Marke des ersten Aufrufs: AC = Rückkehrwort. Rückgabe keine, das Feld ist danach in sich aufsteigend sortiert. Bei n <= 1 sofortige Rückkehr.
+# Zellen:     66 Zellen (oktal) in einem Stück, ohne Tabelle; Arbeitszellen ML0002% Zähler, ML0003% n in Adresseneinheiten, ML0004% Index i, ML0005% Index k, ML0006% Hilfswert H; die Befehlszellen ML0014% und ML0015% (`db 1`) werden zur Laufzeit mit 240 a(k) und 240 a(i) belegt (Befehl zur Laufzeit bauen, Handbuch 5.4).
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat5sort_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts (die Zellen werden nicht mehrfach belegt). Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten und auch die Parameter über sie ansprechen (`sort+1`, `sort+2`), spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat5sort_da                      ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat5sort_da) = 0
+         $SET kat5sort_da 1                  ; ab jetzt gilt: Rumpf ist da
+             000     *+3              ; Zelle 0 des UP: Sprung ueber die zwei Parameter
+ML0016%:     db      1                ; Parameter 1: Anfangsadresse des Feldes (vom Aufrufer gefuellt)
+ML0017%:     db      1                ; Parameter 2: Fuelllaenge, Anzahl der Worte (vom Aufrufer gefuellt)
+             240     ML0001%          ; erste Codezelle: Rueckkehrwort sichern
+             211     ML0017%          ; AC := n
+             330     #01              ; AC mit 1 vergleichen
+             140     ML0001%          ; n <= 1: nichts zu sortieren, Rueckkehr
+             240     ML0002%          ; zz := n (Zaehler)
+             211     #0               ; AC := 0
+             240     ML0003%          ; sn := 0 (n in Adresseneinheiten, 01000 je Element)
+ML0007%:     211     ML0003%          ; AC := sn
+             210     #01000           ; AC := sn + 01000
+             240     ML0003%          ; sn := AC
+             211     ML0002%          ; AC := Zaehler
+             220     #01              ; AC := Zaehler - 1
+             240     ML0002%          ; zz := AC
+             330     #0               ; AC mit 0 vergleichen
+             170     ML0008%          ; Zaehler = 0: sn fertig, AC = 0, weiter
+             000     ML0007%          ; sonst naechste Adresseneinheit
+ML0008%:     240     ML0004%          ; i := 0 (AC = 0), spaeter i := i + 1
+             210     #01000           ; AC := i + 1
+ML0009%:     240     ML0005%          ; k := i + 1
+             210     ML0016%          ; AC := AC + Feldanfang
+             210     #0240            ; Befehl 240 a(k) bauen
+             240     ML0014%          ; Befehlszelle 1 := AC
+             251     0                ; AC := a(k)
+             240     ML0006%          ; H := a(k)
+             211     ML0004%          ; AC := i
+             210     ML0016%          ; AC := AC + Feldanfang
+             210     #0240            ; Befehl 240 a(i) bauen
+             240     ML0015%          ; Befehlszelle 2 := AC
+             251     0                ; AC := a(i)
+             330     ML0006%          ; AC mit H vergleichen
+             140     ML0010%          ; a(i) <= H: nicht tauschen
+ML0014%:     db      1                ; Laufzeit: 240 a(k): a(k) := a(i)
+             211     ML0006%          ; AC := alter Wert a(k)
+ML0015%:     db      1                ; Laufzeit: 240 a(i): a(i) := alter Wert a(k)
+ML0010%:     211     ML0005%          ; AC := k
+             210     #01000           ; AC := k + 1
+             330     ML0003%          ; AC mit sn vergleichen
+             170     ML0011%          ; k + 1 = n: innere Schleife fertig
+             000     ML0009%          ; weiter (AC = k + 1)
+ML0011%:     211     ML0004%          ; AC := i
+             210     #02000           ; AC := i + 2
+             330     ML0003%          ; AC mit sn vergleichen
+             170     ML0001%          ; i + 2 = n: Rueckkehr
+             220     #01000           ; AC := i + 1
+             000     ML0008%          ; weiter bei i := i + 1
+ML0001%:     db      1                ; Laufzeit: Rueckkehrsprung (Festlegung 010), hier am Ende des UP sequentiell erreicht
+ML0002%:     db      1                ; Arbeitszelle: Zaehler der Umrechnung
+ML0003%:     db      1                ; Arbeitszelle: n in Adresseneinheiten
+ML0004%:     db      1                ; Arbeitszelle: Index i (Adresseneinheiten)
+ML0005%:     db      1                ; Arbeitszelle: Index k (Adresseneinheiten)
+ML0006%:     db      1                ; Arbeitszelle: Hilfswert H
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT5SORT2: MACRO
+         $SPEC   TYP=M CLASS=KAT5 ACTION=None
+# AC: bei der Rückkehr ohne Bedeutung (n <= 1: das Rückkehrwort wird nicht verändert; sonst der letzte Vergleichswert). Zerstörte Zellen: die Zellen des UP (Arbeitszellen ML0002% bis ML0007%, Rückkehrzelle ML0001%, die vier Befehlszellen ML0013% bis ML0016%) und die Feldzellen selbst (das Feld wird sortiert). R1 und R3 werden nicht benutzt. Die Arbeitsspur wird nicht benutzt.
+# KAT5SORT2: Unterprogramm (Rumpf), sortiert ein Feld aus PAAREN (kat5-Wort, Wert) aufsteigend nach dem kat5-Wort auf denselben Zellen und zieht den Wert mit (Sortierreihenfolge = Zahlenwert des kat5-Wortes; Verfahren wie KAT5SORT: Austauschsortierung mit zwei Schleifen, Vergleich mit Vergleichersprung 1 und 3, ohne z0). Der Wert wird nie verglichen, nur zusammen mit seinem kat5-Wort vertauscht.
+# Feld:       Ein Paar sind zwei benachbarte Zellen: das kat5-Wort auf der Adresse a, der Wert dahinter auf a + 01000 (eine Adresseneinheit weiter); das nächste Paar beginnt bei a + 02000. Das Feld hat keine Lücken zwischen den Paaren.
+# Aufruf:     sort: KAT5SORT2   (Marke steht auf der ersten Zelle des UP = Zelle 0000 des UP; das UP beginnt dort mit einem Sprung über die zwei Parameter)
+#             Parameter 1 (Zelle Marke+1): Anfangsadresse des Feldes, der Aufrufer trägt sie vorher ein (z. B. `211 @feld`, `240 sort+1`).
+#             Parameter 2 (Zelle Marke+2): Füllänge = Anzahl der PAARE (nicht der Zellen) als gewöhnliche Zahl (z. B. `211 #024`, `240 sort+2`); das UP rechnet selbst in Adresseneinheiten (02000 je Paar) um.
+#             Aufruf mit 025 auf die Marke des ersten Aufrufs: AC = Rückkehrwort. Rückgabe keine, das Feld ist danach nach den kat5-Wörtern aufsteigend sortiert, jeder Wert steht wieder hinter seinem Wort. Bei n <= 1 sofortige Rückkehr.
+#             Der Wert ist ein beliebiges Wort, das nur mitgezogen wird (Test: positive Zahlen bis 0777, alle verschieden).
+# Zellen:     105 Zellen (oktal) in einem Stück, ohne Tabelle; Arbeitszellen ML0002% Zähler, ML0003% n in Adresseneinheiten, ML0004% Index i, ML0005% Index k, ML0006% Hilfswert H (kat5-Wort), ML0007% Hilfswert W (Wert); die Befehlszellen ML0013% und ML0014% (kat5-Wort) sowie ML0015% und ML0016% (Wert) (`db 1`) werden zur Laufzeit mit 240 a(k), 240 a(i), 240 w(k) und 240 w(i) belegt (Befehl zur Laufzeit bauen, Handbuch 5.4).
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat5sort2_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts (die Zellen werden nicht mehrfach belegt). Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten und auch die Parameter über sie ansprechen (`sort+1`, `sort+2`), spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+#             KAT5SORT und KAT5SORT2 haben getrennte Schalter (kat5sort_da, kat5sort2_da) und dürfen im selben Programm stehen.
+         $GLOBAL kat5sort2_da                     ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat5sort2_da) = 0
+         $SET kat5sort2_da 1                 ; ab jetzt gilt: Rumpf ist da
+             000     *+3              ; Zelle 0 des UP: Sprung ueber die zwei Parameter
+ML0017%:     db      1                ; Parameter 1: Anfangsadresse des Feldes (vom Aufrufer gefuellt)
+ML0018%:     db      1                ; Parameter 2: Fuelllaenge, Anzahl der PAARE (vom Aufrufer gefuellt); ein Paar = 2 Zellen: kat5-Wort, Wert
+             240     ML0001%          ; erste Codezelle: Rueckkehrwort sichern
+             211     ML0018%          ; AC := n
+             330     #01              ; AC mit 1 vergleichen
+             140     ML0001%          ; n <= 1: nichts zu sortieren, Rueckkehr
+             240     ML0002%          ; zz := n (Zaehler)
+             211     #0               ; AC := 0
+             240     ML0003%          ; sn := 0 (n in Adresseneinheiten, 02000 je Paar)
+ML0008%:     211     ML0003%          ; AC := sn
+             210     #02000           ; AC := sn + 02000 (ein Paar sind zwei Adresseinheiten)
+             240     ML0003%          ; sn := AC
+             211     ML0002%          ; AC := Zaehler
+             220     #01              ; AC := Zaehler - 1
+             240     ML0002%          ; zz := AC
+             330     #0               ; AC mit 0 vergleichen
+             170     ML0009%          ; Zaehler = 0: sn fertig, AC = 0, weiter
+             000     ML0008%          ; sonst naechstes Paar
+ML0009%:     240     ML0004%          ; i := 0 (AC = 0), spaeter i := i + 1 (Paare)
+             210     #02000           ; AC := i + 1
+ML0010%:     240     ML0005%          ; k := i + 1
+             210     ML0017%          ; AC := AC + Feldanfang
+             210     #0240            ; Befehl 240 a(k) bauen (kat5-Wort des Paares k)
+             240     ML0013%          ; Befehlszelle 1 := AC
+             251     0                ; AC := a(k)
+             240     ML0006%          ; H := a(k)
+             211     ML0004%          ; AC := i
+             210     ML0017%          ; AC := AC + Feldanfang
+             210     #0240            ; Befehl 240 a(i) bauen (kat5-Wort des Paares i)
+             240     ML0014%          ; Befehlszelle 2 := AC
+             251     0                ; AC := a(i)
+             330     ML0006%          ; AC mit H vergleichen
+             140     ML0011%          ; a(i) <= H: nicht tauschen
+ML0013%:     db      1                ; Laufzeit: 240 a(k): a(k) := a(i)
+             211     ML0006%          ; AC := alter Wert a(k)
+ML0014%:     db      1                ; Laufzeit: 240 a(i): a(i) := alter Wert a(k)
+             211     ML0005%          ; AC := k (jetzt der Wert des Paares, eine Adresseinheit hinter dem kat5-Wort)
+             210     ML0017%          ; AC := AC + Feldanfang
+             210     #01240           ; Befehl 240 w(k) bauen (01000 = eine Adresseinheit weiter, 0240 = Operationscode)
+             240     ML0015%          ; Befehlszelle 3 := AC
+             251     0                ; AC := w(k)
+             240     ML0007%          ; W := alter Wert w(k)
+             211     ML0004%          ; AC := i
+             210     ML0017%          ; AC := AC + Feldanfang
+             210     #01240           ; Befehl 240 w(i) bauen
+             240     ML0016%          ; Befehlszelle 4 := AC
+             251     0                ; AC := w(i)
+ML0015%:     db      1                ; Laufzeit: 240 w(k): w(k) := w(i)
+             211     ML0007%          ; AC := alter Wert w(k)
+ML0016%:     db      1                ; Laufzeit: 240 w(i): w(i) := alter Wert w(k)
+ML0011%:     211     ML0005%          ; AC := k
+             210     #02000           ; AC := k + 1 (ein Paar weiter)
+             330     ML0003%          ; AC mit sn vergleichen
+             170     ML0012%          ; k + 1 = n: innere Schleife fertig
+             000     ML0010%          ; weiter (AC = k + 1)
+ML0012%:     211     ML0004%          ; AC := i
+             210     #04000           ; AC := i + 2
+             330     ML0003%          ; AC mit sn vergleichen
+             170     ML0001%          ; i + 2 = n: Rueckkehr
+             220     #02000           ; AC := i + 1
+             000     ML0009%          ; weiter bei i := i + 1
+ML0001%:     db      1                ; Laufzeit: Rueckkehrsprung (Festlegung 010), hier am Ende des UP sequentiell erreicht
+ML0002%:     db      1                ; Arbeitszelle: Zaehler der Umrechnung
+ML0003%:     db      1                ; Arbeitszelle: n in Adresseneinheiten
+ML0004%:     db      1                ; Arbeitszelle: Index i (Adresseneinheiten)
+ML0005%:     db      1                ; Arbeitszelle: Index k (Adresseneinheiten)
+ML0006%:     db      1                ; Arbeitszelle: Hilfswert H (kat5-Wort)
+ML0007%:     db      1                ; Arbeitszelle: Hilfswert W (Wert)
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT6AUSGABE: MACRO
+         $SPEC   TYP=M CLASS=KAT6 ACTION=None
+# AC: bei der Rückkehr das letzte Textwort (mit z0, negativ). Zerstörte Zellen: die 50 Zellen des UP (Arbeitszellen ML0002% bis ML0005% und ML0015%, Ausgabebefehl ML0009%, Speicherbefehl ML0012%, Rückkehrzelle ML0001%) und die Zellen der Spur 7640 (über SCHIEBE_LI/SCHIEBE_RE). R1 = 7773 und R3 = 7774 bleiben unverändert.
+# KAT6AUSGABE: Unterprogramm (Rumpf), gibt einen mit kat6 komprimierten Text aus (5 Zeichen je Wort zu 6 Bit im Eingabecode der Kodetabelle, erstes Zeichen rechts im Wort, Stoppbit über dem letzten Zeichen, z0 am letzten Wort; Format: Assemblerdokumentation 3.3.18, Anweisung kat6).
+# Aufruf:     ausgabe: KAT6AUSGABE   (Marke steht auf der ersten Zelle des UP)
+#             Startadresse des Textes: R1 = Register 7773 (abs 07773), im Adreßfeld (da text); der Aufrufer trägt sie vorher ein (z. B. 211 radr, 240 07773). R1 bleibt unverändert.
+#             Der Aufrufer wählt vorher den Kanal an (z. B. ANWAHL K2) und ruft mit 025 auf: AC = Rückkehrwort.
+#             R3 = Register 3 (abs 07774): Adresse der KB/GB-Zelle des Ausgabegeräts (Adreßfeld, `da kbgb`; Festlegung 030). Das Hauptprogramm verwaltet die Zelle
+#             (0 = KB, 1 = GB, anfangs KB), trägt die Adresse vorher in R3 ein und gibt den Zustand so an das UP weiter.
+#             Das UP zieht den Zustand nach: gibt es das Zeichen Um. GB (kat6 037) aus, setzt es die Zelle auf 1, bei Um. KB (kat6 057) auf 0. Beide Zeichen werden auch ausgegeben.
+#             Es gibt selbst keine Umschaltzeichen aus und liest den Anfangszustand nicht; die Zelle hat bei der Rückkehr den erreichten Zustand.
+# Ausgabe:    Keine Tabelle. Aus dem 6-Bit-Code c gewinnt das UP den Ausgabebefehl durch Maskieren und Schieben (Assemblerdokumentation 3.3.18): Zeichen = (c UND 017) + 2 mal (c UND 060),
+#             Ausgabeadresse = Zeichen mal 8, im Adreßfeld also Zeichen mal 010000, dazu der Operationscode 030. Die Bits p und w bleiben 0 (das Schreibwerk wertet nur v u 8 4 2 1 aus).
+# Ende:       Je Wort wird der Rest (ohne z0) je Zeichen um 6 Stellen nach rechts geschoben; das Wort ist fertig, sobald nur noch das Stoppbit (Rest = 1) übrig ist. Der Text endet mit dem Wort, das z0 trägt;
+#             ein Endwort ohne Zeichen (nur z0 und das Stoppbit in z32) gibt nichts aus. Codes ohne Zeichen (frei laut Tabelle der Doku) sind nicht zulässig und werden nicht geprüft (Festlegung 005).
+# Rückkehr:   Das Rückkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Rücksprung, Festlegung 010).
+# Zellen:     ML0002% Zeiger, ML0003% Textwort, ML0004% Zeichenrest, ML0005% Zeichen, ML0015% Hilfszelle (Bits u und v), ML0009% Ausgabebefehl, ML0012% Speicherbefehl für den Zustand (Arbeitszellen im UP)
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat6ausgabe_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat6ausgabe_da                   ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat6ausgabe_da) = 0
+         $SET kat6ausgabe_da 1               ; ab jetzt gilt: Rumpf ist da
+             240 ML0001%              ; Rueckkehrwort sichern
+             211 ML0014%              ; AC := Startadresse des Textes
+             220 #01000               ; eine Adresseneinheit weniger, weil ML0006% sie gleich wieder dazuzaehlt
+             240 ML0002%              ; zeiger := Adresse des Wortes vor dem ersten (R1 bleibt unveraendert)
+ML0006%:     211 ML0002%              ; neues Wort: Zeiger auf das naechste Wort
+             210 #01000               ; plus eine Adresseneinheit
+             240 ML0002%              ; zeiger := Adresse des aktuellen Wortes
+             251 0                    ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+             240 ML0003%              ; tw := Textwort (mit z0)
+             200 #037777777777        ; z0 ausblenden, nur 32 Bit (Zeichen und Stoppbit)
+             240 ML0004%              ; rest := Zeichenrest mit Stoppbit
+ML0007%:     330 #1                   ; Vergleich des Rests mit 1 (keine Operation), der AC bleibt der Rest
+             170 ML0010%              ; Rest 1: nur noch das Stoppbit uebrig, Wort fertig
+             200 #077                 ; unterstes Zeichen (6 Bit) ausblenden
+             240 ML0005%              ; zeichen := kat6-Code
+             330 #037                 ; Vergleich mit kat6 037 (Um. GB)
+             170 ML0011%              ; Um. GB: Zustand := GB
+             330 #057                 ; Vergleich mit kat6 057 (Um. KB)
+             170 ML0011%              ; Um. KB: Zustand := KB
+ML0008%:     211 ML0005%              ; AC := kat6-Code (auch nach der Zustandsuebergabe)
+             200 #060                 ; Bits u und v (020 und 040) ausblenden
+             240 ML0015%              ; hilf := Code UND 060
+             211 ML0005%              ; AC := kat6-Code
+             200 #017                 ; Bits 8 4 2 1
+             210 ML0015%              ; plus (Code UND 060)
+             210 ML0015%              ; plus (Code UND 060) noch einmal: AC := Zeichen (8 Bit, p = w = 0)
+             SCHIEBE_LI 12            ; Zeichen mal 8 (Ausgabeadresse) mal 01000 (Adressfeld)
+             210 #030                 ; plus Operationscode 030 (Ausgabe)
+             240 ML0009%              ; Ausgabebefehl auf die naechste Zelle speichern
+ML0009%:     db  1                    ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+             211 ML0004%              ; AC := Zeichenrest
+             SCHIEBE_RE 6             ; 6 Stellen rechts: naechstes Zeichen nach unten
+             240 ML0004%              ; rest := Rest
+             000 ML0007%              ; naechstes Zeichen (der AC ist der Rest)
+ML0010%:     211 ML0003%              ; AC := Textwort mit z0 (negativ beim letzten Wort)
+             050 ML0006%              ; kein z0: naechstes Wort
+ML0001%:     db  1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0011%:     211 ML0016%              ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+             210 #0240                ; plus Operationscode 240: Speicherbefehl
+             240 ML0012%              ; Speicherbefehl auf die uebernaechste Zelle
+             211 ML0005%              ; AC := kat6-Code (037 oder 057)
+             200 #020                 ; Bit u: 037 hat es (Um. GB), 057 nicht (Um. KB)
+             SCHIEBE_RE 4             ; 020 wird 1: AC := 1 (GB) oder 0 (KB)
+ML0012%:     db  1                    ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+             000 ML0008%              ; Zeichen ausgeben
+ML0003%:     db  1                    ; Arbeitszelle: aktuelles Textwort
+ML0004%:     db  1                    ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0002%:     db  1                    ; Arbeitszelle: Adresse des aktuellen Textwortes
+ML0005%:     db  1                    ; Arbeitszelle: aktueller kat6-Code
+ML0015%:     db  1                    ; Arbeitszelle: Code UND 060
+ML0014%:     abs 07773
+ML0016%:     abs 07774
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+KAT6EINGABE: MACRO
+         $SPEC   TYP=M CLASS=KAT6 ACTION=None
+# AC: bei der Rückkehr der Zeichenrest (negativ, der Rückkehrsprung ändert den AC nicht). Zerstörte Zellen: die 96 Zellen des UP (Arbeitszellen ML0002% bis ML0005%, Speicherbefehl ML0013%, Zustandswert ML0030%, Speicherbefehl ML0032%, Rückkehrzelle ML0001%) und die Zellen der Spur 7640 (über SCHIEBE_RE); die Tabelle ML0026% (64 Zellen) wird nur gelesen. R1 = 7773, R2 = 7776 und R3 = 7774 bleiben unverändert.
+# KAT6EINGABE: Unterprogramm (Rumpf), liest Zeichen über den angewählten Eingabekanal (K0 = SW / T-SW) und legt sie als kat6-Text ab (5 Zeichen je Wort zu 6 Bit im Eingabecode der Kodetabelle, erstes Zeichen rechts im Wort, Stoppbit über dem letzten Zeichen, z0 am letzten Wort; Format: Assemblerdokumentation 3.3.18, Anweisung kat6).
+# Aufruf:     eingabe: KAT6EINGABE   (Marke steht auf der ersten Zelle des UP)
+#             R1 = Register 7773 (abs 07773): Adresse des Bereichs (Adreßfeld, `da text`); R2 = Register 7776 (abs 07776): höchste Zeichenzahl (mindestens 1).
+#             Der Aufrufer trägt beides vorher ein (z. B. 211 radr, 240 07773 und 211 #12, 240 07776), wählt den Kanal an (ANWAHL K0) und ruft mit 025 auf: AC = Rückkehrwort.
+#             R3 = Register 3 (abs 07774): Adresse der KB/GB-Zelle des Eingabegeräts (Adreßfeld, `da kbgb`; Festlegung 030). Das Hauptprogramm verwaltet die Zelle
+#             (0 = KB, 1 = GB, anfangs KB), trägt die Adresse vorher in R3 ein und gibt den Zustand so an das UP weiter. Das UP zieht den Zustand nach: wird das
+#             Zeichen Um. GB eingegeben, setzt es die Zelle auf 1, bei Um. KB auf 0 (das Zeichen wird wie ein anderes Zeichen gespeichert und gezählt). Es liest den Anfangszustand nicht;
+#             die Zelle hat bei der Rückkehr den erreichten Zustand.
+# Zeichen:    Gespeichert werden a bis z, 0 bis 9, Leertaste, . , - + (die Taste + / = hat nur einen Code), : / % und der Akzent sowie Um. KB und Um. GB. Der gespeicherte Code ist die Eingabeadresse der Taste selbst (kat6-Codes laut Tabelle 3.3.18);
+#             die Tabelle ML0026% liefert ihn nur um 24 Stellen nach links geschoben. Alle anderen Tasten (Irrung Satz, BM, Tabulator, WR, Transport) werden überlesen: nicht gespeichert, nicht gezählt.
+# Ende:       Die Eingabe endet (1) mit dem Zeichen : (wird als letztes Zeichen gespeichert und zählt mit), (2) mit dem Zeichen WRZL (SatzMarke, wird nicht gespeichert)
+#             oder (3) sobald R2 Zeichen angenommen sind (volle Zeichenzahl gilt als Eingabeende, auch ohne : und WRZL). Das letzte Wort bekommt z0.
+#             Gespeichert wird in höchstens (R2 + 4) / 5 Worten; mit WRZL nach genau 5, 10, ... Zeichen steht ein leeres Endwort (nur z0 und das Stoppbit in z32) hinter dem letzten vollen Wort. Umschaltzeichen zählen mit.
+# Stoppbit:   Jedes Wort bekommt das Stoppbit 1 unmittelbar links vom letzten Zeichen des Wortes (volles Wort: z2; unvollständiges Endwort: über dem letzten Zeichen). Das UP setzt es oberhalb des obersten Zeichens und schiebt es mit dem Wort nach rechts.
+# Rückkehr:   Das Rückkehrwort steht auf der Zelle ML0001%, die am Ende des UP sequentiell durchlaufen wird (kein eigener Rücksprung, Festlegung 010).
+# Tabelle:    Die Zeichentabelle ML0026% (64 Zellen, Eingabeadresse = Zellenadresse ODER ML0026%) liegt auf einer 0100-Grenze (`equ100 *`, davor bleiben bis zu 77 Zellen frei).
+#             Tasten ohne kat6-Zeichen tragen in der Tabelle z0 (AC wird negativ, das Zeichen wird überlesen) oder bei Sprung-Umstellung einen Sprung zurück zum Lesen.
+#             ML0027%, ML0028% und ML0031% sind nur die abs-Marken von R1, R2 und R3 und belegen keine Zelle.
+# Mehrfachaufruf: Der Rumpf entsteht nur beim ersten Aufruf im Lauf (globale Variable kat6eingabe_da, über $GLOBAL auch mit ;#MAKROLOKAL=1);
+#             jeder weitere Aufruf erzeugt nichts. Die Marke steht nur beim ersten Aufruf auf dem UP; eine Marke auf einem späteren Aufruf bekäme die Adresse der nächsten Zelle (4.1),
+#             deshalb alle Aufrufe `025` auf die Marke des ersten Aufrufs richten, spätere Aufrufe ohne Marke schreiben. Braucht c82ass ab 1.02-001 ($GLOBAL).
+         $GLOBAL kat6eingabe_da                   ; UP schon erzeugt? (0 = nein)
+         $IF $V(kat6eingabe_da) = 0
+         $SET kat6eingabe_da 1               ; ab jetzt gilt: Rumpf ist da
+             240     ML0001%              ; Rueckkehrwort sichern
+             211     ML0028%              ; AC := hoechste Zeichenzahl
+             220     #1                   ; AC := n - 1
+             240     ML0004%              ; zaehl := n - 1 (negativ, wenn alle Zeichen angenommen sind)
+             211     ML0027%              ; AC := Adresse des Bereichs
+             220     #01000               ; eine Adresseneinheit weniger, weil weiter sie gleich wieder dazuzaehlt
+             240     ML0002%              ; zeiger := Adresse des Wortes vor dem ersten
+ML0006%:     211     ML0002%              ; neues Wort beginnen: zeiger auf das naechste Wort
+             210     #01000               ; plus eine Adresseneinheit
+             240     ML0002%              ; zeiger := Adresse des aktuellen Wortes
+             211     #4                   ; AC := 4
+             240     ML0005%              ; m := 4 (Zeichen noch zu uebernehmen minus 1)
+             241     ML0003%              ; wort := 0, AC := 0
+             211     ML0004%              ; AC := Rest
+             050     ML0007%              ; Rest >= 0: Zeichen lesen
+ML0034%:     211     ML0003%              ; Eingabeende, Wort unvollstaendig: AC := Wort
+             210     #010000000000        ; Stoppbit in z2 ueber dem obersten Zeichen (wandert beim Ausrichten mit)
+             240     ML0003%              ; wort := Wort mit Stoppbit
+ML0008%:     211     ML0005%              ; m + 1 Zeichen fehlen im Wort; m < 0 heisst Wort voll
+             040     ML0009%              ; Wort voll: fertig ausgerichtet
+             220     #1                   ; AC := m - 1 (der AC enthaelt m noch von oben)
+             240     ML0005%              ; m := AC
+             211     ML0003%              ; AC := Wort
+             SCHIEBE_RE 6                 ; ein fehlendes Zeichen: Wort 6 Stellen nach rechts (erstes Zeichen nach rechts, Stoppbit mit)
+             240     ML0003%              ; wort := ausgerichtetes Wort
+             000     ML0008%              ; naechstes fehlendes Zeichen
+ML0009%:     211     ML0003%              ; AC := ausgerichtetes Wort mit Stoppbit
+             210     #040000000000        ; z0 setzen: Endwort
+             240     ML0003%              ; wort := Endwort mit z0
+             000     ML0010%              ; Wort speichern
+ML0007%:     211     ML0003%              ; AC := bisheriges Wort
+             SCHIEBE_RE 6                 ; ein Zeichen nach rechts, links wird Platz fuer das neue Zeichen
+             010     ML0026%              ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+             040     ML0007%              ; AC negativ (z0 aus der Tabelle): Taste ohne kat6-Zeichen, ueberlesen
+ML0012%:     240     ML0003%              ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+ML0033%:     211     ML0004%              ; AC := zaehl
+             220     #1                   ; AC := AC - 1
+             240     ML0004%              ; zaehl := AC
+             211     ML0005%              ; AC := m
+             220     #1                   ; AC := AC - 1
+             240     ML0005%              ; m := AC
+             040     ML0011%              ; m < 0: Wort voll
+             211     ML0004%              ; AC := Rest
+             050     ML0007%              ; Rest >= 0: weiter lesen
+             000     ML0034%              ; alle Zeichen angenommen: Eingabeende
+ML0011%:     211     ML0003%              ; Wort voll: AC := Wort
+             210     #010000000000        ; Stoppbit in z2 (volles Wort, ob Endwort oder nicht)
+             240     ML0003%              ; wort := Wort mit Stoppbit
+             211     ML0004%              ; AC := Rest
+             040     ML0008%              ; Rest < 0: das volle Wort ist das Endwort (ausr ist dann ohne Schieben, setzt z0)
+ML0010%:     211     ML0002%              ; AC := Adresse des Wortes im Bereich
+             210     #0240                ; plus Operationscode 240: Speicherbefehl
+             240     ML0013%              ; Speicherbefehl auf die naechste Zelle
+             211     ML0003%              ; AC := Wort
+ML0013%:     db      1                    ; Laufzeit: 240 <Adresse des Wortes>, speichert das Wort in den Bereich
+             211     ML0004%              ; AC := Rest
+             050     ML0006%              ; Rest >= 0: naechstes Wort beginnen
+ML0001%:     db      1                    ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002%:     db      1                    ; Arbeitszelle: Adresse des aktuellen Wortes im Bereich
+ML0003%:     db      1                    ; Arbeitszelle: Wort, das gerade aufgebaut wird
+ML0004%:     db      1                    ; Arbeitszelle: noch anzunehmende Zeichen minus 1
+ML0005%:     db      1                    ; Arbeitszelle: noch fehlende Zeichen im Wort minus 1
+ML0014%:     221     #1                   ; AC := -1
+             240     ML0004%              ; zaehl := -1: Eingabe zu Ende
+             000     ML0034%              ; Wort ausrichten, z0 setzen, speichern
+ML0015%:     210     #01200000000         ; Sprungzeichen 12 (Leertaste / ZWR): kat6 012 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0016%:     210     #01500000000         ; Sprungzeichen 15 (:  /  (): kat6 015 << 24 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Doppelpunkt (der AC wird gleich geloescht)
+             241     ML0004%              ; zaehl := 0, AC := 0: mit diesem Zeichen endet die Eingabe (zaehl wird gleich -1)
+             000     ML0033%              ; weiter bei der Zaehlung (wort ist schon gespeichert)
+ML0018%:     210     #03300000000         ; Sprungzeichen 33 (. / !): kat6 033 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0019%:     210     #03700000000         ; Sprungzeichen 37 (Um. GB): kat6 037 << 24 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+             211     #1                   ; AC := 1 (Zustand GB)
+             000     ML0029%              ; Zustand setzen
+ML0020%:     210     #04000000000         ; Sprungzeichen 40 (- / Dreieck): kat6 040 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0021%:     210     #05700000000         ; Sprungzeichen 57 (Um. KB): kat6 057 << 24 zum verschobenen Wort addieren
+             240     ML0003%              ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+             211     #0                   ; AC := 0 (Zustand KB)
+             000     ML0029%              ; Zustand setzen
+ML0022%:     210     #06000000000         ; Sprungzeichen 60 (Akzent / ;): kat6 060 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0024%:     210     #07300000000         ; Sprungzeichen 73 (, / ?): kat6 073 << 24 zum verschobenen Wort addieren
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0029%:     240     ML0030%              ; wert := Zustand (0 = KB, 1 = GB)
+             211     ML0031%              ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+             210     #0240                ; plus Operationscode 240: Speicherbefehl
+             240     ML0032%              ; Speicherbefehl auf die naechste Zelle
+             211     ML0030%              ; AC := Zustand
+ML0032%:     db      1                    ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+             211     ML0003%              ; AC := Wort mit dem Umschaltzeichen
+             000     ML0012%              ; weiter bei der Uebernahme
+ML0030%:     db      1                    ; Arbeitszelle: Zustand, der gespeichert wird
+             equ100  *                    ; ztab muss durch 0100 teilbar sein
+ML0026%:
+             dw      0                    ; 00: 0, kat6 00 << 24
+             dw      0100000000           ; 01: 1, kat6 01 << 24
+             dw      0200000000           ; 02: 2, kat6 02 << 24
+             dw      0300000000           ; 03: 3, kat6 03 << 24
+             dw      0400000000           ; 04: 4, kat6 04 << 24
+             dw      0500000000           ; 05: 5, kat6 05 << 24
+             dw      0600000000           ; 06: 6, kat6 06 << 24
+             dw      0700000000           ; 07: 7, kat6 07 << 24
+             dw      01000000000          ; 10: 8, kat6 010 << 24
+             dw      01100000000          ; 11: 9, kat6 011 << 24
+             000     ML0015%              ; 12: Leertaste / ZWR (Sprung-Umstellung)
+             spa     015                  ; unbelegte Eingabeadressen 13 bis 14 auslassen
+             000     ML0016%              ; 15: :  /  ( (Sprung-Umstellung)
+             000     ML0007%              ; 16: Irrung Satz (Sprung-Umstellung), kein kat6-Zeichen: ueberlesen
+             spa     020                  ; unbelegte Eingabeadressen 17 bis 17 auslassen
+             dw      02000000000          ; 20: + / =, kat6 020 << 24
+             dw      02100000000          ; 21: a, kat6 021 << 24
+             dw      02200000000          ; 22: b, kat6 022 << 24
+             dw      02300000000          ; 23: c, kat6 023 << 24
+             dw      02400000000          ; 24: d, kat6 024 << 24
+             dw      02500000000          ; 25: e, kat6 025 << 24
+             dw      02600000000          ; 26: f, kat6 026 << 24
+             dw      02700000000          ; 27: g, kat6 027 << 24
+             dw      03000000000          ; 30: h, kat6 030 << 24
+             dw      03100000000          ; 31: i, kat6 031 << 24
+             000     ML0014%              ; 32: SatzMarke / WRZL = Eingabeende (nicht gespeichert)
+             000     ML0018%              ; 33: . / ! (Sprung-Umstellung)
+             spa     037                  ; unbelegte Eingabeadressen 34 bis 36 auslassen
+             000     ML0019%              ; 37: Um. GB (Sprung-Umstellung)
+             000     ML0020%              ; 40: - / Dreieck (Sprung-Umstellung)
+             dw      04100000000          ; 41: j, kat6 041 << 24
+             dw      04200000000          ; 42: k, kat6 042 << 24
+             dw      04300000000          ; 43: l, kat6 043 << 24
+             dw      04400000000          ; 44: m, kat6 044 << 24
+             dw      04500000000          ; 45: n, kat6 045 << 24
+             dw      04600000000          ; 46: o, kat6 046 << 24
+             dw      04700000000          ; 47: p, kat6 047 << 24
+             dw      05000000000          ; 50: q, kat6 050 << 24
+             dw      05100000000          ; 51: r, kat6 051 << 24
+             dw      040000000000         ; 52: WR, kein kat6-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+             spa     057                  ; unbelegte Eingabeadressen 53 bis 56 auslassen
+             000     ML0021%              ; 57: Um. KB (Sprung-Umstellung)
+             000     ML0022%              ; 60: Akzent / ; (Sprung-Umstellung)
+             dw      06100000000          ; 61: / / ), kat6 061 << 24
+             dw      06200000000          ; 62: s, kat6 062 << 24
+             dw      06300000000          ; 63: t, kat6 063 << 24
+             dw      06400000000          ; 64: u, kat6 064 << 24
+             dw      06500000000          ; 65: v, kat6 065 << 24
+             dw      06600000000          ; 66: w, kat6 066 << 24
+             dw      06700000000          ; 67: x, kat6 067 << 24
+             dw      07000000000          ; 70: y, kat6 070 << 24
+             dw      07100000000          ; 71: z, kat6 071 << 24
+             000     ML0007%              ; 72: BM (Sprung-Umstellung), kein kat6-Zeichen: ueberlesen
+             000     ML0024%              ; 73: , / ? (Sprung-Umstellung)
+             dw      07400000000          ; 74: Prozentzeichen / *, kat6 074 << 24
+             000     ML0007%              ; 75: Tabulator (Sprung-Umstellung), kein kat6-Zeichen: ueberlesen
+             spa     077                  ; unbelegte Eingabeadressen 76 bis 76 auslassen
+             dw      040000000000         ; 77: Transport, kein kat6-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+ML0027%:     abs 07773
+ML0028%:     abs 07776
+ML0031%:     abs 07774
+         $ENDIF                   ; Ende von: Rumpf nur beim ersten Aufruf
+         MEND
+
+
+GK_MATH: MACRO 1
+         $SPEC   TYP=M CLASS=GK ACTION=None
+# GK_MATH: Unterprogramme der Gleitkomma-Grundrechenarten im Format dwg (z0 Vorzeichen, z1..z6 Exponent e+32, z7..z32 Mantisse 2^25 <= M < 2^26, Wert = +-M/2^26*2^e, Null = Wort 0).
+# Aufruf:     GK_MATH add | sub | mul | div | alle   (ohne Marke; der Parameter nennt das Unterprogramm, das der Aufrufer braucht; alle = alle vier)
+#             Das Makro darf beliebig oft und mit jedem Parameter aufgerufen werden: JEDER TEIL DES CODES WIRD NUR EINMAL ERZEUGT (Merker gkm_add, gkm_sub, gkm_mul, gkm_div, gkm_ad, gkm_md, gkm_pk).
+#             Ein Aufruf erzeugt nur, was noch fehlt: den Einsprung des genannten UP (Marke gk_add, gk_sub, gk_mul bzw. gk_div), beim ersten Bedarf den Kern der Addition (add, sub) bzw. von Multiplikation und
+#             Division (mul, div) mit seinen Arbeitszellen und beim allerersten Aufruf den gemeinsamen Teil (Packen, Rueckkehrzelle, Sonderfaelle, gemeinsame Arbeitszellen). Wer nur gk_add braucht, bekommt weder Multiplikation noch Division.
+#             Reihenfolge im Speicher je Aufruf: Einsprung/Einsprunge und Kern der Addition, Einsprung/Einsprunge und Kern von Multiplikation und Division, gemeinsamer Teil. Mit zwei Aufrufen belegt das Makro
+#             an zwei Stellen Speicher; das Makro steht wie jedes UP-Makro dort, wo der Ablauf nicht hineinlaeuft (Festlegung 035: UP mit mehr als 5 Befehlen als eigenes Makro, jeder Aufruf nutzt dieselben Zellen).
+# Benutzung:  R1 (Zelle 7773) und R2 (Zelle 7776) laden, dann  025 gk_add | gk_sub | gk_mul | gk_div ;  Ergebnis im AC (dwg). R1 und R2 bleiben unveraendert. gk_add: R1+R2, gk_sub: R1-R2, gk_mul: R1*R2, gk_div: R1/R2.
+#             Das UP ruft kein weiteres UP auf (unterste Ebene). Die Rueckkehr laeuft ueber die gemeinsame Zelle gkm_rueck am Ende des gemeinsamen Teils (Festlegung 010); jeder Einsprung beginnt mit 240 gkm_rueck.
+# Annahmen:   Division durch 0 (auch 0/0) und Exponentenueberlauf (Ergebnis >= 2^31) erzeugen einen kuenstlichen Ueberlauf (AC := 2^32-1, + 1, Halt beim naechsten Befehl, FUE); Exponentenunterlauf (Ergebnis < 2^-33) ergibt 0;
+#             Rundung: Mitte weg von 0 (Betrag); bitgenau gleich der exakten Bruchrechnung (Projekt_Gleitkomma, gk_modell).
+# AC:         bei der Rueckkehr das Ergebnis. Zerstoerte Zellen: die eigenen Arbeitszellen (gkm_xa, gkm_xb, gkm_t, gkm_ee, gkm_sg, gkm_m, gkm_cn, gkm_r; bei add/sub gkm_br, gkm_st, gkm_rr; bei mul/div gkm_y, gkm_z, gkm_fl,
+#             gkm_ea, gkm_eb, gkm_ma, gkm_mb) und die Arbeitsspur 7640 bis 7677 (SCHIEBE_*, 440, 472, 412). R3 bleibt unberuehrt. gkm_r1 (7773) und gkm_r2 (7776) sind nur abs-Marken und belegen keine Zelle.
+# Namen:      Alle inneren Marken beginnen mit gkm_ (vermeidet Zusammenstoesse mit gk_ausgabe/gk_eingabe, die gk_rueck, gk_pk, gk_null selbst definieren); feste Marken statt ML0001%, weil spaetere Aufrufe
+#             die Zellen eines frueheren Aufrufs ansprechen. Die Marken gk_add, gk_sub, gk_mul, gk_div entstehen nur im Aufruf mit dem jeweiligen Parameter (oder alle).
+# Befehlszahl je Aufruf (Testfaelle Projekt_Gleitkomma/gk_math_op): add 12 bis 853, sub 13 bis 858, mul 14 bis 72, div 14 bis 554 (Mittel 214, 225, 64, 461).
+$PR1 add sub mul div alle
+$GLOBAL gkm_add gkm_sub gkm_mul gkm_div gkm_ad gkm_md gkm_pk   ; Merker: 1 = Teil ist schon erzeugt (legt fehlende globale Variablen mit 0 an)
+$LOCAL wa ws wm wd ea es em ed ead emd                          ; wa..wd: Parameter verlangt; ea..ed: Einsprung in diesem Aufruf erzeugen; ead, emd: Kern in diesem Aufruf erzeugen
+$IF $1 = add | $1 = alle
+$SET wa 1
+$ENDIF
+$IF $1 = sub | $1 = alle
+$SET ws 1
+$ENDIF
+$IF $1 = mul | $1 = alle
+$SET wm 1
+$ENDIF
+$IF $1 = div | $1 = alle
+$SET wd 1
+$ENDIF
+$IF $V(wa) = 1 & $V(gkm_add) = 0
+$SET ea 1
+$SET gkm_add 1
+$ENDIF
+$IF $V(ws) = 1 & $V(gkm_sub) = 0
+$SET es 1
+$SET gkm_sub 1
+$ENDIF
+$IF $V(wm) = 1 & $V(gkm_mul) = 0
+$SET em 1
+$SET gkm_mul 1
+$ENDIF
+$IF $V(wd) = 1 & $V(gkm_div) = 0
+$SET ed 1
+$SET gkm_div 1
+$ENDIF
+$IF $CALC($V(wa)+$V(ws)) > 0 & $V(gkm_ad) = 0
+$SET ead 1
+$SET gkm_ad 1
+$ENDIF
+$IF $CALC($V(wm)+$V(wd)) > 0 & $V(gkm_md) = 0
+$SET emd 1
+$SET gkm_md 1
+$ENDIF
+; ---- Teil 1: Addition/Subtraktion (nur wenn in diesem Aufruf etwas davon fehlt)
+$IF $V(ead) = 1
+gkm_br:         db      1                       ; Mantisse b << 5
+gkm_st:         db      1                       ; Klebebit-Summe
+gkm_rr:         db      1                       ; Ergebnis der Mantissenaddition
+$ENDIF
+$IF $V(ea) = 1
+gk_add:         240     gkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                211     gkm_r1                  ; R1
+                240     gkm_xa                  ; Operand a
+                211     gkm_r2                  ; R2
+                240     gkm_xb                  ; Operand b
+$IF $V(es) = 0 & $V(ead) = 1
+; (der Kern der Addition folgt unmittelbar: kein Sprung noetig)
+$ELSE
+                000     gkm_ad                  ; weiter zum Kern
+$ENDIF
+$ENDIF
+$IF $V(es) = 1
+gk_sub:         240     gkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                211     gkm_r1                  ; R1
+                240     gkm_xa                  ; Operand a
+                211     gkm_r2                  ; R2
+                240     gkm_xb                  ; Operand b
+                311     gkm_xb                  ; AC := b, Vergleicher: V3 genau bei b = 0
+                170     gkm_ad                  ; b = 0: unveraendert
+                040     gkm_su_n                ; z0 gesetzt: b negativ
+                210     #040000000000           ; b positiv: z0 setzen
+                240     gkm_xb                  ; b merken
+                000     gkm_ad                  ; weiter zum Kern
+gkm_su_n:       200     #037777777777           ; b negativ: z0 loeschen
+                240     gkm_xb                  ; b merken
+$IF $V(ead) = 0
+                000     gkm_ad                  ; weiter zum Kern (steht schon an anderer Stelle)
+$ENDIF
+$ENDIF
+$IF $V(ead) = 1
+gkm_ad:         311     gkm_xb                  ; AC := b, V3 bei b = 0
+                170     gkm_ad_b0               ; b = 0: Ergebnis a
+                311     gkm_xa                  ; AC := a, V3 bei a = 0
+                170     gkm_ad_a0               ; a = 0: Ergebnis b
+                211     gkm_xa                  ; |a|
+                200     #037777777777           ; z0 loeschen
+                240     gkm_t                   ; |a| merken
+                211     gkm_xb                  ; |b|
+                200     #037777777777           ; z0 loeschen
+                330     gkm_t                   ; |b| mit |a| vergleichen
+                140     gkm_ad_ok               ; |b| <= |a|: kein Tausch
+                211     gkm_xa                  ; Tausch: a ...
+                240     gkm_t                   ; ... merken
+                211     gkm_xb                  ; b ...
+                240     gkm_xa                  ; ... nach a
+                211     gkm_t                   ; altes a ...
+                240     gkm_xb                  ; ... nach b
+gkm_ad_ok:      211     gkm_xa                  ; |a|
+                200     #037777777777           ; z0 loeschen
+                642     07656                   ; 26 rechts: Exponent ea (e + 32)
+                240     gkm_ee                  ; Ergebnisexponent := ea
+                211     gkm_xb                  ; |b|
+                200     #037777777777           ; z0 loeschen
+                642     07656                   ; 26 rechts: Exponent eb
+                240     gkm_t                   ; eb merken
+                211     gkm_ee                  ; ea
+                220     gkm_t                   ; ea - eb = d (Schiebeweite)
+                240     gkm_cn                  ; Zaehler d
+                211     gkm_xa                  ; a
+                200     #0377777777             ; Mantisse Ma (26 Bit)
+                SCHIEBE_LI 5                       ; 5 links (Schutzbits)
+                240     gkm_r                   ; r := Ma << 5
+                211     gkm_xb                  ; b
+                200     #0377777777             ; Mantisse Mb
+                SCHIEBE_LI 5                       ; 5 links
+                240     gkm_br                  ; br := Mb << 5
+                241     gkm_st                  ; Klebebit-Summe := 0
+gkm_ad_sl:      311     gkm_cn                  ; AC := d, V3 bei d = 0
+                170     gkm_ad_sx               ; fertig geschoben
+                211     gkm_br                  ; br
+                200     #1                      ; Bit 0 (geht verloren)
+                210     gkm_st                  ; zur Summe
+                240     gkm_st                  ; merken
+                211     gkm_br                  ; br
+                212     #0                      ; 1 rechts
+                240     gkm_br                  ; merken
+                211     gkm_cn                  ; d
+                220     #1                      ; - 1
+                240     gkm_cn                  ; merken
+                000     gkm_ad_sl               ; weiter
+gkm_ad_sx:      311     gkm_st                  ; AC := Summe, V3 bei 0
+                170     gkm_ad_vz               ; nichts verloren: ohne Klebebit
+                211     gkm_br                  ; br
+                200     #037777777776           ; Bit 0 loeschen
+                210     #1                      ; Klebebit setzen
+                240     gkm_br                  ; merken
+gkm_ad_vz:      211     gkm_xa                  ; Vorzeichen a
+                040     gkm_ad_xn               ; negativ
+                211     gkm_xb                  ; a >= 0: Vorzeichen b
+                040     gkm_ad_df               ; negativ: verschieden
+                000     gkm_ad_gl               ; gleich
+gkm_ad_xn:      211     gkm_xb                  ; a < 0: Vorzeichen b
+                040     gkm_ad_gl               ; auch negativ: gleich
+gkm_ad_df:      211     gkm_r                   ; verschieden: r - br
+                220     gkm_br                  ; ... subtrahieren
+                000     gkm_ad_nz               ; weiter
+gkm_ad_gl:      211     gkm_r                   ; gleich: r + br
+                210     gkm_br                  ; ... addieren
+gkm_ad_nz:      240     gkm_rr                  ; R merken
+                311     gkm_rr                  ; AC := R, V3 bei 0
+                170     gkm_null                ; R = 0: Ergebnis 0
+                330     #020000000000           ; R mit 2^31 vergleichen
+                150     gkm_ad_rr               ; R >= 2^31: 1 rechts
+gkm_ad_nl:      211     gkm_rr                  ; R
+                330     #010000000000           ; mit 2^30 vergleichen
+                150     gkm_ad_nm               ; R >= 2^30: normiert
+                210     gkm_rr                  ; R := 2 R
+                240     gkm_rr                  ; merken
+                211     gkm_ee                  ; Exponent
+                220     #1                      ; - 1
+                240     gkm_ee                  ; merken
+                000     gkm_ad_nl               ; weiter normieren
+gkm_ad_rr:      211     gkm_rr                  ; R
+                212     #0                      ; 1 rechts
+                240     gkm_rr                  ; merken
+                211     gkm_ee                  ; Exponent
+                210     #1                      ; + 1
+                240     gkm_ee                  ; merken
+gkm_ad_nm:      211     gkm_rr                  ; R
+                210     #020                    ; + 16 (Rundung)
+                SCHIEBE_RE 5                       ; 5 rechts: Mantisse
+                240     gkm_m                   ; m merken
+                211     gkm_xa                  ; a
+                200     #040000000000           ; Vorzeichen
+                240     gkm_sg                  ; sg merken
+                000     gkm_pk                  ; Packen
+gkm_ad_b0:      211     gkm_xa                  ; b = 0: Ergebnis a
+                000     gkm_rueck               ; zurueck
+gkm_ad_a0:      211     gkm_xb                  ; a = 0: Ergebnis b
+                000     gkm_rueck               ; zurueck
+$ENDIF
+; ---- Teil 2: Multiplikation/Division (nur wenn in diesem Aufruf etwas davon fehlt)
+$IF $V(emd) = 1
+gkm_y:          db      1                       ; Quotient
+gkm_z:          db      1                       ; Produkt bzw. Quotient vor der Rundung
+gkm_fl:         db      1                       ; 0 Multiplikation, 1 Division
+gkm_ea:         db      1                       ; Exponent a
+gkm_eb:         db      1                       ; Exponent b
+gkm_ma:         db      1                       ; Mantisse a
+gkm_mb:         db      1                       ; Mantisse b
+$ENDIF
+$IF $V(em) = 1
+gk_mul:         240     gkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                241     gkm_fl                  ; fl := 0
+$IF $V(ed) = 0 & $V(emd) = 1
+; (der Kern folgt unmittelbar: kein Sprung noetig)
+$ELSE
+                000     gkm_md                  ; weiter zum gemeinsamen Anfang
+$ENDIF
+$ENDIF
+$IF $V(ed) = 1
+gk_div:         240     gkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                211     #1                      ; AC := 1
+                240     gkm_fl                  ; fl := 1
+$IF $V(emd) = 0
+                000     gkm_md                  ; weiter zum gemeinsamen Anfang (steht schon an anderer Stelle)
+$ENDIF
+$ENDIF
+$IF $V(emd) = 1
+gkm_md:         211     gkm_r1                  ; R1
+                240     gkm_xa                  ; Operand a
+                211     gkm_r2                  ; R2
+                240     gkm_xb                  ; Operand b
+                311     gkm_xb                  ; AC := b, V3 bei b = 0
+                170     gkm_md_b0               ; b = 0
+                311     gkm_xa                  ; AC := a, V3 bei a = 0
+                170     gkm_null                ; a = 0: Ergebnis 0
+                211     gkm_xa                  ; Vorzeichen a
+                040     gkm_md_an               ; negativ
+                211     gkm_xb                  ; a >= 0: Vorzeichen b
+                040     gkm_md_ng               ; negativ: Ergebnis negativ
+                000     gkm_md_ps               ; positiv
+gkm_md_an:      211     gkm_xb                  ; a < 0: Vorzeichen b
+                040     gkm_md_ps               ; auch negativ: Ergebnis positiv
+gkm_md_ng:      211     #040000000000           ; Vorzeichen des Ergebnisses: -
+                240     gkm_sg                  ; merken
+                000     gkm_md_e                ; weiter
+gkm_md_ps:      241     gkm_sg                  ; Vorzeichen des Ergebnisses: +
+gkm_md_e:       211     gkm_xa                  ; |a|
+                200     #037777777777           ; z0 loeschen
+                642     07656                   ; 26 rechts: Exponent ea
+                240     gkm_ea                  ; merken
+                211     gkm_xb                  ; |b|
+                200     #037777777777           ; z0 loeschen
+                642     07656                   ; 26 rechts: Exponent eb
+                240     gkm_eb                  ; merken
+                211     gkm_xa                  ; a
+                200     #0377777777             ; Mantisse Ma
+                240     gkm_ma                  ; merken
+                211     gkm_xb                  ; b
+                200     #0377777777             ; Mantisse Mb
+                240     gkm_mb                  ; merken
+                311     gkm_fl                  ; AC := fl, V3 bei Multiplikation
+                170     gkm_mu                  ; fl = 0: Multiplikation
+; ---- Division: Y = floor(Ma * 2^27 / Mb), 28 Schritte
+                211     gkm_ea                  ; ea
+                220     gkm_eb                  ; - eb
+                210     #32                     ; + 32
+                240     gkm_ee                  ; Ergebnisexponent
+                211     gkm_ma                  ; Ma
+                240     gkm_r                   ; Rest := Ma
+                241     gkm_y                   ; Quotient := 0
+                211     #27                     ; 28 Durchlaeufe (27 bis 0)
+                240     gkm_cn                  ; Zaehler
+gkm_dv_l:       211     gkm_y                   ; Quotient
+                210     gkm_y                   ; 2 y
+                240     gkm_y                   ; merken
+                211     gkm_r                   ; Rest
+                330     gkm_mb                  ; mit Mb vergleichen
+                150     gkm_dv_ge               ; Rest >= Mb: abziehen
+gkm_dv_c:       211     gkm_r                   ; Rest
+                210     gkm_r                   ; 2 Rest
+                240     gkm_r                   ; merken
+                211     gkm_cn                  ; Zaehler
+                220     #1                      ; - 1
+                240     gkm_cn                  ; merken
+                050     gkm_dv_l                ; noch nicht negativ: weiter
+                211     gkm_y                   ; AC := Y
+                000     gkm_mq                  ; weiter zur Rundung
+gkm_dv_ge:      211     gkm_r                   ; Rest
+                220     gkm_mb                  ; - Mb
+                240     gkm_r                   ; merken
+                211     gkm_y                   ; Quotient
+                210     #1                      ; + 1
+                240     gkm_y                   ; merken
+                000     gkm_dv_c                ; weiter
+gkm_md_b0:      311     gkm_fl                  ; AC := fl, V3 bei Multiplikation
+                170     gkm_null                ; Multiplikation mit 0: Ergebnis 0
+                000     gkm_fue                 ; Division durch 0: kuenstlicher Ueberlauf
+; ---- Multiplikation: Z = floor(Ma * Mb / 2^24) mit Gruppenbefehlen 440, 472, 412 auf der Arbeitsspur 7640
+gkm_mu:         211     gkm_ea                  ; ea
+                210     gkm_eb                  ; + eb
+                220     #33                     ; - 33
+                240     gkm_ee                  ; Ergebnisexponent
+                211     gkm_mb                  ; Mb
+                SCHIEBE_LI 2                       ; 2 links
+                240     gkm_t                   ; t := Mb << 2
+                211     gkm_ma                  ; Ma
+                SCHIEBE_LI 6                       ; 6 links
+                440     07640                   ; Ma << 6 in alle Zellen der Arbeitsspur
+                211     gkm_t                   ; Multiplikator
+                472     07640                   ; Teilprodukte
+                211     #0                      ; Anfangswert 0 (keine Rundung)
+                412     07640                   ; AC := Z
+; ---- gemeinsam: Z im AC zu 26-Bit-Mantisse runden
+gkm_mq:         240     gkm_z                   ; Z merken
+                330     #01000000000            ; mit 2^27 vergleichen
+                150     gkm_mq_hi               ; Z >= 2^27
+                211     gkm_z                   ; Z
+                212     #1                      ; (Z + 1) / 2
+                240     gkm_m                   ; Mantisse
+                000     gkm_pk                  ; packen
+gkm_mq_hi:      211     gkm_z                   ; Z
+                212     #2                      ; (Z + 2) / 2
+                212     #0                      ; / 2 : (Z + 2) / 4
+                240     gkm_m                   ; Mantisse
+                211     gkm_ee                  ; Exponent
+                210     #1                      ; + 1
+                240     gkm_ee                  ; merken
+$IF $V(gkm_pk) = 1
+                000     gkm_pk                  ; der gemeinsame Teil steht schon an anderer Stelle
+$ENDIF
+$ENDIF
+; ---- Teil 3: gemeinsamer Teil (Packen, Rueckkehr, Sonderfaelle, gemeinsame Arbeitszellen), nur beim allerersten Aufruf
+$IF $V(gkm_pk) = 0
+gkm_pk:         211     gkm_m                   ; Mantisse
+                330     #0400000000             ; mit 2^26 vergleichen
+                170     gkm_pk_ue               ; = 2^26: auf 2^25 und Exponent + 1
+gkm_pk_1:       211     gkm_ee                  ; Exponent
+                040     gkm_null                ; < 0: Unterlauf, Ergebnis 0 (Annahme A8)
+                330     #64                     ; mit 64 vergleichen
+                150     gkm_fue                 ; >= 64: Ueberlauf (Annahme A9)
+                SCHIEBE_LI 26                      ; 26 links: Exponentenfeld
+                210     gkm_m                   ; + Mantisse
+                210     gkm_sg                  ; + Vorzeichen
+gkm_rueck:      db      1                       ; Laufzeit: Rueckkehrwort vom Aufrufer, wird zuletzt durchlaufen (Festlegung 010)
+gkm_pk_ue:      211     #0200000000             ; 2^25
+                240     gkm_m                   ; Mantisse := 2^25
+                211     gkm_ee                  ; Exponent
+                210     #1                      ; + 1
+                240     gkm_ee                  ; merken
+                000     gkm_pk_1                ; weiter
+gkm_null:       001     gkm_rueck               ; Ergebnis 0: AC loeschen, zurueck
+gkm_fue:        211     #037777777777           ; kuenstlicher Ueberlauf: 2^32 - 1
+                210     #1                      ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+                000     gkm_rueck               ; (nie erreicht)
+gkm_r1:         abs     07773                   ; Register R1 (nur Bezug)
+gkm_r2:         abs     07776                   ; Register R2 (nur Bezug)
+gkm_xa:         db      1                       ; Operand a
+gkm_xb:         db      1                       ; Operand b
+gkm_t:          db      1                       ; Hilfszelle
+gkm_ee:         db      1                       ; Ergebnisexponent (e + 32, ganze Zahl)
+gkm_sg:         db      1                       ; Vorzeichenwort des Ergebnisses (0 oder 2^32)
+gkm_m:          db      1                       ; Ergebnismantisse
+gkm_cn:         db      1                       ; Zaehler
+gkm_r:          db      1                       ; Rest bzw. Mantisse a << 5
+$SET gkm_pk 1
+$ENDIF
+         MEND
+
+
+GK_SIN: MACRO
+         $SPEC   TYP=M CLASS=GK ACTION=None
+# GK_SIN: Unterprogramme gk_sin (Sinus) und gk_cos (Kosinus, zweiter Einsprung im selben Code), Funktionen im Format dwg (z0 Vorzeichen, z1..z6 Exponent e+32, z7..z32 Mantisse 2^25 <= M < 2^26, Wert = +-M/2^26*2^e, Null = Wort 0).
+# Aufruf:     GK_SIN   (ohne Marke, ohne Parameter). Das Makro darf beliebig oft aufgerufen werden: DER CODE WIRD NUR EINMAL ERZEUGT (globale Variable gk_sin_da, $GLOBAL; weitere Aufrufe erzeugen nichts).
+#             Der erste Aufruf ruft selbst GK_MATH add, GK_MATH sub und GK_MATH mul auf (die Teile, die schon da sind, entstehen nicht noch einmal) und legt dahinter gk_sin mit Arbeitszellen und Konstantentabellen ab.
+#             Das Makro steht wie jedes UP-Makro dort, wo der Ablauf nicht hineinlaeuft. Die Marken gk_sin und gks_x stehen nur beim ersten Aufruf; alle Aufrufer benutzen diese Marken.
+# Benutzung:  x (dwg, Bogenmass) nach gks_x (Zelle gk_sin+1) legen, dann  025 gk_sin ;  Ergebnis sin(x) im AC (dwg). gks_x bleibt unveraendert.
+#             Kosinus: x ebenfalls nach gks_x legen, dann  025 gk_cos ;  Ergebnis cos(x) im AC (dwg). gk_cos steht unmittelbar vor gk_sin (gk_sin = gk_cos + 1); der Parameter gks_x ist derselbe.
+#             gk_cos benutzt die Argumentreduktion von gk_sin: cos(x) = cos(|x|) = sin(|x| + pi/2); statt pi/2 zu addieren, wird der Quadrant n mod 4 um 1 weitergeschoben (genauer, keine zweite Rundung) und das Vorzeichen von x ignoriert (cos(-x) = cos(x) bitgenau).
+#             gk_sin ruft UP auf (gk_add, gk_sub, gk_mul) und ist daher nicht unterste Ebene; es uebergibt deshalb ueber den Parameterblock gks_x, nicht ueber R1 (Festlegung 031). Rueckkehr ueber die Zelle gks_rueck (Festlegungen 009, 010).
+# Annahmen:   A1 Bereich |x| < 4096 * pi/2 (rund 6433); ausserhalb ein kuenstlicher Ueberlauf (AC := 2^32-1, + 1, Halt beim naechsten Befehl, FUE). A2 Fehler hoechstens etwa 2 Einheiten der letzten Mantissenstelle (Modell gegen exakte Reihe: 1,7).
+#             A5 gk_cos: derselbe Bereich |x| < 4096 * pi/2; Fehler hoechstens etwa 1,4 Einheiten der letzten Mantissenstelle (Modell gegen exakte Reihe, 20000 Zufallsfaelle: 1,39); cos(x) gilt fuer das auf dwg gerundete x; nahe den Nullstellen ist der relative Fehler gross (cos(pi/2) = -2,78E-8 fuer das gerundete dwg-pi/2). cos(0) = 1.
+#             A3 sin(0) = 0 (Wort 0); sehr kleine x: sin(x) = x. A4 Ein Ergebniswort -0 gibt es nicht. sin(x) gilt fuer das auf dwg gerundete x.
+# AC:         bei der Rueckkehr sin(x). Zerstoert: AC, die eigenen Arbeitszellen (gks_rr, gks_f, gks_w, gks_nf, gks_q, gks_zp, gks_ze, gks_y, gks_p, gks_res), R1 (7773), R2 (7776), die Arbeitsspur 7640 bis 7677 (durch gk_add, gk_sub, gk_mul) und die Zellen von GK_MATH. R3 bleibt unberuehrt.
+# Verfahren:  Argumentreduktion nach Cody und Waite mit pi/2 = P1 + P2 + P3, dann Horner-Reihe fuer sin (5 Koeffizienten) oder cos (6 Koeffizienten) je nach Quadrant; Einzelheiten und Sollwerte: Projekt_Gleitkomma/gk_trigonomie_sin.asm, Assemblerdokumentation 4.32.
+# Namen:      Alle inneren Marken beginnen mit gks_ (ausser den Einsprungmarken gk_sin und gk_cos). Im Programm darf keine eigene Marke gks_*, gk_sin oder gk_cos stehen.
+# Umfang:     gk_sin und gk_cos zusammen 0234 Zellen (156; zwei Einspruenge, Parameter, Code, Arbeitszellen, Tabellen; der Kosinus kostet 12 Zellen); mit GK_MATH add, sub, mul zusammen 0636 Zellen (gemessen mit Projekt_Gleitkomma/gk_trigonomie_sin).
+# Doku:       C8205_Standardmakros_c82ass.md, Abschnitt 8. Prüfung: Projekt_Gleitkomma/gk_trigonomie_sin (23 Fälle), Claude/gk_sin_makro (Mehrfachaufruf) und Claude/gk_cos_makro (gk_cos, 10 Fälle).
+         $GLOBAL gk_sin_da                        ; gk_sin schon erzeugt? (0 = nein)
+         $IF $V(gk_sin_da) = 0
+         $SET gk_sin_da 1                         ; ab jetzt gilt: gk_sin ist da
+         GK_MATH add                              ; gk_add: R1 + R2 (nur, wenn noch nicht erzeugt)
+         GK_MATH sub                              ; gk_sub: R1 - R2 (nur, wenn noch nicht erzeugt)
+         GK_MATH mul                              ; gk_mul: R1 * R2 (nur, wenn noch nicht erzeugt)
+gk_cos:         000    gks_ce       ; Einsprung Kosinus (gk_sin steht unmittelbar dahinter): weiter bei gks_ce
+gk_sin:         000    *+2          ; Sprung ueber den Parameter auf die erste Codezelle
+gks_x:          db      1            ; Parameter x (dwg), vom Aufrufer vor 025 gk_sin gefuellt
+                240    gks_rueck    ; Rueckkehrwort sichern (wird am Ende sequentiell durchlaufen)
+                241    gks_c        ; Kosinusmerker c := 0 (Sinus)
+                211     gks_x        ; AC := x
+                240    gks_rr       ; rr := x (vorlaeufig, danach |x|)
+                040   gks_ng       ; x negativ
+                241   gks_f        ; Vorzeichenmerker f := 0 (x >= 0)
+                000    gks_re       ; weiter
+gks_ng:         200    #037777777777 ; z0 loeschen: |x|
+                240    gks_rr       ; rr := |x|
+                211     #1           ; Vorzeichenmerker f := 1 (x < 0)
+                240    gks_f        ; merken
+gks_re:         211     gks_rr       ; AC := a = |x|
+                240    gks_r1       ; R1 := a
+                211     #020242763016  ; 2/pi
+                240    gks_r2       ; R2 := 2/pi
+                025     gk_mul       ; t = a * 2/pi
+                240    gks_r1       ; R1 := t
+                211     #035200000000  ; 2^25 (dwg)
+                240    gks_r2       ; R2 := 2^25
+                025     gk_add       ; w = t + 2^25: rundet t auf eine ganze Zahl n (Mantisse von w = 2^25 + n)
+                240    gks_w        ; w merken
+                220    #035200000000  ; w - Wort(2^25) = n (bei Exponent 58, sonst gross)
+                220    #010000      ; n - 4096
+                050   gks_fue      ; n >= 4096: ausserhalb des Bereichs, kuenstlicher Ueberlauf (A1)
+                211     gks_w        ; AC := w
+                240    gks_r1       ; R1 := w (R2 = 2^25 bleibt, gk_add laesst R1 und R2 unveraendert)
+                025     gk_sub       ; nf = w - 2^25 = n als dwg-Zahl (exakt)
+                240    gks_nf       ; nf merken
+                211     gks_w        ; AC := w
+                210    gks_c        ; + Kosinusmerker: Kosinus verschiebt den Quadranten um 1 (cos a = sin(a + pi/2))
+                200    #3           ; q = n mod 4 bzw. (n + 1) mod 4 (die unteren 2 Bit)
+                240    gks_q        ; q merken
+                211     @gks_pw      ; Zeiger auf die Tabelle P1, P2, P3
+                240    gks_zp       ; Zeiger merken
+gks_rl:         211     gks_nf       ; Reduktionsschleife (3 Durchlaeufe): AC := nf
+                240    gks_r1       ; R1 := nf
+                211     gks_zp       ; Zeiger
+                251    0            ; AC := Pk
+                240    gks_r2       ; R2 := Pk
+                025     gk_mul       ; nf * Pk
+                240    gks_r2       ; R2 := nf * Pk
+                211     gks_rr       ; r
+                240    gks_r1       ; R1 := r
+                025     gk_sub       ; r - nf * Pk
+                240    gks_rr       ; r merken
+                ZEIGER_NAECHST gks_zp ; naechste Teilkonstante
+                220    @gks_pwe     ; Zeiger - Ende der Tabelle
+                040   gks_rl       ; kleiner (negativ): naechstes Pk
+                211     gks_rr       ; AC := r
+                240    gks_r1       ; R1 := r
+                240    gks_r2       ; R2 := r
+                025     gk_mul       ; y = r * r
+                240    gks_y        ; y merken
+                211     gks_q        ; AC := q
+                200    #1           ; q ungerade?
+                220    #1           ; -1 bei q gerade (sin), 0 bei q ungerade (cos)
+                040   gks_si       ; q gerade: Koeffizienten des Sinus
+                211     @gks_kt      ; q ungerade: Koeffizienten des Kosinus
+                240    gks_zp       ; Anfangszeiger
+                211     @gks_kte     ; Ende der Kosinustabelle
+                240    gks_ze       ; Endezeiger
+                000    gks_hs       ; weiter
+gks_si:         211     @gks_st      ; Anfang der Sinustabelle
+                240    gks_zp       ; Anfangszeiger
+                211     @gks_kt      ; Ende der Sinustabelle = Anfang der Kosinustabelle
+                240    gks_ze       ; Endezeiger
+gks_hs:         211     gks_zp       ; Horner: p := erster Koeffizient
+                251    0            ; AC := Koeffizient 1
+                240    gks_p        ; p merken
+                ZEIGER_NAECHST gks_zp ; naechster Koeffizient
+gks_hl:         211     gks_p        ; Hornerschleife: AC := p
+                240    gks_r1       ; R1 := p
+                211     gks_y        ; y
+                240    gks_r2       ; R2 := y
+                025     gk_mul       ; p * y
+                240    gks_r1       ; R1 := p * y
+                211     gks_zp       ; Zeiger
+                251    0            ; AC := Koeffizient
+                240    gks_r2       ; R2 := Koeffizient
+                025     gk_add       ; p * y + Koeffizient
+                240    gks_p        ; p merken
+                ZEIGER_NAECHST gks_zp ; naechster Koeffizient
+                220    gks_ze       ; Zeiger - Ende der Tabelle
+                040   gks_hl       ; kleiner (negativ): naechster Koeffizient
+                211     gks_q        ; AC := q
+                200    #1           ; q ungerade?
+                220    #1           ; -1 bei q gerade (sin), 0 bei q ungerade (cos)
+                050   gks_cs       ; q ungerade: Ergebnis ist p (Kosinus)
+                211     gks_p        ; q gerade: sin r = p * r
+                240    gks_r1       ; R1 := p
+                211     gks_rr       ; r
+                240    gks_r2       ; R2 := r
+                025     gk_mul       ; sin r = p * r
+                000    gks_fl       ; weiter
+gks_cs:         211     gks_p        ; Ergebnis cos r = p
+gks_fl:         240    gks_res      ; Ergebnis merken
+                213     gks_q        ; AC := q >> 1 (loeschen und rechts schieben)
+                210    gks_f        ; + Vorzeichenmerker von x
+                200    #1           ; Summe mod 2: 1 = Vorzeichen umkehren
+                220    #1           ; -1: nichts umkehren, 0: umkehren
+                040   gks_ok       ; nichts umkehren
+                311     gks_res      ; AC := Ergebnis, V3 bei Ergebnis 0
+                170   gks_ok       ; Ergebnis 0: bleibt 0 (A4)
+                040   gks_zn       ; z0 gesetzt: loeschen
+                210    #040000000000 ; z0 setzen
+                240    gks_res      ; Ergebnis merken
+                000    gks_ok       ; weiter
+gks_zn:         200    #037777777777 ; z0 loeschen
+                240    gks_res      ; Ergebnis merken
+gks_ok:         211     gks_res      ; AC := Ergebnis
+gks_rueck:      db      1            ; Laufzeit: Rueckkehrwort vom Aufrufer, wird zuletzt durchlaufen (Festlegung 010)
+gks_fue:        211     #037777777777 ; kuenstlicher Ueberlauf: 2^32 - 1
+                210    #1           ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+                000    gks_rueck    ; (nie erreicht)
+gks_ce:         240    gks_rueck    ; Einsprung Kosinus: Rueckkehrwort sichern
+                211     #1           ; Kosinusmerker
+                240    gks_c        ; c := 1
+                211     gks_x        ; AC := x
+                200    #037777777777 ; z0 loeschen: |x| (cos(-x) = cos(x))
+                240    gks_rr       ; rr := |x|
+                241    gks_f        ; Vorzeichenmerker f := 0 (der Kosinus ist gerade)
+                000    gks_re       ; weiter wie bei x >= 0
+gks_r1:         abs     07773        ; Register R1 (nur Bezug)
+gks_r2:         abs     07776        ; Register R2 (nur Bezug)
+gks_rr:         db      1            ; |x|, dann r
+gks_f:          db      1            ; Vorzeichenmerker: 0 x >= 0, 1 x < 0
+gks_c:          db      1            ; Kosinusmerker: 0 Sinus, 1 Kosinus
+gks_w:          db      1            ; w = t + 2^25
+gks_nf:         db      1            ; n als dwg-Zahl
+gks_q:          db      1            ; Quadrant n mod 4
+gks_zp:         db      1            ; Zeiger in die Tabelle
+gks_ze:         db      1            ; Endezeiger der Koeffiziententabelle
+gks_y:          db      1            ; y = r*r
+gks_p:          db      1            ; Hornerwert
+gks_res:        db      1            ; Ergebnis
+
+; ===== Tabellen (dwg)
+gks_pw:         dw      020711020000     ; P1 = pi/2 auf 13 Bit gekuerzt (1,570556640625)
+                dw      012373240000     ; P2 = (pi/2 - P1) auf 13 Bit gekuerzt
+                dw      003610413214     ; P3 = pi/2 - P1 - P2 (26 Bit)
+gks_pwe:        equ     *            ; Ende der Tabelle P1..P3
+gks_st:         dw      007270736165      ; sin: 1/9!
+                dw      052320032003      ; sin: -1/7!
+                dw      015210421042      ; sin: 1/5!
+                dw      057252525253      ; sin: -1/3!
+                dw      020600000000      ; sin: 1
+gks_kt:         dw      045623744767      ; cos: -1/10!
+                dw      010720032003      ; cos: 1/8!
+                dw      053666026603      ; cos: -1/6!
+                dw      016252525253      ; cos: 1/4!
+                dw      060200000000      ; cos: -1/2!
+                dw      020600000000      ; cos: 1
+gks_kte:        equ     *            ; Ende der Kosinustabelle
+         $ENDIF                                   ; Ende von: gk_sin nur beim ersten Aufruf
+         MEND
+
+
+FK_MATH: MACRO 1
+         $SPEC   TYP=M CLASS=FK ACTION=None
+# FK_MATH: Unterprogramme der Festkomma-Grundrechenarten im Format dwf (Wort = x * 2^32, Zweierkomplement 33 Bit, Komma zwischen z0 und z1, Bereich -1 bis 1 - 2^-32).
+# Aufruf:     FK_MATH add | sub | mul | div | alle   (ohne Marke; der Parameter nennt das Unterprogramm, das der Aufrufer braucht; alle = alle vier)
+#             Das Makro darf beliebig oft und mit jedem Parameter aufgerufen werden: JEDER TEIL DES CODES WIRD NUR EINMAL ERZEUGT (Merker fkm_add, fkm_sub, fkm_mul, fkm_div, fkm_md, fkm_pk).
+#             Ein Aufruf erzeugt nur, was noch fehlt: den Einsprung des genannten UP (Marke fk_add, fk_sub, fk_mul bzw. fk_div), beim ersten Bedarf von mul oder div den gemeinsamen Kern von
+#             Multiplikation und Division mit seinen Arbeitszellen und beim allerersten Aufruf den gemeinsamen Teil (die Rueckkehrzelle fkm_rueck). Wer nur fk_add braucht, bekommt keinen Kern.
+#             Reihenfolge im Speicher je Aufruf: Einsprung add, Einsprung sub, Arbeitszellen, Einsprung mul, Einsprung div, Kern von Multiplikation und Division, gemeinsamer Teil.
+#             Das Makro steht wie jedes UP-Makro dort, wo der Ablauf nicht hineinlaeuft (Festlegung 035: jeder Aufruf nutzt dieselben Zellen).
+# Benutzung:  R1 (Zelle 7773) und R2 (Zelle 7776) laden, dann  025 fk_add | fk_sub | fk_mul | fk_div ;  Ergebnis im AC (dwf). R1 und R2 bleiben unveraendert. fk_add: R1+R2, fk_sub: R1-R2, fk_mul: R1*R2, fk_div: R1/R2.
+#             Das UP ruft kein weiteres UP auf (unterste Ebene). Die Rueckkehr laeuft ueber die gemeinsame Zelle fkm_rueck am Ende (Festlegung 010); jeder Einsprung beginnt mit 240 fkm_rueck.
+# Annahmen:   D1 Ueberlauf bei Addition und Subtraktion sowie bei (-1) * (-1), -1 / -1 und a / -1 mit a = -1: die Maschine erzeugt ihn selbst (FUE, Halt beim naechsten Befehl).
+#             D2 Division durch 0 (auch 0/0) und Quotient mit Betrag >= 1 (|a| >= |b|, ausser a = -b): kuenstlicher Ueberlauf (AC := 2^32-1, + 1, Halt beim naechsten Befehl).
+#             D3 Rundung bei mul und div: Mitte weg von 0 (Betrag); bitgenau gleich der exakten Bruchrechnung (Projekt_Festkomma, fk_math_op). D4 a / b mit a = -b ergibt -1, mit a = b Ueberlauf.
+# AC:         bei der Rueckkehr das Ergebnis. Zerstoerte Zellen: die eigenen Arbeitszellen (bei mul/div fkm_fl, fkm_xa, fkm_xb, fkm_sg, fkm_r, fkm_y, fkm_t, fkm_cn, fkm_z) und bei mul die Arbeitsspur
+#             7640 bis 7677 (440, 472, 412). R3 bleibt unberuehrt. fkm_r1 (7773) und fkm_r2 (7776) sind nur abs-Marken und belegen keine Zelle.
+# Namen:      Alle inneren Marken beginnen mit fkm_ (vermeidet Zusammenstoesse mit fk_ausgabe/fk_eingabe, die fk_rueck selbst definieren); feste Marken statt ML0001%, weil spaetere Aufrufe
+#             die Zellen eines frueheren Aufrufs ansprechen. Die Marken fk_add, fk_sub, fk_mul, fk_div entstehen nur im Aufruf mit dem jeweiligen Parameter (oder alle).
+# Verfahren:  Addition und Subtraktion: ein Befehl (210, 220). Multiplikation und Division: Betraege und Vorzeichenmerker; die Faelle 0 und -1 vorab (a * (-1) = -a, a / (-1) = -a);
+#             Multiplikation: Betraege 32 Bit, Gruppenbefehle 440, 472, 412 mit Rundungskonstante 2^31; Division: 32 Schritte bitweise (t = |b| - r; r >= t: Bit 1, r := r - t; sonst Bit 0, r := 2 r;
+#             alle Werte bleiben unter 2^32), ein 33. Schritt ergibt das Rundungsbit.
+$PR1 add sub mul div alle
+$GLOBAL fkm_add fkm_sub fkm_mul fkm_div fkm_md fkm_pk           ; Merker: 1 = Teil ist schon erzeugt (legt fehlende globale Variablen mit 0 an)
+$LOCAL wa ws wm wd ea es em ed emd                              ; wa..wd: Parameter verlangt; ea..ed: Einsprung in diesem Aufruf erzeugen; emd: Kern in diesem Aufruf erzeugen
+$IF $1 = add | $1 = alle
+$SET wa 1
+$ENDIF
+$IF $1 = sub | $1 = alle
+$SET ws 1
+$ENDIF
+$IF $1 = mul | $1 = alle
+$SET wm 1
+$ENDIF
+$IF $1 = div | $1 = alle
+$SET wd 1
+$ENDIF
+$IF $V(wa) = 1 & $V(fkm_add) = 0
+$SET ea 1
+$SET fkm_add 1
+$ENDIF
+$IF $V(ws) = 1 & $V(fkm_sub) = 0
+$SET es 1
+$SET fkm_sub 1
+$ENDIF
+$IF $V(wm) = 1 & $V(fkm_mul) = 0
+$SET em 1
+$SET fkm_mul 1
+$ENDIF
+$IF $V(wd) = 1 & $V(fkm_div) = 0
+$SET ed 1
+$SET fkm_div 1
+$ENDIF
+$IF $CALC($V(wm)+$V(wd)) > 0 & $V(fkm_md) = 0
+$SET emd 1
+$SET fkm_md 1
+$ENDIF
+; ---- Teil 1: Addition und Subtraktion
+$IF $V(ea) = 1
+fk_add:         240     fkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                211     fkm_r1                  ; AC := R1
+                210     fkm_r2                  ; + R2 (Ueberlauf: FUE, Halt beim naechsten Befehl)
+$IF $V(es) = 0 & $V(emd) = 0 & $V(fkm_pk) = 0
+; (die Rueckkehrzelle folgt unmittelbar: kein Sprung noetig)
+$ELSE
+                000     fkm_rueck               ; zurueck
+$ENDIF
+$ENDIF
+$IF $V(es) = 1
+fk_sub:         240     fkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                211     fkm_r1                  ; AC := R1
+                220     fkm_r2                  ; - R2 (Ueberlauf: FUE, Halt beim naechsten Befehl)
+$IF $V(emd) = 0 & $V(fkm_pk) = 0
+; (die Rueckkehrzelle folgt unmittelbar: kein Sprung noetig)
+$ELSE
+                000     fkm_rueck               ; zurueck
+$ENDIF
+$ENDIF
+; ---- Teil 2: Multiplikation und Division
+$IF $V(emd) = 1
+fkm_fl:         db      1                       ; Operation: 0 Multiplikation, 1 Division
+fkm_xa:         db      1                       ; Operand a (dann Betrag)
+fkm_xb:         db      1                       ; Operand b (dann Betrag)
+fkm_sg:         db      1                       ; Vorzeichenmerker (1: Ergebnis negativ)
+fkm_r:          db      1                       ; Rest
+fkm_y:          db      1                       ; Quotient
+fkm_t:          db      1                       ; Hilfszelle
+fkm_cn:         db      1                       ; Zaehler
+fkm_z:          db      1                       ; Betrag des Ergebnisses
+$ENDIF
+$IF $V(em) = 1
+fk_mul:         240     fkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                241     fkm_fl                  ; fl := 0 (Multiplikation), AC := 0
+$IF $V(ed) = 0 & $V(emd) = 1
+; (der Kern folgt unmittelbar: kein Sprung noetig)
+$ELSE
+                000     fkm_md                  ; weiter zum gemeinsamen Anfang
+$ENDIF
+$ENDIF
+$IF $V(ed) = 1
+fk_div:         240     fkm_rueck               ; Eintritt: Rueckkehrwort sichern
+                211     #1                      ; AC := 1
+                240     fkm_fl                  ; fl := 1 (Division)
+$IF $V(emd) = 0
+                000     fkm_md                  ; weiter zum gemeinsamen Anfang (steht schon an anderer Stelle)
+$ENDIF
+$ENDIF
+$IF $V(emd) = 1
+fkm_md:         211     fkm_r1                  ; R1
+                240     fkm_xa                  ; Operand a
+                211     fkm_r2                  ; R2
+                240     fkm_xb                  ; Operand b
+                311     fkm_xb                  ; AC := b, V3 bei b = 0
+                170     fkm_b0                  ; b = 0
+                311     fkm_xa                  ; AC := a, V3 bei a = 0
+                170     fkm_null                ; a = 0: Ergebnis 0
+                211     fkm_xb                  ; b
+                330     #040000000000           ; mit -1 vergleichen
+                170     fkm_mb                  ; b = -1: Ergebnis -a
+                211     fkm_xa                  ; a
+                330     #040000000000           ; mit -1 vergleichen
+                170     fkm_ma                  ; a = -1
+                241     fkm_sg                  ; sg := 0, AC := 0
+                211     fkm_xa                  ; a
+                050     fkm_a1                  ; a >= 0: Betrag steht schon da
+                221     fkm_xa                  ; AC := -a
+                240     fkm_xa                  ; Betrag von a
+                211     #1                      ; AC := 1
+                240     fkm_sg                  ; sg := 1
+fkm_a1:         211     fkm_xb                  ; b
+                050     fkm_b1                  ; b >= 0: Betrag steht schon da
+                221     fkm_xb                  ; AC := -b
+                240     fkm_xb                  ; Betrag von b
+                211     fkm_sg                  ; sg
+                210     #1                      ; sg + 1 (0, 1 oder 2; 1 heisst: Ergebnis negativ)
+                240     fkm_sg                  ; merken
+fkm_b1:         311     fkm_fl                  ; AC := fl, V3 bei Multiplikation
+                170     fkm_mu                  ; fl = 0: Multiplikation
+; ---- Division Betrag a / Betrag b, beide 32 Bit, 1 bis 2^32-1
+                211     fkm_xa                  ; Betrag a
+                330     fkm_xb                  ; mit Betrag b vergleichen
+                170     fkm_gl                  ; gleich
+                150     fkm_fue                 ; Betrag a > Betrag b: Ueberlauf
+                240     fkm_r                   ; Rest := Betrag a
+                241     fkm_y                   ; Quotient := 0
+                211     #31                     ; 32 Durchlaeufe (31 bis 0)
+                240     fkm_cn                  ; Zaehler
+fkm_dl:         211     fkm_xb                  ; Betrag b
+                220     fkm_r                   ; - r
+                240     fkm_t                   ; t := Betrag b - r
+                211     fkm_r                   ; r
+                330     fkm_t                   ; mit t vergleichen
+                150     fkm_dg                  ; r >= t: Bit 1
+                211     fkm_r                   ; r
+                210     fkm_r                   ; 2 r
+                240     fkm_r                   ; merken
+                211     fkm_y                   ; y
+                210     fkm_y                   ; 2 y
+                000     fkm_dn                  ; weiter
+fkm_dg:         211     fkm_r                   ; r
+                220     fkm_t                   ; r - t = 2 r - Betrag b
+                240     fkm_r                   ; merken
+                211     fkm_y                   ; y
+                210     fkm_y                   ; 2 y
+                210     #1                      ; + 1
+fkm_dn:         240     fkm_y                   ; merken
+                211     fkm_cn                  ; Zaehler
+                220     #1                      ; - 1
+                240     fkm_cn                  ; merken
+                050     fkm_dl                  ; noch nicht negativ: weiter
+                211     fkm_xb                  ; 33. Schritt: Rundungsbit
+                220     fkm_r                   ; - r
+                240     fkm_t                   ; t
+                211     fkm_r                   ; r
+                330     fkm_t                   ; mit t vergleichen
+                140     fkm_dz                  ; r < t: Bit 0
+                211     fkm_y                   ; y
+                210     #1                      ; + 1 (aufrunden, Mitte weg von 0)
+                000     fkm_fin                 ; weiter zum Vorzeichen
+fkm_dz:         211     fkm_y                   ; y
+                000     fkm_fin                 ; weiter zum Vorzeichen
+fkm_gl:         211     fkm_sg                  ; Betrag a = Betrag b: sg
+                330     #1                      ; mit 1 vergleichen
+                170     fkm_m1                  ; verschiedene Vorzeichen: a / b = -1
+                000     fkm_fue                 ; gleiche Vorzeichen: +1, Ueberlauf
+fkm_m1:         211     #040000000000           ; Wort -1
+                000     fkm_rueck               ; zurueck
+fkm_mb:         221     fkm_xa                  ; b = -1: Ergebnis -a (Multiplikation und Division; a = -1: Ueberlauf der Maschine)
+                000     fkm_rueck               ; zurueck
+fkm_ma:         311     fkm_fl                  ; a = -1: AC := fl, V3 bei Multiplikation
+                170     fkm_ma1                 ; Multiplikation
+                000     fkm_fue                 ; Division: Betrag >= 1, Ueberlauf
+fkm_ma1:        221     fkm_xb                  ; Ergebnis -b
+                000     fkm_rueck               ; zurueck
+fkm_b0:         311     fkm_fl                  ; AC := fl, V3 bei Multiplikation
+                170     fkm_null                ; Multiplikation mit 0: Ergebnis 0
+fkm_fue:        211     #037777777777           ; kuenstlicher Ueberlauf: 2^32 - 1
+                210     #1                      ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+                000     fkm_rueck               ; (nie erreicht)
+fkm_null:       001     fkm_rueck               ; Ergebnis 0: AC loeschen, zurueck
+; ---- Multiplikation Betrag a * Betrag b mit Gruppenbefehlen auf der Arbeitsspur 7640
+fkm_mu:         211     fkm_xa                  ; Betrag a
+                440     07640                   ; in alle Zellen der Arbeitsspur
+                211     fkm_xb                  ; Betrag b (Multiplikator)
+                472     07640                   ; Teilprodukte
+                211     #020000000000           ; Rundungskonstante 2^31 (halbe letzte Stelle)
+                412     07640                   ; AC := Summe der Teilprodukte
+; ---- gemeinsam: Betrag im AC, Vorzeichen anbringen
+fkm_fin:        240     fkm_z                   ; Betrag merken
+                211     fkm_sg                  ; sg
+                330     #1                      ; mit 1 vergleichen
+                170     fkm_ng                  ; 1: Ergebnis negativ
+                211     fkm_z                   ; Betrag
+                000     fkm_rueck               ; zurueck
+fkm_ng:         221     fkm_z                   ; AC := -Betrag
+$IF $V(fkm_pk) = 1
+                000     fkm_rueck               ; der gemeinsame Teil steht schon an anderer Stelle
+$ENDIF
+$ENDIF
+; ---- Teil 3: gemeinsamer Teil (Rueckkehrzelle), nur beim allerersten Aufruf
+$IF $V(fkm_pk) = 0
+fkm_rueck:      db      1                       ; Laufzeit: Rueckkehrwort vom Aufrufer, wird zuletzt durchlaufen (Festlegung 010)
+fkm_r1:         abs     07773                   ; Register R1 (nur Bezug)
+fkm_r2:         abs     07776                   ; Register R2 (nur Bezug)
+$SET fkm_pk 1
+$ENDIF
+         MEND

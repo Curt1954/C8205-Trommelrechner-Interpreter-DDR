@@ -1,0 +1,13 @@
+args --pass0
+rc 0
+stdout Stand n = 5
+stdout im Makro Wert 5
+stdout Quelltext (Zeile 9): $WARN Warnung n = 5
+nicht-stdout Hinweis:
+nicht-stdout Projektverzeichnis:
+nicht-stdout Benutze für
+nicht-stdout Startadresse:
+anzahl-stdout 3 5
+nicht-stderr 
+datei-weg obj mqo test sym log dmp
+escape-weg

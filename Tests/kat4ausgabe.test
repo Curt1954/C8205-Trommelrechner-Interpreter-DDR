@@ -1,0 +1,55 @@
+Trommeldatei:
+#DOK-0001 Ausgabe von abcde ueber KAT4AUSGABE
+#SPEI-0001 0001-0003
+--sw-ausgabe virtuelle_Geraete/SW-Ausgabe
+#PROT STUFE=2
+0000: 00000004000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 06410631061 # text: kat4 abcde ; Zellen 0001 und 0002: Wort a b c d, dann e mit z0
+0002: 40000000045
+0003: 00000001000 # radr: da text ; Zelle 0003: Startadresse des Textes (Adressfeld)
+0004: 00000003211 # haupt: 211 radr ; Zelle 0004: AC := Startadresse des Textes
+0005: 00007773240 # 240 07773 ; Zelle 0005: R1 := Startadresse (Register 7773)
+0006: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0007: 00000011025 # 025 ausgabe ; Zelle 0007: Aufruf, AC := Rueckkehrwort 000 0010
+0010: 00000000020 # 020 0 ; Zelle 0010: Halt, BZ = 0011
+0011: 00000036240 # ausgabe: 240 ML0001GNU ; Rueckkehrwort sichern
+0012: 00007773211 # 211 ML0010GNU ; AC := Startadresse des Textes
+0013: 00000045240 # 240 ML0009GNU ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+0014: 00000000251 # ML0002GNU: 251 0 ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0015: 00000043240 # 240 ML0007GNU ; tw := Textwort (mit z0)
+0016: 00000046200 # 200 l0001 ; z0 ausblenden, nur 32 Bit Zeichen
+0017: 00000044240 # 240 ML0008GNU ; wort := Zeichenrest
+0020: 00000044211 # ML0003GNU: 211 ML0008GNU ; AC := Zeichenrest
+0021: 00000047330 # 330 l0002 ; Vergleich mit 0 (keine Operation)
+0022: 00000034170 # 170 ML0005GNU ; Rest 0: Wort fertig
+0023: 00000050200 # 200 l0003 ; unterstes Zeichen ausblenden
+0024: 00007644644 # 644 07644 ; 12 Stellen links: Zeichen auf die Adresse des Ausgabebefehls
+0025: 00000051210 # 210 l0004 ; Operationscode 030 (Ausgabe) dazu
+0026: 00000027240 # 240 ML0004GNU ; Ausgabebefehl auf die naechste Zelle speichern
+0030: 00000044211 # 211 ML0008GNU ; AC := Zeichenrest
+0031: 00007670642 # 642 07670 ; 8 Stellen rechts: naechstes Zeichen nach unten
+0032: 00000044240 # 240 ML0008GNU ; wort := Rest
+0033: 00000020000 # 000 ML0003GNU ; naechstes Zeichen
+0034: 00000043211 # ML0005GNU: 211 ML0007GNU ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0035: 00000037050 # 050 ML0006GNU ; kein z0: naechstes Wort
+0037: 00000045211 # ML0006GNU: 211 ML0009GNU ; AC := Adresse des Textwortes
+0040: 00000052210 # 210 l0005 ; plus eine Adresseneinheit
+0041: 00000045240 # 240 ML0009GNU ; zeiger := Adresse des naechsten Wortes
+0042: 00000014000 # 000 ML0002GNU ; AC ist der Zeiger, Textwort lesen
+0046: 37777777777 # l0001 dw 037777777777
+0047: 00000000000 # l0002 dw 000000000000
+0050: 00000000377 # l0003 dw 000000000377
+0051: 00000000030 # l0004 dw 000000000030
+0052: 00000001000 # l0005 dw 000000001000
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011
+7773: 00000001000   # R1
+0001: 06410631061   # text, Wort 1
+0002: 40000000045   # text, Wort 2 mit z0
+0027: 00000450030   # aus
+0036: 00000010000   # rueck
+0043: 40000000045   # tw
+0044: 00000000000   # wort
+0045: 00000002000   # zeiger

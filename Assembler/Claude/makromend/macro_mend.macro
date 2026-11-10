@@ -1,0 +1,6 @@
+# macro_mend.macro - Projekt-Makrodatei fuer den Test makromend (Kommentare mit dem Wort MEND als Teil anderer Woerter)
+LADEERG:         MACRO
+# Wirkung: AC := wert, erg := AC. Kommentar mit AMEND und RECOMMEND und MENDEL mitten im Rumpf.
+                211     wert         ; lade wert (RECOMMEND)
+                240     erg          ; speichere nach erg (AMEND)
+                MEND

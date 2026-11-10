@@ -1,3 +1,5 @@
+C8205-Interpreter-Version: 0.95-019
+
 Test bsp_5_18_kep
 
 == 1. Ausgangsbedingungen ==
@@ -27,7 +29,7 @@ Trommeldatei (uebernommen, Ausschnitt; nicht genannte Zellen = 0):
   #DOK-0001 Kleines Eingabeprogramm KEP (Programmieranleitung 5.18, Abb. 27), Eingabe im R 300-Code ueber K0
   #SPEI-0001 3000-3004
   #SPEI-0001 7723-7724
-  #TROMMEL=KEEP (Trommel unveraendert: Stand des vorigen Laufs; danach die Zeilen von Trommeldatei:)
+  #TROMMEL=LEER (Trommel vor dem Test geleert: alle 4096 Zellen = 0; danach die Zeilen von Trommeldatei:)
   #PROT STUFE=2
 Tastenfolge: H G R
   H  : Schalter H-R -> "H", Flag H := 1

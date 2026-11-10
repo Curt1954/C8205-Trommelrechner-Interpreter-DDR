@@ -1,0 +1,39 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000570030 # t0: dt = ; Zellen 0001 und 0002: Umschaltzeichen und =; danach hat sich der KB/GB-Zustand der Textzaehlung geaendert
+0002: 00000400030
+0003: 00000000000 # erg: dw 0 ; Zelle 0003: Ergebnis 1
+0004: 00000000000 # erg2: dw 0 ; Zelle 0004: Ergebnis 2
+0005: 00007500211 # haupt 211 ba ; Zelle 0005: AC := erstes Wort von Block A
+0006: 00000003240 # 240 erg ; Zelle 0006: (erg) := AC
+0007: 00007504211 # 211 l0001 ; Zelle 0007: AC := Literal 5 (der Assembler legt es in die Luecke von Block A)
+0010: 00000004240 # 240 erg2 ; Zelle 0010: (erg2) := AC
+0011: 00000000020 # 020 0 ; Zelle 0011: Halt
+7500: 00001170030 # ba: dt 1 ; im geaenderten Zustand zwei Zellen (Umschaltzeichen, Ziffer 1)
+7501: 00000010030
+7502: 00000010030 # dt 1 ; eine Zelle
+7503: 40000000001 # kat4 1 ; eine Zelle
+7504: 00000000005 # l0001 dw 5
+7440: 00000010030 # bb: dto 1 ; eine Zelle: dto setzt kein Umschaltzeichen
+7441: 00001170030 # dtm 1 ; zwei Zellen: dtm setzt immer das Umschaltzeichen
+7442: 00000010030
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0012 AC=00000000005 US=1
+0001: 00000570030   # dt =: Umschaltzeichen GB
+0002: 00000400030   # dt =: Zeichen =
+0003: 00001170030   # erg: erstes Wort von Block A (Umschaltzeichen KB)
+0004: 00000000005   # erg2: Literal 5
+7500: 00001170030   # Block A: Umschaltzeichen KB
+7501: 00000010030   # Block A: Ziffer 1
+7502: 00000010030   # Block A: dt 1
+7503: 40000000001   # Block A: kat4 1
+7504: 00000000005   # Literal 5 in der Luecke hinter Block A
+7440: 00000010030   # Block B: dto 1
+7441: 00001170030   # Block B: dtm 1, Umschaltzeichen KB
+7442: 00000010030   # Block B: dtm 1, Ziffer 1

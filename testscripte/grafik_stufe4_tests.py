@@ -394,7 +394,7 @@ class Rechnerton(unittest.TestCase):
     def test_grundgeraeusch_pegel_0_8_als_schleife(self):
         t = self.neu(); t.grund_an()
         for _ in range(30): s = samples(self.m.block())                              # laenger als die Datei: Schleife ohne Neustart-Luecke
-        self.assertEqual(set(s), {int(33 * 0.8)}); self.assertEqual(self.m.klingt(), 1)
+        self.assertEqual(set(s), {int(33 * 0.68)}); self.assertEqual(self.m.klingt(), 1)
 
     def test_grund_an_zweimal_bleibt_eine_schleife(self):
         t = self.neu(); t.grund_an(); t.grund_an(); self.assertEqual(self.m.klingt(), 1)
@@ -482,6 +482,39 @@ class Leser(unittest.TestCase):
         self.assertAlmostEqual(self.uhr.t - t0, 1.0, delta=0.002)                      # 130 Zeichen im Dauerton = 1 s
         lt2 = self.neu(); lt2.zeichen(); lt2.zeichen(); self.uhr.t += 0.05             # Interpreter war ohnehin langsamer: nichts zusaetzlich
         self.assertEqual(lt2.zeichen(), 0.0)
+
+    def test_lesertyp_tempo_303_130_fs751_750(self):
+        self.assertEqual(GT.LESETEMPO_JE_TYP, {'303': 130.0, 'FS751': 750.0}); self.assertEqual(GT.LESETEMPO, 130.0)     # Standard = 303
+
+    def test_lesetempo_fs751_750_zeichen_je_sekunde(self):
+        lt = self.neu(tempo=GT.LESETEMPO_FS751); lt.zeichen(); lt.zeichen(); w = lt.zeichen(); t0 = self.uhr.t
+        self.assertAlmostEqual(w, 1 / 750.0, delta=1e-6)
+        for _ in range(750): lt.zeichen()
+        self.assertAlmostEqual(self.uhr.t - t0, 1.0, delta=0.002)                      # 750 Zeichen im Dauerton = 1 s
+        self.assertEqual(lt.zustand, 'dauer')                                           # gleiche Zustandsfolge wie bei 303 (der Ton selbst ist je Typ eigen, G4-007)
+
+    def test_leserklaenge_je_typ(self):
+        import os, tempfile, wave, array
+        self.assertEqual(GT.LS_KLAENGE_JE_TYP['303'], ('ls_einzel.wav', 'ls_dauer.wav', 'ls_ende.wav'))
+        self.assertEqual(GT.LS_KLAENGE_JE_TYP['FS751'], ('ls_fs751_einzel.wav', 'ls_fs751_dauer.wav', 'ls_fs751_ende.wav'))
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, 'sw_toene'))
+            for typ, laenge in (('303', 100), ('FS751', 300)):                           # je Typ eigene Dateien (Laenge unterscheidet sie)
+                for n in GT.LS_KLAENGE_JE_TYP[typ]:
+                    w = wave.open(os.path.join(d, 'sw_toene', n), 'wb'); w.setnchannels(1); w.setsampwidth(2); w.setframerate(44100)
+                    w.writeframes(array.array('h', [0] * laenge).tobytes()); w.close()
+            self.assertEqual(len(GT.lade_leserklaenge(d)['einzel']), 100)               # Standard 303
+            self.assertEqual(len(GT.lade_leserklaenge(d, '303')['dauer']), 100)
+            k = GT.lade_leserklaenge(d, 'FS751')
+            self.assertEqual((len(k['einzel']), len(k['dauer']), len(k['ende'])), (300, 300, 300))
+            self.assertAlmostEqual(GT.LeserTon(None, k).einzel_s, 300 / 44100.0, delta=1e-9)
+
+    def test_ls_leser_typ_argument(self):
+        import argparse, c8205_interp as I
+        for t, soll in (('303', '303'), ('FS751', 'FS751'), ('fs751', 'FS751'), ('FS715', 'FS751'), (' 303 ', '303')):
+            self.assertEqual(I.ls_leser_typ_arg(t), soll)
+        for t in ('', '304', 'FS', '750'):
+            with self.assertRaises(argparse.ArgumentTypeError): I.ls_leser_typ_arg(t)
 
     def test_tonlaenge_verzoegert_nicht(self):
         lt = self.neu(tempo=0); t0 = self.uhr.t
@@ -673,10 +706,10 @@ class TonOption(unittest.TestCase):
     def test_rechnerton_faktor(self):
         m = TM.Mischer(); t = MischerRechnerTon(None, m, {'fade_in': klang(1000, 1000), 'fade_out': klang(1000, 1000), 'grund': klang(1000, 1000)}, faktor=0.6)
         t.fade_in(); self.assertEqual(samples(m.block())[5], 600)
-        m.alles_aus(); t.grund_an(); self.assertEqual(samples(m.block())[5], int(1000 * 0.8 * 0.6))
+        m.alles_aus(); t.grund_an(); self.assertEqual(samples(m.block())[5], int(1000 * 0.68 * 0.6))
         m.alles_aus(); t.fade_out(); self.assertEqual(samples(m.block())[5], 600)
         t0 = MischerRechnerTon(None, TM.Mischer(), {'fade_in': klang(10), 'fade_out': klang(10), 'grund': klang(10)})
-        self.assertEqual((t0.faktor, t0.grund_pegel), (1.0, 0.8))                       # Voreinstellung = Pegel der Hoerpruefung 1
+        self.assertEqual((t0.faktor, t0.grund_pegel), (1.0, 0.68))                       # Voreinstellung = Pegel der Hoerpruefung 1
 
     def test_leser_und_stanzer_pegel(self):
         m = TM.Mischer(); lt = GT.LeserTon(m, {'einzel': klang(441, 1000), 'dauer': klang(441), 'ende': klang(441)}, tempo=None, pegel=0.4)
@@ -723,6 +756,58 @@ class StartOhneAbspielprogramm(unittest.TestCase):
     def test_mit_stumm_keine_spielerpruefung(self):
         rc, text = self._start('--STUMM')
         self.assertNotIn('Kein Abspielprogramm', text)
+
+
+class PultTastenTonPruefung(unittest.TestCase):
+    """G4-001: Tastengeraeusche des Pults (grafik_pultton.py): Dateien, Pegel, Gruppe Pult, Mischung mit dem Grundgeraeusch."""
+    def test_dateien_laden_format_und_spitze(self):
+        from grafik_pultton import lade_pultklaenge, KLICK_PEGEL
+        k = lade_pultklaenge(os.path.join(PROJ, 'ton'))
+        self.assertEqual(sorted(k), ['einrast', 'impuls', 'radio'])
+        for art, a in k.items():
+            self.assertTrue(len(a) > 441, art)                                   # laenger als 10 ms
+            self.assertAlmostEqual(max(abs(v) for v in a) / 32768.0, 0.35, delta=0.005, msg=art)   # alle Spitze 0,35 (einrast_aus ab 27.10.2026 wie die anderen)
+        self.assertEqual(KLICK_PEGEL, 1.76)
+    def test_taste_spielt_in_der_gruppe_pult_mit_klickpegel_mal_faktor(self):
+        from grafik_pultton import PultTastenTon, KLICK_PEGEL
+        class M:
+            def __init__(s): s.ev = []
+            def einzel(s, kanal, daten, pegel=1.0, schluessel=None): s.ev.append((kanal, daten, pegel, schluessel))
+        m = M(); k = {'impuls': klang(10, 1), 'einrast': klang(10, 2), 'radio': klang(10, 3)}
+        t = PultTastenTon(m, k, faktor=0.6)
+        t.taste('radio'); t.taste('impuls')
+        self.assertEqual([(e[0], e[1][0], e[3]) for e in m.ev], [('rechner', 3, None), ('rechner', 1, None)])
+        self.assertAlmostEqual(m.ev[0][2], KLICK_PEGEL * 0.6)
+        from grafik_pultton import IMPULS_FAKTOR
+        self.assertEqual(IMPULS_FAKTOR, 1.4)
+        self.assertAlmostEqual(m.ev[1][2], KLICK_PEGEL * 0.6 * IMPULS_FAKTOR)      # G4-003: Impulstasten lauter
+        self.assertEqual(t.log, ['radio', 'impuls'])
+    def test_ton_ziffer_0_stumm_und_ohne_mischer_kein_fehler(self):
+        from grafik_pultton import PultTastenTon
+        class M:
+            n = 0
+            def einzel(s, *a, **kw): s.n += 1
+        m = M(); PultTastenTon(m, {'impuls': klang(10)}, faktor=0.0).taste('impuls'); self.assertEqual(m.n, 0)
+        PultTastenTon(None, {'impuls': klang(10)}).taste('impuls')
+        PultTastenTon(m, None).taste('impuls'); self.assertEqual(m.n, 0)
+    def test_faktor_aus_ton_option(self):
+        f = TM.ton_faktoren(TM.parse_ton('5555'))[0]; self.assertEqual(f, 1.0)
+        self.assertAlmostEqual(TM.ton_faktoren(TM.parse_ton('9555'))[0], 1.8)
+    def test_klick_mit_grundgeraeusch_uebersteuert_nicht_und_hebt_sich_ab(self):
+        from grafik_pultton import PultTastenTon, lade_pultklaenge
+        ordner = os.path.join(PROJ, 'ton')
+        m = TM.Mischer(); grund = TM.lade_klang(os.path.join(ordner, 'rechner_grundgeraeusch.wav'))
+        m.dauer_an('rechner', 'grund', grund, 0.68)
+        for _ in range(30): m.block()
+        ohne = [v for _ in range(20) for v in samples(m.block())]
+        t = PultTastenTon(m, lade_pultklaenge(ordner), faktor=1.0)
+        for art in ('impuls', 'einrast', 'radio'):
+            t.taste(art)
+            mit = [v for _ in range(20) for v in samples(m.block())]
+            self.assertLess(max(abs(v) for v in mit), 32000, art)                # kein Uebersteuern (Spitze Klick 0,62 + Grund 0,22)
+            self.assertGreater(max(abs(v) for v in mit), 1.5 * max(abs(v) for v in ohne), art)   # der Klick ragt deutlich aus dem Grundgeraeusch
+            for _ in range(30): m.block()
+        m.alles_aus()
 
 if __name__ == '__main__':
     print(f'Mischer: {MISCHER_ART}', flush=True)

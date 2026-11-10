@@ -1,0 +1,4 @@
+rc 16
+stderr makro_if_klammer.asm:7: Fehler: E3 Klammer ) fehlt.
+datei-weg obj mqo test
+escape-weg

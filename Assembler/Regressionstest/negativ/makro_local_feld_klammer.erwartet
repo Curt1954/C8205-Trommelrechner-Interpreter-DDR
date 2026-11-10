@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_feld_klammer.asm:6: Fehler: L5 q(4: Klammer ) fehlt
+datei-weg obj mqo test
+escape-weg

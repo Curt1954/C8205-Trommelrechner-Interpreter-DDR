@@ -1,0 +1,79 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000040000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 22600000000 # g16: dwg 16 ; Zelle 0001: 0.5 * 2^5, e' = 37
+0002: 62600000000 # gm16: dwg -16 ; Zelle 0002: z0 = 1
+0003: 20200000000 # g05: dwg 0.5 ; Zelle 0003: e = 0, e' = 32, m = 0.5
+0004: 20600000000 # g1: dwg 1 ; Zelle 0004: 0.5 * 2^1
+0005: 60600000000 # gm1: dwg -1 ; Zelle 0005: z0 = 1
+0006: 20300000000 # g075: dwg 0.75 ; Zelle 0006: m = 0.75, e = 0
+0007: 22310000000 # g125: dwg 12.5 ; Zelle 0007: 0.78125 * 2^4
+0010: 16714631463 # g01: dwg 0.1 ; Zelle 0010: 0.8 * 2^-3, Mantisse auf 26 Bit gerundet
+0011: 25372000000 # g1e3: dwg 1E3 ; Zelle 0011: 1000 = 0.9765625 * 2^10
+0012: 25673400000 # g15e3: dwg 1.5E3 ; Zelle 0012: 1500
+0013: 54243656051 # gm25: dwg -2.5E-3 ; Zelle 0013: -0.0025
+0014: 00000000000 # g0: dwg 0 ; Zelle 0014: Wort 0
+0015: 00000000000 # gm0: dwg -0.0 ; Zelle 0015: Wort 0, keine negative Null
+0016: 00000000000 # g0e5: dwg 0E5 ; Zelle 0016: Wort 0
+0017: 37777777777 # ggross: dwg 2147483616 ; Zelle 0017: groesste Zahl 2^31 - 2^5
+0020: 00200000000 # gklein: dwg 1.16415321826934814453125E-10 ; Zelle 0020: kleinste Zahl 2^-33
+0021: 00200000000 # gklein2: dwg 0.000000000116415321826934814453125 ; Zelle 0021: 2^-33 ohne Exponent
+0022: 00200000000 # gklk: dwg 1.16415321826934814453124E-10 ; Zelle 0022: knapp unter 2^-33, rundet auf 2^-33
+0023: 22600000000 # gplus: dwg +16 ; Zelle 0023: Vorzeichen +
+0024: 22600000000 # ge1: dwg 1.6E1 ; Zelle 0024: Zehnerexponent: 16
+0025: 22600000000 # ge2: dwg 160e-1 ; Zelle 0025: kleines e, negativer Exponent: 16
+0026: 20600000000 # gueber: dwg 0.99999999999 ; Zelle 0026: Mantisse rundet auf 1: m = 0.5, e um 1 groesser, wie dwg 1
+0027: 21300000000 # g3: dwg 3 ; Zelle 0027: 0.75 * 2^2
+0030: 21311037553 # gpi: dwg 3.14159265358979323846 ; Zelle 0030: Mantisse auf 26 Bit gerundet
+0031: 37777777777 # gknapp: dwg 2147483631.99999 ; Zelle 0031: knapp unter der Mitte: rundet auf 2^31 - 2^5
+0032: 20600000000 # g1e0: dwg 1E+0 ; Zelle 0032: Exponent mit Vorzeichen
+0033: 17200000000 # bl1: dwg 0.125 ; Zelle 0033: e = -2
+0034: 57200000000 # bl2: dwg -0.125 ; Zelle 0034: z0 = 1
+0035: 23710000000 # bl3: dwg 100 ; Zelle 0035: 0.78125 * 2^7
+0036: 00000000000 # erg: dw 0 ; Zelle 0036: Ergebnis 1
+0037: 00000000000 # erg2: dw 0 ; Zelle 0037: Ergebnis 2
+0040: 00000017211 # haupt: 211 ggross ; Zelle 0040: AC := (ggross)
+0041: 00000036240 # 240 erg ; Zelle 0041: (erg) := AC
+0042: 00000046211 # 211 dspaet ; Zelle 0042: AC := (dspaet), Vorwaertsreferenz auf eine dwg-Marke
+0043: 00000037240 # 240 erg2 ; Zelle 0043: (erg2) := AC
+0044: 00000001164 # 164 0001 ; Zelle 0044: Diagnoseausgabe (nur im Test)
+0045: 00000000020 # 020 0 ; Zelle 0045: Halt
+0046: 25372000000 # dspaet: dwg 1E3 ; Zelle 0046: nach dem Code
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0046 AC=25372000000 US=1
+0001: 22600000000   # g16
+0002: 62600000000   # gm16
+0003: 20200000000   # g05
+0004: 20600000000   # g1
+0005: 60600000000   # gm1
+0006: 20300000000   # g075
+0007: 22310000000   # g125
+0010: 16714631463   # g01
+0011: 25372000000   # g1e3
+0012: 25673400000   # g15e3
+0013: 54243656051   # gm25
+0014: 00000000000   # g0
+0015: 00000000000   # gm0
+0016: 00000000000   # g0e5
+0017: 37777777777   # ggross
+0020: 00200000000   # gklein
+0021: 00200000000   # gklein2
+0022: 00200000000   # gklk
+0023: 22600000000   # gplus
+0024: 22600000000   # ge1
+0025: 22600000000   # ge2
+0026: 20600000000   # gueber
+0027: 21300000000   # g3
+0030: 21311037553   # gpi
+0031: 37777777777   # gknapp
+0032: 20600000000   # g1e0
+0033: 17200000000   # bl1
+0034: 57200000000   # bl2
+0035: 23710000000   # bl3
+0036: 37777777777   # erg
+0037: 25372000000   # erg2
+0046: 25372000000   # dspaet

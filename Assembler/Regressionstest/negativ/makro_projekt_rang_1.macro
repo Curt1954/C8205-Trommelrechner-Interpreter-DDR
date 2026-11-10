@@ -1,0 +1,6 @@
+ZWEI: MACRO
+         dw 02
+         MEND
+KB:      MACRO
+         dw 077
+         MEND

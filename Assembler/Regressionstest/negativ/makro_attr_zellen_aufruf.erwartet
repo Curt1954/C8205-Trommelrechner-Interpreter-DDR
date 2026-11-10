@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_zellen_aufruf.asm:9: Fehler: $CALC(zellen(x)): Symbol "x": Marke auf dem Aufruf des Makros M2, die Zellenzahl steht erst nach dem Auflösen fest
+datei-weg obj mqo test
+escape-weg

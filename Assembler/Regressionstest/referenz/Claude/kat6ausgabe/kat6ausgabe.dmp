@@ -1,0 +1,87 @@
+0000: 01 0013 000               000  haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+      00 14643432130 text1:     kat6 hallo welt   ; Zellen 0001 und 0002: Text 1
+      00 56343256612 ;    
+      00 40001223721 text2:     kat6 a$ingbb      ; Zelle 0003: a, Um. GB, b
+      00 40001245723 text3:     kat6 c$inkbd      ; Zelle 0004: c, Um. KB, d
+0005: 01 1000        radr1:     da   text1        ; Zelle 0005: Adresse von Text 1 (Adressfeld)
+0006: 01 3000        radr2:     da   text2        ; Zelle 0006: Adresse von Text 2 (Adressfeld)
+0007: 01 4000        radr3:     da   text3        ; Zelle 0007: Adresse von Text 3 (Adressfeld)
+0010: 0              kbaus:     dw   0            ; Zelle 0010: KB/GB-Zustand des Schreibwerks (0 = KB, 1 = GB), initial KB
+0011: 0              zw2:       dw   0            ; Zelle 0011: Zustand nach Text 2 (Pruefung)
+0012: 01 10000       rkb:       da   kbaus        ; Zelle 0012: Adresse der Zustandszelle (Adressfeld)
+0013: 01 0012 211    haupt:     211  rkb          ; AC := Adresse der Zustandszelle
+0014: 00 7774 240               240  r3           ; R3 := Adresse der Zustandszelle
+0015: 00 4500 030               030  04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+0016: 01 0005 211               211  radr1        ; AC := Adresse von Text 1
+0017: 00 7773 240               240  r1           ; R1 := Adresse von Text 1
+0020: 01 0032 025               025  ausgabe      ; Aufruf KAT6AUSGABE (Text 1)
+0021: 01 0006 211               211  radr2        ; AC := Adresse von Text 2
+0022: 00 7773 240               240  r1           ; R1 := Adresse von Text 2
+0023: 01 0032 025               025  ausgabe      ; Aufruf (Text 2, Zustand KB, danach GB)
+0024: 01 0010 211               211  kbaus        ; AC := Zustand nach Text 2
+0025: 01 0011 240               240  zw2          ; zw2 := Zustand nach Text 2
+0026: 01 0007 211               211  radr3        ; AC := Adresse von Text 3
+0027: 00 7773 240               240  r1           ; R1 := Adresse von Text 3
+0030: 01 0032 025               025  ausgabe      ; Aufruf (Text 3, Zustand GB aus dem zweiten Aufruf)
+0031: 01 0000 020               020  0            ; Halt
+0032: 01 0076 240    ausgabe:   240  ML0001GNU    ; Rueckkehrwort sichern
+0033: 00 7773 211               211  ML0014GNU    ; AC := Startadresse des Textes
+0034: 01 0114 220               220  l0001        ; eine Adresseneinheit weniger, weil ML0006% sie gleich wieder dazuzaehlt
+0035: 01 0111 240               240  ML0002GNU    ; zeiger := Adresse des Wortes vor dem ersten (R1 bleibt unveraendert)
+0036: 01 0111 211    ML0006GNU: 211  ML0002GNU    ; neues Wort: Zeiger auf das naechste Wort
+0037: 01 0114 210               210  l0001        ; plus eine Adresseneinheit
+0040: 01 0111 240               240  ML0002GNU    ; zeiger := Adresse des aktuellen Wortes
+0041: 00 0000 251               251  0            ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0042: 01 0107 240               240  ML0003GNU    ; tw := Textwort (mit z0)
+0043: 01 0115 200               200  l0002        ; z0 ausblenden, nur 32 Bit (Zeichen und Stoppbit)
+0044: 01 0110 240               240  ML0004GNU    ; rest := Zeichenrest mit Stoppbit
+0045: 01 0116 330    ML0007GNU: 330  l0003        ; Vergleich des Rests mit 1 (keine Operation), der AC bleibt der Rest
+0046: 01 0074 170               170  ML0010GNU    ; Rest 1: nur noch das Stoppbit uebrig, Wort fertig
+0047: 01 0117 200               200  l0004        ; unterstes Zeichen (6 Bit) ausblenden
+0050: 01 0112 240               240  ML0005GNU    ; zeichen := kat6-Code
+0051: 01 0120 330               330  l0005        ; Vergleich mit kat6 037 (Um. GB)
+0052: 01 0077 170               170  ML0011GNU    ; Um. GB: Zustand := GB
+0053: 01 0121 330               330  l0006        ; Vergleich mit kat6 057 (Um. KB)
+0054: 01 0077 170               170  ML0011GNU    ; Um. KB: Zustand := KB
+0055: 01 0112 211    ML0008GNU: 211  ML0005GNU    ; AC := kat6-Code (auch nach der Zustandsuebergabe)
+0056: 01 0122 200               200  l0007        ; Bits u und v (020 und 040) ausblenden
+0057: 01 0113 240               240  ML0015GNU    ; hilf := Code UND 060
+0060: 01 0112 211               211  ML0005GNU    ; AC := kat6-Code
+0061: 01 0123 200               200  l0008        ; Bits 8 4 2 1
+0062: 01 0113 210               210  ML0015GNU    ; plus (Code UND 060)
+0063: 01 0113 210               210  ML0015GNU    ; plus (Code UND 060) noch einmal: AC := Zeichen (8 Bit, p = w = 0)
+0064: 01 7644 644               644  07644        ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0065: 01 0124 210               210  l0009        ; plus Operationscode 030 (Ausgabe)
+0066: 01 0067 240               240  ML0009GNU    ; Ausgabebefehl auf die naechste Zelle speichern
+0067: 20 0070        ML0009GNU: db   1            ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+0070: 01 0110 211               211  ML0004GNU    ; AC := Zeichenrest
+0071: 01 7662 642               642  07662        ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0072: 01 0110 240               240  ML0004GNU    ; rest := Rest
+0073: 01 0045 000               000  ML0007GNU    ; naechstes Zeichen (der AC ist der Rest)
+0074: 01 0107 211    ML0010GNU: 211  ML0003GNU    ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0075: 01 0036 050               050  ML0006GNU    ; kein z0: naechstes Wort
+0076: 20 0077        ML0001GNU: db   1            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0077: 00 7774 211    ML0011GNU: 211  ML0016GNU    ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0100: 01 0125 210               210  l0010        ; plus Operationscode 240: Speicherbefehl
+0101: 01 0105 240               240  ML0012GNU    ; Speicherbefehl auf die uebernaechste Zelle
+0102: 01 0112 211               211  ML0005GNU    ; AC := kat6-Code (037 oder 057)
+0103: 01 0126 200               200  l0011        ; Bit u: 037 hat es (Um. GB), 057 nicht (Um. KB)
+0104: 01 7654 642               642  07654        ; 4 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0105: 20 0106        ML0012GNU: db   1            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+0106: 01 0055 000               000  ML0008GNU    ; Zeichen ausgeben
+0107: 20 0110        ML0003GNU: db   1            ; Arbeitszelle: aktuelles Textwort
+0110: 20 0111        ML0004GNU: db   1            ; Arbeitszelle: noch auszugebender Zeichenrest
+0111: 20 0112        ML0002GNU: db   1            ; Arbeitszelle: Adresse des aktuellen Textwortes
+0112: 20 0113        ML0005GNU: db   1            ; Arbeitszelle: aktueller kat6-Code
+0113: 20 0114        ML0015GNU: db   1            ; Arbeitszelle: Code UND 060
+0114: 00 00000001000 l0001      dw   000000001000 
+0115: 00 37777777777 l0002      dw   037777777777 
+0116: 00 00000000001 l0003      dw   1            
+0117: 00 00000000077 l0004      dw   000000000077 
+0120: 00 00000000037 l0005      dw   000000000037 
+0121: 00 00000000057 l0006      dw   000000000057 
+0122: 00 00000000060 l0007      dw   000000000060 
+0123: 00 00000000017 l0008      dw   000000000017 
+0124: 00 00000000030 l0009      dw   000000000030 
+0125: 00 00000000240 l0010      dw   000000000240 
+0126: 00 00000000020 l0011      dw   000000000020 

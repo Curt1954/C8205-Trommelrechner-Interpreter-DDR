@@ -1,0 +1,36 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000002000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # erg: dw 0 ; Zelle 0001: Ergebnis (initialisiert)
+0002: 00000450211 # haupt: 211 l0001 ; Zelle 0002: AC := 5 (Literal)
+0003: 00000451210 # 210 l0002 ; Zelle 0003: AC := AC + 6 (Literal)
+0004: 00000452210 # 210 l0003 ; Zelle 0004: AC := AC + 7 (Literal)
+0005: 00000100210 # 210 a1 ; Zelle 0005: AC := AC + (a1), Block A
+0006: 00000300210 # 210 b1 ; Zelle 0006: AC := AC + (b1), Block B
+0007: 00000340210 # 210 c1 ; Zelle 0007: AC := AC + (c1), Block C
+0010: 00000400210 # 210 d1 ; Zelle 0010: AC := AC + (d1), Block D
+0011: 00000001240 # 240 erg ; Zelle 0011: (erg) := AC speichern
+0012: 00000001164 # 164 0001 ; Zelle 0012: Diagnoseausgabe (nur im Test)
+0013: 00000000020 # 020 0 ; Zelle 0013: Halt
+0100: 00000000011 # a1: dw 011 ; erste Zelle von Block A
+0300: 00000000022 # b1: dw 022 ; erste Zelle von Block B
+0340: 00000000033 # c1: dw 033 ; erste Zelle von Block C
+0400: 00000000044 # d1: dw 044 ; erste Zelle von Block D
+0450: 00000000005 # l0001 dw 5
+0451: 00000000006 # l0002 dw 6
+0452: 00000000007 # l0003 dw 7
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0014 AC=00000000154 US=1
+0001: 00000000154   # erg
+0100: 00000000011   # a1
+0300: 00000000022   # b1
+0340: 00000000033   # c1
+0400: 00000000044   # d1
+0450: 00000000005   # Literal 5
+0451: 00000000006   # Literal 6
+0452: 00000000007   # Literal 7

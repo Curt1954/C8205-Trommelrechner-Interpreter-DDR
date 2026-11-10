@@ -3,7 +3,7 @@
 """
 C8205-Interpreter (Python-Stuetze), interpretativer Modus: alle Zeiten = 0.
 
-Version: 0.95-008
+Version: 0.95-019
 (Aufbau und Regeln der Versionsnummer: markdown-dateien/C8205-Versionierung.md; Abfrage: python3 c8205_interp.py --version)
 REGEL: Jede Aenderung dieser Datei erhoeht den Build (zzz) um 1; dazu die Zeile "Version:" und die Konstante VERSION gemeinsam aendern.
 Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinhabers erhoehen.
@@ -11,7 +11,7 @@ Hauptversion und Unterversion nur auf ausdrueckliche Aufforderung des Projektinh
 Aufruf:  python3 c8205_interp.py [--MODUS TEST|GRAFIK] [--mdverz VERZ] [--out VERZ|DATEI.log]
          [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
          [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL] [--zwischenablage auto|tk|system]
-         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] [--LOADONLY] [--C8205Z[=VERZ]] TEST.txt [TEST2.txt ...]
+         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef] [--LOADONLY] [--C8205Z[=VERZ]] [--max-knoten N] TEST.txt [TEST2.txt ...]
          python3 c8205_interp.py --version      (zeigt die Versionsnummer und endet)
          (--leser1, --leser2, --stanzer1, --sw-ausgabe und --k0 duerfen auch als Zeile in der Testdatei stehen; die Kommandozeile hat Vorrang)
          (--SW-TERMINAL: Schreibwerk-Ausgabe zusaetzlich im Fenster "SW Ausgabe"; das Fenster bleibt auch nach dem Testende offen, bis es mit X
@@ -30,6 +30,40 @@ Regeln (aus "C8205-Interpreter-Durchführung_eines_Tests.md"):
   * Befehlszeilenschalter --knotentest (Standard: aus): nur wenn gesetzt, enthalten die Knotenprotokolle
     die Zeilen der durchlaufenen Knoten (K001 KON B ..., K004 TST 002 ... -> falsch). Ohne den Schalter
     bleiben davon nur die BR-Zeilen (nach Knoten 009), Diagnose und Fehler-/Stub-Meldungen.
+
+Aenderung 27.10.2026 (Version 0.95-012): Tempo. Der Knotengraph wird weiter wortlautgetreu aus der .md gelesen, aber beim Start einmal in eine Tabelle
+  uebersetzt (Konnektor-Spruenge, Funktionen, Ausgaenge); Normalknoten laufen ohne Neuaufloesung und ohne Funktionsaufruf in der Hauptschleife. Knoten 2, Ein-/Ausgabe
+  (017/032), Phase IV, Konnektor 7 (BR-Zeile), Endknoten und alle Knoten bei --knotentest laufen unveraendert ueber den ausfuehrlichen Weg. Ergebnis, Protokolle und
+  Knotenzahl sind unveraendert (alle Tests, Protokolle Zeile fuer Zeile gleich); rund 1,8-faches Tempo bei Rechenschleifen.
+  Ausserdem: Die Zeichenlage KB/GB des Schreibwerks (Machine.sw_lage) ist im Testinterpreter jetzt fest KB (vorher bei jedem Start zufaellig), damit die
+  Schreibwerk-Ausgaben von Lauf zu Lauf gleich bleiben. Am Geraet und im Modus GRAFIK bleibt der Zustand beim Einschalten zufaellig (Machine.__init__ unveraendert, nur lauf() setzt KB).
+
+Aenderung 07.11.2026 (Version 0.95-019): Nur Text, kein Verhalten geaendert: Der Hilfetext von --LS-LESER-TYP nennt neben dem Lesetempo auch den Leserton (GRAFIK G4-024: FS751 spielt eigene Klaenge ton/sw_toene/ls_fs751_*.wav).
+Aenderung 30.10.2026 (Version 0.95-018): Nur Text, kein Verhalten geaendert: Der Hinweis in 0.95-017, Programme und Tests muessten auf 5100 .. 5400 030 nachgezogen werden, ist erledigt (Makros ZTINIT und NEUANL, gen_lib, ztl, ztd, ztc, ztd_py, ztpruef, Projekt ZT-Loader, zt-Tests).
+Aenderung 30.10.2026 (Version 0.95-017): Mit --C8205Z gilt fuer die Anwahl der Zusatztrommeln wieder 5100 030 = ZT0, 5200 030 = ZT1, 5300 030 = ZT2, 5400 030 = ZT3
+  (Korrektur durch den Inhaber: die Angabe 5000 .. 5300 aus 0.95-013 war falsch). 5000 030 ist damit keine Trommelanwahl mehr (Anwahlbefehl a2 < 4 nicht definiert, Flag A,
+  wie ohne den Schalter); Kanal K3 ueber 4400 030 bleibt unveraendert. Die Schnittstelle zum Modul (anwahl(k), k = 1..4; ZT0 = zt1.txt) und die Dateinamen bleiben.
+  Hilfetext und Meldungen entsprechend. Ohne den Schalter unveraendert. (Die Programme, Makros und Tests sind seit 0.95-018 nachgezogen.)
+Aenderung 30.10.2026 (Version 0.95-016): Nur Text, kein Verhalten geaendert: Der Hilfetext von --C8205Z und die beiden Meldungen "ohne angewaehlte Zusatztrommel" nennen
+  jetzt 5d00 030 (d = 0..3: 5000 = ZT0 ... 5300 = ZT3; Dateien zt1.txt .. zt4.txt) statt 5k00 030 (k = 1..4); so gilt es seit 0.95-013.
+
+Aenderung 30.10.2026 (Version 0.95-015): Neuer Aufrufschalter --LS-LESER-TYP=303|FS751 (auch --ls-leser-typ; Standard 303; FS715 wird als Schreibvariante von FS751 angenommen):
+  Typ des Lochbandlesers (gilt immer fuer beide Leser K1 und K2). 303 = elektrisch ueber Metallbuersten, 130 Zeichen/s (Standardleser des C 8205);
+  FS751 = optoelektronisch, 750 Zeichen/s. Wirkung nur in GRAFIK (Lesetempo, c8205_grafik.py G4-022); im TEST erlaubt und ohne Wirkung (alle Zeiten 0).
+  Falscher Wert: Aufrufefehler (rc 2). Funktion ls_leser_typ_arg() (auch von c8205_grafik.py benutzt). Sonst unveraendert.
+Aenderung 30.10.2026 (Version 0.95-014): Mit --C8205Z: (1) neue Testmarke #ZTROMMEL=LEER|KEEP (Abschnitt Trommeldatei:, Standard KEEP; Durchfuehrung_eines_Tests.md 2g.1):
+  LEER leert vor dem Test alle vier Zusatztrommeln, KEEP laesst sie unveraendert. Die Zusatztrommeln folgen NUR noch dieser Marke; #TROMMEL=LEER und Trommelvorlagen
+  leeren sie nicht mehr mit (Annahme, Python_Interpreter.md angepasst). (2) neuer Unterabschnitt ZT-Zellen-Pruefung: im Abschnitt Pruefungen: mit Zeilen o-aaaa: ttttttttttt
+  (Durchfuehrung_eines_Tests.md 3a.6): nach dem Lauf werden die ZT-Zellen mit den Sollwerten verglichen, Soll und Ist stehen im Protokoll. Ohne --C8205Z werden beide
+  KOMMENTARLOS IGNORIERT (auch die formale Pruefung der Zeilen entfaellt). Ohne den Schalter und ohne die neuen Zeilen unveraendert.
+
+Aenderung 28.10.2026 (Version 0.95-013): Mit --C8205Z waehlt 5d00 030 jetzt die Zusatztrommel d = 0..3 an (5000 = ZT0 ... 5300 = ZT3; Festlegung des Inhabers,
+  Zusatztrommel_Zeitmodell.md). Bisher k = 1..4 (5100 .. 5400). 5400 030 ist damit keine Trommelanwahl mehr (Kanal K3 wird wieder ueber a2 = 4 erkannt).
+  Die Schnittstelle zum Modul bleibt k = 1..4 (anwahl(d + 1)); die Dateien heissen weiter zt1.txt .. zt4.txt (ZT0 = zt1.txt). Ohne den Schalter unveraendert.
+Aenderung 26.10.2026 (Version 0.95-010): Neuer Schalter --max-knoten N (nur MODUS TEST; Standard 2000000): Obergrenze der Knoten je Testlauf (Endlosschleifen-Schutz).
+  Mit GRAFIK ist der Schalter ein Fehler (dort gilt die Zeitgrenze, siehe c8205_grafik.py G4-014). Ohne den Schalter unveraendert.
+Aenderung 26.10.2026 (Version 0.95-009): Mit --C8205Z wird die Anwahl 5k00 030 jetzt VOR der Kanalwahl geprueft. Vorher wurde 5400 030 (Zusatztrommel 4)
+  als Anwahl des Kanals K3 gedeutet (gleiche Ziffer (a >> 6) & 7 = 4), die ZT4 war nicht waehlbar. Ohne den Schalter unveraendert.
 
 Aenderung 25.10.2026 (Version 0.95-008): Die Befehle der Zusatztrommeln (--C8205Z) heissen jetzt 601 (Ausgabe HT -> ZT) und 661 (Eingabe ZT -> HT) statt 401 und 461
   (Festlegung des Inhabers; Wiederholungsbefehl W, B = 6). Unveraendert: 5k00 030 (Anwahl), ganze Spur zu 32 Worten, zzz0 = obere vier Ziffern des Befehlswortes.
@@ -216,7 +250,7 @@ import subprocess
 import sys
 import time
 
-VERSION = '0.95-008'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
+VERSION = '0.95-019'   # Form y.xx-zzz; muss mit der Zeile "Version:" im Kopfkommentar uebereinstimmen (C8205-Versionierung.md)
 
 MASK33 = (1 << 33) - 1
 MASK12 = 0xFFF
@@ -552,6 +586,10 @@ class Test:
         self.starte = None
         self.starte_nr = None
         self.trommel_vor = None      # None | 'LEER' | 'KEEP' | 'MP': Trommel vor dem Test neu setzen (#TROMMEL=...)
+        self.ztrommel_vor = None     # None | 'LEER' | 'KEEP': Zusatztrommeln vor dem Test (#ZTROMMEL=..., nur mit --C8205Z wirksam)
+        self.pruef_zt = {}           # (o, Adresse) -> Sollwert (ZT-Zellen-Pruefung:, nur mit --C8205Z wirksam)
+        self.zt_fehler = []          # Formfehler der ZT-Marken und -Zeilen; zaehlen nur mit --C8205Z
+        self._zt_modus = False       # True hinter der Kopfzeile ZT-Zellen-Pruefung:
         self._letzte_adr = None
         self._offen = []
         self.zeilen = []
@@ -592,6 +630,27 @@ class Test:
                 continue
             self.pruef_reg[key] = int(val, 8)
 
+    def _parse_zt_zeile(self, s, nr):
+        """Eine Zeile der ZT-Zellen-Pruefung: o-aaaa: ttttttttttt (alles oktal), Abschnitt 3a.6."""
+        m = re.fullmatch(r'(\d+)-(\d+):\s*(\d+)\s*(?:#.*)?', s)
+        if not m:
+            self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: ungueltige Zeile {s!r} (erwartet: o-aaaa: ttttttttttt)')
+            return
+        o, a, w = m.groups()
+        if any(c in '89' for c in o + a + w):
+            self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: Ziffer 8 oder 9 in {s!r}')
+        elif len(o) != 1 or o not in '0123':
+            self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: Trommelnummer {o!r} nicht 0 bis 3')
+        elif len(a) != 4:
+            self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: Adresse {a!r} hat nicht 4 Oktalstellen')
+        elif len(w) != 11:
+            self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: Sollwert {w!r} hat nicht 11 Oktalstellen')
+        else:
+            key, wert = (int(o), int(a, 8)), int(w, 8)
+            if key in self.pruef_zt and self.pruef_zt[key] != wert:
+                self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: Zelle {o}-{a} widerspruechlich mehrfach belegt')
+            self.pruef_zt[key] = wert
+
     def _parse(self):
         modus = 'trommel'
         for nr, raw in enumerate(open(self.path, encoding='utf-8'), 1):
@@ -609,10 +668,17 @@ class Test:
                 continue
             if s.lower().startswith('pr\u00fcfungen') or s.lower().startswith('pruefungen'):
                 modus = 'pruefungen'
+                self._zt_modus = False
                 rest = s.split(':', 1)[1].strip() if ':' in s else ''
                 if rest:
                     self._parse_pruef_regzeile(rest, nr)
                     self._pruef_regzeile_gesehen = True
+                continue
+            if re.fullmatch(r'ZT-Zellen-Pr(?:ue|\u00fc)fung\s*:\s*(?:#.*)?', s, re.I):
+                if modus != 'pruefungen':
+                    self.zt_fehler.append(f'Zeile {nr}: ZT-Zellen-Pruefung: ist nur im Abschnitt Pruefungen: zulaessig')
+                else:
+                    self._zt_modus = True
                 continue
             m_ger = re.fullmatch(r'--(sw-ausgabe|k0|leser1|leser2|stanzer1)(?:\s+(.*?))?\s*(?:#.*)?', s)
             if m_ger:
@@ -666,6 +732,20 @@ class Test:
                 else:
                     self.trommel_vor = m.group(1).upper()
                 continue
+            if re.match(r'#ZTROMMEL(\s|=|$)', s, re.I):
+                if modus == 'pruefungen':
+                    self.zt_fehler.append(f'Zeile {nr}: #ZTROMMEL ist im Abschnitt Pruefungen: nicht zulaessig')
+                    continue
+                m = re.fullmatch(r'#ZTROMMEL\s*=\s*(\S+)\s*(?:#.*)?', s, re.I)
+                if not m:
+                    self.zt_fehler.append(f'Zeile {nr}: fehlerhafte Testmarke #ZTROMMEL: {s!r} (erwartet: #ZTROMMEL=LEER oder #ZTROMMEL=KEEP)')
+                elif self.ztrommel_vor is not None:
+                    self.zt_fehler.append(f'Zeile {nr}: #ZTROMMEL mehrfach')
+                elif m.group(1).upper() not in ('LEER', 'KEEP'):
+                    self.zt_fehler.append(f'Zeile {nr}: #ZTROMMEL={m.group(1)} ungueltig (LEER oder KEEP erwartet)')
+                else:
+                    self.ztrommel_vor = m.group(1).upper()
+                continue
             if re.match(r'#INTERRUPT(\s|$)', s, re.I):
                 if modus != 'trommel':
                     self.fehler.append(f'Zeile {nr}: #INTERRUPT ist nur im Abschnitt Trommeldatei: zulaessig')
@@ -698,6 +778,9 @@ class Test:
                         self.fehler.append(f'Zeile {nr}: Pruefungen: --pruefe-{m_dat.group(1)} mehrfach angegeben')
                     else:
                         self.pruef_dateien[key] = soll
+                    continue
+                if self._zt_modus:
+                    self._parse_zt_zeile(s, nr)
                     continue
                 m_mem = re.fullmatch(r'([0-7]{4}):\s*([0-7]{11})\s*(#.*)?', s)
                 if m_mem:
@@ -820,7 +903,7 @@ class Machine:
         self.halt_grund = ''
         self.came_from = None
         self.diag_hook = None
-        self.sw_lage = random.choice(['KB', 'GB'])
+        self.sw_lage = random.choice(['KB', 'GB'])   # am Geraet zufaellig (GRAFIK); der Testinterpreter setzt in lauf() fest KB
         self.sw_zeilenanfang = True
         self.log = lambda s: None
         self.leser = {1: None, 2: None}
@@ -1610,10 +1693,10 @@ def sw_fenster_main(zwischenablage='auto'):
 def a028(m):
     a = m.AR
     if a & 0o4000:
-        kanal = {0o7: 0, 0o6: 1, 0o5: 2, 0o4: 3}.get((a >> 6) & 0o7)
-        if kanal is None and m.zt is not None and (a >> 9) == 0o5 and (a & 0o77) == 0 and 1 <= ((a >> 6) & 7) <= 4:
-            m.zt.anwahl((a >> 6) & 7)     # --C8205Z: 5k00 030 = Anwahl Zusatztrommel k (Kanalflags unveraendert)
+        if m.zt is not None and (a >> 9) == 0o5 and (a & 0o77) == 0 and 1 <= ((a >> 6) & 7) <= 4:
+            m.zt.anwahl((a >> 6) & 7)     # --C8205Z: 5k00 030 = Anwahl Zusatztrommel (5100 = ZT0 ... 5400 = ZT3; Kanalflags unveraendert); Modul intern k = 1..4 (zt1.txt .. zt4.txt); vor der Kanalwahl
             return
+        kanal = {0o7: 0, 0o6: 1, 0o5: 2, 0o4: 3}.get((a >> 6) & 0o7)
         if kanal is None:
             m.fl['A'] = 1
             raise Stub(f'Anwahlbefehl {octs(a,4)}: a2 < 4 nicht definiert; Flag A bleibt gesetzt')
@@ -1985,12 +2068,10 @@ def lade_nur(test, trommel):
     """Programm der Testdatei auf die Trommel bringen (--LOADONLY): #TROMMEL=-Marke, dann Abschnitt Trommeldatei:; sonst nichts."""
     if test.trommel_vor == 'LEER':
         trommel.setze_inhalt({})
-        if ZT is not None:
-            ZT.leeren()
     elif test.trommel_vor in TROMMEL_VORLAGEN:
         trommel.setze_inhalt(lies_trommelabbild(trommelvorlage_pfad(test.trommel_vor)))
-        if ZT is not None:
-            ZT.leeren()
+    if ZT is not None and test.ztrommel_vor == 'LEER':
+        ZT.leeren()                  # #ZTROMMEL=LEER (nur mit --C8205Z); die Zusatztrommeln folgen nur dieser Marke
     trommel.uebertrage_aus_testdatei(test.mem)
     trommel.datei.flush()
 
@@ -2022,6 +2103,7 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
     lade_nur(test, trommel)
 
     m = Machine(trommel)
+    m.sw_lage = 'KB'   # Testinterpreter: Zeichenlage des Schreibwerks fest KB (Ergebnisse von Lauf zu Lauf gleich); GRAFIK bleibt zufaellig
     if test.ac_init is not None:
         m.AC = test.ac_init
     if test.bz_init is not None:
@@ -2072,7 +2154,43 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
 
     io_stand = {'jetzt': False, 'vorher': False}   # E/A-Anweisung (017 Ausgabe, 032 Eingabe) im laufenden / im vorigen Befehl ausgefuehrt
 
-    def exec_node(node):
+    # Vorbereitung (Version 0.95-012): Der Graph wird weiter wortlautgetreu aus der .md gelesen; hier wird er nur
+    # einmal in eine Tabelle uebersetzt (Konnektor-Sprung, Funktion, Ausgaenge je Knoten), statt bei jedem Knoten
+    # neu aufgeloest zu werden. Knoten mit Sonderbehandlung (Knoten 2, Ein-/Ausgabe 017/032, Phase IV, Konnektor
+    # mit BR-Zeile, Endknoten) und alle Knoten bei --knotentest laufen unveraendert ueber den ausfuehrlichen Weg.
+    K_KON, K_PHA, K_ANW, K_TST = 0, 1, 2, 3
+    plan = {}
+    for node_nr, n in graph.items():
+        typ = n['typ']
+        f = FUNCS.get(n['anw']) if typ in ('Anweisung', 'Test') else None
+        ziel = n['out']
+        br_nach = None
+        if typ == 'Konnektor' and ziel is None:
+            for k, o in graph.items():
+                if o['typ'] == 'Konnektor' and o['text'] == n['text'] and o['out'] is not None and k != node_nr:
+                    ziel = o['out']
+                    if k == 7:
+                        br_nach = 7
+                    break
+        sonder = (node_nr == 2 or br_nach is not None or bool(n.get('end'))
+                  or (typ == 'Anweisung' and n['anw'] in (17, 32))
+                  or (typ == 'Phasenzuordnung' and 'Phase IV' in n['text'])
+                  or (typ in ('Anweisung', 'Test') and f is None)
+                  or typ not in ('Konnektor', 'Phasenzuordnung', 'Anweisung', 'Test'))
+        kind = {'Konnektor': K_KON, 'Phasenzuordnung': K_PHA, 'Anweisung': K_ANW, 'Test': K_TST}.get(typ)
+        # bei Tests steht in "ziel" der Wahr-Ausgang, in "falsch" der Falsch-Ausgang
+        plan[node_nr] = (kind, f, n['wahr'] if typ == 'Test' else ziel, n['falsch'], sonder, ziel, br_nach)
+
+    def fehler_knoten(node, e):
+        if isinstance(e, KonfigFehler):
+            fe = f'Geraet nicht nutzbar (Knoten {node}): {e}'
+            zeilen.append(f'K{node:03d} {fe}')
+            raise LaufFehler(fe)
+        fe = f'STUB bei Knoten {node}: {e}'
+        zeilen.append(f'K{node:03d} {fe}')
+        raise LaufFehler(fe)
+
+    def exec_node_lang(node):
         n = graph[node]
         typ = n['typ']
         zusatz = ''
@@ -2085,14 +2203,8 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
         try:
             if typ == 'Konnektor':
                 bez = n['text']
-                ziel = n['out']
-                if ziel is None:
-                    for k, o in graph.items():
-                        if o['typ'] == 'Konnektor' and o['text'] == bez and o['out'] is not None and k != node:
-                            ziel = o['out']
-                            if k == 7:
-                                br_nach = 7
-                            break
+                ziel = plan[node][5]
+                br_nach = plan[node][6]
                 text = f'KON {bez}'
                 nxt = ziel
             elif typ == 'Phasenzuordnung':
@@ -2118,14 +2230,8 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
                 nxt = n['wahr'] if r else n['falsch']
             else:
                 raise Stub(f'Knotentyp {typ!r} unbekannt')
-        except KonfigFehler as e:
-            fe = f'Geraet nicht nutzbar (Knoten {node}): {e}'
-            zeilen.append(f'K{node:03d} {fe}')
-            raise LaufFehler(fe)
-        except Stub as e:
-            fe = f'STUB bei Knoten {node}: {e}'
-            zeilen.append(f'K{node:03d} {fe}')
-            raise LaufFehler(fe)
+        except (KonfigFehler, Stub) as e:
+            fehler_knoten(node, e)
         if knotentest:
             zeilen.append(f'K{node:03d} {text} BZ={octs(m.BZ,4)} AR={octs(m.AR,4)} AC={octs(m.AC,11)}{zusatz}')
         if br_nach:
@@ -2133,6 +2239,19 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
         if n.get('end'):
             return None
         return nxt
+
+    def exec_node(node):
+        kind, f, out, falsch, sonder, _z, _b = plan[node]
+        if sonder or knotentest:
+            return exec_node_lang(node)
+        try:
+            if kind == K_ANW:
+                f(m)
+            elif kind == K_TST:
+                return out if f(m) else falsch
+        except (KonfigFehler, Stub) as e:
+            fehler_knoten(node, e)
+        return out
 
     def run_e():
         if m.vor_phase2:
@@ -2271,7 +2390,21 @@ def lauf(test, graph, t2, outdir, trommel, max_knoten=2_000_000, knotentest=Fals
                 continue
             cur = m.BZ
         try:
-            nxt = exec_node(node)
+            pl = plan[node]
+            if pl[4] or knotentest:
+                nxt = exec_node_lang(node)
+            else:                       # Normalknoten (wie exec_node, hier ohne Funktionsaufruf)
+                kind = pl[0]
+                try:
+                    if kind == K_ANW:
+                        pl[1](m)
+                        nxt = pl[2]
+                    elif kind == K_TST:
+                        nxt = pl[2] if pl[1](m) else pl[3]
+                    else:
+                        nxt = pl[2]
+                except (KonfigFehler, Stub) as e:
+                    fehler_knoten(node, e)
         except LaufFehler as e:
             fehler = str(e)
             break
@@ -2292,7 +2425,8 @@ def flags_text(m):
 
 
 def pruefe_ergebnis(test, m):
-    if not test.pruef_reg and not test.pruef_mem:
+    pzt = test.pruef_zt if ZT is not None else {}      # ohne --C8205Z kommentarlos ignoriert
+    if not test.pruef_reg and not test.pruef_mem and not pzt:
         return None
     wahr = True
     zeilen = []
@@ -2315,6 +2449,12 @@ def pruefe_ergebnis(test, m):
         gut = (ist == soll)
         wahr = wahr and gut
         zeilen.append(f'  {octs(a,4)}: soll={octs(soll,11)} ist={octs(ist,11)} {"OK" if gut else "FEHLER"}')
+    for o, a in sorted(pzt):
+        soll = pzt[(o, a)]
+        ist = ZT.zelle(o, a)
+        gut = (ist == soll)
+        wahr = wahr and gut
+        zeilen.append(f'  ZT{o} {octs(a,4)}: soll={octs(soll,11)} ist={octs(ist,11)} {"OK" if gut else "FEHLER"}')
     return wahr, zeilen
 
 
@@ -2428,6 +2568,19 @@ def _modus_aus_argv(argv):
     return modus
 
 
+LS_LESER_TYPEN = ('303', 'FS751')      # Lochbandleser: 303 (Metallbuersten, 130 Zeichen/s, Standard), FS751 (optoelektronisch, 750 Zeichen/s)
+
+
+def ls_leser_typ_arg(text):
+    """--LS-LESER-TYP: liefert '303' oder 'FS751' (Gross-/Kleinschreibung egal; FS715 gilt als Schreibvariante von FS751), sonst ArgumentTypeError."""
+    t = str(text).strip().upper()
+    if t == 'FS715':
+        t = 'FS751'
+    if t not in LS_LESER_TYPEN:
+        raise argparse.ArgumentTypeError(f"unbekannter Lochbandleser-Typ {text!r} (erlaubt: 303, FS751)")
+    return t
+
+
 def main():
     global NO_TERMOUT, SW_FENSTER, BASP_TEXT, ZT
     here = os.path.dirname(os.path.abspath(__file__))
@@ -2474,6 +2627,8 @@ def main():
                     "ein Zeichen oder Name wie ZR/WM/IS/IB/TAB/WRZL je Zeile); ohne den Schalter Eingabe vom Terminal")
     ap.add_argument('--out', default=os.path.join(here, 'Test-Protokolle'),
                     help='Protokolldatei (mit Endung) oder Verzeichnis; Standard: Test-Protokolle/ neben dem Skript')
+    ap.add_argument('--max-knoten', type=int, default=2_000_000, metavar='N', dest='max_knoten',
+                    help='nur MODUS TEST: Obergrenze der Knoten je Testlauf (Endlosschleifen-Schutz); Standard: 2000000')
     ap.add_argument('--knotentest', action='store_true', default=False,
                     help='Knotenzeilen (Kxxx ...) ins Protokoll aufnehmen; Standard: aus (BR-Zeilen, Diagnose '
                     'und Fehlermeldungen bleiben immer erhalten)')
@@ -2494,13 +2649,17 @@ def main():
                     help='Programm der Testdatei nur auf die Trommel laden (Marke #TROMMEL=, Abschnitt Trommeldatei:) und sofort mit Rueckkehrcode 0 '
                     'beenden: keine Tastenfolge, kein Programmlauf, keine Pruefung, kein Protokoll (Standard: aus)')
     ap.add_argument('--C8205Z', '--c8205z', dest='c8205z', nargs='?', const='', default=None, metavar='VERZ',
-                    help='Zusatztrommeln des C 8205Z einschalten (Standard: aus): 5k00 030 waehlt ZT k (1..4), zzz0 bbbb 601 gibt die HT-Spur bbbb auf die '
-                    'ZT-Spur zzz0 aus, zzz0 bbbb 661 liest sie zurueck. Die Trommeln liegen als zt1.txt .. zt4.txt in VERZ (Standard: Trommel/ZT/). Nur TEST')
+                    help='Zusatztrommeln des C 8205Z einschalten (Standard: aus): 5k00 030 waehlt ZT (k = 1..4: 5100 = ZT0 ... 5400 = ZT3), zzz0 bbbb 601 gibt die HT-Spur bbbb auf die '
+                    'ZT-Spur zzz0 aus, zzz0 bbbb 661 liest sie zurueck. Die Trommeln liegen als zt1.txt .. zt4.txt (ZT0 = zt1.txt) in VERZ (Standard: Trommel/ZT/). Nur TEST')
+    ap.add_argument('--LS-LESER-TYP', '--ls-leser-typ', dest='ls_leser_typ', default='303', type=ls_leser_typ_arg, metavar='303|FS751',
+                    help='Lochbandleser-Typ (beide Leser): 303 = Metallbuersten, 130 Zeichen/s (Standard), FS751 = optoelektronisch, 750 Zeichen/s. Wirkt nur in GRAFIK (Lesetempo und Leserton); im TEST ohne Wirkung')
     ap.add_argument('--zwischenablage', choices=['auto', 'tk', 'system'], default='auto', metavar='auto|tk|system',
                     help='Kopierverfahren des Fensters "SW Ausgabe" (nur mit --SW-TERMINAL): auto = zuerst Systemprogramm '
                     '(Windows: Win32-API; Linux: wl-copy, xsel, xclip; macOS: pbcopy), dann Tk; tk = nur Tk-Zwischenablage; '
                     'system = nur Systemprogramm bzw. Win32-API (Standard: auto)')
     args = ap.parse_args()
+    if args.max_knoten < 1:
+        ap.error('--max-knoten: Zahl >= 1 erwartet')
     if args.k0 and not args.k0.startswith('datei='):
         ap.error("--k0: 'datei=PFAD' erwartet (ohne --k0 wird vom Terminal gelesen; 'tastatur' entfaellt)")
     if not re.fullmatch(r'[01]{6}', args.basp):
@@ -2602,6 +2761,8 @@ def main():
                 vorab = list(t.fehler) + vorab_trommel(t)
             else:
                 vorab = list(t.fehler) + vorab_geraete(t) + vorab_trommel(t)
+            if ZT is not None:
+                vorab += t.zt_fehler       # ohne --C8205Z entfaellt auch die Formpruefung der ZT-Marken und -Zeilen
             if vorab:
                 vp('FORMALE PRUEFUNG NEGATIV - Test startet nicht, Klaerung erforderlich:')
                 for f in vorab:
@@ -2614,6 +2775,10 @@ def main():
                 tp('Trommel: unveraendert, Stand des vorigen Laufs (#TROMMEL=KEEP)')
             elif t.trommel_vor in TROMMEL_VORLAGEN:
                 tp(f'Trommel: vor dem Test mit dem Abbild "{TROMMEL_VORLAGEN[t.trommel_vor]}" belegt (#TROMMEL={t.trommel_vor})')
+            if ZT is not None and t.ztrommel_vor == 'LEER':
+                tp('Zusatztrommeln: vor dem Test geleert (#ZTROMMEL=LEER)')
+            elif ZT is not None and t.ztrommel_vor == 'KEEP':
+                tp('Zusatztrommeln: unveraendert, Stand des vorigen Laufs (#ZTROMMEL=KEEP)')
             if args.loadonly:
                 lade_nur(t, trommel)
                 tp(f'--LOADONLY: Programm aus {pfad} auf die Trommel {args.trommel} geladen; Test nicht ausgefuehrt')
@@ -2624,7 +2789,7 @@ def main():
             if SW_FENSTER is not None:
                 SW_FENSTER.oeffne()
             try:
-                r = lauf(t, graph, t2, args.out, trommel, knotentest=args.knotentest)
+                r = lauf(t, graph, t2, args.out, trommel, max_knoten=args.max_knoten, knotentest=args.knotentest)
             except KeyboardInterrupt:
                 tp('\nABBRUCH durch den Benutzer (Strg+C)')
                 rc = 8
@@ -2678,6 +2843,7 @@ def main():
                     os.makedirs(d, exist_ok=True)
                     p = os.path.join(d, 'protokoll.txt')
                 with open(p, 'w', encoding='utf-8') as fh:
+                    fh.write(f'C8205-Interpreter-Version: {VERSION}\n\n')
                     fh.write('\n'.join(r['kopf']) + '\n\n== 2. Zustaende des Knotenautomaten ==\n')
                     fh.write('\n'.join(r['zeilen']) + '\n\n')
                     fh.write(f'== Ende ==\n{r["grund"]}\nBZ={octs(m.BZ,4)} AC={octs(m.AC,11)} AR={octs(m.AR,4)} '

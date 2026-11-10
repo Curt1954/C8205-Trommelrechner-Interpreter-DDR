@@ -1,0 +1,25 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000007211 # haupt 211 l0001 ; Zelle 0001: AC := 1 (Literal l0001, wandert nach 0007)
+0002: 00000011210 # 210 l0002 ; Zelle 0002: AC := AC + 2 (Literal l0002, Programmende 0011)
+0003: 00000012210 # 210 l0003 ; Zelle 0003: AC := AC + 3 (Literal l0003, Programmende 0012)
+0004: 00000013210 # 210 l0004 ; Zelle 0004: AC := AC + 4 (Literal l0004, Programmende 0013)
+0005: 00000001164 # 164 0001 ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 00000000020 # 020 0 ; Zelle 0006: Halt
+0007: 00000000001 # l0001 dw 1
+0010: 00000000011 # dw 9 ; Zelle 0010: Fueller; kein end im Quelltext
+0011: 00000000002 # l0002 dw 2
+0012: 00000000003 # l0003 dw 3
+0013: 00000000004 # l0004 dw 4
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 AC=00000000012 US=1
+0007: 00000000001   # l0001
+0011: 00000000002   # l0002
+0012: 00000000003   # l0003
+0013: 00000000004   # l0004

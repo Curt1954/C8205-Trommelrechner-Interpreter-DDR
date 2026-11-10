@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_kette_stern.asm:6: Fehler: $CALC(kb1): Symbol "kb0" hat keinen festen Zahlenwert (equ * ist eine Adresse, die erst nach Pass 0 feststeht)
+datei-weg obj mqo test
+escape-weg

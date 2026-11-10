@@ -1,0 +1,274 @@
+      20 0000 0000                    equ 00000           
+0000: 00 0262 000                     000 eingabewortkz   ; Zelle 0000: Sprung zur Eingabe eines Wortes mit Kennzeichen (Einstieg 0262)
+      20 0000 0001                    equ 00001           
+0001: 00 0223 000                     000 druck           ; Zelle 0001: Sprung zum Druck von BZ und AC
+      20 0000 0262                    equ 00262           
+0262: 00 0040 000    eingabewortkz:   000 kz_anf          ; Eingabe eines Wortes mit Kennzeichen
+0263: 00 0040 000    eingabeprogst:   000 kz_anf          ; Eingabe eines Programmstueckes (Regie bei der Kennzeicheneingabe)
+      20 0000 0316                    equ 00316           
+0316: 00 0044 000    adresseneingabe: 000 ae_anf          ; Adresseneingabe (Offset 016 gehoert keinem zugelassenen Zeichen)
+      20 0000 0300                    equ 00300           
+0300: 0              kz_tab:          dw  0               ; Ziffer 0
+0301: 00 00000000001 tb_1:            dw  01              
+0302: 00 00000000002 tb_2:            dw  02              
+0303: 00 00000000003                  dw  03              
+0304: 00 00000000004                  dw  04              
+0305: 00 00000000005                  dw  05              
+0306: 00 00000000006                  dw  06              
+0307: 00 00000000007 tb_7:            dw  07              
+0310: 00 00000000010                  dw  010             ; Ziffer 8
+0311: 00 00000000011                  dw  011             ; Ziffer 9
+0312: 00 0265 000    tb_zr:           000 kz_neu          ; ZR (012): neues Kennzeichen
+      20 0000 0315                    equ 00315           
+0315: 00 7630 000                     000 kz_rs           ; ':' (015): Schlusszeichen, Rueckkehr zum Aufrufer
+      20 0000 0320                    equ 00320           
+0320: 0                               dw  0               ; '+' (020): nicht definiert, wirkt wie Ziffer 0
+      20 0000 0333                    equ 00333           
+0333: 00 0366 000                     000 pt_end          ; '.' (033)
+      20 0000 0361                    equ 00361           
+0361: 00 00000000017 tb_sl:           dw  017             ; '/' (061): keine Sprung-Umstellung, K1 AND 017 = 15
+      20 0000 0372                    equ 00372           
+0372: 00 7630 000                     000 kz_rs           ; BM (072): Schlusszeichen, Rueckkehr zum Aufrufer
+      20 0000 0100                    equ 00100           
+0100: 00 7717 311    gruppe:          311 td_g            ; AC := Gruppenzaehler; Vergleicher 3, falls td_g = 0
+0101: 00 0140 170                     170 raum            ; td_g = 0: 4 Ziffern gedruckt, Leerzeichen ausgeben
+0102: 00 0132 004                     004 zg              ; AC := td_g um 1 Bit nach links
+0103: 00 7777 217    schleife:        217 adr7777         ; das auszugebende Wort als Uebergabe
+0104: 00 0115 006                     006 verschieben     
+      20 0000 0105                    spa 00105           
+      00 0010 030                     dto 1               
+      00 0260 030                     dto 6               
+0107: 00 7721 520    zu_gx:           520 adr7721         
+0110: 00 77740000000 konst_t:         dw  077740000000    ; Zaehler triadendruck: 10 Einsen = 11 Ziffern
+0111: 00 7760 311                     311 td_z            
+0112: 00 7741 170                     170 td_rs           
+0113: 00 0134 004                     004 zn              ; td_z := td_z um 1 Bit nach links
+      20 0000 0114                    spa 00114           
+      00 0040 030                     dto 4               
+0115: 00 0124 006    verschieben:     006 speichern_r1    
+      20 0000 0117                    equ 00117           ; (Zelle 0116 gehoert c_inc, keine Doppelbelegung)
+0117: 00 70000000000 konst_4:         dw  070000000000    ; 3 Einsen = 4 Ziffern (Zaehler und Gruppenzaehler)
+      20 0000 0122                    equ 00122           ; (Zelle 0120 gehoert kz_sl, keine Doppelbelegung)
+      20 0000 0122                    spa 00122           
+      00 0020 030                     dto 2               
+      00 0070 030                     dto 7               
+0124: 00 7777 240    speichern_r1:    240 adr7777         
+0125: 00 0307 200                     200 tb_7            
+0126: 00 0107 000                     000 zu_gx           
+0127: 00 77000000000 konst_b:         dw  077000000000    ; 6 Einsen = 7 Ziffern (Befehlsdruck)
+      20 0000 0130                    spa 00130           
+      00 0200 030                     dto 0               
+      00 0250 030                     dto 5               
+0132: 00 7717 240    zg:              240 td_g            ; td_g := td_g um 1 Bit nach links
+0133: 00 0103 000                     000 schleife        ; naechste Ziffer
+0134: 00 7760 240    zn:              240 td_z            
+0135: 00 0100 000                     000 gruppe          ; Gruppenzaehler pruefen
+      20 0000 0137                    equ 00137           ; (Zelle 0136 gehoert c_stop, keine Doppelbelegung)
+      20 0000 0137                    spa 00137           
+      00 0230 030                     dto 3               
+      20 0000 0200                    equ 00200           
+0200: 00 7741 240    triadendruck:    240 td_rs           ; Rueckkehrbefehl sichern
+0201: 00 0110 211                     211 konst_t         ; Zaehler: 11 Ziffern
+0202: 00 7760 240                     240 td_z            
+0203: 00 7773 211                     211 adr7773         ; AC := Wort aus R1 (7773), R1 bleibt unveraendert
+0204: 00 7777 240                     240 adr7777         ; Arbeitskopie, hier wird weiter verschoben
+0205: 00 0247 000                     000 td_gem          ; weiter wie beim Befehlsdruck (ohne Drehung)
+      20 0000 0220                    equ 00220           
+0220: 00 7741 240    adressdruck:     240 td_rs           ; Rueckkehrbefehl sichern
+0221: 00 0117 211                     211 konst_4         ; Zaehler: 4 Ziffern
+0222: 00 0242 000                     000 td_dreh         ; weiter wie beim Befehlsdruck
+      20 0000 0240                    equ 00240           
+0240: 00 7741 240    befehlsdruck:    240 td_rs           ; Rueckkehrbefehl sichern
+0241: 00 0127 211                     211 konst_b         ; Zaehler: 7 Ziffern
+0242: 00 7760 240    td_dreh:         240 td_z            ; Zaehler sichern (441 loescht den AC)
+0243: 00 7640 441                     441 nullspur        ; Nullspur := 0 (loescht auch den AC)
+0244: 00 7773 211                     211 adr7773         ; AC := Wort aus R1 (7773), R1 bleibt unveraendert
+0245: 00 7644 616                     616 nz_12           ; 12 Bit zyklisch links
+0246: 00 7777 240                     240 adr7777         ; Wort in die Transportzelle
+0247: 00 0301 211    td_gem:          211 tb_1            
+0250: 00 7724 440                     440 adr7724         ; Einsen-Spur anlegen
+0251: 00 0117 211                     211 konst_4         ; Gruppenzaehler: 4 Ziffern
+0252: 00 7717 240                     240 td_g            
+0253: 00 0103 000                     000 schleife        
+      20 0000 0174                    equ 00174           
+0174: 00 0260 211    k2_vor:          211 c_a2n           ; Rueckkehrbefehl fuer den Punkt statt K2
+0175: 00 7740 240                     240 ae_rs           
+0176: 00 0300 011                     011 kz_tab          ; K2 lesen (Ziffer: weiter bei kz_a2c; Punkt: ae_end -> ae_rs = c_a2n)
+0177: 00 0337 000                     000 kz_a2c          
+      20 0000 0260                    equ 00260           
+0260: 00 0157 000    c_a2n:           000 kz_ra0          ; Befehl fuer ae_rs: RA := 0
+      20 0000 0051                    equ 00051           
+0051: 00 0300 011    kz_k2r:          011 kz_tab          ; K2 lesen
+0052: 00 0361 200                     200 tb_sl           
+0053: 00 7632 240                     240 kz_k2           
+0054: 00 7653 616                     616 nz_9            ; K2 * 01000 (9 Bit nach links)
+0055: 00 0334 210                     210 c_la            ; Adresse der K2-ten Leitadresse (LA+0 ist 0)
+0056: 00 0000 251                     251 0               ; AC := Inhalt dieser Zelle (R-Lesebefehl)
+0057: 00 7633 240                     240 kz_k2s          
+      20 0000 0060                    equ 00060           
+0060: 00 0110 211    kz_dig:          211 konst_t         ; Wort: 11 Ziffern
+0061: 00 7607 240                     240 kz_z            
+      20 0000 0062                    equ 00062           
+0062: 00 0300 211    kz_i:            211 kz_tab          ; Zahl := 0
+0063: 00 7763 240                     240 kz_a            
+      20 0000 0064                    equ 00064           
+0064: 00 0300 011    kz_dl:           011 kz_tab          ; Ziffer lesen; Punkt: Sprung ueber die Tabellenzelle nach pt_end
+0065: 00 7634 240                     240 kz_d            
+0066: 00 7763 211                     211 kz_a            
+0067: 00 7671 616                     616 nz_3            ; mal 8
+0070: 00 7634 210                     210 kz_d            
+0071: 00 7763 240                     240 kz_a            
+0072: 00 7607 311                     311 kz_z            ; Zaehler = 0 ?
+0073: 00 0166 170                     170 pt_wait         ; ja: letzte Ziffer gelesen, auf den Punkt warten (weitere Ziffern werden ignoriert)
+0074: 00 0075 004                     004 kz_zn           
+0075: 00 7607 240    kz_zn:           240 kz_z            
+0076: 00 0064 000                     000 kz_dl           
+      20 0000 0077                    equ 00077           
+0077: 00 00000000240 c_lb0:           dw  0240            ; Anfangswert des Leitbefehls
+      20 0000 0116                    equ 00116           
+0116: 00 00000001000 c_inc:           dw  01000           ; Leitbefehl + 1
+      20 0000 0120                    equ 00120           
+0120: 00 0000 060    kz_sl:           060 0               ; / : bedingter Stopp (Schalter BS)
+0121: 00 0265 000                     000 kz_neu          
+      20 0000 0136                    equ 00136           
+0136: 00 00000000020 c_stop:          dw  020             ; Stoppbefehl
+      20 0000 0140                    equ 00140           
+      00 0320 030    raum:            dz  $zr             ; Leerzeichen ausgeben
+0141: 00 0117 211                     211 konst_4         ; Gruppenzaehler neu: 4 Ziffern
+0142: 00 7717 240                     240 td_g            
+0143: 00 0103 000                     000 schleife        
+      20 0000 0210                    equ 00210           
+0210: 00 0136 211    kz_exec:         211 c_stop          
+0211: 00 7603 240                     240 XW1             ; Stopp hinter dem Befehl
+0212: 00 0312 211                     211 tb_zr           
+0213: 00 7604 240                     240 XW2             ; danach (R): neues Kennzeichen
+0214: 00 7763 211                     211 kz_a            
+0215: 00 7602 240                     240 XW              
+0216: 00 0300 211                     211 kz_tab          ; AC := 0
+0217: 00 7602 000                     000 XW              
+      20 0000 0366                    equ 00366           
+0366: 00 7631 211    pt_end:          211 kz_k1           ; Ende der Ziffern (Punkt, auch nach der letzten Ziffer)
+0367: 00 0302 330                     330 tb_2            
+0370: 00 0356 170                     170 ae_end          ; K1 = 2: Adresse
+0371: 00 0321 000                     000 kz_wend         
+      20 0000 0265                    equ 00265           
+0265: 00 0300 011    kz_neu:          011 kz_tab          ; K1 lesen (ZR u.a.: Sprung ueber die Tabellenzelle)
+0266: 00 0361 200                     200 tb_sl           ; AND 017
+0267: 00 7631 240                     240 kz_k1           
+0270: 00 0301 330                     330 tb_1            
+0271: 00 0162 140                     140 kz_k2i          ; K1 = 0 oder 1 (vorher Wort und Leitadresse loeschen)
+0272: 00 0302 330                     330 tb_2            
+0273: 00 0336 170                     170 kz_a2           ; K1 = 2
+0274: 00 0361 330                     330 tb_sl           
+0275: 00 0120 170                     170 kz_sl           ; K1 = /
+0276: 00 0265 000                     000 kz_neu          ; sonst ohne Wirkung
+      20 0000 0277                    equ 00277           
+0277: 00 00000003000 dr_drei:         dw  03000           ; Druck BZ und AC: 3 Adresseinheiten
+      20 0000 0313                    equ 00313           
+0313: 00 0373 000    c_jg:            000 kz_gesp         ; Sprung nach kz_gesp
+      20 0000 0317                    equ 00317           
+0317: 00 77400000000 c_az:            dw  077400000000    ; 7 Einsen = 8 Ziffern
+      20 0000 0321                    equ 00321           
+0321: 00 7763 211    kz_wend:         211 kz_a            
+0322: 00 7633 210                     210 kz_k2s          ; plus Leitadresse (K2 = 0: plus 0)
+0323: 00 7763 240                     240 kz_a            
+0324: 00 7631 211                     211 kz_k1           
+0325: 00 0301 330                     330 tb_1            
+0326: 00 0210 170                     170 kz_exec         ; K1 = 1: Befehl ausfuehren
+      20 0000 0327                    equ 00327           
+0327: 00 0313 211    kz_sp:           211 c_jg            ; K1 = 0: ueber den Leitbefehl speichern
+0330: 00 7601 240                     240 LB1             
+0331: 00 7763 211                     211 kz_a            
+0332: 00 7600 000                     000 LB              
+      20 0000 0334                    equ 00334           
+0334: 00 00007610000 c_la:            dw  07610000        ; Adresse LA (Leitadresse 0), in die Adressstelle geschoben
+      20 0000 0336                    equ 00336           
+0336: 00 0174 000    kz_a2:           000 k2_vor          ; K1 = 2: K2 lesen (Vorbereitung fuer '2 .', siehe k2_vor)
+0337: 00 0361 200    kz_a2c:          200 tb_sl           
+0340: 00 7632 240                     240 kz_k2           
+0341: 00 0316 025                     025 adresseneingabe ; Adresse nach AC
+0342: 00 7763 240                     240 kz_a            
+0343: 00 7632 211                     211 kz_k2           
+0344: 00 0300 330                     330 kz_tab          ; K2 = 0 ?
+0345: 00 0362 170                     170 kz_rel          
+      20 0000 0346                    equ 00346           
+0346: 00 0151 000                     000 kz_ck           ; K2 = 1 (Hauptleitadresse) gesondert pruefen (AC = K2)
+      20 0000 0347                    equ 00347           
+0347: 00 0377 210                     210 c_xs            ; Befehl 240 LA+K2
+0350: 00 7602 240                     240 XW              
+0351: 00 0312 211                     211 tb_zr           ; danach neues Kennzeichen
+0352: 00 7603 240                     240 XW1             
+0353: 00 7763 211                     211 kz_a            
+0354: 00 7602 000                     000 XW              
+      20 0000 0356                    equ 00356           
+0356: 00 7763 211    ae_end:          211 kz_a            ; Adresse in t3 ... t10
+0357: 00 7653 616                     616 nz_9            
+0360: 00 7740 000                     000 ae_rs           
+      20 0000 0362                    equ 00362           
+0362: 00 7763 211    kz_rel:          211 kz_a            ; K2 = 0: Relativadresse := eingegebene Adresse
+0363: 00 7742 240                     240 RA              
+0364: 00 0144 000                     000 lb_neu          ; Leitbefehl neu bauen
+      20 0000 0044                    equ 00044           
+0044: 00 7740 240    ae_anf:          240 ae_rs           
+0045: 00 7640 441                     441 nullspur        ; Nullspur := 0 (loescht auch den AC)
+0046: 00 0317 211                     211 c_az            ; 8 Ziffern
+0047: 00 7607 240                     240 kz_z            
+0050: 00 0170 000                     000 ae_k            ; K1 := 2 setzen (auch bei Aufruf aus einem Programm)
+      20 0000 0373                    equ 00373           
+0373: 00 7742 211    kz_gesp:         211 RA              ; Relativadresse + 1000 (naechste Zelle)
+0374: 00 0116 210                     210 c_inc           
+0375: 00 7742 240                     240 RA              
+0376: 00 0144 000                     000 lb_neu          ; Leitbefehl neu bauen
+      20 0000 0040                    equ 00040           
+0040: 00 7630 240    kz_anf:          240 kz_rs           ; Rueckkehrbefehl zum Aufrufer sichern (Eingabe Wort mit Kennzeichen und Programmstueck)
+0041: 00 7640 441                     441 nullspur        ; Nullspur := 0 (loescht auch den AC)
+0042: 00 7610 240                     240 LA              ; Leitadresse 0 := 0
+0043: 00 0144 000                     000 lb_neu          ; Leitbefehl bauen
+      20 0000 0144                    equ 00144           
+0144: 00 7611 211    lb_neu:          211 LA+1            ; Hauptleitadresse
+0145: 00 7742 210                     210 RA              ; plus Relativadresse
+0146: 00 0077 210                     210 c_lb0           ; plus 240 = Abspeicherbefehl (Leitbefehl)
+0147: 00 7600 240                     240 LB              
+0150: 00 0265 000                     000 kz_neu          ; K1 lesen
+0151: 00 0301 330    kz_ck:           330 tb_1            ; AC = K2: K2 = 1 ?
+0152: 00 0155 170                     170 kz_hla          ; ja: neue Hauptleitadresse
+0153: 00 7653 616                     616 nz_9            ; K2 * 01000 (9 Bit nach links)
+0154: 00 0347 000                     000 kz_a2b          ; Leitadresse K2 speichern
+0155: 00 7763 211    kz_hla:          211 kz_a            ; K2 = 1: eingegebene Adresse
+0156: 00 7611 240                     240 LA+1            ; ist die neue Hauptleitadresse
+0157: 00 0300 211    kz_ra0:          211 kz_tab          ; AC := 0 (auch Einsprung bei '2 .': RA := 0)
+0160: 00 7742 240                     240 RA              ; Relativadresse := 0
+0161: 00 0144 000                     000 lb_neu          ; Leitbefehl neu bauen
+0162: 00 0300 211    kz_k2i:          211 kz_tab          ; AC := 0: bei '0 .' oder '1 .' (Punkt statt K2) ist das Wort 0
+0163: 00 7763 240                     240 kz_a            
+0164: 00 7633 240                     240 kz_k2s          
+0165: 00 0051 000                     000 kz_k2r          ; K2 lesen
+0166: 00 0300 011    pt_wait:         011 kz_tab          ; alle Ziffern gelesen: weitere Ziffern ueberlesen, Punkt beendet (Sprung nach pt_end)
+0167: 00 0166 000                     000 pt_wait         
+0170: 00 0302 211    ae_k:            211 tb_2            ; K1 := 2: der Punkt beendet die Adresseneingabe (pt_end -> ae_end)
+0171: 00 7631 240                     240 kz_k1           
+0172: 00 0062 000                     000 kz_i            
+      20 0000 0377                    equ 00377           
+0377: 00 00007610240 c_xs:            dw  07610240        ; Befehl 240 LA
+      20 0000 0223                    equ 00223           
+0223: 00 0277 220    druck:           220 dr_drei         ; AC := AC - 3 Adresseinheiten = Befehl 0000 bbbb 000
+0224: 00 7743 240                     240 dr_rs           ; als Fortsetzungsbefehl merken
+0225: 00 7773 240                     240 adr7773         ; und als BZ-Wort in die Uebergabezelle R1 des Triadendrucks
+0226: 00 7777 211                     211 adr7777         ; AC := gerettete AC-Inhalt (Zelle 7777)
+0227: 00 7744 240                     240 dr_ac           ; sichern (7777 wird vom Triadendruck benutzt)
+0230: 00 4500 030                     030 04500           ; Anwahl Kanal K2 (Schreibwerk)
+      00 2720 030                     dz  $wrzl           ; neue Zeile
+      00 1170 030                     dz  $inkb           ; Kleinbuchstabenlage (Ziffern)
+0233: 00 0200 025                     025 triadendruck    ; BZ-Wort drucken
+      00 0320 030                     dz  $zr             ; Zwischenraum
+0235: 00 7744 211                     211 dr_ac           
+0236: 00 7773 240                     240 adr7773         ; AC als Uebergabe in R1
+0237: 00 0206 000                     000 dr_c            ; weiter beim zweiten Stueck
+      20 0000 0206                    equ 00206           
+0206: 00 0200 025    dr_c:            025 triadendruck    ; AC drucken
+0207: 00 0254 000                     000 dr_ende         ; weiter beim dritten Stueck
+      20 0000 0254                    equ 00254           
+      00 2720 030    dr_ende:         dz  $wrzl           ; Zeilenende
+0255: 00 7744 211                     211 dr_ac           ; AC := gerettete AC-Inhalt: das Programm setzt mit seinem AC fort
+0256: 00 0000 060                     060 0               ; bedingter Stopp (bei eingerastetem BS)
+0257: 00 7743 000                     000 dr_rs           ; Fortsetzung: Zelle dr_rs wird als Befehl 000 b ausgefuehrt

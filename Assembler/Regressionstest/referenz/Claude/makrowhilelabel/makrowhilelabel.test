@@ -1,0 +1,103 @@
+Trommeldatei:
+#DOK-0001 Test lokale Labels und $LOCAL im Rumpf einer $WHILE-Schleife (je Durchlauf ein eigenes Label, $LOCAL erneut vereinbart)
+#PROT STUFE=2
+0000: 00000057000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # schlDKR_0: dw 1 ; Label des Durchlaufs
+0002: 00000001000 # 000 schlDKR_0 ; Sprung auf das Label des eigenen Durchlaufs
+0003: 00000000001 # schlDKR_1: dw 1 ; Label des Durchlaufs
+0004: 00000003000 # 000 schlDKR_1 ; Sprung auf das Label des eigenen Durchlaufs
+0005: 00000000001 # schlDKR_2: dw 1 ; Label des Durchlaufs
+0006: 00000005000 # 000 schlDKR_2 ; Sprung auf das Label des eigenen Durchlaufs
+0007: 00000010000 # 000 endeDKR ; Sprung auf ein Label hinter der Schleife
+0010: 00000000077 # endeDKR: dw 077 ; Label ausserhalb des Rumpfes (wie bisher)
+0011: 00000013000 # 000 vorGNU_0 ; Sprung vorwaerts im selben Durchlauf
+0012: 00000000001 # dw 1 ; uebersprungenes Wort
+0013: 00000000002 # vorGNU_0: dw 2 ; Ziel des Sprungs
+0014: 00000016000 # 000 vorGNU_1 ; Sprung vorwaerts im selben Durchlauf
+0015: 00000000001 # dw 1 ; uebersprungenes Wort
+0016: 00000000002 # vorGNU_1: dw 2 ; Ziel des Sprungs
+0017: 00000000000 # innJQX_0_0: dw 0 ; Zehner a, Einer b
+0020: 00000017000 # 000 innJQX_0_0 ; Sprung auf das Label des inneren Durchlaufs
+0021: 00000000001 # innJQX_0_1: dw 1 ; Zehner a, Einer b
+0022: 00000021000 # 000 innJQX_0_1 ; Sprung auf das Label des inneren Durchlaufs
+0023: 00000000077 # ausJQX_0: dw 077 ; Label im Rumpf der aeusseren Schleife
+0024: 00000023000 # 000 ausJQX_0 ; Sprung auf das Label des aeusseren Durchlaufs
+0025: 00000000012 # innJQX_1_0: dw 10 ; Zehner a, Einer b
+0026: 00000025000 # 000 innJQX_1_0 ; Sprung auf das Label des inneren Durchlaufs
+0027: 00000000013 # innJQX_1_1: dw 11 ; Zehner a, Einer b
+0030: 00000027000 # 000 innJQX_1_1 ; Sprung auf das Label des inneren Durchlaufs
+0031: 00000000077 # ausJQX_1: dw 077 ; Label im Rumpf der aeusseren Schleife
+0032: 00000031000 # 000 ausJQX_1 ; Sprung auf das Label des aeusseren Durchlaufs
+0033: 00000000000 # rMTA_0_0: dw 0 ; Zaehler von $REPT
+0034: 00000033000 # 000 rMTA_0_0 ; Sprung auf das Label dieser Wiederholung
+0035: 00000000001 # rMTA_1_0: dw 1 ; Zaehler von $REPT
+0036: 00000035000 # 000 rMTA_1_0 ; Sprung auf das Label dieser Wiederholung
+0037: 00000000000 # rMTA_0_1: dw 0 ; Zaehler von $REPT
+0040: 00000037000 # 000 rMTA_0_1 ; Sprung auf das Label dieser Wiederholung
+0041: 00000000001 # rMTA_1_1: dw 1 ; Zaehler von $REPT
+0042: 00000041000 # 000 rMTA_1_1 ; Sprung auf das Label dieser Wiederholung
+0043: 00000000005 # tagPWD_0: dw 5 ; Label des Durchlaufs
+0044: 00000043000 # 000 tagPWD_0 ; Sprung auf das uebergebene Label
+0045: 00000000005 # tagPWD_1: dw 5 ; Label des Durchlaufs
+0046: 00000045000 # 000 tagPWD_1 ; Sprung auf das uebergebene Label
+0047: 00000000322 # dw 210 ; t, fe(0), fe(1) hintereinander
+0050: 00000000323 # dw 211 ; t, fe(0), fe(1) hintereinander
+0051: 00000000324 # dw 212 ; t, fe(0), fe(1) hintereinander
+0052: 00000000002 # dw 2 ; Anzahl der Elemente
+0053: 00000000003 # dw 3 ; Anzahl der Elemente
+0054: 00000000004 # dw 4 ; Anzahl der Elemente
+0055: 00000000000 # dw 0 ; nach der Vereinbarung immer 0
+0056: 00000000000 # dw 0 ; nach der Vereinbarung immer 0
+0057: 00000001164 # haupt: 164 0001 ; Zelle 0057: Diagnoseausgabe (nur im Test)
+0060: 00000000020 # 020 0 ; Zelle 0060: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0061 US=1
+0000: 00000057000   # Sprung auf haupt
+0001: 00000000001   # WA schl_0
+0002: 00000001000   # WA Sprung auf 0001
+0003: 00000000001   # WA schl_1
+0004: 00000003000   # WA Sprung auf 0003
+0005: 00000000001   # WA schl_2
+0006: 00000005000   # WA Sprung auf 0005
+0007: 00000010000   # WA Sprung auf ende = 0010
+0010: 00000000077   # WA ende
+0011: 00000013000   # WB Sprung auf vor_0 = 0013
+0012: 00000000001   # WB uebersprungenes Wort
+0013: 00000000002   # WB vor_0
+0014: 00000016000   # WB Sprung auf vor_1 = 0016
+0015: 00000000001   # WB uebersprungenes Wort
+0016: 00000000002   # WB vor_1
+0017: 00000000000   # WC a=0 b=0 inn_0_0
+0020: 00000017000   # WC Sprung auf 0017
+0021: 00000000001   # WC a=0 b=1 inn_0_1
+0022: 00000021000   # WC Sprung auf 0021
+0023: 00000000077   # WC aus_0
+0024: 00000023000   # WC Sprung auf 0023
+0025: 00000000012   # WC a=1 b=0 inn_1_0 (10 dezimal)
+0026: 00000025000   # WC Sprung auf 0025
+0027: 00000000013   # WC a=1 b=1 inn_1_1 (11 dezimal)
+0030: 00000027000   # WC Sprung auf 0027
+0031: 00000000077   # WC aus_1
+0032: 00000031000   # WC Sprung auf 0031
+0033: 00000000000   # WD i=0 Z1=0
+0034: 00000033000   # WD Sprung auf 0033
+0035: 00000000001   # WD i=0 Z1=1
+0036: 00000035000   # WD Sprung auf 0035
+0037: 00000000000   # WD i=1 Z1=0
+0040: 00000037000   # WD Sprung auf 0037
+0041: 00000000001   # WD i=1 Z1=1
+0042: 00000041000   # WD Sprung auf 0041
+0043: 00000000005   # WE tag_0
+0044: 00000043000   # WE Sprung auf 0043 (Label als Parameter)
+0045: 00000000005   # WE tag_1
+0046: 00000045000   # WE Sprung auf 0045 (Label als Parameter)
+0047: 00000000322   # WF Durchlauf 0: 210 dezimal
+0050: 00000000323   # WF Durchlauf 1: 211 dezimal
+0051: 00000000324   # WF Durchlauf 2: 212 dezimal
+0052: 00000000002   # WG Anzahl 2
+0053: 00000000003   # WG Anzahl 3
+0054: 00000000004   # WG Anzahl 4
+0055: 00000000000   # WH Durchlauf 0
+0056: 00000000000   # WH Durchlauf 1 (Elemente auf 0 gesetzt)

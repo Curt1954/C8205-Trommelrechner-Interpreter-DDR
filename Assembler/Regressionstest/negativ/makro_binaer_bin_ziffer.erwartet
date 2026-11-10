@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_bin_ziffer.asm:6: Fehler: $CALC(0b102): ungültige Binärzahl (nach 0b folgen nur die Ziffern 0 und 1)
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_zellen_db_operand.asm:6: Fehler: $CALC(zellen(tab)): Symbol "tab": db: Operand "3+1" ist keine gültige Zahl (Oktalzahl mit führender 0 oder Dezimalzahl)
+datei-weg obj mqo test
+escape-weg

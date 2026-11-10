@@ -1,0 +1,21 @@
+rc 0
+anzahl-stderr 4 Hinweis: Makro STAND (
+stderr-reihe makro_dump.asm:17): $DUMP
+stderr-reihe zahl = 5  (lokal)
+stderr-reihe i = 3  (lokal)
+stderr-reihe zahl = 12  (global, verdeckt)
+stderr-reihe q(4) = 0 0 9 0  (global)
+stderr-reihe t = "abc"  (global, Text)
+stderr-reihe makro_dump.asm:17): $DUMP
+stderr-reihe q(2) = 9  (global)
+stderr-reihe x = <nicht definiert>
+stderr-reihe makro_dump.asm:17): zahl=5 i=3 q2=9
+stderr-reihe makro_dump.asm:17): $DUMP
+stderr-reihe i = 3  (lokal)
+stderr-reihe q(2) = 9  (global)
+nicht-stderr Kommentar
+nicht-stderr Warnung
+nicht-stderr Fehler
+stdout 0000: 00 00000000005  dw 5
+datei-da obj mqo test
+escape-weg

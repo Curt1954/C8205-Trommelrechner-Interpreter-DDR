@@ -1,0 +1,4 @@
+rc 16
+stderr makro_if_vergleichszeichen.asm:7: Fehler: E4 Unbekanntes Vergleichszeichen "~"
+datei-weg obj mqo test
+escape-weg

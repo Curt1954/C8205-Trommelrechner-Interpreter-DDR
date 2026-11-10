@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_zellen_unbekannt.asm:6: Fehler: $CALC(zellen(nix)): Symbol "nix": nicht im Quelltext vorhanden
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,229 @@
+0000: 01 0005 000               000    haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0              dif1:      dw     0            ; Zelle 0001: R1 - apc nach dem Aufruf (0, wenn R1 unveraendert)
+0002: 0              dif3:      dw     0            ; Zelle 0002: R3 - 0177 nach dem Aufruf (0, wenn R3 unveraendert)
+0003: 0              fehlart:   dw     0            ; Zelle 0003: Fehlerart (0 kein Fehler, 2 zu lang), vom Fehlerausgang gesetzt
+0004: 01 400000      apc:       da     000000000400 ; Zelle 0004: Adresse des Spurpuffers Programmcode (Adressfeld)
+0005: 00 4600 030    haupt      030    04600        ; 4600 oder K1 oder LSL1 oder LSS1
+0006: 01 0223 211               211    l0001        ; AC := 1
+0007: 00 7775 240               240    kbgb         ; KBGB := 1 (GB); der Lauf darf es nicht aendern
+0010: 01 0004 211               211    apc          ; AC := Adresse des Spurpuffers
+0011: 00 7773 240               240    r1           ; R1 := Spurpuffer Programmcode
+0012: 00 7776 241               241    r2           ; R2 := 0 (Trommel 0), AC := 0
+0013: 01 0224 211               211    l0002        ; AC := 127
+0014: 00 7774 240               240    r3           ; R3 := Spur 127 der Trommel 0 (die zweite Spur liegt dann auf Trommel 1, Spur 0)
+0015: 01 0030 025               025    hschl        ; UP hschl: Streifen lesen, auf die ZT schreiben, R2 := Sektoranzahl
+0016: 00 7773 211               211    r1           ; AC := R1
+0017: 01 0004 220               220    apc          ; minus Soll: 0, wenn R1 unveraendert
+0020: 01 0001 240               240    dif1         ; dif1 := Abweichung von R1
+0021: 00 7774 211               211    r3           ; AC := R3
+0022: 01 0224 220               220    l0002        ; minus Soll: 0, wenn R3 unveraendert
+0023: 01 0002 240               240    dif3         ; dif3 := Abweichung von R3
+0024: 01 0000 020               020    0            ; Halt (normales Ende)
+0025: 01 0225 211    fe_lang    211    l0003        ; Fehlerausgang zu lang: AC := 2
+0026: 01 0003 240               240    fehlart      ; fehlart := 2
+0027: 01 0000 020               020    0            ; Halt (Fehler zu lang)
+0030: 01 0126 240    hschl      240    ML0001GNU    ; Rueckkehrwort sichern
+0031: 00 7773 211               211    ML0050GNU    ; AC := R1 (Adresse des Spurpuffers)
+0032: 01 0133 240               240    ML0030GNU    ; Adresse des Spurpuffers merken (R1 wird je Eingabe veraendert)
+0033: 00 7775 211               211    ML0053GNU    ; AC := KBGB
+0034: 01 0134 240               240    ML0031GNU    ; KBGB merken (der Streifen fuehrt KBGB nach, am Ende wird zurueckgestellt)
+0035: 00 7776 211               211    ML0051GNU    ; AC := R2 (Trommelnummer d)
+0036: 01 7645 644               644    07645        ; 7 mal Linksverschiebung (Operand nach Festlegung 026)
+0037: 00 7774 210               210    ML0052GNU    ; plus R3 (Spurnummer s)
+0040: 01 0127 240               240    ML0002GNU    ; p := 128 * d + s (laufende Zielspur)
+0041: 01 0130 241               241    ML0003GNU    ; Sektorzaehler := 0, AC := 0
+0042: 01 0131 240               240    ML0004GNU    ; Ende-Merker := 0 (Streifen laeuft noch)
+0043: 01 0133 211    ML0005GNU  211    ML0030GNU    ; neue Spur im Puffer: AC := Adresse des Spurpuffers
+0044: 01 0132 240               240    ML0006GNU    ; Zeiger := erste Pufferstelle
+0045: 01 0226 210               210    l0004        ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen := 0)
+0046: 01 0047 240               240    ML0007GNU    ; Befehl 441 <Spurpuffer> auf die naechste Zelle
+0047: 20 0050        ML0007GNU: db     1            ; Laufzeit: 441 <Spurpuffer>, Spurpuffer := 0, AC := 0
+0050: 01 0132 211    ML0008GNU  211    ML0006GNU    ; naechste Eingabe: AC := Zeiger auf die Pufferstelle
+0051: 00 7773 240               240    ML0050GNU    ; R1 := Pufferstelle (2 Zellen fuer diese Eingabe)
+0052: 01 0135 025               025    eingabe      ; UP TYP10EINGABE: liest eine Eingabe, legt Wort 1 und Wort 2 ab; bei / Sprung nach ML0009% (Streifenende)
+0053: 01 0130 211               211    ML0003GNU    ; AC := Sektorzaehler
+0054: 01 0225 210               210    l0003        ; plus 2 (eine Eingabe = 2 Sektoren)
+0055: 01 0130 240               240    ML0003GNU    ; Sektorzaehler := Zahl der Sektoren
+0056: 01 0227 220               220    l0005        ; minus 4096
+0057: 01 0025 050               050    fe_lang      ; >= 0: mehr als 4095 Sektoren -> Fehlerausgang des Aufrufers
+0060: 01 0132 211               211    ML0006GNU    ; AC := Zeiger
+0061: 01 0230 210               210    l0006        ; plus zwei Adresseneinheiten (2 Zellen)
+0062: 01 0132 240               240    ML0006GNU    ; Zeiger := naechste Pufferstelle
+0063: 01 0133 220               220    ML0030GNU    ; minus Adresse des Spurpuffers
+0064: 01 0231 330               330    l0007        ; Vergleich mit 32 Zellen (keine Operation)
+0065: 01 0075 170               170    ML0015GNU    ; Puffer voll: Spur schreiben
+0066: 01 0050 000               000    ML0008GNU    ; naechste Eingabe
+0067: 01 0223 221    hs_ende    221    l0001        ; Streifenende (Sprung aus TYP10EINGABE), Marke hs_ + dritter Parameter: AC := -1
+0070: 01 0131 240               240    ML0004GNU    ; Ende-Merker := -1
+0071: 01 0132 211               211    ML0006GNU    ; AC := Zeiger
+0072: 01 0133 220               220    ML0030GNU    ; minus Adresse des Spurpuffers
+0073: 01 0232 330               330    l0008        ; Vergleich mit 0 (keine Operation)
+0074: 01 0120 170               170    ML0020GNU    ; Puffer leer: keine Spur mehr zu schreiben
+0075: 01 0127 211    ML0015GNU  211    ML0002GNU    ; Spur schreiben: AC := p
+0076: 01 0233 200               200    l0009        ; nur die Trommelnummer (Bit 7 und 8 von p)
+0077: 01 7670 644               644    07670        ; 8 mal Linksverschiebung (Operand nach Festlegung 026)
+0100: 01 0234 210               210    l0010        ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+0101: 01 0102 240               240    ML0016GNU    ; Anwahlbefehl auf die naechste Zelle
+0102: 20 0103        ML0016GNU: db     1            ; Laufzeit: 5k00 030, ZT d anwaehlen (K1 bleibt angewaehlt)
+0103: 01 0127 211               211    ML0002GNU    ; AC := p
+0104: 01 0224 200               200    l0002        ; nur die Spur s (Bit 0 bis 6 von p)
+0105: 01 7656 644               644    07656        ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0106: 01 0133 210               210    ML0030GNU    ; plus Adresse des Spurpuffers
+0107: 01 0235 210               210    l0011        ; plus Operationscode 601 (Ausgabe HT -> ZT)
+0110: 01 0111 240               240    ML0017GNU    ; Ausgabebefehl auf die naechste Zelle
+0111: 20 0112        ML0017GNU: db     1            ; Laufzeit: zzz0 bbbb 601, Spurpuffer auf Spur s der gewaehlten ZT
+0112: 01 0127 211               211    ML0002GNU    ; AC := p
+0113: 01 0223 210               210    l0001        ; plus 1
+0114: 01 0127 240               240    ML0002GNU    ; p := naechste Zielspur (127 -> Spur 0 der naechsten Trommel)
+0115: 01 0131 211               211    ML0004GNU    ; AC := Ende-Merker
+0116: 01 0120 040               040    ML0020GNU    ; < 0: letzte Spur geschrieben, fertig
+0117: 01 0043 000               000    ML0005GNU    ; sonst neue Spur im Puffer
+0120: 01 0130 211    ML0020GNU  211    ML0003GNU    ; fertig: AC := Sektoranzahl
+0121: 00 7776 240               240    ML0051GNU    ; R2 := Sektoranzahl
+0122: 01 0133 211               211    ML0030GNU    ; AC := Adresse des Spurpuffers
+0123: 00 7773 240               240    ML0050GNU    ; R1 := urspruenglicher Wert
+0124: 01 0134 211               211    ML0031GNU    ; AC := KBGB am Anfang
+0125: 00 7775 240               240    ML0053GNU    ; KBGB zurueckgestellt
+0126: 20 0127        ML0001GNU: db     1            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0127: 20 0130        ML0002GNU: db     1            ; Arbeitszelle p: laufende Zielspur (128 * Trommel + Spur)
+0130: 20 0131        ML0003GNU: db     1            ; Arbeitszelle: Sektorzaehler (2 je Eingabe)
+0131: 20 0132        ML0004GNU: db     1            ; Arbeitszelle: Ende-Merker (0 = weiter, -1 = / gelesen)
+0132: 20 0133        ML0006GNU: db     1            ; Arbeitszelle: Zeiger auf die naechste Eingabestelle im Spurpuffer (Adressfeld)
+0133: 20 0134        ML0030GNU: db     1            ; Arbeitszelle: Adresse des Spurpuffers (R1 am Anfang)
+0134: 20 0135        ML0031GNU: db     1            ; Arbeitszelle: KBGB am Anfang
+0135: 01 0215 240    eingabe    240    ML0001SZG    ; Rueckkehrwort sichern
+0136: 01 0313 241               241    ML0013SZG    ; Wort 1 := 0, AC := 0
+0137: 01 0314 241               241    ML0014SZG    ; Wort 2 := 0
+0140: 01 0225 211               211    l0003        ; zwei Kennzeichen sind noch zu lesen
+0141: 01 0317 240               240    ML0017SZG    ; zaehler := 2
+0142: 01 0300 011    ML0003SZG  011    ML0012SZG    ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+0143: 01 0147 040               040    ML0004SZG    ; z0 gesetzt: Ziffer oder +
+0144: 01 0361 330               330    ML0022SZG    ; Vergleich mit der Tabellenzelle 61 (/), keine Operation
+0145: 01 0067 170               170    hs_ende      ; gleich: Streifenende, Sprung zum Ausgang des Aufrufers
+0146: 01 0142 000               000    ML0003SZG    ; sonst: Zeichen ignorieren, weiterlesen
+0147: 01 0236 200    ML0004SZG  200    l0012        ; AC := Code des Zeichens (6 Bit)
+0150: 01 0334 240               240    ML0016SZG    ; code := Code
+0151: 01 0317 211               211    ML0017SZG    ; AC := noch zu lesende Kennzeichen
+0152: 01 0232 330               330    l0008        ; Vergleich mit 0 (keine Operation)
+0153: 01 0163 170               170    ML0005SZG    ; 0: Ziffernteil
+0154: 01 0223 220               220    l0001        ; AC := zaehler - 1
+0155: 01 0317 240               240    ML0017SZG    ; zaehler := zaehler - 1
+0156: 01 0314 211               211    ML0014SZG    ; AC := Wort 2 bisher
+0157: 01 7662 644               644    07662        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0160: 01 0334 210               210    ML0016SZG    ; plus Code des neuen Kennzeichens
+0161: 01 0314 240               240    ML0014SZG    ; Wort 2 := neues Wort 2
+0162: 01 0142 000               000    ML0003SZG    ; naechstes Zeichen
+0163: 01 0334 211    ML0005SZG  211    ML0016SZG    ; Ziffernteil: AC := Code
+0164: 01 0237 200               200    l0013        ; Bits ausser den drei unteren: 0 nur bei Oktalziffern 0 bis 7
+0165: 01 0223 220               220    l0001        ; AC := AC - 1 (negativ, wenn Oktalziffer)
+0166: 01 0142 050               050    ML0003SZG    ; AC >= 0: 8, 9 oder +: ignorieren
+0167: 01 0313 211               211    ML0013SZG    ; AC := Wort 1 bisher
+0170: 01 7671 644               644    07671        ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0171: 01 0334 210               210    ML0016SZG    ; plus Code der neuen Ziffer
+0172: 01 0313 240               240    ML0013SZG    ; Wort 1 := neues Wort 1
+0173: 01 0142 000               000    ML0003SZG    ; naechstes Zeichen
+0174: 01 0317 211    ML0006SZG  211    ML0017SZG    ; Ende (. oder :): AC := noch zu lesende Kennzeichen
+0175: 01 0223 330               330    l0001        ; Vergleich mit 1 (keine Operation)
+0176: 01 0200 170               170    ML0007SZG    ; 1: nur ein Kennzeichen gelesen, es gehoert nach Kennzeichen 1
+0177: 01 0203 000               000    ML0008SZG    ; sonst: Wort 2 ist richtig (0 oder 2 Kennzeichen; bei 2 ist Wort 2 = 0)
+0200: 01 0314 211    ML0007SZG  211    ML0014SZG    ; AC := Wort 2 (ein Kennzeichen)
+0201: 01 7662 644               644    07662        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0202: 01 0314 240               240    ML0014SZG    ; Wort 2 := Kennzeichen 1 und 0
+0203: 00 7773 211    ML0008SZG  211    ML0050SZG    ; AC := R1 (Adresse des Bereichs)
+0204: 01 0240 210               210    l0014        ; plus Operationscode 240: Befehl 240 <Wort 1>
+0205: 01 0207 240               240    ML0009SZG    ; Speicherbefehl auf die naechste Zelle
+0206: 01 0313 211               211    ML0013SZG    ; AC := Wort 1
+0207: 20 0210        ML0009SZG: db     1            ; Laufzeit: 240 <Bereich>, Wort 1 in die erste Zelle
+0210: 00 7773 211               211    ML0050SZG    ; AC := R1
+0211: 01 0241 210               210    l0015        ; plus eine Adresseneinheit und 240: Befehl 240 <Bereich + 1>
+0212: 01 0214 240               240    ML0010SZG    ; Speicherbefehl auf die naechste Zelle
+0213: 01 0314 211               211    ML0014SZG    ; AC := Wort 2 (nichtnegativ)
+0214: 20 0215        ML0010SZG: db     1            ; Laufzeit: 240 <Bereich + 1>, Wort 2 in die zweite Zelle
+0215: 20 0216        ML0001SZG: db     1            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0216: 01 0223 211    ML0011SZG  211    l0001        ; Um. GB: AC := 1
+0217: 00 7775 240               240    ML0051SZG    ; KBGB := 1
+0220: 01 0142 000               000    ML0003SZG    ; weiterlesen
+0221: 00 7775 241    ML0018SZG  241    ML0051SZG    ; Um. KB: KBGB := 0
+0222: 01 0142 000               000    ML0003SZG    ; weiterlesen
+0223: 00 00000000001 l0001      dw     1            
+0224: 00 00000000177 l0002      dw     000000000177 
+0225: 00 00000000002 l0003      dw     2            
+0226: 00 00000000441 l0004      dw     000000000441 
+0227: 00 00000010000 l0005      dw     000000010000 
+0230: 00 00000002000 l0006      dw     000000002000 
+0231: 00 00000040000 l0007      dw     000000040000 
+0232: 0              l0008      dw     000000000000 
+0233: 00 00000000600 l0009      dw     000000000600 
+0234: 00 00005100030 l0010      dw     000005100030 
+0235: 00 00000000601 l0011      dw     000000000601 
+0236: 00 00000000077 l0012      dw     000000000077 
+0237: 00 00000000070 l0013      dw     000000000070 
+0240: 00 00000000240 l0014      dw     000000000240 
+0241: 00 00000001240 l0015      dw     000000001240 
+      20 0000 0300              equ100 00300        ; ML0012% muss durch 0100 teilbar sein
+0300: 00 40000000000            dw     040000000000 ; 00: 0: gueltig, z0 gesetzt, Code 00
+0301: 00 40000000001            dw     040000000001 ; 01: 1: gueltig, z0 gesetzt, Code 01
+0302: 00 40000000002            dw     040000000002 ; 02: 2: gueltig, z0 gesetzt, Code 02
+0303: 00 40000000003            dw     040000000003 ; 03: 3: gueltig, z0 gesetzt, Code 03
+0304: 00 40000000004            dw     040000000004 ; 04: 4: gueltig, z0 gesetzt, Code 04
+0305: 00 40000000005            dw     040000000005 ; 05: 5: gueltig, z0 gesetzt, Code 05
+0306: 00 40000000006            dw     040000000006 ; 06: 6: gueltig, z0 gesetzt, Code 06
+0307: 00 40000000007            dw     040000000007 ; 07: 7: gueltig, z0 gesetzt, Code 07
+0310: 00 40000000010            dw     040000000010 ; 10: 8: gueltig, z0 gesetzt, Code 10
+0311: 00 40000000011            dw     040000000011 ; 11: 9: gueltig, z0 gesetzt, Code 11
+0312: 01 0142 000               000    ML0003SZG    ; 12: Leertaste: ignorieren
+0313: 20 0314        ML0013SZG: db     1            ; 13: Arbeitszelle: Wort 1, das gerade aufgebaut wird
+0314: 20 0315        ML0014SZG: db     1            ; 14: Arbeitszelle: Wort 2 (Kennzeichen)
+0315: 01 0174 000               000    ML0006SZG    ; 15: : beendet die Eingabe
+0316: 01 0142 000               000    ML0003SZG    ; 16: Irrung Satz: ignorieren
+0317: 20 0320        ML0017SZG: db     1            ; 17: Arbeitszelle: noch zu lesende Kennzeichen (2, 1, 0)
+0320: 00 40000000020            dw     040000000020 ; 20: +: gueltig, z0 gesetzt, Code 20
+0321: 0                         dw     0            ; 21: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0322: 0                         dw     0            ; 22: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0323: 0                         dw     0            ; 23: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0324: 0                         dw     0            ; 24: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0325: 0                         dw     0            ; 25: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0326: 0                         dw     0            ; 26: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0327: 0                         dw     0            ; 27: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0330: 0                         dw     0            ; 30: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0331: 0                         dw     0            ; 31: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0332: 01 0142 000               000    ML0003SZG    ; 32: WRZL: ignorieren
+0333: 01 0174 000               000    ML0006SZG    ; 33: . beendet die Eingabe
+0334: 20 0335        ML0016SZG: db     1            ; 34: Arbeitszelle: Code (6 Bit) des gelesenen Zeichens
+0335: 0                         dw     0            ; 35: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0336: 0                         dw     0            ; 36: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0337: 01 0216 000               000    ML0011SZG    ; 37: Um. GB: KBGB := 1
+0340: 01 0142 000               000    ML0003SZG    ; 40: - / Dreieck: ignorieren
+0341: 0                         dw     0            ; 41: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0342: 0                         dw     0            ; 42: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0343: 0                         dw     0            ; 43: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0344: 0                         dw     0            ; 44: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0345: 0                         dw     0            ; 45: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0346: 0                         dw     0            ; 46: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0347: 0                         dw     0            ; 47: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0350: 0                         dw     0            ; 50: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0351: 0                         dw     0            ; 51: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0352: 0                         dw     0            ; 52: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0353: 0                         dw     0            ; 53: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0354: 0                         dw     0            ; 54: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0355: 0                         dw     0            ; 55: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0356: 0                         dw     0            ; 56: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0357: 01 0221 000               000    ML0018SZG    ; 57: Um. KB: KBGB := 0
+0360: 01 0142 000               000    ML0003SZG    ; 60: ` / ;: ignorieren
+0361: 00 20000000000 ML0022SZG: dw     020000000000 ; 61: /: Streifenende-Kennung (z1 gesetzt, z0 nicht), nur zum Vergleich; Sprung nach ende
+0362: 0                         dw     0            ; 62: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0363: 0                         dw     0            ; 63: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0364: 0                         dw     0            ; 64: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0365: 0                         dw     0            ; 65: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0366: 0                         dw     0            ; 66: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0367: 0                         dw     0            ; 67: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0370: 0                         dw     0            ; 70: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0371: 0                         dw     0            ; 71: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0372: 01 0142 000               000    ML0003SZG    ; 72: BM: ignorieren
+0373: 01 0142 000               000    ML0003SZG    ; 73: , / ?: ignorieren
+0374: 0                         dw     0            ; 74: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0375: 01 0142 000               000    ML0003SZG    ; 75: Tabulator: ignorieren
+0376: 0                         dw     0            ; 76: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0377: 0                         dw     0            ; 77: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+      20 0000 0400              equ40  00400        ; Spurgrenze
+0400: 20 0440        spufpc:    db     040          ; Spurpuffer Programmcode: 32 Zellen

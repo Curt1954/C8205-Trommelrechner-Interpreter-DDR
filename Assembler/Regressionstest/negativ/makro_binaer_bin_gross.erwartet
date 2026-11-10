@@ -1,0 +1,4 @@
+rc 16
+stderr Zahl zu groß (bei "0b11111111111111111111111111111111111111")
+datei-weg obj mqo test
+escape-weg

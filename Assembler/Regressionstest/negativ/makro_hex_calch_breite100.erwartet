@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_calch_breite100.asm:4: Fehler: Operand '$CALCH100(1)' ist ungültig
+datei-weg obj mqo test
+escape-weg

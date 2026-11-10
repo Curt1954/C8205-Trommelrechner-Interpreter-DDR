@@ -1,0 +1,141 @@
+Trommeldatei:
+#ZTROMMEL=LEER
+#DOK-0001 pname: Projektmakro PNAME (Element 13) mit 11a, drei Aufrufe (ID 3, 4 und 32), kat5-Name in einer Zelle, Eintrag zu 2 Zellen, Uebertrag Spur 127 -> Trommel 1 Spur 0, Wort 2 nur in den eigenen Feldern
+#SPEI-0001 0001-0001
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000240000 # apn: da 000000000240 ; Zelle 0001: Adresse SPUF-PN (Adressfeld)
+0002: 00000200000 # a00: da 000000000200 ; Zelle 0002: Adresse SPUF-00 (Adressfeld)
+0003: 00000061000 # anm1: da 000000000061 ; Zelle 0003: Namenszelle n1 (Eintrag ID 3)
+0004: 00000062000 # anm2: da 000000000062 ; Zelle 0004: Namenszelle n2 (Eintrag ID 4)
+0005: 00000063000 # anm3: da 000000000063 ; Zelle 0005: Namenszelle n3 (Eintrag ID 32)
+0006: 00000151211 # haupt 211 l0001 ; AC := Mist
+0007: 00000264240 # 240 000000000240+024 ; Mist in Zelle 20 des Puffers (Spur 1 des Puffers)
+0010: 00000310240 # 240 000000000240+050 ; Mist in Zelle 40 des Puffers (Spur 2 des Puffers)
+0011: 00000240441 # 441 000000000240 ; 11a: Spur 1 des Puffers := 0
+0012: 00000300441 # 441 000000000240+040 ; 11a: Spur 2 des Puffers := 0
+0013: 00000151211 # 211 l0001 ; AC := Mist
+0014: 00000244240 # 240 000000000240+4 ; Wort 1 des Eintrags ID 3 (Zelle 4): Mist (wird ueberschrieben)
+0015: 00000152211 # 211 l0002 ; AC := z0 = 1 und Laenge 5252 (bleiben erhalten)
+0016: 00000245240 # 240 000000000240+5 ; Wort 2 des Eintrags ID 3 (Zelle 5) vorbelegt
+0017: 00000153211 # 211 l0003 ; AC := Zaehler 2 (zwei Programme vergeben)
+0020: 00000221240 # 240 000000000200+021 ; SPUF-00 Zelle 17 := 2
+0021: 00000222241 # 241 000000000200+022 ; SPUF-00 Zelle 18 := 0 (letzte belegte Trommel)
+0022: 00000154211 # 211 l0004 ; AC := 127 (letzte belegte Spur)
+0023: 00000223240 # 240 000000000200+023 ; SPUF-00 Zelle 19 := 127
+0024: 00000001211 # 211 apn ; AC := Adresse SPUF-PN
+0025: 00007773240 # 240 r1 ; R1 := SPUF-PN
+0026: 00000003211 # 211 anm1 ; AC := Adresse n1
+0027: 00007776240 # 240 r2 ; R2 := Namenszelle n1
+0030: 00000002211 # 211 a00 ; AC := Adresse SPUF-00
+0031: 00007774240 # 240 r3 ; R3 := SPUF-00
+0032: 00000064025 # 025 pname ; Element 13: Eintrag ID 3 (Zellen 4 und 5)
+0033: 00000004211 # 211 anm2 ; AC := Adresse n2
+0034: 00007776240 # 240 r2 ; R2 := Namenszelle n2 (R1 und R3 bleiben)
+0035: 00000064025 # 025 pname ; Element 13: Eintrag ID 4 (Zellen 6 und 7)
+0036: 00000155211 # 211 l0005 ; AC := 31 (dezimal): 31 Programme vergeben, die naechste ID ist 32
+0037: 00000221240 # 240 000000000200+021 ; SPUF-00 Zelle 17 := 31
+0040: 00000005211 # 211 anm3 ; AC := Adresse n3
+0041: 00007776240 # 240 r2 ; R2 := Namenszelle n3
+0042: 00000064025 # 025 pname ; Element 13: Eintrag ID 32 (Zellen 62 und 63, Ende von SPUF-PN)
+0043: 00005100030 # 030 05100 ; Anwahl ZT 0 (5100 030)
+0044: 00000001211 # 211 apn ; AC := Adresse SPUF-PN
+0045: 00000156210 # 210 l0006 ; plus Spur 1 (1 * 2^26) und Operationscode 601
+0046: 00000047240 # 240 ab1 ; Ausgabebefehl auf die naechste Zelle
+0050: 00000001211 # 211 apn ; AC := Adresse SPUF-PN
+0051: 00000157210 # 210 l0007 ; plus Spur 2 (2 * 2^26), 32 Zellen (040 * 01000 = 040000) und 601
+0052: 00000053240 # 240 ab2 ; Ausgabebefehl auf die naechste Zelle
+0054: 00000002211 # 211 a00 ; AC := Adresse SPUF-00
+0055: 00000160210 # 210 l0008 ; plus Spur 0 und Operationscode 601
+0056: 00000057240 # 240 ab3 ; Ausgabebefehl auf die naechste Zelle
+0060: 00000000020 # 020 0 ; Halt
+0061: 02122230000 # n1: kat5 abc ; Namenszelle (Eintrag ID 3): kat5 "abc" = 02122230000
+0062: 03021343437 # n2: kat5 hallo ; Namenszelle (Eintrag ID 4): kat5 "hallo" = 03021343437
+0063: 02122101152 # n3: kat5 ab12z ; Namenszelle (Eintrag ID 32): kat5 "ab12z" = 02122101152
+0064: 00000145240 # pname 240 ML0001DKR ; Rueckkehrwort sichern
+0065: 00007774211 # 211 ML0013DKR ; AC := R3 (Adresse SPUF-00)
+0066: 00000161210 # 210 l0009 ; plus 17 Zellen (17 dez = 021 okt): Zelle 17 = Zaehler
+0067: 00000000251 # 251 0 ; R-Lesebefehl: AC := Z
+0070: 00000146240 # 240 ML0002DKR ; Z merken
+0071: 00000146210 # 210 ML0002DKR ; AC := 2 * Z (Zellen des Eintrags vor dem neuen; Eintrag = 2 Zellen)
+0072: 00007653644 # 644 07653 ; 9 mal Linksverschiebung (Operand nach Festlegung 026)
+0073: 00007773210 # 210 ML0012DKR ; plus R1: Adresse von Wort 1 des neuen Eintrags
+0074: 00000147240 # 240 ML0003DKR ; Adresse des Eintrags merken
+0075: 00000162210 # 210 l0010 ; plus Operationscode 240 (Speichern): Befehl 240 <Wort 1>
+0076: 00000101240 # 240 ML0008DKR ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+0077: 00007776211 # 211 ML0014DKR ; AC := R2 (Adresse der Namenszelle)
+0100: 00000000251 # 251 0 ; AC := Namenszelle (kat5-Wort)
+0102: 00000146211 # 211 ML0002DKR ; AC := Z
+0103: 00000163210 # 210 l0011 ; AC := ID = Z + 1
+0104: 00007646644 # 644 07646 ; 2 mal Linksverschiebung (Operand nach Festlegung 026)
+0105: 00000150240 # 240 ML0004DKR ; Zwischenwert
+0106: 00007774211 # 211 ML0013DKR ; AC := R3
+0107: 00000164210 # 210 l0012 ; plus 18 Zellen (022 okt): Zelle 18 = letzte belegte Trommel T
+0110: 00000000251 # 251 0 ; AC := T
+0111: 00000150210 # 210 ML0004DKR ; AC := ID * 4 + T
+0112: 00007645644 # 644 07645 ; 7 mal Linksverschiebung (Operand nach Festlegung 026)
+0113: 00000150240 # 240 ML0004DKR ; Zwischenwert
+0114: 00007774211 # 211 ML0013DKR ; AC := R3
+0115: 00000165210 # 210 l0013 ; plus 19 Zellen (023 okt): Zelle 19 = letzte belegte Spur S
+0116: 00000000251 # 251 0 ; AC := S
+0117: 00000150210 # 210 ML0004DKR ; AC := (ID * 4 + T) * 128 + S
+0120: 00000163210 # 210 l0011 ; plus 1: naechste Spur (Uebertrag S = 127 in die Trommel)
+0121: 00007644644 # 644 07644 ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0122: 00000166210 # 210 l0014 ; plus Typ 10 (2 * 2^30)
+0123: 00000150240 # 240 ML0004DKR ; neue Felder von Wort 2
+0124: 00000147211 # 211 ML0003DKR ; AC := Adresse von Wort 1
+0125: 00000167210 # 210 l0015 ; plus 1 Zelle: Adresse von Wort 2
+0126: 00000000251 # 251 0 ; AC := altes Wort 2
+0127: 00000170200 # 200 l0016 ; nur z0 und Laenge behalten (Typ, ID, Trommel, Spur ausblenden)
+0130: 00000150210 # 210 ML0004DKR ; neue Felder einsetzen
+0131: 00000150240 # 240 ML0004DKR ; Wort 2 fertig
+0132: 00000147211 # 211 ML0003DKR ; AC := Adresse von Wort 1
+0133: 00000171210 # 210 l0017 ; plus 1 Zelle (01000) und 240: Befehl 240 <Wort 2>
+0134: 00000136240 # 240 ML0010DKR ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+0135: 00000150211 # 211 ML0004DKR ; AC := Wort 2 fertig
+0137: 00007774211 # 211 ML0013DKR ; AC := R3
+0140: 00000172210 # 210 l0018 ; plus 17 Zellen und 240: Befehl 240 <SPUF-00 Zelle 17>
+0141: 00000144240 # 240 ML0011DKR ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+0142: 00000146211 # 211 ML0002DKR ; AC := Z
+0143: 00000163210 # 210 l0011 ; AC := Z + 1 = neue ID
+0151: 07777777777 # l0001 dw 007777777777
+0152: 40000005252 # l0002 dw 040000005252
+0153: 00000000002 # l0003 dw 2
+0154: 00000000177 # l0004 dw 000000000177
+0155: 00000000037 # l0005 dw 31
+0156: 00400000601 # l0006 dw 000400000601
+0157: 01000040601 # l0007 dw 001000040601
+0160: 00000000601 # l0008 dw 000000000601
+0161: 00000021000 # l0009 dw 000000021000
+0162: 00000000240 # l0010 dw 000000000240
+0163: 00000000001 # l0011 dw 1
+0164: 00000022000 # l0012 dw 000000022000
+0165: 00000023000 # l0013 dw 000000023000
+0166: 20000000000 # l0014 dw 020000000000
+0167: 00000001000 # l0015 dw 000000001000
+0170: 40000007777 # l0016 dw 040000007777
+0171: 00000001240 # l0017 dw 000000001240
+0172: 00000021240 # l0018 dw 000000021240
+Tastenfolge:
+H G R
+Prüfungen:
+US=1
+ZT-Zellen-Pruefung:
+0-0040: 00000000000   # Eintrag ID 1, Wort 1 (nie beschrieben)
+0-0041: 00000000000   # Eintrag ID 1, Wort 2
+0-0042: 00000000000   # Eintrag ID 2, Wort 1
+0-0043: 00000000000   # Eintrag ID 2, Wort 2
+0-0044: 02122230000   # Eintrag ID 3, Wort 1 = n1 = kat5 abc (Zelle 4)
+0-0045: 60032005252   # Eintrag ID 3, Wort 2: Typ 10, ID 3, Trommel 1, Spur 0; z0 und Laenge erhalten (Zelle 5)
+0-0046: 03021343437   # Eintrag ID 4, Wort 1 = n2 = kat5 hallo (Zelle 6)
+0-0047: 20042000000   # Eintrag ID 4, Wort 2: Typ 10, ID 4, Trommel 1, Spur 0 (Zelle 7)
+0-0050: 00000000000   # Zelle 8: nie beschrieben
+0-0064: 00000000000   # Zelle 20 (Spur 1 des Puffers): Mist durch 11a geloescht
+0-0110: 00000000000   # Zelle 40 (Spur 2 des Puffers, Zelle 8): Mist durch 11a geloescht
+0-0135: 00000000000   # Eintrag ID 31, Wort 2 (Zelle 61): nie beschrieben
+0-0136: 02122101152   # Eintrag ID 32, Wort 1 = n3 = kat5 ab12z (Zelle 62)
+0-0137: 20402000000   # Eintrag ID 32, Wort 2: Typ 10, ID 32, Trommel 1, Spur 0 (Zelle 63)
+0-0021: 00000000040   # SPUF-00 Zelle 17: Zaehler = 32
+0-0022: 00000000000   # SPUF-00 Zelle 18: Trommel unveraendert
+0-0023: 00000000177   # SPUF-00 Zelle 19: Spur unveraendert

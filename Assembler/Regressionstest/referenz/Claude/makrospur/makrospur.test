@@ -1,0 +1,20 @@
+Trommeldatei:
+#DOK-0001 Test Fehlersuche im Makro: $TRACE, $NOTE und $DUMP beobachten nur und aendern den erzeugten Code nicht (Gegenstueck makrospur_ohne)
+#PROT STUFE=2
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Summe 1 bis 1
+0002: 00000000003 # dw 3 ; Summe 1 bis 2
+0003: 00000000006 # dw 6 ; Summe 1 bis 3
+0004: 00000000011 # dw 9 ; q(2) = 9
+0005: 00000000005 # dw 5 ; Parameter
+0006: 00000001164 # haupt: 164 0001 ; Zelle 6: Diagnoseausgabe (nur im Test)
+0007: 00000000020 # 020 0 ; Zelle 7: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0010 US=1
+0001: 00000000001   # SUMME 1
+0002: 00000000003   # SUMME 2
+0003: 00000000006   # SUMME 3
+0004: 00000000011   # FELDTEXT: q(2) = 9
+0005: 00000000005   # ZWEIG 5 (ZWEIG 0 erzeugt nichts)

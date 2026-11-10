@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '-1.00000000012' ist ungültig (dwf: Zahlenbereich -1 bis 1-2^-32 überschritten)
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,26 @@
+; c82ass.opsym - Standardtabelle der Namen fuer Operationscodes (OPSYM, c82ass 1.00-061)
+; Zeilen: <NAME> <code> ; Nr. <Nummer der Einzelbefehlsuebersicht> <Bedeutung>
+; Im Quelltext mit vorangestelltem Punkt im Operationscode-Feld schreiben (.LD). Aenderungen nur durch den Inhaber.
+JMP   000 ; Nr. 1 unbedingter Sprung ohne Löschen, ohne Resultatbehandlung (Alias-Code 100)
+STOP  020 ; Nr. 14 unbedingter Stop 1. Art
+JNEG  040 ; Nr. 22 Negativsprung
+JPOS  050 ; Nr. 27 Positivsprung
+JOVF  070 ; Nr. 37 Überlaufsprung
+JVG1  140 ; Nr. 53 Vergleichersprung 1
+JVG2  150 ; Nr. 58 Vergleichersprung 2
+JVG3  170 ; Nr. 68 Vergleichersprung 3
+NOP   164 ; Nr. 66 Leer-Operation ohne Löschen
+AND   200 ; Nr. 73 Einzel-Konjunktion im Akkumulator
+ADD   210 ; Nr. 77 Einzel-Addition
+LD    211 ; Nr. 78 Einzel-Addition mit Löschen (ac := <a>)
+SUB   220 ; Nr. 85 Einzel-Subtraktion
+LDN   221 ; Nr. 86 Einzel-Subtraktion mit Löschen (ac := -<a>)
+CADD  230 ; Nr. 93 bedingte Addition/Subtraktion
+STO   240 ; Nr. 97 Einzel-Transport (<a> := <AC>)
+STOC  241 ; Nr. 98 Einzel-Transport mit Löschen
+ANDS  250 ; Nr. 102 Einzel-Konjunktion im Speicher
+LDR   251 ; Nr. 103 R-Lesebefehl (indirektes Lesen über berechnete Adresse)
+ANDN  260 ; Nr. 110 Konjunktion mit negiertem Akkumulator
+CLRP  270 ; Nr. 114 bedingte Speicherlöschung (wenn <AC> >= 0: <a> := 0)
+LDRN  271 ; Nr. 115 R-Minuslesebefehl
+CMP   330 ; Nr. 142 reines Vergleichersetzen

@@ -1,0 +1,1251 @@
+                                      000                                   haupt                                 ; rel 0000: Einsprung
+eins:                                 dw                                    1                                     ; 1
+zwei:                                 dw                                    2                                     ; 2
+k4:                                   dw                                    4                                     ; 4
+k5:                                   dw                                    5                                     ; 5
+k7:                                   dw                                    7                                     ; 7
+k8:                                   dw                                    8                                     ; 8
+k10:                                  dw                                    10                                    ; 10 dezimal
+k12:                                  dw                                    12                                    ; 12 dezimal
+k15:                                  dw                                    15                                    ; 15 dezimal
+k16:                                  dw                                    16                                    ; 16 dezimal
+k25:                                  dw                                    25                                    ; 25 dezimal
+k32:                                  dw                                    32                                    ; 32 dezimal
+k_vorg:                               dw                                    0100                                  ; Vorgabe nn = 100 oktal
+k_j:                                  dw                                    0100                                  ; Tabellenwert J
+k_n:                                  dw                                    0101                                  ; Tabellenwert N
+k_slash:                              dw                                    040                                   ; Tabellenwert Schraegstrich
+k_240:                                dw                                    0240                                  ; Operationscode Speichern
+k_601:                                dw                                    0601                                  ; Ausgabe HT -> ZT
+k_661:                                dw                                    0661                                  ; Eingabe ZT -> HT
+k_an:                                 dw                                    05100030                              ; Befehl 5100 030 (Anwahl ZT0); plus t um 15 Bit nach links
+k_amask:                              dw                                    077000                                ; untere 6 Bit der Adresse
+k_adr1:                               dw                                    01000                                 ; eine Adresseinheit
+k_adr6:                               dw                                    06000                                 ; sechs Adresseinheiten
+k_lk:                                 dw                                    025147361025                          ; LISTENKENNUNG
+k_rk:                                 dw                                    061350247316                          ; REPOSITORY_KENNUNG
+k_bk:                                 dw                                    034716052613                          ; BLOCKKENNUNG
+k_c0:                                 dw                                    040000000000                          ; Belegungsliste: nur Spur 0 belegt
+k_name0:                              dw                                    071632412120                          ; Name ZTD, Zeichen 1 bis 5 (Z T D ZR ZR)
+k_name1:                              dw                                    012121212120                          ; Name ZTD, Zeichen 6 bis 10 (ZR)
+da_ltr:                               da                                    000000002400                          ; Adresse Spur LTR
+da_puf:                               da                                    000000002340                          ; Adresse Spur PUF
+da_tabk:                              da                                    000000002100                          ; Adresse Tastaturtabelle
+da_pz:                                da                                    000000002067                          ; Adresse Ziffernausgabetabelle
+null:                                 dw                                    0                                     ; 0
+t:                                    dw                                    0                                     ; Trommel 0 bis 3
+nn:                                   dw                                    0                                     ; Zahl der Namenseintraege
+nblk:                                 dw                                    0                                     ; Spuren des Namensblocks
+sb:                                   dw                                    0                                     ; erste Spur des Namensblocks
+sg_erst:                              dw                                    0                                     ; erste Spur des ersten ZTD-Segments
+sg_spur:                              dw                                    0                                     ; erste Spur des laufenden Segments
+sg_neu:                               dw                                    0                                     ; erste Spur des naechsten Segments
+sg_i:                                 dw                                    0                                     ; Spur im Segment 0 bis 16
+sc_u:                                 dw                                    0                                     ; Trommelzaehler der Suche nach vorhandenem Repository
+bl_i:                                 dw                                    0                                     ; Spurzaehler beim Schreiben des Namensblocks
+zt_t:                                 dw                                    0                                     ; Trommel fuer zt_anw
+zc_spur:                              dw                                    0                                     ; Spur fuer 601/661
+zc_adr:                               dw                                    0                                     ; Adressfeld der HT-Spur
+zc_op:                                dw                                    0                                     ; Operationscode
+su_n:                                 dw                                    0                                     ; gesuchte Zahl freier Spuren
+su_res:                               dw                                    0                                     ; Ergebnis: erste Spur oder 0
+su_lauf:                              dw                                    0                                     ; Laenge der laufenden freien Folge
+su_s:                                 dw                                    0                                     ; Spurzaehler
+su_w:                                 dw                                    0                                     ; Wort der Belegungsliste (wird geschoben)
+su_zb:                                dw                                    0                                     ; Bitzaehler
+mk_von:                               dw                                    0                                     ; erste zu belegende Spur
+mk_n:                                 dw                                    0                                     ; Anzahl
+mk_bis:                               dw                                    0                                     ; erste Spur hinter dem Bereich
+mk_s:                                 dw                                    0                                     ; Spurzaehler
+mk_alt:                               dw                                    0                                     ; altes Listenwort (wird geschoben)
+mk_neu:                               dw                                    0                                     ; neues Listenwort
+mk_b:                                 dw                                    0                                     ; neues Bit
+mk_zb:                                dw                                    0                                     ; Bitzaehler
+d_acc:                                dw                                    0                                     ; Dialog: Zahl
+d_ziff:                               dw                                    0                                     ; Dialog: Zahl der Ziffern
+d_jn:                                 dw                                    0                                     ; Dialog: 1 = J, 2 = N
+d_bad:                                dw                                    0                                     ; Dialog: ungueltiges Zeichen
+d_v:                                  dw                                    0                                     ; Dialog: Tabellenwert
+bw_stufe:                             dw                                    0                                     ; Band: 0 K1, 1 K2, 2 Ziffern
+bw_ende:                              dw                                    0                                     ; Band: 1 = Schlusszeichen /
+bw_k1:                                dw                                    0                                     ; Band: K1
+bw_k2:                                dw                                    0                                     ; Band: K2
+bw_wert:                              dw                                    0                                     ; Band: Wortwert
+bw_cnt:                               dw                                    0                                     ; Band: Zahl der Ziffern
+bw_v:                                 dw                                    0                                     ; Band: Tabellenwert
+pk_cnt:                               dw                                    0                                     ; Worte in der Pufferspur
+pk_g5:                                dw                                    0                                     ; Worte in der Gruppe
+pk_ptr:                               dw                                    0                                     ; Adressfeld der naechsten Wortzelle
+pk_kwptr:                             dw                                    0                                     ; Adressfeld der Kennungszelle der Gruppe
+pk_kwacc:                             dw                                    0                                     ; Kennzeichen der Gruppe
+pk_len:                               dw                                    0                                     ; Zahl der Programmworte L
+fl_more:                              dw                                    0                                     ; 1 = es folgen weitere Worte
+pz_wert:                              dw                                    0                                     ; auszugebende Ziffer
+po_wert:                              dw                                    0                                     ; auszugebende dreistellige Zahl
+st_zelle:                             dw                                    0                                     ; (frei)
+zw_r:                                 dw                                    0                                     
+za_r:                                 dw                                    0                                     
+zl_r:                                 dw                                    0                                     
+zs_r:                                 dw                                    0                                     
+zp_r:                                 dw                                    0                                     
+su_r:                                 dw                                    0                                     
+sw_r:                                 dw                                    0                                     
+mk_r:                                 dw                                    0                                     
+mw_r:                                 dw                                    0                                     
+d_r:                                  dw                                    0                                     
+bw_r:                                 dw                                    0                                     
+pr_r:                                 dw                                    0                                     
+pi_r:                                 dw                                    0                                     
+fl_r:                                 dw                                    0                                     
+pz_r:                                 dw                                    0                                     
+po_r:                                 dw                                    0                                     
+haupt:                                211                                   da_tabk                               ; AC := Adresse der Tastaturtabelle
+                                      200                                   k_amask                               ; untere 6 Adressbits
+                                      330                                   null                                  ; gleich 0?
+                                      170                                   h_ok                                  ; ja: Ladeadresse ist Vielfaches von 0100
+                                      030                                   04500                                 ; Kanal K2 (Schreibwerk)
+                                      dtm                                   LADEADRESSE KEIN VIELFACHES VON 100   
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      211                                   k_13                                  ; Status 13 (oktal)
+                                      000                                   f_ende                                ; Ende mit Status
+h_ok:                                 030                                   04500                                 ; Kanal K2
+                                      dtm                                   ZTC                                   
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+a_t:                                  030                                   04500                                 ; Kanal K2
+                                      dtm                                   TROMMEL (0-3)?                        
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      030                                   04700                                 ; Kanal K0 (Tastatur)
+                                      025                                   d_zeile                               ; Eingabe lesen
+                                      311                                   d_bad                                 ; ungueltiges Zeichen?
+                                      170                                   a_t1                                  ; nein
+                                      000                                   a_t                                   ; ja: neu fragen
+a_t1:                                 311                                   d_jn                                  ; J oder N getippt?
+                                      170                                   a_t2                                  ; nein
+                                      000                                   a_t                                   ; ja: neu fragen
+a_t2:                                 211                                   d_ziff                                ; Zahl der Ziffern
+                                      330                                   eins                                  ; genau eine?
+                                      170                                   a_t3                                  ; ja
+                                      000                                   a_t                                   ; nein: neu fragen
+a_t3:                                 211                                   d_acc                                 ; Wert
+                                      220                                   k4                                    ; minus 4
+                                      040                                   a_t4                                  ; kleiner 4: gueltig
+                                      000                                   a_t                                   ; sonst neu fragen
+a_t4:                                 211                                   d_acc                                 ; Trommel
+                                      240                                   t                                     ; merken
+a_nn:                                 030                                   04500                                 ; Kanal K2
+                                      dtm                                   EINTRAEGE (OKTAL, VORGABE 100)?       
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      030                                   04700                                 ; Kanal K0
+                                      025                                   d_zeile                               ; Eingabe lesen
+                                      311                                   d_bad                                 ; ungueltig?
+                                      170                                   a_n1                                  ; nein
+                                      000                                   a_nn                                  ; ja: neu fragen
+a_n1:                                 311                                   d_jn                                  ; J oder N?
+                                      170                                   a_n2                                  ; nein
+                                      000                                   a_nn                                  ; ja: neu fragen
+a_n2:                                 311                                   d_ziff                                ; keine Ziffer: Vorgabe
+                                      170                                   a_n3                                  ; ja
+                                      211                                   d_acc                                 ; Wert
+                                      330                                   null                                  ; null ist nicht erlaubt
+                                      170                                   a_nn                                  ; neu fragen
+                                      240                                   nn                                    ; nn := Wert
+                                      000                                   a_n4                                  ; weiter
+a_n3:                                 211                                   k_vorg                                ; Vorgabe 100 oktal
+                                      240                                   nn                                    ; nn := Vorgabe
+a_n4:                                 241                                   sc_u                                  ; u := 0
+sc_next:                              211                                   sc_u                                  ; u
+                                      240                                   zt_t                                  ; Trommel u
+                                      025                                   zt_anw                                ; anwaehlen
+                                      241                                   zc_spur                               ; Spur 0
+                                      025                                   zt_lies_ltr                           ; Spur 0 lesen
+                                      211                                   000000002400+4                        ; Zelle 4
+                                      330                                   k_lk                                  ; Listenkennung?
+                                      170                                   sc_lk                                 ; ja: Repository-Kennung pruefen
+sc_weiter:                            211                                   sc_u                                  ; u
+                                      210                                   eins                                  ; u + 1
+                                      240                                   sc_u                                  ; merken
+                                      220                                   k4                                    ; minus 4
+                                      040                                   sc_next                               ; noch eine Trommel
+                                      000                                   sc_ende                               ; fertig
+sc_lk:                                211                                   000000002400+5                        ; Zelle 5
+                                      330                                   k_rk                                  ; Repository-Kennung?
+                                      170                                   f_vorh                                ; ja: Repository vorhanden
+                                      000                                   sc_weiter                             ; nein: naechste Trommel
+sc_ende:                              211                                   t                                     ; Trommel t
+                                      240                                   zt_t                                  ; fuer zt_anw
+                                      025                                   zt_anw                                ; anwaehlen
+                                      241                                   zc_spur                               ; Spur 0
+                                      025                                   zt_lies_ltr                           ; lesen
+                                      211                                   000000002400+4                        ; Zelle 4
+                                      330                                   k_lk                                  ; Listenkennung?
+                                      170                                   f_ok                                  ; ja: formatiert
+                                      030                                   04500                                 ; Kanal K2
+                                      dtm                                   TROMMEL                               
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $zr                                   ; Zwischenraum
+                                      dz                                    $inkb                                 ; Kleinbuchstabenlage (Ziffern)
+                                      211                                   t                                     ; Trommel
+                                      240                                   pz_wert                               ; als Ziffer
+                                      025                                   prt_ziff                              ; ausgeben
+                                      dz                                    $zr                                   ; Zwischenraum
+                                      dtm                                   UNFORMATIERT. LISTE ANLEGEN (J/N)?    
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      dtm                                   ACHTUNG: FREMDDATEN GEHEN VERLOREN    
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      030                                   04700                                 ; 4700 oder K0 oder SW1 Input oder KON Input
+                                      025                                   d_zeile                               ; Antwort lesen
+                                      211                                   d_jn                                  ; 1 = J
+                                      330                                   eins                                  ; J?
+                                      170                                   f_form                                ; ja: formatieren
+                                      030                                   04500                                 ; Kanal K2
+                                      dtm                                   ABGEBROCHEN                           
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      211                                   k_14                                  ; Status 14 (oktal)
+                                      000                                   f_ende                                ; Ende
+f_form:                               441                                   000000002400                          ; Spur 0 := 0
+                                      211                                   k_c0                                  ; nur Spur 0 belegt
+                                      240                                   000000002400+0                        ; Zelle 0
+                                      211                                   k_lk                                  ; Listenkennung
+                                      240                                   000000002400+4                        ; Zelle 4
+                                      241                                   zc_spur                               ; Spur 0
+                                      025                                   zt_schr_ltr                           ; schreiben
+f_ok:                                 211                                   nn                                    ; nn
+                                      612                                   nz+031                                ; durch 8
+                                      210                                   eins                                  ; plus 1 = Spurzahl des Blocks
+                                      240                                   nblk                                  ; merken
+                                      240                                   su_n                                  ; gesucht
+                                      025                                   sp_such                               ; Luecke suchen
+                                      311                                   su_res                                ; 0 = nicht gefunden
+                                      170                                   f_voll                                ; Trommel voll
+                                      211                                   su_res                                ; erste Spur
+                                      240                                   sb                                    ; merken
+                                      240                                   mk_von                                ; belegen
+                                      211                                   nblk                                  ; Anzahl
+                                      240                                   mk_n                                  ; belegen
+                                      025                                   sp_mark                               ; Belegungsliste ergaenzen
+                                      211                                   k16                                   ; 16 Spuren
+                                      240                                   su_n                                  ; gesucht
+                                      025                                   sp_such                               ; suchen
+                                      311                                   su_res                                ; 0 = nicht gefunden
+                                      170                                   f_voll                                ; Trommel voll
+                                      211                                   su_res                                ; erste Spur des Segments
+                                      240                                   sg_spur                               ; laufendes Segment
+                                      240                                   sg_erst                               ; erstes Segment
+                                      240                                   mk_von                                ; belegen
+                                      211                                   k16                                   ; 16 Spuren
+                                      240                                   mk_n                                  ; belegen
+                                      025                                   sp_mark                               ; Belegungsliste ergaenzen
+                                      241                                   sg_i                                  ; Spur im Segment := 0
+                                      240                                   pk_len                                ; L := 0
+                                      030                                   04500                                 ; Kanal K2
+                                      dtm                                   ZTD-LOCHSTREIFEN IN LESER 1 LEGEN     
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      030                                   04600                                 ; Kanal K1 (Leser 1)
+                                      441                                   000000002340                          ; Pufferspur := 0
+                                      025                                   pk_init                               ; Packzaehler
+rd_loop:                              025                                   band_wort                             ; ein Wort oder Ende lesen
+                                      211                                   bw_ende                               ; Schlusszeichen?
+                                      330                                   eins                                  ; gleich 1?
+                                      170                                   rd_ende                               ; ja
+                                      311                                   bw_k1                                 ; K1 gleich 0?
+                                      170                                   rd_k1                                 ; ja
+                                      000                                   f_k7                                  ; nein: Kennzeichen unzulaessig
+rd_k1:                                211                                   pk_cnt                                ; Worte in der Spur
+                                      330                                   k25                                   ; Spur voll?
+                                      170                                   rd_voll                               ; ja
+rd_put:                               025                                   put_roh                               ; Wort ablegen
+                                      211                                   pk_len                                ; L
+                                      210                                   eins                                  ; L + 1
+                                      240                                   pk_len                                ; merken
+                                      000                                   rd_loop                               ; naechstes Wort
+rd_voll:                              211                                   eins                                  ; weitere Worte folgen
+                                      240                                   fl_more                               ; merken
+                                      025                                   flush                                 ; Spur schreiben
+                                      000                                   rd_put                                ; Wort ablegen
+rd_ende:                              311                                   pk_len                                ; kein Wort gelesen?
+                                      170                                   f_lochfehl                            ; Lochstreifen fehlerhaft
+                                      241                                   fl_more                               ; kein weiteres Wort
+                                      025                                   flush                                 ; letzte Spur schreiben
+zf_loop:                              211                                   sg_i                                  ; Spur im Segment
+                                      330                                   k16                                   ; Segment voll?
+                                      170                                   zf_ende                               ; ja
+                                      211                                   sg_spur                               ; erste Spur des Segments
+                                      210                                   sg_i                                  ; plus Spur im Segment
+                                      240                                   zc_spur                               ; Spur
+                                      025                                   zt_schr_puf                           ; Nullspur schreiben (Pufferspur ist 0)
+                                      211                                   sg_i                                  ; naechste Spur
+                                      210                                   eins                                  ; plus 1
+                                      240                                   sg_i                                  ; merken
+                                      000                                   zf_loop                               ; weiter
+zf_ende:                              030                                   04500                                 ; Kanal K2
+                                      441                                   000000002340                          ; Pufferspur := 0
+                                      211                                   k_bk                                  ; Blockkennung
+                                      240                                   000000002340+0                        ; Wort 0
+                                      211                                   nn                                    ; nn
+                                      240                                   000000002340+2                        ; Wort 2
+                                      211                                   eins                                  ; ein belegter Eintrag
+                                      240                                   000000002340+3                        ; Wort 3
+                                      211                                   k_name0                               ; Name ZTD
+                                      240                                   000000002340+4                        ; Eintrag 0, Name 1 bis 5
+                                      211                                   k_name1                               ; Rest des Namens
+                                      240                                   000000002340+5                        ; Eintrag 0, Name 6 bis 10
+                                      211                                   pk_len                                ; L
+                                      240                                   000000002340+6                        ; Eintrag 0, Laenge
+                                      211                                   t                                     ; Trommel
+                                      616                                   nz+005                                ; mal 0200
+                                      210                                   sg_erst                               ; plus Spur des ersten Segments
+                                      240                                   000000002340+7                        ; Eintrag 0, Lagewort
+                                      211                                   sb                                    ; erste Spur des Blocks
+                                      240                                   zc_spur                               ; Spur
+                                      025                                   zt_schr_puf                           ; schreiben
+                                      441                                   000000002340                          ; Pufferspur := 0
+                                      211                                   eins                                  ; i := 1
+                                      240                                   bl_i                                  ; merken
+bl_loop:                              211                                   bl_i                                  ; i
+                                      220                                   nblk                                  ; minus Spurzahl
+                                      050                                   bl_ende                               ; i >= Spurzahl: fertig
+                                      211                                   sb                                    ; erste Spur
+                                      210                                   bl_i                                  ; plus i
+                                      240                                   zc_spur                               ; Spur
+                                      025                                   zt_schr_puf                           ; Nullspur schreiben
+                                      211                                   bl_i                                  ; i
+                                      210                                   eins                                  ; i + 1
+                                      240                                   bl_i                                  ; merken
+                                      000                                   bl_loop                               ; weiter
+bl_ende:                              211                                   k_rk                                  ; Repository-Kennung
+                                      240                                   000000002400+5                        ; Zelle 5
+                                      211                                   eins                                  ; Formatversion 1
+                                      240                                   000000002400+6                        ; Zelle 6
+                                      211                                   sb                                    ; Spur des ersten Namensblocks
+                                      240                                   000000002400+7                        ; Zelle 7
+                                      241                                   zc_spur                               ; Spur 0
+                                      025                                   zt_schr_ltr                           ; schreiben (Uebernahme)
+                                      030                                   04500                                 ; Kanal K2
+                                      dtm                                   REPOSITORY ANGELEGT, TROMMEL          
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $zr                                   ; Zwischenraum
+                                      dz                                    $inkb                                 ; Kleinbuchstabenlage (Ziffern)
+                                      211                                   t                                     ; Trommel
+                                      240                                   pz_wert                               ; als Ziffer
+                                      025                                   prt_ziff                              ; ausgeben
+                                      dtm                                   , BLOCK AB SPUR                       
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $zr                                   ; Zwischenraum
+                                      dz                                    $inkb                                 ; Kleinbuchstabenlage
+                                      211                                   sb                                    ; Spur des Blocks
+                                      240                                   po_wert                               ; ausgeben
+                                      025                                   prt_okt3                              ; dreistellig
+                                      dtm                                   , ZTD AB SPUR                         
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $zr                                   ; Zwischenraum
+                                      dz                                    $inkb                                 ; Kleinbuchstabenlage
+                                      211                                   sg_erst                               ; Spur des ersten Segments
+                                      240                                   po_wert                               ; ausgeben
+                                      025                                   prt_okt3                              ; dreistellig
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      241                                   st_zelle                              ; (frei)
+                                      000                                   f_ende                                ; Ende mit Status 0 (AC = 0)
+f_vorh:                               030                                   04500                                 ; Kanal K2
+                                      dtm                                   REPOSITORY VORHANDEN                  
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      211                                   k_12                                  ; Status 12 (oktal)
+                                      000                                   f_ende                                ; Ende
+f_voll:                               030                                   04500                                 ; Kanal K2
+                                      dtm                                   TROMMELN VOLL                         
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      211                                   k_6                                   ; Status 6
+                                      000                                   f_ende                                ; Ende
+f_k7:                                 030                                   04500                                 ; Kanal K2
+                                      dtm                                   KENNZEICHEN UNZULAESSIG               
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      211                                   k7                                    ; Status 7
+                                      000                                   f_ende                                ; Ende
+f_lochfehl:                           030                                   04500                                 ; Kanal K2
+                                      dtm                                   LOCHSTREIFEN FEHLERHAFT               
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                                      dz                                    $wrzl                                 ; Zeilenschaltung
+                                      211                                   k_11                                  ; Status 11 (oktal)
+f_ende:                               240                                   07626                                 ; Status nach ZTL_STATUS
+                                      030                                   04700                                 ; Kanal K0
+                                      000                                   0000                                  ; Sprung 0000 000 (BIS)
+k_6:                                  dw                                    6                                     ; Status 6
+k_11:                                 dw                                    011                                   ; Status 11 (oktal)
+k_12:                                 dw                                    012                                   ; Status 12 (oktal)
+k_13:                                 dw                                    013                                   ; Status 13 (oktal)
+k_14:                                 dw                                    014                                   ; Status 14 (oktal)
+zt_anw:                               240                                   zw_r                                  ; Rueckkehr sichern
+                                      211                                   zt_t                                  ; t
+                                      616                                   nz+035                                ; um 15 Bit nach links
+                                      210                                   k_an                                  ; plus Befehl 5100 030
+                                      240                                   zw_x                                  ; Befehl ablegen
+zw_x:                                 db                                    1                                     ; hier steht 5k00 030
+                                      000                                   zw_r                                  ; zurueck
+zt_ausf:                              240                                   za_r                                  ; Rueckkehr sichern
+                                      211                                   zc_spur                               ; Spur
+                                      616                                   nz+016                                ; um 26 Bit nach links (zzz0)
+                                      210                                   zc_adr                                ; plus Adresse der HT-Spur
+                                      210                                   zc_op                                 ; plus 0601 oder 0661
+                                      240                                   za_x                                  ; Befehl ablegen
+za_x:                                 db                                    1                                     ; hier steht der ZT-Befehl
+                                      000                                   za_r                                  ; zurueck
+zt_lies_ltr:                          240                                   zl_r                                  ; Rueckkehr sichern
+                                      211                                   da_ltr                                ; Adresse LTR
+                                      240                                   zc_adr                                ; merken
+                                      211                                   k_661                                 ; Eingabe ZT -> HT
+                                      240                                   zc_op                                 ; merken
+                                      025                                   zt_ausf                               ; ausfuehren
+                                      000                                   zl_r                                  ; zurueck
+zt_schr_ltr:                          240                                   zs_r                                  ; Rueckkehr sichern
+                                      211                                   da_ltr                                ; Adresse LTR
+                                      240                                   zc_adr                                ; merken
+                                      211                                   k_601                                 ; Ausgabe HT -> ZT
+                                      240                                   zc_op                                 ; merken
+                                      025                                   zt_ausf                               ; ausfuehren
+                                      000                                   zs_r                                  ; zurueck
+zt_schr_puf:                          240                                   zp_r                                  ; Rueckkehr sichern
+                                      211                                   da_puf                                ; Adresse PUF
+                                      240                                   zc_adr                                ; merken
+                                      211                                   k_601                                 ; Ausgabe HT -> ZT
+                                      240                                   zc_op                                 ; merken
+                                      025                                   zt_ausf                               ; ausfuehren
+                                      000                                   zp_r                                  ; zurueck
+sp_such:                              240                                   su_r                                  ; Rueckkehr sichern
+                                      241                                   su_lauf                               ; Folge := 0
+                                      240                                   su_s                                  ; Spur := 0
+                                      240                                   su_res                                ; Ergebnis := 0
+                                      211                                   000000002400+0                        ; Wort 0
+                                      240                                   su_w                                  ; merken
+                                      025                                   su_wort                               ; 32 Spuren pruefen
+                                      311                                   su_res                                ; gefunden?
+                                      170                                   su_w1                                 ; nein: weiter
+                                      000                                   su_r                                  ; ja: zurueck
+su_w1:                                211                                   000000002400+1                        ; Wort 1
+                                      240                                   su_w                                  ; merken
+                                      025                                   su_wort                               ; pruefen
+                                      311                                   su_res                                ; gefunden?
+                                      170                                   su_w2                                 ; nein
+                                      000                                   su_r                                  ; ja
+su_w2:                                211                                   000000002400+2                        ; Wort 2
+                                      240                                   su_w                                  ; merken
+                                      025                                   su_wort                               ; pruefen
+                                      311                                   su_res                                ; gefunden?
+                                      170                                   su_w3                                 ; nein
+                                      000                                   su_r                                  ; ja
+su_w3:                                211                                   000000002400+3                        ; Wort 3
+                                      240                                   su_w                                  ; merken
+                                      025                                   su_wort                               ; pruefen
+                                      000                                   su_r                                  ; zurueck
+su_wort:                              240                                   sw_r                                  ; Rueckkehr sichern
+                                      211                                   k32                                   ; 32 Bits
+                                      240                                   su_zb                                 ; Zaehler
+su_bit:                               211                                   su_w                                  ; Wort
+                                      040                                   su_bel                                ; z0 = 1: Spur belegt
+                                      211                                   su_lauf                               ; Folge
+                                      210                                   eins                                  ; plus 1
+                                      240                                   su_lauf                               ; merken
+                                      220                                   su_n                                  ; minus gesuchte Zahl
+                                      330                                   null                                  ; gleich 0?
+                                      170                                   su_fund                               ; ja: gefunden
+                                      000                                   su_next                               ; weiter
+su_bel:                               241                                   su_lauf                               ; Folge := 0
+su_next:                              215                                   su_w                                  ; Wort um 1 Bit nach links
+                                      240                                   su_w                                  ; merken
+                                      211                                   su_s                                  ; Spur
+                                      210                                   eins                                  ; plus 1
+                                      240                                   su_s                                  ; merken
+                                      211                                   su_zb                                 ; Zaehler
+                                      220                                   eins                                  ; minus 1
+                                      240                                   su_zb                                 ; merken
+                                      330                                   null                                  ; gleich 0?
+                                      170                                   sw_r                                  ; ja: Wort fertig, zurueck
+                                      000                                   su_bit                                ; naechstes Bit
+su_fund:                              211                                   su_s                                  ; aktuelle Spur (letzte der Folge)
+                                      220                                   su_n                                  ; minus Zahl
+                                      210                                   eins                                  ; plus 1 = erste Spur
+                                      240                                   su_res                                ; Ergebnis
+                                      000                                   sw_r                                  ; zurueck
+sp_mark:                              240                                   mk_r                                  ; Rueckkehr sichern
+                                      211                                   mk_von                                ; von
+                                      210                                   mk_n                                  ; plus Anzahl
+                                      240                                   mk_bis                                ; bis (ausschliesslich)
+                                      241                                   mk_s                                  ; Spur := 0
+                                      211                                   000000002400+0                        ; Wort 0
+                                      240                                   mk_alt                                ; merken
+                                      025                                   mk_wort                               ; umbauen
+                                      211                                   mk_neu                                ; neues Wort
+                                      240                                   000000002400+0                        ; zurueck
+                                      211                                   000000002400+1                        ; Wort 1
+                                      240                                   mk_alt                                ; merken
+                                      025                                   mk_wort                               ; umbauen
+                                      211                                   mk_neu                                ; neues Wort
+                                      240                                   000000002400+1                        ; zurueck
+                                      211                                   000000002400+2                        ; Wort 2
+                                      240                                   mk_alt                                ; merken
+                                      025                                   mk_wort                               ; umbauen
+                                      211                                   mk_neu                                ; neues Wort
+                                      240                                   000000002400+2                        ; zurueck
+                                      211                                   000000002400+3                        ; Wort 3
+                                      240                                   mk_alt                                ; merken
+                                      025                                   mk_wort                               ; umbauen
+                                      211                                   mk_neu                                ; neues Wort
+                                      240                                   000000002400+3                        ; zurueck
+                                      000                                   mk_r                                  ; zurueck
+mk_wort:                              240                                   mw_r                                  ; Rueckkehr sichern
+                                      241                                   mk_neu                                ; neues Wort := 0
+                                      211                                   k32                                   ; 32 Bits
+                                      240                                   mk_zb                                 ; Zaehler
+mk_bit:                               241                                   mk_b                                  ; Bit := 0
+                                      211                                   mk_alt                                ; altes Wort
+                                      040                                   mk_b1                                 ; z0 = 1: schon belegt
+                                      211                                   mk_s                                  ; Spur
+                                      220                                   mk_von                                ; minus von
+                                      040                                   mk_nb                                 ; kleiner: nicht im Bereich
+                                      211                                   mk_s                                  ; Spur
+                                      220                                   mk_bis                                ; minus bis
+                                      050                                   mk_nb                                 ; nicht kleiner: nicht im Bereich
+mk_b1:                                211                                   eins                                  ; Bit := 1
+                                      240                                   mk_b                                  ; merken
+mk_nb:                                215                                   mk_neu                                ; neues Wort um 1 Bit nach links
+                                      210                                   mk_b                                  ; plus Bit
+                                      240                                   mk_neu                                ; merken
+                                      215                                   mk_alt                                ; altes Wort um 1 Bit nach links
+                                      240                                   mk_alt                                ; merken
+                                      211                                   mk_s                                  ; Spur
+                                      210                                   eins                                  ; plus 1
+                                      240                                   mk_s                                  ; merken
+                                      211                                   mk_zb                                 ; Zaehler
+                                      220                                   eins                                  ; minus 1
+                                      240                                   mk_zb                                 ; merken
+                                      330                                   null                                  ; gleich 0?
+                                      170                                   mk_we                                 ; ja: fertig
+                                      000                                   mk_bit                                ; naechstes Bit
+mk_we:                                215                                   mk_neu                                ; letztes Bit z32 bleibt 0
+                                      240                                   mk_neu                                ; merken
+                                      000                                   mw_r                                  ; zurueck
+d_zeile:                              240                                   d_r                                   ; Rueckkehr sichern
+                                      241                                   d_acc                                 ; Zahl := 0
+                                      240                                   d_ziff                                ; Ziffern := 0
+                                      240                                   d_jn                                  ; J/N := 0
+                                      240                                   d_bad                                 ; ungueltig := 0
+d_lies:                               011                                   000000002100                          ; Zeichen lesen: AC := Tabellenwert oder Sprung (d_end, d_lies)
+                                      240                                   d_v                                   ; merken
+                                      220                                   k8                                    ; minus 8
+                                      040                                   d_zif                                 ; kleiner 8: oktale Ziffer
+                                      211                                   d_v                                   ; Wert
+                                      330                                   k_j                                   ; J?
+                                      170                                   d_isj                                 ; ja
+                                      330                                   k_n                                   ; N?
+                                      170                                   d_isn                                 ; ja
+d_ung:                                211                                   eins                                  ; ungueltig := 1
+                                      240                                   d_bad                                 ; merken
+                                      000                                   d_lies                                ; weiter lesen
+d_isj:                                211                                   eins                                  ; J/N := 1
+                                      240                                   d_jn                                  ; merken
+                                      000                                   d_lies                                ; weiter
+d_isn:                                211                                   zwei                                  ; J/N := 2
+                                      240                                   d_jn                                  ; merken
+                                      000                                   d_lies                                ; weiter
+d_zif:                                211                                   d_ziff                                ; Ziffern
+                                      210                                   eins                                  ; plus 1
+                                      240                                   d_ziff                                ; merken
+                                      220                                   k5                                    ; minus 5
+                                      050                                   d_ung                                 ; mehr als 4 Ziffern: ungueltig
+                                      211                                   d_acc                                 ; Zahl
+                                      616                                   nz+031                                ; mal 8
+                                      210                                   d_v                                   ; plus Ziffer
+                                      240                                   d_acc                                 ; merken
+                                      000                                   d_lies                                ; weiter
+d_end:                                000                                   d_r                                   ; Ende der Zeile: zurueck
+band_wort:                            240                                   bw_r                                  ; Rueckkehr sichern
+                                      241                                   bw_stufe                              ; Stufe 0: K1 erwartet
+                                      240                                   bw_ende                               ; kein Ende
+                                      240                                   bw_k1                                 ; K1 := 0
+                                      240                                   bw_k2                                 ; K2 := 0
+                                      240                                   bw_wert                               ; Wert := 0
+                                      240                                   bw_cnt                                ; Ziffern := 0
+bw_lies:                              011                                   tab_b                                 ; Zeichen lesen: AC := Tabellenwert oder Sprung (b_pkt, b_skip, b_fehl)
+                                      240                                   bw_v                                  ; merken
+                                      311                                   bw_stufe                              ; Stufe 0?
+                                      170                                   bw_s0                                 ; ja
+                                      211                                   bw_stufe                              ; Stufe
+                                      330                                   eins                                  ; Stufe 1?
+                                      170                                   bw_s1                                 ; ja
+                                      211                                   bw_v                                  ; Stufe 2: Ziffer 0 bis 7
+                                      220                                   k8                                    ; minus 8
+                                      050                                   b_fehl                                ; keine oktale Ziffer
+                                      211                                   bw_cnt                                ; Ziffern
+                                      210                                   eins                                  ; plus 1
+                                      240                                   bw_cnt                                ; merken
+                                      220                                   k12                                   ; minus 12
+                                      050                                   b_fehl                                ; mehr als 11 Ziffern
+                                      211                                   bw_wert                               ; Wert
+                                      616                                   nz+031                                ; mal 8
+                                      210                                   bw_v                                  ; plus Ziffer
+                                      240                                   bw_wert                               ; merken
+                                      000                                   bw_lies                               ; weiter
+bw_s0:                                211                                   bw_v                                  ; Stufe 0: K1 oder Schlusszeichen
+                                      330                                   k_slash                               ; Schlusszeichen?
+                                      170                                   bw_slash                              ; ja
+                                      220                                   k10                                   ; minus 10
+                                      050                                   b_fehl                                ; keine Ziffer
+                                      211                                   bw_v                                  ; K1
+                                      240                                   bw_k1                                 ; merken
+                                      211                                   eins                                  ; Stufe := 1
+                                      240                                   bw_stufe                              ; merken
+                                      000                                   bw_lies                               ; weiter
+bw_s1:                                211                                   bw_v                                  ; Stufe 1: K2
+                                      220                                   k10                                   ; minus 10
+                                      050                                   b_fehl                                ; keine Ziffer
+                                      211                                   bw_v                                  ; K2
+                                      240                                   bw_k2                                 ; merken
+                                      211                                   zwei                                  ; Stufe := 2
+                                      240                                   bw_stufe                              ; merken
+                                      000                                   bw_lies                               ; weiter
+bw_slash:                             211                                   eins                                  ; Ende := 1
+                                      240                                   bw_ende                               ; merken
+                                      000                                   bw_r                                  ; zurueck
+b_pkt:                                311                                   bw_stufe                              ; Punkt: Stufe 0?
+                                      170                                   b_fehl                                ; ja: Fehler (Punkt ohne K1)
+                                      000                                   bw_r                                  ; Wort vollstaendig, zurueck
+b_skip:                               000                                   bw_lies                               ; Zeichen ueberlesen
+pk_init:                              240                                   pi_r                                  ; Rueckkehr sichern
+                                      211                                   da_puf                                ; Adresse PUF
+                                      240                                   pk_kwptr                              ; Kennungszelle der Gruppe 0
+                                      210                                   k_adr1                                ; plus 1 Zelle
+                                      240                                   pk_ptr                                ; erste Wortzelle
+                                      241                                   pk_cnt                                ; Worte := 0
+                                      240                                   pk_g5                                 ; Gruppe := 0
+                                      240                                   pk_kwacc                              ; Kennzeichen := 0
+                                      000                                   pi_r                                  ; zurueck
+put_roh:                              240                                   pr_r                                  ; Rueckkehr sichern
+                                      211                                   pk_ptr                                ; Adressfeld der Zelle
+                                      210                                   k_240                                 ; plus Speicherbefehl
+                                      240                                   pr_x                                  ; Befehl ablegen
+                                      211                                   bw_wert                               ; Wort
+pr_x:                                 db                                    1                                     ; hier steht 240 puf+zelle
+                                      211                                   pk_ptr                                ; Zelle
+                                      210                                   k_adr1                                ; plus 1
+                                      240                                   pk_ptr                                ; merken
+                                      211                                   pk_kwacc                              ; Kennzeichen
+                                      616                                   nz+022                                ; um 6 Bit nach links
+                                      210                                   bw_k2                                 ; plus K2
+                                      240                                   pk_kwacc                              ; merken
+                                      211                                   pk_cnt                                ; Worte
+                                      210                                   eins                                  ; plus 1
+                                      240                                   pk_cnt                                ; merken
+                                      211                                   pk_g5                                 ; Gruppe
+                                      210                                   eins                                  ; plus 1
+                                      240                                   pk_g5                                 ; merken
+                                      330                                   k5                                    ; Gruppe voll?
+                                      170                                   pr_grp                                ; ja
+                                      000                                   pr_r                                  ; zurueck
+pr_grp:                               211                                   pk_kwptr                              ; Kennungszelle
+                                      210                                   k_240                                 ; plus Speicherbefehl
+                                      240                                   pr_y                                  ; Befehl ablegen
+                                      211                                   pk_kwacc                              ; Kennzeichen
+                                      616                                   nz+031                                ; mal 8 (z30 bis z32 = 0)
+pr_y:                                 db                                    1                                     ; hier steht 240 puf+kennungszelle
+                                      211                                   pk_kwptr                              ; Kennungszelle
+                                      210                                   k_adr6                                ; plus 6 Zellen
+                                      240                                   pk_kwptr                              ; naechste Gruppe
+                                      211                                   pk_ptr                                ; Wortzelle
+                                      210                                   k_adr1                                ; plus 1 (Kennungszelle ueberspringen)
+                                      240                                   pk_ptr                                ; merken
+                                      241                                   pk_g5                                 ; Gruppe := 0
+                                      240                                   pk_kwacc                              ; Kennzeichen := 0
+                                      000                                   pr_r                                  ; zurueck
+flush:                                240                                   fl_r                                  ; Rueckkehr sichern
+fl_pad:                               311                                   pk_g5                                 ; Gruppe voll oder leer?
+                                      170                                   fl_pad_ok                             ; ja
+                                      241                                   bw_wert                               ; Fuellwort 0
+                                      240                                   bw_k2                                 ; Kennzeichen 0
+                                      025                                   put_roh                               ; ablegen
+                                      000                                   fl_pad                                ; weiter
+fl_pad_ok:                            211                                   sg_i                                  ; Spur im Segment
+                                      330                                   k15                                   ; 16. Spur?
+                                      170                                   fl_letzte                             ; ja: Verkettung
+fl_wr:                                211                                   sg_spur                               ; erste Spur des Segments
+                                      210                                   sg_i                                  ; plus Spur im Segment
+                                      240                                   zc_spur                               ; Spur
+                                      025                                   zt_schr_puf                           ; schreiben
+                                      211                                   sg_i                                  ; Spur im Segment
+                                      210                                   eins                                  ; plus 1
+                                      240                                   sg_i                                  ; merken
+                                      330                                   k16                                   ; Segment voll?
+                                      170                                   fl_seg                                ; ja
+fl_neu:                               441                                   000000002340                          ; Pufferspur := 0
+                                      025                                   pk_init                               ; Packzaehler
+                                      000                                   fl_r                                  ; zurueck
+fl_seg:                               311                                   fl_more                               ; weitere Worte?
+                                      170                                   fl_neu                                ; nein: sg_i bleibt 16
+                                      211                                   sg_neu                                ; naechstes Segment
+                                      240                                   sg_spur                               ; wird laufendes Segment
+                                      241                                   sg_i                                  ; Spur im Segment := 0
+                                      000                                   fl_neu                                ; weiter
+fl_letzte:                            311                                   fl_more                               ; weitere Worte?
+                                      170                                   fl_wr                                 ; nein: Verkettung 0
+                                      211                                   k16                                   ; 16 Spuren
+                                      240                                   su_n                                  ; gesucht
+                                      025                                   sp_such                               ; suchen
+                                      311                                   su_res                                ; 0 = nicht gefunden
+                                      170                                   f_voll                                ; Trommel voll
+                                      211                                   su_res                                ; erste Spur
+                                      240                                   sg_neu                                ; neues Segment
+                                      240                                   mk_von                                ; belegen
+                                      211                                   k16                                   ; 16 Spuren
+                                      240                                   mk_n                                  ; belegen
+                                      025                                   sp_mark                               ; Belegungsliste ergaenzen
+                                      211                                   t                                     ; Trommel
+                                      616                                   nz+005                                ; mal 0200
+                                      210                                   sg_neu                                ; plus Spur
+                                      240                                   000000002340+036                      ; Verkettung in Zelle 36
+                                      000                                   fl_wr                                 ; Spur schreiben
+prt_ziff:                             240                                   pz_r                                  ; Rueckkehr sichern
+                                      211                                   pz_wert                               ; Ziffer
+                                      616                                   nz+013                                ; mal 01000 (Adresseinheiten)
+                                      210                                   da_pz                                 ; plus Tabelle
+                                      251                                   0                                     ; AC := Ausgabebefehl der Ziffer
+                                      240                                   pz_x                                  ; Befehl ablegen
+pz_x:                                 db                                    1                                     ; hier steht der Ausgabebefehl
+                                      000                                   pz_r                                  ; zurueck
+prt_okt3:                             240                                   po_r                                  ; Rueckkehr sichern
+                                      211                                   po_wert                               ; Zahl
+                                      612                                   nz+022                                ; durch 64
+                                      200                                   k7                                    ; untere 3 Bit
+                                      240                                   pz_wert                               ; Ziffer
+                                      025                                   prt_ziff                              ; ausgeben
+                                      211                                   po_wert                               ; Zahl
+                                      612                                   nz+031                                ; durch 8
+                                      200                                   k7                                    ; untere 3 Bit
+                                      240                                   pz_wert                               ; Ziffer
+                                      025                                   prt_ziff                              ; ausgeben
+                                      211                                   po_wert                               ; Zahl
+                                      200                                   k7                                    ; untere 3 Bit
+                                      240                                   pz_wert                               ; Ziffer
+                                      025                                   prt_ziff                              ; ausgeben
+                                      000                                   po_r                                  ; zurueck
+pz_tab:                               dto                                   0                                     ; Ziffer 0
+                                      dto                                   1                                     ; Ziffer 1
+                                      dto                                   2                                     ; Ziffer 2
+                                      dto                                   3                                     ; Ziffer 3
+                                      dto                                   4                                     ; Ziffer 4
+                                      dto                                   5                                     ; Ziffer 5
+                                      dto                                   6                                     ; Ziffer 6
+                                      dto                                   7                                     ; Ziffer 7
+                                      equ100                                02100                                     ; Tabellen auf Vielfaches von 0100
+tab_k:                                dw                                    00                                    ; 00 Ziffer 0
+                                      dw                                    01                                    ; 01 Ziffer 1
+                                      dw                                    02                                    ; 02 Ziffer 2
+                                      dw                                    03                                    ; 03 Ziffer 3
+                                      dw                                    04                                    ; 04 Ziffer 4
+                                      dw                                    05                                    ; 05 Ziffer 5
+                                      dw                                    06                                    ; 06 Ziffer 6
+                                      dw                                    07                                    ; 07 Ziffer 7
+                                      dw                                    010                                   ; 10 Ziffer 8
+                                      dw                                    011                                   ; 11 Ziffer 9
+                                      000                                   d_end                                 ; 12 Leertaste
+                                      dw                                    077                                   ; 13 unbelegt
+                                      dw                                    077                                   ; 14 unbelegt
+                                      000                                   d_lies                                ; 15 :
+                                      000                                   d_lies                                ; 16 Irrung Satz
+                                      dw                                    077                                   ; 17 unbelegt
+                                      dw                                    077                                   ; 20 +
+                                      dw                                    077                                   ; 21 a
+                                      dw                                    077                                   ; 22 b
+                                      dw                                    077                                   ; 23 c
+                                      dw                                    077                                   ; 24 d
+                                      dw                                    077                                   ; 25 e
+                                      dw                                    077                                   ; 26 f
+                                      dw                                    077                                   ; 27 g
+                                      dw                                    077                                   ; 30 h
+                                      dw                                    077                                   ; 31 i
+                                      000                                   d_end                                 ; 32 SatzMarke
+                                      000                                   d_end                                 ; 33 .
+                                      dw                                    077                                   ; 34 unbelegt
+                                      dw                                    077                                   ; 35 unbelegt
+                                      000                                   d_lies                                ; 36 Irrung Block
+                                      000                                   d_lies                                ; 37 Um. GB
+                                      000                                   d_lies                                ; 40 -
+                                      dw                                    0100                                  ; 41 J
+                                      dw                                    077                                   ; 42 k
+                                      dw                                    077                                   ; 43 l
+                                      dw                                    077                                   ; 44 m
+                                      dw                                    0101                                  ; 45 N
+                                      dw                                    077                                   ; 46 o
+                                      dw                                    077                                   ; 47 p
+                                      dw                                    077                                   ; 50 q
+                                      dw                                    077                                   ; 51 r
+                                      dw                                    077                                   ; 52 WR
+                                      dw                                    077                                   ; 53 unbelegt
+                                      dw                                    077                                   ; 54 unbelegt
+                                      dw                                    077                                   ; 55 unbelegt
+                                      dw                                    077                                   ; 56 unbelegt
+                                      000                                   d_lies                                ; 57 Um. KB
+                                      000                                   d_lies                                ; 60 `
+                                      dw                                    077                                   ; 61 /
+                                      dw                                    077                                   ; 62 s
+                                      dw                                    077                                   ; 63 t
+                                      dw                                    077                                   ; 64 u
+                                      dw                                    077                                   ; 65 v
+                                      dw                                    077                                   ; 66 w
+                                      dw                                    077                                   ; 67 x
+                                      dw                                    077                                   ; 70 y
+                                      dw                                    077                                   ; 71 z
+                                      000                                   d_lies                                ; 72 BM/ZV
+                                      000                                   d_lies                                ; 73 ,
+                                      dw                                    077                                   ; 74 %
+                                      000                                   d_lies                                ; 75 Tabulator
+                                      dw                                    077                                   ; 76 unbelegt
+                                      dw                                    077                                   ; 77 unbelegt
+tab_b:                                dw                                    00                                    ; 00 Ziffer 0
+                                      dw                                    01                                    ; 01 Ziffer 1
+                                      dw                                    02                                    ; 02 Ziffer 2
+                                      dw                                    03                                    ; 03 Ziffer 3
+                                      dw                                    04                                    ; 04 Ziffer 4
+                                      dw                                    05                                    ; 05 Ziffer 5
+                                      dw                                    06                                    ; 06 Ziffer 6
+                                      dw                                    07                                    ; 07 Ziffer 7
+                                      dw                                    010                                   ; 10 Ziffer 8
+                                      dw                                    011                                   ; 11 Ziffer 9
+                                      000                                   b_skip                                ; 12 Leertaste
+                                      dw                                    077                                   ; 13 unbelegt
+                                      dw                                    077                                   ; 14 unbelegt
+                                      000                                   b_fehl                                ; 15 :
+                                      000                                   b_fehl                                ; 16 Irrung Satz
+                                      dw                                    077                                   ; 17 unbelegt
+                                      dw                                    077                                   ; 20 +
+                                      dw                                    077                                   ; 21 a
+                                      dw                                    077                                   ; 22 b
+                                      dw                                    077                                   ; 23 c
+                                      dw                                    077                                   ; 24 d
+                                      dw                                    077                                   ; 25 e
+                                      dw                                    077                                   ; 26 f
+                                      dw                                    077                                   ; 27 g
+                                      dw                                    077                                   ; 30 h
+                                      dw                                    077                                   ; 31 i
+                                      000                                   b_skip                                ; 32 SatzMarke
+                                      000                                   b_pkt                                 ; 33 .
+                                      dw                                    077                                   ; 34 unbelegt
+                                      dw                                    077                                   ; 35 unbelegt
+                                      000                                   b_fehl                                ; 36 Irrung Block
+                                      000                                   b_skip                                ; 37 Um. GB
+                                      000                                   b_fehl                                ; 40 -
+                                      dw                                    077                                   ; 41 j
+                                      dw                                    077                                   ; 42 k
+                                      dw                                    077                                   ; 43 l
+                                      dw                                    077                                   ; 44 m
+                                      dw                                    077                                   ; 45 n
+                                      dw                                    077                                   ; 46 o
+                                      dw                                    077                                   ; 47 p
+                                      dw                                    077                                   ; 50 q
+                                      dw                                    077                                   ; 51 r
+                                      dw                                    077                                   ; 52 WR
+                                      dw                                    077                                   ; 53 unbelegt
+                                      dw                                    077                                   ; 54 unbelegt
+                                      dw                                    077                                   ; 55 unbelegt
+                                      dw                                    077                                   ; 56 unbelegt
+                                      000                                   b_skip                                ; 57 Um. KB
+                                      000                                   b_fehl                                ; 60 `
+                                      dw                                    040                                   ; 61 Schraegstrich (Bandende)
+                                      dw                                    077                                   ; 62 s
+                                      dw                                    077                                   ; 63 t
+                                      dw                                    077                                   ; 64 u
+                                      dw                                    077                                   ; 65 v
+                                      dw                                    077                                   ; 66 w
+                                      dw                                    077                                   ; 67 x
+                                      dw                                    077                                   ; 70 y
+                                      dw                                    077                                   ; 71 z
+                                      000                                   b_fehl                                ; 72 BM/ZV
+                                      000                                   b_fehl                                ; 73 ,
+                                      dw                                    077                                   ; 74 %
+                                      000                                   b_fehl                                ; 75 Tabulator
+                                      dw                                    077                                   ; 76 unbelegt
+                                      dw                                    077                                   ; 77 unbelegt
+                                      equ40                                 02300                                     ; Spurgrenze
+nz:                                   dbn                                   040                                   ; Nullspur (nur Nullen, fuer 616 und 612)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+puf:                                  db                                    040                                   ; Pufferspur fuer 601
+ltr:                                  db                                    040                                   ; Spur 0 der Trommel (Belegungsliste)

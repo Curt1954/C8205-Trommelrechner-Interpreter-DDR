@@ -1,0 +1,411 @@
+gkm_br:        db             1              ; Mantisse b << 5
+gkm_st:        db             1              ; Klebebit-Summe
+gkm_rr:        db             1              ; Ergebnis der Mantissenaddition
+gk_add:        240            gkm_rueck      ; Eintritt: Rueckkehrwort sichern
+               211            gkm_r1         ; R1
+               240            gkm_xa         ; Operand a
+               211            gkm_r2         ; R2
+               240            gkm_xb         ; Operand b
+gkm_ad:        311            gkm_xb         ; AC := b, V3 bei b = 0
+               170            gkm_ad_b0      ; b = 0: Ergebnis a
+               311            gkm_xa         ; AC := a, V3 bei a = 0
+               170            gkm_ad_a0      ; a = 0: Ergebnis b
+               211            gkm_xa         ; |a|
+               200            l0001          ; z0 loeschen
+               240            gkm_t          ; |a| merken
+               211            gkm_xb         ; |b|
+               200            l0001          ; z0 loeschen
+               330            gkm_t          ; |b| mit |a| vergleichen
+               140            gkm_ad_ok      ; |b| <= |a|: kein Tausch
+               211            gkm_xa         ; Tausch: a ...
+               240            gkm_t          ; ... merken
+               211            gkm_xb         ; b ...
+               240            gkm_xa         ; ... nach a
+               211            gkm_t          ; altes a ...
+               240            gkm_xb         ; ... nach b
+gkm_ad_ok:     211            gkm_xa         ; |a|
+               200            l0001          ; z0 loeschen
+               642            07656          ; 26 rechts: Exponent ea (e + 32)
+               240            gkm_ee         ; Ergebnisexponent := ea
+               211            gkm_xb         ; |b|
+               200            l0001          ; z0 loeschen
+               642            07656          ; 26 rechts: Exponent eb
+               240            gkm_t          ; eb merken
+               211            gkm_ee         ; ea
+               220            gkm_t          ; ea - eb = d (Schiebeweite)
+               240            gkm_cn         ; Zaehler d
+               211            gkm_xa         ; a
+               200            l0002          ; Mantisse Ma (26 Bit)
+               644            07677          ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+               240            gkm_r          ; r := Ma << 5
+               211            gkm_xb         ; b
+               200            l0002          ; Mantisse Mb
+               644            07677          ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+               240            gkm_br         ; br := Mb << 5
+               241            gkm_st         ; Klebebit-Summe := 0
+gkm_ad_sl:     311            gkm_cn         ; AC := d, V3 bei d = 0
+               170            gkm_ad_sx      ; fertig geschoben
+               211            gkm_br         ; br
+               200            l0003          ; Bit 0 (geht verloren)
+               210            gkm_st         ; zur Summe
+               240            gkm_st         ; merken
+               211            gkm_br         ; br
+               212            l0004          ; 1 rechts
+               240            gkm_br         ; merken
+               211            gkm_cn         ; d
+               220            l0003          ; - 1
+               240            gkm_cn         ; merken
+               000            gkm_ad_sl      ; weiter
+gkm_ad_sx:     311            gkm_st         ; AC := Summe, V3 bei 0
+               170            gkm_ad_vz      ; nichts verloren: ohne Klebebit
+               211            gkm_br         ; br
+               200            l0005          ; Bit 0 loeschen
+               210            l0003          ; Klebebit setzen
+               240            gkm_br         ; merken
+gkm_ad_vz:     211            gkm_xa         ; Vorzeichen a
+               040            gkm_ad_xn      ; negativ
+               211            gkm_xb         ; a >= 0: Vorzeichen b
+               040            gkm_ad_df      ; negativ: verschieden
+               000            gkm_ad_gl      ; gleich
+gkm_ad_xn:     211            gkm_xb         ; a < 0: Vorzeichen b
+               040            gkm_ad_gl      ; auch negativ: gleich
+gkm_ad_df:     211            gkm_r          ; verschieden: r - br
+               220            gkm_br         ; ... subtrahieren
+               000            gkm_ad_nz      ; weiter
+gkm_ad_gl:     211            gkm_r          ; gleich: r + br
+               210            gkm_br         ; ... addieren
+gkm_ad_nz:     240            gkm_rr         ; R merken
+               311            gkm_rr         ; AC := R, V3 bei 0
+               170            gkm_null       ; R = 0: Ergebnis 0
+               330            l0006          ; R mit 2^31 vergleichen
+               150            gkm_ad_rr      ; R >= 2^31: 1 rechts
+gkm_ad_nl:     211            gkm_rr         ; R
+               330            l0007          ; mit 2^30 vergleichen
+               150            gkm_ad_nm      ; R >= 2^30: normiert
+               210            gkm_rr         ; R := 2 R
+               240            gkm_rr         ; merken
+               211            gkm_ee         ; Exponent
+               220            l0003          ; - 1
+               240            gkm_ee         ; merken
+               000            gkm_ad_nl      ; weiter normieren
+gkm_ad_rr:     211            gkm_rr         ; R
+               212            l0004          ; 1 rechts
+               240            gkm_rr         ; merken
+               211            gkm_ee         ; Exponent
+               210            l0003          ; + 1
+               240            gkm_ee         ; merken
+gkm_ad_nm:     211            gkm_rr         ; R
+               210            l0008          ; + 16 (Rundung)
+               642            07677          ; 5 mal Rechtsverschiebung (Operand nach Festlegung 026)
+               240            gkm_m          ; m merken
+               211            gkm_xa         ; a
+               200            l0009          ; Vorzeichen
+               240            gkm_sg         ; sg merken
+               000            gkm_pk         ; Packen
+gkm_ad_b0:     211            gkm_xa         ; b = 0: Ergebnis a
+               000            gkm_rueck      ; zurueck
+gkm_ad_a0:     211            gkm_xb         ; a = 0: Ergebnis b
+               000            gkm_rueck      ; zurueck
+gkm_pk:        211            gkm_m          ; Mantisse
+               330            l0010          ; mit 2^26 vergleichen
+               170            gkm_pk_ue      ; = 2^26: auf 2^25 und Exponent + 1
+gkm_pk_1:      211            gkm_ee         ; Exponent
+               040            gkm_null       ; < 0: Unterlauf, Ergebnis 0 (Annahme A8)
+               330            l0011          ; mit 64 vergleichen
+               150            gkm_fue        ; >= 64: Ueberlauf (Annahme A9)
+               644            07656          ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+               210            gkm_m          ; + Mantisse
+               210            gkm_sg         ; + Vorzeichen
+gkm_rueck:     db             1              ; Laufzeit: Rueckkehrwort vom Aufrufer, wird zuletzt durchlaufen (Festlegung 010)
+gkm_pk_ue:     211            l0012          ; 2^25
+               240            gkm_m          ; Mantisse := 2^25
+               211            gkm_ee         ; Exponent
+               210            l0003          ; + 1
+               240            gkm_ee         ; merken
+               000            gkm_pk_1       ; weiter
+gkm_null:      001            gkm_rueck      ; Ergebnis 0: AC loeschen, zurueck
+gkm_fue:       211            l0001          ; kuenstlicher Ueberlauf: 2^32 - 1
+               210            l0003          ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+               000            gkm_rueck      ; (nie erreicht)
+gkm_xa:        db             1              ; Operand a
+gkm_xb:        db             1              ; Operand b
+gkm_t:         db             1              ; Hilfszelle
+gkm_ee:        db             1              ; Ergebnisexponent (e + 32, ganze Zahl)
+gkm_sg:        db             1              ; Vorzeichenwort des Ergebnisses (0 oder 2^32)
+gkm_m:         db             1              ; Ergebnismantisse
+gkm_cn:        db             1              ; Zaehler
+gkm_r:         db             1              ; Rest bzw. Mantisse a << 5
+gk_sub:        240            gkm_rueck      ; Eintritt: Rueckkehrwort sichern
+               211            gkm_r1         ; R1
+               240            gkm_xa         ; Operand a
+               211            gkm_r2         ; R2
+               240            gkm_xb         ; Operand b
+               311            gkm_xb         ; AC := b, Vergleicher: V3 genau bei b = 0
+               170            gkm_ad         ; b = 0: unveraendert
+               040            gkm_su_n       ; z0 gesetzt: b negativ
+               210            l0009          ; b positiv: z0 setzen
+               240            gkm_xb         ; b merken
+               000            gkm_ad         ; weiter zum Kern
+gkm_su_n:      200            l0001          ; b negativ: z0 loeschen
+               240            gkm_xb         ; b merken
+               000            gkm_ad         ; weiter zum Kern (steht schon an anderer Stelle)
+gkm_y:         db             1              ; Quotient
+gkm_z:         db             1              ; Produkt bzw. Quotient vor der Rundung
+gkm_fl:        db             1              ; 0 Multiplikation, 1 Division
+gkm_ea:        db             1              ; Exponent a
+gkm_eb:        db             1              ; Exponent b
+gkm_ma:        db             1              ; Mantisse a
+gkm_mb:        db             1              ; Mantisse b
+gk_mul:        240            gkm_rueck      ; Eintritt: Rueckkehrwort sichern
+               241            gkm_fl         ; fl := 0
+gkm_md:        211            gkm_r1         ; R1
+               240            gkm_xa         ; Operand a
+               211            gkm_r2         ; R2
+               240            gkm_xb         ; Operand b
+               311            gkm_xb         ; AC := b, V3 bei b = 0
+               170            gkm_md_b0      ; b = 0
+               311            gkm_xa         ; AC := a, V3 bei a = 0
+               170            gkm_null       ; a = 0: Ergebnis 0
+               211            gkm_xa         ; Vorzeichen a
+               040            gkm_md_an      ; negativ
+               211            gkm_xb         ; a >= 0: Vorzeichen b
+               040            gkm_md_ng      ; negativ: Ergebnis negativ
+               000            gkm_md_ps      ; positiv
+gkm_md_an:     211            gkm_xb         ; a < 0: Vorzeichen b
+               040            gkm_md_ps      ; auch negativ: Ergebnis positiv
+gkm_md_ng:     211            l0009          ; Vorzeichen des Ergebnisses: -
+               240            gkm_sg         ; merken
+               000            gkm_md_e       ; weiter
+gkm_md_ps:     241            gkm_sg         ; Vorzeichen des Ergebnisses: +
+gkm_md_e:      211            gkm_xa         ; |a|
+               200            l0001          ; z0 loeschen
+               642            07656          ; 26 rechts: Exponent ea
+               240            gkm_ea         ; merken
+               211            gkm_xb         ; |b|
+               200            l0001          ; z0 loeschen
+               642            07656          ; 26 rechts: Exponent eb
+               240            gkm_eb         ; merken
+               211            gkm_xa         ; a
+               200            l0002          ; Mantisse Ma
+               240            gkm_ma         ; merken
+               211            gkm_xb         ; b
+               200            l0002          ; Mantisse Mb
+               240            gkm_mb         ; merken
+               311            gkm_fl         ; AC := fl, V3 bei Multiplikation
+               170            gkm_mu         ; fl = 0: Multiplikation
+               211            gkm_ea         ; ea
+               220            gkm_eb         ; - eb
+               210            l0013          ; + 32
+               240            gkm_ee         ; Ergebnisexponent
+               211            gkm_ma         ; Ma
+               240            gkm_r          ; Rest := Ma
+               241            gkm_y          ; Quotient := 0
+               211            l0014          ; 28 Durchlaeufe (27 bis 0)
+               240            gkm_cn         ; Zaehler
+gkm_dv_l:      211            gkm_y          ; Quotient
+               210            gkm_y          ; 2 y
+               240            gkm_y          ; merken
+               211            gkm_r          ; Rest
+               330            gkm_mb         ; mit Mb vergleichen
+               150            gkm_dv_ge      ; Rest >= Mb: abziehen
+gkm_dv_c:      211            gkm_r          ; Rest
+               210            gkm_r          ; 2 Rest
+               240            gkm_r          ; merken
+               211            gkm_cn         ; Zaehler
+               220            l0003          ; - 1
+               240            gkm_cn         ; merken
+               050            gkm_dv_l       ; noch nicht negativ: weiter
+               211            gkm_y          ; AC := Y
+               000            gkm_mq         ; weiter zur Rundung
+gkm_dv_ge:     211            gkm_r          ; Rest
+               220            gkm_mb         ; - Mb
+               240            gkm_r          ; merken
+               211            gkm_y          ; Quotient
+               210            l0003          ; + 1
+               240            gkm_y          ; merken
+               000            gkm_dv_c       ; weiter
+gkm_md_b0:     311            gkm_fl         ; AC := fl, V3 bei Multiplikation
+               170            gkm_null       ; Multiplikation mit 0: Ergebnis 0
+               000            gkm_fue        ; Division durch 0: kuenstlicher Ueberlauf
+gkm_mu:        211            gkm_ea         ; ea
+               210            gkm_eb         ; + eb
+               220            l0015          ; - 33
+               240            gkm_ee         ; Ergebnisexponent
+               211            gkm_mb         ; Mb
+               644            07646          ; 2 mal Linksverschiebung (Operand nach Festlegung 026)
+               240            gkm_t          ; t := Mb << 2
+               211            gkm_ma         ; Ma
+               644            07662          ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+               440            07640          ; Ma << 6 in alle Zellen der Arbeitsspur
+               211            gkm_t          ; Multiplikator
+               472            07640          ; Teilprodukte
+               211            l0004          ; Anfangswert 0 (keine Rundung)
+               412            07640          ; AC := Z
+gkm_mq:        240            gkm_z          ; Z merken
+               330            l0016          ; mit 2^27 vergleichen
+               150            gkm_mq_hi      ; Z >= 2^27
+               211            gkm_z          ; Z
+               212            l0003          ; (Z + 1) / 2
+               240            gkm_m          ; Mantisse
+               000            gkm_pk         ; packen
+gkm_mq_hi:     211            gkm_z          ; Z
+               212            l0017          ; (Z + 2) / 2
+               212            l0004          ; / 2 : (Z + 2) / 4
+               240            gkm_m          ; Mantisse
+               211            gkm_ee         ; Exponent
+               210            l0003          ; + 1
+               240            gkm_ee         ; merken
+               000            gkm_pk         ; der gemeinsame Teil steht schon an anderer Stelle
+gk_div:        240            gkm_rueck      ; Eintritt: Rueckkehrwort sichern
+               211            l0003          ; AC := 1
+               240            gkm_fl         ; fl := 1
+               000            gkm_md         ; weiter zum gemeinsamen Anfang (steht schon an anderer Stelle)
+               equ            02000          ; relative Adresse 02000
+haupt:         211            l0018          ; Zeiger auf die Operationstabelle
+               240            oz             ; merken
+               211            l0019          ; Zeiger auf die Ergebniszellen
+               240            rz             ; merken
+op_l:          211            oz             ; Zeiger
+               251            0              ; AC := Aufrufbefehl (025 gk_xxx)
+               240            cl             ; in die Aufrufzelle
+               211            l0020          ; Zeiger auf die Falltabelle
+               240            fz             ; merken
+fa_l:          211            fz             ; Zeiger auf a
+               251            0              ; AC := a
+               240            r1             ; nach R1
+               211            fz             ; Zeiger
+               210            l0021          ; auf b
+               251            0              ; AC := b
+               240            r2             ; nach R2
+cl:            db             1              ; Laufzeit: 025 gk_xxx, AC := Ergebnis
+               240            tm             ; Ergebnis merken
+               211            rz             ; Zeiger auf die Ergebniszelle
+               210            l0022          ; + Speicherbefehl
+               240            sp             ; auf die naechste Zelle legen
+               211            tm             ; Ergebnis
+sp:            db             1              ; Laufzeit: 240 res_i
+               211            rz             ; Lade den Zeiger `rz`
+               210            l0021          ; Addiere eine Adresseneinheit (nächstes Wort)
+               240            rz             ; Speichere den Zeiger zurück nach `rz`
+               211            fz             ; Lade den Zeiger `fz`
+               210            l0021          ; Addiere eine Adresseneinheit (nächstes Wort)
+               240            fz             ; Speichere den Zeiger zurück nach `fz`
+               211            fz             ; Lade den Zeiger `fz`
+               210            l0021          ; Addiere eine Adresseneinheit (nächstes Wort)
+               240            fz             ; Speichere den Zeiger zurück nach `fz`
+               211            fz             ; Zeiger
+               220            l0023          ; Zeiger - Ende der Falltabelle
+               040            fa_l           ; kleiner (negativ): naechster Fall
+               211            oz             ; Lade den Zeiger `oz`
+               210            l0021          ; Addiere eine Adresseneinheit (nächstes Wort)
+               240            oz             ; Speichere den Zeiger zurück nach `oz`
+               211            oz             ; Zeiger
+               220            l0024          ; Zeiger - Ende der Operationstabelle
+               040            op_l           ; kleiner (negativ): naechste Operation
+               020            0              ; Halt (nicht erreicht: der letzte Fall 5/0 endet im FUE-Halt)
+oz:            db             1              ; Zeiger Operationstabelle
+rz:            db             1              ; Zeiger Ergebniszelle
+fz:            db             1              ; Zeiger Falltabelle
+tm:            db             1              ; Ergebnis (Zwischenspeicher)
+               equ            02300          ; Operationstabelle
+optab:         025            gk_add         ; Operation 1: Addition
+               025            gk_sub         ; Operation 2: Subtraktion
+               025            gk_mul         ; Operation 3: Multiplikation
+               025            gk_div         ; Operation 4: Division
+optabend:      dw             0              ; Ende
+               equ            02400          ; Falltabelle: Paare a, b (dwg)
+               dw             020600000000   ; Fall 1 a  (1)
+               dw             020600000000   ; Fall 1 b  (1)
+               dw             020700000000   ; Fall 2 a  (1,5)
+               dw             021220000000   ; Fall 2 b  (2,25)
+               dw             061300000000   ; Fall 3 a  (-3)
+               dw             020200000000   ; Fall 3 b  (0,5)
+               dw             021740000000   ; Fall 4 a  (7)
+               dw             061740000000   ; Fall 4 b  (-7)
+               dw             036756326240   ; Fall 5 a  (5E8)
+               dw             020640000000   ; Fall 5 b  (1,25 (d gross))
+               dw             020600000000   ; Fall 6 a  (1)
+               dw             044200662545   ; Fall 6 b  (-3E-8 (Schutzbits))
+               dw             020600000000   ; Fall 7 a  (1)
+               dw             003600000000   ; Fall 7 b  (2^-26 (Mitte))
+               dw             060600000000   ; Fall 8 a  (-1)
+               dw             043600000000   ; Fall 8 b  (-2^-26 (Mitte))
+               dw             020600000000   ; Fall 9 a  (1)
+               dw             043600000000   ; Fall 9 b  (-2^-26)
+               dw             017652525253   ; Fall 10 a  (1/3)
+               dw             020252525253   ; Fall 10 b  (2/3)
+               dw             000000000000   ; Fall 11 a  (0)
+               dw             021640000000   ; Fall 11 b  (5)
+               dw             006600000000   ; Fall 12 a  (2^-20)
+               dw             006600000000   ; Fall 12 b  (2^-20)
+               dw             020600000003   ; Fall 13 a  (1,0000001)
+               dw             020377777771   ; Fall 13 b  (0,9999999)
+               dw             030761100624   ; Fall 14 a  (123456,789)
+               dw             055311413702   ; Fall 14 b  (-0,0123)
+               dw             076600000000   ; Fall 15 a  (-2^28)
+               dw             021300000000   ; Fall 15 b  (3)
+               dw             022250315722   ; Fall 16 a  (zufall 1)
+               dw             056240604053   ; Fall 16 b  (zufall 1)
+               dw             016640637140   ; Fall 17 a  (zufall 2)
+               dw             061362423745   ; Fall 17 b  (zufall 2)
+               dw             016602146533   ; Fall 18 a  (zufall 3)
+               dw             061716256772   ; Fall 18 b  (zufall 3)
+               dw             057217722273   ; Fall 19 a  (zufall 4)
+               dw             060266610765   ; Fall 19 b  (zufall 4)
+               dw             062337130057   ; Fall 20 a  (zufall 5)
+               dw             021620036750   ; Fall 20 b  (zufall 5)
+               dw             021267273506   ; Fall 21 a  (zufall 6)
+               dw             021261522675   ; Fall 21 b  (zufall 6)
+               dw             020300000000   ; Fall 22 a  (0,75)
+               dw             020300000000   ; Fall 22 b  (0,75)
+               dw             020600000000   ; Fall 23 a  (1)
+               dw             003200000000   ; Fall 23 b  (2^-27)
+               dw             020600000000   ; Fall 24 a  (1)
+               dw             001600000000   ; Fall 24 b  (2^-30 (d = 30))
+               dw             001600000000   ; Fall 25 a  (2^-30)
+               dw             020600000000   ; Fall 25 b  (1 (Tausch))
+               dw             021300000000   ; Fall 26 a  (3)
+               dw             061740000000   ; Fall 26 b  (-7)
+               dw             020200000000   ; Fall 27 a  (0,5)
+               dw             020200000000   ; Fall 27 b  (0,5)
+               dw             001611340575   ; Fall 28 a  (1E-9)
+               dw             037356326240   ; Fall 28 b  (1E9)
+               dw             021640000000   ; Fall 29 a  (5)
+               dw             020600000000   ; Fall 29 b  (1)
+               dw             020600000000   ; Fall 30 a  (1)
+               dw             022240000000   ; Fall 30 b  (10)
+               dw             020252525253   ; Fall 31 a  (2/3)
+               dw             017652525253   ; Fall 31 b  (1/3)
+               dw             001600000000   ; Fall 32 a  (2^-30)
+               dw             001600000000   ; Fall 32 b  (2^-30 (mul Unterlauf))
+               dw             041600000000   ; Fall 33 a  (-2^-30)
+               dw             001200000000   ; Fall 33 b  (2^-31)
+               dw             021640000000   ; Fall 34 a  (5)
+               dw             000000000000   ; Fall 34 b  (0 (div: kuenstlicher FUE))
+fallend:       dw             0              ; Ende
+               equ            03000          ; Ergebniszellen: add, sub, mul, div je 34 Zellen
+res:           db             136            
+l0001          dw             037777777777   
+l0002          dw             000377777777   
+l0003          dw             1              
+l0004          dw             000000000000   
+l0005          dw             037777777776   
+l0006          dw             020000000000   
+l0007          dw             010000000000   
+l0008          dw             000000000020   
+l0009          dw             040000000000   
+l0010          dw             000400000000   
+l0011          dw             64             
+l0012          dw             000200000000   
+l0013          dw             32             
+l0014          dw             27             
+l0015          dw             33             
+l0016          dw             001000000000   
+l0017          dw             2              
+l0018          da             optab          
+l0019          da             res            
+l0020          da             fall           
+l0021          dw             000000001000   
+l0022          dw             000000000240   
+l0023          da             fallend        
+l0024          da             optabend       

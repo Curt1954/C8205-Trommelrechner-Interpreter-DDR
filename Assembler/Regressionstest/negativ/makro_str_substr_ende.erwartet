@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_substr_ende.asm:6: Fehler: M1 $SUBSTR z: Das Ende (Start 2, Anzahl 3) liegt hinter dem Textende (Länge 3)
+datei-weg obj mqo test
+escape-weg

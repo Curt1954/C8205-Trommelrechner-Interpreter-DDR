@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_rept_zeilen.asm:2: Fehler: (Quelltext) Die $REPT-Wiederholung erzeugt mehr als 4096 Zeilen.
+datei-weg obj mqo test
+escape-weg

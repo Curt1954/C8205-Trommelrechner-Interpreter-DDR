@@ -1,0 +1,30 @@
+Trommeldatei:
+#DOK-0001 Test Attributabfragen in Makros aus ;#MACRODATEI1: art, def; Marke aus einem Makro der Makrodatei ist kein Symbol des Quelltexts (A-11)
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000012000 # 000 haupt ; Zelle 0: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Art des Symbols
+0002: 00000000002 # dw 2 ; Art des Symbols
+0003: 00000000004 # dw 4 ; Art des Symbols
+0004: 00000000000 # dw 0 ; Art des Symbols
+0005: 00000000115 # md_marke: dw 77 ; Marke aus einem Makro der Makrodatei
+0006: 00000000001 # dw 1 ; Symbol vorhanden
+0007: 00000000002 # dw 2 ; Symbol fehlt
+0010: 00000000002 # dw 2 ; Symbol fehlt
+0011: 00000000002 # dw 2 ; Makro im Quelltext
+0012: 00000001164 # haupt: 164 0001 ; Diagnoseausgabe (nur im Test)
+0013: 00000000020 # 020 0 ; Halt
+0014: 00000000007 # a_dw: dw 7 ; Marke auf dw
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0014 US=1
+0001: 00000000001   # MD_ART a_abs
+0002: 00000000002   # MD_ART a_equ
+0003: 00000000004   # MD_ART a_dw
+0004: 00000000000   # MD_ART md_marke
+0005: 00000000115   # MD_ERZ
+0006: 00000000001   # MD_IF a_abs
+0007: 00000000002   # MD_IF nix
+0010: 00000000002   # MD_IF md_marke
+0011: 00000000002   # Q_ART a_equ

@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Textelemente, Wechsel zwischen Text und Zahl, $INC auf Feldelement, $V(#t(i)) und $V(@t)
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000002 # dw 2 ; Zeichenzahl 2
+0002: 00000000002 # dw 2 ; Zeichenzahl 2
+0003: 00000000014 # dw 12 ; Text 12 als Operand
+0004: 00000000007 # dw 7 ; Zahl 7
+0005: 00000000005 # dw 5 ; Zeichenzahl 5
+0006: 00000000004 # dw 4 ; 4
+0007: 00000000007 # dw 7 ; 7
+0010: 00000000003 # dw 3 ; Elementzahl 3
+0011: 00000001164 # haupt: 164 0001 ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 00000000020 # 020 0 ; Zelle 0012: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 00000000002   # Zeichenzahl von t(0)
+0002: 00000000002   # Zeichenzahl von t(1)
+0003: 00000000014   # Text 12 als Zahl
+0004: 00000000007   # t(2) = 7
+0005: 00000000005   # t(2) = hallo hat 5 Zeichen
+0006: 00000000004   # t(0) als Zahl 4
+0007: 00000000007   # 4 + 3
+0010: 00000000003   # Elementzahl

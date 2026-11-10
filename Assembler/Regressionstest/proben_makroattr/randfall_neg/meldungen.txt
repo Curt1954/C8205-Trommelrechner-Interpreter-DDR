@@ -1,0 +1,19 @@
+# Sollmeldungen der Fehlerproben rf_*.asm (von Hand aus dem Quelltext hergeleitet, dann am Binary 1.00-071 gelesen; alle gleich).
+# Jede Probe endet mit Rueckgabecode 16, die Meldung steht in Zeile 5 (Aufruf M1 bzw. FA) und kommt zweimal ("2-mal gleiche Fehlermeldung").
+# Format: <Datei> | <Text nach "Fehler: $CALC(...): "> (ohne den Zusatz ' (bei "...")')
+rf_zyklus_za.asm     | Symbol "za": Verweis zu tief oder zyklisch (mehr als 16 Stufen)
+rf_zyklus_zs.asm     | Symbol "zs": Verweis zu tief oder zyklisch (mehr als 16 Stufen)
+rf_kette_ka16.asm    | Symbol "ka0": Verweis zu tief oder zyklisch (mehr als 16 Stufen)
+rf_kette_kb1.asm     | Symbol "kb0" hat keinen festen Zahlenwert (equ * ist eine Adresse, die erst nach Pass 0 feststeht)
+rf_equ_leer.asm      | Symbol "eo" hat keinen festen Zahlenwert (der Operand fehlt)
+rf_zellen_za.asm     | Symbol "za": equ definiert einen Wert und belegt keine Zelle
+rf_zellen_ka16.asm   | Symbol "ka16": equ definiert einen Wert und belegt keine Zelle
+rf_def_33.asm        | def: Symbolname zu lang (höchstens 32 Zeichen)
+rf_art_33.asm        | art: Symbolname zu lang (höchstens 32 Zeichen)
+rf_zellen_33.asm     | zellen: Symbolname zu lang (höchstens 32 Zeichen)
+rf_wert_33.asm       | Symbolname zu lang
+rf_param_ausdr.asm   | art: Das Argument ist kein einzelner Symbolname (Operator, Komma, Leerraum und weitere Klammern sind nicht erlaubt)
+rf_param_ausdr2.asm  | art: Das Argument ist kein einzelner Symbolname (Operator, Komma, Leerraum und weitere Klammern sind nicht erlaubt)
+rf_klammer2.asm      | def: Das Argument ist kein einzelner Symbolname (Operator, Komma, Leerraum und weitere Klammern sind nicht erlaubt)
+# rf_kette_ka15.asm ist KEIN Fehlerfall: $CALC(ka15) ergibt 3 (15 Stufen sind erlaubt, 16 nicht). Der Assembler lehnt das Programm nur wegen der
+# Zyklus-Zeilen za, zb, zs in derselben Datei ab; ohne diese Zeilen ist rc 0. Zum Vergleich mit rf_kette_ka16.asm.

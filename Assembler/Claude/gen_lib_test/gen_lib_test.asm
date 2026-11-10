@@ -1,0 +1,636 @@
+; Pruefprogramm der Bibliothek c82gen (Normalmodus)
+; ERZEUGT von Assembler/Claude/gen_lib_test/gen/gen_lib_test_gen.py -- nicht von Hand aendern, Aenderungen im Generator.
+; Belegung: 546 Zellen (Code 362, Daten 171, Literale 13), Grenze 1024.
+; Empfehlung (001): kleinste Startzelle 0040 (0002 bis 0037 gehoeren dem KEP), groesste Startzelle 6500 (7600 minus 546 Zellen, abgerundet), Ausrichtung auf eine 0100-Grenze (Tafeln und Spuren liegen relativ zum Start).
+; #DOK-0001 Pruefprogramm c82gen: Schieben, UP, Kurzidiome, Felder, Ausgabe, Eingabetafel (Normalmodus)
+; --sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/gen_lib_test.txt
+; --k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/gen_lib_test.txt
+; --pruefe-sw-ausgabe Test-Ergebnisvergleiche/gen_lib_test-sw-ausgabe.txt
+; #TASTENFOLGE H SW=1 G R
+                start                ; Zaehlung beginnt bei 0000
+                211     pn             ; AC := pn
+                646     07663          ; AC um 1 Bit zyklisch links
+                240     l1             ; l1 := AC
+                211     pn             ; AC := pn
+                646     07646          ; AC um 2 Bit zyklisch links
+                240     l2             ; l2 := AC
+                211     pn             ; AC := pn
+                646     07671          ; AC um 3 Bit zyklisch links
+                240     l3             ; l3 := AC
+                211     pn             ; AC := pn
+                646     07654          ; AC um 4 Bit zyklisch links
+                240     l4             ; l4 := AC
+                211     pn             ; AC := pn
+                646     07677          ; AC um 5 Bit zyklisch links
+                240     l5             ; l5 := AC
+                211     pn             ; AC := pn
+                646     07662          ; AC um 6 Bit zyklisch links
+                240     l6             ; l6 := AC
+                211     pn             ; AC := pn
+                646     07645          ; AC um 7 Bit zyklisch links
+                240     l7             ; l7 := AC
+                211     pn             ; AC := pn
+                646     07670          ; AC um 8 Bit zyklisch links
+                240     l8             ; l8 := AC
+                211     pn             ; AC := pn
+                646     07653          ; AC um 9 Bit zyklisch links
+                240     l9             ; l9 := AC
+                211     pn             ; AC := pn
+                646     07676          ; AC um 10 Bit zyklisch links
+                240     l10            ; l10 := AC
+                211     pn             ; AC := pn
+                646     07661          ; AC um 11 Bit zyklisch links
+                240     l11            ; l11 := AC
+                211     pn             ; AC := pn
+                646     07644          ; AC um 12 Bit zyklisch links
+                240     l12            ; l12 := AC
+                211     pn             ; AC := pn
+                646     07667          ; AC um 13 Bit zyklisch links
+                240     l13            ; l13 := AC
+                211     pn             ; AC := pn
+                646     07652          ; AC um 14 Bit zyklisch links
+                240     l14            ; l14 := AC
+                211     pn             ; AC := pn
+                646     07675          ; AC um 15 Bit zyklisch links
+                240     l15            ; l15 := AC
+                211     pn             ; AC := pn
+                646     07660          ; AC um 16 Bit zyklisch links
+                240     l16            ; l16 := AC
+                211     pn             ; AC := pn
+                646     07643          ; AC um 17 Bit zyklisch links
+                240     l17            ; l17 := AC
+                211     pn             ; AC := pn
+                646     07666          ; AC um 18 Bit zyklisch links
+                240     l18            ; l18 := AC
+                211     pn             ; AC := pn
+                646     07651          ; AC um 19 Bit zyklisch links
+                240     l19            ; l19 := AC
+                211     pn             ; AC := pn
+                646     07674          ; AC um 20 Bit zyklisch links
+                240     l20            ; l20 := AC
+                211     pn             ; AC := pn
+                646     07657          ; AC um 21 Bit zyklisch links
+                240     l21            ; l21 := AC
+                211     pn             ; AC := pn
+                646     07642          ; AC um 22 Bit zyklisch links
+                240     l22            ; l22 := AC
+                211     pn             ; AC := pn
+                646     07665          ; AC um 23 Bit zyklisch links
+                240     l23            ; l23 := AC
+                211     pn             ; AC := pn
+                646     07650          ; AC um 24 Bit zyklisch links
+                240     l24            ; l24 := AC
+                211     pn             ; AC := pn
+                646     07673          ; AC um 25 Bit zyklisch links
+                240     l25            ; l25 := AC
+                211     pn             ; AC := pn
+                646     07656          ; AC um 26 Bit zyklisch links
+                240     l26            ; l26 := AC
+                211     pn             ; AC := pn
+                646     07641          ; AC um 27 Bit zyklisch links
+                240     l27            ; l27 := AC
+                211     pn             ; AC := pn
+                646     07664          ; AC um 28 Bit zyklisch links
+                240     l28            ; l28 := AC
+                211     pn             ; AC := pn
+                646     07647          ; AC um 29 Bit zyklisch links
+                240     l29            ; l29 := AC
+                211     pn             ; AC := pn
+                646     07672          ; AC um 30 Bit zyklisch links
+                240     l30            ; l30 := AC
+                211     pn             ; AC := pn
+                646     07655          ; AC um 31 Bit zyklisch links
+                240     l31            ; l31 := AC
+                211     pn             ; AC := pn
+                646     07640          ; AC um 32 Bit zyklisch links
+                240     l32            ; l32 := AC
+                211     pr             ; AC := pr
+                642     07663          ; AC um 1 Bit nach rechts
+                240     r1             ; r1 := AC
+                211     pr             ; AC := pr
+                642     07646          ; AC um 2 Bit nach rechts
+                240     r2             ; r2 := AC
+                211     pr             ; AC := pr
+                642     07671          ; AC um 3 Bit nach rechts
+                240     r3             ; r3 := AC
+                211     pr             ; AC := pr
+                642     07654          ; AC um 4 Bit nach rechts
+                240     r4             ; r4 := AC
+                211     pr             ; AC := pr
+                642     07677          ; AC um 5 Bit nach rechts
+                240     r5             ; r5 := AC
+                211     pr             ; AC := pr
+                642     07662          ; AC um 6 Bit nach rechts
+                240     r6             ; r6 := AC
+                211     pr             ; AC := pr
+                642     07645          ; AC um 7 Bit nach rechts
+                240     r7             ; r7 := AC
+                211     pr             ; AC := pr
+                642     07670          ; AC um 8 Bit nach rechts
+                240     r8             ; r8 := AC
+                211     pr             ; AC := pr
+                642     07653          ; AC um 9 Bit nach rechts
+                240     r9             ; r9 := AC
+                211     pr             ; AC := pr
+                642     07676          ; AC um 10 Bit nach rechts
+                240     r10            ; r10 := AC
+                211     pr             ; AC := pr
+                642     07661          ; AC um 11 Bit nach rechts
+                240     r11            ; r11 := AC
+                211     pr             ; AC := pr
+                642     07644          ; AC um 12 Bit nach rechts
+                240     r12            ; r12 := AC
+                211     pr             ; AC := pr
+                642     07667          ; AC um 13 Bit nach rechts
+                240     r13            ; r13 := AC
+                211     pr             ; AC := pr
+                642     07652          ; AC um 14 Bit nach rechts
+                240     r14            ; r14 := AC
+                211     pr             ; AC := pr
+                642     07675          ; AC um 15 Bit nach rechts
+                240     r15            ; r15 := AC
+                211     pr             ; AC := pr
+                642     07660          ; AC um 16 Bit nach rechts
+                240     r16            ; r16 := AC
+                211     pr             ; AC := pr
+                642     07643          ; AC um 17 Bit nach rechts
+                240     r17            ; r17 := AC
+                211     pr             ; AC := pr
+                642     07666          ; AC um 18 Bit nach rechts
+                240     r18            ; r18 := AC
+                211     pr             ; AC := pr
+                642     07651          ; AC um 19 Bit nach rechts
+                240     r19            ; r19 := AC
+                211     pr             ; AC := pr
+                642     07674          ; AC um 20 Bit nach rechts
+                240     r20            ; r20 := AC
+                211     pr             ; AC := pr
+                642     07657          ; AC um 21 Bit nach rechts
+                240     r21            ; r21 := AC
+                211     pr             ; AC := pr
+                642     07642          ; AC um 22 Bit nach rechts
+                240     r22            ; r22 := AC
+                211     pr             ; AC := pr
+                642     07665          ; AC um 23 Bit nach rechts
+                240     r23            ; r23 := AC
+                211     pr             ; AC := pr
+                642     07650          ; AC um 24 Bit nach rechts
+                240     r24            ; r24 := AC
+                211     pr             ; AC := pr
+                642     07673          ; AC um 25 Bit nach rechts
+                240     r25            ; r25 := AC
+                211     pr             ; AC := pr
+                642     07656          ; AC um 26 Bit nach rechts
+                240     r26            ; r26 := AC
+                211     pr             ; AC := pr
+                642     07641          ; AC um 27 Bit nach rechts
+                240     r27            ; r27 := AC
+                211     pr             ; AC := pr
+                642     07664          ; AC um 28 Bit nach rechts
+                240     r28            ; r28 := AC
+                211     pr             ; AC := pr
+                642     07647          ; AC um 29 Bit nach rechts
+                240     r29            ; r29 := AC
+                211     pr             ; AC := pr
+                642     07672          ; AC um 30 Bit nach rechts
+                240     r30            ; r30 := AC
+                211     pr             ; AC := pr
+                642     07655          ; AC um 31 Bit nach rechts
+                240     r31            ; r31 := AC
+                211     pr             ; AC := pr
+                642     07640          ; AC um 32 Bit nach rechts
+                240     r32            ; r32 := AC
+                241     px             ; px := 0, AC := 0
+                025     outer          ; Aufruf outer
+                211     #07            ; AC := 07
+                240     px             ; px := AC
+                025     inner          ; Aufruf inner
+                211     ri             ; AC := ri
+                240     rd             ; rd := AC
+                211     #05            ; AC := 05
+                240     x              ; x := AC
+                211     #07            ; AC := 07
+                240     y              ; y := AC
+                211     #-03           ; AC := -03
+                240     neg            ; neg := AC
+                241     cnt            ; cnt := 0, AC := 0
+                210     #01            ; AC := AC + 01
+                240     cnt            ; cnt := AC
+                210     #01            ; AC := AC + 01
+                240     cnt            ; cnt := AC
+                210     #01            ; AC := AC + 01
+                240     cnt            ; cnt := AC
+                211     y              ; AC := y
+                220     x              ; AC := AC - x
+                240     dif            ; dif := AC
+                240     dif2           ; dif2 := AC
+                211     x              ; AC := x
+                330     y              ; AC mit y vergleichen
+                140     t_1            ; kleiner oder gleich: weiter bei t_1
+                241     c1             ; c1 := 0, AC := 0
+                000     w_2            ; weiter bei w_2
+t_1:            211     #01            ; AC := 01
+                240     c1             ; c1 := AC
+w_2:            211     x              ; AC := x
+                330     y              ; AC mit y vergleichen
+                150     t_3            ; groesser oder gleich: weiter bei t_3
+                241     c2             ; c2 := 0, AC := 0
+                000     w_4            ; weiter bei w_4
+t_3:            211     #01            ; AC := 01
+                240     c2             ; c2 := AC
+w_4:            211     x              ; AC := x
+                330     y              ; AC mit y vergleichen
+                170     t_5            ; gleich: weiter bei t_5
+                241     c3             ; c3 := 0, AC := 0
+                000     w_6            ; weiter bei w_6
+t_5:            211     #01            ; AC := 01
+                240     c3             ; c3 := AC
+w_6:            211     y              ; AC := y
+                330     #07            ; AC mit 07 vergleichen
+                170     t_7            ; gleich: weiter bei t_7
+                241     c4             ; c4 := 0, AC := 0
+                000     w_8            ; weiter bei w_8
+t_7:            211     #01            ; AC := 01
+                240     c4             ; c4 := AC
+w_8:            211     neg            ; AC := neg
+                040     t_9            ; AC < 0: weiter bei t_9
+                241     c5             ; c5 := 0, AC := 0
+                000     w_10           ; weiter bei w_10
+t_9:            211     #01            ; AC := 01
+                240     c5             ; c5 := AC
+w_10:           211     neg            ; AC := neg
+                050     t_11           ; AC >= 0: weiter bei t_11
+                241     c6             ; c6 := 0, AC := 0
+                000     w_12           ; weiter bei w_12
+t_11:           211     #01            ; AC := 01
+                240     c6             ; c6 := AC
+w_12:           211     x              ; AC := x
+                050     t_13           ; AC >= 0: weiter bei t_13
+                241     c7             ; c7 := 0, AC := 0
+                000     w_14           ; weiter bei w_14
+t_13:           211     #01            ; AC := 01
+                240     c7             ; c7 := AC
+w_14:           211     #02000         ; AC := 02000
+                240     ix             ; ix := AC
+                211     #0123          ; AC := 0123
+                240     wv             ; wv := AC
+                211     ix             ; AC := Index ix
+                210     @fe            ; AC := Index + Anfangsadresse fe
+                210     #0240          ; AC := Befehl 240 fe[Index]
+                240     fs_15          ; Befehl auf Zelle fs_15 ablegen
+                211     wv             ; AC := wv
+fs_15:          db      01             ; zur Laufzeit 240 fe[Index]
+                211     ix             ; AC := Index ix
+                210     @fe            ; AC := Index + Anfangsadresse fe
+                251     0              ; AC := fe[Index] (R-Lesebefehl)
+                240     fr             ; fr := AC
+                030     04500          ; Kanal K2 anwaehlen
+                dtm     Test           ; Text 'Test'
+                dz      $wrzl          ; Zeilenschaltung
+                211     #01234         ; AC := 01234
+                240     zahl           ; zahl := AC
+                240     po_wert        ; Parameter po_wert
+                030     04500          ; Kanal K2 anwaehlen
+                dz      $inkb          ; Kleinbuchstabenzustand fuer Ziffern
+                025     prt_okt4       ; Aufruf prt_okt4
+                dz      $wrzl          ; Zeichen $wrzl
+                211     #05            ; AC := 05
+                240     d5             ; d5 := AC
+                240     pz_wert        ; Parameter pz_wert
+                025     prt_ziff       ; Aufruf prt_ziff
+                dz      $wrzl          ; Zeichen $wrzl
+                030     04700          ; Kanal K0 anwaehlen
+                011     tk             ; Zeichen lesen (Tafel tk)
+                240     z1             ; z1 := AC
+                011     tk             ; Zeichen lesen (Tafel tk)
+                240     z2             ; z2 := AC
+                011     tk             ; Zeichen lesen (Tafel tk)
+                211     #0777          ; AC := 0777
+                240     z3             ; z3 := AC
+ja:             211     #01            ; AC := 01
+                240     z3             ; z3 := AC
+                164     0001           ; Diagnoseausgabe (nur im Test)
+                020     0              ; Halt
+inner:          240     rueck_inner    ; Rueckkehrwort sichern: px = 0: ri := 100, sonst ri := px + 1
+                211     px             ; AC := px
+                330     #0             ; AC mit 0 vergleichen
+                170     in_null        ; gleich: weiter bei in_null
+                211     px             ; AC := px
+                210     #01            ; AC := AC + 01
+                240     ri             ; ri := AC
+                000     rueck_inner    ; Ausgang px <> 0 aus inner
+in_null:        211     #0144          ; AC := 0144
+                240     ri             ; ri := AC
+rueck_inner:    db      01             ; Rueckkehrzelle von inner: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+outer:          240     rueck_outer    ; Rueckkehrwort sichern: inner zweimal rufen: px = 0 und px = 5
+                241     px             ; px := 0, AC := 0
+                025     inner          ; Aufruf inner
+                211     ri             ; AC := ri
+                240     ra             ; ra := AC
+                211     #05            ; AC := 05
+                240     px             ; px := AC
+                025     inner          ; Aufruf inner
+                211     ri             ; AC := ri
+                240     rb             ; rb := AC
+                211     ra             ; AC := ra
+                210     rb             ; AC := AC + rb
+                240     rs             ; rs := AC
+rueck_outer:    db      01             ; Rueckkehrzelle von outer: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+prt_ziff:       240     rueck_prt_ziff ; Rueckkehrwort sichern: Ziffer ausgeben
+                211     pz_wert        ; AC := Ziffer
+                646     07653          ; mal 01000 (Adresseneinheiten): AC um 9 Bit zyklisch links
+                210     @pz_tab        ; plus Anfang der Ausgabebefehle
+                251     0              ; AC := Ausgabebefehl der Ziffer (R-Lesebefehl)
+                240     pz_x           ; Befehl ablegen
+pz_x:           db      01             ; hier steht der Ausgabebefehl 030 xxxx
+rueck_prt_ziff: db      01             ; Rueckkehrzelle von prt_ziff: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+prt_okt4:       240     rueck_prt_okt4 ; Rueckkehrwort sichern: Zahl mit 4 Oktalziffern ausgeben
+                211     po_wert        ; AC := Zahl
+                642     07653          ; Ziffer 1 nach unten: AC um 9 Bit nach rechts
+                200     #07            ; Ziffer 1 ausblenden (Maske 7)
+                240     pz_wert        ; Ziffer 1
+                025     prt_ziff       ; Ziffer 1: Aufruf prt_ziff
+                211     po_wert        ; AC := Zahl
+                642     07662          ; Ziffer 2 nach unten: AC um 6 Bit nach rechts
+                200     #07            ; Ziffer 2 ausblenden (Maske 7)
+                240     pz_wert        ; Ziffer 2
+                025     prt_ziff       ; Ziffer 2: Aufruf prt_ziff
+                211     po_wert        ; AC := Zahl
+                642     07671          ; Ziffer 3 nach unten: AC um 3 Bit nach rechts
+                200     #07            ; Ziffer 3 ausblenden (Maske 7)
+                240     pz_wert        ; Ziffer 3
+                025     prt_ziff       ; Ziffer 3: Aufruf prt_ziff
+                211     po_wert        ; AC := Zahl
+                200     #07            ; Ziffer 4 ausblenden (Maske 7)
+                240     pz_wert        ; Ziffer 4
+                025     prt_ziff       ; Ziffer 4: Aufruf prt_ziff
+rueck_prt_okt4: db      01             ; Rueckkehrzelle von prt_okt4: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+pn:             dw      -020765432107  ; Muster mit Vorzeichenbit
+pr:             dw      07123456701    ; Muster positiv
+l1:             db      01             ; Ergebnis links 1
+l2:             db      01             ; Ergebnis links 2
+l3:             db      01             ; Ergebnis links 3
+l4:             db      01             ; Ergebnis links 4
+l5:             db      01             ; Ergebnis links 5
+l6:             db      01             ; Ergebnis links 6
+l7:             db      01             ; Ergebnis links 7
+l8:             db      01             ; Ergebnis links 8
+l9:             db      01             ; Ergebnis links 9
+l10:            db      01             ; Ergebnis links 10
+l11:            db      01             ; Ergebnis links 11
+l12:            db      01             ; Ergebnis links 12
+l13:            db      01             ; Ergebnis links 13
+l14:            db      01             ; Ergebnis links 14
+l15:            db      01             ; Ergebnis links 15
+l16:            db      01             ; Ergebnis links 16
+l17:            db      01             ; Ergebnis links 17
+l18:            db      01             ; Ergebnis links 18
+l19:            db      01             ; Ergebnis links 19
+l20:            db      01             ; Ergebnis links 20
+                begin                  ; Eingabetafel tk
+tk:             dw      077            ; 00 : Wert
+                dw      077            ; 01 : Wert
+                dw      02             ; 02 2: Wert
+                dw      077            ; 03 : Wert
+                dw      077            ; 04 : Wert
+                dw      077            ; 05 : Wert
+                dw      077            ; 06 : Wert
+                dw      077            ; 07 : Wert
+                dw      077            ; 10 : Wert
+                dw      077            ; 11 : Wert
+                dw      077            ; 12 : Wert
+                dw      077            ; 13 : Wert
+                dw      077            ; 14 : Wert
+                dw      077            ; 15 : Wert
+                dw      077            ; 16 : Wert
+                dw      077            ; 17 : Wert
+                dw      077            ; 20 : Wert
+                000     ja             ; 21 A: Sprung
+                dw      077            ; 22 : Wert
+                dw      077            ; 23 : Wert
+                dw      077            ; 24 : Wert
+                dw      077            ; 25 : Wert
+                dw      077            ; 26 : Wert
+                dw      077            ; 27 : Wert
+                dw      077            ; 30 : Wert
+                dw      077            ; 31 : Wert
+                dw      077            ; 32 : Wert
+                dw      077            ; 33 : Wert
+                dw      077            ; 34 : Wert
+                dw      077            ; 35 : Wert
+                dw      077            ; 36 : Wert
+                dw      077            ; 37 : Wert
+                dw      077            ; 40 : Wert
+                dw      077            ; 41 : Wert
+                dw      077            ; 42 : Wert
+                dw      077            ; 43 : Wert
+                dw      077            ; 44 : Wert
+                dw      077            ; 45 : Wert
+                dw      077            ; 46 : Wert
+                dw      077            ; 47 : Wert
+                dw      077            ; 50 : Wert
+                dw      077            ; 51 : Wert
+                dw      077            ; 52 : Wert
+                dw      077            ; 53 : Wert
+                dw      077            ; 54 : Wert
+                dw      077            ; 55 : Wert
+                dw      077            ; 56 : Wert
+                dw      077            ; 57 : Wert
+                dw      077            ; 60 : Wert
+                dw      077            ; 61 : Wert
+                dw      077            ; 62 : Wert
+                dw      077            ; 63 : Wert
+                dw      077            ; 64 : Wert
+                dw      077            ; 65 : Wert
+                dw      077            ; 66 : Wert
+                dw      077            ; 67 : Wert
+                dw      077            ; 70 : Wert
+                dw      077            ; 71 : Wert
+                dw      077            ; 72 : Wert
+                dw      077            ; 73 : Wert
+                dw      077            ; 74 : Wert
+                dw      077            ; 75 : Wert
+                dw      077            ; 76 : Wert
+                dw      077            ; 77 : Wert
+                bend                   ; Ende Eingabetafel tk
+l21:            db      01             ; Ergebnis links 21
+l22:            db      01             ; Ergebnis links 22
+l23:            db      01             ; Ergebnis links 23
+l24:            db      01             ; Ergebnis links 24
+l25:            db      01             ; Ergebnis links 25
+l26:            db      01             ; Ergebnis links 26
+l27:            db      01             ; Ergebnis links 27
+l28:            db      01             ; Ergebnis links 28
+l29:            db      01             ; Ergebnis links 29
+l30:            db      01             ; Ergebnis links 30
+l31:            db      01             ; Ergebnis links 31
+l32:            db      01             ; Ergebnis links 32
+r1:             db      01             ; Ergebnis rechts 1
+r2:             db      01             ; Ergebnis rechts 2
+r3:             db      01             ; Ergebnis rechts 3
+r4:             db      01             ; Ergebnis rechts 4
+r5:             db      01             ; Ergebnis rechts 5
+r6:             db      01             ; Ergebnis rechts 6
+r7:             db      01             ; Ergebnis rechts 7
+r8:             db      01             ; Ergebnis rechts 8
+r9:             db      01             ; Ergebnis rechts 9
+r10:            db      01             ; Ergebnis rechts 10
+r11:            db      01             ; Ergebnis rechts 11
+r12:            db      01             ; Ergebnis rechts 12
+r13:            db      01             ; Ergebnis rechts 13
+r14:            db      01             ; Ergebnis rechts 14
+r15:            db      01             ; Ergebnis rechts 15
+r16:            db      01             ; Ergebnis rechts 16
+r17:            db      01             ; Ergebnis rechts 17
+r18:            db      01             ; Ergebnis rechts 18
+r19:            db      01             ; Ergebnis rechts 19
+r20:            db      01             ; Ergebnis rechts 20
+r21:            db      01             ; Ergebnis rechts 21
+r22:            db      01             ; Ergebnis rechts 22
+r23:            db      01             ; Ergebnis rechts 23
+r24:            db      01             ; Ergebnis rechts 24
+r25:            db      01             ; Ergebnis rechts 25
+r26:            db      01             ; Ergebnis rechts 26
+r27:            db      01             ; Ergebnis rechts 27
+r28:            db      01             ; Ergebnis rechts 28
+r29:            db      01             ; Ergebnis rechts 29
+r30:            db      01             ; Ergebnis rechts 30
+r31:            db      01             ; Ergebnis rechts 31
+r32:            db      01             ; Ergebnis rechts 32
+px:             db      01             ; Zelle px
+ri:             db      01             ; Zelle ri
+ra:             db      01             ; Zelle ra
+rb:             db      01             ; Zelle rb
+rs:             db      01             ; Zelle rs
+rd:             db      01             ; Zelle rd
+x:              db      01             ; Zelle x
+y:              db      01             ; Zelle y
+neg:            db      01             ; Zelle neg
+cnt:            db      01             ; Zelle cnt
+dif:            db      01             ; Zelle dif
+dif2:           db      01             ; Zelle dif2
+c1:             db      01             ; Sprungergebnis c1
+c2:             db      01             ; Sprungergebnis c2
+c3:             db      01             ; Sprungergebnis c3
+c4:             db      01             ; Sprungergebnis c4
+c5:             db      01             ; Sprungergebnis c5
+c6:             db      01             ; Sprungergebnis c6
+c7:             db      01             ; Sprungergebnis c7
+                begin                  ; Feld fe (zusammengehoerige Worte)
+fe:             dw      013            ; Feld[0] = 11
+                dw      026            ; Feld[1] = 22
+                dw      041            ; Feld[2] = 33
+                dw      054            ; Feld[3] = 44
+                bend                   ; Ende Feld fe
+ix:             db      01             ; Zelle ix
+wv:             db      01             ; Zelle wv
+fr:             db      01             ; Zelle fr
+po_wert:        db      01             ; auszugebende Zahl
+pz_wert:        db      01             ; auszugebende Ziffer
+zahl:           db      01             ; auszugebende Zahl
+d5:             db      01             ; auszugebende Ziffer
+z1:             db      01             ; Eingabeergebnis z1
+z2:             db      01             ; Eingabeergebnis z2
+z3:             db      01             ; Eingabeergebnis z3
+pz_tab:         dto     0              ; Ausgabebefehl Ziffer 0
+                dto     1              ; Ausgabebefehl Ziffer 1
+                dto     2              ; Ausgabebefehl Ziffer 2
+                dto     3              ; Ausgabebefehl Ziffer 3
+                dto     4              ; Ausgabebefehl Ziffer 4
+                dto     5              ; Ausgabebefehl Ziffer 5
+                dto     6              ; Ausgabebefehl Ziffer 6
+                dto     7              ; Ausgabebefehl Ziffer 7
+                end                  ; Programmende
+
+; Sollwerte aus dem Python-Modell des Generators (unabhaengig vom Assemblerprogramm).
+;#PRUEFE-START
+; BZ=0464 US=1
+; 0554: 36024713563   # l1
+; 0555: 74051627346   # l2
+; 0556: 70123456715   # l3
+; 0557: 60247135633   # l4
+; 0560: 40516273467   # l5
+; 0561: 01234567157   # l6
+; 0562: 02471356336   # l7
+; 0563: 05162734674   # l8
+; 0564: 12345671570   # l9
+; 0565: 24713563360   # l10
+; 0566: 51627346740   # l11
+; 0567: 23456715701   # l12
+; 0570: 47135633602   # l13
+; 0571: 16273467405   # l14
+; 0572: 34567157012   # l15
+; 0573: 71356336024   # l16
+; 0574: 62734674051   # l17
+; 0575: 45671570123   # l18
+; 0576: 13563360247   # l19
+; 0577: 27346740516   # l20
+; 0700: 56715701234   # l21
+; 0701: 35633602471   # l22
+; 0702: 73467405162   # l23
+; 0703: 67157012345   # l24
+; 0704: 56336024713   # l25
+; 0705: 34674051627   # l26
+; 0706: 71570123456   # l27
+; 0707: 63360247135   # l28
+; 0710: 46740516273   # l29
+; 0711: 15701234567   # l30
+; 0712: 33602471356   # l31
+; 0713: 67405162734   # l32
+; 0714: 03451627340   # r1
+; 0715: 01624713560   # r2
+; 0716: 00712345670   # r3
+; 0717: 00345162734   # r4
+; 0720: 00162471356   # r5
+; 0721: 00071234567   # r6
+; 0722: 00034516273   # r7
+; 0723: 00016247135   # r8
+; 0724: 00007123456   # r9
+; 0725: 00003451627   # r10
+; 0726: 00001624713   # r11
+; 0727: 00000712345   # r12
+; 0730: 00000345162   # r13
+; 0731: 00000162471   # r14
+; 0732: 00000071234   # r15
+; 0733: 00000034516   # r16
+; 0734: 00000016247   # r17
+; 0735: 00000007123   # r18
+; 0736: 00000003451   # r19
+; 0737: 00000001624   # r20
+; 0740: 00000000712   # r21
+; 0741: 00000000345   # r22
+; 0742: 00000000162   # r23
+; 0743: 00000000071   # r24
+; 0744: 00000000034   # r25
+; 0745: 00000000016   # r26
+; 0746: 00000000007   # r27
+; 0747: 00000000003   # r28
+; 0750: 00000000001   # r29
+; 0751: 00000000000   # r30
+; 0752: 00000000000   # r31
+; 0753: 00000000000   # r32
+; 0755: 00000000010   # ri
+; 0756: 00000000144   # ra
+; 0757: 00000000006   # rb
+; 0760: 00000000152   # rs
+; 0761: 00000000010   # rd
+; 0764: 77777777775   # neg
+; 0765: 00000000003   # cnt
+; 0766: 00000000002   # dif
+; 0767: 00000000002   # dif2
+; 0770: 00000000001   # c1
+; 0771: 00000000000   # c2
+; 0772: 00000000000   # c3
+; 0773: 00000000001   # c4
+; 0774: 00000000001   # c5
+; 0775: 00000000000   # c6
+; 0776: 00000000001   # c7
+; 0777: 00000000013   # fe+0
+; 1000: 00000000026   # fe+1
+; 1001: 00000000123   # fe+2
+; 1002: 00000000054   # fe+3
+; 1005: 00000000123   # fr
+; 1012: 00000000002   # z1
+; 1013: 00000000077   # z2
+; 1014: 00000000001   # z3
+;#PRUEFE-ENDE

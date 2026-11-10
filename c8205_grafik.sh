@@ -5,9 +5,10 @@
 # Alle Schalter gehen unveraendert an c8205_grafik.py; Hilfe: ./c8205_grafik.sh -h
 # Der Rueckgabewert ist der von c8205_grafik.py (0 = normal, 8 = Abbruch mit Strg+C, 16 = Start nicht moeglich).
 #
-# In Stufe 1 gibt es noch kein Pult-Fenster. Die Pult-Tasten kommen von der Kommandozeile:
-#   ./c8205_grafik.sh --entwickler-tasten "H"                 nur Halt, Rechner steht
-#   ./c8205_grafik.sh --entwickler-tasten "H G R"             Grundstellung, Start; laeuft, bis das Programm haelt
+# Pult-Tasten von der Kommandozeile: mit --ohne-fenster ohne Fenster; ohne diesen Schalter oeffnet --entwickler-tasten das Pult-Fenster
+# (G4-026), die Tasten folgen nach dem Hochlauf (Netz-Taste). Beispiele ohne Fenster:
+#   ./c8205_grafik.sh --ohne-fenster --entwickler-tasten "H"   nur Halt, Rechner steht
+#   ./c8205_grafik.sh --ohne-fenster --entwickler-tasten "H G R"  Grundstellung, Start; laeuft, bis das Programm haelt
 #                                                             oder auf Eingabe wartet (dann Strg+C)
 #   ./c8205_grafik.sh --entwickler-k0 DATEI --entwickler-tasten "..."   K0-Zeichen (eines je Zeile) vorab eingeben
 # Ausgabe: Zustand am Ende des Laufs (BZ, AC, AR, Flags), Schreibwerk-Text, Trommelstatistik.

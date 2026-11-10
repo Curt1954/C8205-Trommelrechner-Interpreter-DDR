@@ -1,0 +1,4 @@
+rc 16
+stderr Fehler: Operationscode .XYZ ist unbekannt (geladene Namensdateien: c82ass.opsym).
+datei-weg obj mqo test
+escape-weg

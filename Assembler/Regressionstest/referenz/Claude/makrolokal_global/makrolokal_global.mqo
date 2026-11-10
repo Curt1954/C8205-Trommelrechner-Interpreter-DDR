@@ -1,0 +1,9 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      1       ; Zaehlerstand nach der Erhoehung
+        dw      2       ; Zaehlerstand nach der Erhoehung
+        dw      3       ; Zaehlerstand nach der Erhoehung
+        dw      10      ; Zelle 0004: 10 (der Quelltext liest die globale Variable)
+        dw      0       ; Zelle 0005: 0 (s war lokal in SUMME und ist weg)
+        dw      1       ; Zelle 0006: 1
+haupt:  164     0001    ; Zelle 0007: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0010: Halt (Zelle 8 dezimal)

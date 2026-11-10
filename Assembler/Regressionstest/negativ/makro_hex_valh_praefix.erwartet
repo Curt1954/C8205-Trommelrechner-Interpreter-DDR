@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_valh_praefix.asm:6: Fehler: M1 $VALH n: Der Text "0x1F" ist keine hexadezimale ganze Zahl (erlaubt sind die Ziffern 0 bis 9 und A bis F oder a bis f, davor ein einzelnes -)
+datei-weg obj mqo test
+escape-weg

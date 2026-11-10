@@ -1,0 +1,33 @@
+0000: 01 0032 000            000 haupt                                                ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 20000000000 f05:    dwf 0.5                                                  ; Zelle 0001: 1/2: nur z1, Wort 20000000000
+0002: 00 10000000000 f025:   dwf 0.25                                                 ; Zelle 0002: 1/4: nur z2
+0003: 00 30000000000 f075:   dwf 0.75                                                 ; Zelle 0003: z1 und z2
+0004: 00 60000000000 fm05:   dwf -0.5                                                 ; Zelle 0004: Zweierkomplement, z0 = 1
+0005: 00 40000000000 fm1:    dwf -1                                                   ; Zelle 0005: kleinster Wert, nur z0 gesetzt
+0006: 0              f0:     dwf 0                                                    ; Zelle 0006: Wort 0
+0007: 00 03146314632 f01:    dwf 0.1                                                  ; Zelle 0007: 0.1 * 2^32 = 429496729.6, gerundet 429496730
+0010: 00 74631463146 fm01:   dwf -0.1                                                 ; Zelle 0010: Zweierkomplement von 0.1
+0011: 00 00000000001 fmin:   dwf 0.00000000023283064365386962890625                   ; Zelle 0011: 2^-32, kleinste positive Zahl
+0012: 00 37777777777 fmax:   dwf 0.99999999976716935634613037109375                   ; Zelle 0012: 1 - 2^-32, groesster Wert
+0013: 00 20000000000 ffuehr: dwf 00.50                                                ; Zelle 0013: fuehrende 0 ist dezimal, wie 0.5
+0014: 00 20000000000 fplus:  dwf +0.5                                                 ; Zelle 0014: Vorzeichen +
+0015: 0              fnull2: dwf 0.0                                                  ; Zelle 0015: Wort 0
+0016: 0              fnull3: dwf -0                                                   ; Zelle 0016: keine negative Null: Wort 0
+0017: 0              fnull4: dwf 0.00000000001                                        ; Zelle 0017: rundet zu 0: Wort 0
+0020: 00 00000000001 fhalb:  dwf 0.000000000116415321826934814453125                  ; Zelle 0020: genau 2^-33, Mitte: weg von 0, Wort 1
+0021: 00 77777777777 fmhalb: dwf -0.000000000116415321826934814453125                 ; Zelle 0021: Mitte, weg von 0: Wort von -1/2^32
+0022: 00 40000000000 fm1r:   dwf -1.0000000001                                        ; Zelle 0022: rundet auf -1, Bereich erst nach dem Runden geprueft
+0023: 00 20000000000 flang:  dwf 0.50000000000000000000000000000000000000000000000000 ; Zelle 0023: lange Ziffernfolge, wie 0.5
+0024: 00 14000000000 f0375:  dwf 0.375                                                ; Zelle 0024: z2 und z3
+0025: 00 04000000000 bl1:    dwf 0.125                                                ; Zelle 0025: z3
+0026: 00 74000000000 bl2:    dwf -0.125                                               ; Zelle 0026: Zweierkomplement
+0027: 00 02000000000 bl3:    dwf 0.0625                                               ; Zelle 0027: z4
+0030: 0              erg:    dw  0                                                    ; Zelle 0030: Ergebnis 1
+0031: 0              erg2:   dw  0                                                    ; Zelle 0031: Ergebnis 2
+0032: 01 0012 211    haupt:  211 fmax                                                 ; Zelle 0032: AC := (fmax)
+0033: 01 0030 240            240 erg                                                  ; Zelle 0033: (erg) := AC
+0034: 01 0040 211            211 dspaet                                               ; Zelle 0034: AC := (dspaet), Vorwaertsreferenz auf eine dwf-Marke
+0035: 01 0031 240            240 erg2                                                 ; Zelle 0035: (erg2) := AC
+0036: 01 0001 164            164 0001                                                 ; Zelle 0036: Diagnoseausgabe (nur im Test)
+0037: 01 0000 020            020 0                                                    ; Zelle 0037: Halt
+0040: 00 14000000000 dspaet: dwf 0.375                                                ; Zelle 0040: nach dem Code

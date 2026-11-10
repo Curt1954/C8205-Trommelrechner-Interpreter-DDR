@@ -1,0 +1,8 @@
+0000: 01 0002 000            000 haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 6000        zeiger: da  000000000006 ; Zelle 0001: Adresse der Arbeitszelle zg
+0002: 01 0007 211    haupt:  211 l0001        ; Zelle 0002: AC := 5 (Literal l0001; das Symbol-Literal zg zaehlt nicht mit)
+0003: 01 0006 240            240 000000000006 ; Zelle 0003: (zg) := 5
+0004: 01 0001 164            164 0001         ; Zelle 0004: Diagnoseausgabe (nur im Test)
+0005: 01 0000 020            020 0            ; Zelle 0005: Halt
+0006: 00 0           zg      dbn 1            
+0007: 00 00000000005 l0001   dw  5            

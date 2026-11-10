@@ -1,0 +1,8 @@
+0000: 01 0001 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 0001 164    haupt: 164 0001  ; Zelle 0001: Diagnoseausgabe (nur im Test)
+0002: 01 0000 020           020 0     ; Zelle 0002: Halt
+0003: 0              anf:   dw  0     ; Zelle 0003
+0004: 00 00000000021        dw  021   ; lange Form, erstes Wort
+0005: 00 00000000022        dw  022   ; lange Form, zweites Wort
+0006: 20 0012               db  4     ; Zellen 0006 bis 0011 oktal 0011 (vier Zellen: dezimal 6 bis 9)
+0012: 00 00000000011 ende:  dw  9     ; Zelle 0012 oktal (dezimal 10)

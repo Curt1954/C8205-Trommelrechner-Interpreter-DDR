@@ -1,6 +1,6 @@
 # BAZ-Wirkungstabelle (Cache für den Claude-Interpreter)
 
-Version: 0.95-001
+Version: 0.95-002
 
 Zweck: Für jeden bereits in einem Test aufgetretenen BAZ-Wert (Operationsteil, oktal,
 B-A-Z) wird hier einmalig der Knotenpfad Knoten 10 bis 34 sowie die Wirkungsformel
@@ -8,6 +8,16 @@ festgehalten. Da dieser Teil des Knotenautomaten eine reine Funktion von B/A/Z i
 (vgl. ANWEISUNG-021), bleibt ein einmal eingetragener BAZ-Wert dauerhaft gültig -
 solange sich die zugrundeliegenden Dokumente (C8205-Interpreter-Eingänge_der_Knoten.md, C8205-Interpreter-Beschreibung_der_Knoten.md [Variablentabelle T2], C8205-Interpreter-Befehlsliste.md) nicht ändern. Bei einer Korrektur dieser
 Quelldateien ist der betroffene Eintrag hier neu herzuleiten.
+
+**Quelldokument-Versionen, auf denen diese Tabelle beruht:**
+
+| Quelldokument | Version |
+|---|---:|
+| `C8205-Interpreter-Eingänge_der_Knoten.md` | `0.95-001` |
+| `C8205-Interpreter-Beschreibung_der_Knoten.md` | `0.95-001` |
+| `C8205-Interpreter-Befehlsliste.md` | `0.95-004` |
+
+Vor einer Verwendung der Tabelle sind diese Nummern mit den aktuellen Versionszeilen der Quelldokumente zu vergleichen. Weicht eine Nummer ab, ist die Tabelle nicht automatisch ungültig; es muss geprüft werden, ob die Änderung den betreffenden Knotenpfad oder die Wirkungsformel beeinflusst. Betroffene Einträge sind neu herzuleiten und die dokumentierten Quelldokument-Versionen danach zu aktualisieren.
 
 Neue BAZ-Werte werden bei Auftreten ergänzt, nichts wird im Voraus vorbefüllt.
 

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_label_name_lang.asm:6: Fehler: Macrolabel muß aus einem Namen
+datei-weg obj mqo test
+escape-weg

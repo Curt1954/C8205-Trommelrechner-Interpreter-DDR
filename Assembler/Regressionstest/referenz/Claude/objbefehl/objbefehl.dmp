@@ -1,0 +1,6 @@
+0000: 01 0001 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 0004 211    haupt: 211 wert  ; Zelle 0001: AC := wert
+0002: 01 0005 240           240 erg   ; Zelle 0002: erg := AC
+0003: 01 0000 020           020 0     ; Zelle 0003: Halt
+0004: 00 00000000123 wert:  dw  0123  ; Zelle 0004: Konstante
+0005: 0              erg:   dw  0     ; Zelle 0005: Ergebnis

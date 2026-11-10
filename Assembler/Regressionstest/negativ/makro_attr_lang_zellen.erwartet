@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_lang_zellen.asm:6: Fehler: $CALC(zellen(nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn)): zellen: Symbolname zu lang (höchstens 32 Zeichen)
+datei-weg obj mqo test
+escape-weg

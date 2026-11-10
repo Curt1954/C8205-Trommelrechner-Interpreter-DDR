@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_feldindex_aussen.asm:7: Fehler: M1 $UPPER f(4): Feld f: Index 4 liegt außerhalb von 0 bis 2 (Anzahl 3)
+datei-weg obj mqo test
+escape-weg

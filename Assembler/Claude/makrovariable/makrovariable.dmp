@@ -1,0 +1,11 @@
+0000: 01 0011 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0                     dw  0     ; Zaehlerstand vor der Erhoehung
+0002: 00 00000000012        dw  10    ; Zehnfaches des neuen Standes
+0003: 00 00000000001        dw  1     ; Zaehlerstand vor der Erhoehung
+0004: 00 00000000024        dw  20    ; Zehnfaches des neuen Standes
+0005: 00 00000000002        dw  2     ; Zaehlerstand vor der Erhoehung
+0006: 00 00000000036        dw  30    ; Zehnfaches des neuen Standes
+0007: 00 00000000010        dw  8     ; Zaehlerstand nach Erhoehung um 5
+0010: 00 00000000015        dw  13    ; Zaehlerstand nach Erhoehung um 5
+0011: 01 0001 164    haupt: 164 0001  ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 01 0000 020           020 0     ; Zelle 0012: Halt

@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '0xFF' ist ungültig (dwh erwartet 1 bis 8 Hexadezimalziffern 0-9 und A-F)
+datei-weg obj mqo test
+escape-weg

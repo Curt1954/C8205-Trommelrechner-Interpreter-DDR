@@ -1,0 +1,241 @@
+Trommeldatei:
+#DOK-0001 KAT4EINGABE: Zustand GB vorbelegt, Eingabe a Um. KB b WRZL -> Zustand KB, Ausgabe mit KAT4AUSGABE
+#SPEI-0001 0001-0005
+#PROT STUFE=2
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/kat4eingabe_um.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/kat4eingabe_um
+0000: 00000010000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0003: 00000001000 # radr: da text ; Zelle 0003: Adresse des Bereichs (Adressfeld)
+0004: 00000000001 # kbein: dw 1 ; Zelle 0004: KB/GB-Zustand der SW-Eingabe (0 = KB, 1 = GB); hier absichtlich 1, um das Nachziehen durch Um. KB zu pruefen
+0005: 00000000000 # kbaus: dw 0 ; Zelle 0005: KB/GB-Zustand der Schreibwerk-Ausgabe, initial KB
+0006: 00000004000 # rkbe: da kbein ; Zelle 0006: Adresse der Eingabe-Zustandszelle (Adressfeld)
+0007: 00000005000 # rkba: da kbaus ; Zelle 0007: Adresse der Ausgabe-Zustandszelle (Adressfeld)
+0010: 00004700030 # haupt 030 04700 ; 4700 oder K0 oder SW1 Input oder KON Input
+0011: 00000003211 # 211 radr ; AC := Adresse des Bereichs
+0012: 00007773240 # 240 r1 ; R1 := Adresse des Bereichs
+0013: 00000170211 # 211 l0001 ; AC := hoechste Zeichenzahl
+0014: 00007776240 # 240 r2 ; R2 := 8
+0015: 00000006211 # 211 rkbe ; AC := Adresse der Eingabe-Zustandszelle
+0016: 00007774240 # 240 r3 ; R3 := Adresse der Eingabe-Zustandszelle
+0017: 00000032025 # 025 eingabe ; Aufruf KAT4EINGABE, AC := Rueckkehrwort
+0020: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0021: 00002720030 # dz $wrzl ; Zeilenschaltung
+0022: 00004700030 # 030 04700 ; 4700 oder K0 oder SW1 Input oder KON Input
+0023: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0024: 00000007211 # 211 rkba ; AC := Adresse der Ausgabe-Zustandszelle
+0025: 00007774240 # 240 r3 ; R3 := Adresse der Ausgabe-Zustandszelle
+0026: 00000300025 # 025 ausgabe ; Aufruf KAT4AUSGABE (R1 = Adresse des Textes bleibt vom UP unveraendert)
+0027: 00002720030 # dz $wrzl ; Zeilenschaltung
+0030: 00004700030 # 030 04700 ; 4700 oder K0 oder SW1 Input oder KON Input
+0031: 00000000020 # 020 0 ; Halt
+0032: 00000115240 # eingabe 240 ML0001YFM ; Rueckkehrwort sichern
+0033: 00007776211 # 211 ML0028YFM ; AC := hoechste Zeichenzahl
+0034: 00000171220 # 220 l0002 ; AC := n - 1
+0035: 00000120240 # 240 ML0004YFM ; zaehl := n - 1 (negativ, wenn alle Zeichen angenommen sind)
+0036: 00007773211 # 211 ML0027YFM ; AC := Adresse des Bereichs
+0037: 00000172220 # 220 l0003 ; eine Adresseneinheit weniger, weil weiter sie gleich wieder dazuzaehlt
+0040: 00000116240 # 240 ML0002YFM ; zeiger := Adresse des Wortes vor dem ersten
+0041: 00000116211 # ML0006YFM 211 ML0002YFM ; neues Wort beginnen: zeiger auf das naechste Wort
+0042: 00000172210 # 210 l0003 ; plus eine Adresseneinheit
+0043: 00000116240 # 240 ML0002YFM ; zeiger := Adresse des aktuellen Wortes
+0044: 00000173211 # 211 l0004 ; AC := 3
+0045: 00000121240 # 240 ML0005YFM ; m := 3 (Zeichen noch zu uebernehmen minus 1)
+0046: 00000117241 # 241 ML0003YFM ; wort := 0, AC := 0
+0047: 00000120211 # 211 ML0004YFM ; AC := Rest
+0050: 00000066050 # 050 ML0007YFM ; Rest >= 0: Zeichen lesen
+0051: 00000121211 # ML0008YFM 211 ML0005YFM ; Eingabeende: m + 1 Zeichen fehlen im Wort; m < 0 heisst Wort voll
+0052: 00000062040 # 040 ML0009YFM ; Wort voll: fertig ausgerichtet
+0053: 00000121211 # 211 ML0005YFM ; AC := m
+0054: 00000171220 # 220 l0002 ; AC := AC - 1
+0055: 00000121240 # 240 ML0005YFM ; m := AC
+0056: 00000117211 # 211 ML0003YFM ; AC := Wort
+0057: 00007670642 # 642 07670 ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0060: 00000117240 # 240 ML0003YFM ; wort := ausgerichtetes Wort
+0061: 00000051000 # 000 ML0008YFM ; naechstes fehlendes Zeichen
+0062: 00000117211 # ML0009YFM 211 ML0003YFM ; AC := ausgerichtetes Wort
+0063: 00000174210 # 210 l0005 ; z0 setzen: Endwort
+0064: 00000117240 # 240 ML0003YFM ; wort := Endwort mit z0
+0065: 00000106000 # 000 ML0010YFM ; Wort speichern
+0066: 00000117211 # ML0007YFM 211 ML0003YFM ; AC := bisheriges Wort
+0067: 00007670642 # 642 07670 ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0070: 00000200010 # 010 ML0026YFM ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+0071: 00000117240 # ML0012YFM 240 ML0003YFM ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+0072: 00000120211 # 211 ML0004YFM ; AC := zaehl
+0073: 00000171220 # 220 l0002 ; AC := AC - 1
+0074: 00000120240 # 240 ML0004YFM ; zaehl := AC
+0075: 00000121211 # 211 ML0005YFM ; AC := m
+0076: 00000171220 # 220 l0002 ; AC := AC - 1
+0077: 00000121240 # 240 ML0005YFM ; m := AC
+0100: 00000104040 # 040 ML0011YFM ; m < 0: Wort voll
+0101: 00000120211 # 211 ML0004YFM ; AC := Rest
+0102: 00000066050 # 050 ML0007YFM ; Rest >= 0: weiter lesen
+0103: 00000051000 # 000 ML0008YFM ; alle Zeichen angenommen: Eingabeende
+0104: 00000120211 # ML0011YFM 211 ML0004YFM ; Wort voll: AC := Rest
+0105: 00000051040 # 040 ML0008YFM ; Rest < 0: das volle Wort ist das Endwort (ausr ist dann ohne Schieben, setzt z0)
+0106: 00000116211 # ML0010YFM 211 ML0002YFM ; AC := Adresse des Wortes im Bereich
+0107: 00000175210 # 210 l0006 ; plus Operationscode 240: Speicherbefehl
+0110: 00000112240 # 240 ML0013YFM ; Speicherbefehl auf die naechste Zelle
+0111: 00000117211 # 211 ML0003YFM ; AC := Wort
+0113: 00000120211 # 211 ML0004YFM ; AC := Rest
+0114: 00000041050 # 050 ML0006YFM ; Rest >= 0: naechstes Wort beginnen
+0122: 00000171221 # ML0014YFM 221 l0002 ; AC := -1
+0123: 00000120240 # 240 ML0004YFM ; zaehl := -1: Eingabe zu Ende
+0124: 00000051000 # 000 ML0008YFM ; Wort ausrichten, z0 setzen, speichern
+0125: 00000176210 # ML0015YFM 210 l0007 ; Sprungzeichen 12 (Leertaste / ZWR): kat4 032 << 24 zum verschobenen Wort addieren
+0126: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0127: 00000177210 # ML0016YFM 210 l0008 ; Sprungzeichen 15 (:  /  (): kat4 015 << 24 zum verschobenen Wort addieren
+0130: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0131: 00000213210 # ML0017YFM 210 l0009 ; Sprungzeichen 16 (Irrung Satz): kat4 016 << 24 zum verschobenen Wort addieren
+0132: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0133: 00000214210 # ML0018YFM 210 l0010 ; Sprungzeichen 33 (. / !): kat4 073 << 24 zum verschobenen Wort addieren
+0134: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0135: 00000217210 # ML0019YFM 210 l0011 ; Sprungzeichen 37 (Um. GB): kat4 057 << 24 zum verschobenen Wort addieren
+0136: 00000117240 # 240 ML0003YFM ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+0137: 00000171211 # 211 l0002 ; AC := 1 (Zustand GB)
+0140: 00000157000 # 000 ML0029YFM ; Zustand setzen
+0141: 00000234210 # ML0020YFM 210 l0012 ; Sprungzeichen 40 (- / Dreieck): kat4 100 << 24 zum verschobenen Wort addieren
+0142: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0143: 00000235210 # ML0021YFM 210 l0013 ; Sprungzeichen 57 (Um. KB): kat4 117 << 24 zum verschobenen Wort addieren
+0144: 00000117240 # 240 ML0003YFM ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+0145: 00000236211 # 211 l0014 ; AC := 0 (Zustand KB)
+0146: 00000157000 # 000 ML0029YFM ; Zustand setzen
+0147: 00000253210 # ML0022YFM 210 l0015 ; Sprungzeichen 60 (` / ;): kat4 160 << 24 zum verschobenen Wort addieren
+0150: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0151: 00000254210 # ML0023YFM 210 l0016 ; Sprungzeichen 72 (BM): kat4 352 << 24 zum verschobenen Wort addieren
+0152: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0153: 00000255210 # ML0024YFM 210 l0017 ; Sprungzeichen 73 (, / ?): kat4 153 << 24 zum verschobenen Wort addieren
+0154: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0155: 00000256210 # ML0025YFM 210 l0018 ; Sprungzeichen 75 (Tabulator): kat4 155 << 24 zum verschobenen Wort addieren
+0156: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0157: 00000167240 # ML0029YFM 240 ML0030YFM ; wert := Zustand (0 = KB, 1 = GB)
+0160: 00007774211 # 211 ML0031YFM ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0161: 00000175210 # 210 l0006 ; plus Operationscode 240: Speicherbefehl
+0162: 00000164240 # 240 ML0032YFM ; Speicherbefehl auf die naechste Zelle
+0163: 00000167211 # 211 ML0030YFM ; AC := Zustand
+0165: 00000117211 # 211 ML0003YFM ; AC := Wort mit dem Umschaltzeichen
+0166: 00000071000 # 000 ML0012YFM ; weiter bei der Uebernahme
+0170: 00000000010 # l0001 dw 8
+0171: 00000000001 # l0002 dw 1
+0172: 00000001000 # l0003 dw 000000001000
+0173: 00000000003 # l0004 dw 3
+0174: 40000000000 # l0005 dw 040000000000
+0175: 00000000240 # l0006 dw 000000000240
+0176: 03200000000 # l0007 dw 003200000000
+0177: 01500000000 # l0008 dw 001500000000
+0200: 02000000000 # dw 002000000000 ; 00: 0, kat4 020 << 24
+0201: 00100000000 # dw 000100000000 ; 01: 1, kat4 001 << 24
+0202: 00200000000 # dw 000200000000 ; 02: 2, kat4 002 << 24
+0203: 02300000000 # dw 002300000000 ; 03: 3, kat4 023 << 24
+0204: 00400000000 # dw 000400000000 ; 04: 4, kat4 004 << 24
+0205: 02500000000 # dw 002500000000 ; 05: 5, kat4 025 << 24
+0206: 02600000000 # dw 002600000000 ; 06: 6, kat4 026 << 24
+0207: 00700000000 # dw 000700000000 ; 07: 7, kat4 007 << 24
+0210: 01000000000 # dw 001000000000 ; 10: 8, kat4 010 << 24
+0211: 03100000000 # dw 003100000000 ; 11: 9, kat4 031 << 24
+0212: 00000125000 # 000 ML0015YFM ; 12: Leertaste / ZWR (Sprung-Umstellung)
+0213: 01600000000 # l0009 dw 001600000000
+0214: 07300000000 # l0010 dw 007300000000
+0215: 00000127000 # 000 ML0016YFM ; 15: :  /  ( (Sprung-Umstellung)
+0216: 00000131000 # 000 ML0017YFM ; 16: Irrung Satz (Sprung-Umstellung)
+0217: 05700000000 # l0011 dw 005700000000
+0220: 04000000000 # dw 004000000000 ; 20: + / =, kat4 040 << 24
+0221: 06100000000 # dw 006100000000 ; 21: a, kat4 061 << 24
+0222: 06200000000 # dw 006200000000 ; 22: b, kat4 062 << 24
+0223: 04300000000 # dw 004300000000 ; 23: c, kat4 043 << 24
+0224: 06400000000 # dw 006400000000 ; 24: d, kat4 064 << 24
+0225: 04500000000 # dw 004500000000 ; 25: e, kat4 045 << 24
+0226: 04600000000 # dw 004600000000 ; 26: f, kat4 046 << 24
+0227: 06700000000 # dw 006700000000 ; 27: g, kat4 067 << 24
+0230: 07000000000 # dw 007000000000 ; 30: h, kat4 070 << 24
+0231: 05100000000 # dw 005100000000 ; 31: i, kat4 051 << 24
+0232: 00000122000 # 000 ML0014YFM ; 32: SatzMarke / WRZL = Eingabeende
+0233: 00000133000 # 000 ML0018YFM ; 33: . / ! (Sprung-Umstellung)
+0234: 10000000000 # l0012 dw 010000000000
+0235: 11700000000 # l0013 dw 011700000000
+0236: 00000000000 # l0014 dw 000000000000
+0237: 00000135000 # 000 ML0019YFM ; 37: Um. GB (Sprung-Umstellung)
+0240: 00000141000 # 000 ML0020YFM ; 40: - / Dreieck (Sprung-Umstellung)
+0241: 12100000000 # dw 012100000000 ; 41: j, kat4 121 << 24
+0242: 12200000000 # dw 012200000000 ; 42: k, kat4 122 << 24
+0243: 10300000000 # dw 010300000000 ; 43: l, kat4 103 << 24
+0244: 12400000000 # dw 012400000000 ; 44: m, kat4 124 << 24
+0245: 10500000000 # dw 010500000000 ; 45: n, kat4 105 << 24
+0246: 10600000000 # dw 010600000000 ; 46: o, kat4 106 << 24
+0247: 12700000000 # dw 012700000000 ; 47: p, kat4 127 << 24
+0250: 13000000000 # dw 013000000000 ; 50: q, kat4 130 << 24
+0251: 11100000000 # dw 011100000000 ; 51: r, kat4 111 << 24
+0252: 11200000000 # dw 011200000000 ; 52: WR, kat4 112 << 24
+0253: 16000000000 # l0015 dw 016000000000
+0254: 35200000000 # l0016 dw 035200000000
+0255: 15300000000 # l0017 dw 015300000000
+0256: 15500000000 # l0018 dw 015500000000
+0257: 00000143000 # 000 ML0021YFM ; 57: Um. KB (Sprung-Umstellung)
+0260: 00000147000 # 000 ML0022YFM ; 60: ` / ; (Sprung-Umstellung)
+0261: 14100000000 # dw 014100000000 ; 61: / / ), kat4 141 << 24
+0262: 14200000000 # dw 014200000000 ; 62: s, kat4 142 << 24
+0263: 16300000000 # dw 016300000000 ; 63: t, kat4 163 << 24
+0264: 14400000000 # dw 014400000000 ; 64: u, kat4 144 << 24
+0265: 16500000000 # dw 016500000000 ; 65: v, kat4 165 << 24
+0266: 16600000000 # dw 016600000000 ; 66: w, kat4 166 << 24
+0267: 14700000000 # dw 014700000000 ; 67: x, kat4 147 << 24
+0270: 15000000000 # dw 015000000000 ; 70: y, kat4 150 << 24
+0271: 17100000000 # dw 017100000000 ; 71: z, kat4 171 << 24
+0272: 00000151000 # 000 ML0023YFM ; 72: BM (Sprung-Umstellung)
+0273: 00000153000 # 000 ML0024YFM ; 73: , / ? (Sprung-Umstellung)
+0274: 17400000000 # dw 017400000000 ; 74: Prozentzeichen / *, kat4 174 << 24
+0275: 00000155000 # 000 ML0025YFM ; 75: Tabulator (Sprung-Umstellung)
+0276: 37777777777 # l0019 dw 037777777777
+0277: 17700000000 # dw 017700000000 ; 77: Transport, kat4 177 << 24
+0300: 00000333240 # ausgabe 240 ML0001HOV ; Rueckkehrwort sichern
+0301: 00007773211 # 211 ML0010HOV ; AC := Startadresse des Textes
+0302: 00000342240 # 240 ML0009HOV ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+0303: 00000000251 # ML0002HOV 251 0 ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0304: 00000340240 # 240 ML0007HOV ; tw := Textwort (mit z0)
+0305: 00000276200 # 200 l0019 ; z0 ausblenden, nur 32 Bit Zeichen
+0306: 00000341240 # 240 ML0008HOV ; wort := Zeichenrest
+0307: 00000341211 # ML0003HOV 211 ML0008HOV ; AC := Zeichenrest
+0310: 00000236330 # 330 l0014 ; Vergleich mit 0 (keine Operation)
+0311: 00000331170 # 170 ML0005HOV ; Rest 0: Wort fertig
+0312: 00000357200 # 200 l0020 ; unterstes Zeichen ausblenden
+0313: 00000343240 # 240 ML0011HOV ; zeichen := Zeichen (der AC wird fuer die Zustandsuebergabe gebraucht)
+0314: 00000360330 # 330 l0021 ; Vergleich mit kat4 057 (Um. GB)
+0315: 00000344170 # 170 ML0012HOV ; Um. GB: Zustand := GB
+0316: 00000361330 # 330 l0022 ; Vergleich mit kat4 117 (Um. KB)
+0317: 00000346170 # 170 ML0013HOV ; Um. KB: Zustand := KB
+0320: 00000343211 # ML0014HOV 211 ML0011HOV ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+0321: 00007644644 # 644 07644 ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0322: 00000362210 # 210 l0023 ; Operationscode 030 (Ausgabe) dazu
+0323: 00000324240 # 240 ML0004HOV ; Ausgabebefehl auf die naechste Zelle speichern
+0325: 00000341211 # 211 ML0008HOV ; AC := Zeichenrest
+0326: 00007670642 # 642 07670 ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0327: 00000341240 # 240 ML0008HOV ; wort := Rest
+0330: 00000307000 # 000 ML0003HOV ; naechstes Zeichen
+0331: 00000340211 # ML0005HOV 211 ML0007HOV ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0332: 00000334050 # 050 ML0006HOV ; kein z0: naechstes Wort
+0334: 00000342211 # ML0006HOV 211 ML0009HOV ; AC := Adresse des Textwortes
+0335: 00000172210 # 210 l0003 ; plus eine Adresseneinheit
+0336: 00000342240 # 240 ML0009HOV ; zeiger := Adresse des naechsten Wortes
+0337: 00000303000 # 000 ML0002HOV ; AC ist der Zeiger, Textwort lesen
+0344: 00000171211 # ML0012HOV 211 l0002 ; Um. GB: AC := 1 (Zustand GB)
+0345: 00000347000 # 000 ML0015HOV ; Zustand setzen
+0346: 00000236211 # ML0013HOV 211 l0014 ; Um. KB: AC := 0 (Zustand KB)
+0347: 00000356240 # ML0015HOV 240 ML0016HOV ; wert := Zustand (0 = KB, 1 = GB)
+0350: 00007774211 # 211 ML0017HOV ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0351: 00000175210 # 210 l0006 ; plus Operationscode 240: Speicherbefehl
+0352: 00000354240 # 240 ML0018HOV ; Speicherbefehl auf die naechste Zelle
+0353: 00000356211 # 211 ML0016HOV ; AC := Zustand
+0355: 00000320000 # 000 ML0014HOV ; zurueck zur Ausgabe des Zeichens
+0357: 00000000377 # l0020 dw 000000000377
+0360: 00000000057 # l0021 dw 000000000057
+0361: 00000000117 # l0022 dw 000000000117
+0362: 00000000030 # l0023 dw 000000000030
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0032
+0001: 40014447461   # Wort: a Um. KB b mit z0
+0004: 00000000000   # kbein: GB durch Um. KB auf KB gezogen
+0005: 00000000000   # kbaus
+7773: 00000001000   # R1 unveraendert
+7774: 00000005000   # R3: zuletzt die Adresse der Ausgabe-Zustandszelle
+7776: 00000000010   # R2 unveraendert

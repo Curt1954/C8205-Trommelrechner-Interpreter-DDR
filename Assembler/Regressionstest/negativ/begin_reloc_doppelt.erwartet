@@ -1,0 +1,3 @@
+rc 16
+stderr begin: Schlüsselwort RELOC-EQU steht doppelt.
+datei-weg obj mqo test

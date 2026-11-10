@@ -1,0 +1,53 @@
+Trommeldatei:
+#DOK-0001 Test $VALO: Ziffernfolgen, Grenzen, Beispiele 2 und 3, Rundreise, $VAL und $IF unveraendert
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000026000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000017 # dw 15 ; 17 oktal = 15
+0002: 00000000017 # dw 15 ; 017 = 15
+0003: 00000000017 # dw 15 ; 00017 = 15
+0004: 00000000000 # dw 0 ; 0
+0005: 00000000125 # dw 85 ; -15 + 100 = 85
+0006: 00000000007 # dw 7 ; 7
+0007: 00000000777 # dw 511 ; 777 oktal = 511
+0010: 00000000777 # dw 511 ; 2^63-1 geteilt durch 2^54 = 511 (ganzzahlig)
+0011: 00000000007 # dw 7 ; 2^63-1 minus (2^63-8) = 7
+0012: 00000000040 # dw 32 ; Summe 32
+0013: 00000000003 # dw 3 ; 3
+0014: 00000000017 # dw 15 ; 15
+0015: 00000000021 # dw 17 ; 17
+0016: 00000000021 # dw 17 ; $VAL liest dezimal: 17
+0017: 00000000017 # dw 15 ; Ausdruck liest oktal: 15
+0020: 00000000001 # dw 1 ; $IF liest dezimal: 17 ist wahr
+0021: 00000000000 # dw 0 ; 15 ist unwahr
+0022: 00000000130 # dw 88 ; Bestand makrostrzeichen: -12 + 100 = 88
+0023: 00000000312 # dw 202 ; 101 Werte, je zwei Pruefungen: 202
+0024: 00000000026 # dw 22 ; 22 Zeichen
+0025: 00000000000 # dw 0 ; gleiche Zahl zurueck: Unterschied 0
+0026: 00000001164 # haupt: 164 0001 ; Zelle 22: Diagnoseausgabe (nur im Test)
+0027: 00000000020 # 020 0 ; Zelle 23: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0030 US=1
+0001: 00000000017   # VALOK: 17 oktal
+0002: 00000000017   # VALOK: 017
+0003: 00000000017   # VALOK: 00017
+0004: 00000000000   # VALOK: 0
+0005: 00000000125   # VALOK: -17 + 100
+0006: 00000000007   # VALOK: 7
+0007: 00000000777   # VALOK: 777 oktal
+0010: 00000000777   # VALOK: groesste Zahl durch 2^54
+0011: 00000000007   # VALOK: groesste Zahl minus 2^63-8
+0012: 00000000040   # OKTSUMME: 15 + 17
+0013: 00000000003   # RUNDE: Text 017 hat 3 Zeichen
+0014: 00000000017   # RUNDE: $VALO
+0015: 00000000021   # RUNDE: $VAL dezimal
+0016: 00000000021   # UNVER: $VAL 017 dezimal
+0017: 00000000017   # UNVER: $SET liest oktal
+0020: 00000000001   # UNVER: $IF 017 = 17 wahr
+0021: 00000000000   # UNVER: $IF 017 = 15 unwahr
+0022: 00000000130   # UNVER: -0012 + 100
+0023: 00000000312   # RUNDEN: 202 gelungene Rundreisen
+0024: 00000000026   # RUNDEN: 2^63-1 hat 22 Zeichen
+0025: 00000000000   # RUNDEN: Unterschied 0

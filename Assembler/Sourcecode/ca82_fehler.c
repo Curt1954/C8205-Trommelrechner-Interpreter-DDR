@@ -62,7 +62,7 @@ static int fehlerMeldungPruefen(int quellzeile, const char *schluessel) {
 void fehlerMitOrt(int quellzeile, const char *text) {
     if (!fehlerMeldungPruefen(quellzeile, text)) return;
     fflush(stdout);   // Reihenfolge von STDOUT und STDERR auch bei Umleitung erhalten
-    if (quellzeile > 0) fprintf(stderr, "%s:%d: %sFehler:%s %s\n", inputFileName, quellzeile, _violett, _normal, text);
+    if (quellzeile > 0) fprintf(stderr, "%s:%d: %sFehler:%s %s\n", qDatei(quellzeile), qZeile(quellzeile), _violett, _normal, text);
     else                fprintf(stderr, "%s: %sFehler:%s %s\n", inputFileName, _violett, _normal, text);
 }
 
@@ -85,11 +85,11 @@ void fehlerZusammenfassung(void) {
         wiederholt += e->anzahl - e->gedruckt;
         fflush(stdout);
         if (e->ersteZeile > 0 && e->letzteZeile != e->ersteZeile)
-            fprintf(stderr, "%s: %d-mal gleiche Fehlermeldung (Zeilen %d bis %d, davon %d einzeln ausgegeben): %.100s%s\n", inputFileName, e->anzahl,
-                    e->ersteZeile, e->letzteZeile, e->gedruckt, e->schluessel, strlen(e->schluessel) > 100 ? "..." : "");
+            fprintf(stderr, "%s: %d-mal gleiche Fehlermeldung (Zeilen %s bis %s, davon %d einzeln ausgegeben): %.100s%s\n", inputFileName, e->anzahl,
+                    qOrt(e->ersteZeile), qOrt(e->letzteZeile), e->gedruckt, e->schluessel, strlen(e->schluessel) > 100 ? "..." : "");
         else if (e->ersteZeile > 0)
-            fprintf(stderr, "%s: %d-mal gleiche Fehlermeldung (Zeile %d, davon %d einzeln ausgegeben): %.100s%s\n", inputFileName, e->anzahl,
-                    e->ersteZeile, e->gedruckt, e->schluessel, strlen(e->schluessel) > 100 ? "..." : "");
+            fprintf(stderr, "%s: %d-mal gleiche Fehlermeldung (Zeile %s, davon %d einzeln ausgegeben): %.100s%s\n", inputFileName, e->anzahl,
+                    qOrt(e->ersteZeile), e->gedruckt, e->schluessel, strlen(e->schluessel) > 100 ? "..." : "");
         else
             fprintf(stderr, "%s: %d-mal gleiche Fehlermeldung (davon %d einzeln ausgegeben): %.100s%s\n", inputFileName, e->anzahl, e->gedruckt,
                     e->schluessel, strlen(e->schluessel) > 100 ? "..." : "");

@@ -1,0 +1,19 @@
+c82gen 0.01-003/0.01-004: Messung am Archivprogramm Fassung A (ZTD, Generator Assembler/Claude/ztd_py/gen/ztd_py_gen.py)
+Stand 30.10.2026, gemessen gegen Zip 0.95.7-061 (die Fassungen 0.01-003 ohne und 0.01-004 mit Nullspur im Archivmodus; Zeilen "0.01-003" unten = Zwischenstaende vor der Schiebespur). Arbeitsnotiz, bewusst keine .md (die Namen ztl, ztc, ztd duerfen in den .md nicht vorkommen); Zusammenfassung ohne diese Namen: gen_lib_messung.md.
+
+Abnahmetest: bash Assembler/Claude/ztd_py/gen/ztd_py_test.sh (C8205Z/Tests_Z/ztd_py_tests.py, 16 Faelle, 114 Pruefungen, rund 33 s). Mit ZTD_FALL=f04 laeuft nur ein Fall (2 s).
+
+Zellen der erzeugten ztd_py.asm (alle Laeufe mit unveraendertem ztd_py_gen.py, alte Schnittstelle):
+  Bibliothek 0.01-002 (Stand 061)                                  2257   Test wahr (114 Pruefungen)
+  0.01-003, ohne Verlegen von Einzelzellen in Luecken, W-Transport 2172   Test falsch (4 Fehler)
+  0.01-003, ohne Rueckkehrzelle am UP-Ende, W-Transport            2085   Test falsch (4 Fehler)
+  0.01-003 mit W-Transport auf 7640 (026)                          2063   Test falsch (4 Fehler: f04_m_g, f06_angaben)
+  0.01-003, Archivmodus mit Nullspur (Vorgabe)                     2120   Test wahr (114 Pruefungen)
+  zum Vergleich Fassung B (von Hand, Assembler/Claude/ztd/ztd.asm)  2195
+
+Ursache der 4 Fehler mit W-Transport: ZTL loescht die Spur 7640 in init ("Arbeitsspur berechnen, Nullspur loeschen") und schiebt danach mit der W-Addition, z. B. 616 7653 (rot9) in sv, 616 7662 (rot6) in sv_w. Dazu braucht es Nullen auf 7640. Der W-Transport von ZTD (646/642 auf 7640) fuellt die Spur; beim Kommando M endet ZTL darum mit Unbedingter Stop bei BZ=1003, AC=5, das Programm wird nicht nach 6000 geladen. Die Schiebebefehle selbst sind gleichwertig: 360 Vergleichswerte (9 Muster, 10 Schiebeweiten, links und rechts) liefern mit 616/612 ueber Nullspur und mit 646/642 auf 7640 dasselbe. Mit der W-Addition 616 auf 7640 (ohne Nullspur im Programm) schlugen 38 Pruefungen fehl: die Spur ist unter dem Lader nicht immer null.
+Folgerung: Archivprogramme schieben mit eigener Nullspur (Prog(archiv=True) setzt schiebespur='nullspur'); die Ersparnis von 57 Zellen durch 026 bleibt dort aus, bis der Lader die Spur 7640 nicht mehr als Nullspur voraussetzt.
+
+Ersparnis der uebrigen Massnahmen am Archivprogramm (nur mit W-Transport gemessen): Luecken fuellen mit Einzelzellen 109 Zellen, Rueckkehrzelle am UP-Ende 22 Zellen.
+
+Erzeugte Dateien: ztd_py.asm 116594 B, 1740 Zeilen (vorher 117581 B, 1754 Zeilen); Generator 46560 B, 1117 Zeilen (unveraendert).

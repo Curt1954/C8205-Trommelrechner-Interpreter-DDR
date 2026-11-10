@@ -1,0 +1,49 @@
+0000: 01 0057 000                000 haupt      ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000001 schlDKR_0:  dw  1          ; Label des Durchlaufs
+0002: 01 0001 000                000 schlDKR_0  ; Sprung auf das Label des eigenen Durchlaufs
+0003: 00 00000000001 schlDKR_1:  dw  1          ; Label des Durchlaufs
+0004: 01 0003 000                000 schlDKR_1  ; Sprung auf das Label des eigenen Durchlaufs
+0005: 00 00000000001 schlDKR_2:  dw  1          ; Label des Durchlaufs
+0006: 01 0005 000                000 schlDKR_2  ; Sprung auf das Label des eigenen Durchlaufs
+0007: 01 0010 000                000 endeDKR    ; Sprung auf ein Label hinter der Schleife
+0010: 00 00000000077 endeDKR:    dw  077        ; Label ausserhalb des Rumpfes (wie bisher)
+0011: 01 0013 000                000 vorGNU_0   ; Sprung vorwaerts im selben Durchlauf
+0012: 00 00000000001             dw  1          ; uebersprungenes Wort
+0013: 00 00000000002 vorGNU_0:   dw  2          ; Ziel des Sprungs
+0014: 01 0016 000                000 vorGNU_1   ; Sprung vorwaerts im selben Durchlauf
+0015: 00 00000000001             dw  1          ; uebersprungenes Wort
+0016: 00 00000000002 vorGNU_1:   dw  2          ; Ziel des Sprungs
+0017: 0              innJQX_0_0: dw  0          ; Zehner a, Einer b
+0020: 01 0017 000                000 innJQX_0_0 ; Sprung auf das Label des inneren Durchlaufs
+0021: 00 00000000001 innJQX_0_1: dw  1          ; Zehner a, Einer b
+0022: 01 0021 000                000 innJQX_0_1 ; Sprung auf das Label des inneren Durchlaufs
+0023: 00 00000000077 ausJQX_0:   dw  077        ; Label im Rumpf der aeusseren Schleife
+0024: 01 0023 000                000 ausJQX_0   ; Sprung auf das Label des aeusseren Durchlaufs
+0025: 00 00000000012 innJQX_1_0: dw  10         ; Zehner a, Einer b
+0026: 01 0025 000                000 innJQX_1_0 ; Sprung auf das Label des inneren Durchlaufs
+0027: 00 00000000013 innJQX_1_1: dw  11         ; Zehner a, Einer b
+0030: 01 0027 000                000 innJQX_1_1 ; Sprung auf das Label des inneren Durchlaufs
+0031: 00 00000000077 ausJQX_1:   dw  077        ; Label im Rumpf der aeusseren Schleife
+0032: 01 0031 000                000 ausJQX_1   ; Sprung auf das Label des aeusseren Durchlaufs
+0033: 0              rMTA_0_0:   dw  0          ; Zaehler von $REPT
+0034: 01 0033 000                000 rMTA_0_0   ; Sprung auf das Label dieser Wiederholung
+0035: 00 00000000001 rMTA_1_0:   dw  1          ; Zaehler von $REPT
+0036: 01 0035 000                000 rMTA_1_0   ; Sprung auf das Label dieser Wiederholung
+0037: 0              rMTA_0_1:   dw  0          ; Zaehler von $REPT
+0040: 01 0037 000                000 rMTA_0_1   ; Sprung auf das Label dieser Wiederholung
+0041: 00 00000000001 rMTA_1_1:   dw  1          ; Zaehler von $REPT
+0042: 01 0041 000                000 rMTA_1_1   ; Sprung auf das Label dieser Wiederholung
+0043: 00 00000000005 tagPWD_0:   dw  5          ; Label des Durchlaufs
+0044: 01 0043 000                000 tagPWD_0   ; Sprung auf das uebergebene Label
+0045: 00 00000000005 tagPWD_1:   dw  5          ; Label des Durchlaufs
+0046: 01 0045 000                000 tagPWD_1   ; Sprung auf das uebergebene Label
+0047: 00 00000000322             dw  210        ; t, fe(0), fe(1) hintereinander
+0050: 00 00000000323             dw  211        ; t, fe(0), fe(1) hintereinander
+0051: 00 00000000324             dw  212        ; t, fe(0), fe(1) hintereinander
+0052: 00 00000000002             dw  2          ; Anzahl der Elemente
+0053: 00 00000000003             dw  3          ; Anzahl der Elemente
+0054: 00 00000000004             dw  4          ; Anzahl der Elemente
+0055: 0                          dw  0          ; nach der Vereinbarung immer 0
+0056: 0                          dw  0          ; nach der Vereinbarung immer 0
+0057: 01 0001 164    haupt:      164 0001       ; Zelle 0057: Diagnoseausgabe (nur im Test)
+0060: 01 0000 020                020 0          ; Zelle 0060: Halt

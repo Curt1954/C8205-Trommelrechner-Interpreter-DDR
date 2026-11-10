@@ -1,0 +1,51 @@
+Trommeldatei:
+#DOK-0001 Test Zeichenketten im Makroablauf: $1 und $CALC in Zahlen, inaktive Zweige, Wechsel Zahl/Text, lokales Ziel, Text mit 200 Zeichen
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000025000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000004 # dw 4 ; CDEF hat 4 Zeichen
+0002: 00000000103 # dw 67 ; C = 67
+0003: 00000000003 # dw 3 ; FGH hat 3 Zeichen
+0004: 00000000102 # dw 66 ; B = 66
+0005: 00000000007 # dw 7 ; immer erzeugt
+0006: 00000000002 # dw 2 ; OK hat 2 Zeichen
+0007: 00000000010 # dw 8 ; immer erzeugt
+0010: 00000000001 # dw 1 ; Text X hat 1 Zeichen
+0011: 00000000011 # dw 9 ; Zahl 9
+0012: 00000000012 # dw 10 ; Zahl 10
+0013: 00000000005 # dw 5 ; lokale z: LOKAL hat 5 Zeichen
+0014: 00000000002 # dw 2 ; lokales Feldelement: YZ hat 2 Zeichen
+0015: 00000000002 # dw 2 ; globale z hat 2 Zeichen
+0016: 00000000013 # dw 11 ; gleich
+0017: 00000000054 # dw 44 ; ungleich (zwei Leerzeichen)
+0020: 00000000101 # dw 65 ; A, B, C = 65, 66, 67
+0021: 00000000102 # dw 66 ; A, B, C = 65, 66, 67
+0022: 00000000103 # dw 67 ; A, B, C = 65, 66, 67
+0023: 00000000310 # dw 200 ; 160 + 40 = 200
+0024: 00000001425 # dw 789 ; letzte drei Zeichen 789
+0025: 00000001164 # haupt: 164 0001 ; Zelle 21: Diagnoseausgabe (nur im Test)
+0026: 00000000020 # 020 0 ; Zelle 22: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0027 US=1
+0001: 00000000004   # ZAHL: CDEF hat 4 Zeichen
+0002: 00000000103   # ZAHL: C = 67
+0003: 00000000003   # ZAHL: FGH hat 3 Zeichen
+0004: 00000000102   # ZWEIG: B = 66
+0005: 00000000007   # ZWEIG: Zeile nach dem $ENDIF
+0006: 00000000002   # ZWEIG2: OK hat 2 Zeichen
+0007: 00000000010   # ZWEIG2: Zeile nach dem $ENDIF (8)
+0010: 00000000001   # ARTW: Text X
+0011: 00000000011   # ARTW: Zahl 9
+0012: 00000000012   # ARTW: Zahl 10 nach $INC
+0013: 00000000005   # LOK: lokale z
+0014: 00000000002   # LOK: lokales Feldelement
+0015: 00000000002   # PRUEFZ: globale z unveraendert
+0016: 00000000013   # GLEICH: gleich = 11
+0017: 00000000054   # GLEICH: zwei Leerzeichen = ungleich = 44
+0020: 00000000101   # REPTD: A
+0021: 00000000102   # REPTD: B
+0022: 00000000103   # REPTD: C
+0023: 00000000310   # LANG: 200 Zeichen
+0024: 00000001425   # LANG: 789

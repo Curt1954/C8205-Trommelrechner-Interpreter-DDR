@@ -1,0 +1,4 @@
+rc 16
+stderr höchstens 32 Parameter zulässig, aber 33 wurden übergeben
+datei-weg obj mqo test
+escape-weg

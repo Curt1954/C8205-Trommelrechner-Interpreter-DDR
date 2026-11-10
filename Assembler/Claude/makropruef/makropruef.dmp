@@ -1,0 +1,7 @@
+0000: 01 0003 000            000 haupt  ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000005 quelle: dw  5      ; Zelle 0001: Quelle
+0002: 0              ziel:   dw  0      ; Zelle 0002: Ziel
+0003: 01 0001 211    haupt:  211 quelle ; AC := Zelle quelle
+0004: 01 0002 240            240 ziel   ; Zelle ziel := AC
+0005: 01 0001 164            164 0001   ; Diagnoseausgabe (nur im Test)
+0006: 01 0000 020            020 0      ; Halt

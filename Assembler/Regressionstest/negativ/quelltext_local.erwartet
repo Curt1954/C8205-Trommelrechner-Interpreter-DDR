@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_local.asm:2: Fehler: (Quelltext) $LOCAL steht außerhalb eines Makroaufrufs
+datei-weg obj mqo test
+escape-weg

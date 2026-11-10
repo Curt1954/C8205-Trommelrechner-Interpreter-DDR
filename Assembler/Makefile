@@ -10,7 +10,7 @@ CC      ?= gcc
 CFLAGS  ?= -O2 -Wall -Wextra -Wshadow
 SRC      = $(addprefix Sourcecode/, ca82_protokoll.c ca82_standards.c ca82_symbole.c ca82_berichte.c ca82_makros.c \
            ca82_zustand.c ca82_hilfen.c ca82_fehler.c ca82_quelle.c ca82_listing.c ca82_pass0.c ca82_pass1.c \
-           ca82_pass2.c ca82_ausdruck.c ca82_codierung.c ca82_pass3.c ca82_fluss.c ca82_testdatei.c ca82_main.c)
+           ca82_pass2.c ca82_opt.c ca82_ausdruck.c ca82_codierung.c ca82_pass3.c ca82_fluss.c ca82_testdatei.c ca82_opsym.c ca82_main.c)
 HDR      = $(wildcard Sourcecode/*.h)
 
 .PHONY: all test pruefen fuzz clean

@@ -1,0 +1,3 @@
+rc 0
+stderr symbolliteral_ausdruck_vorher.asm:2: Warnung: Symbol-Literal x steht in einem Ausdruck (x+1)
+escape-weg

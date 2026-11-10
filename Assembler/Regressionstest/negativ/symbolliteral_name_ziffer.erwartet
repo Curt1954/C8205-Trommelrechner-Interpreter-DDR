@@ -1,0 +1,4 @@
+rc 16
+stderr symbolliteral_name_ziffer.asm:1: Fehler: Operand !1ab ist kein gültiges Symbol-Literal
+datei-weg obj mqo test
+escape-weg

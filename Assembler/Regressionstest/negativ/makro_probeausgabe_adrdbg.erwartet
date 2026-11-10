@@ -1,0 +1,6 @@
+args --adrdbg=nirgends.adrdbg
+rc 16
+stderr Die Option --adrdbg= gilt nur zusammen mit --adraus=.
+stderr Abbruch.
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog adrdbg
+escape-weg

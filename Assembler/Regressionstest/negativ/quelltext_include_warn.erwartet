@@ -1,0 +1,5 @@
+args -WARN=ALLE
+rc 0
+stderr Symbol 'nix' (0001, quelltext_include_warn_1.inc Zeile 1) ist definiert, wird aber nie verwendet
+datei-da obj mqo test
+escape-weg

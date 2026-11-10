@@ -1,0 +1,32 @@
+Trommeldatei:
+#DOK-0001 Test: $SET/$INC/$V wirken bei verschachtelten Aufrufen in Quelltextreihenfolge; ein Makro-Label als Parameter an ein verschachteltes Makro
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Stand von n beim Aufruf
+0002: 00000000002 # dw 2 ; Stand von n beim Aufruf
+0003: 00000000002 # dw 2 ; Stand von n beim Aufruf
+0004: 00000000003 # dw 3 ; Stand von n beim Aufruf
+0005: 00000000004 # dw 4 ; Stand von n beim Aufruf
+0006: 00000000001 # eins: dw 1 ; Zelle 0006: Konstante 1
+0007: 00000000000 # fehler: dw 0 ; Zelle 0007: bleibt 0
+0010: 00000000000 # treffer: dw 0 ; Zelle 0010: wird 1
+0011: 00000015000 # haupt: 000 ML0001HOV ; Sprung zum uebergebenen Label
+0012: 00000007240 # 240 fehler ; wird uebersprungen
+0013: 00000006211 # ML0001KRY: 211 eins ; eigenes Label (gleiche Nummer wie in AUS)
+0014: 00000007240 # 240 fehler ; wird uebersprungen
+0015: 00000006211 # ML0001HOV: 211 eins ; AC := 1
+0016: 00000010240 # 240 treffer ; treffer := 1
+0017: 00000001164 # 164 0001 ; Zelle 0017: Diagnoseausgabe (nur im Test)
+0020: 00000000020 # 020 0 ; Zelle 0020: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0021 AC=00000000001 US=1
+0001: 00000000001   # OUT1 Nr. 1: n = 1
+0002: 00000000002   # OUT1 Nr. 2: n = 2
+0003: 00000000002   # OUT2 Nr. 1: INNER vor dem Erhoehen: 2
+0004: 00000000003   # OUT2 Nr. 2: 3
+0005: 00000000004   # INNER am Schluss: 4
+0007: 00000000000   # fehler
+0010: 00000000001   # treffer

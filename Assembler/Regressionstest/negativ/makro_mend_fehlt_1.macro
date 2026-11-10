@@ -1,0 +1,4 @@
+# Makro ohne MEND; das Wort AMEND im Kommentar ist kein Makroende
+OHNEENDE: MACRO
+# Wirkung: nichts, Kommentar mit AMEND
+        211 ziel     ; Kommentar mit RECOMMEND

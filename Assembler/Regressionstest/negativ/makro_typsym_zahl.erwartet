@@ -1,0 +1,4 @@
+rc 16
+stderr Parameter $1: Wert "07" ist kein Symbol
+datei-weg obj mqo test
+escape-weg

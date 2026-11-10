@@ -1,0 +1,188 @@
+0000: 01 0035 000               000    haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 20 0023        erg:       db     18           ; Zellen 0001 bis 0022: Ergebnisbereiche, je Eingabe 2 Zellen (Wort 1, Wort 2)
+0023: 20 0034        kb:        db     9            ; Zellen 0023 bis 0033: KBGB nach jeder Eingabe
+0034: 20 0035        dif1:      db     1            ; Zelle 0034: R1 - Soll nach dem letzten Aufruf (0, wenn R1 unveraendert)
+0035: 00 7775 241    haupt:     241    kbgb         ; KBGB := 0 (Anfangszustand KB), AC := 0
+0036: 00 4600 030               030    04600        ; 4600 oder K1 oder LSL1 oder LSS1
+0037: 01 0120 211               211    a0           ; AC := Adresse des Bereichs der Eingabe 1
+0040: 00 7773 240               240    r1           ; R1 := Bereich
+0041: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 1 lesen
+0042: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0043: 01 0023 240               240    kb+0         ; Zelle kb+0 := KBGB
+0044: 01 0121 211               211    a1           ; AC := Adresse des Bereichs der Eingabe 2
+0045: 00 7773 240               240    r1           ; R1 := Bereich
+0046: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 2 lesen
+0047: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0050: 01 0024 240               240    kb+1         ; Zelle kb+1 := KBGB
+0051: 01 0122 211               211    a2           ; AC := Adresse des Bereichs der Eingabe 3
+0052: 00 7773 240               240    r1           ; R1 := Bereich
+0053: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 3 lesen
+0054: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0055: 01 0025 240               240    kb+2         ; Zelle kb+2 := KBGB
+0056: 01 0123 211               211    a3           ; AC := Adresse des Bereichs der Eingabe 4
+0057: 00 7773 240               240    r1           ; R1 := Bereich
+0060: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 4 lesen
+0061: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0062: 01 0026 240               240    kb+3         ; Zelle kb+3 := KBGB
+0063: 01 0124 211               211    a4           ; AC := Adresse des Bereichs der Eingabe 5
+0064: 00 7773 240               240    r1           ; R1 := Bereich
+0065: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 5 lesen
+0066: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0067: 01 0027 240               240    kb+4         ; Zelle kb+4 := KBGB
+0070: 01 0125 211               211    a5           ; AC := Adresse des Bereichs der Eingabe 6
+0071: 00 7773 240               240    r1           ; R1 := Bereich
+0072: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 6 lesen
+0073: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0074: 01 0030 240               240    kb+5         ; Zelle kb+5 := KBGB
+0075: 01 0126 211               211    a6           ; AC := Adresse des Bereichs der Eingabe 7
+0076: 00 7773 240               240    r1           ; R1 := Bereich
+0077: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 7 lesen
+0100: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0101: 01 0031 240               240    kb+6         ; Zelle kb+6 := KBGB
+0102: 01 0127 211               211    a7           ; AC := Adresse des Bereichs der Eingabe 8
+0103: 00 7773 240               240    r1           ; R1 := Bereich
+0104: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 8 lesen
+0105: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0106: 01 0032 240               240    kb+7         ; Zelle kb+7 := KBGB
+0107: 01 0130 211               211    a8           ; AC := Adresse des Bereichs der Eingabe 9
+0110: 00 7773 240               240    r1           ; R1 := Bereich
+0111: 01 0131 025               025    eingabe      ; UP eingabe: Eingabe 9 lesen
+0112: 00 7775 211               211    kbgb         ; AC := KBGB nach der Eingabe
+0113: 01 0033 240               240    kb+8         ; Zelle kb+8 := KBGB
+0114: 00 7773 211               211    r1           ; AC := R1
+0115: 01 0130 220               220    a8           ; minus Soll (Bereich der letzten Eingabe): 0, wenn R1 unveraendert
+0116: 01 0034 240               240    dif1         ; dif1 := Abweichung
+0117: 01 0000 020               020    0            ; Halt (normales Ende)
+0120: 01 1000        a0:        da     erg+0        ; Adresse des Bereichs der Eingabe 1 (Adressfeld)
+0121: 01 3000        a1:        da     erg+2        ; Adresse des Bereichs der Eingabe 2 (Adressfeld)
+0122: 01 5000        a2:        da     erg+4        ; Adresse des Bereichs der Eingabe 3 (Adressfeld)
+0123: 01 7000        a3:        da     erg+6        ; Adresse des Bereichs der Eingabe 4 (Adressfeld)
+0124: 01 11000       a4:        da     erg+8        ; Adresse des Bereichs der Eingabe 5 (Adressfeld)
+0125: 01 13000       a5:        da     erg+10       ; Adresse des Bereichs der Eingabe 6 (Adressfeld)
+0126: 01 15000       a6:        da     erg+12       ; Adresse des Bereichs der Eingabe 7 (Adressfeld)
+0127: 01 17000       a7:        da     erg+14       ; Adresse des Bereichs der Eingabe 8 (Adressfeld)
+0130: 01 21000       a8:        da     erg+16       ; Adresse des Bereichs der Eingabe 9 (Adressfeld)
+0131: 01 0207 240    eingabe:   240    ML0001GNU    ; Rueckkehrwort sichern
+0132: 01 0313 241               241    ML0013GNU    ; Wort 1 := 0, AC := 0
+0133: 01 0314 241               241    ML0014GNU    ; Wort 2 := 0
+0134: 01 0400 211               211    l0001        ; zwei Kennzeichen sind noch zu lesen
+0135: 01 0317 240               240    ML0017GNU    ; zaehler := 2
+0136: 01 0300 011    ML0003GNU: 011    ML0012GNU    ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+0137: 01 0141 040               040    ML0004GNU    ; z0 gesetzt: Ziffer oder +
+0140: 01 0136 000               000    ML0003GNU    ; sonst: Zeichen ignorieren, weiterlesen
+0141: 01 0401 200    ML0004GNU: 200    l0002        ; AC := Code des Zeichens (6 Bit)
+0142: 01 0334 240               240    ML0016GNU    ; code := Code
+0143: 01 0317 211               211    ML0017GNU    ; AC := noch zu lesende Kennzeichen
+0144: 01 0402 330               330    l0003        ; Vergleich mit 0 (keine Operation)
+0145: 01 0155 170               170    ML0005GNU    ; 0: Ziffernteil
+0146: 01 0403 220               220    l0004        ; AC := zaehler - 1
+0147: 01 0317 240               240    ML0017GNU    ; zaehler := zaehler - 1
+0150: 01 0314 211               211    ML0014GNU    ; AC := Wort 2 bisher
+0151: 01 7662 644               644    07662        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0152: 01 0334 210               210    ML0016GNU    ; plus Code des neuen Kennzeichens
+0153: 01 0314 240               240    ML0014GNU    ; Wort 2 := neues Wort 2
+0154: 01 0136 000               000    ML0003GNU    ; naechstes Zeichen
+0155: 01 0334 211    ML0005GNU: 211    ML0016GNU    ; Ziffernteil: AC := Code
+0156: 01 0404 200               200    l0005        ; Bits ausser den drei unteren: 0 nur bei Oktalziffern 0 bis 7
+0157: 01 0403 220               220    l0004        ; AC := AC - 1 (negativ, wenn Oktalziffer)
+0160: 01 0136 050               050    ML0003GNU    ; AC >= 0: 8, 9 oder +: ignorieren
+0161: 01 0313 211               211    ML0013GNU    ; AC := Wort 1 bisher
+0162: 01 7671 644               644    07671        ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0163: 01 0334 210               210    ML0016GNU    ; plus Code der neuen Ziffer
+0164: 01 0313 240               240    ML0013GNU    ; Wort 1 := neues Wort 1
+0165: 01 0136 000               000    ML0003GNU    ; naechstes Zeichen
+0166: 01 0317 211    ML0006GNU: 211    ML0017GNU    ; Ende (. oder :): AC := noch zu lesende Kennzeichen
+0167: 01 0403 330               330    l0004        ; Vergleich mit 1 (keine Operation)
+0170: 01 0172 170               170    ML0007GNU    ; 1: nur ein Kennzeichen gelesen, es gehoert nach Kennzeichen 1
+0171: 01 0175 000               000    ML0008GNU    ; sonst: Wort 2 ist richtig (0 oder 2 Kennzeichen; bei 2 ist Wort 2 = 0)
+0172: 01 0314 211    ML0007GNU: 211    ML0014GNU    ; AC := Wort 2 (ein Kennzeichen)
+0173: 01 7662 644               644    07662        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0174: 01 0314 240               240    ML0014GNU    ; Wort 2 := Kennzeichen 1 und 0
+0175: 00 7773 211    ML0008GNU: 211    ML0050GNU    ; AC := R1 (Adresse des Bereichs)
+0176: 01 0405 210               210    l0006        ; plus Operationscode 240: Befehl 240 <Wort 1>
+0177: 01 0201 240               240    ML0009GNU    ; Speicherbefehl auf die naechste Zelle
+0200: 01 0313 211               211    ML0013GNU    ; AC := Wort 1
+0201: 20 0202        ML0009GNU: db     1            ; Laufzeit: 240 <Bereich>, Wort 1 in die erste Zelle
+0202: 00 7773 211               211    ML0050GNU    ; AC := R1
+0203: 01 0406 210               210    l0007        ; plus eine Adresseneinheit und 240: Befehl 240 <Bereich + 1>
+0204: 01 0206 240               240    ML0010GNU    ; Speicherbefehl auf die naechste Zelle
+0205: 01 0314 211               211    ML0014GNU    ; AC := Wort 2 (nichtnegativ)
+0206: 20 0207        ML0010GNU: db     1            ; Laufzeit: 240 <Bereich + 1>, Wort 2 in die zweite Zelle
+0207: 20 0210        ML0001GNU: db     1            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0210: 01 0403 211    ML0011GNU: 211    l0004        ; Um. GB: AC := 1
+0211: 00 7775 240               240    ML0051GNU    ; KBGB := 1
+0212: 01 0136 000               000    ML0003GNU    ; weiterlesen
+0213: 00 7775 241    ML0018GNU: 241    ML0051GNU    ; Um. KB: KBGB := 0
+0214: 01 0136 000               000    ML0003GNU    ; weiterlesen
+      20 0000 0300              equ100 00300        ; ML0012% muss durch 0100 teilbar sein
+0300: 00 40000000000            dw     040000000000 ; 00: 0: gueltig, z0 gesetzt, Code 00
+0301: 00 40000000001            dw     040000000001 ; 01: 1: gueltig, z0 gesetzt, Code 01
+0302: 00 40000000002            dw     040000000002 ; 02: 2: gueltig, z0 gesetzt, Code 02
+0303: 00 40000000003            dw     040000000003 ; 03: 3: gueltig, z0 gesetzt, Code 03
+0304: 00 40000000004            dw     040000000004 ; 04: 4: gueltig, z0 gesetzt, Code 04
+0305: 00 40000000005            dw     040000000005 ; 05: 5: gueltig, z0 gesetzt, Code 05
+0306: 00 40000000006            dw     040000000006 ; 06: 6: gueltig, z0 gesetzt, Code 06
+0307: 00 40000000007            dw     040000000007 ; 07: 7: gueltig, z0 gesetzt, Code 07
+0310: 00 40000000010            dw     040000000010 ; 10: 8: gueltig, z0 gesetzt, Code 10
+0311: 00 40000000011            dw     040000000011 ; 11: 9: gueltig, z0 gesetzt, Code 11
+0312: 01 0136 000               000    ML0003GNU    ; 12: Leertaste: ignorieren
+0313: 20 0314        ML0013GNU: db     1            ; 13: Arbeitszelle: Wort 1, das gerade aufgebaut wird
+0314: 20 0315        ML0014GNU: db     1            ; 14: Arbeitszelle: Wort 2 (Kennzeichen)
+0315: 01 0166 000               000    ML0006GNU    ; 15: : beendet die Eingabe
+0316: 01 0136 000               000    ML0003GNU    ; 16: Irrung Satz: ignorieren
+0317: 20 0320        ML0017GNU: db     1            ; 17: Arbeitszelle: noch zu lesende Kennzeichen (2, 1, 0)
+0320: 00 40000000020            dw     040000000020 ; 20: +: gueltig, z0 gesetzt, Code 20
+0321: 0                         dw     0            ; 21: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0322: 0                         dw     0            ; 22: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0323: 0                         dw     0            ; 23: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0324: 0                         dw     0            ; 24: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0325: 0                         dw     0            ; 25: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0326: 0                         dw     0            ; 26: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0327: 0                         dw     0            ; 27: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0330: 0                         dw     0            ; 30: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0331: 0                         dw     0            ; 31: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0332: 01 0136 000               000    ML0003GNU    ; 32: WRZL: ignorieren
+0333: 01 0166 000               000    ML0006GNU    ; 33: . beendet die Eingabe
+0334: 20 0335        ML0016GNU: db     1            ; 34: Arbeitszelle: Code (6 Bit) des gelesenen Zeichens
+0335: 0                         dw     0            ; 35: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0336: 0                         dw     0            ; 36: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0337: 01 0210 000               000    ML0011GNU    ; 37: Um. GB: KBGB := 1
+0340: 01 0136 000               000    ML0003GNU    ; 40: - / Dreieck: ignorieren
+0341: 0                         dw     0            ; 41: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0342: 0                         dw     0            ; 42: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0343: 0                         dw     0            ; 43: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0344: 0                         dw     0            ; 44: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0345: 0                         dw     0            ; 45: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0346: 0                         dw     0            ; 46: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0347: 0                         dw     0            ; 47: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0350: 0                         dw     0            ; 50: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0351: 0                         dw     0            ; 51: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0352: 0                         dw     0            ; 52: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0353: 0                         dw     0            ; 53: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0354: 0                         dw     0            ; 54: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0355: 0                         dw     0            ; 55: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0356: 0                         dw     0            ; 56: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0357: 01 0213 000               000    ML0018GNU    ; 57: Um. KB: KBGB := 0
+0360: 01 0136 000               000    ML0003GNU    ; 60: ` / ;: ignorieren
+0361: 0                         dw     0            ; 61: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0362: 0                         dw     0            ; 62: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0363: 0                         dw     0            ; 63: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0364: 0                         dw     0            ; 64: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0365: 0                         dw     0            ; 65: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0366: 0                         dw     0            ; 66: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0367: 0                         dw     0            ; 67: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0370: 0                         dw     0            ; 70: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0371: 0                         dw     0            ; 71: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0372: 01 0136 000               000    ML0003GNU    ; 72: BM: ignorieren
+0373: 01 0136 000               000    ML0003GNU    ; 73: , / ?: ignorieren
+0374: 0                         dw     0            ; 74: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0375: 01 0136 000               000    ML0003GNU    ; 75: Tabulator: ignorieren
+0376: 0                         dw     0            ; 76: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0377: 0                         dw     0            ; 77: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0400: 00 00000000002 l0001      dw     2            
+0401: 00 00000000077 l0002      dw     000000000077 
+0402: 0              l0003      dw     000000000000 
+0403: 00 00000000001 l0004      dw     1            
+0404: 00 00000000070 l0005      dw     000000000070 
+0405: 00 00000000240 l0006      dw     000000000240 
+0406: 00 00000001240 l0007      dw     000000001240 

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_arbeitspuffer.asm:9: Fehler: M1 $UPPER z: $V(c): Text passt nicht in den Arbeitspuffer (höchstens 4095 Zeichen)
+datei-weg obj mqo test
+escape-weg

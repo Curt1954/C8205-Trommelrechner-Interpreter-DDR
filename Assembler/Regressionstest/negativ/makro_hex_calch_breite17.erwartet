@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_calch_breite17.asm:6: Fehler: $CALCH17(1): Breite 17 liegt außerhalb von 1 bis 16
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,647 @@
+                             000                          haupt                        ; Zelle 0000: Sprung zum Hauptprogramm
+haupt                        020                          0                            ; Zelle 0001: Halt (die UP werden nicht aufgerufen, nur erzeugt)
+k4ein                        240                          ML0001PWD                    ; Rueckkehrwort sichern
+                             211                          ML0028PWD                    ; AC := hoechste Zeichenzahl
+                             220                          l0008                        ; AC := n - 1
+                             240                          ML0004PWD                    ; zaehl := n - 1 (negativ, wenn alle Zeichen angenommen sind)
+                             211                          ML0027PWD                    ; AC := Adresse des Bereichs
+                             220                          l0007                        ; eine Adresseneinheit weniger, weil weiter sie gleich wieder dazuzaehlt
+                             240                          ML0002PWD                    ; zeiger := Adresse des Wortes vor dem ersten
+ML0006PWD                    211                          ML0002PWD                    ; neues Wort beginnen: zeiger auf das naechste Wort
+                             210                          l0007                        ; plus eine Adresseneinheit
+                             240                          ML0002PWD                    ; zeiger := Adresse des aktuellen Wortes
+                             211                          l0010                        ; AC := 3
+                             240                          ML0005PWD                    ; m := 3 (Zeichen noch zu uebernehmen minus 1)
+                             241                          ML0003PWD                    ; wort := 0, AC := 0
+                             211                          ML0004PWD                    ; AC := Rest
+                             050                          ML0007PWD                    ; Rest >= 0: Zeichen lesen
+ML0008PWD                    211                          ML0005PWD                    ; Eingabeende: m + 1 Zeichen fehlen im Wort; m < 0 heisst Wort voll
+                             040                          ML0009PWD                    ; Wort voll: fertig ausgerichtet
+                             211                          ML0005PWD                    ; AC := m
+                             220                          l0008                        ; AC := AC - 1
+                             240                          ML0005PWD                    ; m := AC
+                             211                          ML0003PWD                    ; AC := Wort
+                             642                          07670                        ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             240                          ML0003PWD                    ; wort := ausgerichtetes Wort
+                             000                          ML0008PWD                    ; naechstes fehlendes Zeichen
+ML0009PWD                    211                          ML0003PWD                    ; AC := ausgerichtetes Wort
+                             210                          l0011                        ; z0 setzen: Endwort
+                             240                          ML0003PWD                    ; wort := Endwort mit z0
+                             000                          ML0010PWD                    ; Wort speichern
+ML0007PWD                    211                          ML0003PWD                    ; AC := bisheriges Wort
+                             642                          07670                        ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             010                          ML0026PWD                    ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+ML0012PWD                    240                          ML0003PWD                    ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+                             211                          ML0004PWD                    ; AC := zaehl
+                             220                          l0008                        ; AC := AC - 1
+                             240                          ML0004PWD                    ; zaehl := AC
+                             211                          ML0005PWD                    ; AC := m
+                             220                          l0008                        ; AC := AC - 1
+                             240                          ML0005PWD                    ; m := AC
+                             040                          ML0011PWD                    ; m < 0: Wort voll
+                             211                          ML0004PWD                    ; AC := Rest
+                             050                          ML0007PWD                    ; Rest >= 0: weiter lesen
+                             000                          ML0008PWD                    ; alle Zeichen angenommen: Eingabeende
+ML0011PWD                    211                          ML0004PWD                    ; Wort voll: AC := Rest
+                             040                          ML0008PWD                    ; Rest < 0: das volle Wort ist das Endwort (ausr ist dann ohne Schieben, setzt z0)
+ML0010PWD                    211                          ML0002PWD                    ; AC := Adresse des Wortes im Bereich
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0013PWD                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0003PWD                    ; AC := Wort
+ML0013PWD:                   db                           1                            ; Laufzeit: 240 <Adresse des Wortes>, speichert das Wort in den Bereich
+                             211                          ML0004PWD                    ; AC := Rest
+                             050                          ML0006PWD                    ; Rest >= 0: naechstes Wort beginnen
+ML0001PWD:                   db                           1                            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002PWD:                   db                           1                            ; Arbeitszelle: Adresse des aktuellen Wortes im Bereich
+ML0003PWD:                   db                           1                            ; Arbeitszelle: Wort, das gerade aufgebaut wird
+ML0004PWD:                   db                           1                            ; Arbeitszelle: noch anzunehmende Zeichen minus 1
+ML0005PWD:                   db                           1                            ; Arbeitszelle: noch fehlende Zeichen im Wort minus 1
+ML0014PWD                    221                          l0008                        ; AC := -1
+                             240                          ML0004PWD                    ; zaehl := -1: Eingabe zu Ende
+                             000                          ML0008PWD                    ; Wort ausrichten, z0 setzen, speichern
+ML0015PWD                    210                          l0012                        ; Sprungzeichen 12 (Leertaste / ZWR): kat4 032 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0016PWD                    210                          l0013                        ; Sprungzeichen 15 (:  /  (): kat4 015 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0017PWD                    210                          l0014                        ; Sprungzeichen 16 (Irrung Satz): kat4 016 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0018PWD                    210                          l0015                        ; Sprungzeichen 33 (. / !): kat4 073 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0019PWD                    210                          l0016                        ; Sprungzeichen 37 (Um. GB): kat4 057 << 24 zum verschobenen Wort addieren
+                             240                          ML0003PWD                    ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             211                          l0008                        ; AC := 1 (Zustand GB)
+                             000                          ML0029PWD                    ; Zustand setzen
+ML0020PWD                    210                          l0017                        ; Sprungzeichen 40 (- / Dreieck): kat4 100 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0021PWD                    210                          l0018                        ; Sprungzeichen 57 (Um. KB): kat4 117 << 24 zum verschobenen Wort addieren
+                             240                          ML0003PWD                    ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             211                          l0002                        ; AC := 0 (Zustand KB)
+                             000                          ML0029PWD                    ; Zustand setzen
+ML0022PWD                    210                          l0019                        ; Sprungzeichen 60 (` / ;): kat4 160 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0023PWD                    210                          l0020                        ; Sprungzeichen 72 (BM): kat4 352 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0024PWD                    210                          l0021                        ; Sprungzeichen 73 (, / ?): kat4 153 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0025PWD                    210                          l0022                        ; Sprungzeichen 75 (Tabulator): kat4 155 << 24 zum verschobenen Wort addieren
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0029PWD                    240                          ML0030PWD                    ; wert := Zustand (0 = KB, 1 = GB)
+                             211                          ML0031PWD                    ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0032PWD                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0030PWD                    ; AC := Zustand
+ML0032PWD:                   db                           1                            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+                             211                          ML0003PWD                    ; AC := Wort mit dem Umschaltzeichen
+                             000                          ML0012PWD                    ; weiter bei der Uebernahme
+ML0030PWD:                   db                           1                            ; Arbeitszelle: Zustand, der gespeichert wird
+l0001                        dw                           037777777777                 
+l0002                        dw                           000000000000                 
+l0003                        dw                           000000000377                 
+l0004                        dw                           000000000057                 
+l0005                        dw                           000000000117                 
+l0006                        dw                           000000000030                 
+l0007                        dw                           000000001000                 
+l0008                        dw                           1                            
+l0009                        dw                           000000000240                 
+l0010                        dw                           3                            
+l0011                        dw                           040000000000                 
+l0012                        dw                           003200000000                 
+l0013                        dw                           001500000000                 
+l0014                        dw                           001600000000                 
+l0015                        dw                           007300000000                 
+l0016                        dw                           005700000000                 
+l0017                        dw                           010000000000                 
+l0018                        dw                           011700000000                 
+l0019                        dw                           016000000000                 
+l0020                        dw                           035200000000                 
+l0021                        dw                           015300000000                 
+l0022                        dw                           015500000000                 
+l0023                        dw                           000000077000                 
+l0024                        dw                           000000054000                 
+l0025                        dw                           000000055000                 
+l0026                        da                           000000000341                 
+l0027                        dw                           000077777777                 
+l0028                        dw                           4                            
+l0029                        dw                           000000000001                 
+l0030                        dw                           000000000006                 
+l0031                        dw                           000000000004                 
+l0032                        dw                           000000000055                 
+                             equ100                       00200                            ; ztab muss durch 0100 teilbar sein
+                             dw                           002000000000                 ; 00: 0, kat4 020 << 24
+                             dw                           000100000000                 ; 01: 1, kat4 001 << 24
+                             dw                           000200000000                 ; 02: 2, kat4 002 << 24
+                             dw                           002300000000                 ; 03: 3, kat4 023 << 24
+                             dw                           000400000000                 ; 04: 4, kat4 004 << 24
+                             dw                           002500000000                 ; 05: 5, kat4 025 << 24
+                             dw                           002600000000                 ; 06: 6, kat4 026 << 24
+                             dw                           000700000000                 ; 07: 7, kat4 007 << 24
+                             dw                           001000000000                 ; 10: 8, kat4 010 << 24
+                             dw                           003100000000                 ; 11: 9, kat4 031 << 24
+                             000                          ML0015PWD                    ; 12: Leertaste / ZWR (Sprung-Umstellung)
+l0033                        dw                           000000000003                 
+l0034                        dw                           000000000054                 
+                             spa                          00215                        ; unbelegte Eingabeadressen 13 bis 14 auslassen
+                             000                          ML0016PWD                    ; 15: :  /  ( (Sprung-Umstellung)
+                             000                          ML0017PWD                    ; 16: Irrung Satz (Sprung-Umstellung)
+l0035                        dw                           000000000002                 
+                             spa                          00220                        ; unbelegte Eingabeadressen 17 bis 17 auslassen
+                             dw                           004000000000                 ; 20: + / =, kat4 040 << 24
+                             dw                           006100000000                 ; 21: a, kat4 061 << 24
+                             dw                           006200000000                 ; 22: b, kat4 062 << 24
+                             dw                           004300000000                 ; 23: c, kat4 043 << 24
+                             dw                           006400000000                 ; 24: d, kat4 064 << 24
+                             dw                           004500000000                 ; 25: e, kat4 045 << 24
+                             dw                           004600000000                 ; 26: f, kat4 046 << 24
+                             dw                           006700000000                 ; 27: g, kat4 067 << 24
+                             dw                           007000000000                 ; 30: h, kat4 070 << 24
+                             dw                           005100000000                 ; 31: i, kat4 051 << 24
+                             000                          ML0014PWD                    ; 32: SatzMarke / WRZL = Eingabeende
+                             000                          ML0018PWD                    ; 33: . / ! (Sprung-Umstellung)
+l0036                        dw                           000000000077                 
+l0037                        dw                           000000000037                 
+l0038                        dw                           000000000060                 
+                             spa                          00237                        ; unbelegte Eingabeadressen 34 bis 36 auslassen
+                             000                          ML0019PWD                    ; 37: Um. GB (Sprung-Umstellung)
+                             000                          ML0020PWD                    ; 40: - / Dreieck (Sprung-Umstellung)
+                             dw                           012100000000                 ; 41: j, kat4 121 << 24
+                             dw                           012200000000                 ; 42: k, kat4 122 << 24
+                             dw                           010300000000                 ; 43: l, kat4 103 << 24
+                             dw                           012400000000                 ; 44: m, kat4 124 << 24
+                             dw                           010500000000                 ; 45: n, kat4 105 << 24
+                             dw                           010600000000                 ; 46: o, kat4 106 << 24
+                             dw                           012700000000                 ; 47: p, kat4 127 << 24
+                             dw                           013000000000                 ; 50: q, kat4 130 << 24
+                             dw                           011100000000                 ; 51: r, kat4 111 << 24
+                             dw                           011200000000                 ; 52: WR, kat4 112 << 24
+l0039                        dw                           000000000017                 
+l0040                        dw                           000000000020                 
+l0041                        dw                           001200000000                 
+l0042                        dw                           003300000000                 
+                             spa                          00257                        ; unbelegte Eingabeadressen 53 bis 56 auslassen
+                             000                          ML0021PWD                    ; 57: Um. KB (Sprung-Umstellung)
+                             000                          ML0022PWD                    ; 60: ` / ; (Sprung-Umstellung)
+                             dw                           014100000000                 ; 61: / / ), kat4 141 << 24
+                             dw                           014200000000                 ; 62: s, kat4 142 << 24
+                             dw                           016300000000                 ; 63: t, kat4 163 << 24
+                             dw                           014400000000                 ; 64: u, kat4 144 << 24
+                             dw                           016500000000                 ; 65: v, kat4 165 << 24
+                             dw                           016600000000                 ; 66: w, kat4 166 << 24
+                             dw                           014700000000                 ; 67: x, kat4 147 << 24
+                             dw                           015000000000                 ; 70: y, kat4 150 << 24
+                             dw                           017100000000                 ; 71: z, kat4 171 << 24
+                             000                          ML0023PWD                    ; 72: BM (Sprung-Umstellung)
+                             000                          ML0024PWD                    ; 73: , / ? (Sprung-Umstellung)
+                             dw                           017400000000                 ; 74: Prozentzeichen / *, kat4 174 << 24
+                             000                          ML0025PWD                    ; 75: Tabulator (Sprung-Umstellung)
+l0043                        dw                           003700000000                 
+                             spa                          00277                        ; unbelegte Eingabeadressen 76 bis 76 auslassen
+                             dw                           017700000000                 ; 77: Transport, kat4 177 << 24
+k5aus                        240                          ML0001BIP                    ; Rueckkehrwort sichern
+                             211                          ML0014BIP                    ; AC := Adresse des Wortes (R1 bleibt unveraendert)
+                             251                          0                            ; R-Lesebefehl: AC := Wort (Adresse im AC)
+                             240                          ML0004BIP                    ; rest := Wort (nie negativ, z0 bis z2 sind 0)
+ML0007BIP                    330                          l0002                        ; Vergleich des Rests mit 0 (keine Operation), der AC bleibt der Rest
+                             170                          ML0001BIP                    ; Rest 0: Wort fertig, Rueckkehr
+                             642                          07675                        ; 15 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             200                          l0023                        ; nur das Zeichen behalten
+                             240                          ML0005BIP                    ; zeichen := Code mal 01000
+                             330                          l0024                        ; Vergleich mit kat5 054 (Um. KB)
+                             170                          ML0011BIP                    ; Um. KB: Zustand := KB
+                             330                          l0025                        ; Vergleich mit kat5 055 (Um. GB)
+                             170                          ML0011BIP                    ; Um. GB: Zustand := GB
+ML0008BIP                    210                          l0026                        ; plus Adresse der Tabelle, Code 01 steht auf ML0013%
+                             251                          0                            ; R-Lesebefehl: AC := fertiger Ausgabebefehl des Zeichens
+                             240                          ML0009BIP                    ; Ausgabebefehl auf die naechste Zelle speichern
+ML0009BIP:                   db                           1                            ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+                             211                          ML0004BIP                    ; AC := Zeichenrest
+                             200                          l0027                        ; erstes Zeichen entfernen (die unteren 24 Bit bleiben)
+                             644                          07662                        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+                             240                          ML0004BIP                    ; rest := Rest
+                             000                          ML0007BIP                    ; naechstes Zeichen (der AC ist der Rest)
+ML0001BIP:                   db                           1                            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0011BIP                    211                          ML0015BIP                    ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0012BIP                    ; Speicherbefehl auf die uebernaechste Zelle
+                             211                          ML0005BIP                    ; AC := Code mal 01000 (054000 oder 055000)
+                             220                          l0024                        ; AC := 0 (Um. KB) oder 01000 (Um. GB)
+                             642                          07653                        ; 9 mal Rechtsverschiebung (Operand nach Festlegung 026)
+ML0012BIP:                   db                           1                            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+                             211                          ML0005BIP                    ; AC := Code mal 01000, zurueck zur Ausgabe des Zeichens
+                             000                          ML0008BIP                    ; Zeichen ausgeben
+ML0004BIP:                   db                           1                            ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0005BIP:                   db                           1                            ; Arbeitszelle: aktueller kat5-Code mal 01000
+ML0013BIP:                   dto                          \ \                          ; Tabelle, Code 01: Leerzeichen
+                             dz                           ,                            ; Code 02: Komma
+                             dz                           -                            ; Code 03: Minus
+                             dz                           .                            ; Code 04: Punkt
+                             dz                           +                            ; Code 05: + und =
+                             dz                           :                            ; Code 06: Doppelpunkt
+                             dto                          0123456789                   ; Codes 07 bis 020: 0 bis 9
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                             dto                          abcdefghijklmnopqrstuvwxyz   ; Codes 021 bis 052: a bis z
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+; 
+                             dz                           $wrzl                        ; Code 053: Zeilenschaltung (Satzmarke)
+                             dz                           $inkb                        ; Code 054: Um. KB
+                             dz                           $ingb                        ; Code 055: Um. GB
+k5ein                        240                          ML0001QXE                    ; Rueckkehrwort sichern
+                             241                          ML0003QXE                    ; wort := 0, AC := 0
+                             211                          l0028                        ; AC := 4
+                             240                          ML0004QXE                    ; zaehl := 4 (noch anzunehmende Zeichen minus 1)
+ML0007QXE                    211                          ML0003QXE                    ; Zeichen lesen: AC := bisheriges Wort
+                             644                          07662                        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+                             010                          ML0026QXE                    ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+                             040                          ML0007QXE                    ; AC negativ (z0 aus der Tabelle): Taste ohne kat5-Zeichen, ueberlesen
+ML0012QXE                    240                          ML0003QXE                    ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+                             211                          ML0004QXE                    ; AC := zaehl
+                             220                          l0008                        ; AC := AC - 1
+                             240                          ML0004QXE                    ; zaehl := AC
+                             050                          ML0007QXE                    ; zaehl >= 0: weiter lesen
+ML0008QXE                    211                          ML0004QXE                    ; Eingabeende: zaehl + 1 Zeichen fehlen im Wort (WRZL springt hierher)
+                             040                          ML0010QXE                    ; zaehl < 0: Wort voll, fertig ausgerichtet
+                             220                          l0008                        ; AC := zaehl - 1
+                             240                          ML0004QXE                    ; zaehl := AC
+                             211                          ML0003QXE                    ; AC := Wort
+                             644                          07662                        ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+                             240                          ML0003QXE                    ; wort := ausgerichtetes Wort
+                             000                          ML0008QXE                    ; naechstes fehlendes Zeichen
+ML0010QXE                    211                          ML0027QXE                    ; AC := R1 = Adresse des Wortes (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0013QXE                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0003QXE                    ; AC := Wort
+ML0013QXE:                   db                           1                            ; Laufzeit: 240 <Adresse des Wortes>, speichert das Wort
+ML0001QXE:                   db                           1                            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0003QXE:                   db                           1                            ; Arbeitszelle: Wort, das gerade aufgebaut wird
+ML0004QXE:                   db                           1                            ; Arbeitszelle: noch anzunehmende Zeichen minus 1
+ML0015QXE                    210                          l0029                        ; Sprungzeichen 12 (Leertaste / ZWR): kat5 01 zum verschobenen Wort addieren
+                             000                          ML0012QXE                    ; weiter bei der Uebernahme
+ML0016QXE                    210                          l0030                        ; Sprungzeichen 15 (:  /  (): kat5 06 zum verschobenen Wort addieren
+                             000                          ML0012QXE                    ; weiter bei der Uebernahme
+ML0018QXE                    210                          l0031                        ; Sprungzeichen 33 (. / !): kat5 04 zum verschobenen Wort addieren
+                             000                          ML0012QXE                    ; weiter bei der Uebernahme
+ML0019QXE                    210                          l0032                        ; Sprungzeichen 37 (Um. GB): kat5 055 zum verschobenen Wort addieren
+                             240                          ML0003QXE                    ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             211                          l0008                        ; AC := 1 (Zustand GB)
+                             000                          ML0029QXE                    ; Zustand setzen
+ML0020QXE                    210                          l0033                        ; Sprungzeichen 40 (- / Dreieck): kat5 03 zum verschobenen Wort addieren
+                             000                          ML0012QXE                    ; weiter bei der Uebernahme
+ML0021QXE                    210                          l0034                        ; Sprungzeichen 57 (Um. KB): kat5 054 zum verschobenen Wort addieren
+                             240                          ML0003QXE                    ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             211                          l0002                        ; AC := 0 (Zustand KB)
+                             000                          ML0029QXE                    ; Zustand setzen
+ML0024QXE                    210                          l0035                        ; Sprungzeichen 73 (, / ?): kat5 02 zum verschobenen Wort addieren
+                             000                          ML0012QXE                    ; weiter bei der Uebernahme
+ML0029QXE                    240                          ML0030QXE                    ; wert := Zustand (0 = KB, 1 = GB)
+                             211                          ML0031QXE                    ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0032QXE                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0030QXE                    ; AC := Zustand
+ML0032QXE:                   db                           1                            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+                             211                          ML0003QXE                    ; AC := Wort mit dem Umschaltzeichen
+                             000                          ML0012QXE                    ; weiter bei der Uebernahme
+ML0030QXE:                   db                           1                            ; Arbeitszelle: Zustand, der gespeichert wird
+l0044                        dw                           004000000000                 
+l0045                        dw                           006000000000                 
+                             equ100                       00600                            ; ztab muss durch 0100 teilbar sein
+                             dw                           07                           ; 00: 0, kat5 07
+                             dw                           010                          ; 01: 1, kat5 010
+                             dw                           011                          ; 02: 2, kat5 011
+                             dw                           012                          ; 03: 3, kat5 012
+                             dw                           013                          ; 04: 4, kat5 013
+                             dw                           014                          ; 05: 5, kat5 014
+                             dw                           015                          ; 06: 6, kat5 015
+                             dw                           016                          ; 07: 7, kat5 016
+                             dw                           017                          ; 10: 8, kat5 017
+                             dw                           020                          ; 11: 9, kat5 020
+                             000                          ML0015QXE                    ; 12: Leertaste / ZWR (Sprung-Umstellung)
+                             spa                          00615                        ; unbelegte Eingabeadressen 13 bis 14 auslassen
+                             000                          ML0016QXE                    ; 15: :  /  ( (Sprung-Umstellung)
+                             000                          ML0007QXE                    ; 16: Irrung Satz (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+                             spa                          00620                        ; unbelegte Eingabeadressen 17 bis 17 auslassen
+                             dw                           05                           ; 20: + / =, kat5 05
+                             dw                           021                          ; 21: a, kat5 021
+                             dw                           022                          ; 22: b, kat5 022
+                             dw                           023                          ; 23: c, kat5 023
+                             dw                           024                          ; 24: d, kat5 024
+                             dw                           025                          ; 25: e, kat5 025
+                             dw                           026                          ; 26: f, kat5 026
+                             dw                           027                          ; 27: g, kat5 027
+                             dw                           030                          ; 30: h, kat5 030
+                             dw                           031                          ; 31: i, kat5 031
+                             000                          ML0008QXE                    ; 32: SatzMarke / WRZL = Eingabeende (nicht gespeichert), Wort ausrichten
+                             000                          ML0018QXE                    ; 33: . / ! (Sprung-Umstellung)
+                             spa                          00637                        ; unbelegte Eingabeadressen 34 bis 36 auslassen
+                             000                          ML0019QXE                    ; 37: Um. GB (Sprung-Umstellung)
+                             000                          ML0020QXE                    ; 40: - / Dreieck (Sprung-Umstellung)
+                             dw                           032                          ; 41: j, kat5 032
+                             dw                           033                          ; 42: k, kat5 033
+                             dw                           034                          ; 43: l, kat5 034
+                             dw                           035                          ; 44: m, kat5 035
+                             dw                           036                          ; 45: n, kat5 036
+                             dw                           037                          ; 46: o, kat5 037
+                             dw                           040                          ; 47: p, kat5 040
+                             dw                           041                          ; 50: q, kat5 041
+                             dw                           042                          ; 51: r, kat5 042
+                             dw                           040000000000                 ; 52: WR, kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+                             spa                          00657                        ; unbelegte Eingabeadressen 53 bis 56 auslassen
+                             000                          ML0021QXE                    ; 57: Um. KB (Sprung-Umstellung)
+                             000                          ML0007QXE                    ; 60: ` / ; (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+                             dw                           040000000000                 ; 61: / / ), kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+                             dw                           043                          ; 62: s, kat5 043
+                             dw                           044                          ; 63: t, kat5 044
+                             dw                           045                          ; 64: u, kat5 045
+                             dw                           046                          ; 65: v, kat5 046
+                             dw                           047                          ; 66: w, kat5 047
+                             dw                           050                          ; 67: x, kat5 050
+                             dw                           051                          ; 70: y, kat5 051
+                             dw                           052                          ; 71: z, kat5 052
+                             000                          ML0007QXE                    ; 72: BM (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+                             000                          ML0024QXE                    ; 73: , / ? (Sprung-Umstellung)
+                             dw                           040000000000                 ; 74: Prozentzeichen / *, kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+                             000                          ML0007QXE                    ; 75: Tabulator (Sprung-Umstellung), kein kat5-Zeichen: ueberlesen
+                             spa                          00677                        ; unbelegte Eingabeadressen 76 bis 76 auslassen
+                             dw                           040000000000                 ; 77: Transport, kein kat5-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+k6ein                        240                          ML0001RYF                    ; Rueckkehrwort sichern
+                             211                          ML0028RYF                    ; AC := hoechste Zeichenzahl
+                             220                          l0008                        ; AC := n - 1
+                             240                          ML0004RYF                    ; zaehl := n - 1 (negativ, wenn alle Zeichen angenommen sind)
+                             211                          ML0027RYF                    ; AC := Adresse des Bereichs
+                             220                          l0007                        ; eine Adresseneinheit weniger, weil weiter sie gleich wieder dazuzaehlt
+                             240                          ML0002RYF                    ; zeiger := Adresse des Wortes vor dem ersten
+ML0006RYF                    211                          ML0002RYF                    ; neues Wort beginnen: zeiger auf das naechste Wort
+                             210                          l0007                        ; plus eine Adresseneinheit
+                             240                          ML0002RYF                    ; zeiger := Adresse des aktuellen Wortes
+                             211                          l0028                        ; AC := 4
+                             240                          ML0005RYF                    ; m := 4 (Zeichen noch zu uebernehmen minus 1)
+                             241                          ML0003RYF                    ; wort := 0, AC := 0
+                             211                          ML0004RYF                    ; AC := Rest
+                             050                          ML0007RYF                    ; Rest >= 0: Zeichen lesen
+ML0034RYF                    211                          ML0003RYF                    ; Eingabeende, Wort unvollstaendig: AC := Wort
+                             210                          l0017                        ; Stoppbit in z2 ueber dem obersten Zeichen (wandert beim Ausrichten mit)
+                             240                          ML0003RYF                    ; wort := Wort mit Stoppbit
+ML0008RYF                    211                          ML0005RYF                    ; m + 1 Zeichen fehlen im Wort; m < 0 heisst Wort voll
+                             040                          ML0009RYF                    ; Wort voll: fertig ausgerichtet
+                             220                          l0008                        ; AC := m - 1 (der AC enthaelt m noch von oben)
+                             240                          ML0005RYF                    ; m := AC
+                             211                          ML0003RYF                    ; AC := Wort
+                             642                          07662                        ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             240                          ML0003RYF                    ; wort := ausgerichtetes Wort
+                             000                          ML0008RYF                    ; naechstes fehlendes Zeichen
+ML0009RYF                    211                          ML0003RYF                    ; AC := ausgerichtetes Wort mit Stoppbit
+                             210                          l0011                        ; z0 setzen: Endwort
+                             240                          ML0003RYF                    ; wort := Endwort mit z0
+                             000                          ML0010RYF                    ; Wort speichern
+ML0007RYF                    211                          ML0003RYF                    ; AC := bisheriges Wort
+                             642                          07662                        ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             010                          ML0026RYF                    ; Zeichen lesen: AC := AC + (ztab ODER Eingabeadresse), Sprungzeichen springen auf hNN
+                             040                          ML0007RYF                    ; AC negativ (z0 aus der Tabelle): Taste ohne kat6-Zeichen, ueberlesen
+ML0012RYF                    240                          ML0003RYF                    ; wort := Wort mit neuem Zeichen (Sprungzeichen kommen hierher)
+ML0033RYF                    211                          ML0004RYF                    ; AC := zaehl
+                             220                          l0008                        ; AC := AC - 1
+                             240                          ML0004RYF                    ; zaehl := AC
+                             211                          ML0005RYF                    ; AC := m
+                             220                          l0008                        ; AC := AC - 1
+                             240                          ML0005RYF                    ; m := AC
+                             040                          ML0011RYF                    ; m < 0: Wort voll
+                             211                          ML0004RYF                    ; AC := Rest
+                             050                          ML0007RYF                    ; Rest >= 0: weiter lesen
+                             000                          ML0034RYF                    ; alle Zeichen angenommen: Eingabeende
+ML0011RYF                    211                          ML0003RYF                    ; Wort voll: AC := Wort
+                             210                          l0017                        ; Stoppbit in z2 (volles Wort, ob Endwort oder nicht)
+                             240                          ML0003RYF                    ; wort := Wort mit Stoppbit
+                             211                          ML0004RYF                    ; AC := Rest
+                             040                          ML0008RYF                    ; Rest < 0: das volle Wort ist das Endwort (ausr ist dann ohne Schieben, setzt z0)
+ML0010RYF                    211                          ML0002RYF                    ; AC := Adresse des Wortes im Bereich
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0013RYF                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0003RYF                    ; AC := Wort
+ML0013RYF:                   db                           1                            ; Laufzeit: 240 <Adresse des Wortes>, speichert das Wort in den Bereich
+                             211                          ML0004RYF                    ; AC := Rest
+                             050                          ML0006RYF                    ; Rest >= 0: naechstes Wort beginnen
+ML0001RYF:                   db                           1                            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002RYF:                   db                           1                            ; Arbeitszelle: Adresse des aktuellen Wortes im Bereich
+ML0003RYF:                   db                           1                            ; Arbeitszelle: Wort, das gerade aufgebaut wird
+ML0004RYF:                   db                           1                            ; Arbeitszelle: noch anzunehmende Zeichen minus 1
+ML0005RYF:                   db                           1                            ; Arbeitszelle: noch fehlende Zeichen im Wort minus 1
+ML0014RYF                    221                          l0008                        ; AC := -1
+                             240                          ML0004RYF                    ; zaehl := -1: Eingabe zu Ende
+                             000                          ML0034RYF                    ; Wort ausrichten, z0 setzen, speichern
+ML0015RYF                    210                          l0041                        ; Sprungzeichen 12 (Leertaste / ZWR): kat6 012 << 24 zum verschobenen Wort addieren
+                             000                          ML0012RYF                    ; weiter bei der Uebernahme
+ML0016RYF                    210                          l0013                        ; Sprungzeichen 15 (:  /  (): kat6 015 << 24 zum verschobenen Wort addieren
+                             240                          ML0003RYF                    ; wort := Wort mit Doppelpunkt (der AC wird gleich geloescht)
+                             241                          ML0004RYF                    ; zaehl := 0, AC := 0: mit diesem Zeichen endet die Eingabe (zaehl wird gleich -1)
+                             000                          ML0033RYF                    ; weiter bei der Zaehlung (wort ist schon gespeichert)
+ML0018RYF                    210                          l0042                        ; Sprungzeichen 33 (. / !): kat6 033 << 24 zum verschobenen Wort addieren
+                             000                          ML0012RYF                    ; weiter bei der Uebernahme
+ML0019RYF                    210                          l0043                        ; Sprungzeichen 37 (Um. GB): kat6 037 << 24 zum verschobenen Wort addieren
+                             240                          ML0003RYF                    ; wort := Wort mit Um. GB (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             211                          l0008                        ; AC := 1 (Zustand GB)
+                             000                          ML0029RYF                    ; Zustand setzen
+ML0020RYF                    210                          l0044                        ; Sprungzeichen 40 (- / Dreieck): kat6 040 << 24 zum verschobenen Wort addieren
+                             000                          ML0012RYF                    ; weiter bei der Uebernahme
+ML0021RYF                    210                          l0016                        ; Sprungzeichen 57 (Um. KB): kat6 057 << 24 zum verschobenen Wort addieren
+                             240                          ML0003RYF                    ; wort := Wort mit Um. KB (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             211                          l0002                        ; AC := 0 (Zustand KB)
+                             000                          ML0029RYF                    ; Zustand setzen
+ML0022RYF                    210                          l0045                        ; Sprungzeichen 60 (Akzent / ;): kat6 060 << 24 zum verschobenen Wort addieren
+                             000                          ML0012RYF                    ; weiter bei der Uebernahme
+ML0024RYF                    210                          l0015                        ; Sprungzeichen 73 (, / ?): kat6 073 << 24 zum verschobenen Wort addieren
+                             000                          ML0012RYF                    ; weiter bei der Uebernahme
+ML0029RYF                    240                          ML0030RYF                    ; wert := Zustand (0 = KB, 1 = GB)
+                             211                          ML0031RYF                    ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0032RYF                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0030RYF                    ; AC := Zustand
+ML0032RYF:                   db                           1                            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+                             211                          ML0003RYF                    ; AC := Wort mit dem Umschaltzeichen
+                             000                          ML0012RYF                    ; weiter bei der Uebernahme
+ML0030RYF:                   db                           1                            ; Arbeitszelle: Zustand, der gespeichert wird
+                             equ100                       01100                            ; ztab muss durch 0100 teilbar sein
+                             dw                           0                            ; 00: 0, kat6 00 << 24
+                             dw                           0100000000                   ; 01: 1, kat6 01 << 24
+                             dw                           0200000000                   ; 02: 2, kat6 02 << 24
+                             dw                           0300000000                   ; 03: 3, kat6 03 << 24
+                             dw                           0400000000                   ; 04: 4, kat6 04 << 24
+                             dw                           0500000000                   ; 05: 5, kat6 05 << 24
+                             dw                           0600000000                   ; 06: 6, kat6 06 << 24
+                             dw                           0700000000                   ; 07: 7, kat6 07 << 24
+                             dw                           01000000000                  ; 10: 8, kat6 010 << 24
+                             dw                           01100000000                  ; 11: 9, kat6 011 << 24
+                             000                          ML0015RYF                    ; 12: Leertaste / ZWR (Sprung-Umstellung)
+                             spa                          01115                        ; unbelegte Eingabeadressen 13 bis 14 auslassen
+                             000                          ML0016RYF                    ; 15: :  /  ( (Sprung-Umstellung)
+                             000                          ML0007RYF                    ; 16: Irrung Satz (Sprung-Umstellung), kein kat6-Zeichen: ueberlesen
+                             spa                          01120                        ; unbelegte Eingabeadressen 17 bis 17 auslassen
+                             dw                           02000000000                  ; 20: + / =, kat6 020 << 24
+                             dw                           02100000000                  ; 21: a, kat6 021 << 24
+                             dw                           02200000000                  ; 22: b, kat6 022 << 24
+                             dw                           02300000000                  ; 23: c, kat6 023 << 24
+                             dw                           02400000000                  ; 24: d, kat6 024 << 24
+                             dw                           02500000000                  ; 25: e, kat6 025 << 24
+                             dw                           02600000000                  ; 26: f, kat6 026 << 24
+                             dw                           02700000000                  ; 27: g, kat6 027 << 24
+                             dw                           03000000000                  ; 30: h, kat6 030 << 24
+                             dw                           03100000000                  ; 31: i, kat6 031 << 24
+                             000                          ML0014RYF                    ; 32: SatzMarke / WRZL = Eingabeende (nicht gespeichert)
+                             000                          ML0018RYF                    ; 33: . / ! (Sprung-Umstellung)
+                             spa                          01137                        ; unbelegte Eingabeadressen 34 bis 36 auslassen
+                             000                          ML0019RYF                    ; 37: Um. GB (Sprung-Umstellung)
+                             000                          ML0020RYF                    ; 40: - / Dreieck (Sprung-Umstellung)
+                             dw                           04100000000                  ; 41: j, kat6 041 << 24
+                             dw                           04200000000                  ; 42: k, kat6 042 << 24
+                             dw                           04300000000                  ; 43: l, kat6 043 << 24
+                             dw                           04400000000                  ; 44: m, kat6 044 << 24
+                             dw                           04500000000                  ; 45: n, kat6 045 << 24
+                             dw                           04600000000                  ; 46: o, kat6 046 << 24
+                             dw                           04700000000                  ; 47: p, kat6 047 << 24
+                             dw                           05000000000                  ; 50: q, kat6 050 << 24
+                             dw                           05100000000                  ; 51: r, kat6 051 << 24
+                             dw                           040000000000                 ; 52: WR, kein kat6-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+                             spa                          01157                        ; unbelegte Eingabeadressen 53 bis 56 auslassen
+                             000                          ML0021RYF                    ; 57: Um. KB (Sprung-Umstellung)
+                             000                          ML0022RYF                    ; 60: Akzent / ; (Sprung-Umstellung)
+                             dw                           06100000000                  ; 61: / / ), kat6 061 << 24
+                             dw                           06200000000                  ; 62: s, kat6 062 << 24
+                             dw                           06300000000                  ; 63: t, kat6 063 << 24
+                             dw                           06400000000                  ; 64: u, kat6 064 << 24
+                             dw                           06500000000                  ; 65: v, kat6 065 << 24
+                             dw                           06600000000                  ; 66: w, kat6 066 << 24
+                             dw                           06700000000                  ; 67: x, kat6 067 << 24
+                             dw                           07000000000                  ; 70: y, kat6 070 << 24
+                             dw                           07100000000                  ; 71: z, kat6 071 << 24
+                             000                          ML0007RYF                    ; 72: BM (Sprung-Umstellung), kein kat6-Zeichen: ueberlesen
+                             000                          ML0024RYF                    ; 73: , / ? (Sprung-Umstellung)
+                             dw                           07400000000                  ; 74: Prozentzeichen / *, kat6 074 << 24
+                             000                          ML0007RYF                    ; 75: Tabulator (Sprung-Umstellung), kein kat6-Zeichen: ueberlesen
+                             spa                          01177                        ; unbelegte Eingabeadressen 76 bis 76 auslassen
+                             dw                           040000000000                 ; 77: Transport, kein kat6-Zeichen: z0 gesetzt, AC wird negativ, ueberlesen
+emark:                       dw                           0123                         ; Endemarke mit festem Wert
+k6aus                        240                          ML0001CJQ                    ; Rueckkehrwort sichern
+                             211                          ML0014CJQ                    ; AC := Startadresse des Textes
+                             220                          l0007                        ; eine Adresseneinheit weniger, weil ML0006% sie gleich wieder dazuzaehlt
+                             240                          ML0002CJQ                    ; zeiger := Adresse des Wortes vor dem ersten (R1 bleibt unveraendert)
+ML0006CJQ                    211                          ML0002CJQ                    ; neues Wort: Zeiger auf das naechste Wort
+                             210                          l0007                        ; plus eine Adresseneinheit
+                             240                          ML0002CJQ                    ; zeiger := Adresse des aktuellen Wortes
+                             251                          0                            ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+                             240                          ML0003CJQ                    ; tw := Textwort (mit z0)
+                             200                          l0001                        ; z0 ausblenden, nur 32 Bit (Zeichen und Stoppbit)
+                             240                          ML0004CJQ                    ; rest := Zeichenrest mit Stoppbit
+ML0007CJQ                    330                          l0008                        ; Vergleich des Rests mit 1 (keine Operation), der AC bleibt der Rest
+                             170                          ML0010CJQ                    ; Rest 1: nur noch das Stoppbit uebrig, Wort fertig
+                             200                          l0036                        ; unterstes Zeichen (6 Bit) ausblenden
+                             240                          ML0005CJQ                    ; zeichen := kat6-Code
+                             330                          l0037                        ; Vergleich mit kat6 037 (Um. GB)
+                             170                          ML0011CJQ                    ; Um. GB: Zustand := GB
+                             330                          l0004                        ; Vergleich mit kat6 057 (Um. KB)
+                             170                          ML0011CJQ                    ; Um. KB: Zustand := KB
+ML0008CJQ                    211                          ML0005CJQ                    ; AC := kat6-Code (auch nach der Zustandsuebergabe)
+                             200                          l0038                        ; Bits u und v (020 und 040) ausblenden
+                             240                          ML0015CJQ                    ; hilf := Code UND 060
+                             211                          ML0005CJQ                    ; AC := kat6-Code
+                             200                          l0039                        ; Bits 8 4 2 1
+                             210                          ML0015CJQ                    ; plus (Code UND 060)
+                             210                          ML0015CJQ                    ; plus (Code UND 060) noch einmal: AC := Zeichen (8 Bit, p = w = 0)
+                             644                          07644                        ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+                             210                          l0006                        ; plus Operationscode 030 (Ausgabe)
+                             240                          ML0009CJQ                    ; Ausgabebefehl auf die naechste Zelle speichern
+ML0009CJQ:                   db                           1                            ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+                             211                          ML0004CJQ                    ; AC := Zeichenrest
+                             642                          07662                        ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             240                          ML0004CJQ                    ; rest := Rest
+                             000                          ML0007CJQ                    ; naechstes Zeichen (der AC ist der Rest)
+ML0010CJQ                    211                          ML0003CJQ                    ; AC := Textwort mit z0 (negativ beim letzten Wort)
+                             050                          ML0006CJQ                    ; kein z0: naechstes Wort
+ML0001CJQ:                   db                           1                            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0011CJQ                    211                          ML0016CJQ                    ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0012CJQ                    ; Speicherbefehl auf die uebernaechste Zelle
+                             211                          ML0005CJQ                    ; AC := kat6-Code (037 oder 057)
+                             200                          l0040                        ; Bit u: 037 hat es (Um. GB), 057 nicht (Um. KB)
+                             642                          07654                        ; 4 mal Rechtsverschiebung (Operand nach Festlegung 026)
+ML0012CJQ:                   db                           1                            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+                             000                          ML0008CJQ                    ; Zeichen ausgeben
+ML0003CJQ:                   db                           1                            ; Arbeitszelle: aktuelles Textwort
+ML0004CJQ:                   db                           1                            ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0002CJQ:                   db                           1                            ; Arbeitszelle: Adresse des aktuellen Textwortes
+ML0005CJQ:                   db                           1                            ; Arbeitszelle: aktueller kat6-Code
+ML0015CJQ:                   db                           1                            ; Arbeitszelle: Code UND 060
+k4aus                        240                          ML0001DKR                    ; Rueckkehrwort sichern
+                             211                          ML0010DKR                    ; AC := Startadresse des Textes
+                             240                          ML0009DKR                    ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+ML0002DKR                    251                          0                            ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+                             240                          ML0007DKR                    ; tw := Textwort (mit z0)
+                             200                          l0001                        ; z0 ausblenden, nur 32 Bit Zeichen
+                             240                          ML0008DKR                    ; wort := Zeichenrest
+ML0003DKR                    211                          ML0008DKR                    ; AC := Zeichenrest
+                             330                          l0002                        ; Vergleich mit 0 (keine Operation)
+                             170                          ML0005DKR                    ; Rest 0: Wort fertig
+                             200                          l0003                        ; unterstes Zeichen ausblenden
+                             240                          ML0011DKR                    ; zeichen := Zeichen (der AC wird fuer die Zustandsuebergabe gebraucht)
+                             330                          l0004                        ; Vergleich mit kat4 057 (Um. GB)
+                             170                          ML0012DKR                    ; Um. GB: Zustand := GB
+                             330                          l0005                        ; Vergleich mit kat4 117 (Um. KB)
+                             170                          ML0013DKR                    ; Um. KB: Zustand := KB
+ML0014DKR                    211                          ML0011DKR                    ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+                             644                          07644                        ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+                             210                          l0006                        ; Operationscode 030 (Ausgabe) dazu
+                             240                          ML0004DKR                    ; Ausgabebefehl auf die naechste Zelle speichern
+ML0004DKR:                   db                           1                            ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+                             211                          ML0008DKR                    ; AC := Zeichenrest
+                             642                          07670                        ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                             240                          ML0008DKR                    ; wort := Rest
+                             000                          ML0003DKR                    ; naechstes Zeichen
+ML0005DKR                    211                          ML0007DKR                    ; AC := Textwort mit z0 (negativ beim letzten Wort)
+                             050                          ML0006DKR                    ; kein z0: naechstes Wort
+ML0001DKR:                   db                           1                            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0006DKR                    211                          ML0009DKR                    ; AC := Adresse des Textwortes
+                             210                          l0007                        ; plus eine Adresseneinheit
+                             240                          ML0009DKR                    ; zeiger := Adresse des naechsten Wortes
+                             000                          ML0002DKR                    ; AC ist der Zeiger, Textwort lesen
+ML0007DKR:                   db                           1                            ; Arbeitszelle: aktuelles Textwort
+ML0008DKR:                   db                           1                            ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0009DKR:                   db                           1                            ; Arbeitszelle: Adresse des aktuellen Textwortes
+ML0011DKR:                   db                           1                            ; Arbeitszelle: aktuelles Zeichen (waehrend der Zustandspruefung)
+ML0012DKR                    211                          l0008                        ; Um. GB: AC := 1 (Zustand GB)
+                             000                          ML0015DKR                    ; Zustand setzen
+ML0013DKR                    211                          l0002                        ; Um. KB: AC := 0 (Zustand KB)
+ML0015DKR                    240                          ML0016DKR                    ; wert := Zustand (0 = KB, 1 = GB)
+                             211                          ML0017DKR                    ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+                             210                          l0009                        ; plus Operationscode 240: Speicherbefehl
+                             240                          ML0018DKR                    ; Speicherbefehl auf die naechste Zelle
+                             211                          ML0016DKR                    ; AC := Zustand
+ML0018DKR:                   db                           1                            ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+                             000                          ML0014DKR                    ; zurueck zur Ausgabe des Zeichens
+ML0016DKR:                   db                           1                            ; Arbeitszelle: Zustand, der gespeichert wird

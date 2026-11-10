@@ -1,0 +1,3 @@
+rc 16
+stderr Makrodatei ;#MACRODATEI1 'gibt_es_nicht.macro' konnte nicht geoeffnet werden
+datei-weg obj

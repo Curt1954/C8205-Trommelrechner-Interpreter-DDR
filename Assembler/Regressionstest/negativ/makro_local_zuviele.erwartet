@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_zuviele.asm:14: Fehler: L6 $LOCAL i1: mehr als 64 lokale Variablen in einem Makroaufruf (auch die mit $SET angelegten zählen)
+datei-weg obj mqo test
+escape-weg

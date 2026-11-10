@@ -1,0 +1,26 @@
+Trommeldatei:
+#DOK-0001 Gruppe-1-Makro mit ;#MAKROUMORDNEN=NO: Rumpf und Programmrest bleiben an ihrer Stelle (Endadresse 0112)
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # haupt: 020 0 ; Zelle 0001: Halt (das UP wird nicht aufgerufen, nur erzeugt)
+0002: 00000003000 # am: da 000000000003 ; Zelle 0002: Adresse der Marke am Aufruf (Wert der Marke mal 01000)
+0100: 00000000701 # dw 0701 ; Rumpfzelle 1
+0101: 00000000702 # dw 0702 ; Rumpfzelle 2
+0102: 00000000703 # dw 0703 ; Rumpfzelle 3
+0103: 00000000704 # dw 0704 ; Rumpfzelle 4
+0104: 00000000705 # dw 0705 ; Rumpfzelle 5
+0105: 00000000706 # dw 0706 ; Rumpfzelle 6
+0106: 00000000111 # t1: dw 0111 ; Programmrest, Zelle 1
+0107: 00000000222 # t2: dw 0222 ; Programmrest, Zelle 2
+0110: 00000000333 # t3: dw 0333 ; Programmrest, Zelle 3
+0111: 00000000444 # t4: dw 0444 ; Programmrest, Zelle 4
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0002
+0002: 00000003000   # am: da g1, g1 = 0003 vor dem Aufrunden
+0100: 00000000701   # Rumpfzelle 1 auf der 0100-Grenze
+0105: 00000000706   # Rumpfzelle 6
+0106: 00000000111   # t1: Programmrest hinter dem Rumpf
+0107: 00000000222   # t2
+0110: 00000000333   # t3
+0111: 00000000444   # t4

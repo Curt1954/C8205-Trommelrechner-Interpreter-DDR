@@ -1,0 +1,16 @@
+            000         haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+            dw          24          ; 12*2 = 24
+            dw          14          ; 1+4+9 = 14
+            dw          8           ; 7+1 = 8
+            dw          1           ; abs mit Zahlenwert: 1
+            dw          0           ; nicht vorhanden: 0
+            dw          12          ; 12, 13, 14
+            dw          13          ; 12, 13, 14
+            dw          14          ; 12, 13, 14
+            dw          breite2     ; Zelle 0011: das erzeugte Symbol ist auch im Programm ein Symbol
+haupt:      020         0           ; Zelle 0012: Halt
+lagem:      equ         00100        ; equ mit Zahlenwert 64 (setzt den Befehlszaehler, 3.3.8)
+spurm:      equ         00120   ; verweist auf ein equ des Makros: 64+16 = 80
+            dw          16          ; 80-64 = 16
+            dw          00120       ; 80 oktal 0120
+            dw          2           ; equ mit Zahlenwert: 2

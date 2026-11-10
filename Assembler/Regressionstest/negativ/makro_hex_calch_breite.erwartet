@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_calch_breite.asm:6: Fehler: $CALCH2(256): Ergebnis 256 braucht mehr als 2 Hexadezimalziffern
+datei-weg obj mqo test
+escape-weg

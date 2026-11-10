@@ -1,0 +1,15 @@
+0000: 01 0001 000           000    haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 0000 020    haupt: 020    0            ; Zelle 0001: Halt (das UP wird nicht aufgerufen, nur erzeugt)
+0002: 01 7000        am:    da     000000000007 ; Zelle 0002: Adresse der Marke am Aufruf (Wert der Marke mal 01000)
+0003: 00 00000000111 t1:    dw     0111         ; Programmrest, Zelle 1
+0004: 00 00000000222 t2:    dw     0222         ; Programmrest, Zelle 2
+0005: 00 00000000333 t3:    dw     0333         ; Programmrest, Zelle 3
+0006: 00 00000000444 t4:    dw     0444         ; Programmrest, Zelle 4
+      20 0000 0007   g1:    equ    00007        ; automatisch generiert
+      20 0000 0100          equ100 00100        ; erste Anweisung: auf die naechste 0100-Grenze (Gruppe 1)
+0100: 00 00000000701        dw     0701         ; Rumpfzelle 1
+0101: 00 00000000702        dw     0702         ; Rumpfzelle 2
+0102: 00 00000000703        dw     0703         ; Rumpfzelle 3
+0103: 00 00000000704        dw     0704         ; Rumpfzelle 4
+0104: 00 00000000705        dw     0705         ; Rumpfzelle 5
+0105: 00 00000000706        dw     0706         ; Rumpfzelle 6

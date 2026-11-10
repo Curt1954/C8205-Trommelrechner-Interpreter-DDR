@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_include_danach.asm:5: Fehler: Operationscode 'bar' ist ungültig
+datei-weg obj mqo test
+escape-weg

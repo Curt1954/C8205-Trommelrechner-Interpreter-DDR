@@ -1,0 +1,14 @@
+Trommeldatei:
+#DOK-0001 ZT-Marken und ZT-Zellen-Pruefung ohne --C8205Z werden kommentarlos ignoriert (auch Formfehler)
+#PROT STUFE=2
+#TROMMEL=LEER
+#ZTROMMEL=gibtsnicht   # Formfehler, ohne Schalter ohne Wirkung
+0000: 00000003000   # 000 3: Sprung
+0003: 00000000020   # 020: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0004 US=1
+ZT-Zellen-Pruefung:
+9-00: 12
+1-0140: 00000001000

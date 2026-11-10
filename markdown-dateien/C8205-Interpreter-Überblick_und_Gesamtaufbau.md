@@ -1,6 +1,6 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
-Version: 0.95-007
+Version: 0.95-009
 
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
@@ -15,7 +15,7 @@ Das Projekt hat drei Teilprojekte:
   (Abschnitt 6.1),
 - den **Assembler** `c82ass` (C): übersetzt Assembler-Quelltext in Objektcode für den C 8205
   (Abschnitt 6.2),
-- das **Bausteininterpretationssystem BIS**: Programmsystem (Anwendungs-Software), das auf dem C 8205 selbst
+- das **Bausteininterpretiersystem BIS**: Programmsystem (Anwendungs-Software), das auf dem C 8205 selbst
   läuft (Abschnitt 6.3).
 
 
@@ -52,8 +52,8 @@ Der Rechner besteht aus:
 Zur unmittelbar zugeordneten (1.) Peripherie gehören:
 - der Magnettrommelspeicher (Organisation und Kapazität: siehe Dokument "C8205-Interpreter-Magnettrommel.md"),
 - Tastatur, Lampenfeld und Bahnsperrenschalter (Bedienelemente: siehe Dokument "C8205-Interpreter-Bedienpult_mit_Schaltern.md"),
-- 2 Lochbandleser (Leser 1 an Kanal K1, Leser 2 an Kanal K2; Eingabegeschwindigkeit des Standardlesers
-  130 Zeichen/s; Zeichen im
+- 2 Lochbandleser (Leser 1 an Kanal K1, Leser 2 an Kanal K2; Eingabegeschwindigkeit des Standardlesers 303
+  130 Zeichen/s, des Lesers FS751 750 Zeichen/s (GRAFIK-Schalter `--LS-LESER-TYP`); Zeichen im
   8-Kanal- oder 5-Kanal-Kode; Details: "C8205-Interpreter-Lochstreifenleser.md"),
 - 1 Lochbandstanzer (maximale Stanzgeschwindigkeit 50 Zeichen/s, Kanal K1),
 - 1 Schreibwerk für alphanumerische Ein- und Ausgabe (maximale Schreibgeschwindigkeit 10 Zeichen/s;
@@ -383,7 +383,7 @@ Einzelheiten stehen nicht hier, sondern an einer Stelle:
   Abschnitt 2a.
 
 
-### 6.3 BIS (Bausteininterpretationssystem)
+### 6.3 BIS (Bausteininterpretiersystem)
 
 Das BIS ist ein offenes Unterprogrammsystem für den C 8205 (Ein- und Ausgabe von Dezimalzahlen, Multiplikation und
 Division von Fest- und Gleitkommazahlen, Addition und Subtraktion von Gleitkommazahlen, Serviceprogramme). Es ist

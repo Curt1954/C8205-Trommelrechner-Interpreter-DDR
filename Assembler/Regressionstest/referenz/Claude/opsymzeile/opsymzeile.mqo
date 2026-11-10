@@ -1,0 +1,6 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+hol:    dw      7       ; Zelle 0001: Label hol (Symbol) neben dem Namen .HOL
+erg:    dw      0       ; Zelle 0002: Ergebnis
+haupt:  211     hol     ; Zelle 0003: AC := 7
+        240     erg     ; Zelle 0004: erg := 7
+        020     0       ; Zelle 0005: Halt

@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001 Feldwerte bleiben ueber Makroaufrufe erhalten; $DIM mit gleicher Groesse setzt auf 0 zurueck
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # dw 16 ; g(1)
+0002: 00000000020 # dw 16 ; g(0)
+0003: 00000000025 # dw 21 ; g(1)
+0004: 00000000025 # dw 21 ; g(0)
+0005: 00000000000 # dw 0 ; 0
+0006: 00000000000 # dw 0 ; 0
+0007: 00000001164 # haupt: 164 0001 ; Zelle 0007: Diagnoseausgabe (nur im Test)
+0010: 00000000020 # 020 0 ; Zelle 0010: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011 US=1
+0001: 00000000020   # GB 1: g(1)
+0002: 00000000020   # GB 1: g(0) = 11 + 5
+0003: 00000000025   # GB 2: g(1)
+0004: 00000000025   # GB 2: g(0) = 16 + 5
+0005: 00000000000   # GC: g(0) nach neuem $DIM
+0006: 00000000000   # GC: g(1) nach neuem $DIM

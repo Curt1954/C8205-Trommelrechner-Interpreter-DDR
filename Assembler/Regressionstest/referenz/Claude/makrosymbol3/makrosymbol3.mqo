@@ -1,0 +1,7 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      30      ; 10+20 = 30
+        dw      15      ; 14+1 = 15
+        dw      1       ; gr = 14 > 10: wahr
+        dw      20      ; 20, 21
+        dw      21      ; 20, 21
+haupt:  020     0       ; Zelle 0006: Halt

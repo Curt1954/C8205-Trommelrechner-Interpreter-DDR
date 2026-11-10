@@ -1,0 +1,9 @@
+            000         haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+erg:        dw          0           ; Zelle 0001: Ergebnis
+haupt:      211         z1          ; Zelle 0002: AC := Wort der Zelle z1
+            240         erg         ; Zelle 0003: (erg) := AC
+            020         0           ; Zelle 0004: Halt
+blkx:       equ100      00100           ; erste Anweisung: Gruppe 1
+z1:         dz          $wrzl       ; erste Zelle des Blocks
+            da          erg         ; zweite Zelle: Adresse von erg
+            dw          5           ; dritte Zelle

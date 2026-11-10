@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_calc_fehler.asm:3: Fehler: $CALC(1/0): Division durch 0
+datei-weg obj mqo test
+escape-weg

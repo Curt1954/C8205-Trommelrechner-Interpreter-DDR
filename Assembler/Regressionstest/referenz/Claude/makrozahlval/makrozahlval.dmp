@@ -1,0 +1,24 @@
+0000: 01 0026 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000017        dw  15    ; 17 oktal = 15
+0002: 00 00000000017        dw  15    ; 017 = 15
+0003: 00 00000000017        dw  15    ; 00017 = 15
+0004: 0                     dw  0     ; 0
+0005: 00 00000000125        dw  85    ; -15 + 100 = 85
+0006: 00 00000000007        dw  7     ; 7
+0007: 00 00000000777        dw  511   ; 777 oktal = 511
+0010: 00 00000000777        dw  511   ; 2^63-1 geteilt durch 2^54 = 511 (ganzzahlig)
+0011: 00 00000000007        dw  7     ; 2^63-1 minus (2^63-8) = 7
+0012: 00 00000000040        dw  32    ; Summe 32
+0013: 00 00000000003        dw  3     ; 3
+0014: 00 00000000017        dw  15    ; 15
+0015: 00 00000000021        dw  17    ; 17
+0016: 00 00000000021        dw  17    ; $VAL liest dezimal: 17
+0017: 00 00000000017        dw  15    ; Ausdruck liest oktal: 15
+0020: 00 00000000001        dw  1     ; $IF liest dezimal: 17 ist wahr
+0021: 0                     dw  0     ; 15 ist unwahr
+0022: 00 00000000130        dw  88    ; Bestand makrostrzeichen: -12 + 100 = 88
+0023: 00 00000000312        dw  202   ; 101 Werte, je zwei Pruefungen: 202
+0024: 00 00000000026        dw  22    ; 22 Zeichen
+0025: 0                     dw  0     ; gleiche Zahl zurueck: Unterschied 0
+0026: 01 0001 164    haupt: 164 0001  ; Zelle 22: Diagnoseausgabe (nur im Test)
+0027: 01 0000 020           020 0     ; Zelle 23: Halt

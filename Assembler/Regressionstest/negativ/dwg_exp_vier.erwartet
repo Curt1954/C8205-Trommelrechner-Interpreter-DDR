@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '1E1000' ist ungültig (dwg erwartet [+|-]Ziffern[.Ziffern][E[+|-]1 bis 3 Ziffern])
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,5 @@
+rc 16
+stderr makro_probe_echt_fehler.asm:13: Fehler: CHK $ERROR: Abstand kleiner 1
+nicht-stderr Probelauf
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

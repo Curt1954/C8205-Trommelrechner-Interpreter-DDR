@@ -1,8 +1,8 @@
 #!/bin/bash
-# Version 1.00-030
+# Version 1.00-037
 # Vollstaendige Pruefung des Assemblers c82ass fuer Entwickler und CI (aus beliebigem Verzeichnis aufrufbar):
 #   1. Uebersetzen mit -Wall -Wextra -Wshadow -Werror: der Quelltext muss ohne Warnung uebersetzen.
-#   2. Regressionstest (139 Programme gegen Referenz, Negativtests) mit dem normalen Binary.
+#   2. Regressionstest (alle nicht ausgenommenen Programme gegen Referenz und alle Negativtests; Stand 10.11.2026 nach der Halbierung: 118 Programme, 340 Negativtests) mit dem normalen Binary.
 #   3. Dasselbe Binary-Paar mit AddressSanitizer + UBSan (inkl. Leak-Pruefung); jede Meldung ist ein Fehler.
 #
 #   Regressionstest/pruefe_alles.sh            alles
@@ -13,7 +13,7 @@
 
 HIER=$(cd "$(dirname "$0")" && pwd)
 ASM=$(cd "$HIER/.." && pwd)
-SRC="$ASM/Sourcecode/ca82_protokoll.c $ASM/Sourcecode/ca82_standards.c $ASM/Sourcecode/ca82_symbole.c $ASM/Sourcecode/ca82_berichte.c $ASM/Sourcecode/ca82_makros.c $ASM/Sourcecode/ca82_zustand.c $ASM/Sourcecode/ca82_hilfen.c $ASM/Sourcecode/ca82_fehler.c $ASM/Sourcecode/ca82_quelle.c $ASM/Sourcecode/ca82_listing.c $ASM/Sourcecode/ca82_pass0.c $ASM/Sourcecode/ca82_pass1.c $ASM/Sourcecode/ca82_pass2.c $ASM/Sourcecode/ca82_ausdruck.c $ASM/Sourcecode/ca82_codierung.c $ASM/Sourcecode/ca82_pass3.c $ASM/Sourcecode/ca82_fluss.c $ASM/Sourcecode/ca82_testdatei.c $ASM/Sourcecode/ca82_main.c"
+SRC="$ASM/Sourcecode/ca82_protokoll.c $ASM/Sourcecode/ca82_standards.c $ASM/Sourcecode/ca82_symbole.c $ASM/Sourcecode/ca82_berichte.c $ASM/Sourcecode/ca82_makros.c $ASM/Sourcecode/ca82_zustand.c $ASM/Sourcecode/ca82_hilfen.c $ASM/Sourcecode/ca82_fehler.c $ASM/Sourcecode/ca82_quelle.c $ASM/Sourcecode/ca82_listing.c $ASM/Sourcecode/ca82_pass0.c $ASM/Sourcecode/ca82_pass1.c $ASM/Sourcecode/ca82_pass2.c $ASM/Sourcecode/ca82_opt.c $ASM/Sourcecode/ca82_ausdruck.c $ASM/Sourcecode/ca82_codierung.c $ASM/Sourcecode/ca82_pass3.c $ASM/Sourcecode/ca82_fluss.c $ASM/Sourcecode/ca82_testdatei.c $ASM/Sourcecode/ca82_opsym.c $ASM/Sourcecode/ca82_main.c"
 TMP=$(mktemp -d) || exit 1
 trap 'rm -rf "$TMP"' EXIT
 ASAN=1; [ "$1" = "--ohne-asan" ] && ASAN=0

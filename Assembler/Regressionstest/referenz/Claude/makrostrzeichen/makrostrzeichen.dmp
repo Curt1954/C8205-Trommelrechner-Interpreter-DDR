@@ -1,0 +1,33 @@
+0000: 01 0037 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000101        dw  65    ; A = 65
+0002: 00 00000000142        dw  98    ; b = 98
+0003: 00 00000000143        dw  99    ; c = 99
+0004: 00 00000000040        dw  32    ; Leerzeichen = 32
+0005: 00 00000000176        dw  126   ; Tilde = 126
+0006: 00 00000000303        dw  195   ; erstes Byte des ae mit Umlaut = 195
+0007: 00 00000000244        dw  164   ; zweites Byte = 164
+0010: 00 00000000001        dw  1     ; ein Zeichen: 1
+0011: 0                     dw  0     ; gleich A: 0
+0012: 00 00000000141        dw  97    ; Code als Rechenausdruck, 97
+0013: 00 00000000040        dw  32    ; Leerzeichen, 32
+0014: 00 00000000001        dw  1     ; ein Zeichen: 1
+0015: 00 00000000176        dw  126   ; Tilde, 126
+0016: 00 00000000102        dw  66    ; Code aus dem Parameter, 66
+0017: 00 00000000052        dw  42    ; 42
+0020: 0                     dw  0     ; 0
+0021: 00 00000000007        dw  7     ; 7
+0022: 00 00000000123        dw  83    ; -17 + 100 = 83
+0023: 00 00000000130        dw  88    ; -12 + 100 = 88
+0024: 00 00000000002        dw  2     ; Text 57 hat 2 Zeichen
+0025: 00 00000000071        dw  57    ; zurueck zur Zahl 57
+0026: 00 00000000007        dw  7     ; abcd-xy hat 7 Zeichen
+0027: 0                     dw  0     ; spaetere Aenderung von a aendert c nicht: 0
+0030: 00 00000000004        dw  4     ; 1212 hat 4 Zeichen
+0031: 00 00000002274        dw  1212  ; Zahl 1212
+0032: 00 00000000010        dw  8     ; Text mit Leerzeichen: 8
+0033: 0                     dw  0     ; gleich: 0
+0034: 00 00000000004        dw  4     ; zwei Umlaute sind 4 Bytes
+0035: 00 00000000002        dw  2     ; ein Umlaut: 2 Bytes
+0036: 00 00000000303        dw  195   ; erstes Byte: 195
+0037: 01 0001 164    haupt: 164 0001  ; Zelle 31: Diagnoseausgabe (nur im Test)
+0040: 01 0000 020           020 0     ; Zelle 32: Halt

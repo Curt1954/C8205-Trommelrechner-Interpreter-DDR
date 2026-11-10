@@ -1,0 +1,17 @@
+0000: 01 0005 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000017 wert:  dw  017   ; Zelle 0001
+0002: 00 00000000005 wert2: dw  05    ; Zelle 0002
+0003: 0              erg:   dw  0     ; Zelle 0003
+0004: 0              erg2:  dw  0     ; Zelle 0004
+0005: 01 0002 211    haupt: 211 wert2 ; Zelle 0005: AC := 5
+0006: 01 0017 240           240 hilf  ; Zelle 0006: (hilf) := 5
+0007: 01 0001 211           211 wert  ; Zelle 0007: AC := 017
+0010: 01 0020 240           240 hilf2 ; Zelle 0010: (hilf2) := 017
+0011: 01 0017 211           211 hilf  ; Zelle 0011: AC := (hilf) = 5
+0012: 01 0003 240           240 erg   ; Zelle 0012: (erg) := 5
+0013: 01 0020 211           211 hilf2 ; Zelle 0013: AC := (hilf2) = 017
+0014: 01 0004 240           240 erg2  ; Zelle 0014: (erg2) := 017
+0015: 01 0001 164           164 0001  ; Zelle 0015: Diagnoseausgabe (nur im Test)
+0016: 01 0000 020           020 0     ; Zelle 0016: Halt
+0017: 00 0           hilf   dbn 1     
+0020: 00 0           hilf2  dbn 1     

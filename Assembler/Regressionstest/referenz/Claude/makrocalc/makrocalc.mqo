@@ -1,0 +1,23 @@
+               000            haupt          ; Zelle 0000: Sprung zum Hauptprogramm
+z1:            dw             13             ; Produkt der Parameter plus 1
+z2:            dw             16             ; Produkt der Parameter plus 1
+z3:            dw             016            ; Summe aus p1 und dreimal p2, oktal
+               dw             2              ; Rest: 100 mod 7 = 2
+               dw             35             ; Schieben vor ODER: (1<<5)|3 = 35
+               dw             15             ; Klammern: 15
+               dw             077            ; Komplement und UND: 63
+               dw             18             ; Oktal- und Dezimalzahl: 8 + 10 = 18
+p1:            dw             1              ; ungerade
+p2:            dw             0              ; gerade
+erg1:          dw             0              ; Zelle 0013: Ergebnis SCHIEBE_LI
+erg2:          dw             0              ; Zelle 0014: Ergebnis SCHIEBE_RE
+eins:          dw             1              ; Zelle 0015: Konstante 1
+bit31:         dw             020000000000   ; Zelle 0016: 2 hoch 31
+haupt:         211            eins           ; AC := 1
+               644            07671          ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+               240            erg1           ; Ergebnis ablegen
+               211            bit31          ; AC := 2 hoch 31
+               642            07670          ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+               240            erg2           ; Ergebnis ablegen
+               164            0001           ; Diagnoseausgabe (nur im Test)
+               020            0              ; Halt

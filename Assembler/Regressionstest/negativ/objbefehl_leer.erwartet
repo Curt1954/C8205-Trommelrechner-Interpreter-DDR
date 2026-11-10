@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 2: ;#PRECOMMAND= ist ungueltig
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,4 @@
+rc 16
+stderr K $PROBE steht ohne Klammern und ohne Argument
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

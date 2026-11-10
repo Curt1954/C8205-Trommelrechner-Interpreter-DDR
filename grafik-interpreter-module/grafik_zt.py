@@ -43,7 +43,7 @@ def lade_modul():
 
 
 class GrafikZT:
-    """Zusatztrommeln ZT1..ZT4 ueber das C-Modul. trommel: die GrafikTrommel (Haupttrommel, Zeitmodell, Direktzugriffe)."""
+    """Zusatztrommeln ueber das C-Modul (Nummer im Modul k = 1..4; Anzeige und Befehl 5k00 030: 5100 = ZT0 .. 5400 = ZT3, d = k - 1). trommel: die GrafikTrommel (Haupttrommel, Zeitmodell, Direktzugriffe)."""
 
     def __init__(self, verzeichnis, trommel, start_index=None, modul=None):
         self.Z = modul or lade_modul()
@@ -68,7 +68,7 @@ class GrafikZT:
 
     # --- Schnittstelle des Interpreters (a028: Anwahl, a005: 601/661) -------------------------------------------------
     def anwahl(self, k):
-        """5k00 030: Zusatztrommel k (1..4) anwaehlen."""
+        """5k00 030 (5100 = ZT0 .. 5400 = ZT3): Zusatztrommel d (0..3) anwaehlen; der Interpreter ruft mit k = d + 1 (1..4) auf."""
         if self.Z.anwahl(k) != self.Z.ZT_OK:
             raise I.KonfigFehler(f'Zusatztrommel {k} nicht anwaehlbar')
 

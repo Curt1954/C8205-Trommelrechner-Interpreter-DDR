@@ -1,0 +1,45 @@
+Trommeldatei:
+#DOK-0001 Test von Parametern in Anfuehrungszeichen mit Leerzeichen, $PRx $TYPTEXT und $LENn (auch in $CALC)
+#PROT STUFE=2
+0000: 00000025000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000007 # dw 7 ; Zeichenzahl des Textes (Parameter 1)
+0002: 00000000012 # dw 10 ; Zeichenzahl plus Parameter 2
+0003: 00000000002 # dw 2 ; Zahl der Parameter: der Text zaehlt als ein Parameter
+0004: 00000000003 # dw 3 ; Zeichenzahl des Textes (Parameter 1)
+0005: 00000000015 # dw 13 ; Zeichenzahl plus Parameter 2
+0006: 00000000002 # dw 2 ; Zahl der Parameter: der Text zaehlt als ein Parameter
+0007: 00000000005 # dw 5 ; Zeichenzahl des Textes (Parameter 1)
+0010: 00000000006 # dw 6 ; Zeichenzahl plus Parameter 2
+0011: 00000000002 # dw 2 ; Zahl der Parameter: der Text zaehlt als ein Parameter
+0012: 00000000001 # dw 1 ; Text laenger als 5 Zeichen
+0013: 00000000003 # dw 3 ; je Zeichen ein Wort
+0014: 00000000003 # dw 3 ; je Zeichen ein Wort
+0015: 00000000003 # dw 3 ; je Zeichen ein Wort
+0016: 00000000003 # dw 3 ; je Zeichen ein Wort
+0017: 00000000003 # dw 3 ; je Zeichen ein Wort
+0020: 00000000003 # dw 3 ; je Zeichen ein Wort
+0021: 00000000003 # dw 3 ; je Zeichen ein Wort
+0022: 00000000002 # dw 2 ; Text hoechstens 5 Zeichen
+0023: 00000000003 # dw 3 ; je Zeichen ein Wort
+0024: 00000000003 # dw 3 ; je Zeichen ein Wort
+0025: 00000001164 # haupt: 164 0001 ; Zelle 0025: Diagnoseausgabe (nur im Test)
+0026: 00000000020 # 020 0 ; Zelle 0026: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0027 US=1
+0001: 00000000007   # Zeichenzahl 7
+0002: 00000000012   # 7+3 = 10 = 012
+0003: 00000000002   # zwei Parameter (Text und n)
+0004: 00000000003   # Zeichenzahl 3
+0005: 00000000015   # 3+10 = 13 = 015
+0006: 00000000002   # zwei Parameter
+0007: 00000000005   # Zeichenzahl 5
+0010: 00000000006   # 5+1 = 6
+0011: 00000000002   # zwei Parameter
+0012: 00000000001   # TXT2: 7 > 5
+0013: 00000000003   # erstes Zeichen
+0021: 00000000003   # siebtes Zeichen
+0022: 00000000002   # TXT2: 2 <= 5
+0023: 00000000003   # erstes Zeichen
+0024: 00000000003   # zweites Zeichen

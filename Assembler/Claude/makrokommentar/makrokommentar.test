@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Kommentar hinter MACRO: ohne Parameter, mit Zahl, ohne Leerzeichen vor dem Semikolon, variable Zahl, Tabulatoren; zum Vergleich im Quelltext
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000013 # dw 11 ; Wort 11 dezimal (013 oktal)
+0002: 00000000007 # dw 3+4 ; Summe der beiden Parameter
+0003: 00000000014 # dw 3*4 ; Produkt der beiden Parameter
+0004: 00000000005 # dw 5 ; erster Parameter
+0005: 00000000006 # dw 6 ; erster Parameter
+0006: 00000000006 # dw 1+2+3 ; Summe der drei Parameter
+0007: 00000000025 # dw 21 ; Wort 21 dezimal (025 oktal)
+0010: 00000000036 # dw 10+20 ; Summe der beiden Parameter
+0011: 00000001164 # haupt: 164 0001 ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 00000000020 # 020 0 ; Zelle 0012: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 00000000013   # MKNULL
+0002: 00000000007   # MKZWEI
+0003: 00000000014   # MKDICHT
+0004: 00000000005   # MKVAR
+0005: 00000000006   # MKVAR
+0006: 00000000006   # MKTAB
+0007: 00000000025   # QNULL
+0010: 00000000036   # QZWEI

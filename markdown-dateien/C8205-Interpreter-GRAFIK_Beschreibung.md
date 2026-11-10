@@ -1,6 +1,6 @@
 # C 8205 – GRAFIK-Interpreter: Beschreibung
 
-Version: 0.95-061
+Version: 0.95-078
 
 **Stand: Gerüst, Abschnitte 1 bis 11 geschrieben (§10 mit teilweiser Triage, siehe §10.6); Prüfverfahren §1 bis §10 liegt vor (`C8205-Interpreter-GRAFIK_Pruefverfahren.md`).** Das PDF dazu (`C8205-GRAFIK_Beschreibung_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Anforderungspaket Dokument 12 (fällt nach Abschluss weg).
 
@@ -60,14 +60,16 @@ python3 c8205_interp.py [Schalter ...]    (gleichwertig; ohne --MODUS startet GR
 | `--trommel PFAD` | Trommeldatei (seit 15.10.2026); Standard `Trommel/trommel.txt`. Sie ist der Speicher des Rechners, Programme verändern sie; wer die Ausgangsbelegung behalten will, sichert sie oder gibt eine eigene Kopie an. Neben ihr liegt die Schalterdatei der Bahnsperren (`trommel.basp`) |
 | `--BASP abcdef` | Bahnsperrenschalter, sechs Ziffern 0/1; wirkt in GRAFIK über das C-Modul (`bahnsperre_setzen`), wird im Pult nicht angezeigt; ohne Angabe gilt die Stellung der Schalterdatei (anlegen mit `000000`) |
 | `--trommelzeit alt\|echt\|schnell` | Zeitmodell der Trommel; Standard `alt`. `alt`: Wartezeiten nach der Wanduhr im C-Modul; `echt`: virtuelle Zeit (eine Wortzeit je Phase), auf Hardwaretempo gebremst; `schnell`: virtuelle Zeit ohne Bremsen. Einzelheiten und Zähler: §7.8 |
+| `--taktprotokoll DATEI` | Taktmitschrift der virtuellen Zeit (§7.11); nur mit `--trommelzeit echt` oder `schnell`, sonst Rückkehrcode 16. Standard: aus. Dazu `--takt-max N` (Zeilen, Standard 5000000, 0 = unbegrenzt) |
 | `--STUMM` | schaltet alle Töne ab; damit entfällt auch die Wartezeit des Hochlaufs (Entscheidung 6) |
 | `--TON pppp` | Lautstärke je Gruppe (Pult, SW, LL, LS), vier Ziffern 0 bis 9, 5 = Voreinstellung, 0 = stumm; wirkungslos mit `--STUMM` |
 | `--TASTATUR de\|en` | Tastaturbelegung beim Abspielen einer Klickspur und im Protokoll; Standard `de` |
+| `--LS-LESER-TYP 303\|FS751` (auch `--ls-leser-typ`) | Typ des Lochbandlesers, gilt für beide Leser K1 und K2 (G4-022): `303` = Metallbürsten, 130 Zeichen/s (Standard), `FS751` = optoelektronisch, 750 Zeichen/s; `FS715` wird als `FS751` angenommen. Ändert das Lesetempo und den Leserton (FS751 spielt `ton/sw_toene/ls_fs751_einzel.wav`, `ls_fs751_dauer.wav`, `ls_fs751_ende.wav`, G4-024). Im Modus TEST erlaubt und ohne Wirkung; ein anderer Wert ist ein Aufruffehler (Rückkehrcode 2) |
 | `--HWCHECK` | zweites Fenster mit BZ, BR, Spur/Sektor, AC und <<AR>> (§8) |
-| `--C8205Z[=VERZ]` | schaltet die vier Zusatztrommeln des **experimentellen Prototyps C8205Z** ein (Standard: aus; §7.10): `5k00 030` wählt ZT k (1 bis 4), `zzz0 bbbb 601` gibt die Haupttrommelspur bbbb auf die gewählte ZT aus, `zzz0 bbbb 661` liest sie zurück; ein Befehl dauert rund 81 bis 86 ms. Die Trommeln liegen als `zt1.txt` bis `zt4.txt` in `VERZ` (Standard `Trommel/ZT/`). Braucht das gebaute Erweiterungsmodul `c8205_ztmodul` |
+| `--C8205Z[=VERZ]` | schaltet die vier Zusatztrommeln des **experimentellen Prototyps C8205Z** ein (Standard: aus; §7.10): `5k00 030` wählt ZT k (1 bis 4; 5100 = ZT0 bis 5400 = ZT3), `zzz0 bbbb 601` gibt die Haupttrommelspur bbbb auf die gewählte ZT aus, `zzz0 bbbb 661` liest sie zurück; ein Befehl dauert rund 81 bis 86 ms. Die Trommeln liegen als `zt1.txt` bis `zt4.txt` in `VERZ` (Standard `Trommel/ZT/`). Braucht das gebaute Erweiterungsmodul `c8205_ztmodul` |
 | `--mdverz VERZ` | Ordner mit den Dokumenten, aus denen der Knotengraph gelesen wird; Standard `markdown-dateien` |
 | `--DEBUGLOG [DATEI]`, `--AUFZEICHNUNG [DATEI]`, `--WIEDERGABE [DATEI]` | Fehlersuche: Protokoll, Aufzeichnung und Wiedergabe einer Klickspur (Prüfverfahren §5) |
-| `--pult-protokoll`, `--netz-schnell`, `--ohne-fenster`, `--entwickler-tasten`, `--entwickler-k0` | Entwicklerschalter für Prüfungen, nicht für den Betrieb |
+| `--pult-protokoll`, `--netz-schnell`, `--ohne-fenster`, `--entwickler-tasten`, `--entwickler-k0` | Entwicklerschalter für Prüfungen, nicht für den Betrieb. **Netz-Automatik (G4-026):** Ohne Pult-Fenster (`--ohne-fenster`, `--entwickler-tasten`, `--entwickler-k0`) schaltet GRAFIK das Netz selbst: Netz-Ein am Anfang (ohne Hochlauf), Netz-Aus, sobald der Rechner 15 s lang keine Befehlsgrenze mehr durchlaufen hat (z. B. Eingabe-Halt vor einem leeren Leser). Ein teilgelesenes Band bleibt im Leserordner. Rückgabecode dann 0 (Strg+C: 8); kein eigener Schalter. |
 
 *Herkunft:* `--TON`, `--TASTATUR`, `--DEBUGLOG`, `--AUFZEICHNUNG` und `--WIEDERGABE` wurden im Zuge der Entwicklung vom Projektinhaber beauftragt (Auskunft 19.10.2026); Dok. 11 S5-05 führt sie nicht auf. Einzelheiten stehen bei §6 (`--TON`) und im Prüfverfahren §5 (Klickspur).
 
@@ -127,7 +129,7 @@ Insgesamt 15 große und 23 kleine Lampen (12 AR, 9 OR, V1, V2). Die Lampen T und
 | LS | Stanzermotor läuft ständig; ohne Wirkung auf die Stanzerdatei, nur Ton (3.7) | einrastend | nein |
 | Selektor SW | unterdrückt neue SW-Ausgabe (3.7) | einrastend, je für sich | nein |
 
-Die Taste G setzt K0 an und leitet daraus das Flag ab: Schalter SW gedrückt → SW := 1, sonst T := 1. Die Stellung T/SW wirkt auf die **Eingabe**: Stellung SW heißt Eingabe nur im SW-Fenster, Stellung T nur über Klicks im Pult; beides gilt nur bei angewähltem K0 und aufgestelltem Eingabe-Halt (Vorgabe 6 zu `--MODUS`). Sie hat keinen Einfluss auf die Schreibwerk-Ausgabe über K2.
+Die Taste G stellt den **Kanal der eingerasteten Kanaltaste** (K0 bis K3) ein, nicht immer K0 (Projektinhaber 27.10.2026, G4-019; vorher setzte G immer K0 an): ist K1, K2 oder K3 eingerastet, gilt dieser Kanal (Flags K1 bis K3 entsprechend, T und SW := 0); ist K0 eingerastet, was auch der Startzustand ist, gilt K0 und das Flag wird abgeleitet: Schalter SW gedrückt → SW := 1, sonst T := 1. Ein im Programm ausgeführter Anwahlbefehl ändert die Rastung der Kanaltaste nicht (OP-35a); nach G gilt wieder der Kanal der Taste. G bei gehaltenem E ändert den Kanal nicht (Nr. 6 unten). Die Stellung T/SW wirkt auf die **Eingabe**: Stellung SW heißt Eingabe nur im SW-Fenster, Stellung T nur über Klicks im Pult; beides gilt nur bei angewähltem K0 und aufgestelltem Eingabe-Halt (Vorgabe 6 zu `--MODUS`). Sie hat keinen Einfluss auf die Schreibwerk-Ausgabe über K2.
 
 **Startzustand der Tasten** (entschieden 16.10.2026, Review F-14): alle Schalter und Tasten ungedrückt, **außer H und T-SW in Stellung T**; die Taste K0 ist eingerastet und Kanal K0 angewählt (Entwurf 96; ersetzt Entwurf 76). Lampe R ist dunkel (R = nicht H), andere Lampen als N und B sind dunkel, solange der Rechner aus ist.
 
@@ -211,7 +213,7 @@ Festlegung des Projektinhabers (18.10.2026): E und M+ E wirken **so, wie es im I
    *Wann „FÜ gesetzt und E gehalten“ entsteht (untersucht 21.10.2026, gemessen):* `E+` hält an, wenn FÜ gesetzt ist und der Befehl im BR kein Überlaufsprung ist (Überlauftest vor Phase IV, Knoten 28, 44, 55, 65, oder vor Phase I, Knoten 80; Halt an Knoten 30, 46, 58, 66, 81, Meldung „Halt wegen Ueberlauf (FUE bereits 1)“). E ist dann noch gehalten, der Zustand entsteht also am Pult. Beispiel: `0000: 3000 211`, `0001: 3001 210`, `0002: 3002 211` mit 3000 = 37777777777 und 3001 = 1; nach `H G E E E` ist FÜ = 1, das nächste `E+` hält an Knoten 30.
    *Fortsetzung (bestätigt 21.10.2026, OP-41):* Löscht G in diesem Halt den Überlauf, wird der Halt aufgehoben; das Loslassen von E setzt Phase IV und I beim Prüfknoten fort (jetzt ohne Überlauf, der Befehl im BR wird ausgeführt) und durchläuft danach Phase II und III. Ohne G bleibt der Halt auch beim Loslassen (wie bisher). Ein anderer Halt (US, BS, FE) bleibt bei G mit gehaltenem E bestehen, nur FÜ wird gelöscht. TEST ist nicht betroffen (kennt kein gehaltenes E).
 7. Prüfbar: `testscripte/grafik_pult_tests.py`, Klasse `EGetrennt` (G bei gehaltenem E: sechs Tests; Lampenreihe: drei Tests); Handliste H-8 (Prüfverfahren §7.1).
-8. **Abbruch eines E-Schritts im Eingabe-Halt (OP-20, behoben 21.10.2026):** Bricht H (oder ein Kanalwechsel) einen E-Schritt ab, der im Eingabe-Halt wartet, gilt die Taste E danach als losgelassen und K0 wartet nicht mehr; E, G und R wirken danach wie sonst. Prüfbar: Klassen `K0AbbruchBeimWarten` und `EImEingabeHaltAbgebrochen` in `testscripte/grafik_pult_tests.py`; Einzelheiten in §10.5.
+8. **Abbruch eines E-Schritts im Eingabe-Halt (OP-20, behoben 21.10.2026):** Bricht H (oder ein Kanalwechsel) einen E-Schritt ab, der im Eingabe-Halt wartet, gilt die Taste E danach als losgelassen und K0 wartet nicht mehr; E, G und R wirken danach wie sonst. **Fortsetzung mit R (G4-016, 26.10.2026):** Ein durch H im Eingabe-Halt des R-Laufs abgebrochener Eingabebefehl wird mit R nur fortgesetzt, solange kein neuer BR aufgestellt wurde. Haben danach E-Schritte (oder M, ST, Ü) einen BR aufgestellt, beginnt R bei diesem BR; früher setzte R im alten Eingabeknoten fort und wartete erneut auf K0, die Befehle liefen nicht los. Prüfbar: Test `test_r_nach_h_und_e_beginnt_beim_aufgestellten_br`. Prüfbar: Klassen `K0AbbruchBeimWarten` und `EImEingabeHaltAbgebrochen` in `testscripte/grafik_pult_tests.py`; Einzelheiten in §10.5.
 
 ### 3.9 Aufbau der Pult-Software und Threads
 
@@ -327,6 +329,7 @@ Eine Taste im SW-Fenster wirkt nur, wenn **K0 angewählt, der Selektor SW am Pul
 |---|---|
 | K0 und SW angewählt, Rechner bei `011` | Das Zeichen geht an den Rechner und wird sofort angezeigt. |
 | K0 und SW angewählt, Rechner noch nicht (wieder) bei `011` | Das Zeichen wartet im Puffer (§5.5) und wird erst angezeigt, wenn der Rechner es geholt hat. |
+| K0 und SW angewählt, Rechner im Halt (Schalter `H`, Flag H) und kein `011` aktiv (G4-023) | **Nur der Klang:** das Zeichen wird weder vorgemerkt noch angezeigt, auch nicht nach `R`. Im Halt arbeitet der Rechner keinen Eingabebefehl ab. Ist im Halt ein `011` aktiv (Einzelschritt `E` wartet auf das Zeichen), gilt die Zeile „Rechner bei `011`“. |
 | Kanal K1 bis K3 angewählt, Schalter SW gelöst (Stellung T) | **Gesperrt:** keine Eingabe, keine Anzeige, kein Ton, keine Meldung, nichts vorgemerkt. |
 | Zeichen ohne Gegenstück im R300-Code | Still verworfen (§5.3), ohne Wirkung auf die Lage. |
 
@@ -346,7 +349,7 @@ Ein- und ausgegeben werden können nur Zeichen des R300-Codes (`C8205-Interprete
 
 - **Die Umschalttasten der Computertastatur** (Umschalt, Feststelltaste, AltGr) werden nicht gesondert ausgewertet. Sie bestimmen nur, welches Zeichen getippt wird (`A` statt `a`); das Fenster erkennt am Zeichen, welche Lage es braucht. Das C-8205-Zeichen `Um. KB` oder `Um. GB` tippt der Benutzer nie selbst; **das Fenster erzeugt es** (S3-11; bestätigt 18.10.2026, Checkpoint 45).
 - **Die Lage des Rechners spielt für die Eingabe am SW keine Rolle** (Festlegung des Projektinhabers 18.10.2026). Das Fenster führt nur die Lage des SW selbst.
-- **Nach dem Einschalten (jedem Programmstart) ist die Lage des SW unbestimmt** (S3-12; Entscheidung 18.10.2026): Der Benutzer tippt frei, mit oder ohne Umschalttaste; weitere Festlegungen gibt es nicht, den Rest erledigt das Fenster. Für das **erste** Zeichen mit bestimmter Lage geht deshalb **immer** das Umschaltzeichen zum Rechner: `A` als erstes Zeichen → `Um. GB`, `A`, das SW steht danach auf GB; `a` → `Um. KB`, `a`, danach KB. Es gibt keinen zufälligen und keinen festen Anfangszustand (beides verworfen).
+- **Nach dem Einschalten (jedem Programmstart) steht das SW immer auf KB** (Festlegung des Projektinhabers 29.10.2026, G4-010; ersetzt „unbestimmt“, S3-12 und Entscheidung 18.10.2026). Grund: Host-Tastaturen haben keine Taste für KB, nur Umschalten nach GB; ein unbestimmter Vorzustand ließ Ziffern und Sonderzeichen scheinbar verschwinden. Das Umschaltzeichen geht nur noch bei Abweichung von der Lage des SW zum Rechner: `a` oder `1` als erstes Zeichen gehen allein, `A` oder `!` als erstes Zeichen als `Um. GB`, Zeichen; das SW steht danach auf GB. Der Rechner zählt Umschaltzeichen bei der Speicherung mit (z. B. KAT4EINGABE), die Anzeige zeigt sie nie.
 - **Bei den folgenden Zeichen** entscheidet das vorhergehende: gleiche Lage → nur das Zeichen; andere Lage → Umschaltzeichen und Zeichen, der Rechner bekommt **zwei Eingaben** und muss dafür zwei `011` durchlaufen. Zeichen mit gleichem Code in beiden Lagen (ZR, TAB, WRZL u. a.) gehen allein und ändern die Lage nicht.
 - **Abstand der zwei Eingaben** (S3-11, U-11, Z-2; Entscheidung 18.10.2026): kein fester Wert. Maßgebend ist das echte Drücken der Tasten. Ist eine Umschalttaste beteiligt (Umschalt, AltGr), ist der Abstand die Zeit zwischen deren Drücken und dem Drücken der Zeichentaste; sonst geht das Umschaltzeichen beim Drücken der Zeichentaste und das Zeichen beim Loslassen (Abstand = Haltezeit). Das Fenster fügt keine Zeit hinzu. Die „etwa 0,1 s“ vom 18.10.2026 waren ein Beispiel, keine Vorgabe. Zeichen „dazwischen“ gibt es nicht; kommt die nächste Taste, ist eine ausstehende zweite Eingabe frei, nichts wird verworfen (S3-14).
 - `Um. KB` und `Um. GB` werden nie angezeigt und bleiben stumm.
@@ -363,7 +366,8 @@ Auf Wunsch des Projektinhabers (19.10.2026) gibt es einen kleinen Puffer (G4-007
 | Weitergabe | Der Takt des Fensters (10 ms) gibt je aktivem `011` **eine** Eingabe weiter, in der Reihenfolge des Tippens; Paare frühestens nach dem echten Tastenabstand (§5.4). |
 | Anzeige und Ton | **Anzeige:** erst wenn der Rechner die Eingabe geholt hat, nicht beim Tippen; sie zeigt nur, was den Rechner erreicht hat (S3-04). **Klang (OP-09, entschieden 21.10.2026, G4-008/G4-010):** beim Tastendruck, sobald das Zeichen im Puffer ist, auch wenn der Rechner es noch nicht geholt hat; je Zeichen genau ein Klang (bei der späteren Annahme kein zweiter). Ein Umschaltzeichen klingt nie; bei einem Paar (Umschaltzeichen, Zeichen) klingt das Zeichen beim Drücken, nicht erst beim Loslassen. Eine Taste, die verloren geht (Puffer voll), ist gesperrt oder nicht darstellbar ist, klingt nicht. Die Rücktaste nimmt ein vorgemerktes Zeichen zurück; sein Klang ist dann schon gespielt. |
 | Kanalwechsel | Anwahl von K1 bis K3 oder Wegfall des Flags SW **verwirft** den Puffer; gezählt wird jeder echte Wechsel, auch ein kurzes K2 und zurück. **Ausnahme:** die zweite Hälfte eines Paares, dessen Umschaltzeichen schon beim Rechner ist, bleibt erhalten, damit das Umschaltzeichen nicht allein steht (z. B. Programme, die nach dem Umschaltzeichen eine Meldung über K2 ausgeben). Ohne K0/SW ist die Taste weiter gesperrt und nichts wird gepuffert. |
-| Verfall | Kein zeitlicher Verfall; Zeichen bleiben im Puffer, bis der Rechner wieder bei `011` ist oder der Kanal wechselt. |
+| Halt (G4-023) | Im Halt (Flag H) ohne aktiven `011` kommt **kein** neues Zeichen in den Puffer (nur der Klang), und ein bereits gepuffertes Zeichen **verfällt** (wie beim Kanalwechsel; die zweite Hälfte eines Paares mit schon gesendetem Umschaltzeichen bleibt). Nach `R` erscheint also nichts von dem, was im Halt getippt wurde. Fehlerbericht des Projektinhabers 30.10.2026: im Halt getippte Zeichen erschienen nach `R` alle im SW-Fenster. |
+| Verfall | Kein zeitlicher Verfall im Lauf; Zeichen bleiben im Puffer, bis der Rechner wieder bei `011` ist oder der Kanal wechselt. |
 | Rücktaste | Nimmt zuerst das zuletzt gepufferte Zeichen zurück (samt seinem Umschaltzeichen, wenn es noch im Puffer steht), siehe §5.6. |
 
 **Stand der Entscheidung.** Gewünscht hat der Projektinhaber: einen kleinen Puffer, der bei Kanalwechsel verworfen wird. Größe 8, die Ausnahme für Paare und das Fehlen eines zeitlichen Verfalls sind Annahmen des Entwicklers, vom Projektinhaber am 19.10.2026 bestätigt (§10.5). Auf die Frage nach einer Taste „dazwischen“ antwortete der Projektinhaber am 19.10.2026: „weiß ich nicht, die Eingabe muss funktionieren!“ Daraufhin steht `SwEingabe.EIN_TASTENDRUCK = False` (G4-009): Es gilt dieser Puffer. Die Alternative `True` (G4-008: der Puffer hält höchstens einen Tastendruck, ein Zeichen oder Umschalter und Zeichen) bleibt wählbar, verliert aber bei schnellem Tippen systembedingt Zeichen. Eine dritte, nicht gebaute Möglichkeit wäre: ein Platz Vormerkung, die Taste danach nicht verwerfen, sondern erst bei Abholung annehmen. Ob 8 reicht, soll der nächste Lauf mit `--DEBUGLOG` zeigen (Zeilen `SW Taste … voll`).
@@ -390,7 +394,7 @@ Die Rücktaste hat **Löschwirkung** (G4-006; Antwort des Projektinhabers 19.10.
 
 ### 5.8 Debug-Log und Spur
 
-- **Debug-Log** (`--DEBUGLOG`, S3-17): je Taste eine Zeile `SW Taste char=… keysym=… -> geliefert | folgt | vorgemerkt | voll | blockiert | verworfen (Puffer: n)`; bei Kanalwechsel `Puffer -> verworfen`; ferner die Annahme beim Rechner („Rechner uebernimmt Token“, `grafik_k0.py`), die Anzeige (`SWAUS`) und je Eingabeklang eine Zeile mit Schreibwerk und Mischer. Die Klickspur kennt die Ereignisart `tipp`. Keine Wirkung auf das Rechnerverhalten.
+- **Debug-Log** (`--DEBUGLOG`, S3-17): je Taste eine Zeile `SW Taste char=… keysym=… -> geliefert | folgt | vorgemerkt | voll | blockiert | angehalten | verworfen (Puffer: n)`; bei Kanalwechsel `Puffer -> verworfen`; ferner die Annahme beim Rechner („Rechner uebernimmt Token“, `grafik_k0.py`), die Anzeige (`SWAUS`) und je Eingabeklang eine Zeile mit Schreibwerk und Mischer. Die Klickspur kennt die Ereignisart `tipp`. Keine Wirkung auf das Rechnerverhalten.
 - **Spur:** Das Programm `r300_eingabe` schreibt je empfangenem Token dessen Ausgabewort ab Zelle 3000 in den Speicher; damit ist prüfbar, was der Rechner wirklich bekam. Die Auswertung `r300_eingabe_log_auswerten.py` vergleicht Anzeige, angenommene Zeichen und Tokens (Verfahren: Prüfverfahren §6).
 
 ### 5.9 Überholte Fassungen (zum Lesen der Altdokumente)
@@ -425,7 +429,7 @@ Die Rücktaste hat **Löschwirkung** (G4-006; Antwort des Projektinhabers 19.10.
 
 ## 6 Töne
 
-**Inhalt:** Schreibwerk, Lochstreifenleser, Rechner-Grundgeräusch, Netzablauf, Stanzer, Haltzeit, Mischer
+**Inhalt:** Schreibwerk, Lochstreifenleser, Rechner-Grundgeräusch, Netzablauf, Stanzer, Haltzeit, Mischer, Tastengeräusche des Pults (§6.12)
 
 **Quellen (alt):** Dok. 03, 10 §4; `ton/SW_Ton_Beschreibung.md` bleibt als Teil B bis D
 
@@ -457,7 +461,7 @@ Töne gibt es nur im Modus GRAFIK. Im Modus TEST gibt es keine Töne und keine H
 
 Der Leserton hängt an `GrafikLeser.bei_zeichen` und wird bei **jedem Zeichen** aufgerufen, das der Leser K1 oder K2 tatsächlich an den Rechner liefert (S4-09; genau ein Zeichen je Zugriff, vom Projektinhaber bestätigt 16.10.2026). Kein Aufruf bei Zeichen von Tastatur oder K0. Es gibt **einen** Leserton für K1 und K2 (O4-12).
 
-- **Lesetempo 130 Zeichen/s**, auch mit `--STUMM`, nicht im Modus TEST (O4-11); Rechenzeit wird angerechnet, die Tonlänge verzögert nichts.
+- **Lesetempo 130 Zeichen/s** beim Leser 303 (Standard) und **750 Zeichen/s** beim Leser FS751 (`--LS-LESER-TYP`, G4-022; der Typ gilt für beide Leser; Ton je Typ: 303 `ls_einzel.wav`, `ls_dauer.wav`, `ls_ende.wav`, FS751 `ls_fs751_einzel.wav`, `ls_fs751_dauer.wav`, `ls_fs751_ende.wav`, G4-024; Ablauf Einzelton, Dauerton, Aus ist für beide Typen gleich), auch mit `--STUMM`, nicht im Modus TEST (O4-11); Rechenzeit wird angerechnet, die Tonlänge verzögert nichts.
 - Das erste Zeichen nach mehr als 100 ms Pause ist ein **Einzelschritt** (`ls_einzel.wav`, etwa 150 ms). Folgt das nächste Zeichen höchstens 100 ms später, läuft das **Dauergeräusch** (Schleife `ls_dauer.wav`, der Einzelschritt wird abgebrochen). Bleiben die Zeichen länger als 100 ms aus, endet es mit dem **Auslaufen** (`ls_ende.wav`, 60 ms). Die Schwelle 100 ms ist eine Konstante, die nach der Hörprüfung nachzustellen ist (S4-16).
 - Das Löschzeichen 11111111, das der Interpreter übergeht, zählt als gelieferte Zeichen: es klingt und kostet Lesezeit (O4-13).
 
@@ -475,7 +479,7 @@ Der Stanzerton hängt an `GrafikStanzer.bei_zeichen` (nach dem Schreiben des Zei
 
 Der Ablauf von Netz-Ein bis Netz-Aus steht in §3.4. Die Töne dazu (S4-11; Dok. 03 §1 Nr. 4, 5; §5 Nr. 19, 20):
 
-- **Einschalten:** `fade_in` in voller Länge (11,3 s, Länge der Aufnahme), danach B grün und **Grundgeräusch** als Schleife (Aufnahme 5,9 s, Pegel 0,8, Entscheidung 17.10.2026; kein Neustart wie in Stufe 2). Der Pegel am Ende von `fade_in` (etwa 0,073 RMS) liegt über dem am Schleifenanfang (etwa 0,044); eine Überblendung ist nicht festgelegt und bleibt Gegenstand der Hörprüfung.
+- **Einschalten:** `fade_in` in voller Länge (11,3 s, Länge der Aufnahme), danach B grün und **Grundgeräusch** als Schleife (Aufnahme 5,9 s, Pegel 0,68, seit 27.10.2026; vorher 0,8, Entscheidung 17.10.2026; kein Neustart wie in Stufe 2). Der Pegel am Ende von `fade_in` (etwa 0,073 RMS) liegt über dem am Schleifenanfang (etwa 0,037 seit der Absenkung auf 0,68; vorher 0,044); eine Überblendung ist nicht festgelegt und bleibt Gegenstand der Hörprüfung.
 - **Ausschalten mit dem Klick:** `fade_out` (2 s) beendet `fade_in` und das Grundgeräusch und schließt die Tore von Schreibwerk, Leser und Stanzer (O4-17); danach Ende mit Code 0.
 - **Strg+C, X am Pult oder SW-Fenster, Schließen** (Code 8): alle Töne hören sofort auf (Tore zu, Strom zu), **kein `fade_out`**.
 - **Wiedereinschalten** heißt, das Skript neu zu starten; es beginnt wieder mit „Rechner aus“ und wartet auf den Klick auf den Netzschalter. Die Register sind danach weg, die Trommeldatei bleibt erhalten.
@@ -484,7 +488,7 @@ Der Ablauf von Netz-Ein bis Netz-Aus steht in §3.4. Die Töne dazu (S4-11; Dok.
 ### 6.6 Lautstärke und Stummschaltung
 
 - **`--STUMM`** (S4-13): keine Töne, **keine Hochlaufwartezeit** (B grün sofort nach dem Klick), keine Prüfung des Audiogeräts; Schreibwerkzeit, Lesetempo und Stanztempo bleiben.
-- **`--TON=pppp`** (S4-19; Entscheidung 19.10.2026 nach der ersten Hörprüfung): vier Ziffern 0 bis 9 in der Reihenfolge **Pult, SW, LL, LS** (Pult = Rechnertöne; SW = Schreibwerk einschließlich der angezeigten Eingabe; LL = Lochstreifenleser; LS = Lochbandstanzer). Voreinstellung 5555; 0 = stumm. Faktor = Basis × Ziffer / 5. **Basis laut Code (`TON_BASIS` in `grafik_tonmisch.py`): Pult 1,0, SW 2,0, LL 1,3, LS 1,0.** SW 2,0, weil der Tastenanschlag doppelt so laut werden sollte (Hörprüfung 1); LL 1,3 seit G4-012 („Leser einen Tick lauter“, Hörprüfung 19.10.2026). Ungültige Angaben (nicht vier Ziffern) beenden den Start mit der argparse-Meldung (Code 2). Mit `--STUMM` wirkungslos; unter Windows wirkte der Wert Pult im `winsound`-Zweig nicht; mit dem Mischer (`winmm`) ist `--TON` nicht geprüft (§9.2.3). Die Zeichenklänge erreichen 0,4 des Vollausschlags; ab Faktor 2,5 (SW: Ziffer 6) übersteuert ein einzelner Klick.
+- **`--TON=pppp`** (S4-19; Entscheidung 19.10.2026 nach der ersten Hörprüfung): vier Ziffern 0 bis 9 in der Reihenfolge **Pult, SW, LL, LS** (Pult = Rechnertöne und Tastengeräusche des Pults (§6.12); SW = Schreibwerk einschließlich der angezeigten Eingabe; LL = Lochstreifenleser; LS = Lochbandstanzer). Voreinstellung 5555; 0 = stumm. Faktor = Basis × Ziffer / 5. **Basis laut Code (`TON_BASIS` in `grafik_tonmisch.py`): Pult 1,0, SW 2,0, LL 1,3, LS 1,0.** SW 2,0, weil der Tastenanschlag doppelt so laut werden sollte (Hörprüfung 1); LL 1,3 seit G4-012 („Leser einen Tick lauter“, Hörprüfung 19.10.2026). Ungültige Angaben (nicht vier Ziffern) beenden den Start mit der argparse-Meldung (Code 2). Mit `--STUMM` wirkungslos; unter Windows wirkte der Wert Pult im `winsound`-Zweig nicht; mit dem Mischer (`winmm`) ist `--TON` nicht geprüft (§9.2.3). Die Zeichenklänge erreichen 0,4 des Vollausschlags; ab Faktor 2,5 (SW: Ziffer 6) übersteuert ein einzelner Klick.
 
 ### 6.7 Start und Fehlerfälle
 
@@ -505,11 +509,12 @@ Alle Konstanten sind nach der Hörprüfung nachstellbar (S4-16); der Projektinha
 | TAB, WRZL | 400 ms, 360 ms | `grafik_schreibwerk.py` | E (Nr. 17); `tab_400.wav` ohne eigene Abnahme |
 | WR (Klang und Schreibwerkzeit), Ausblendung der Datei | 120 ms, 5 ms | `grafik_schreibwerk.py` (`WR_MS`), `wr.wav` aus `ton/erzeuge_wr_klang.py` | E 21.10.2026 (OP-42); Schnitt nicht gehört, Hörprüfung offen (H-4) |
 | Schwelle Leser, Auslaufen | 100 ms, 60 ms | `grafik_geraeteton.py` | E; nachzustellen |
-| Lesetempo | 130 Zeichen/s | `grafik_geraeteton.py` | E (O4-11) |
+| Lesetempo | 130 Zeichen/s (Typ 303), 750 Zeichen/s (Typ FS751) | `grafik_geraeteton.py` (`LESETEMPO_303`, `LESETEMPO_FS751`) | 303: E (O4-11); FS751: Auftrag des Projektinhabers 30.10.2026 |
 | Dauerstanzen, Ende, Abschalten | 50 ms, 50 ms, 5 s | `grafik_geraeteton.py` | E 16.10.2026 (Nr. 21) |
 | Stanztempo | 50 Zeichen/s | `grafik_geraeteton.py` | E 18.10.2026 („ungefähr so“) |
-| Grundgeräusch-Pegel | 0,8 | `grafik_rechnerton.py` | E 17.10.2026 |
+| Grundgeräusch-Pegel | 0,68 (vorher 0,8) | `grafik_rechnerton.py` (`GRUND_PEGEL`, G4-005) | 0,8: E 17.10.2026; 0,68: 27.10.2026, Auftrag des Projektinhabers nach der Hörprüfung („Töne im Verhältnis zum Grundgeräusch zu leise“, 15 % leiser); fade_in und fade_out unverändert; Hörprüfung offen |
 | Vorlauf, Puffer der Senke | 2 Blöcke (20 ms), 20 ms | `grafik_tonmisch.py` | G4-004, am Gerät nicht gemessen |
+| Pegel der Pult-Tastenklänge | 1,76 (vorher 1,6; mal Gruppenfaktor Pult aus `--TON`) | `grafik_pultton.py` (`KLICK_PEGEL`, G4-002) | 1,6: V 27.10.2026; 1,76: 27.10.2026, Auftrag des Projektinhabers nach der Hörprüfung („10 % lauter“); Hörprüfung offen |
 
 ### 6.10 Befunde und Hinweise zu den Quellen
 
@@ -532,12 +537,33 @@ Alle Konstanten sind nach der Hörprüfung nachstellbar (S4-16); der Projektinha
 | S4-13, S4-19, G4-012 | `--STUMM`, `--TON` | 6.6 |
 | S4-04, O4-4 | Abbruch mit Code 16 | 6.7 |
 | S4-15, S4-16, O4-18, B-2 | Plattformen, Hörprüfung, Konstanten | 6.8, 6.9 |
+| G4-002 (`grafik_pultton.py`), G2-015 | Tastengeräusche des Pults | 6.12 |
 
 **Stand der Prüfung.** Aus den Dokumenten übernommen; im Code gegengelesen sind nur die Konstanten der Tabelle in §6.9 und `TON_BASIS`. Logikprüfungen laufen ohne Audiogerät (`grafik_stufe4_tests`, 90 Prüfungen, am 21.10.2026 gezählt; vorher 80, die Angabe 69 war veraltet; gegen den Python-Mischer und gegen das C-Modul; Prüfverfahren §3). Hörprüfung 1 und 2 und der Lauf mit Tk-Fenster sind vom Projektinhaber am 19.10.2026 als „ok“ gemeldet, ohne Einzelbefunde.
 
+### 6.12 Tastengeräusche des Pults
+
+Das Pult macht Tastengeräusche (Entscheidung des Projektinhabers 27.10.2026). Sie gehören zur Gruppe **Pult** von `--TON` (§6.6) und gelten wie alle Töne nur in GRAFIK ohne `--STUMM`; unter Windows ohne `winmm` (Rückfall `winsound`) gibt es sie nicht.
+
+- **Drei Klänge für die drei mechanischen Tastentypen** (Dateien in `ton/pult_toene/`, 44,1 kHz, 16 Bit, mono, Spitze 0,35; vom Projektinhaber am 27.10.2026 als gut bestätigt, Hörprüfung nach dem Einbau offen):
+
+| Tastentyp | Tasten | Klang | Datei |
+|---|---|---|---|
+| Typ 3 Impulstaste (Taster) | G, Ü, ST, die 21 Eingabetasten, E und M (beim Drücken, auch bei Umschalt+Klick) | `impuls` | `impuls_druck.wav` (60 ms, aus der Aufnahme des Projektinhabers geschnitten) |
+| Typ 2 Ein-Tasten-Einrastschalter | SP, BS, LS, Selektor SW, Kanaltasten K0 bis K3 | `einrast` | `einrast_aus.wav` (95 ms, synthetisch) |
+| Typ 1 Radiotasten | H–R und T–SW | `radio` | `radio_wechsel.wav` (140 ms, synthetisch; ein Klang für beide Richtungen) |
+
+- **Nur wirksame Klicks klingen** (M-25: „kein Ton“): gesperrte Tasten (Rollensperre bei R, R bei gehaltenem E oder M, Eingabetaste ohne Eingabe-Halt), ein Klick auf eine schon eingerastete Taste der Wippen und jeder Klick außerhalb des Betriebs (nur der Netzschalter wirkt) bleiben stumm. Der Netzschalter hat keinen Tastenklang (er hat `fade_in` und `fade_out`).
+- **Kein Ton beim Loslassen** (Entscheidung des Projektinhabers 27.10.2026): weder beim Loslassen einer Impulstaste noch bei E− und M− (Loslassen der Maus). Umschalt+Klick auf E oder M klingt beim Setzen und beim Lösen des Halters je einmal, weil beides ein Tastendruck ist.
+- **Typ 2 klingt beim Einrasten und beim Lösen gleich** (`einrast_aus.wav`), weil nur dieser Klang bestätigt wurde; `einrast_ein.wav` (Erzeugung mit `erzeuge_pult_toene.py`) ist nicht eingebunden. K0 bis K3 klingen wie Typ 2 (Korrektur des Projektinhabers 27.10.2026); die wechselseitige Auslösung ist Logik, nicht Klang.
+- **Tastatur und Maus** lösen denselben Klang aus, weil alles durch `PultSteuerung.klick` läuft. Die Zeichen im SW-Fenster haben ihren eigenen Klang (§6.2) und kommen nicht dazu.
+- **Pegel gegen das Grundgeräusch:** Die Klicks werden mit `KLICK_PEGEL` 1,76 mal dem Gruppenfaktor Pult gespielt (Spitze 0,62; mit der Spitze des Grundgeräusches von 0,22 unter 1,0; bis 27.10.2026 1,6, auf Wunsch des Projektinhabers nach der Hörprüfung 10 % lauter). Gemessen mit `ton/pult_toene/pruefe_hoerbarkeit.py` (lautester 10-ms-Abschnitt des Klicks gegen die 10-ms-Fenster des Grundgeräusches mit Pegel 0,68, Band 2,5 bis 5 kHz): +13 bis +18 dB gegen das lauteste Fenster, +23 bis +27 dB gegen den Median (mit Klickpegel 1,6 und Grundgeräusch 0,8: +11 bis +16 und +20 bis +25 dB). Das Grundgeräusch hat seine Energie fast ganz unter 500 Hz, die Klicks bei 2,5 bis 5 kHz. Der Faktor liegt im Code und nicht in den Dateien, damit `--TON` Grundgeräusch und Klicks gemeinsam regelt und das Verhältnis bei jeder Lautstärke bleibt. **Nur gemessen, nicht gehört.**
+- **Impulstasten lauter (G4-003, 27.10.2026):** Der Klang `impuls` (G, Ü, ST, E, M, Eingabetasten) wird zusätzlich mit `IMPULS_FAKTOR` 1,4 (+2,9 dB) gespielt, weil der nur etwa 9 ms lange Tick in der Hörprobe zu leise war (Energie danach etwa wie `einrast`). Spitze 0,35 · 1,76 · 1,4 = 0,86; Stellschraube in `grafik_pultton.py`.
+- **Umsetzung:** `grafik_pultton.py` (G4-002, Klasse `PultTastenTon`, Gruppe Pult = Tonkanal `rechner`); `PultSteuerung` (G2-015) ruft `taste_ton(art)` in `_klick` an den wirksamen Stellen auf; `c8205_grafik.py` (G4-018) lädt die Klänge und verbindet sie. Ein Fehler im Ton verhindert die Taste nicht (Eintrag im Debuglog). Prüfungen: `grafik_pult_tests.py` (Klasse `PultTastenTon`, 10) und `grafik_stufe4_tests.py` (Klasse `PultTastenTonPruefung`, 5; Dateien, Pegel, Mischung mit dem Grundgeräusch ohne Übersteuern).
+
 ## 7 Echte Trommel
 
-**Inhalt:** C-Module, Regel „Schlitz ist Schlitz“, Takt, Plattformschicht, Anbindung, Zeitmodelle und Zähler der Trommelstatistik
+**Inhalt:** C-Module, Regel „Schlitz ist Schlitz“, Takt, Plattformschicht, Anbindung, Zeitmodelle und Zähler der Trommelstatistik, Taktprotokoll (§7.11)
 
 **Quellen (alt):** Dok. 02; Dok. 07 (Stufe 1); `C8205-Interpreter-Magnettrommel.md` verweist hierher
 
@@ -677,17 +703,74 @@ Lesart: In `echt` ist `ticks` (14 021) fast `vt` (14 027), denn 14 027 Wortzeite
 | O-9, Entwurf 86 und 87 | `--BASP`, Schalterdatei `.basp` | 7.5 |
 | G1-xx (Stufe 1), Dok. 07 | `grafik_trommel.py`, Treiber | 7.1, 7.5 |
 | `c8205_grafik.py` G4-009 (22.10.2026) | `--trommelzeit`, virtuelle Zeit, Zähler der Trommelstatistik | 7.8 |
+| `c8205_grafik.py` G4-025, `grafik_takt.py` TP-001, `grafik_trommel.py` G5-002 (08.11.2026) | `--taktprotokoll`, `--takt-max`, Taktmitschrift | 7.11 |
+| `testscripte/grafik_takt_schleife.py` TS-002, `grafik_takt_schleife_tests.py` TY-002 (08.11.2026) | Auswertung des Taktprotokolls: Schleife um einen Befehl, Takte (`--takte`) | 7.11 |
 
 ### 7.10 Zusatztrommeln des experimentellen Prototyps C8205Z (`--C8205Z`)
 
 Mit `./c8205_grafik.sh --C8205Z[=VERZ]` (auch zusammen mit `--HWCHECK`) hat GRAFIK vier Zusatztrommeln ZT1 bis ZT4 zu je 4096 Worten. Es handelt sich um einen **experimentellen Prototyp**; Zeitmodell und Modulspezifikation: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`. Ohne den Schalter ist alles unverändert (`601`/`661` sind Leer-Operationen mit Löschen).
 
-- **Befehle:** `5k00 030` (k = 1 bis 4) wählt die Zusatztrommel k; `zzz0 bbbb 601` überträgt die Haupttrommelspur bbbb auf die Spur zzz0 der gewählten ZT, `zzz0 bbbb 661` die Spur zzz0 der gewählten ZT auf die Haupttrommelspur bbbb. Jeder Befehl überträgt eine ganze Spur (32 Worte). Ohne Anwahl: Halt mit Flag A (601) bzw. E (661) wie in TEST.
+- **Befehle:** `5k00 030` (k = 1 bis 4; 5100 = ZT0 bis 5400 = ZT3) wählt die Zusatztrommel k; `zzz0 bbbb 601` überträgt die Haupttrommelspur bbbb auf die Spur zzz0 der gewählten ZT, `zzz0 bbbb 661` die Spur zzz0 der gewählten ZT auf die Haupttrommelspur bbbb. Jeder Befehl überträgt eine ganze Spur (32 Worte). Ohne Anwahl: Halt mit Flag A (601) bzw. E (661) wie in TEST.
 - **Anbindung:** `grafik-interpreter-module/grafik_zt.py` (Klasse `GrafikZT`, G5-001) hängt das C-Modul `C8205Z/zt_modul` über das Erweiterungsmodul `c8205_ztmodul` an die Haupttrommel (Direktzugriffe ohne Koinzidenz). Der Python-Interpreter im Modus TEST rechnet dagegen mit Zeit 0 (`c8205_zt.py`).
 - **Zeit:** Bei `--trommelzeit alt` wartet das C-Modul in Echtzeit (ein Befehl dauert 81 bis 86 ms). Bei `echt` und `schnell` rechnet das Modul nur; die Dauer wird auf die virtuelle Zeit der Haupttrommel aufgeschlagen, bei `echt` abgeschlafen, bei `schnell` nicht. Ein Abbruch (X im Fenster, Netz-Aus, Strg+C) beendet auch einen laufenden Befehl.
 - **Bauen:** `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace` (Windows: `bau_ztmodul_mingw.bat` im selben Ordner; am 26.10.2026 gebaut und importiert, kein Funktionstest, §9.2.3). Fehlt das Modul, endet der Start mit einer Fehlermeldung und der Bauanleitung.
 - **Prüfung:** `bash C8205Z/Tests_Z/zt_grafik_tests.sh` vergleicht TEST und GRAFIK (ohne Fenster) in allen drei Trommelzeiten Byte für Byte. Das Pult-Fenster mit `--C8205Z` ist nur gestartet, nicht abgenommen.
 - **Anzeige:** Das Pult zeigt die Zusatztrommeln nicht. Der HW-Check (§8.7) zeigt sie nur mit `--C8205Z`: je ZT die zuletzt bearbeitete Adresse, hinter der angewählten ein kleiner grüner Punkt, und ein Inhaltsfeld für die angewählte ZT.
+
+### 7.11 Taktprotokoll (`--taktprotokoll`)
+
+*Stand 08.11.2026 (G4-025, `grafik_takt.py` TP-001, `grafik_trommel.py` G5-002). Auftrag des Inhabers: die Takte einer Programmschleife (z. B. der Eingabeschleife) ermitteln; die Messung muss abschaltbar sein. Geprüft mit `testscripte/grafik_takt_tests.py` (16 Prüfungen).*
+
+**Zweck.** Die virtuelle Zeit `vt` (§7.8) hängt nur vom Programm und der Startlage ab. Mit `--taktprotokoll DATEI` schreibt GRAFIK jede Fortschreibung von `vt` als Zeile in eine Textdatei. Es wird **alles** mitgeschrieben, die Uhr läuft für alle Befehle; welche Schleife, welches Fenster und welche Summe gebildet werden, entscheidet erst ein Auswertungsskript. So bleibt jede Wartezeit richtig, auch die vor dem ersten Befehl der Schleife (sie hängt von der Trommellage und damit vom Befehl davor ab).
+
+**Aus und an.** Ohne den Schalter wird das Modul nicht geladen; die Trommel prüft je `tick()` und je Zugriff nur `takt is None`. Verhalten, Ausgaben und Zähler sind dann unverändert. Mit dem Schalter ändert sich an `vt`, an der Wartezeitsumme und an den Registern nichts (geprüft: Lauf mit und ohne Mitschrift ist gleich). Gilt nur mit `--trommelzeit echt` oder `schnell`; mit `alt` meldet GRAFIK einen Fehler (Rückkehrcode 16), weil es dort keine virtuelle Zeit gibt. Der Knotenablauf ist nicht geändert: `Rechner.takt_einhaengen` umhüllt `exec_node` nur an der Instanz; deshalb ist in `c8205_interp.py` (TEST, alle Zeiten 0) nichts nachzuziehen.
+
+**Aufruf (Beispiel).**
+
+```
+python3 c8205_grafik.py --ohne-fenster --STUMM --trommelzeit schnell --trommel EIGENE_TROMMEL.txt \
+        --entwickler-tasten "H G R" --taktprotokoll takt.tsv
+```
+
+Am Ende erscheint zusätzlich die Zeile `Taktprotokoll: DATEI (N Zeilen, vt am Ende …, Zugriffe, Wartezeit)`.
+
+**Format.** UTF-8, LF; zwei Kopfzeilen mit `#`, dann je Ereignis eine Zeile, Spalten durch Tabulator getrennt:
+
+| Spalte | Inhalt |
+|---|---|
+| `lfd` | laufende Nummer ab 1 |
+| `vt` | virtuelle Zeit in Wortzeiten **vor** dem Ereignis |
+| `art` | `T` Phase beginnt (eine Wortzeit; Knoten 63: die zusätzliche Wortzeit des Sprungs, Phase I wird übersprungen), `L` Lesezugriff, `S` Schreibzugriff, `Z` Lücke (`vt` wurde außerhalb von `tick()` und Zugriff fortgeschrieben, z. B. Zeitaufschlag der Zusatztrommeln, §7.10) |
+| `knoten`, `phase` | Knoten des Graphen und zuletzt begonnene Phase (I bis IV) |
+| `BZ`, `BR`, `OR`, `AC` | Befehlszähler, Adressteil des Befehlsregisters, Operationscode und Akkumulator im Augenblick des Ereignisses (oktal; die Register ändern sich während des Befehls, §7.5 und Knotenbeschreibung) |
+| `n` | bei `T` und `Z`: Wortzeiten; bei `L` und `S`: Wartezeit bis der Sektor unter dem Kopf liegt (0 bis 31) |
+| `adresse` | bei `L` und `S`: Trommeladresse (oktal); sonst `-` |
+
+Die Zeit nach einem Ereignis ist `vt + n`; die nächste Zeile beginnt dort (Stetigkeit, geprüft). Der Befehlsbeginn ist die Zeile `T` mit Knoten 2 (Phase I); der Sprung über Knoten 63 hat keine Phase I. Am Ende steht `# Ende: …`, bei Überschreiten von `--takt-max` stattdessen `# ABGEBROCHEN …` (die Uhr läuft weiter, nur die Mitschrift endet).
+
+**Grenzen (nicht erledigt).**
+
+- Eingabe-Halt und Halt stehen nicht im Protokoll: `vt` steht dort still (§7.8). Das gelesene Zeichen wird nicht eigens geschrieben; es steht, wenn der Befehl es in den Akkumulator übernommen hat, in der Spalte `AC` der folgenden Zeilen.
+- Die Auswahl einer Schleife ist nicht Teil von GRAFIK; sie macht das Auswertungsskript `testscripte/grafik_takt_schleife.py` (Teil 1, seit 08.11.2026, unten). Die Takte je Zyklus bestimmt `--takte` (unten); noch offen: Summe je Zeichen (z. B. Punkt, zehn Ziffern) und Eintrittsadresse.
+- Wie jede Zeit in GRAFIK hängt die erste Wartezeit von der Startlage ab (§7.8, Streuung bis 31 Wortzeiten). Die Takte von Befehl zu Befehl nicht, weil jeder Befehlsabruf auf dem Sektor seines Befehls beginnt.
+- Windows ist nicht geprüft (reines Python, keine neue Plattformabhängigkeit).
+
+**Auswertung: Schleife um einen Befehl und ihre Takte (`testscripte/grafik_takt_schleife.py` TS-002, Test `grafik_takt_schleife_tests.py` TY-002, 36 Prüfungen; Block des Sammellaufs).** Das Skript liest ein Taktprotokoll, wählt die Befehle, die mit einem durch seine Adresse angegebenen Befehl (Anker) eine Schleife bilden (Teil 1), und bestimmt mit `--takte` die Takte (Teil 2).
+
+- **Befehlsadresse.** Jeder Befehl hat genau eine Zeile `L` mit Knoten 9 (Phase II, Befehl holen); ihre Spalte `adresse` ist die **Adresse des Befehls**. `BZ` taugt dafür nicht: nach einem Sprung (Knoten 63) steht dort die Rückkehradresse. OR und BR (Operationscode, Operandadresse) stehen in der ersten Zeile `T` mit Knoten 15 (Phase III) danach. Die Zeile des Befehls selbst hat in `adresse` nur `-`; das gilt auch für `011` (Eingabe): seine Adresse steht in der Zeile `L`/Knoten 9 davor, und sein OR wird während des Befehls zu `211`, der Operandzugriff folgt danach mit anderer Adresse. In einem Protokoll sind Befehle und Phase-III-Zeilen gleich viele (geprüft am Lauf der Eingabeschleife: 41 844 Befehle).
+- **Zyklus und Variante.** Ausführungen des Ankers A in Protokollreihenfolge: e1, e2, … Ein *Zyklus* ist die Folge aller Befehle von e(i) einschließlich bis e(i+1) ausschließlich. Die Schleife ist die Menge der Befehlsadressen aller Zyklen. Gleiche Adressfolgen bilden eine *Variante* (z. B. Ziffer oder Zeilenende; Zahl der Durchläufe einer inneren Schleife). Unterprogramme und innere Schleifen zwischen zwei Ausführungen von A gehören zum Zyklus. Befehle vor der ersten und nach der letzten Ausführung von A bilden keinen Zyklus und werden nur gezählt.
+- **Takte (Teil 2, `--takte`; Festlegung des Inhabers 08.11.2026).** Ein Befehl umfasst die Zeit vom Beginn seiner Phase III bis zum Beginn der Phase III des Folgebefehls, also die Wartezeit auf den Folgebefehl eingeschlossen. Die Takte eines Zyklus sind `vt_III` der nächsten Ausführung des Ankers minus `vt_III` dieser Ausführung; je Befehl `vt_III` des Folgebefehls minus eigenes `vt_III`. Ausgegeben werden je Variante Zyklen, kleinste, größte und mittlere Takte (mit ms bei 104 µs je Takt; „schwankt“, wenn kleinste und größte verschieden sind), dann über alle Zyklen Summe, Mittel je Zyklus und je Befehl. Die Wartezeit auf das Zeichen im Eingabe-Halt ist nicht enthalten (`vt` steht dort still). Die TSV-Datei hat je Befehl `vt_holen`, `wz_holen`, `vt_III` und `takte`. **Messwert (Lauf der Eingabeschleife, `--trommelzeit schnell`, FS751, Anker 0064):** Ziffernvariante V1 (11 Befehle, 0064 bis 0076) in allen 2391 Zyklen genau **352 Takte** (36,608 ms), wie in Lieferung 001; die Varianten über 0333 (Zeichenende, 41 bis 91 Befehle) 1216 bis 2816 Takte; Mittel über alle 2703 Zyklen 489,649 Takte. Die Varianten mit demselben Weg schwanken um bis zu 64 Takte (V2 1408 bis 1472), vermutlich wegen wechselnder Operandadressen (OR/BR wechselt); nicht untersucht.
+- **Aufruf (aus dem Projektstamm).**
+
+```
+python3 testscripte/grafik_takt_schleife.py LOG --liste              # alle Befehlsadressen mit OR, BR, Häufigkeit (Anker finden)
+python3 testscripte/grafik_takt_schleife.py LOG --befehl 0064        # Schleife um den Befehl auf Adresse 0064 (oktal, mehrfach möglich)
+python3 testscripte/grafik_takt_schleife.py LOG --op 011             # Anker = alle Adressen, an denen ein Befehl mit OR 011 steht
+python3 testscripte/grafik_takt_schleife.py LOG --befehl 0064 --takte   # dazu die Takte je Variante und über alle Zyklen
+```
+
+  Weitere Schalter: `--voll` (Befehle je Variante einzeln), `--varianten N` (Standard 8), `--tsv DATEI` (je Zyklus und Befehl eine Zeile: `anker zyklus variante pos adresse OR BR vt_holen wz_holen vt_III takte`, `takte` immer gefüllt). Ausgabe: Ausführungen, Zyklen, Varianten (Adressfolge in Bereichen, `xK` = derselbe Bereich K-mal hintereinander), Vereinigungsmenge mit Zahl der Zyklen und Ausführungen je Adresse, Kern (Adressen in jedem Zyklus). Rückkehrcode 0 in Ordnung, 2 Aufruf oder Datei falsch, 4 Anker nicht gefunden oder weniger als zwei Ausführungen.
+- **Grenzen.** Ein Anker, der in einem langen Zyklus nur einmal je äußerem Durchlauf läuft (z. B. der Befehl 0051 im Lauf der Eingabeschleife, Zyklen bis 1398 Befehle), liefert den ganzen äußeren Durchlauf einschließlich der inneren Schleifen; die innere Schleife wählt man mit ihrem eigenen Anker (0064). Wechselt OR oder BR eines Befehls (Befehl zur Laufzeit gebaut), zeigt die Tabelle den häufigsten Wert und den Vermerk „wechselt“.
 
 ## 8 Hardware-Check
 
@@ -918,7 +1001,7 @@ Bei der Abnahme der Stufen nicht beanstandet, aber nie einzeln bestätigt. Sie g
 | OP-24 | **Überholte Aussagen** in Dok. 01 §1.7 und §1.9, Dok. 02 §6 (§5.9, §7.5, §8.5) und Dok. 03 (§5 Nr. 9 und die Absätze „Stand 16.10.2026“ nennen „nicht eingebaut“; `tab_kurz.wav` und `tab_lang.wav` werden nicht mehr gespielt, Dok. 10 §6.3 B-1, B-2); sie fallen mit Stufe 6 weg | erledigt mit Stufe 6 | Dok. 10 §6.3; ferner Dok. 00 §3 (Zeilen „ohne Echo“, 15.10.2026; seit 18.10.2026 überholt, Dok. 09 S3-04), Stufe-3-Checkpoint U-8 |
 | OP-25 | **R300-Eingabe, Klickspur und Sollfolge:** `Tests/r300_eingabe_klickspur.txt` und `Tests/r300_eingabe_soll.txt` liegen nicht im Archiv (am 19.10.2026 gelöscht, weil die Regressionsschleife sie als Tests zählte). Der echte Lauf und die Auswertung starten erst, wenn der Erzeuger sie neu anlegt. **Entschieden 19.10.2026 (Projektinhaber: „lassen“): so lassen; bei Bedarf erzeugen und danach wieder löschen.** Die vier Testskripte bleiben unverändert | entschieden, kein Eingriff | Prüfverfahren §6.5, §10 B-4 |
 | OP-27 | **Ausfall des Tonstroms im Betrieb am echten Gerät** (Rückkehrcode 16 mitten im Lauf, S4-04, Dok. 10 B-5): nur der Start ohne Abspielprogramm ist an einem echten Start geprüft; der Ausfall im Betrieb wurde in der Abnahme nicht eigens gemeldet | offen | Dok. 10 B-5 |
-| OP-28 | **Zeiten am Gerät nicht gemessen:** Verzögerung des Tons höchstens 50 ms, Schreibwerkzeit 75 bis 90 ms, Lesetempo 130 Zeichen/s, Stanztempo etwa 50 Zeichen/s. Belegt ist nur die Hörprüfung 2 („ok“, 19.10.2026). Ebenso nicht am Gerät geprüft: die Aufrufe von `pw-cat` und `aplay` (am Rechner des Projektinhabers lief ein Abspielprogramm; welches, ist nicht festgehalten) | Hinweis | Dok. 10 §3a (Nicht geprüft), S4-03, S4-18, §6.9 |
+| OP-28 | **Zeiten am Gerät nicht gemessen:** Verzögerung des Tons höchstens 50 ms, Schreibwerkzeit 75 bis 90 ms, Lesetempo 130 Zeichen/s (Typ 303; Typ FS751: 750 Zeichen/s), Stanztempo etwa 50 Zeichen/s. Belegt ist nur die Hörprüfung 2 („ok“, 19.10.2026). Ebenso nicht am Gerät geprüft: die Aufrufe von `pw-cat` und `aplay` (am Rechner des Projektinhabers lief ein Abspielprogramm; welches, ist nicht festgehalten) | Hinweis | Dok. 10 §3a (Nicht geprüft), S4-03, S4-18, §6.9 |
 | OP-29 | **Bedienablauf am Pult nie durchgespielt:** Dok. 01 §1.8 Nr. 8 bis 14 (Minimalprogramm laden, Leitadressen, `01.`, `10 aaaa`) wurde in Stufe 2 nur am KEP-Beispiel geprüft; ein Beleg für den ganzen Ablauf liegt mir nicht vor. Außerdem offen aus `AENDERUNG_E_unter_M` (0.03-015): der Hinweis „H statt R“ zu Handbuch 4.4 Nr. 2 | offen | CP Stufe 2, AENDERUNG 0.03-015 |
 | OP-32 | **Fensterlage (FL-001) und Fokus-Entprellung am echten Fenster:** Dok. 05 F-65 (b) bat um eine Prüfung unter X11 (Wandern der Position) und mit zwei Bildschirmen; eine Rückmeldung ist nicht belegt (**offen, nur am echten Fenster prüfbar**). **Entprellung des Fokus, Testlücke geschlossen 21.10.2026:** `grafik_sw_tests.py` hat drei neue Tests (`test_fokus_entprellung_bleibt_unter_0_4_s_im_sw_fenster`, `test_fokus_geht_nach_0_4_s_ohne_aufforderung_zum_pult`, `test_fokus_neue_aufforderung_setzt_die_uhr_zurueck`; Uhr und Aufforderung gesteuert, Ersatzmodul statt Tk); 81 von 81 grün. Gegenprobe: mit der Schwelle 0,2 s oder 0,8 s im Code werden zwei der drei Tests rot. Das echte Verhalten am Fenster (Abstände um 0,4 s, §5.7) bleibt davon unberührt und ist nicht geprüft | Hinweis, Rest offen | Dok. 05 F-43, F-65 (b) |
 | OP-33 | **Bedienablauf §3 Nr. 12 bis 14 gegen das BIS-Dokument:** Dok. 01 §1.8 stellte fest, dass die BIS-Dokumentation dem Paket nicht beilag und die Einzelheiten nicht geprüft sind. Sie liegt im Projekt (`Bausteininterpretiersystem BIS/markdown-dateien/C8205-Interpreter-BIS.md`) und wurde bei G6-014 **stichprobenartig** gelesen. Bestätigt: `2 K₂ aaaa` mit K₂ = 0 Relativadresse, 1 Hauptleitadresse, 2 bis 9 die 2. bis 9. Leitadresse (BIS-2.2, Kennzeichentabelle); `1 0 aaaa …` ist ein Sofortbefehl ohne Adressenänderung (BIS-2.2.11: `10 3004 000.`). **Abweichungen, nicht geklärt:** (a) das BIS-Dokument schreibt die Eingaben mit Schlusspunkt und beim Sofortbefehl mit Befehlsteil (`1 K₂ a₁a₂a₃a₄ BAZ .`); §3 Nr. 12 bis 14 und Dok. 01 zeigen die Kurzform `20 aaaa`, `10 aaaa` ohne Punkt; (b) Dok. 01 nennt `01.` einen „Befehl zur fortlaufenden Eingabe von Objektkodebefehlen“; nach BIS-2.2.3 ist `0 K₂ …` ein **einzelnes Maschinenwort** (mit Addition der Leitadresse nach K₂), und die Programmstück-Eingabe des MP wird dort mit `025 eingabeprogst` aufgerufen. Ob `01.` am Pult das Einlesen des Bandes auslöst, habe ich nicht aus dem BIS-Dokument herleiten können. **Entschieden 19.10.2026 (Projektinhaber): Die Prüfung am Pult ist nicht möglich, weil dafür ein vollständiges BIS-Minimalprogramm nötig ist; das ist nicht Gegenstand dieser Anforderung.** §3 Nr. 12 bis 14 bleibt wie in Dok. 01 festgelegt (Kurzform), ungeprüft; die Abweichungen (a) und (b) bleiben als Hinweis stehen und werden bei der BIS-Abnahme geprüft | Hinweis, außerhalb des Umfangs | Dok. 01 §1.8 Nr. 12 bis 14 und „Lesart und Grenzen“ (b) |
@@ -1028,7 +1111,7 @@ Die Triage nach S6-04 ist mit G6-014 **durchgesehen**. **Vollständig gelesen** 
 | Dok. 00 §6 (Entwurf 35), Dok. 06 M-21, M-34 | Leser-Gleichstand, Pult-Auslegungen | 10.5 (OP-35 (a) und (b), OP-34, erledigt) |
 | Dok. 07 §4 | `CHECKPOINT_Stufe1.md` fehlt | 10.5 (OP-36, geschlossen) |
 | Dok. 00 §6 (Entwurf 84), Dok. 01 §6.2 | Lampenmittelung | 10.5 (OP-37, bestätigt) |
-| Versionierung §8, §10.3 | Versionskennung der GRAFIK-Module | 10.5 (OP-38, erledigt) |
+| Versionierung §8, §10 | Versionskennung der GRAFIK-Module | 10.5 (OP-38, erledigt) |
 | CP Stufe 3 (Schreibwerkzeit), Dok. 10 §6.3 | Rechner-Thread in der Schreibwerkzeit, Testlaufzeit | 10.5 (OP-39, erprobt; OP-40, untersucht) |
 | `SW_Ton_Beschreibung.md` §14.1, `grafik_schreibwerk.py` | Klang für WR | 6.2, 6.10 Nr. 6, 10.5 (OP-42, entschieden) |
 | Versionierung 0.95-010 und 0.95-014, `projekt_C8205.zip` | Stand der Dateien im Archiv | 10.5 (OP-43, erledigt) |
@@ -1223,6 +1306,13 @@ Die 114 Zeilen aus Dokument 00 §2, **unveränderte Nummern und Daten, unveränd
 | 20.10.2026 | **Verzeichnisse der Geräte neu geordnet:** `virtuelle_Geraete/` heißt jetzt `Test-virtuelleGeraete/` und gehört nur dem TEST-Interpreter (`Leser1/`, `Leser1_02/`, `Leser2/`, `Stanzer1/`, `SW-Ausgabe/`, `T-SW-Eingabe/`). Neu ist ein leeres `virtuelle_Geraete/` mit `Leser1/`, `Leser2/`, `Stanzer1/` als Standardordner von GRAFIK. Die Trommel liegt in `Trommel/` (`trommel.txt`, `trommel.basp`, `trommel_r300_eingabe.txt`) und ist für beide Interpreter gemeinsam; die Einträge vom 15.10.2026 gelten mit dem neuen Pfad `Trommel/trommel.txt` | Projektstruktur |
 | 21.10.2026 | **E+ ohne M zeigt BZ in der Lampenreihe AR; G bei gehaltenem E löscht nur den Überlauf** *(Projektinhaber, 21.10.2026, OP-10 und OP-11)*: (1) Es wird unterschieden: `E+` ohne M+ zeigt im gehaltenen Zustand den BZ in den AR-Lampen, `E+` mit gehaltenem M+ erhöht AR und zeigt es an. (2) Nach Handbuch 4.1 Nr. 2 löscht G bei gehaltenem E nur den Überlauf; das ist allein richtig. Umsetzung in §3.8 und §10.5 (OP-10, OP-11); Fortsetzung des Halts wegen Überlauf am 21.10.2026 bestätigt (OP-41) | Dialog 21.10.2026 |
 | 21.10.2026 | **Eingabeklang beim Tastendruck** *(Projektinhaber, 21.10.2026, OP-09, Variante b)*: Der Klang einer Eingabe kommt, sobald das Zeichen im Puffer ist, auch wenn der Rechner es noch nicht angenommen hat; die Anzeige kommt weiter erst bei der Annahme. Umsetzung in §5.5, §6.2, §6.10 Nr. 3 und §10.5 (OP-09). Klarstellung: Der Ein-Zeichen-Puffer, von dem der Projektinhaber sprach, ist der des echten Geräts; der Software-Puffer (8 Eingaben) bleibt | Dialog 21.10.2026 |
+| 27.10.2026 | **Tempo der Knotenausführung (G4-017):** Der Knotengraph wird weiter wortlautgetreu aus der `.md` gelesen, aber beim Start einmal in eine Tabelle übersetzt (`Rechner._baue_plan`: Konnektor-Sprünge, Funktionen, Ausgänge); Normalknoten laufen ohne Neuauflösung. Knoten 2, Konnektor mit BR-Zeile, Endknoten, Knoten ohne Funktion und alle Knoten bei `--knotentest` laufen unverändert über `exec_node_lang`, der Ausgabe-Halt ohne Gerät über `_ausgabe_halt`. Verhalten, Zeitgeber (`_tick`) und Knotenzahl unverändert; gemessen rund 1,5-faches Tempo bei einer Rechenschleife (9,0 s → 5,9 s). Dasselbe in `lauf()` des TEST-Interpreters (0.95-012, dort 1,85-fach). Die Zeichenlage KB/GB des Schreibwerks bleibt in GRAFIK zufällig; nur der TEST-Interpreter setzt sie fest auf KB, und `grafik_gleichwertigkeit.py` setzt sie für den GRAFIK-Vergleichslauf ebenfalls auf KB. |
+| 27.10.2026 | **Tastengeräusche des Pults (G4-018, G2-015, `grafik_pultton.py` G4-002; Klickpegel 1,76; Grundgeräusch-Pegel 0,8 auf 0,68, `grafik_rechnerton.py` G4-005):** Drei Klänge für die drei Tastentypen (Impulstaste, Einrastschalter und K0 bis K3, Radiotasten), nur bei wirksamem Klick, **kein Ton beim Loslassen** (Projektinhaber 27.10.2026), Gruppe Pult von `--TON`, Pegel 1,6 gegen das Grundgeräusch; Einzelheiten §6.12. Hörprüfung offen. |
+| 27.10.2026 | **G stellt den Kanal der eingerasteten Kanaltaste ein (G4-019, Fehlerbehebung; Projektinhaber 27.10.2026):** Nach G galt immer K0, auch wenn K1, K2 oder K3 eingerastet war. Jetzt gilt der Kanal der Taste; nur wenn K0 eingerastet ist (Startzustand), gilt K0 mit T oder SW. Umsetzung `Rechner.kanaltaste` (c8205_grafik.py); Beschreibung in §3.3 bei „Die Taste G“. Prüfungen `grafik_kern_tests.py` (Klasse `GKanal`, 5). |
+| 29.10.2026 | **Vorzustand des SW nach dem Einschalten ist KB (Festlegung des Projektinhabers, G4-010):** ersetzt den unbestimmten Vorzustand vom 18.10.2026 (G3-008). Erstes Zeichen `a`, `1` ohne Umschaltzeichen; `A`, `!` mit `Um. GB`. Ändert §5.4; `grafik_sw.py` G4-010, `testscripte/grafik_sw_tests.py` (92 Tests) | §5.4 |
+| 30.10.2026 | **Zweiter Lochbandleser-Typ, Schalter `--LS-LESER-TYP=303\|FS751` (G4-022, `grafik_geraeteton.py` G4-006, `c8205_interp.py` 0.95-015; Auftrag des Projektinhabers):** 303 = Lochbandleser Modell 303 (elektrisch über Metallbürsten, 130 Zeichen/s, Standardleser, Standard des Schalters), FS751 = optoelektronisch, 750 Zeichen/s. Der Schalter gilt immer für beide Leser, im Modus TEST ist er erlaubt und ohne Wirkung, der Ton bleibt zunächst gleich. Der Auftrag schrieb den Typ einmal „FS751“, einmal „FS715“; angenommen werden beide Schreibweisen, die Doku nennt FS751 (Bestätigung des Namens steht aus). Nicht am Gerät mit Ton geprüft. |
+| 07.11.2026 | **Leserton für FS751 (G4-024, `grafik_geraeteton.py` G4-007; Auftrag des Projektinhabers, Aufnahme `lochstreifenleser_optisch.wav`, 5 s, Stereo, 44,1 kHz, hochgeladen):** Der Leser FS751 klingt anders als der 303. Aus der Aufnahme (gleichmäßiges Laufgeräusch mit etwa 0,3 s Anlauf und etwa 0,5 s Auslauf) wurden drei Mono-Klänge erzeugt (Mittel beider Kanäle): `ls_fs751_einzel.wav` (148 ms aus dem Anlauf, 5 ms ein- und ausgeblendet), `ls_fs751_dauer.wav` (3,55 s aus dem gleichmäßigen Teil 0,6 bis 4,2 s, Naht mit 50 ms Überblendung schleifenfähig) und `ls_fs751_ende.wav` (0,55 s, Auslauf der Aufnahme); alle drei Klänge auf 70 % abgesenkt (Lautstärke um 30 % verringert, Wunsch des Projektinhabers; Faktor in den Dateien, nicht im Pegel von `--TON`). Ablauf, Zeiten und Tempo unverändert (Einzelton, Dauerton, Aus nach `LS_AUS_S`); `--LS-LESER-TYP=303` spielt weiter `ls_einzel.wav`, `ls_dauer.wav`, `ls_ende.wav`. Die Aufteilung der Aufnahme in drei Klänge ist eine Annahme von Claude (Bestätigung steht aus). Nicht am Gerät mit Ton gehört. |
+| 30.10.2026 | **Tasten im Halt (G4-023, Fehlerbehebung; Projektinhaber 30.10.2026):** Mit `H` (Rechner im Halt) getippte Zeichen klangen zwar, wurden aber gepuffert und erschienen nach `R` alle im SW-Fenster. Jetzt: im Halt ohne aktiven `011` nur der Klang, nichts gepuffert, vorgepufferte Zeichen verfallen (§5.3, §5.5); mit aktivem `011` (Einzelschritt) wird angenommen. `grafik_sw.py` G4-011, `c8205_grafik.py` G4-023, Prüfungen `testscripte/grafik_sw_tests.py` (Klasse `HaltZustand`). |
 <!-- REGISTER-ENDE -->
 
 ## Anhang B Übersetzungstabelle alt → neu
@@ -1334,3 +1424,7 @@ Nicht aufgenommen (Treffer ohne Kennungscharakter, z. B. Normen, Zeichen, Teilen
 | `markdown-dateien/C8205-Interpreter-Pult_Tastentest_GRAFIK.md` | 2 | Verweise umstellen (S6-07/S6-08) |
 | `markdown-dateien/C8205-Interpreter-Lochstreifenleser.md` | 1 | Verweise umstellen (S6-07/S6-08) |
 | `ton/SW_Ton_Beschreibung.md` | 15 | Verweise umstellen (S6-07/S6-08) |
+
+## Knotengrenze in GRAFIK (G4-014/G4-015, 26.10.2026)
+
+In GRAFIK ist der Endlosschleifen-Schutz eine Rechenzeit: 1000 Knoten entsprechen 1 ms (Annahme von Claude, Auftrag des Projektinhabers), die Grenze je `lauf()` ist seit G4-015 18 000 000 ms (5 Stunden), das sind 18 000 000 000 Knoten; GRAFIK muss 5 Stunden am Stück laufen können (Auftrag des Projektinhabers) (`KNOTEN_JE_MS`, `MAX_ZEIT_MS` in `c8205_grafik.py`). Der Schalter `--max-knoten` gibt es nur im Modus TEST (Standard dort 2 000 000).

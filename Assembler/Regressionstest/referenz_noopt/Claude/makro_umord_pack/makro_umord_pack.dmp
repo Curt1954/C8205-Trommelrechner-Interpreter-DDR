@@ -1,0 +1,18 @@
+0000: 01 0001 000           000    haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 0000 020    haupt: 020    0            ; Zelle 0001: Halt (die UP werden nicht aufgerufen, nur erzeugt)
+0002: 01 3000        kopf:  da     000000000003 ; Zelle 0002: Adresse der Marke am Aufruf von M4A (Wert der Marke mal 01000)
+0003: 00 00000000701 m4a:   dw     0701         ; erste Rumpfzelle (Marke fuer den Test)
+0004: 20 0016               db     012          ; 012 Arbeitszellen
+0016: 00 00000000702        dw     0702         ; letzte Rumpfzelle (Marke fuer den Test)
+      20 0000 0100          equ100 00100        ; erste Anweisung: auf die naechste 0100-Grenze (Gruppe 1)
+0100: 00 00000000731        dw     0731         ; erste Rumpfzelle (Marke fuer den Test)
+0101: 20 0137               db     036          ; 036 Arbeitszellen
+0137: 00 00000000732        dw     0732         ; letzte Rumpfzelle (Marke fuer den Test)
+0140: 00 00000000711        dw     0711         ; erste Rumpfzelle (Marke fuer den Test)
+0141: 20 0147               db     06           ; 06 Arbeitszellen
+0147: 00 00000000712        dw     0712         ; letzte Rumpfzelle (Marke fuer den Test)
+0150: 00 00000000721        dw     0721         ; erste Rumpfzelle (Marke fuer den Test)
+0151: 20 0155               db     04           ; 04 Arbeitszellen
+0155: 00 00000000722        dw     0722         ; letzte Rumpfzelle (Marke fuer den Test)
+0156: 00 00000000111 t1:    dw     0111         ; Programmrest, Zelle 1
+0157: 00 00000000222 t2:    dw     0222         ; Programmrest, Zelle 2

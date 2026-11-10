@@ -1,0 +1,28 @@
+            000         haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+wert:       dw          017         ; Zelle 0001: Konstante 017
+erg:        dw          0           ; Zelle 0002: Ergebnis
+eins:       dw          1           ; Zelle 0003: Konstante 1
+rueck:      db          1           ; Zelle 0004: Rueckkehrwort der Unterprogramme (Laufzeit: 000 <Rueckkehradresse>)
+drei:       dw          3           ; Zelle 0005: Konstante 3 aus der Variablen n
+haupt:      211         wert        ; AC := wert (017)
+            240         erg         ; erg := AC
+            025         verdopple   ; UP aus teile/bibl.inc: erg := erg + erg
+            025         plus1       ; UP aus teile/bibl2.inc (dort eingebunden): erg := erg + 1
+            025         plus3       ; UP aus teile/bibl2.inc: erg := erg + drei
+            164         0001        ; Diagnoseausgabe (nur im Test)
+            020         0           ; Halt
+verdopple:  240         rueck       ; erste Zeile des UP: Rueckkehrwort sichern
+            211         erg         ; AC := erg
+            210         erg         ; AC := AC + erg
+            240         erg         ; erg := AC
+            000         rueck       ; zurueck zum Aufrufer
+plus1:      240         rueck       ; erste Zeile des UP: Rueckkehrwort sichern
+            211         erg         ; AC := erg
+            210         eins        ; AC := AC + 1
+            240         erg         ; erg := AC
+            000         rueck       ; zurueck zum Aufrufer
+plus3:      240         rueck       ; erste Zeile des UP: Rueckkehrwort sichern
+            211         erg         ; AC := erg
+            210         drei        ; AC := AC + 3
+            240         erg         ; erg := AC
+            000         rueck       ; zurueck zum Aufrufer

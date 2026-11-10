@@ -1,0 +1,449 @@
+0000: 01 0513 240    gk_ausgabe:   240    zabs         ; Eintritt, Zahl im AC: merken
+0001: 01 0004 040                  040    gk_n         ; z0 gesetzt: negativ
+      00 0400 030                  dto    +            ; Vorzeichen + drucken
+0003: 01 0010 000                  000    gk_c         ; weiter
+      00 1000 030    gk_n:         dto    -            ; Vorzeichen - drucken
+0005: 01 0513 211                  211    zabs         ; AC := z
+0006: 01 2031 200                  200    l0001        ; z0 loeschen: Betrag
+0007: 01 0513 240                  240    zabs         ; Betrag merken
+0010: 01 0513 211    gk_c:         211    zabs         ; AC := |z|
+0011: 01 2032 330                  330    l0002        ; mit 0 vergleichen
+0012: 01 0104 170                  170    gk_null      ; gleich: Null
+0013: 01 2033 200                  200    l0003        ; Mantisse (26 Bit) ausblenden
+0014: 01 7662 644                  644    07662        ; 6 links: Bruch m = 0,5 bis 1 (32 Bit)
+0015: 01 0514 240                  240    aa           ; Bruch a merken
+0016: 01 0513 211                  211    zabs         ; AC := |z|
+0017: 01 7656 642                  642    07656        ; 26 rechts: e' = e + 32
+0020: 01 0517 240                  240    e1           ; e' merken
+0021: 01 2034 211                  211    l0004        ; AC := Adresse des letzten Tabellenworts (10^9)
+0022: 01 0521 240                  240    idx          ; Suchzeiger
+0023: 01 0521 211    gk_sl:        211    idx          ; Suchschleife: AC := Zeiger
+0024: 00 0000 251                  251    0            ; AC := T10[Zeiger]
+0025: 01 0522 240                  240    tmp          ; Tabellenwert merken
+0026: 01 0513 211                  211    zabs         ; AC := |z|
+0027: 01 0522 330                  330    tmp          ; |z| mit Tabellenwert vergleichen
+0030: 01 0035 150                  150    gk_gef       ; |z| >= Tabellenwert: gefunden (Abbruchwort 0 trifft immer)
+0031: 01 0521 211                  211    idx          ; Zeiger
+0032: 01 2035 220                  220    l0005        ; ein Wort tiefer
+0033: 01 0521 240                  240    idx          ; Zeiger merken
+0034: 01 0023 000                  000    gk_sl        ; weiter suchen
+0035: 01 0521 211    gk_gef:       211    idx          ; Zeiger i
+0036: 01 2036 220                  220    l0006        ; i - 9 = E (in Adresseneinheiten)
+0037: 01 0523 240                  240    ea           ; E * 01000 merken
+0040: 01 0514 211                  211    aa           ; Bruch a
+0041: 01 7640 440                  440    07640        ; a in alle Zellen der Arbeitsspur
+0042: 01 0521 211                  211    idx          ; Zeiger
+0043: 01 2037 210                  210    l0007        ; 20 Worte weiter: Tabelle P
+0044: 00 0000 251                  251    0            ; AC := P (Faktor)
+0045: 01 7640 472                  472    07640        ; Teilprodukte
+0046: 01 2040 211                  211    l0008        ; Rundung 2^-1
+0047: 01 7640 412                  412    07640        ; AC := a * P
+0050: 01 0524 240                  240    ww           ; Produkt merken
+0051: 01 0521 211                  211    idx          ; Zeiger
+0052: 01 2041 210                  210    l0009        ; 40 Worte weiter: Tabelle p
+0053: 00 0000 251                  251    0            ; AC := p
+0054: 01 0526 240                  240    pq           ; p merken
+0055: 01 2042 211                  211    l0010        ; 62
+0056: 01 0517 220                  220    e1           ; - e'
+0057: 01 0526 220                  220    pq           ; - p = s - 2
+0060: 01 0527 240                  240    cnt          ; Zaehler
+0061: 01 0524 211    gk_sh:        211    ww           ; Schiebeschleife: AC := Produkt
+0062: 01 2032 212                  212    l0002        ; 1 rechts
+0063: 01 0524 240                  240    ww           ; merken
+0064: 01 0527 211                  211    cnt          ; Zaehler
+0065: 01 2043 220                  220    l0011        ; - 1
+0066: 01 0527 240                  240    cnt          ; merken
+0067: 01 0061 050                  050    gk_sh        ; s-1 Schritte
+0070: 01 0524 211                  211    ww           ; AC := Produkt
+0071: 01 2043 210                  210    l0011        ; + 1 (Rundung)
+0072: 01 2032 212                  212    l0002        ; letzter Schritt rechts
+0073: 01 0530 240                  240    nn           ; N = 10^7 bis 10^8
+0074: 01 2044 220                  220    l0012        ; N - 10^8
+0075: 01 0106 040                  040    gk_prt       ; kleiner: in Ordnung
+0076: 01 2045 211                  211    l0013        ; N := 10^7
+0077: 01 0530 240                  240    nn           ; merken
+0100: 01 0523 211                  211    ea           ; E
+0101: 01 2035 210                  210    l0005        ; E + 1
+0102: 01 0523 240                  240    ea           ; merken
+0103: 01 0106 000                  000    gk_prt       ; drucken
+0104: 01 0530 241    gk_null:      241    nn           ; Null: N := 0
+0105: 01 0523 241                  241    ea           ; E := 0
+      00 0200 030    gk_prt:       dto    0            ; Druck: 0
+      00 1530 030                  dto    ,            ; Dezimalkomma
+0110: 01 2046 211                  211    l0014        ; Zeiger auf 10^7
+0111: 01 0531 240                  240    pwi          ; merken
+0112: 01 2047 211                  211    l0015        ; 8 Ziffern
+0113: 01 0534 240                  240    dcnt         ; Zaehler
+0114: 01 0531 211    gk_nd:        211    pwi          ; naechste Ziffer: Zeiger
+0115: 00 0000 251                  251    0            ; AC := Zehnerpotenz
+0116: 01 0535 240                  240    pwv          ; merken
+0117: 01 0536 241                  241    dg           ; Ziffer := 0
+0120: 01 0530 211    gk_sb:        211    nn           ; Subtraktionsschleife: N
+0121: 01 0535 220                  220    pwv          ; - Zehnerpotenz
+0122: 01 0130 040                  040    gk_sd        ; negativ: Ziffer fertig
+0123: 01 0530 240                  240    nn           ; N verkleinern
+0124: 01 0536 211                  211    dg           ; Ziffer
+0125: 01 2035 210                  210    l0005        ; + 1 (Adresseneinheit)
+0126: 01 0536 240                  240    dg           ; merken
+0127: 01 0120 000                  000    gk_sb        ; weiter
+0130: 01 0165 025    gk_sd:        025    prdig        ; Ziffer drucken
+0131: 01 0531 211                  211    pwi          ; Zeiger
+0132: 01 2035 210                  210    l0005        ; naechstes Wort
+0133: 01 0531 240                  240    pwi          ; merken
+0134: 01 0534 211                  211    dcnt         ; Zaehler
+0135: 01 2043 220                  220    l0011        ; - 1
+0136: 01 0534 240                  240    dcnt         ; merken
+0137: 01 0114 050                  050    gk_nd        ; 8 Ziffern
+      00 0450 030                  dto    e            ; Exponentenzeichen
+0141: 01 0523 211                  211    ea           ; E
+0142: 01 0145 040                  040    gk_en        ; negativ
+      00 0400 030                  dto    +            ; Vorzeichen +
+0144: 01 0150 000                  000    gk_ex        ; weiter
+      00 1000 030    gk_en:        dto    -            ; Vorzeichen -
+0146: 01 0523 221                  221    ea           ; AC := -E
+0147: 01 0523 240                  240    ea           ; |E| merken
+0150: 01 0523 211    gk_ex:        211    ea           ; |E|
+0151: 01 2050 220                  220    l0016        ; - 10
+0152: 01 0157 040                  040    gk_t0        ; unter 10: Zehnerziffer 0
+0153: 01 0523 240                  240    ea           ; |E| - 10
+0154: 01 2035 211                  211    l0005        ; Ziffer 1
+0155: 01 0536 240                  240    dg           ; merken
+0156: 01 0160 000                  000    gk_t1        ; drucken
+0157: 01 0536 241    gk_t0:        241    dg           ; Ziffer 0
+0160: 01 0165 025    gk_t1:        025    prdig        ; Zehnerziffer drucken
+0161: 01 0523 211                  211    ea           ; Einerziffer
+0162: 01 0536 240                  240    dg           ; merken
+0163: 01 0165 025                  025    prdig        ; Einerziffer drucken
+0164: 20 0165        gk_rueck:     db     1            ; Rueckkehrwort vom Aufrufer, wird zuletzt durchlaufen (010)
+0165: 01 0173 240    prdig:        240    pr_rueck     ; UP Ziffer drucken: Rueckkehrwort sichern
+0166: 01 0536 211                  211    dg           ; Ziffer * 01000
+0167: 01 2051 210                  210    l0017        ; + Adresse der Ausgabebefehle
+0170: 00 0000 251                  251    0            ; AC := Ausgabebefehl der Ziffer
+0171: 01 0172 240                  240    pr           ; auf die naechste Zelle legen
+0172: 20 0173        pr:           db     1            ; Laufzeit: Ausgabebefehl, druckt die Ziffer
+0173: 20 0174        pr_rueck:     db     1            ; Rueckkehrwort, wird durchlaufen (010)
+0174: 01 0530 241    gk_eingabe:   241    nn           ; N := 0
+0175: 01 0534 241                  241    dcnt         ; Phase := 0 (vor dem Punkt)
+0176: 01 0535 241                  241    pwv          ; Vorzeichenmerker := 0
+0177: 01 0523 241                  241    ea           ; Dezimalexponent k := 0
+0200: 01 0500 011    gk_rd:        011    tab          ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen selbst)
+0201: 01 2052 330                  330    l0018        ; Vergleich mit 10
+0202: 01 0200 170                  170    gk_rd        ; gleich 10: Plus, uebergehen
+0203: 01 0247 150                  150    gk_e         ; groesser: e
+0204: 01 0522 240    gk_dg:        240    tmp          ; Ziffer merken
+0205: 01 0534 211                  211    dcnt         ; Phase
+0206: 01 2053 330                  330    l0019        ; Exponent?
+0207: 01 0237 170                  170    gk_xz        ; ja: Exponentenziffer
+0210: 01 0530 211                  211    nn           ; N
+0211: 01 2054 330                  330    l0020        ; noch Platz fuer eine Stelle (N*10+9 < 2^32)?
+0212: 01 0227 150                  150    gk_fl        ; nein
+0213: 01 0214 004                  004    *+1          ; 2 N
+0214: 01 0215 004                  004    *+1          ; 4 N
+0215: 01 0530 210                  210    nn           ; 5 N
+0216: 01 0217 004                  004    *+1          ; 10 N
+0217: 01 0522 210                  210    tmp          ; + Ziffer
+0220: 01 0530 240                  240    nn           ; N merken
+0221: 01 0534 211                  211    dcnt         ; Phase
+0222: 01 2032 330                  330    l0002        ; vor dem Punkt?
+0223: 01 0200 170                  170    gk_rd        ; ja: weiter
+0224: 01 0523 211                  211    ea           ; hinter dem Punkt: k := k - 1
+0225: 01 2035 220                  220    l0005        ; ... - 1
+0226: 01 0235 000                  000    gk_ke        ; speichern
+0227: 01 0534 211    gk_fl:        211    dcnt         ; N voll: Phase
+0230: 01 2032 330                  330    l0002        ; vor dem Punkt?
+0231: 01 0233 170                  170    gk_pi        ; ja: k := k + 1
+0232: 01 0200 000                  000    gk_rd        ; nein: Ziffer verwerfen
+0233: 01 0523 211    gk_pi:        211    ea           ; k
+0234: 01 2035 210                  210    l0005        ; + 1
+0235: 01 0523 240    gk_ke:        240    ea           ; k merken
+0236: 01 0200 000                  000    gk_rd        ; naechstes Zeichen
+0237: 01 0524 211    gk_xz:        211    ww           ; Exponentenziffer: Exponent
+0240: 01 0241 004                  004    *+1          ; 2 x
+0241: 01 0242 004                  004    *+1          ; 4 x
+0242: 01 0524 210                  210    ww           ; 5 x
+0243: 01 0244 004                  004    *+1          ; 10 x
+0244: 01 0522 210                  210    tmp          ; + Ziffer
+0245: 01 0524 240                  240    ww           ; merken
+0246: 01 0200 000                  000    gk_rd        ; weiter
+0247: 01 0535 211    gk_e:         211    pwv          ; e: Vorzeichen der Mantisse
+0250: 01 0513 240                  240    zabs         ; merken
+0251: 01 0535 241                  241    pwv          ; Vorzeichenmerker := 0 (jetzt fuer den Exponenten)
+0252: 01 0524 241                  241    ww           ; Exponentenwert := 0
+0253: 01 2053 211                  211    l0019        ; Phase 2
+0254: 01 0534 240                  240    dcnt         ; merken
+0255: 01 0200 000                  000    gk_rd        ; weiter
+0256: 01 2043 211    gk_pt:        211    l0011        ; Komma: Phase 1 (Nachkommastellen)
+0257: 01 0534 240                  240    dcnt         ; merken
+0260: 01 0200 000                  000    gk_rd        ; weiter
+0261: 01 2043 211    gk_mi:        211    l0011        ; Minus: Merker setzen
+0262: 01 0535 240                  240    pwv          ; merken
+0263: 01 0200 000                  000    gk_rd        ; weiter
+0264: 01 0534 211    gk_te:        211    dcnt         ; Phase
+0265: 01 2053 330                  330    l0019        ; Exponent vorhanden?
+0266: 01 0272 170                  170    gk_x         ; ja
+0267: 01 0535 211                  211    pwv          ; nein: Merker ist das Vorzeichen der Mantisse
+0270: 01 0513 240                  240    zabs         ; merken
+0271: 01 0305 000                  000    gk_nx        ; weiter
+0272: 01 0524 211    gk_x:         211    ww           ; Exponentenwert
+0273: 01 7653 644                  644    07653        ; 9 links: in Adresseneinheiten
+0274: 01 0522 240                  240    tmp          ; merken
+0275: 01 0535 211                  211    pwv          ; Vorzeichen des Exponenten
+0276: 01 2032 330                  330    l0002        ; Vergleich mit 0
+0277: 01 0523 211                  211    ea           ; k
+0300: 01 0303 170                  170    gk_pe        ; Exponent positiv
+0301: 01 0522 220                  220    tmp          ; k - Exponent
+0302: 01 0304 000                  000    gk_ne        ; weiter
+0303: 01 0522 210    gk_pe:        210    tmp          ; k + Exponent
+0304: 01 0523 240    gk_ne:        240    ea           ; k merken
+0305: 01 2055 211    gk_nx:        211    l0021        ; Exponentenfeld fuer N: 64
+0306: 01 0517 240                  240    e1           ; merken
+0307: 01 0530 211                  211    nn           ; N
+0310: 01 2032 330                  330    l0002        ; Null?
+0311: 01 0417 170                  170    gk_rueck_ein ; ja: Ergebnis 0 (AC = 0)
+0312: 01 2040 330    gk_nl:        330    l0008        ; Normieren: Bit z1 gesetzt?
+0313: 01 0323 150                  150    gk_nf        ; ja: fertig
+0314: 01 0315 004                  004    *+1          ; sonst 1 links
+0315: 01 0530 240                  240    nn           ; merken
+0316: 01 0517 211                  211    e1           ; Exponentenfeld
+0317: 01 2043 220                  220    l0011        ; - 1
+0320: 01 0517 240                  240    e1           ; merken
+0321: 01 0530 211                  211    nn           ; AC := N
+0322: 01 0312 000                  000    gk_nl        ; weiter
+0323: 01 0514 240    gk_nf:        240    aa           ; Bruch a (0,5 bis 1)
+0324: 01 0523 211    gk_ml:        211    ea           ; Multiplikationsschleife: k
+0325: 01 2032 330                  330    l0002        ; fertig?
+0326: 01 0375 170                  170    gk_pk        ; ja: packen
+0327: 01 2056 330                  330    l0022        ; k mit +9 vergleichen
+0330: 01 0332 140                  140    gk_a         ; kleiner oder gleich
+0331: 01 2056 211                  211    l0022        ; k := +9
+0332: 01 2057 330    gk_a:         330    l0023        ; mit -9 vergleichen
+0333: 01 0335 150                  150    gk_b         ; groesser oder gleich
+0334: 01 2057 211                  211    l0023        ; k := -9
+0335: 01 0522 240    gk_b:         240    tmp          ; Schritt j
+0336: 01 2060 211                  211    l0024        ; Adresse von 10^0
+0337: 01 0522 210                  210    tmp          ; + j: Adresse von 10^j
+0340: 00 0000 251                  251    0            ; AC := Tabellenwort (dwg)
+0341: 01 0521 240                  240    idx          ; merken
+0342: 01 2033 200                  200    l0003        ; Mantisse (26 Bit)
+0343: 01 7662 644                  644    07662        ; 6 links: Bruch m (32 Bit)
+0344: 01 0524 240                  240    ww           ; merken
+0345: 01 0514 211                  211    aa           ; Bruch a
+0346: 01 7640 440                  440    07640        ; a in alle Zellen der Arbeitsspur
+0347: 01 0524 211                  211    ww           ; m
+0350: 01 7640 472                  472    07640        ; Teilprodukte
+0351: 01 2040 211                  211    l0008        ; Rundung 2^-1
+0352: 01 7640 412                  412    07640        ; AC := a * m
+0353: 01 0514 240                  240    aa           ; merken
+0354: 01 0521 211                  211    idx          ; Tabellenwort
+0355: 01 7656 642                  642    07656        ; 26 rechts: Exponentenfeld
+0356: 01 0517 210                  210    e1           ; + e1
+0357: 01 2061 220                  220    l0025        ; - 32
+0360: 01 0517 240                  240    e1           ; merken
+0361: 01 0514 211                  211    aa           ; Produkt
+0362: 01 2040 330                  330    l0008        ; Bit z1 gesetzt?
+0363: 01 0371 150                  150    gk_n1        ; ja
+0364: 01 0365 004                  004    *+1          ; sonst 1 links
+0365: 01 0514 240                  240    aa           ; merken
+0366: 01 0517 211                  211    e1           ; Exponentenfeld
+0367: 01 2043 220                  220    l0011        ; - 1
+0370: 01 0517 240                  240    e1           ; merken
+0371: 01 0523 211    gk_n1:        211    ea           ; k
+0372: 01 0522 220                  220    tmp          ; - j
+0373: 01 0523 240                  240    ea           ; merken
+0374: 01 0324 000                  000    gk_ml        ; weiter
+0375: 01 0514 211    gk_pk:        211    aa           ; Packen: Bruch a
+0376: 01 7677 642                  642    07677        ; 5 rechts
+0377: 01 2043 210                  210    l0011        ; + 1 (Rundung, kein Ueberlauf moeglich)
+0400: 01 7663 642                  642    07663        ; 1 rechts: M = 26-Bit-Mantisse (2^25 bis 2^26)
+0401: 01 0514 240                  240    aa           ; merken
+0402: 01 7656 642                  642    07656        ; 26 rechts: 1 bei Rundungsueberlauf (M = 2^26), sonst 0
+0403: 01 7673 644                  644    07673        ; 25 links: 2^25 bei Ueberlauf (Exponent +1, Mantisse 0,5)
+0404: 01 0514 210                  210    aa           ; + M
+0405: 01 0514 240                  240    aa           ; merken
+0406: 01 0517 211                  211    e1           ; Exponentenfeld
+0407: 01 7656 644                  644    07656        ; 26 links
+0410: 01 0514 210                  210    aa           ; + Mantisse
+0411: 01 0514 240                  240    aa           ; merken
+0412: 01 0513 211                  211    zabs         ; Vorzeichen
+0413: 01 2032 330                  330    l0002        ; positiv?
+0414: 01 0514 211                  211    aa           ; AC := Ergebnis
+0415: 01 0417 170                  170    gk_rueck_ein ; ja: zurueck
+0416: 01 2062 210                  210    l0026        ; z0 setzen: negativ (Wert -2^32 addieren)
+0417: 20 0420        gk_rueck_ein: db     1            ; Laufzeit: Rueckkehrwort (am UP-Ende sequentiell erreicht)
+      20 0000 0500                 equ100 00500        ; tab muss durch 0100 teilbar sein
+0500: 0              tab:          dw     0            ; 00: Ziffer 0 (Tabellenanfang)
+0501: 00 00000000001               dw     1            ; 01: Ziffer 1
+0502: 00 00000000002               dw     2            ; 02: Ziffer 2
+0503: 00 00000000003               dw     3            ; 03: Ziffer 3
+0504: 00 00000000004               dw     4            ; 04: Ziffer 4
+0505: 00 00000000005               dw     5            ; 05: Ziffer 5
+0506: 00 00000000006               dw     6            ; 06: Ziffer 6
+0507: 00 00000000007               dw     7            ; 07: Ziffer 7
+0510: 00 00000000010               dw     8            ; 10: Ziffer 8
+0511: 00 00000000011               dw     9            ; 11: Ziffer 9
+0512: 01 0200 000                  000    gk_rd        ; 12: Leertaste: Sprungzeichen, uebergehen
+0513: 20 0514        zabs:         db     1            ; 13: Arbeitszelle |z| bzw. Vorzeichen der Mantisse
+0514: 20 0515        aa:           db     1            ; 14: Arbeitszelle Bruch der Mantisse
+0515: 01 0200 000                  000    gk_rd        ; 15: Doppelpunkt: Sprungzeichen, uebergehen
+0516: 01 0200 000                  000    gk_rd        ; 16: Irrung Satz: Sprungzeichen, uebergehen
+0517: 20 0520        e1:           db     1            ; 17: Arbeitszelle e'
+0520: 00 00000000012               dw     10           ; 20: Plus: Wert 10
+0521: 20 0522        idx:          db     1            ; 21: Arbeitszelle Suchzeiger bzw. Tabellenwort
+0522: 20 0523        tmp:          db     1            ; 22: Arbeitszelle Tabellenwert bzw. Ziffer
+0523: 20 0524        ea:           db     1            ; 23: Arbeitszelle E * 01000 bzw. k
+0524: 20 0525        ww:           db     1            ; 24: Arbeitszelle Produkt bzw. Exponentenwert
+0525: 00 00000000013               dw     11           ; 25: e: Wert 11
+0526: 20 0527        pq:           db     1            ; 26: Arbeitszelle p
+0527: 20 0530        cnt:          db     1            ; 27: Arbeitszelle Zaehler
+0530: 20 0531        nn:           db     1            ; 30: Arbeitszelle N
+0531: 20 0532        pwi:          db     1            ; 31: Arbeitszelle Zeiger Zehnerpotenz
+0532: 01 0200 000                  000    gk_rd        ; 32: WRZL: Sprungzeichen, uebergehen
+0533: 01 0264 000                  000    gk_te        ; 33: Punkt: Sprungzeichen, Eingabeende
+0534: 20 0535        dcnt:         db     1            ; 34: Arbeitszelle Ziffernzaehler bzw. Phase
+0535: 20 0536        pwv:          db     1            ; 35: Arbeitszelle Zehnerpotenz bzw. Vorzeichenmerker
+0536: 20 0537        dg:           db     1            ; 36: Arbeitszelle Ziffer * 01000
+0537: 01 0200 000                  000    gk_rd        ; 37: Um. GB: Sprungzeichen, uebergehen
+0540: 01 0261 000                  000    gk_mi        ; 40: Minus: Sprungzeichen, Vorzeichen
+      00 0200 030    zif:          dto    0123456789   ; 41 bis 52: Ausgabebefehle der Ziffern 0 bis 9
+      00 0010 030    ;    
+      00 0020 030    ;    
+      00 0230 030    ;    
+      00 0040 030    ;    
+      00 0250 030    ;    
+      00 0260 030    ;    
+      00 0070 030    ;    
+      00 0100 030    ;    
+      00 0310 030    ;    
+0553: 0                            dw     0            ; 53: frei
+0554: 0                            dw     0            ; 54: frei
+0555: 0                            dw     0            ; 55: frei
+0556: 0                            dw     0            ; 56: frei
+0557: 01 0200 000                  000    gk_rd        ; 57: Um. KB: Sprungzeichen, uebergehen
+0560: 01 0200 000                  000    gk_rd        ; 60: Strichpunkt: Sprungzeichen, uebergehen
+0561: 00 00046113200 pw0:          dw     10000000     ; 61: Zehnerpotenzen 10^7 bis 10^0 (61 bis 70)
+0562: 00 00003641100               dw     1000000      ; 62: 10^6
+0563: 00 00000303240               dw     100000       ; 63: 10^5
+0564: 00 00000023420               dw     10000        ; 64: 10^4
+0565: 00 00000001750               dw     1000         ; 65: 10^3
+0566: 00 00000000144               dw     100          ; 66: 10^2
+0567: 00 00000000012               dw     10           ; 67: 10^1
+0570: 00 00000000001               dw     1            ; 70: 10^0
+0571: 0                            dw     0            ; 71: frei
+0572: 01 0200 000                  000    gk_rd        ; 72: BM: Sprungzeichen, uebergehen
+0573: 01 0256 000                  000    gk_pt        ; 73: Komma: Sprungzeichen, Dezimalkomma
+0574: 0                            dw     0            ; 74: frei
+0575: 01 0200 000                  000    gk_rd        ; 75: Tabulator: Sprungzeichen, uebergehen
+0576: 0                            dw     0            ; 76: frei
+0577: 0                            dw     0            ; 77: frei
+0600: 0                            dw     0            ; i=0 Abbruchwort (|z| < 10^-9)
+0601: 00 01611340575               dwg    1E-9         ; i=1: 10^-9
+0602: 00 03253630734               dwg    1E-8         ; i=2: 10^-8
+0603: 00 04726577123               dwg    1E-7         ; i=3: 10^-7
+0604: 00 06606157364               dwg    1E-6         ; i=4: 10^-6
+0605: 00 10247613261               dwg    1E-5         ; i=5: 10^-5
+0606: 00 11721556135               dwg    1E-4         ; i=6: 10^-4
+0607: 00 13603044672               dwg    1E-3         ; i=7: 10^-3
+0610: 00 15243656051               dwg    1E-2         ; i=8: 10^-2
+0611: 00 16714631463 t10_9:        dwg    1E-1         ; i=9: 10^-1
+0612: 00 20600000000 t10_0:        dwg    1E0          ; i=10: 10^0
+0613: 00 22240000000               dwg    1E1          ; i=11: 10^1
+0614: 00 23710000000               dwg    1E2          ; i=12: 10^2
+0615: 00 25372000000               dwg    1E3          ; i=13: 10^3
+0616: 00 27234200000               dwg    1E4          ; i=14: 10^4
+0617: 00 30703240000               dwg    1E5          ; i=15: 10^5
+0620: 00 32364110000               dwg    1E6          ; i=16: 10^6
+0621: 00 34230455000               dwg    1E7          ; i=17: 10^7
+0622: 00 35676570200               dwg    1E8          ; i=18: 10^8
+0623: 00 37356326240 t10_19:       dwg    1E9          ; i=19: 10^9
+0624: 00 26150536057               dw     026150536057 ; i=0: P fuer 10^(8--9)
+0625: 00 21606744677               dw     021606744677 ; i=1: P fuer 10^(8--8)
+0626: 00 34327724462               dw     034327724462 ; i=2: P fuer 10^(8--7)
+0627: 00 26571420364               dw     026571420364 ; i=3: P fuer 10^(8--6)
+0630: 00 22141163452               dw     022141163452 ; i=4: P fuer 10^(8--5)
+0631: 00 35065122420               dw     035065122420 ; i=5: P fuer 10^(8--4)
+0632: 00 27220733500               dw     027220733500 ; i=6: P fuer 10^(8--3)
+0633: 00 22500574400               dw     022500574400 ; i=7: P fuer 10^(8--2)
+0634: 00 35632624000               dw     035632624000 ; i=8: P fuer 10^(8--1)
+0635: 00 27657020000               dw     027657020000 ; i=9: P fuer 10^(8-0)
+0636: 00 23045500000               dw     023045500000 ; i=10: P fuer 10^(8-1)
+0637: 00 36411000000               dw     036411000000 ; i=11: P fuer 10^(8-2)
+0640: 00 30324000000               dw     030324000000 ; i=12: P fuer 10^(8-3)
+0641: 00 23420000000               dw     023420000000 ; i=13: P fuer 10^(8-4)
+0642: 00 37200000000               dw     037200000000 ; i=14: P fuer 10^(8-5)
+0643: 00 31000000000               dw     031000000000 ; i=15: P fuer 10^(8-6)
+0644: 00 24000000000               dw     024000000000 ; i=16: P fuer 10^(8-7)
+0645: 00 20000000000               dw     020000000000 ; i=17: P fuer 10^(8-8)
+0646: 00 31463146315               dw     031463146315 ; i=18: P fuer 10^(8-9)
+0647: 00 24365605075               dw     024365605075 ; i=19: P fuer 10^(8-10)
+0650: 00 00000000071               dw     57           ; i=0: p
+0651: 00 00000000066               dw     54           ; i=1: p
+0652: 00 00000000062               dw     50           ; i=2: p
+0653: 00 00000000057               dw     47           ; i=3: p
+0654: 00 00000000054               dw     44           ; i=4: p
+0655: 00 00000000050               dw     40           ; i=5: p
+0656: 00 00000000045               dw     37           ; i=6: p
+0657: 00 00000000042               dw     34           ; i=7: p
+0660: 00 00000000036               dw     30           ; i=8: p
+0661: 00 00000000033               dw     27           ; i=9: p
+0662: 00 00000000030               dw     24           ; i=10: p
+0663: 00 00000000024               dw     20           ; i=11: p
+0664: 00 00000000021               dw     17           ; i=12: p
+0665: 00 00000000016               dw     14           ; i=13: p
+0666: 00 00000000012               dw     10           ; i=14: p
+0667: 00 00000000007               dw     7            ; i=15: p
+0670: 00 00000000004               dw     4            ; i=16: p
+0671: 00 00000000001               dw     1            ; i=17: p
+0672: 00 77777777775               dw     -3           ; i=18: p
+0673: 00 77777777772               dw     -6           ; i=19: p
+      20 0000 2000                 equ    02000        ; relative Adresse 02000
+2000: 00 4500 030    haupt:        030    04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 1170 030                  dz     $inkb        ; Umschaltung in Kleinbuchstabe
+      00 2720 030                  dz     $wrzl        ; Zeilenschaltung
+2003: 00 4700 030                  030    04700        ; 4700 oder K0 oder SW1 Input oder KON Input
+2004: 01 2025 211    lese:         211    rwe          ; Rueckkehrwort der Eingabe
+2005: 01 0417 240                  240    gk_rueck_ein ; in die Rueckkehrzelle von gk_eingabe
+2006: 01 0174 000                  000    gk_eingabe   ; Zahl einlesen, Ergebnis im AC
+2007: 01 2027 240    nache:        240    zw           ; gk-Zahl merken
+2010: 00 4500 030                  030    04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+      00 1170 030                  dz     $inkb        ; Umschaltung in Kleinbuchstabe
+2012: 01 2026 211                  211    rwa          ; Rueckkehrwort der Ausgabe
+2013: 01 0164 240                  240    gk_rueck     ; in die Rueckkehrzelle von gk_ausgabe
+2014: 01 2027 211                  211    zw           ; gk-Zahl in den AC
+2015: 01 0000 000                  000    gk_ausgabe   ; Zahl ausgeben
+      00 2720 030    nacha:        dz     $wrzl        ; Zeilenschaltung
+2017: 00 4700 030                  030    04700        ; 4700 oder K0 oder SW1 Input oder KON Input
+2020: 01 2030 211                  211    zn           ; Zaehler
+2021: 01 2043 220                  220    l0011        ; - 1
+2022: 01 2030 240                  240    zn           ; merken
+2023: 01 2004 050                  050    lese         ; noch nicht fertig: naechste Zahl
+2024: 01 0000 020                  020    0            ; Halt
+2025: 01 2007000     rwe:          da     nache        ; Rueckkehrwort der Eingabe
+2026: 01 2016000     rwa:          da     nacha        ; Rueckkehrwort der Ausgabe
+2027: 20 2030        zw:           db     1            ; gelesene gk-Zahl
+2030: 00 00000000012 zn:           dw     10           ; Zaehler: 11 Zahlen
+2031: 00 37777777777 l0001         dw     037777777777 
+2032: 0              l0002         dw     000000000000 
+2033: 00 00377777777 l0003         dw     000377777777 
+2034: 01 623000      l0004         da     t10_19       
+2035: 00 00000001000 l0005         dw     000000001000 
+2036: 01 611000      l0006         da     t10_9        
+2037: 00 00000024000 l0007         dw     000000024000 
+2040: 00 20000000000 l0008         dw     020000000000 
+2041: 00 00000050000 l0009         dw     000000050000 
+2042: 00 00000000076 l0010         dw     62           
+2043: 00 00000000001 l0011         dw     1            
+2044: 00 00575360400 l0012         dw     100000000    
+2045: 00 00046113200 l0013         dw     10000000     
+2046: 01 561000      l0014         da     pw0          
+2047: 00 00000000007 l0015         dw     7            
+2050: 00 00000012000 l0016         dw     000000012000 
+2051: 01 541000      l0017         da     zif          
+2052: 00 00000000012 l0018         dw     10           
+2053: 00 00000000002 l0019         dw     2            
+2054: 00 02765702000 l0020         dw     400000000    
+2055: 00 00000000100 l0021         dw     000000000100 
+2056: 00 00000011000 l0022         dw     000000011000 
+2057: 00 77777767000 l0023         dw     -011000      
+2060: 01 612000      l0024         da     t10_0        
+2061: 00 00000000040 l0025         dw     000000000040 
+2062: 00 40000000000 l0026         dw     040000000000 

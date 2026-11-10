@@ -1,10 +1,10 @@
-; zt_feld.asm - 32 Zufallskonstanten (Spur 0100) auf Zusatztrommel 2, Adresse 01000 schreiben,
+; zt_feld.asm - 32 Zufallskonstanten (Spur 0100) auf Zusatztrommel ZT1 (Datei zt2.txt), Adresse 01000 schreiben,
 ;   von dort in die Spur 0200 (32 Worte) zurueckholen, danach Halt. Nur mit Schalter --C8205Z.
                 start                ; Zaehlung beginnt bei 0000
                 000     haupt        ; Zelle 0000: Sprung zum Hauptprogramm
-haupt:          030     05200        ; Anwahl ZT2 (5200 030, Festlegung 5k00 = ZTk)
-                dw      010000100601 ; Ausgabe 601: HT-Spur 0100 -> ZT2 Adresse 01000 (zzz0 = 1000)
-                dw      010000200661 ; Eingabe 661: ZT2 Adresse 01000 -> HT-Spur 0200 (bbbb = 0200)
+haupt:          030     05200        ; Anwahl der Zusatztrommel ZT1 = Datei zt2.txt (5200 030 = 5k00 mit k = 2)
+                dw      010000100601 ; Ausgabe 601: HT-Spur 0100 -> ZT1 Adresse 01000 (zzz0 = 1000)
+                dw      010000200661 ; Eingabe 661: ZT1 Adresse 01000 -> HT-Spur 0200 (bbbb = 0200)
                 164     0001         ; Diagnoseausgabe (nur im Test)
                 020     0            ; Halt
                 equ     0100         ; Feld beginnt auf Spur 0100 (Zellen 0100 bis 0137)

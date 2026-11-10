@@ -1,9 +1,0 @@
-        211     d3010   ; <AC>:=a (Vorbereitung: AC muss laut Aufgabe schon a enthalten)
-        000     m3000   ; Sprung zum Programmbeginn der Aufgabe in Zelle 3000
-        equ     03000   
-m3000:  644     d3006   ; <AC>:=4a, <3006>:=a, <3023>:=2a
-        214     d3006   ; <AC>:=2(4a+a)=10a
-        164     00001   ; DEBUG Nr. 0001
-        020     0       ; unbedingter Stop
-        equ     03010   
-d3010:  dw      07      ; a = 7

@@ -23,7 +23,7 @@ extern char inputFileName[1024];   // wird weiter unten definiert
 // #STARTE ersetzt die Tastenfolge: Ist es im Vorspann, erzeugt der Assembler keinen Abschnitt "Tastenfolge:".
 static int istTestVorspannText(const char *t) {
     static const char *marken[] = {
-        "#DOK-", "#SPEI-", "#SPUR-", "#PROT", "#AC", "#BZ", "#STARTE", "#TROMMEL",
+        "#DOK-", "#SPEI-", "#SPUR-", "#PROT", "#AC", "#BZ", "#STARTE", "#TROMMEL", "#ZTROMMEL",
         "--leser1", "--leser2", "--stanzer1", "--sw-ausgabe", "--k0"
     };
     for (size_t m = 0; m < sizeof(marken) / sizeof(marken[0]); m++) {

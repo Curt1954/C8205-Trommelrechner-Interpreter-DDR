@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 3 der Quelldatei: $INCLUDE 'gibtesnicht.inc' konnte nicht geöffnet werden
+datei-weg obj mqo test
+escape-weg

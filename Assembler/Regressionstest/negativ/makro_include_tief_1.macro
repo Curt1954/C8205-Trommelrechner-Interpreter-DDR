@@ -1,0 +1,3 @@
+INCT:           MACRO 0
+                $INCLUDE makro_include_tief_1.macro
+                MEND

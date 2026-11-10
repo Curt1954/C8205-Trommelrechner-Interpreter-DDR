@@ -1,0 +1,4 @@
+rc 16
+stderr '$CALC(!x+1)' ist ungültig
+datei-weg obj mqo test
+escape-weg

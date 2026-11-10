@@ -1,0 +1,524 @@
+Trommeldatei:
+#TROMMEL=LEER
+#PROT STUFE=2
+#BZ=1777
+0003: 00000166240 # gk_add: 240 gkm_rueck ; Eintritt: Rueckkehrwort sichern
+0004: 00007773211 # 211 gkm_r1 ; R1
+0005: 00000201240 # 240 gkm_xa ; Operand a
+0006: 00007776211 # 211 gkm_r2 ; R2
+0007: 00000202240 # 240 gkm_xb ; Operand b
+0010: 00000202311 # gkm_ad: 311 gkm_xb ; AC := b, V3 bei b = 0
+0011: 00000150170 # 170 gkm_ad_b0 ; b = 0: Ergebnis a
+0012: 00000201311 # 311 gkm_xa ; AC := a, V3 bei a = 0
+0013: 00000152170 # 170 gkm_ad_a0 ; a = 0: Ergebnis b
+0014: 00000201211 # 211 gkm_xa ; |a|
+0015: 00003210200 # 200 l0001 ; z0 loeschen
+0016: 00000203240 # 240 gkm_t ; |a| merken
+0017: 00000202211 # 211 gkm_xb ; |b|
+0020: 00003210200 # 200 l0001 ; z0 loeschen
+0021: 00000203330 # 330 gkm_t ; |b| mit |a| vergleichen
+0022: 00000031140 # 140 gkm_ad_ok ; |b| <= |a|: kein Tausch
+0023: 00000201211 # 211 gkm_xa ; Tausch: a ...
+0024: 00000203240 # 240 gkm_t ; ... merken
+0025: 00000202211 # 211 gkm_xb ; b ...
+0026: 00000201240 # 240 gkm_xa ; ... nach a
+0027: 00000203211 # 211 gkm_t ; altes a ...
+0030: 00000202240 # 240 gkm_xb ; ... nach b
+0031: 00000201211 # gkm_ad_ok: 211 gkm_xa ; |a|
+0032: 00003210200 # 200 l0001 ; z0 loeschen
+0033: 00007656642 # 642 07656 ; 26 rechts: Exponent ea (e + 32)
+0034: 00000204240 # 240 gkm_ee ; Ergebnisexponent := ea
+0035: 00000202211 # 211 gkm_xb ; |b|
+0036: 00003210200 # 200 l0001 ; z0 loeschen
+0037: 00007656642 # 642 07656 ; 26 rechts: Exponent eb
+0040: 00000203240 # 240 gkm_t ; eb merken
+0041: 00000204211 # 211 gkm_ee ; ea
+0042: 00000203220 # 220 gkm_t ; ea - eb = d (Schiebeweite)
+0043: 00000207240 # 240 gkm_cn ; Zaehler d
+0044: 00000201211 # 211 gkm_xa ; a
+0045: 00003211200 # 200 l0002 ; Mantisse Ma (26 Bit)
+0046: 00007677644 # 644 07677 ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+0047: 00000210240 # 240 gkm_r ; r := Ma << 5
+0050: 00000202211 # 211 gkm_xb ; b
+0051: 00003211200 # 200 l0002 ; Mantisse Mb
+0052: 00007677644 # 644 07677 ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+0053: 00000000240 # 240 gkm_br ; br := Mb << 5
+0054: 00000001241 # 241 gkm_st ; Klebebit-Summe := 0
+0055: 00000207311 # gkm_ad_sl: 311 gkm_cn ; AC := d, V3 bei d = 0
+0056: 00000072170 # 170 gkm_ad_sx ; fertig geschoben
+0057: 00000000211 # 211 gkm_br ; br
+0060: 00003212200 # 200 l0003 ; Bit 0 (geht verloren)
+0061: 00000001210 # 210 gkm_st ; zur Summe
+0062: 00000001240 # 240 gkm_st ; merken
+0063: 00000000211 # 211 gkm_br ; br
+0064: 00003213212 # 212 l0004 ; 1 rechts
+0065: 00000000240 # 240 gkm_br ; merken
+0066: 00000207211 # 211 gkm_cn ; d
+0067: 00003212220 # 220 l0003 ; - 1
+0070: 00000207240 # 240 gkm_cn ; merken
+0071: 00000055000 # 000 gkm_ad_sl ; weiter
+0072: 00000001311 # gkm_ad_sx: 311 gkm_st ; AC := Summe, V3 bei 0
+0073: 00000100170 # 170 gkm_ad_vz ; nichts verloren: ohne Klebebit
+0074: 00000000211 # 211 gkm_br ; br
+0075: 00003214200 # 200 l0005 ; Bit 0 loeschen
+0076: 00003212210 # 210 l0003 ; Klebebit setzen
+0077: 00000000240 # 240 gkm_br ; merken
+0100: 00000201211 # gkm_ad_vz: 211 gkm_xa ; Vorzeichen a
+0101: 00000105040 # 040 gkm_ad_xn ; negativ
+0102: 00000202211 # 211 gkm_xb ; a >= 0: Vorzeichen b
+0103: 00000107040 # 040 gkm_ad_df ; negativ: verschieden
+0104: 00000112000 # 000 gkm_ad_gl ; gleich
+0105: 00000202211 # gkm_ad_xn: 211 gkm_xb ; a < 0: Vorzeichen b
+0106: 00000112040 # 040 gkm_ad_gl ; auch negativ: gleich
+0107: 00000210211 # gkm_ad_df: 211 gkm_r ; verschieden: r - br
+0110: 00000000220 # 220 gkm_br ; ... subtrahieren
+0111: 00000114000 # 000 gkm_ad_nz ; weiter
+0112: 00000210211 # gkm_ad_gl: 211 gkm_r ; gleich: r + br
+0113: 00000000210 # 210 gkm_br ; ... addieren
+0114: 00000002240 # gkm_ad_nz: 240 gkm_rr ; R merken
+0115: 00000002311 # 311 gkm_rr ; AC := R, V3 bei 0
+0116: 00000175170 # 170 gkm_null ; R = 0: Ergebnis 0
+0117: 00003215330 # 330 l0006 ; R mit 2^31 vergleichen
+0120: 00000132150 # 150 gkm_ad_rr ; R >= 2^31: 1 rechts
+0121: 00000002211 # gkm_ad_nl: 211 gkm_rr ; R
+0122: 00003216330 # 330 l0007 ; mit 2^30 vergleichen
+0123: 00000140150 # 150 gkm_ad_nm ; R >= 2^30: normiert
+0124: 00000002210 # 210 gkm_rr ; R := 2 R
+0125: 00000002240 # 240 gkm_rr ; merken
+0126: 00000204211 # 211 gkm_ee ; Exponent
+0127: 00003212220 # 220 l0003 ; - 1
+0130: 00000204240 # 240 gkm_ee ; merken
+0131: 00000121000 # 000 gkm_ad_nl ; weiter normieren
+0132: 00000002211 # gkm_ad_rr: 211 gkm_rr ; R
+0133: 00003213212 # 212 l0004 ; 1 rechts
+0134: 00000002240 # 240 gkm_rr ; merken
+0135: 00000204211 # 211 gkm_ee ; Exponent
+0136: 00003212210 # 210 l0003 ; + 1
+0137: 00000204240 # 240 gkm_ee ; merken
+0140: 00000002211 # gkm_ad_nm: 211 gkm_rr ; R
+0141: 00003217210 # 210 l0008 ; + 16 (Rundung)
+0142: 00007677642 # 642 07677 ; 5 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0143: 00000206240 # 240 gkm_m ; m merken
+0144: 00000201211 # 211 gkm_xa ; a
+0145: 00003220200 # 200 l0009 ; Vorzeichen
+0146: 00000205240 # 240 gkm_sg ; sg merken
+0147: 00000154000 # 000 gkm_pk ; Packen
+0150: 00000201211 # gkm_ad_b0: 211 gkm_xa ; b = 0: Ergebnis a
+0151: 00000166000 # 000 gkm_rueck ; zurueck
+0152: 00000202211 # gkm_ad_a0: 211 gkm_xb ; a = 0: Ergebnis b
+0153: 00000166000 # 000 gkm_rueck ; zurueck
+0154: 00000206211 # gkm_pk: 211 gkm_m ; Mantisse
+0155: 00003221330 # 330 l0010 ; mit 2^26 vergleichen
+0156: 00000167170 # 170 gkm_pk_ue ; = 2^26: auf 2^25 und Exponent + 1
+0157: 00000204211 # gkm_pk_1: 211 gkm_ee ; Exponent
+0160: 00000175040 # 040 gkm_null ; < 0: Unterlauf, Ergebnis 0 (Annahme A8)
+0161: 00003222330 # 330 l0011 ; mit 64 vergleichen
+0162: 00000176150 # 150 gkm_fue ; >= 64: Ueberlauf (Annahme A9)
+0163: 00007656644 # 644 07656 ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0164: 00000206210 # 210 gkm_m ; + Mantisse
+0165: 00000205210 # 210 gkm_sg ; + Vorzeichen
+0167: 00003223211 # gkm_pk_ue: 211 l0012 ; 2^25
+0170: 00000206240 # 240 gkm_m ; Mantisse := 2^25
+0171: 00000204211 # 211 gkm_ee ; Exponent
+0172: 00003212210 # 210 l0003 ; + 1
+0173: 00000204240 # 240 gkm_ee ; merken
+0174: 00000157000 # 000 gkm_pk_1 ; weiter
+0175: 00000166001 # gkm_null: 001 gkm_rueck ; Ergebnis 0: AC loeschen, zurueck
+0176: 00003210211 # gkm_fue: 211 l0001 ; kuenstlicher Ueberlauf: 2^32 - 1
+0177: 00003212210 # 210 l0003 ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+0200: 00000166000 # 000 gkm_rueck ; (nie erreicht)
+0211: 00000166240 # gk_sub: 240 gkm_rueck ; Eintritt: Rueckkehrwort sichern
+0212: 00007773211 # 211 gkm_r1 ; R1
+0213: 00000201240 # 240 gkm_xa ; Operand a
+0214: 00007776211 # 211 gkm_r2 ; R2
+0215: 00000202240 # 240 gkm_xb ; Operand b
+0216: 00000202311 # 311 gkm_xb ; AC := b, Vergleicher: V3 genau bei b = 0
+0217: 00000010170 # 170 gkm_ad ; b = 0: unveraendert
+0220: 00000224040 # 040 gkm_su_n ; z0 gesetzt: b negativ
+0221: 00003220210 # 210 l0009 ; b positiv: z0 setzen
+0222: 00000202240 # 240 gkm_xb ; b merken
+0223: 00000010000 # 000 gkm_ad ; weiter zum Kern
+0224: 00003210200 # gkm_su_n: 200 l0001 ; b negativ: z0 loeschen
+0225: 00000202240 # 240 gkm_xb ; b merken
+0226: 00000010000 # 000 gkm_ad ; weiter zum Kern (steht schon an anderer Stelle)
+0236: 00000166240 # gk_mul: 240 gkm_rueck ; Eintritt: Rueckkehrwort sichern
+0237: 00000231241 # 241 gkm_fl ; fl := 0
+0240: 00007773211 # gkm_md: 211 gkm_r1 ; R1
+0241: 00000201240 # 240 gkm_xa ; Operand a
+0242: 00007776211 # 211 gkm_r2 ; R2
+0243: 00000202240 # 240 gkm_xb ; Operand b
+0244: 00000202311 # 311 gkm_xb ; AC := b, V3 bei b = 0
+0245: 00000342170 # 170 gkm_md_b0 ; b = 0
+0246: 00000201311 # 311 gkm_xa ; AC := a, V3 bei a = 0
+0247: 00000175170 # 170 gkm_null ; a = 0: Ergebnis 0
+0250: 00000201211 # 211 gkm_xa ; Vorzeichen a
+0251: 00000255040 # 040 gkm_md_an ; negativ
+0252: 00000202211 # 211 gkm_xb ; a >= 0: Vorzeichen b
+0253: 00000257040 # 040 gkm_md_ng ; negativ: Ergebnis negativ
+0254: 00000262000 # 000 gkm_md_ps ; positiv
+0255: 00000202211 # gkm_md_an: 211 gkm_xb ; a < 0: Vorzeichen b
+0256: 00000262040 # 040 gkm_md_ps ; auch negativ: Ergebnis positiv
+0257: 00003220211 # gkm_md_ng: 211 l0009 ; Vorzeichen des Ergebnisses: -
+0260: 00000205240 # 240 gkm_sg ; merken
+0261: 00000263000 # 000 gkm_md_e ; weiter
+0262: 00000205241 # gkm_md_ps: 241 gkm_sg ; Vorzeichen des Ergebnisses: +
+0263: 00000201211 # gkm_md_e: 211 gkm_xa ; |a|
+0264: 00003210200 # 200 l0001 ; z0 loeschen
+0265: 00007656642 # 642 07656 ; 26 rechts: Exponent ea
+0266: 00000232240 # 240 gkm_ea ; merken
+0267: 00000202211 # 211 gkm_xb ; |b|
+0270: 00003210200 # 200 l0001 ; z0 loeschen
+0271: 00007656642 # 642 07656 ; 26 rechts: Exponent eb
+0272: 00000233240 # 240 gkm_eb ; merken
+0273: 00000201211 # 211 gkm_xa ; a
+0274: 00003211200 # 200 l0002 ; Mantisse Ma
+0275: 00000234240 # 240 gkm_ma ; merken
+0276: 00000202211 # 211 gkm_xb ; b
+0277: 00003211200 # 200 l0002 ; Mantisse Mb
+0300: 00000235240 # 240 gkm_mb ; merken
+0301: 00000231311 # 311 gkm_fl ; AC := fl, V3 bei Multiplikation
+0302: 00000345170 # 170 gkm_mu ; fl = 0: Multiplikation
+0303: 00000232211 # 211 gkm_ea ; ea
+0304: 00000233220 # 220 gkm_eb ; - eb
+0305: 00003224210 # 210 l0013 ; + 32
+0306: 00000204240 # 240 gkm_ee ; Ergebnisexponent
+0307: 00000234211 # 211 gkm_ma ; Ma
+0310: 00000210240 # 240 gkm_r ; Rest := Ma
+0311: 00000227241 # 241 gkm_y ; Quotient := 0
+0312: 00003225211 # 211 l0014 ; 28 Durchlaeufe (27 bis 0)
+0313: 00000207240 # 240 gkm_cn ; Zaehler
+0314: 00000227211 # gkm_dv_l: 211 gkm_y ; Quotient
+0315: 00000227210 # 210 gkm_y ; 2 y
+0316: 00000227240 # 240 gkm_y ; merken
+0317: 00000210211 # 211 gkm_r ; Rest
+0320: 00000235330 # 330 gkm_mb ; mit Mb vergleichen
+0321: 00000333150 # 150 gkm_dv_ge ; Rest >= Mb: abziehen
+0322: 00000210211 # gkm_dv_c: 211 gkm_r ; Rest
+0323: 00000210210 # 210 gkm_r ; 2 Rest
+0324: 00000210240 # 240 gkm_r ; merken
+0325: 00000207211 # 211 gkm_cn ; Zaehler
+0326: 00003212220 # 220 l0003 ; - 1
+0327: 00000207240 # 240 gkm_cn ; merken
+0330: 00000314050 # 050 gkm_dv_l ; noch nicht negativ: weiter
+0331: 00000227211 # 211 gkm_y ; AC := Y
+0332: 00000363000 # 000 gkm_mq ; weiter zur Rundung
+0333: 00000210211 # gkm_dv_ge: 211 gkm_r ; Rest
+0334: 00000235220 # 220 gkm_mb ; - Mb
+0335: 00000210240 # 240 gkm_r ; merken
+0336: 00000227211 # 211 gkm_y ; Quotient
+0337: 00003212210 # 210 l0003 ; + 1
+0340: 00000227240 # 240 gkm_y ; merken
+0341: 00000322000 # 000 gkm_dv_c ; weiter
+0342: 00000231311 # gkm_md_b0: 311 gkm_fl ; AC := fl, V3 bei Multiplikation
+0343: 00000175170 # 170 gkm_null ; Multiplikation mit 0: Ergebnis 0
+0344: 00000176000 # 000 gkm_fue ; Division durch 0: kuenstlicher Ueberlauf
+0345: 00000232211 # gkm_mu: 211 gkm_ea ; ea
+0346: 00000233210 # 210 gkm_eb ; + eb
+0347: 00003226220 # 220 l0015 ; - 33
+0350: 00000204240 # 240 gkm_ee ; Ergebnisexponent
+0351: 00000235211 # 211 gkm_mb ; Mb
+0352: 00007646644 # 644 07646 ; 2 mal Linksverschiebung (Operand nach Festlegung 026)
+0353: 00000203240 # 240 gkm_t ; t := Mb << 2
+0354: 00000234211 # 211 gkm_ma ; Ma
+0355: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0356: 00007640440 # 440 07640 ; Ma << 6 in alle Zellen der Arbeitsspur
+0357: 00000203211 # 211 gkm_t ; Multiplikator
+0360: 00007640472 # 472 07640 ; Teilprodukte
+0361: 00003213211 # 211 l0004 ; Anfangswert 0 (keine Rundung)
+0362: 00007640412 # 412 07640 ; AC := Z
+0363: 00000230240 # gkm_mq: 240 gkm_z ; Z merken
+0364: 00003227330 # 330 l0016 ; mit 2^27 vergleichen
+0365: 00000372150 # 150 gkm_mq_hi ; Z >= 2^27
+0366: 00000230211 # 211 gkm_z ; Z
+0367: 00003212212 # 212 l0003 ; (Z + 1) / 2
+0370: 00000206240 # 240 gkm_m ; Mantisse
+0371: 00000154000 # 000 gkm_pk ; packen
+0372: 00000230211 # gkm_mq_hi: 211 gkm_z ; Z
+0373: 00003230212 # 212 l0017 ; (Z + 2) / 2
+0374: 00003213212 # 212 l0004 ; / 2 : (Z + 2) / 4
+0375: 00000206240 # 240 gkm_m ; Mantisse
+0376: 00000204211 # 211 gkm_ee ; Exponent
+0377: 00003212210 # 210 l0003 ; + 1
+0400: 00000204240 # 240 gkm_ee ; merken
+0401: 00000154000 # 000 gkm_pk ; der gemeinsame Teil steht schon an anderer Stelle
+0402: 00000166240 # gk_div: 240 gkm_rueck ; Eintritt: Rueckkehrwort sichern
+0403: 00003212211 # 211 l0003 ; AC := 1
+0404: 00000231240 # 240 gkm_fl ; fl := 1
+0405: 00000240000 # 000 gkm_md ; weiter zum gemeinsamen Anfang (steht schon an anderer Stelle)
+2000: 00003231211 # haupt: 211 l0018 ; Zeiger auf die Operationstabelle
+2001: 00002052240 # 240 oz ; merken
+2002: 00003232211 # 211 l0019 ; Zeiger auf die Ergebniszellen
+2003: 00002053240 # 240 rz ; merken
+2004: 00002052211 # op_l: 211 oz ; Zeiger
+2005: 00000000251 # 251 0 ; AC := Aufrufbefehl (025 gk_xxx)
+2006: 00002020240 # 240 cl ; in die Aufrufzelle
+2007: 00003233211 # 211 l0020 ; Zeiger auf die Falltabelle
+2010: 00002054240 # 240 fz ; merken
+2011: 00002054211 # fa_l: 211 fz ; Zeiger auf a
+2012: 00000000251 # 251 0 ; AC := a
+2013: 00007773240 # 240 r1 ; nach R1
+2014: 00002054211 # 211 fz ; Zeiger
+2015: 00003234210 # 210 l0021 ; auf b
+2016: 00000000251 # 251 0 ; AC := b
+2017: 00007776240 # 240 r2 ; nach R2
+2021: 00002055240 # 240 tm ; Ergebnis merken
+2022: 00002053211 # 211 rz ; Zeiger auf die Ergebniszelle
+2023: 00003235210 # 210 l0022 ; + Speicherbefehl
+2024: 00002026240 # 240 sp ; auf die naechste Zelle legen
+2025: 00002055211 # 211 tm ; Ergebnis
+2027: 00002053211 # 211 rz ; Lade den Zeiger `rz`
+2030: 00003234210 # 210 l0021 ; Addiere eine Adresseneinheit (nächstes Wort)
+2031: 00002053240 # 240 rz ; Speichere den Zeiger zurück nach `rz`
+2032: 00002054211 # 211 fz ; Lade den Zeiger `fz`
+2033: 00003234210 # 210 l0021 ; Addiere eine Adresseneinheit (nächstes Wort)
+2034: 00002054240 # 240 fz ; Speichere den Zeiger zurück nach `fz`
+2035: 00002054211 # 211 fz ; Lade den Zeiger `fz`
+2036: 00003234210 # 210 l0021 ; Addiere eine Adresseneinheit (nächstes Wort)
+2037: 00002054240 # 240 fz ; Speichere den Zeiger zurück nach `fz`
+2040: 00002054211 # 211 fz ; Zeiger
+2041: 00003236220 # 220 l0023 ; Zeiger - Ende der Falltabelle
+2042: 00002011040 # 040 fa_l ; kleiner (negativ): naechster Fall
+2043: 00002052211 # 211 oz ; Lade den Zeiger `oz`
+2044: 00003234210 # 210 l0021 ; Addiere eine Adresseneinheit (nächstes Wort)
+2045: 00002052240 # 240 oz ; Speichere den Zeiger zurück nach `oz`
+2046: 00002052211 # 211 oz ; Zeiger
+2047: 00003237220 # 220 l0024 ; Zeiger - Ende der Operationstabelle
+2050: 00002004040 # 040 op_l ; kleiner (negativ): naechste Operation
+2051: 00000000020 # 020 0 ; Halt (nicht erreicht: der letzte Fall 5/0 endet im FUE-Halt)
+2300: 00000003025 # optab: 025 gk_add ; Operation 1: Addition
+2301: 00000211025 # 025 gk_sub ; Operation 2: Subtraktion
+2302: 00000236025 # 025 gk_mul ; Operation 3: Multiplikation
+2303: 00000402025 # 025 gk_div ; Operation 4: Division
+2304: 00000000000 # optabend: dw 0 ; Ende
+2400: 20600000000 # dw 020600000000 ; Fall 1 a  (1)
+2401: 20600000000 # dw 020600000000 ; Fall 1 b  (1)
+2402: 20700000000 # dw 020700000000 ; Fall 2 a  (1,5)
+2403: 21220000000 # dw 021220000000 ; Fall 2 b  (2,25)
+2404: 61300000000 # dw 061300000000 ; Fall 3 a  (-3)
+2405: 20200000000 # dw 020200000000 ; Fall 3 b  (0,5)
+2406: 21740000000 # dw 021740000000 ; Fall 4 a  (7)
+2407: 61740000000 # dw 061740000000 ; Fall 4 b  (-7)
+2410: 36756326240 # dw 036756326240 ; Fall 5 a  (5E8)
+2411: 20640000000 # dw 020640000000 ; Fall 5 b  (1,25 (d gross))
+2412: 20600000000 # dw 020600000000 ; Fall 6 a  (1)
+2413: 44200662545 # dw 044200662545 ; Fall 6 b  (-3E-8 (Schutzbits))
+2414: 20600000000 # dw 020600000000 ; Fall 7 a  (1)
+2415: 03600000000 # dw 003600000000 ; Fall 7 b  (2^-26 (Mitte))
+2416: 60600000000 # dw 060600000000 ; Fall 8 a  (-1)
+2417: 43600000000 # dw 043600000000 ; Fall 8 b  (-2^-26 (Mitte))
+2420: 20600000000 # dw 020600000000 ; Fall 9 a  (1)
+2421: 43600000000 # dw 043600000000 ; Fall 9 b  (-2^-26)
+2422: 17652525253 # dw 017652525253 ; Fall 10 a  (1/3)
+2423: 20252525253 # dw 020252525253 ; Fall 10 b  (2/3)
+2424: 00000000000 # dw 000000000000 ; Fall 11 a  (0)
+2425: 21640000000 # dw 021640000000 ; Fall 11 b  (5)
+2426: 06600000000 # dw 006600000000 ; Fall 12 a  (2^-20)
+2427: 06600000000 # dw 006600000000 ; Fall 12 b  (2^-20)
+2430: 20600000003 # dw 020600000003 ; Fall 13 a  (1,0000001)
+2431: 20377777771 # dw 020377777771 ; Fall 13 b  (0,9999999)
+2432: 30761100624 # dw 030761100624 ; Fall 14 a  (123456,789)
+2433: 55311413702 # dw 055311413702 ; Fall 14 b  (-0,0123)
+2434: 76600000000 # dw 076600000000 ; Fall 15 a  (-2^28)
+2435: 21300000000 # dw 021300000000 ; Fall 15 b  (3)
+2436: 22250315722 # dw 022250315722 ; Fall 16 a  (zufall 1)
+2437: 56240604053 # dw 056240604053 ; Fall 16 b  (zufall 1)
+2440: 16640637140 # dw 016640637140 ; Fall 17 a  (zufall 2)
+2441: 61362423745 # dw 061362423745 ; Fall 17 b  (zufall 2)
+2442: 16602146533 # dw 016602146533 ; Fall 18 a  (zufall 3)
+2443: 61716256772 # dw 061716256772 ; Fall 18 b  (zufall 3)
+2444: 57217722273 # dw 057217722273 ; Fall 19 a  (zufall 4)
+2445: 60266610765 # dw 060266610765 ; Fall 19 b  (zufall 4)
+2446: 62337130057 # dw 062337130057 ; Fall 20 a  (zufall 5)
+2447: 21620036750 # dw 021620036750 ; Fall 20 b  (zufall 5)
+2450: 21267273506 # dw 021267273506 ; Fall 21 a  (zufall 6)
+2451: 21261522675 # dw 021261522675 ; Fall 21 b  (zufall 6)
+2452: 20300000000 # dw 020300000000 ; Fall 22 a  (0,75)
+2453: 20300000000 # dw 020300000000 ; Fall 22 b  (0,75)
+2454: 20600000000 # dw 020600000000 ; Fall 23 a  (1)
+2455: 03200000000 # dw 003200000000 ; Fall 23 b  (2^-27)
+2456: 20600000000 # dw 020600000000 ; Fall 24 a  (1)
+2457: 01600000000 # dw 001600000000 ; Fall 24 b  (2^-30 (d = 30))
+2460: 01600000000 # dw 001600000000 ; Fall 25 a  (2^-30)
+2461: 20600000000 # dw 020600000000 ; Fall 25 b  (1 (Tausch))
+2462: 21300000000 # dw 021300000000 ; Fall 26 a  (3)
+2463: 61740000000 # dw 061740000000 ; Fall 26 b  (-7)
+2464: 20200000000 # dw 020200000000 ; Fall 27 a  (0,5)
+2465: 20200000000 # dw 020200000000 ; Fall 27 b  (0,5)
+2466: 01611340575 # dw 001611340575 ; Fall 28 a  (1E-9)
+2467: 37356326240 # dw 037356326240 ; Fall 28 b  (1E9)
+2470: 21640000000 # dw 021640000000 ; Fall 29 a  (5)
+2471: 20600000000 # dw 020600000000 ; Fall 29 b  (1)
+2472: 20600000000 # dw 020600000000 ; Fall 30 a  (1)
+2473: 22240000000 # dw 022240000000 ; Fall 30 b  (10)
+2474: 20252525253 # dw 020252525253 ; Fall 31 a  (2/3)
+2475: 17652525253 # dw 017652525253 ; Fall 31 b  (1/3)
+2476: 01600000000 # dw 001600000000 ; Fall 32 a  (2^-30)
+2477: 01600000000 # dw 001600000000 ; Fall 32 b  (2^-30 (mul Unterlauf))
+2500: 41600000000 # dw 041600000000 ; Fall 33 a  (-2^-30)
+2501: 01200000000 # dw 001200000000 ; Fall 33 b  (2^-31)
+2502: 21640000000 # dw 021640000000 ; Fall 34 a  (5)
+2503: 00000000000 # dw 000000000000 ; Fall 34 b  (0 (div: kuenstlicher FUE))
+2504: 00000000000 # fallend: dw 0 ; Ende
+3210: 37777777777 # l0001 dw 037777777777
+3211: 00377777777 # l0002 dw 000377777777
+3212: 00000000001 # l0003 dw 1
+3213: 00000000000 # l0004 dw 000000000000
+3214: 37777777776 # l0005 dw 037777777776
+3215: 20000000000 # l0006 dw 020000000000
+3216: 10000000000 # l0007 dw 010000000000
+3217: 00000000020 # l0008 dw 000000000020
+3220: 40000000000 # l0009 dw 040000000000
+3221: 00400000000 # l0010 dw 000400000000
+3222: 00000000100 # l0011 dw 64
+3223: 00200000000 # l0012 dw 000200000000
+3224: 00000000040 # l0013 dw 32
+3225: 00000000033 # l0014 dw 27
+3226: 00000000041 # l0015 dw 33
+3227: 01000000000 # l0016 dw 001000000000
+3230: 00000000002 # l0017 dw 2
+3231: 00002300000 # l0018 da optab
+3232: 00003000000 # l0019 da res
+3233: 00002400000 # l0020 da fall
+3234: 00000001000 # l0021 dw 000000001000
+3235: 00000000240 # l0022 dw 000000000240
+3236: 00002504000 # l0023 da fallend
+3237: 00002304000 # l0024 da optabend
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0201 AC=40000000000 FUE=1 US=0   # Halt im kuenstlichen Ueberlauf von gk_div (Fall 5/0), BZ = Adresse des Befehls hinter dem 210 in gk_fue + 1
+3000: 21200000000   # add Fall 1
+3001: 21360000000   # add Fall 2
+3002: 61240000000   # add Fall 3
+3003: 00000000000   # add Fall 4
+3004: 36756326240   # add Fall 5
+3005: 20377777776   # add Fall 6
+3006: 20600000001   # add Fall 7
+3007: 60600000001   # add Fall 8
+3010: 20377777777   # add Fall 9
+3011: 20600000000   # add Fall 10
+3012: 21640000000   # add Fall 11
+3013: 07200000000   # add Fall 12
+3014: 21200000000   # add Fall 13
+3015: 30761100616   # add Fall 14
+3016: 76377777777   # add Fall 15
+3017: 22247614312   # add Fall 16
+3020: 61355406762   # add Fall 17
+3021: 61714235305   # add Fall 18
+3022: 60332575444   # add Fall 19
+3023: 62227110473   # add Fall 20
+3024: 21664407202   # add Fall 21
+3025: 20700000000   # add Fall 22
+3026: 20600000000   # add Fall 23
+3027: 20600000000   # add Fall 24
+3030: 20600000000   # add Fall 25
+3031: 61600000000   # add Fall 26
+3032: 20600000000   # add Fall 27
+3033: 37356326240   # add Fall 28
+3034: 21700000000   # add Fall 29
+3035: 22260000000   # add Fall 30
+3036: 20600000000   # add Fall 31
+3037: 02200000000   # add Fall 32
+3040: 41200000000   # add Fall 33
+3041: 21640000000   # add Fall 34
+3042: 00000000000   # sub Fall 1
+3043: 60300000000   # sub Fall 2
+3044: 61340000000   # sub Fall 3
+3045: 22340000000   # sub Fall 4
+3046: 36756326240   # sub Fall 5
+3047: 20600000001   # sub Fall 6
+3050: 20377777777   # sub Fall 7
+3051: 60377777777   # sub Fall 8
+3052: 20600000001   # sub Fall 9
+3053: 57652525253   # sub Fall 10
+3054: 61640000000   # sub Fall 11
+3055: 00000000000   # sub Fall 12
+3056: 05320000000   # sub Fall 13
+3057: 30761100632   # sub Fall 14
+3060: 76600000000   # sub Fall 15
+3061: 22251017332   # sub Fall 16
+3062: 21367440730   # sub Fall 17
+3063: 21720300457   # sub Fall 18
+3064: 20222624306   # sub Fall 19
+3065: 62623463622   # sub Fall 20
+3066: 16666430440   # sub Fall 21
+3067: 00000000000   # sub Fall 22
+3070: 20600000000   # sub Fall 23
+3071: 20600000000   # sub Fall 24
+3072: 60600000000   # sub Fall 25
+3073: 22240000000   # sub Fall 26
+3074: 00000000000   # sub Fall 27
+3075: 77356326240   # sub Fall 28
+3076: 21600000000   # sub Fall 29
+3077: 62220000000   # sub Fall 30
+3100: 17652525253   # sub Fall 31
+3101: 00000000000   # sub Fall 32
+3102: 41700000000   # sub Fall 33
+3103: 21640000000   # sub Fall 34
+3104: 20600000000   # mul Fall 1
+3105: 21330000000   # mul Fall 2
+3106: 60700000000   # mul Fall 3
+3107: 63304000000   # mul Fall 4
+3110: 37225005744   # mul Fall 5
+3111: 44200662545   # mul Fall 6
+3112: 03600000000   # mul Fall 7
+3113: 03600000000   # mul Fall 8
+3114: 43600000000   # mul Fall 9
+3115: 17343434344   # mul Fall 10
+3116: 00000000000   # mul Fall 11
+3117: 00000000000   # mul Fall 12
+3120: 20377777777   # mul Fall 13
+3121: 65675641137   # mul Fall 14
+3122: 77300000000   # mul Fall 15
+3123: 57723377757   # mul Fall 16
+3124: 57630265645   # mul Fall 17
+3125: 57721707175   # mul Fall 18
+3126: 16715370741   # mul Fall 19
+3127: 63373131044   # mul Fall 20
+3130: 21776404724   # mul Fall 21
+3131: 20220000000   # mul Fall 22
+3132: 03200000000   # mul Fall 23
+3133: 01600000000   # mul Fall 24
+3134: 01600000000   # mul Fall 25
+3135: 62650000000   # mul Fall 26
+3136: 17600000000   # mul Fall 27
+3137: 20600000000   # mul Fall 28
+3140: 21640000000   # mul Fall 29
+3141: 22240000000   # mul Fall 30
+3142: 17343434344   # mul Fall 31
+3143: 00000000000   # mul Fall 32
+3144: 00000000000   # mul Fall 33
+3145: 00000000000   # mul Fall 34
+3146: 20600000000   # div Fall 1
+3147: 20252525253   # div Fall 2
+3150: 61700000000   # div Fall 3
+3151: 60600000000   # div Fall 4
+3152: 36676570200   # div Fall 5
+3153: 74776240253   # div Fall 6
+3154: 35600000000   # div Fall 7
+3155: 35600000000   # div Fall 8
+3156: 75600000000   # div Fall 9
+3157: 20200000000   # div Fall 10
+3160: 00000000000   # div Fall 11
+3161: 20600000000   # div Fall 12
+3162: 20600000007   # div Fall 13
+3163: 74231117105   # div Fall 14
+3164: 75652525253   # div Fall 15
+3165: 64606054231   # div Fall 16
+3166: 55651570653   # div Fall 17
+3167: 55241421562   # div Fall 18
+3170: 17311445706   # div Fall 19
+3171: 61306225353   # div Fall 20
+3172: 20604070246   # div Fall 21
+3173: 20600000000   # div Fall 22
+3174: 36200000000   # div Fall 23
+3175: 37600000000   # div Fall 24
+3176: 01600000000   # div Fall 25
+3177: 57733333333   # div Fall 26
+3200: 20600000000   # div Fall 27
+3201: 00000000000   # div Fall 28
+3202: 21640000000   # div Fall 29
+3203: 16714631463   # div Fall 30
+3204: 21200000000   # div Fall 31
+3205: 20600000000   # div Fall 32
+3206: 61200000000   # div Fall 33

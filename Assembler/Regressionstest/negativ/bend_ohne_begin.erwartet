@@ -1,0 +1,4 @@
+rc 16
+stderr bend_ohne_begin.asm:3: Fehler: bend ohne vorangehendes begin
+datei-weg obj mqo test
+escape-weg

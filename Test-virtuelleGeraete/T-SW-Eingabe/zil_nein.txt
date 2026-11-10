@@ -1,0 +1,5 @@
+# zil_nein: Um. KB (Geraet steht nach der Frage in GB), j (KB, uebergangen), Um. GB, n = N (Nein)
+Um. KB
+j
+Um. GB
+n

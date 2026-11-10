@@ -1,0 +1,6 @@
+0000: 01 0003 000           .JMP  haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000007 hol:   dw    7     ; Zelle 0001: Label hol (Symbol) neben dem Namen .HOL
+0002: 0              erg:   dw    0     ; Zelle 0002: Ergebnis
+0003: 01 0001 211    haupt: .HOL  hol   ; Zelle 0003: AC := 7
+0004: 01 0002 240           .SPE  erg   ; Zelle 0004: erg := 7
+0005: 01 0000 020           .STOP 0     ; Zelle 0005: Halt

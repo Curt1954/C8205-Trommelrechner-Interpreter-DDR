@@ -1,0 +1,21 @@
+Trommeldatei:
+#DOK-0001 Test Vorgabe ohne Schalter: Variablen sind global, $SET im Makro ueberschreibt die globale Variable, $GLOBAL legt nur eine fehlende mit 0 an
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000050 # dw 40 ; globaler Wert
+0002: 00000000001 # dw 1 ; 1 (global)
+0003: 00000000002 # dw 2 ; Zelle 0003: 2
+0004: 00000000002 # dw 2 ; globaler Wert
+0005: 00000000000 # dw 0 ; 0
+0006: 00000001164 # haupt: 164 0001 ; Zelle 0006: Diagnoseausgabe (nur im Test)
+0007: 00000000020 # 020 0 ; Zelle 0007: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0010 US=1
+0001: 00000000050   # LIES: 40
+0002: 00000000001   # VERDECKT: global basis = 1
+0003: 00000000002   # Quelltext: basis = 2 (VERDECKT hat die globale ueberschrieben)
+0004: 00000000002   # LIES: 2
+0005: 00000000000   # NEU: neu = 0

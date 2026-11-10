@@ -1,4 +1,4 @@
-//ca82_standards.c - Version 1.00-034 (siehe ca82_version.h)
+//ca82_standards.c - Version 1.01-029 (siehe ca82_version.h)
 #include "ca82_standards.h"
 #include <errno.h>
 
@@ -6,6 +6,7 @@
 int kommentar = 0;
 FILE *berichtLog = NULL;   // gesetzt, solange die Berichte nach Pass 3 auch ins .log geschrieben werden
 int farbeAktiv = 0;   // 1 = ANSI-Farbcodes ausgeben (wird in main gesetzt)
+int nurPass0Aktiv = 0;   // 1 = Schalter --pass0 (wird in main gesetzt)
 Register regs;
 
 
@@ -22,7 +23,15 @@ void printX(const char *message) {
     printf("%s\n", message);
 }
 
+// Kopfmeldungen, die --pass0 weglaesst (wie das grep -v der Shell-Kette): Projektverzeichnis, benutzte Dateien, Startadresse
+static int istKopfmeldung(const char *message) {
+    return strncmp(message, "Projektverzeichnis:", 19) == 0
+        || strncmp(message, "Benutze für", strlen("Benutze für")) == 0
+        || strncmp(message, "Startadresse:", 13) == 0;
+}
+
 void printMsg(const char *message) {
+    if (nurPass0Aktiv && istKopfmeldung(message)) return;   // --pass0: Kopfmeldungen entfallen
     fprintf(stderr,"%s%s%s\n", _gruen, message, _normal);
 }
 
@@ -33,6 +42,60 @@ void printFehler(const char *message) {
 void printWarnung(const char *message) {
     fprintf(stderr,"%sWarnung: %s %s\n", _gelb, _normal, message);
     if (berichtLog) fprintf(berichtLog, "Warnung: %s\n", message);
+}
+
+// Formatiert nach format/ap in einen genau passenden, mit malloc angelegten Puffer (NULL bei Fehler); der Aufrufer gibt ihn frei.
+static char *formatiereAlloc(const char *format, va_list ap) {
+    va_list ap2;
+    va_copy(ap2, ap);
+    int n = vsnprintf(NULL, 0, format, ap2);
+    va_end(ap2);
+    if (n < 0) return NULL;
+    char *text = malloc((size_t)n + 1);
+    if (!text) return NULL;
+    vsnprintf(text, (size_t)n + 1, format, ap);
+    return text;
+}
+
+void printFehlerFmt(const char *format, ...) {
+    va_list ap;
+    va_start(ap, format);
+    char *text = formatiereAlloc(format, ap);
+    va_end(ap);
+    if (text) {
+        printFehler(text);
+        free(text);
+    }
+}
+
+void printWarnungFmt(const char *format, ...) {
+    va_list ap;
+    va_start(ap, format);
+    char *text = formatiereAlloc(format, ap);
+    va_end(ap);
+    if (text) {
+        printWarnung(text);
+        free(text);
+    }
+}
+
+void printMsgFmt(const char *format, ...) {
+    va_list ap;
+    va_start(ap, format);
+    char *text = formatiereAlloc(format, ap);
+    va_end(ap);
+    if (text) {
+        printMsg(text);
+        free(text);
+    }
+}
+
+int snprintfGekuerzt(char *ziel, size_t groesse, const char *format, ...) {
+    va_list ap;
+    va_start(ap, format);
+    int n = vsnprintf(ziel, groesse, format, ap);
+    va_end(ap);
+    return n;
 }
 
 void berichtPrintf(const char *format, ...) {
@@ -275,13 +338,14 @@ void pruefeLadeadresse(int argc, char *argv[], const char *kennzeichen, unsigned
 
 // ----------
 
-int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[]) {
+// dateinameGroesse ist die Groesse des Puffers dateiname (einschliesslich '\0'); es wird nie mehr hineingeschrieben.
+int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *standardEndung, const char *projektVerzeichnis, char dateiname[], size_t dateinameGroesse) {
     char projektdetailsDatei[] = "projekdetails";
     int kennzeichenGefunden = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], kennzeichen) == 0 && i + 1 < argc) {
-            strncpy(dateiname, argv[i + 1], 512 - 1);
+            snprintfGekuerzt(dateiname, dateinameGroesse, "%s", argv[i + 1]);   // auf dateinameGroesse - 1 Zeichen gekuerzt, immer mit '\0'
             kennzeichenGefunden = 1;
             break;
         }
@@ -307,6 +371,7 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
                         if (copy_length > MAX_LINE_LENGTH - 1) {
                             copy_length = MAX_LINE_LENGTH - 1;  // Begrenzung setzen
                         }
+                        if (copy_length > dateinameGroesse - 1) copy_length = dateinameGroesse - 1;   // nicht ueber den Puffer dateiname hinaus
                         
                         memmove(dateiname, rest + 1, copy_length);
                         dateiname[copy_length] = '\0'; // Null-Termination sicherstellen
@@ -327,7 +392,7 @@ int pruefeDatei(int argc, char *argv[], const char *kennzeichen, const char *sta
     strcpy(tempdn,dateiname);
     char *dotPos = strrchr(dateiname, '.'); // Sucht letzten Punkt
     if (dotPos == NULL || strlen(dotPos + 1) != 3) { // Prüft, ob keine Endung existiert oder sie nicht genau 3 Zeichen hat
-        strncat(dateiname, standardEndung, 1024 - strlen(dateiname) - 1);
+        strncat(dateiname, standardEndung, dateinameGroesse - strlen(dateiname) - 1);
     }
 
     char fullPath[1024]; 
@@ -567,7 +632,9 @@ void ensureFullStructure(const char *verz) {
             continue;
         }
 
-        snprintf(fullPath, sizeof(fullPath), "%s/%s", geraetePath, subdirectories[i]);
+        STRKOPIE(fullPath, geraetePath);   // Laenge ist oben geprueft; STRKOPIE/STRANHANG kuerzen im Zweifel statt zu ueberlaufen
+        STRANHANG(fullPath, "/");
+        STRANHANG(fullPath, subdirectories[i]);
 
         if (stat(fullPath, &st) != 0) {
             if (MKDIR(fullPath, 0777) != 0) {

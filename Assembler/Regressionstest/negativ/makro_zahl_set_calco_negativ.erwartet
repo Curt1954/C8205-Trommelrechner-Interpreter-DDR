@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zahl_set_calco_negativ.asm:7: Fehler: M1 $SET t: $CALCO(3-5): negatives Ergebnis -2 ist oktal nicht darstellbar
+datei-weg obj mqo test
+escape-weg

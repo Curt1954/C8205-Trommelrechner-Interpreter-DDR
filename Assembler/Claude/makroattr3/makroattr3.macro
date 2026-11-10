@@ -1,0 +1,17 @@
+; makroattr3.macro - Projektmakrodatei zum Test makroattr3 (Attributabfragen in Makros aus einer Makrodatei, Assemblerdokumentation 4.23)
+MD_ART:   MACRO 1
+          dw      $CALC(art($1))              ; Art des Symbols
+          MEND
+MD_ERZ:   MACRO
+md_marke: dw      77                          ; Marke aus einem Makro der Makrodatei
+          MEND
+MD_IF:    MACRO 1
+          $IF $CALC(def($1)) = 1
+          dw      1                           ; Symbol vorhanden
+          $ELSE
+          dw      2                           ; Symbol fehlt
+          $ENDIF
+          MEND
+MD_NIE:   MACRO
+          dw      $CALC(zellen(nirgends))     ; wird nie aufgerufen
+          MEND

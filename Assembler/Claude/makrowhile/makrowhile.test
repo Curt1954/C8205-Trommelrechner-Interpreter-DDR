@@ -1,0 +1,47 @@
+Trommeldatei:
+#DOK-0001 Test Schleife mit Abbruchbedingung ($WHILE) und vorzeitigem Verlassen des Makros ($EXIT)
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000023000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Quadrat des Zaehlers i
+0002: 00000000004 # dw 4 ; Quadrat des Zaehlers i
+0003: 00000000011 # dw 9 ; Quadrat des Zaehlers i
+0004: 00000000020 # dw 16 ; Quadrat des Zaehlers i
+0005: 00000000031 # dw 25 ; Quadrat des Zaehlers i
+0006: 00000000000 # dw 0 ; Zaehler k
+0007: 00000000001 # dw 1 ; Zaehler k
+0010: 00000000002 # dw 2 ; Zaehler k
+0011: 00000000077 # dw 077 ; Fundstelle
+0012: 00000000013 # dw 11 ; Zehner a, Einer b
+0013: 00000000025 # dw 21 ; Zehner a, Einer b
+0014: 00000000026 # dw 22 ; Zehner a, Einer b
+0015: 00000000037 # dw 31 ; Zehner a, Einer b
+0016: 00000000040 # dw 32 ; Zehner a, Einer b
+0017: 00000000041 # dw 33 ; Zehner a, Einer b
+0020: 00000000001 # dw 1 ; immer
+0021: 00000000001 # dw 1 ; immer
+0022: 00000000002 # dw 2 ; nur bei 1 ungleich 0
+0023: 00000001164 # haupt: 164 0001 ; Zelle 19: Diagnoseausgabe (nur im Test)
+0024: 00000000020 # 020 0 ; Zelle 20: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0025 US=1
+0001: 00000000001   # 1*1
+0002: 00000000004   # 2*2
+0003: 00000000011   # 3*3 = 9
+0004: 00000000020   # 4*4 = 16
+0005: 00000000031   # 5*5 = 25
+0006: 00000000000   # k=0
+0007: 00000000001   # k=1
+0010: 00000000002   # k=2
+0011: 00000000077   # k=3: Fundstelle, danach $EXIT
+0012: 00000000013   # 11
+0013: 00000000025   # 21
+0014: 00000000026   # 22
+0015: 00000000037   # 31
+0016: 00000000040   # 32
+0017: 00000000041   # 33
+0020: 00000000001   # FRUEH 0
+0021: 00000000001   # FRUEH 1, erstes Wort
+0022: 00000000002   # FRUEH 1, zweites Wort

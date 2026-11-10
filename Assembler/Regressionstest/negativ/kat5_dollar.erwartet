@@ -1,0 +1,4 @@
+rc 16
+stderr kat5 Operand enthält $ ohne gültigen Markennamen ($wrzl, $inkb, $ingb) an Position: 2.
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,20 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000013 # w_dwb: dwb 1011 ; Zelle 0001: Wort 11 = 013 oktal
+0002: 00000000004 # dw 4 ; Art des Symbols
+0003: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0004: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0005: 00000001164 # haupt: 164 0001 ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 00000000020 # 020 0 ; Zelle 0006: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 US=1
+0001: 00000000013   # w_dwb
+0002: 00000000004   # FRAGE_ART w_dwb
+0003: 00000000001   # FRAGE_DEF w_dwb
+0004: 00000000001   # FRAGE_ZELLEN w_dwb

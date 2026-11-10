@@ -1,0 +1,8 @@
+0000: 01 0004 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0              a:     dw  0     ; Zelle 0001
+0002: 00 00000000002        dw  2     ; Abstand der beiden Marken
+0003: 00 00000000011 b:     dw  9     ; Zelle 0003
+0004: 01 0000 020    haupt: 020 0     ; Zelle 0004: Halt
+0005: 0                     dw  0     ; im eigentlichen Lauf 0
+0006: 00 00000000336        dw  222   ; im eigentlichen Lauf (oktal 336)
+0007: 00 00000000005        dw  5     ; im eigentlichen Lauf 5

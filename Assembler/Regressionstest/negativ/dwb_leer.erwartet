@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '' ist ungültig (dwb erwartet 1 bis 33 Ziffern 0 oder 1)
+datei-weg obj mqo test
+escape-weg

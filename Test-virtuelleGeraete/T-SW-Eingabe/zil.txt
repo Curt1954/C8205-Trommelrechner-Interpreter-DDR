@@ -1,0 +1,7 @@
+# zil: Um. KB (Geraet steht nach der Frage in GB), j n (KB, uebergangen), Um. GB, a (uebergangen), j = J (Ja)
+Um. KB
+j
+n
+Um. GB
+a
+j

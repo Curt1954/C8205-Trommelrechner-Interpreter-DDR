@@ -1,0 +1,2 @@
+rc 16
+stderr Makro SCHIEBE: 'ziel' ist ein Positionsparameter, kein Schluesselwort

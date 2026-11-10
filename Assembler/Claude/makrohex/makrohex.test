@@ -1,0 +1,96 @@
+Trommeldatei:
+#DOK-0001 Test dwh (1 bis 8 Hexziffern), $CALCH und $CALCHn (Ausgabe), 0x-Zahl im Ausdruck (Eingabe), $VALH (Text nach Zahl), Rundreise, $VAL unveraendert
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000054000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000377 # dwh FF ; 255 = FF = 0377 oktal
+0002: 00000000000 # dwh 0 ; 0 ergibt die Ziffer 0
+0003: 00000000377 # dwh 000000FF ; mit Breite 8: 000000FF = 0377
+0004: 37777777777 # dwh FFFFFFFF ; 2^32-1: FFFFFFFF = 37777777777 oktal
+0005: 00000000012 # dwh A ; Breite 1: Ziffer A = 012
+0006: 00000000016 # dwh E ; 14 = E = 016 oktal
+0007: 00000137357 # dwh BEEF ; BEEF = 0137357 oktal
+0010: 00000000377 # dw 255 ; 255 = 0377
+0011: 00000000526 # dw 342 ; grosses X, Kleinbuchstaben: 171*2 = 342 = 0526
+0012: 00004000000 # dw 1048576 ; 2^20 = 04000000
+0013: 00000000015 # dw 13 ; 5 ODER 010 (oktal 8) = 13 = 015
+0014: 00000000400 # dwh 100 ; 255+1 = 256 = 100 hexadezimal = 0400
+0015: 00000000253 # dw 171 ; fuehrende Nullen zaehlen nicht: 171 = 0253
+0016: 00000000132 # dw 90 ; -10 + 100 = 90 = 0132
+0017: 00000000014 # dw 12 ; 0xb ist 11 (b als Hexziffer), 0b1 ist 1: 12 = 014
+0020: 00000000041 # dw 33 ; E ist Hexziffer, kein Exponent: 30+3 = 33 = 041
+0021: 00000000377 # dw 255 ; FF hexadezimal = 255 = 0377
+0022: 00000000377 # dw 255 ; Kleinbuchstaben: 255
+0023: 00000000377 # dw 255 ; fuehrende Nullen: 255
+0024: 00000000132 # dw 90 ; -10 + 100 = 90 = 0132
+0025: 00000000000 # dw 0 ; 0
+0026: 00000000001 # dw 1 ; 1
+0027: 00000000777 # dw 511 ; 2^63-1 durch 2^54 geteilt = 511 = 0777
+0030: 00000000145 # dw 101 ; $VAL liest unveraendert dezimal: 101 = 0145
+0031: 00000000020 # dw 16 ; 10 hexadezimal = 16 = 020
+0032: 00000000003 # dw 3 ; 3 Zeichen = 03
+0033: 00000002322 # dw 1234 ; 1234 = 02322
+0034: 00000000010 # dw 8 ; 8 Zeichen = 010
+0035: 00000002322 # dw 1234 ; 1234 = 02322
+0036: 00000000312 # dw 202 ; 101 Werte, je zwei Pruefungen: 202 = 0312
+0037: 00000000020 # dw 16 ; 16 Zeichen = 020
+0040: 00000000000 # dw 0 ; gleiche Zahl zurueck: Unterschied 0
+0041: 00000000101 # dw 65 ; Code des ersten Zeichens: A = 65 = 0101
+0042: 00000000000 # dwh 0 ; Wort 0
+0043: 00000000001 # dwh 1 ; Wort 1
+0044: 00000000001 # dwh 00000001 ; 8 Stellen, fuehrende Nullen: Wort 1
+0045: 17777777777 # dwh 7FFFFFFF ; 2^31-1 = 17777777777 oktal
+0046: 20000000000 # dwh 80000000 ; 2^31 = 20000000000 oktal
+0047: 25363367401 # dwh abcdef01 ; Kleinbuchstaben: 25363367401 oktal
+0050: 33653337357 # dwh DEADBEEF ; Grossbuchstaben: 33653337357 oktal
+0051: 00000052000 # hx1: da 000000000052 ; Vorwaertsverweis auf ein Symbol, dessen Name nur aus Hexziffern besteht (spaetes Symbol)
+0052: 00000000000 # cafe: dw 0 ; die Zelle, auf die hx1 zeigt
+0053: 00000145376 # dwh cafe ; hier ist cafe eine Hexzahl und kein Symbol: 0xCAFE = 0145376 oktal
+0054: 00000001164 # haupt: 164 0001 ; Zelle 44: Diagnoseausgabe (nur im Test)
+0055: 00000000020 # 020 0 ; Zelle 45: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0056 US=1
+0001: 00000000377   # HEXAUS: $CALCH(255) = FF
+0002: 00000000000   # HEXAUS: $CALCH(0)
+0003: 00000000377   # HEXAUS: $CALCH8(255) = 000000FF
+0004: 37777777777   # HEXAUS: $CALCH8(2^32-1) = FFFFFFFF
+0005: 00000000012   # HEXAUS: $CALCH1(10) = A
+0006: 00000000016   # HEXAUS: $CALCH(2+3*4) = E
+0007: 00000137357   # HEXAUS: $CALCH(48879) = BEEF
+0010: 00000000377   # HEXLIT: 0xFF
+0011: 00000000526   # HEXLIT: 0XaB*2
+0012: 00004000000   # HEXLIT: 0x1<<20
+0013: 00000000015   # HEXLIT: 0x5|010
+0014: 00000000400   # HEXLIT: $CALCH(0xFF+0x1) = 100
+0015: 00000000253   # HEXLIT: 0x0000AB
+0016: 00000000132   # HEXLIT: -0xA+100
+0017: 00000000014   # HEXLIT: 0xb+0b1
+0020: 00000000041   # HEXLIT: 0x1E+3
+0021: 00000000377   # HEXVAL: FF
+0022: 00000000377   # HEXVAL: ff
+0023: 00000000377   # HEXVAL: 00FF
+0024: 00000000132   # HEXVAL: -A + 100
+0025: 00000000000   # HEXVAL: 0
+0026: 00000000001   # HEXVAL: 1
+0027: 00000000777   # HEXVAL: 7FFFFFFFFFFFFFFF durch 2^54
+0030: 00000000145   # HEXVAL: $VAL 101 dezimal
+0031: 00000000020   # HEXVAL: 10 hexadezimal = 16
+0032: 00000000003   # HEXRUND: Text hat 3 Zeichen
+0033: 00000002322   # HEXRUND: 1234 zurueck
+0034: 00000000010   # HEXRUND: Breite 8
+0035: 00000002322   # HEXRUND: 1234 zurueck (feste Breite)
+0036: 00000000312   # HEXRUND: 202 gelungene Rundreisen
+0037: 00000000020   # HEXRUND: 2^63-1 hat 16 Zeichen
+0040: 00000000000   # HEXRUND: Unterschied 0
+0041: 00000000101   # HEXRUND: Grossbuchstabe A = 65
+0042: 00000000000   # HEXDWH: dwh 0
+0043: 00000000001   # HEXDWH: dwh 1
+0044: 00000000001   # HEXDWH: dwh 00000001
+0045: 17777777777   # HEXDWH: dwh 7FFFFFFF
+0046: 20000000000   # HEXDWH: dwh 80000000
+0047: 25363367401   # HEXDWH: dwh abcdef01
+0050: 33653337357   # HEXDWH: dwh DEADBEEF
+0052: 00000000000   # HEXDWH: cafe: dw 0
+0053: 00000145376   # HEXDWH: dwh cafe = 0xCAFE

@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 2: ;#MAKROLOKAL ohne '=' (Syntax ;#MAKROLOKAL=1).
+datei-weg obj mqo test
+escape-weg

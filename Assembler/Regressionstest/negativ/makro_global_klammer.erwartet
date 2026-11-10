@@ -1,0 +1,4 @@
+rc 16
+stderr makro_global_klammer.asm:6: Fehler: G2 $GLOBAL q(3): Der Name steht ohne Klammer (ein Feld legt $DIM an)
+datei-weg obj mqo test
+escape-weg

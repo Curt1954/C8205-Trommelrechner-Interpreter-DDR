@@ -1,0 +1,7 @@
+args --pass0 --makros -WARN=ALLE
+rc 0
+nicht-stdout Projektverzeichnis:
+nicht-stdout nie verwendet
+nicht-stdout EINS
+nicht-stderr 
+datei-weg obj mqo test sym log dmp

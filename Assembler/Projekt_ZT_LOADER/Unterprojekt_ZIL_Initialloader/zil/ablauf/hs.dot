@@ -1,0 +1,38 @@
+digraph G {
+ graph [rankdir=TB, fontname="Helvetica", labelloc=t, fontsize=16, nodesep=0.6, ranksep=0.45, forcelabels=true,
+   label="UP hschl – Lochstreifen aus Leser 1 als Typ 10 lesen und spurweise auf die ZT schreiben (Makro HSCHL, ZT-Repository_Aufgabenstellung.md 6c und 7a)\nSeite 4 von 4; Nummern setzen die von Seite 3 fort"];
+ node [fontname="Helvetica", fontsize=11, style=filled, fillcolor="#ffffff", color="#333333"];
+ edge [fontname="Helvetica", fontsize=10];
+ a [shape=oval, fillcolor="#e8e8e8", label="UP hschl (Makro HSCHL, Aufruf 025)\nEin:  R1 = Adresse Puffer Programmcode (1 Spur,\n       auf Spurgrenze), R2 = Trommel d, R3 = Spur\n       s der ersten Zielspur (Zahlen); K1\n       angewählt\nAus: R2 = Sektoranzahl (R1, R3 und KBGB\n       unverändert); Fehler: kein Rücksprung", xlabel=<<font color="#c00000" point-size="12"><b>44</b></font>>];
+ i1 [shape=box, label="Anfang:  Adresse des Puffers (R1) und KBGB merken\np := 128 · d + s  (laufende Zielspur)\nSektorzähler := 0     Ende-Merker := 0  (Streifen\n       läuft noch)", xlabel=<<font color="#c00000" point-size="12"><b>45</b></font>>];
+ i2 [shape=box, label="neue Spur im Puffer:  Zeiger := Adresse des\n       Puffers\nBefehl 441 <Puffer>:  alle 32 Zellen des Puffers\n       := 0  (Rest der letzten Spur bleibt 0)", xlabel=<<font color="#c00000" point-size="12"><b>46</b></font>>];
+ rd [shape=box, label="Eingabe lesen:  R1 := Zeiger\nUP eingabe (Makro TYP10EINGABE, Aufruf 025): liest\n       eine Eingabe bis einschließlich . oder :\n       vom Leser 1 (K1)\nund legt Wort 1 (Daten) und Wort 2 (Kennzeichen)\n       in die 2 Zellen ab Zeiger;  Um. KB / Um. GB\n       führen KBGB nach", xlabel=<<font color="#c00000" point-size="12"><b>47</b></font>>];
+ ds [shape=diamond, fillcolor="#fff2cc", label="„/“ (Streifenende) gelesen ?\n(TYP10EINGABE springt dann nach hs_ende;\neine begonnene Eingabe wird verworfen)", xlabel=<<font color="#c00000" point-size="12"><b>48</b></font>>];
+ sp [shape=box, label="Eingabe fertig:  Sektorzähler := Sektorzähler + 2", xlabel=<<font color="#c00000" point-size="12"><b>49</b></font>>];
+ dl [shape=diamond, fillcolor="#fff2cc", label="Sektorzähler ≥ 4096 ?\n(mehr als 4095 Sektoren = 2048 Eingaben)", xlabel=<<font color="#c00000" point-size="12"><b>50</b></font>>];
+ f2 [shape=oval, fillcolor="#f4cccc", label="Fehlerausgang fe_lang des Hauptprogramms\nAusschrift „lochstreifen zu lang“, Halt", xlabel=<<font color="#c00000" point-size="12"><b>51</b></font>>];
+ zg [shape=box, label="Zeiger := Zeiger + 2 Zellen", xlabel=<<font color="#c00000" point-size="12"><b>52</b></font>>];
+ dp [shape=diamond, fillcolor="#fff2cc", label="Zeiger = Puffer + 32 Zellen ?\n(Puffer voll: 16 Eingaben)", xlabel=<<font color="#c00000" point-size="12"><b>53</b></font>>];
+ en [shape=box, label="Streifenende:  Ende-Merker := -1", xlabel=<<font color="#c00000" point-size="12"><b>54</b></font>>];
+ de [shape=diamond, fillcolor="#fff2cc", label="Zeiger = Puffer ?\n(keine Eingabe mehr im Puffer)", xlabel=<<font color="#c00000" point-size="12"><b>55</b></font>>];
+ wr [shape=box, style="filled,rounded", fillcolor="#fce4d6", label="Spur schreiben:  Anwahl 5k00 030  (k = d + 1,  d =\n       Bit 7 und 8 von p)\nAusgabe:  Wort := s · 2^26 + Puffer + 601  (s =\n       Bit 0 bis 6 von p), ausführen\nPuffer → Spur s der Trommel d;   p := p + 1\n       (Übertrag Spur 127 → Spur 0 der nächsten\n       Trommel)", xlabel=<<font color="#c00000" point-size="12"><b>56</b></font>>];
+ dm [shape=diamond, fillcolor="#fff2cc", label="Ende-Merker < 0 ?", xlabel=<<font color="#c00000" point-size="12"><b>57</b></font>>];
+ ret [shape=oval, fillcolor="#f4cccc", label="R2 := Sektorzähler;  R1 := Adresse des Puffers;\n       KBGB zurückgestellt\nRückkehr zum Aufrufer  (K1 und die letzte Trommel\n       bleiben angewählt)", xlabel=<<font color="#c00000" point-size="12"><b>58</b></font>>];
+ a->i1->i2->rd->ds;
+ ds->en [label=" ja"];
+ ds->sp [label=" nein"];
+ sp->dl;
+ dl->f2 [label=" ja"];
+ dl->zg [label=" nein"];
+ zg->dp;
+ dp->wr [label=" ja"];
+ dp->rd [label=" nein: nächste Eingabe", constraint=false];
+ en->de;
+ de->ret [label=" ja: nichts zu schreiben"];
+ de->wr [label=" nein: letzte Spur"];
+ wr->dm;
+ dm->ret [label=" ja"];
+ dm->i2 [label=" nein: nächste Spur", constraint=false];
+ leg [shape=note, fillcolor="#fafafa", fontsize=9, label="Eine Eingabe = 2 Zellen (Typ 10, Aufgabenstellung 5a und\n7a): Wort 1 = Datenwert, Wort 2 = Kennzeichen; ein Puffer (1\nSpur = 32 Zellen) fasst 16 Eingaben. „/“ beendet den\nStreifen. p = 128 · d + s ist der laufende Spurzähler\n(Arbeitszelle).\nAnwahl 5k00 030 = 05100030 + d · 0100000 (wie NEUANL), je\nSpur; der Puffer wird je Spur mit 441 gelöscht. Der\nFehlerausgang ist ein Parameter des Makros (Sprungziel im\nHauptprogramm); 8 und 9 sind kein Fehler mehr.\nR1 wird je Eingabe auf die Pufferstelle gesetzt und am Ende\nzurückgestellt, KBGB ebenfalls (der Streifen kann Um. KB /\nUm. GB enthalten)."];
+ a->leg [style=invis];
+}

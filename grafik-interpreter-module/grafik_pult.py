@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_pult.py - Pult-Steuerung des Modus GRAFIK (Stufe 2). Reine Standardbibliothek, KEIN Tkinter (dadurch testbar).
-Version: G2-011
+Version: G2-015
 
 Aufgaben (GRAFIK_Beschreibung §4.5, §5.7 (alt: Dok. 01 Abschnitte 1.3, 1.7, 1.8, 3.5); GRAFIK_Beschreibung §4 (alt: Dok. 06)):
   * Netzablauf: AUS (Start) -> HOCHLAUF (B rot, 11,3 s) -> BETRIEB (B gruen) -> AUSLAUF (B dunkel, ~2 s) -> ENDE.
@@ -21,7 +21,7 @@ import threading
 
 from grafik_debuglog import log
 
-VERSION_PULT = 'G2-014'
+VERSION_PULT = 'G2-015'
 
 HOCHLAUF_S = 11.3       # Laenge von fade_in (GRAFIK_Beschreibung §3.6 (alt: Dok. 01 Abschnitt 1.8 Nr. 4)); Ton folgt in Stufe 4
 AUSLAUF_S = 2.0         # Laenge von fade_out (rund 2 s)
@@ -106,7 +106,7 @@ class Mittelung:
 
 class PultSteuerung:
     def __init__(self, ordner, rechner=None, hochlauf_s=HOCHLAUF_S, auslauf_s=AUSLAUF_S, tastenzeit_s=TASTENZEIT_S,
-                 bei_betrieb=None, bei_ende=None, ton=None, bei_ls=None):
+                 bei_betrieb=None, bei_ende=None, ton=None, bei_ls=None, taste_ton=None):
         """ordner: Ordner 'pult' (Manifest, bild/, grafiken/). rechner: c8205_grafik.Rechner (oder None fuer reine Anzeige).
         bei_betrieb(): wird einmal aufgerufen, wenn B gruen wird (hier startet der Rechner-Thread).
         bei_ende(): wird beim Auslauf aufgerufen (Abbruch des Rechners), noch bevor ENDE erreicht ist."""
@@ -115,6 +115,7 @@ class PultSteuerung:
             self.m = json.load(f)
         self.r = rechner
         self.ton = ton
+        self.taste_ton = taste_ton      # Stufe 4 (G2-015): Funktion(art) mit art 'impuls', 'einrast' oder 'radio' bei jedem WIRKSAMEN Klick (grafik_pultton.PultTastenTon.taste); sonst None. Kein Loslass-Ton.
         self.bei_ls = bei_ls            # Stufe 4 (S4-10): Funktion(bool) beim Einrasten/Loesen des Selektors LS (Stanzerton); sonst None
         self.hochlauf_s, self.auslauf_s, self.tastenzeit_s = hochlauf_s, auslauf_s, tastenzeit_s
         self.bei_betrieb, self.bei_ende = bei_betrieb, bei_ende
@@ -206,6 +207,14 @@ class PultSteuerung:
             self.r.neue_folge()
         self.r.taste(token)
 
+    def _klang(self, art):
+        """Tastengeraeusch (G2-015): nur aufgerufen, wenn der Klick gewirkt hat; gesperrte oder wirkungslose Klicks bleiben stumm (M-25). Ein Fehler im Ton darf die Taste nicht verhindern."""
+        if self.taste_ton is not None:
+            try:
+                self.taste_ton(art)
+            except Exception as e:
+                log('FEHLER', f'Tastenton {art}: {e!r}')
+
     def _blinken(self, taste, jetzt):
         self.blink[taste] = jetzt + self.tastenzeit_s
 
@@ -245,6 +254,7 @@ class PultSteuerung:
                     return False
                 self.rastet.discard('R')
                 self.rastet.add('H')
+                self._klang('radio')
                 self._an_rechner('H')
                 return True
             if taste == 'R':
@@ -252,6 +262,7 @@ class PultSteuerung:
                     return False
                 self.rastet.discard('H')
                 self.rastet.add('R')
+                self._klang('radio')
                 self._an_rechner('R')
                 return True
             # --- Rollensperre
@@ -263,6 +274,7 @@ class PultSteuerung:
                     return False
                 self.rastet.discard('SW' if taste == 'T' else 'T')
                 self.rastet.add(taste)
+                self._klang('radio')
                 self._an_rechner('SW=0' if taste == 'T' else 'SW=1')
                 return True
             # --- Selektoren (einrastend)
@@ -273,6 +285,7 @@ class PultSteuerung:
                 else:
                     self.rastet.add(taste)
                     ein = True
+                self._klang('einrast')
                 if taste == 'SW_umschalt':
                     if self.r is not None:
                         self.r.sw.unterdruecken = ein
@@ -288,12 +301,14 @@ class PultSteuerung:
             if taste in KANAL:                                  # Radio-Verhalten: genau eine rastet (Aenderung 17.10.2026 gegen Entwurf 77)
                 self.rastet -= set(KANAL)
                 self.rastet.add(taste)
+                self._klang('einrast')
                 self._an_rechner(taste)
                 return True
             # --- E und M: Halter. Niederdruecken und Loslassen sind getrennte Ereignisse (E+ / E-, M+ / M-): E+ fuehrt Phase IV und I aus,
             #     E- Phase II und III (Handbuch, Taste E); bei gehaltener Taste (Umschalt+Klick) liegt dazwischen beliebig viel Zeit.
             if taste in ('E', 'M'):
                 if umschalt:
+                    self._klang('impuls')                      # Umschalt+Klick ist beide Male ein Tastendruck (Halter setzen oder loesen); kein Ton beim Loslassen der Maus
                     if taste in self.halter:
                         self.halter.discard(taste)
                         self._an_rechner(taste + '-')
@@ -304,6 +319,7 @@ class PultSteuerung:
                 if taste in self.halter:                       # normaler Klick auf gehaltene Taste: nichts
                     return False
                 self._blinken(taste, jetzt)
+                self._klang('impuls')
                 self.maus_gehalten[taste] = True
                 self._an_rechner(taste + '+')
                 return True
@@ -315,10 +331,12 @@ class PultSteuerung:
                     return False
                 self.protokoll.append('K0:' + EINGABE_TOKEN[taste])
                 self._blinken(taste, jetzt)
+                self._klang('impuls')
                 return True
             # --- uebrige Klick-Tasten: G, UE, ST
             if taste in ('G', 'UE', 'ST'):
                 self._blinken(taste, jetzt)
+                self._klang('impuls')
                 self._an_rechner(taste)
                 return True
             return False

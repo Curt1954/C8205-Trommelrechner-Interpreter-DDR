@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zaehler_ausserhalb.asm:5: Fehler: R6 Der Zähler $Z1 gilt nur innerhalb einer $REPT-Schleife
+datei-weg obj mqo test
+escape-weg

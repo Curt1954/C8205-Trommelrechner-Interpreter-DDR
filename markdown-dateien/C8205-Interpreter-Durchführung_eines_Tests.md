@@ -1,6 +1,6 @@
 ** Durchführung eines Tests **
 
-Version: 0.95-014
+Version: 0.95-019
 
 ## 1. Einordnung und Testvoraussetzungen
 
@@ -687,6 +687,24 @@ sofern ihm das Abbild vorliegt; sonst startet der Test nicht (Grundsatz „laut 
 
 **Beispiel:** `Tests/trommel-001_leer.txt` belegt zwei Zellen selbst und prüft, dass drei weitere Zellen 0 sind. Er ist auch auf einer verschmutzten Trommel `Test wahr`.
 
+### 2g.1 Die Testmarke `#ZTROMMEL=LEER` und `#ZTROMMEL=KEEP` (Ergänzung 30.10.2026, umgesetzt)
+
+**Stand: umgesetzt in `c8205_interp.py` 0.95-014 und im Assembler (Erkennung als Testmarke ab c82ass 1.00-056).** Wie `#TROMMEL=` (2g) die Haupttrommel, bestimmt `#ZTROMMEL=` den Anfangszustand der **Zusatztrommeln** (Schalter `--C8205Z`). Die Marke steht im Abschnitt `Trommeldatei:`, wie `#TROMMEL=`; ein Kommentar mit `#` dahinter ist zulässig.
+
+```
+#ZTROMMEL=LEER
+#ZTROMMEL=KEEP
+```
+
+| Wert | Wirkung vor dem Test |
+| --- | --- |
+| `LEER` | Alle vier Zusatztrommeln (ZT0 bis ZT3) werden geleert: alle Zellen 0. |
+| `KEEP` | Die Zusatztrommeln bleiben unverändert (Stand des vorigen Laufs). |
+
+**Standard ist `KEEP`:** Fehlt die Marke, gilt `KEEP`. Ohne Schalter `--C8205Z` hat die Marke keine Wirkung (wie die ZT-Zellen-Prüfung, 3a.6). Der Zeitpunkt im Ablauf ist der des Rücksetzens der Haupttrommel (2g, Ablauf Schritt 2), also vor dem Lauf.
+
+**Folge für `#TROMMEL=`:** Die Zusatztrommeln folgen nur noch `#ZTROMMEL=`. `#TROMMEL=LEER` und Trommelvorlagen leeren sie nicht mehr mit (Annahme des Bearbeiters nach dem Vorschlag der Aufgabe; `Python_Interpreter.md` ist angepasst). Die Marke wird nur mit `--C8205Z` ausgewertet: Ohne den Schalter werden sie und ihre Formfehler (unbekannter Wert, doppelte Marke, Marke im Abschnitt `Prüfungen:`) kommentarlos ignoriert. Mit dem Schalter meldet der Interpreter im Protokoll die Zeile `Zusatztrommeln: vor dem Test geleert (#ZTROMMEL=LEER)` bzw. `... unverändert, Stand des vorigen Laufs (#ZTROMMEL=KEEP)`; ohne Marke erscheint keine Zeile.
+
 ## 2h. Beispiel 1: Ein Programm über Lochstreifen auf die Trommel laden und in TEST und GRAFIK ausführen (Ergänzung 20.10.2026)
 
 Dieser Abschnitt führt einen Test durch, dessen Programm **nicht** in den Zeilen der Trommeldatei steht, sondern von einem Lochstreifen in die Trommel geladen wird. Er verbindet die Testdatei (Abschnitt 2 und 2b), die Hilfsprogramme für Lochstreifen (`C8205-Interpreter-Lochstreifen-Hilfsprogramme.md`), den TEST-Interpreter und den GRAFIK-Interpreter. Als Beispiel dient `Tests/k1_leser_stanzer.test`: Das Programm liest von Leser 1 Zeichen bis zum Zeichen `:` und stanzt sie auf Stanzer 1 (Lochstreifen kopieren). Im Beispiel enthält der Streifen den Text `Hallo Welt 123 (ok)!:`.
@@ -1139,7 +1157,7 @@ ergeben, steht hinter dem Abschnittskopf `False` (`Prüfungen: False`, Abschnitt
 
 ### 3a.1 Aufbau
 
-Der Abschnitt `Prüfungen:` besteht aus höchstens zwei Teilen, in dieser Reihenfolge:
+Der Abschnitt `Prüfungen:` besteht aus höchstens drei Teilen, in dieser Reihenfolge (der dritte Teil, die ZT-Zellen-Prüfung, ist in Abschnitt 3a.6 beschrieben):
 
 1. **Höchstens eine** Register-/Flag-Zeile. Sie enthält, durch Leerzeichen getrennt und in beliebiger
    Reihenfolge, eine oder mehrere Zuweisungen der Form `SCHLÜSSEL=WERT`. Zulässige Schlüssel sind
@@ -1159,6 +1177,8 @@ Der Abschnitt `Prüfungen:` besteht aus höchstens zwei Teilen, in dieser Reihen
    Sie legen fest, welchen Inhalt bestimmte Trommeladressen nach Testende haben müssen. Verglichen wird mit dem Trommelstand nach dem Lauf; bei Adressen, die der Test nicht selbst belegt, hängt der Istwert vom Trommelstand vor dem Test ab (Abschnitt 2c). Dieselbe Adresse
    darf nicht mehrfach mit widersprüchlichem Sollwert auftreten (wie bei den Trommeldatei-Zeilen selbst,
    s. Abschnitt 2/5).
+
+3. **Optional** der Unterabschnitt `ZT-Zellen-Pruefung:` mit Prüfzeilen für Zellen der Zusatztrommeln (Abschnitt 3a.6).
 
 Fehlt die Register-/Flag-Zeile (weil keine Register/Flags geprüft werden sollen), beginnt der Abschnitt
 unmittelbar mit Speicherprüfzeilen. Sind weder eine Register-/Flag-Zeile noch Speicherprüfzeilen
@@ -1220,6 +1240,8 @@ die am Ende gleichen Zeilen nur einmal ausgegeben; davor steht eine Zeile „…
 Ein-/Ausgabebefehl bleibt das Knotenlimit ein Fehler (Endlosschleife, Rückgabecode 8, Protokoll vollständig). Beispiel:
 `Tests/knotenlimit_ausgabeschleife.txt` (Endlosschleife mit Ausgabebefehl auf das Schreibwerk).
 
+Die Grenze von 2 000 000 Knoten lässt sich im Modus TEST mit `--max-knoten N` ändern (z. B. `--max-knoten 20000000` für einen großen Ladevorgang; rund 2000 Knoten je übertragenem Wort).
+
 ### 3a.3 Ausgabe
 
 Die Ergebnisprüfung wird, unabhängig von der Protokollierungsstufe `#PROT STUFE=n` (Abschnitt 2,
@@ -1276,6 +1298,58 @@ Der Rückkehrcode bleibt in allen Fällen 6; der Lauf gilt als **Test wahr** und
 
 **Formale Gültigkeit.** Jeder andere Text hinter `Prüfungen:` (auch `True`) ist ein Formfehler: Der Test startet nicht
 (Rückkehrcode 16, 3a.4).
+
+### 3a.6 ZT-Zellen-Prüfung: `ZT-Zellen-Pruefung:` (Ergänzung 30.10.2026, umgesetzt)
+
+**Stand: umgesetzt in `c8205_interp.py` 0.95-014, `c8205_zt.py` 0.01-004, `Assembler/asm_und_test.sh` und c82ass 1.00-056.** Ein Test, der Zusatztrommeln (Schalter `--C8205Z`, Python_Interpreter.md) beschreibt, soll deren Zellen nach dem Lauf prüfen können. Dazu kann der Abschnitt `Prüfungen:` einen Unterabschnitt
+
+```
+ZT-Zellen-Pruefung:
+```
+
+enthalten. Er ist **optional**. Unter der Kopfzeile stehen **beliebig viele** Prüfzeilen, je eine pro Zeile, in der Form
+
+```
+o-aaaa: ttttttttttt
+```
+
+Alles ist oktal:
+
+- `o` = Nummer der Zusatztrommel, eine Oktalstelle (ZT0 bis ZT3; ZT0 ist die Datei `zt1.txt`, ZT3 die Datei `zt4.txt`).
+- `aaaa` = Zellenadresse in der Trommel, 4 Oktalstellen (wie die Adressen in Abschnitt 2).
+- `ttttttttttt` = Sollwert der Zelle, 11 Oktalstellen (Maschinenwortbreite, wie in Abschnitt 3a.1).
+
+Hinter dem Doppelpunkt steht ein Leerzeichen, wie bei den Speicherprüfzeilen (3a.1, Teil 2).
+
+**Beispiel** (Spur 0 von ZT0: Zelle 0 = Repository-Kennzeichen, Zelle 16 = Repository-Kopf):
+
+```
+Prüfungen:
+BZ=2027
+ZT-Zellen-Pruefung:
+0-0000: 52525252525
+0-0020: 00000000001
+```
+
+**Auswertung** (wie 3a.2): Nach Abschluss des Laufs wird jede angegebene Zelle einzeln mit dem Inhalt der Zusatztrommel `o` verglichen. Der Test ist nur dann `Test wahr`, wenn alle Einzelprüfungen (Register, Flags, Haupttrommelzellen, ZT-Zellen, Dateiprüfungen) stimmen. Im Protokoll und auf dem Bildschirm (3a.3) stehen zu jeder ZT-Zelle Soll und Ist, in der Form `  ZT1 0140: soll=00000001000 ist=00000001000 OK` (Trommel, Adresse; Reihenfolge nach Trommel und Adresse, nach den Haupttrommelzellen). Ohne ordnungsgemäßes Ende des Laufs entfällt die Prüfung wie in 3a.2.
+
+**Formale Gültigkeit** (wie 3a.4, der Test startet nicht, Rückkehrcode 16): `o` nicht 0 bis 3, falsche Stellenzahl von Adresse oder Wert, Ziffer 8 oder 9, eine Zeile außerhalb des Formats `o-aaaa: ttttttttttt`, dieselbe Zelle (gleiche `o` und `aaaa`) mit widersprüchlichen Sollwerten.
+
+**Ohne Schalter `--C8205Z`** gibt es keine Zusatztrommeln: Der Unterabschnitt `ZT-Zellen-Pruefung:` wird **kommentarlos ignoriert** (keine Prüfung, keine Meldung, kein Vermerk, kein Einfluss auf das Ergebnis; auch die formale Prüfung der Zeilen entfällt).
+
+**Anfangszustand der Zusatztrommeln:** Ihn legt die Testmarke `#ZTROMMEL=` fest (Abschnitt 2g.1).
+
+**Übernahme aus dem Assemblerquelltext:** Die Zeilen der ZT-Zellen-Prüfung stehen im `;#PRUEFE`-Block des `.asm` (Assembler-Dokumentation 3.1c), jede Zeile mit führendem Semikolon:
+
+```
+;#PRUEFE-START
+;BZ=2027
+;ZT-Zellen-Pruefung:
+;0-0000: 52525252525
+;#PRUEFE-ENDE
+```
+
+Der Assembler übernimmt sie wie die übrigen Zeilen des Blocks in den Abschnitt `Prüfungen:` der `.test`. Die Testmarke `;#ZTROMMEL=LEER` (oder `KEEP`) im Vorspann des `.asm` erkennt der Assembler ab 1.00-056 und schreibt sie in den Abschnitt `Trommeldatei:`. `asm_und_test.sh` startet den Interpreter mit `--C8205Z` (Ordner `Trommel/ZT/`, abweichend `ASM_ZTVERZ`), wenn die `.test` `#ZTROMMEL=` oder `ZT-Zellen-Pruefung:` enthält, und ergänzt `#ZTROMMEL=LEER`, wenn ZT-Zeilen da sind, aber keine Marke. Vorlage: `Assembler/Claude/ztpruef/ztpruef.asm`; Tests des Interpreters: `C8205Z/Tests_Z/zt-004` bis `zt-007` (`zt_tests.sh`).
 
 ## 3b. Dateiprüfungen für Stanzer und Schreibwerk (`--pruefe-stanzer1`, `--pruefe-sw-ausgabe`)
 

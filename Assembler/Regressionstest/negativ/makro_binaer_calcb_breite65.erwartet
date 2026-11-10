@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_calcb_breite65.asm:6: Fehler: $CALCB65(1): Breite 65 liegt außerhalb von 1 bis 64
+datei-weg obj mqo test
+escape-weg

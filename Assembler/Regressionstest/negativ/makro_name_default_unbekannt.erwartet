@@ -1,0 +1,4 @@
+rc 16
+stderr Makro M1: $DEFAULT: Unbekannter Parametername x (Zeile: $DEFAULT x 3) [im Quelltext Zeile 3]
+datei-weg obj mqo test
+escape-weg

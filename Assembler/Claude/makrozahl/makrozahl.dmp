@@ -1,0 +1,38 @@
+0000: 01 0044 000           000 haupt     ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000007 z007:  dw  7         ; Marke z007, z010, z011
+0002: 00 00000000010 z010:  dw  8         ; Marke z007, z010, z011
+0003: 00 00000000011 z011:  dw  9         ; Marke z007, z010, z011
+0004: 00 00000000003        dw  3         ; 3 Zeichen
+0005: 0                     dw  0         ; gleich: 0
+0006: 00 00000000002        dw  2         ; 2 Zeichen
+0007: 00 00000000020        dw  16        ; 16
+0010: 00 00000000007        dw  7         ; 1 + 5 + 1 = 7 Zeichen
+0011: 00 00000000003        dw  3         ; 3 Zeichen
+0012: 0                     dw  0         ; gleich: 0
+0013: 00 00000000001        dw  1         ; 1 Zeichen
+0014: 00 00000000007        dw  7         ; 7
+0015: 00 00000000023        dw  19        ; 19
+0016: 00 00000000002        dw  2         ; 2 Zeichen
+0017: 00 00000000004        dw  4         ; 4 Zeichen
+0020: 0                     dw  0         ; gleich: 0
+0021: 00 00000000003        dw  3         ; 3 Zeichen
+0022: 00 00000000125        dw  85        ; -15 + 100 = 85
+0023: 0                     dw  0         ; 017 gleich 017: 0
+0024: 00 00000000001        dw  1         ; 020 gegen 017: 1
+0025: 00 00000000002        dw  2         ; 2 Zeichen
+0026: 00 00000000021        dw  17        ; dezimal gelesen: 17
+0027: 00 00000000017        dw  15        ; oktal gelesen: 15
+0030: 00 00000000003        dw  3         ; die 7 steht an Position 3
+0031: 0                     dw  0         ; gleich: 0
+0032: 0                     dw  0         ; gleich: 0
+0033: 00 00000000067        dw  55        ; 55
+0034: 00 00000000003        dw  3         ; 3 Zeichen
+0035: 00 00000000017        dw  15        ; 15
+0036: 00 00000000002        dw  2         ; 2 Zeichen
+0037: 00 00000000022        dw  18        ; 18
+0040: 00 00000000003        dw  3         ; 3 Zeichen
+0041: 00 00000000036        dw  30        ; 30
+0042: 00 00000000001        dw  z010-z007 ; Zelle 34: Marken aus TAB3 liegen eine Zelle auseinander
+0043: 00 00000000002        dw  z011-z007 ; Zelle 35: und zwei Zellen
+0044: 01 0001 164    haupt: 164 0001      ; Zelle 36: Diagnoseausgabe (nur im Test)
+0045: 01 0000 020           020 0         ; Zelle 37: Halt

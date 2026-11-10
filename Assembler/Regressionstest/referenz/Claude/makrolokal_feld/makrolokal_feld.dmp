@@ -1,0 +1,12 @@
+0000: 01 0012 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000014        dw  12    ; 5 + 7 = 12
+0002: 00 00000000013        dw  11    ; 11
+0003: 00 00000000026        dw  22    ; 22
+0004: 00 00000000143        dw  99    ; 99
+0005: 0                     dw  0     ; 0 (Element des lokalen Feldes)
+0006: 00 00000000013        dw  11    ; 11
+0007: 00 00000000026        dw  22    ; 22
+0010: 0                     dw  0     ; Zelle 0010: 0 (lokales Feld a ist weg)
+0011: 00 00000000001        dw  1     ; Zelle 0011: 1
+0012: 01 0001 164    haupt: 164 0001  ; Zelle 0012: Diagnoseausgabe (nur im Test)
+0013: 01 0000 020           020 0     ; Zelle 0013: Halt (Zelle 11 dezimal)

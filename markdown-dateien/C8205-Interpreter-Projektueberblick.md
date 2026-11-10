@@ -1,6 +1,6 @@
 # C8205-Interpreter: Projektüberblick
 
-Version: 0.95-003
+Version: 0.95-004
 
 Dieses Dokument richtet sich an Menschen, die das Projekt nicht im Detail verfolgt haben, und
 beschreibt zusammenhängend, was hier entsteht und wie die Einzeldokumente zueinander stehen. Es
@@ -31,7 +31,7 @@ Das Gesamtprojekt gliedert sich dafür in drei Teilprojekte mit unterschiedliche
 **Interpreter** (Python, Wurzel des Projektverzeichnisses; Abschnitt 2) führt Maschinencode gegen das
 rekonstruierte Regelwerk aus, der **Assembler** (C, Unterverzeichnis `Assembler/`; Abschnitt 3)
 übersetzt lesbaren Assembler-Quelltext in genau diesen Maschinencode, und das
-**Bausteininterpretationssystem BIS** (Abschnitt 3a) ist das Programmsystem, das auf dem C 8205 selbst
+**Bausteininterpretiersystem BIS** (Abschnitt 3a) ist das Programmsystem, das auf dem C 8205 selbst
 läuft. Interpreter und Assembler sind eigenständige Werkzeuge, die über den von ihnen erzeugten bzw.
 verarbeiteten Objektcode zusammenhängen, aber unabhängig voneinander entwickelt werden. Das BIS ist kein
 Werkzeug, sondern Anwendungs-Software für den C 8205; als Teilprojekt steht es gleichberechtigt neben den
@@ -96,7 +96,7 @@ Assemblerdokumentation (`Assembler/Dokumentation/`, die `.odt` ist maßgeblich);
 
 ## 3a. Teilprojekt BIS
 
-Das Bausteininterpretationssystem (BIS; Herausgeber VEB Kombinat Zentronik) ist ein **offenes
+Das Bausteininterpretiersystem (BIS; Herausgeber VEB Kombinat Zentronik) ist ein **offenes
 Unterprogrammsystem** für den C 8205 und das dritte Teilprojekt. Anders als Interpreter und Assembler ist es
 kein Werkzeug auf dem Entwicklungsrechner, sondern Software, die auf dem C 8205 selbst abläuft. Der Rechner
 kennt in Hardware nur die Eingabe **eines Zeichens**; alles Weitere (Worte, Adressen und Dezimalzahlen
@@ -214,7 +214,7 @@ zusätzlich zu den inhaltlichen Einzeltests.
 | `C8205-Interpreter-Beschreibung_der_Knoten.md` | Variablentabelle T2: Bedeutung jeder ANWEISUNG-nnn, die im Knotengraph referenziert wird |
 | `C8205-Interpreter-Befehlsliste.md` | Generische Befehlsbeschreibung nach B/A/Z sowie die vollständige, nach Oktalcode geordnete Einzelbefehlsübersicht (372 Befehle) |
 | `C8205-Interpreter-Kodetabellen.md` | Zeichenkodetabelle: R300-Lochstreifenkode (Tabelle 1) |
-| `C8205-Interpreter-BIS.md` | Teilprojekt BIS (Abschnitt 3a): Bausteininterpretationssystem, Kleines Eingabeprogramm (KEP) auf Spur 0, Minimalprogramm mit den Eingabekennzeichen K₁/K₂ |
+| `C8205-Interpreter-BIS.md` | Teilprojekt BIS (Abschnitt 3a): Bausteininterpretiersystem, Kleines Eingabeprogramm (KEP) auf Spur 0, Minimalprogramm mit den Eingabekennzeichen K₁/K₂ |
 | `Bausteininterpretiersystem BIS/markdown-dateien/C8205-Interpreter-Objektdatei_Listing.md` | Objektdatei-Ausdrucke der Beispielprogramme (Vorgabebilder): Spalten einer Befehlszeile, Relokationskennung K1K2, vom Vorgabebild zum Testauftrag, Beispiel Maximum von drei Zahlen; liegt im BIS-Ordner |
 | `C8205-Interpreter-Durchführung_eines_Tests.md` | Das Testkonzept selbst (Abschnitt 5 dieses Dokuments): Trommeldatei, Tastenfolge, Testmarken, virtuelle Geräte, Protokollierung, Python-/Claude-Interpreter, Start eines Tests auf beiden Wegen (Abschnitt 1b) |
 | `C8205-Interpreter-Lochstreifen-Hilfsprogramme.md` | Bedienung und Technik der beiden Lochstreifen-Hilfsprogramme (Anzeige, Eingabe): Format des virtuellen Lochstreifens, Zeichenlage, Irrung, Kopieren in die Zwischenablage, Installation unter Linux, Windows, macOS |

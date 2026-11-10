@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 2 der eingebundenen Datei 'quelltext_include_opsym_1.inc': ;#MACRODATEI und ;#OPSYM gelten nur in der Hauptdatei
+datei-weg obj mqo test
+escape-weg

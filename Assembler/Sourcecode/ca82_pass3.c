@@ -2,6 +2,7 @@
 // Teil des C8205-Assemblers c82ass, Version siehe ca82_version.h
 #include "ca82_intern.h"
 #include "ca82_fluss.h"
+#include "ca82_berichte.h"
 
 
 extern char inputFileName[1024];   // wird weiter unten definiert
@@ -11,12 +12,12 @@ extern char inputFileName[1024];   // wird weiter unten definiert
 static int findeQuellzeileFuerToken(const char *token) {
     size_t tl = strlen(token);
     if (tl == 0) return 0;
-    FILE *f = fopen(inputFileName, "r");
-    if (!f) return 0;
+    // Quelltext einschliesslich der mit $INCLUDE eingebundenen Dateien (fortlaufende Nummern, Doku 4.14)
     char zeile[2048];
     int nr = 0, gefunden = 0;
-    while (!gefunden && fgets(zeile, sizeof(zeile), f)) {
+    while (!gefunden && nr < quellZeilenAnzahl()) {
         nr++;
+        snprintf(zeile, sizeof(zeile), "%s", quellZeilenText(nr));
         char *kommentar_pos = strchr(zeile, ';');
         if (kommentar_pos) *kommentar_pos = '\0';
         for (char *p = zeile; (p = strstr(p, token)) != NULL; p++) {
@@ -25,7 +26,6 @@ static int findeQuellzeileFuerToken(const char *token) {
             if (vorne && hinten) { gefunden = 1; break; }
         }
     }
-    fclose(f);
     return gefunden ? nr : 0;
 }
 
@@ -318,6 +318,301 @@ static void pass3Dw(Pass3Zustand *z, int i, char *line, size_t lineGroesse, cons
     z->pc++;
 }
 
+// dwb (Doku 3.3.19): ein Datenwort aus einer Bitfolge. Der Operand besteht aus 1 bis 33 Ziffern 0 oder 1; die Folge
+// ist immer dual (auch mit fuehrender 0) und steht rechtsbuendig im Wort: letzte Ziffer = z32, bei 33 Stellen
+// erste Ziffer = z0. Kein Vorzeichen, kein Ausdruck, keine Hauptleitadresse. Objektzeile wie bei dw.
+static void pass3Dwb(Pass3Zustand *z, int i, char *line, size_t lineGroesse, const char *operand) {
+    char buffer[512];
+    (void)lineGroesse;
+    size_t n = strlen(operand);
+    int gueltig = (n >= 1 && n <= 33 && strspn(operand, "01") == n);
+    if (gueltig) {
+        unsigned long long dwValue = 0;
+        for (size_t k = 0; k < n; k++) dwValue = (dwValue << 1) | (unsigned long long)(operand[k] - '0');
+        if (dwValue == 0) {
+            snprintf(buffer, sizeof(buffer), "%04o: 0", z->pc);
+        } else {
+            snprintf(buffer, sizeof(buffer), "%04o: 00 %011llo", z->pc, dwValue);
+        }
+        schreibeObjZeile(z->obj, buffer);
+        fprintf(z->hilfs, "%s\n", line);
+        copyAndIncrementLineElementsX(i, buffer);
+    } else {
+        snprintf(buffer, sizeof(buffer), "%04o: %sEE%s %04o %s   ", z->pc, _violett, _normal, 0, operand);   // Fehlerausgabe
+        copyAndIncrementLineElementsX(i, buffer);
+        outAdressError(operand, "Operand", " ist ungültig (dwb erwartet 1 bis 33 Ziffern 0 oder 1)");
+        printHell = 1;
+        is_error3 = 1;
+    }
+    z->pc++;
+}
+
+// dwh (Doku 3.3.19a): ein Datenwort aus 1 bis 8 Hexadezimalziffern 0-9, A-F oder a-f (Gross-/Kleinschreibung gleich). Jede
+// Ziffer sind 4 Bit; die Folge steht rechtsbuendig im Wort (letzte Ziffer = z29 bis z32), z0 bleibt 0. Kein Vorzeichen,
+// kein Praefix, kein Ausdruck, keine Hauptleitadresse. Objektzeile wie bei dw und dwb.
+static void pass3Dwh(Pass3Zustand *z, int i, char *line, size_t lineGroesse, const char *operand) {
+    char buffer[512];
+    (void)lineGroesse;
+    size_t n = strlen(operand);
+    int gueltig = (n >= 1 && n <= 8 && strspn(operand, "0123456789abcdefABCDEF") == n);
+    if (gueltig) {
+        unsigned long long dwValue = 0;
+        for (size_t k = 0; k < n; k++) {
+            int c = (unsigned char)operand[k];
+            int d = (c >= '0' && c <= '9') ? c - '0' : (c >= 'a' && c <= 'f') ? c - 'a' + 10 : c - 'A' + 10;
+            dwValue = (dwValue << 4) | (unsigned long long)d;
+        }
+        if (dwValue == 0) {
+            snprintf(buffer, sizeof(buffer), "%04o: 0", z->pc);
+        } else {
+            snprintf(buffer, sizeof(buffer), "%04o: 00 %011llo", z->pc, dwValue);
+        }
+        schreibeObjZeile(z->obj, buffer);
+        fprintf(z->hilfs, "%s\n", line);
+        copyAndIncrementLineElementsX(i, buffer);
+    } else {
+        snprintf(buffer, sizeof(buffer), "%04o: %sEE%s %04o %s   ", z->pc, _violett, _normal, 0, operand);   // Fehlerausgabe
+        copyAndIncrementLineElementsX(i, buffer);
+        outAdressError(operand, "Operand", " ist ungültig (dwh erwartet 1 bis 8 Hexadezimalziffern 0-9 und A-F)");
+        printHell = 1;
+        is_error3 = 1;
+    }
+    z->pc++;
+}
+
+// ---- dwf und dwg (Doku 3.3.20, 3.3.21): Dezimalzahl exakt in ein Maschinenwort umrechnen ----
+// Der Operand wird nicht in Gleitkommaarithmetik gelesen, sondern als Bruch D / 10^k (D = alle Ziffern als grosse
+// Ganzzahl, k = Zahl der Stellen nach dem Punkt, bei dwg mal 10^E) mit einer kleinen Ganzzahlrechnung auf 32-Bit-Teilen
+// umgerechnet; so entsteht keine Zwischenrundung, und die Mitte zwischen zwei Woertern wird genau erkannt.
+#define GZ_TEILE 1400                      // 1400 * 32 Bit; reicht fuer 10^999 mal einen Operanden von 256 Stellen mit Reserve
+typedef struct { unsigned int w[GZ_TEILE]; int n; } GrosseZahl;   // w[0] niedrigster Teil, n = Zahl der benutzten Teile (0 = Null)
+
+static void gzNull(GrosseZahl *a) { a->n = 0; }
+
+// a := a * m + d; Rueckgabe 1 bei Ueberlauf der Tabelle
+static int gzMulAdd(GrosseZahl *a, unsigned int m, unsigned int d) {
+    unsigned long long uebertrag = d;
+    for (int i = 0; i < a->n; i++) {
+        unsigned long long p = (unsigned long long)a->w[i] * m + uebertrag;
+        a->w[i] = (unsigned int)(p & 0xFFFFFFFFULL);
+        uebertrag = p >> 32;
+    }
+    if (uebertrag != 0) {
+        if (a->n >= GZ_TEILE) return 1;
+        a->w[a->n++] = (unsigned int)uebertrag;
+    }
+    return 0;
+}
+
+// Anzahl der Bits (0 bei Null)
+static int gzBits(const GrosseZahl *a) {
+    if (a->n == 0) return 0;
+    unsigned int h = a->w[a->n - 1];
+    int b = 0;
+    while (h != 0) { b++; h >>= 1; }
+    return (a->n - 1) * 32 + b;
+}
+
+// a := a << bits; Rueckgabe 1 bei Ueberlauf der Tabelle
+static int gzShl(GrosseZahl *a, int bits) {
+    if (a->n == 0 || bits <= 0) return 0;
+    int teile = bits / 32, rest = bits % 32;
+    if (a->n + teile + 1 > GZ_TEILE) return 1;
+    unsigned int neu[GZ_TEILE];
+    int n = a->n + teile + 1;
+    for (int i = 0; i < n; i++) neu[i] = 0;
+    for (int i = 0; i < a->n; i++) {
+        unsigned long long v = (unsigned long long)a->w[i] << rest;
+        neu[i + teile] |= (unsigned int)(v & 0xFFFFFFFFULL);
+        neu[i + teile + 1] |= (unsigned int)(v >> 32);
+    }
+    while (n > 0 && neu[n - 1] == 0) n--;
+    for (int i = 0; i < n; i++) a->w[i] = neu[i];
+    a->n = n;
+    return 0;
+}
+
+// r := a * b (r darf nicht a oder b sein); Rueckgabe 1 bei Ueberlauf der Tabelle
+static int gzMul(GrosseZahl *r, const GrosseZahl *a, const GrosseZahl *b) {
+    gzNull(r);
+    if (a->n == 0 || b->n == 0) return 0;
+    if (a->n + b->n > GZ_TEILE) return 1;
+    for (int i = 0; i < a->n + b->n; i++) r->w[i] = 0;
+    for (int i = 0; i < a->n; i++) {
+        unsigned long long uebertrag = 0;
+        for (int j = 0; j < b->n; j++) {
+            unsigned long long p = (unsigned long long)a->w[i] * b->w[j] + r->w[i + j] + uebertrag;
+            r->w[i + j] = (unsigned int)(p & 0xFFFFFFFFULL);
+            uebertrag = p >> 32;
+        }
+        r->w[i + b->n] = (unsigned int)uebertrag;
+    }
+    r->n = a->n + b->n;
+    while (r->n > 0 && r->w[r->n - 1] == 0) r->n--;
+    return 0;
+}
+
+// -1, 0, 1 wie strcmp
+static int gzVergleich(const GrosseZahl *a, const GrosseZahl *b) {
+    if (a->n != b->n) return a->n < b->n ? -1 : 1;
+    for (int i = a->n - 1; i >= 0; i--) {
+        if (a->w[i] != b->w[i]) return a->w[i] < b->w[i] ? -1 : 1;
+    }
+    return 0;
+}
+
+// a := a - b (Voraussetzung a >= b)
+static void gzSub(GrosseZahl *a, const GrosseZahl *b) {
+    long long borgen = 0;
+    for (int i = 0; i < a->n; i++) {
+        long long d = (long long)a->w[i] - (i < b->n ? (long long)b->w[i] : 0LL) - borgen;
+        if (d < 0) { d += 4294967296LL; borgen = 1; } else borgen = 0;
+        a->w[i] = (unsigned int)d;
+    }
+    while (a->n > 0 && a->w[a->n - 1] == 0) a->n--;
+}
+
+// 10^p
+static int gzZehnerpotenz(GrosseZahl *a, int p) {
+    gzNull(a);
+    a->w[0] = 1; a->n = 1;
+    for (int i = 0; i < p; i++) if (gzMulAdd(a, 10, 0)) return 1;
+    return 0;
+}
+
+// q := Quotient n / t auf ganze Zahl gerundet (genau in der Mitte nach oben, also weg von 0); q muss unter 2^maxBits liegen.
+// Rueckgabe 0 = ok, 1 = Quotient zu gross oder Tabellenueberlauf.
+static int gzTeileGerundet(const GrosseZahl *n, const GrosseZahl *t, int maxBits, unsigned long long *q) {
+    GrosseZahl rest = *n;
+    unsigned long long erg = 0;
+    for (int bit = maxBits - 1; bit >= 0; bit--) {
+        GrosseZahl tb = *t;
+        if (gzShl(&tb, bit)) return 1;
+        if (gzVergleich(&rest, &tb) >= 0) { gzSub(&rest, &tb); erg |= 1ULL << bit; }
+    }
+    if (gzVergleich(&rest, t) >= 0) return 1;   // Quotient haette mehr als maxBits Bits
+    if (gzShl(&rest, 1)) return 1;
+    if (gzVergleich(&rest, t) >= 0) erg++;      // 2 * Rest >= Teiler: aufrunden
+    *q = erg;
+    return 0;
+}
+
+// Zerlegt den Operanden von dwf (mitExponent = 0) oder dwg (mitExponent = 1) nach Doku 3.3.20/3.3.21:
+// [+|-] Ziffern [. Ziffern] [E [+|-] 1 bis 3 Ziffern]. Rueckgabe 0 = ok, sonst 1.
+static int dezimalZerlegen(const char *s, int mitExponent, int *negativ, GrosseZahl *d, int *nachkomma, int *zehnerExp) {
+    *negativ = 0; *nachkomma = 0; *zehnerExp = 0;
+    gzNull(d);
+    if (*s == '+' || *s == '-') { *negativ = (*s == '-'); s++; }
+    int stellen = 0;
+    while (*s >= '0' && *s <= '9') { if (gzMulAdd(d, 10, (unsigned int)(*s - '0'))) return 1; s++; stellen++; }
+    if (stellen == 0) return 1;
+    if (*s == '.') {
+        s++;
+        int nach = 0;
+        while (*s >= '0' && *s <= '9') { if (gzMulAdd(d, 10, (unsigned int)(*s - '0'))) return 1; s++; nach++; }
+        if (nach == 0) return 1;
+        *nachkomma = nach;
+    }
+    if (mitExponent && (*s == 'E' || *s == 'e')) {
+        s++;
+        int expNegativ = 0, ziffern = 0, wert = 0;
+        if (*s == '+' || *s == '-') { expNegativ = (*s == '-'); s++; }
+        while (*s >= '0' && *s <= '9') { wert = wert * 10 + (*s - '0'); s++; ziffern++; if (ziffern > 3) return 1; }
+        if (ziffern == 0) return 1;
+        *zehnerExp = expNegativ ? -wert : wert;
+    }
+    return *s != '\0';
+}
+
+// dwf: gebrochene Festkommazahl. wort = x * 2^32, gerundet, bei negativem x im Zweierkomplement (33 Bit).
+// Rueckgabe 0 = ok, 1 = Aufbau des Operanden falsch, 2 = Zahlenbereich.
+static int dezimalZuFestkomma(const char *operand, unsigned long long *wort) {
+    int neg, k, e10;
+    GrosseZahl d, t;
+    if (dezimalZerlegen(operand, 0, &neg, &d, &k, &e10)) return 1;
+    if (d.n == 0) { *wort = 0; return 0; }
+    if (gzZehnerpotenz(&t, k) || gzShl(&d, 32)) return 2;
+    unsigned long long q;
+    if (gzTeileGerundet(&d, &t, 40, &q)) return 2;
+    if (q == 0) { *wort = 0; return 0; }
+    if (neg ? q > (1ULL << 32) : q > 0xFFFFFFFFULL) return 2;
+    *wort = neg ? ((1ULL << 33) - q) : q;
+    return 0;
+}
+
+// dwg: Gleitkommazahl in der internen Darstellung: z0 Vorzeichen, z1..z6 Exponent e' = e + 32, z7..z32 Mantisse (26 Bit,
+// das erste Bit ist 1). Rueckgabe 0 = ok, 1 = Aufbau falsch, 2 = Betrag zu gross (e' > 63), 3 = Betrag zu klein (e' < 0).
+static int dezimalZuGleitkomma(const char *operand, unsigned long long *wort) {
+    int neg, k, e10;
+    GrosseZahl d, a, b;
+    if (dezimalZerlegen(operand, 1, &neg, &d, &k, &e10)) return 1;
+    if (d.n == 0) { *wort = 0; return 0; }
+    int p = e10 - k;                         // Wert = D * 10^p
+    a = d;
+    gzNull(&b); b.w[0] = 1; b.n = 1;
+    if (p >= 0) {
+        GrosseZahl z, prod;
+        if (gzZehnerpotenz(&z, p) || gzMul(&prod, &d, &z)) return 2;   // Betrag viel zu gross
+        a = prod;
+    } else if (gzZehnerpotenz(&b, -p)) {
+        return 3;                                                        // Betrag viel zu klein
+    }
+    // e mit 2^(e-1) <= a/b < 2^e
+    int l = gzBits(&a) - gzBits(&b);
+    GrosseZahl x = a, y = b;
+    if (l >= 0) { if (gzShl(&y, l)) return 2; } else { if (gzShl(&x, -l)) return 3; }
+    int e = (gzVergleich(&x, &y) >= 0 ? l : l - 1) + 1;
+    if (e > 40) return 2;
+    if (e < -80) return 3;
+    int s = 26 - e;                          // Mantisse M = a/b * 2^s, 2^25 <= M < 2^26 vor dem Runden
+    if (s >= 0) { if (gzShl(&a, s)) return 2; } else { if (gzShl(&b, -s)) return 3; }
+    unsigned long long m;
+    if (gzTeileGerundet(&a, &b, 27, &m)) return 2;
+    if (m == (1ULL << 26)) { m = 1ULL << 25; e++; }   // Rundung ergab 1: Mantisse 0,5, Exponent um 1 groesser
+    int eg = e + 32;
+    if (eg > 63) return 2;
+    if (eg < 0) return 3;
+    *wort = ((unsigned long long)(neg ? 1 : 0) << 32) | ((unsigned long long)eg << 26) | m;
+    return 0;
+}
+
+// dwf und dwg: ein Datenwort aus einer Dezimalzahl. Objektzeile wie bei dw und dwb. Fehler (Aufbau oder Zahlenbereich) meldet
+// Pass 3 als ungueltigen Operanden; die Meldungszeile nennt den Operanden.
+static void pass3Zahlwort(Pass3Zustand *z, int i, char *line, const char *operand, int istDwg) {
+    char buffer[512];
+    unsigned long long wort = 0;
+    int rc = istDwg ? dezimalZuGleitkomma(operand, &wort) : dezimalZuFestkomma(operand, &wort);
+    if (rc == 0) {
+        flussZahlwortIstNull = (wort == 0);
+        if (wort == 0) {
+            snprintf(buffer, sizeof(buffer), "%04o: 0", z->pc);
+        } else {
+            snprintf(buffer, sizeof(buffer), "%04o: 00 %011llo", z->pc, wort);
+        }
+        schreibeObjZeile(z->obj, buffer);
+        fprintf(z->hilfs, "%s\n", line);
+        copyAndIncrementLineElementsX(i, buffer);
+    } else {
+        char *grund;
+        if (rc == 1) {
+            grund = istDwg ? " ist ungültig (dwg erwartet [+|-]Ziffern[.Ziffern][E[+|-]1 bis 3 Ziffern])"
+                           : " ist ungültig (dwf erwartet [+|-]Ziffern[.Ziffern])";
+        } else if (!istDwg) {
+            grund = " ist ungültig (dwf: Zahlenbereich -1 bis 1-2^-32 überschritten)";
+        } else if (rc == 2) {
+            grund = " ist ungültig (dwg: Betrag größer als 2^31-2^5)";
+        } else {
+            grund = " ist ungültig (dwg: Betrag ungleich 0 kleiner als 2^-33)";
+        }
+        snprintf(buffer, sizeof(buffer), "%04o: %sEE%s %04o %s   ", z->pc, _violett, _normal, 0, operand);   // Fehlerausgabe
+        copyAndIncrementLineElementsX(i, buffer);
+        outAdressError(operand, "Operand", grund);
+        printHell = 1;
+        is_error3 = 1;
+    }
+    z->pc++;
+}
+
 static void pass3Da(Pass3Zustand *z, int i, char *line, size_t lineGroesse, char *operand) {
     char buffer[512];
     int errorFlag = 0;
@@ -507,6 +802,30 @@ static void pass3Text(Pass3Zustand *z, int i, char *line, char *operand, char *t
     }
 }
 
+// kat4: komprimierten Text ausgeben (4 Zeichen je Wort) und Befehlszaehler weiterschalten
+static void pass3Kat4(Pass3Zustand *z, char *line, char *operand, char *textkonst, int anzahlBackslashes, int i) {
+    const char *text = (anzahlBackslashes != 2) ? operand : textkonst;
+    textPC = z->pc;
+    erzeugenKat4(text, z->obj, z->hilfs, line, i);
+    z->pc += zaehleKat4(text);
+}
+
+// kat5: komprimierten Text ausgeben (5 Zeichen je Wort) und Befehlszaehler weiterschalten
+static void pass3Kat5(Pass3Zustand *z, char *line, char *operand, char *textkonst, int anzahlBackslashes, int i) {
+    const char *text = (anzahlBackslashes != 2) ? operand : textkonst;
+    textPC = z->pc;
+    erzeugenKat5(text, z->obj, z->hilfs, line, i);
+    z->pc += zaehleKat5(text);
+}
+
+// kat6: komprimierten Text im Eingabecode ausgeben (5 Zeichen je Wort, Stoppbit) und Befehlszaehler weiterschalten
+static void pass3Kat6(Pass3Zustand *z, char *line, char *operand, char *textkonst, int anzahlBackslashes, int i) {
+    const char *text = (anzahlBackslashes != 2) ? operand : textkonst;
+    textPC = z->pc;
+    erzeugenKat6(text, z->obj, z->hilfs, line, i);
+    z->pc += zaehleKat6(text);
+}
+
 void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, char *testFileName) {
     printf("Erzeuge Kennzeichen-Befehle in Objektdatei %s\n\n", machineCodeFileName);
 
@@ -515,6 +834,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
     FILE *dmpFile = oeffneAusgabedatei(dmpFileName, "w");  //.dmp
 
     if (absprAktiv) absprStart(machineCodeFile);
+    if (!absprAktiv) schreibeObjPre(machineCodeFile);   // ;#PRECOMMAND: vor dem ersten Wort (ab 1.03-009)
     line_ausgegeben=0;
     Pass3Zustand zst = { machineCodeFile, hilfsFile, 0, 0, "" };
 
@@ -550,6 +870,19 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
         char textkonst[1024]="";
         
 
+        // --makros: Herkunft je Makroaufruf als Kommentarzeile ins Listing (steht in sp4 der ";+++"-Zeile)
+        if (makrolisteAktiv && strncmp(lineAsmAufgeloest[i].sp1, ";+++ ", 5) == 0 &&
+            strncmp(lineAsmAufgeloest[i].sp4, ";+++ Makro ", 11) == 0) {
+            pruefeZeilenfeld(lineCountAsmAufgeloestX);
+            lineAsmAufgeloestX[lineCountAsmAufgeloestX].adrValid = 0;
+            STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp0, "");
+            STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp1, lineAsmAufgeloest[i].sp4);
+            STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp2, "");
+            STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp3, "");
+            STRKOPIE(lineAsmAufgeloestX[lineCountAsmAufgeloestX].sp4, "");
+            lineCountAsmAufgeloestX++;
+            continue;
+        }
         // übergehen
         if (  ((lineAsmAufgeloest[i].sp1[0] == ';') || (lineAsmAufgeloest[i].sp1[0] == '#') || (lineAsmAufgeloest[i].sp1[0] == '$')  ||
                 (lineAsmAufgeloest[i].sp1[0] == '&') || (strstr(lineAsmAufgeloest[i].sp1, "***") != NULL)   ) ) {
@@ -632,6 +965,14 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 pass3Abs(&zst, i, line, sizeof(line), operand);
             } else if (strcmp(operation, "dw") == 0) {
                 pass3Dw(&zst, i, line, sizeof(line), operand);
+            } else if (strcmp(operation, "dwb") == 0) {
+                pass3Dwb(&zst, i, line, sizeof(line), operand);
+            } else if (strcmp(operation, "dwh") == 0) {
+                pass3Dwh(&zst, i, line, sizeof(line), operand);
+            } else if (strcmp(operation, "dwf") == 0) {
+                pass3Zahlwort(&zst, i, line, operand, 0);
+            } else if (strcmp(operation, "dwg") == 0) {
+                pass3Zahlwort(&zst, i, line, operand, 1);
             } else if (strcmp(operation, "da") == 0) {
                 pass3Da(&zst, i, line, sizeof(line), operand);
             } else if (strcmp(operation, "db") == 0) {
@@ -644,12 +985,18 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
                 pass3Text(&zst, i, line, operand, textkonst, zaehleBackslaShes, 1);
             } else if (strcmp(operation, "dtm") == 0) {
                 pass3Text(&zst, i, line, operand, textkonst, zaehleBackslaShes, 2);
+            } else if (strcmp(operation, "kat4") == 0) {
+                pass3Kat4(&zst, line, operand, textkonst, zaehleBackslaShes, i);
+            } else if (strcmp(operation, "kat5") == 0) {
+                pass3Kat5(&zst, line, operand, textkonst, zaehleBackslaShes, i);
+            } else if (strcmp(operation, "kat6") == 0) {
+                pass3Kat6(&zst, line, operand, textkonst, zaehleBackslaShes, i);
             } else if (strcmp(operation, "dz") == 0) {
                 textPC = zst.pc;
                 dzAuswertung(operand, zst.obj, zst.hilfs, line, i);
                 zst.pc++;
-            } else if (strcmp(operation, "end") == 0) {
-                // nix zu tun.
+            } else if (strcmp(operation, "end") == 0 || strcmp(operation, "begin") == 0 || strcmp(operation, "bend") == 0) {
+                // nix zu tun (begin/bend erzeugen weder Code noch belegen sie Speicher).
             } else {
                 pass3Befehl(&zst, i, line, operation, operand);
                 if (zst.pc == pcVorher + 1) flussMerkeBefehl(pcVorher, befehlCode, befehlHatZiel, befehlZiel, befehlZielAbsolut, i);
@@ -663,13 +1010,15 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
              && strcmp(operation, "start") != 0
              && strcmp(operation, "abs") != 0
              && strcmp(operation, "end") != 0
+             && strcmp(operation, "begin") != 0
+             && strcmp(operation, "bend") != 0
              && strcmp(operation, "db") != 0 ) {
             belegeAdressen(pcVorher, zst.pc, i);
         }
         // Ablaufpruefungen: Datenworte und reservierte Bereiche (db) vermerken; Befehle wurden oben vermerkt.
         if ( zst.pc > pcVorher
-             && (strcmp(operation, "dw") == 0 || strcmp(operation, "da") == 0 || strcmp(operation, "dbn") == 0
-                 || strcmp(operation, "dt") == 0 || strcmp(operation, "dto") == 0 || strcmp(operation, "dtm") == 0
+             && (strcmp(operation, "dw") == 0 || strcmp(operation, "dwb") == 0 || strcmp(operation, "dwh") == 0 || strcmp(operation, "dwf") == 0 || strcmp(operation, "dwg") == 0 || strcmp(operation, "da") == 0 || strcmp(operation, "dbn") == 0
+                 || strcmp(operation, "dt") == 0 || strcmp(operation, "dto") == 0 || strcmp(operation, "dtm") == 0 || strcmp(operation, "kat4") == 0 || strcmp(operation, "kat5") == 0 || strcmp(operation, "kat6") == 0
                  || strcmp(operation, "dz") == 0 || strcmp(operation, "db") == 0) ) {
             flussMerkeDaten(pcVorher, zst.pc, operation, i);
         }
@@ -679,6 +1028,7 @@ void pass3(char *machineCodeFileName, char *hilfsFileName, char *dmpFileName, ch
     printFormattedAsmListingX(lineAsmAufgeloestX, lineCountAsmAufgeloestX, dmpFile);
     erzeugeTestDatei(lineAsmAufgeloestX, lineCountAsmAufgeloestX, testFileName);
 
+    if (!absprAktiv) schreibeObjPost(machineCodeFile);   // ;#POSTCOMMAND: hinter dem letzten Wort, vor dem Endekennzeichen
     if (!absprAktiv) schreibeLochbilder(machineCodeFile, "/");   // bei --ABSPR entfaellt das Endekennzeichen
     fclose(machineCodeFile);
     fclose(hilfsFile);

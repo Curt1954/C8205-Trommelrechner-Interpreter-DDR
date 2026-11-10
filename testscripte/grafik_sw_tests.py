@@ -247,7 +247,7 @@ class Anbindung(unittest.TestCase):
         """S3-13: Ist K0/SW nicht angewaehlt, ist die Taste blockiert: keine Eingabe, keine Anzeige, nichts im Puffer."""
         m = FakeMaschine(); m.fl['SW'] = 0; k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append, abstand=0.1)
         self.assertEqual(e.tippen('a'), 'blockiert'); self.assertFalse(e.eingabe_aktiv())
-        self.assertEqual(echo, []); self.assertEqual(e.puffer, []); self.assertIsNone(e.lage)      # keine Wirkung, auch nicht auf die Lage
+        self.assertEqual(echo, []); self.assertEqual(e.puffer, []); self.assertEqual(e.lage, 'KB')      # keine Wirkung, auch nicht auf die Lage (Vorzustand KB, G4-010)
     def test_ohne_aktiven_011_wird_vorgemerkt(self):
         """G4-007: K0/SW ist angewaehlt, der Rechner aber noch nicht bei 011: das Zeichen wartet im Puffer, keine Anzeige, Lage des SW unveraendert."""
         m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append, abstand=0.1); e.lage = 'KB'
@@ -278,7 +278,7 @@ class Anbindung(unittest.TestCase):
         Das erste Zeichen mit bestimmter Lage geht deshalb als Paar (Um. KB, Zeichen) an den Rechner (Regel 18.10.2026, G3-008). Das Umschaltzeichen
         klingt und erscheint nie (O4-6); das Zeichen selbst wird ohne gehaltene Umschalttaste erst beim LOSLASSEN frei (U-11 Fall b) und klingt erst
         dann (Anzeige und Klang haengen an der Annahme durch den Rechner). Beim Druecken bleibt es still."""
-        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append); erhalten = []; stop = threading.Event()
+        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append); e.lage = None; erhalten = []; stop = threading.Event()      # G4-010: Lage ausdruecklich None
         self._rechner(m, k0, erhalten, stop)
         try:
             self.assertIsNone(e.lage)
@@ -296,7 +296,7 @@ class Anbindung(unittest.TestCase):
     def test_op09_zweiter_zeichen_ohne_zweiten_011_bleibt_im_puffer(self):
         """OP-09: Fragt der Rechner nach dem Umschaltzeichen nicht noch einmal (ein einzelner 011), bleibt das erste Zeichen im Puffer: kein Klang,
         keine Anzeige, auch nach dem Loslassen. Der Puffer haelt es, bis wieder ein 011 aktiv ist."""
-        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append)
+        m = FakeMaschine(); k0 = K0Warteschlange(m); echo = []; e = SwEingabe(k0, m, echo=echo.append); e.lage = None      # G4-010: Lage ausdruecklich None
         k0._wartet_auf = 'SW'                                                # genau ein 011
         self.assertEqual(e.tippen('a'), 'folgt')                             # Um. KB angenommen
         self.assertEqual(k0.naechstes(), 'Um. KB')                           # der Rechner holt das Umschaltzeichen ab und fragt nicht wieder
@@ -324,7 +324,7 @@ class Anbindung(unittest.TestCase):
     def test_op09_erstes_zeichen_klingt_beim_druecken_nicht_erst_beim_loslassen(self):
         """Das erste Zeichen nach dem Einschalten geht als Paar (Um. KB, Zeichen). Das Umschaltzeichen klingt nie, das Zeichen klingt beim Druecken;
         die Anzeige kommt erst nach dem Loslassen und der Annahme durch den Rechner."""
-        m, k0, e, ereignis = self._mit_klick(); erhalten = []; stop = threading.Event()
+        m, k0, e, ereignis = self._mit_klick(); e.lage = None; erhalten = []; stop = threading.Event()      # G4-010: Lage None nur noch ausdruecklich gesetzt (Paar-Mechanismus)
         self._rechner(m, k0, erhalten, stop)
         try:
             self.assertTrue(self._warte(e.erwartet))
@@ -384,7 +384,7 @@ class Anbindung(unittest.TestCase):
         """Regel 18.10.2026 (G3-008): Nach dem Einschalten ist die Lage des SW unbestimmt, das Fenster kennt sie nicht. Fuer das ERSTE Zeichen
         mit bestimmter Lage geht deshalb IMMER das Umschaltzeichen zum Rechner ('A': Um. GB, A; danach steht das SW auf GB). Danach entscheidet
         das vorhergehende Zeichen ('3' nach 'A': Um. KB und 3; '4' nach '3': nur 4)."""
-        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.1); erhalten = []; stop = threading.Event()
+        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.1); e.lage = None; erhalten = []; stop = threading.Event()      # G4-010: Lage ausdruecklich None
         self._rechner(m, k0, erhalten, stop)
         try:
             self.assertIsNone(e.lage)
@@ -401,9 +401,26 @@ class Anbindung(unittest.TestCase):
         finally:
             stop.set(); k0.abbrechen()
 
+    def test_vorzustand_kb_ziffer_und_kleinbuchstabe_gehen_allein(self):
+        """Festlegung 29.10.2026 (G4-010): Nach dem Einschalten steht das SW auf KB. '1' und 'a' als erstes Zeichen gehen OHNE Umschaltzeichen zum
+        Rechner; 'A' als erstes Zeichen geht als Um. GB, A; danach steht das SW auf GB und '!' (GB, Eingabeadresse 33) geht allein."""
+        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.1); erhalten = []; stop = threading.Event()
+        self._rechner(m, k0, erhalten, stop)
+        try:
+            self.assertEqual(e.lage, 'KB')
+            self.assertTrue(self._warte(e.erwartet))
+            self.assertEqual(e.tippen('1'), 'geliefert')
+            self.assertTrue(self._warte(lambda: erhalten == ['1'] and e.erwartet()))
+            self.assertEqual(e.tippen('a'), 'geliefert')
+            self.assertTrue(self._warte(lambda: erhalten == ['1', 'a'] and e.erwartet()))
+            self.assertEqual(e.tippen('!'), 'folgt'); self.assertEqual(e.lage, 'GB')
+            self.assertTrue(self._warte(lambda: (e.liefern(), erhalten == ['1', 'a', 'Um. GB', '!'])[1]))
+        finally:
+            stop.set(); k0.abbrechen()
+
     def test_vorzustand_unbestimmt_kleinbuchstabe_sendet_um_kb(self):
         """'a' als erstes Zeichen: Um. KB, a; das SW steht danach auf KB (Antwort 18.10.2026)."""
-        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.05); erhalten = []; stop = threading.Event()
+        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.05); e.lage = None; erhalten = []; stop = threading.Event()      # G4-010: Lage ausdruecklich None
         self._rechner(m, k0, erhalten, stop)
         try:
             self.assertTrue(self._warte(e.erwartet))
@@ -413,7 +430,7 @@ class Anbindung(unittest.TestCase):
             stop.set(); k0.abbrechen()
 
     def test_zeichen_mit_gleichem_code_in_beiden_lagen_setzen_die_lage_nicht(self):
-        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.1); erhalten = []; stop = threading.Event()
+        m = FakeMaschine(); k0 = K0Warteschlange(m); e = SwEingabe(k0, m, abstand=0.1); e.lage = None; erhalten = []; stop = threading.Event()      # G4-010: Lage ausdruecklich None
         self._rechner(m, k0, erhalten, stop)
         try:
             self.assertTrue(self._warte(e.erwartet))
@@ -673,6 +690,49 @@ def _fake_tk():
         def grab_release(s): pass
     tk = types.SimpleNamespace(Toplevel=W, Text=W, Menu=W, TclError=type('TclError', (Exception,), {}))
     return tk
+
+
+class HaltZustand(unittest.TestCase):
+    """G4-023 (30.10.2026, Fehler des Projektinhabers): Im H-Zustand (Flag H, Schalter H) arbeitet der Rechner keinen Eingabebefehl ab. Eine Taste klingt
+    dann (SW ist freigegeben), geht aber NICHT in den Puffer: nach R darf kein Zeichen erscheinen. Ausnahme: ein 011 ist aktiv (Einzelschritt E im
+    H-Zustand wartet auf das Zeichen), dann wird es wie sonst angenommen."""
+    def _neu(self, **kw):
+        m = FakeMaschine(); k0 = K0Warteschlange(m); ereignis = []
+        e = SwEingabe(k0, m, echo=lambda t: ereignis.append(('anzeige', t)), klick=lambda t: ereignis.append(('klick', t)), **kw)
+        e.lage = 'KB'
+        return m, k0, e, ereignis
+
+    def test_taste_im_h_zustand_klingt_aber_wird_nicht_vorgemerkt(self):
+        m, k0, e, ereignis = self._neu(abstand=0.1)
+        m.fl['H'] = 1
+        for z in '212000.':
+            self.assertEqual(e.tippen(z), 'angehalten')
+        self.assertEqual(e.ausstehend(), 0)
+        self.assertEqual([x for x in ereignis if x[0] == 'klick'], [('klick', z) for z in '212000.'])      # Klang ja
+        self.assertEqual([x for x in ereignis if x[0] == 'anzeige'], [])                                     # Anzeige nein
+        m.fl['H'] = 0                                                                                         # R
+        k0._wartet_auf = 'SW'                                                                                 # der Rechner wartet wieder an einem 011
+        self.assertIsNone(e.liefern())
+        self.assertEqual(e.ausstehend(), 0); self.assertTrue(k0.offen('SW'))                                  # nichts ist angekommen
+        self.assertEqual([x for x in ereignis if x[0] == 'anzeige'], [])
+
+    def test_vorgemerkte_zeichen_verfallen_bei_h(self):
+        m, k0, e, ereignis = self._neu(abstand=0.1)
+        self.assertEqual(e.tippen('2'), 'vorgemerkt'); self.assertEqual(e.ausstehend(), 1)                   # Rechner laeuft, noch nicht bei einem 011
+        m.fl['H'] = 1                                                                                         # Taste H
+        self.assertEqual(e.liefern(), 'verworfen'); self.assertEqual(e.ausstehend(), 0)
+        m.fl['H'] = 0; k0._wartet_auf = 'SW'
+        self.assertIsNone(e.liefern()); self.assertTrue(k0.offen('SW'))
+
+    def test_im_h_zustand_mit_aktivem_011_wird_angenommen(self):
+        m, k0, e, ereignis = self._neu(abstand=0.1)
+        m.fl['H'] = 1; k0._wartet_auf = 'SW'                                                                  # Einzelschritt E auf einem 011
+        self.assertEqual(e.tippen('2'), 'geliefert')
+        self.assertEqual(ereignis, [('klick', '2'), ('anzeige', '2')])
+
+    def test_ohne_h_bleibt_der_puffer_wie_bisher(self):
+        m, k0, e, ereignis = self._neu(abstand=0.1)
+        self.assertEqual(e.tippen('2'), 'vorgemerkt'); self.assertEqual(e.tippen('1'), 'vorgemerkt'); self.assertEqual(e.ausstehend(), 2)
 
 
 class PultAttrappe:

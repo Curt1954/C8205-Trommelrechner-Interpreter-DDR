@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 3 der Quelldatei: $INCLUDE braucht einen Pfad.
+datei-weg obj mqo test
+escape-weg

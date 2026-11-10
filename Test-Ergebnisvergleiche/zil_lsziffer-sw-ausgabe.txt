@@ -1,0 +1,7 @@
+
+UP Repository pruefen
+Repository gefunden
+Zusatztrommel loeschen [J/N]
+
+Lochband mit ZTD in Leser 1 einlegen
+ZTD geladen mit Programm-ID 1

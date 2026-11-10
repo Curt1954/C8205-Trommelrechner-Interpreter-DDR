@@ -1,0 +1,11 @@
+0000: 01 0012 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000001        dw  1     ; eigene Nummer
+0002: 00 00000000001        dw  1     ; Nummer des aeusseren Aufrufs (als Parameter weitergereicht)
+0003: 00 00000000002        dw  2     ; eigene Nummer des inneren Aufrufs
+0004: 00 00000000001        dw  1     ; nach der Rueckkehr gilt wieder die eigene Nummer
+0005: 00 00000000003        dw  3     ; eigene Nummer
+0006: 00 00000000003        dw  3     ; Nummer des aeusseren Aufrufs (als Parameter weitergereicht)
+0007: 00 00000000004        dw  4     ; eigene Nummer des inneren Aufrufs
+0010: 00 00000000003        dw  3     ; nach der Rueckkehr gilt wieder die eigene Nummer
+0011: 00 00000000062        dw  50    ; Nummer mal 10
+0012: 01 0000 020    haupt: 020 0     ; Zelle 0012: Halt

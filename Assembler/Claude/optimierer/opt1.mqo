@@ -1,0 +1,11 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+haupt   211     l0001   ; Zelle 0001: AC := 5 (Literal l0001, wandert nach 0006)
+        210     l0002   ; Zelle 0002: AC := AC + 7 (Literal l0002, wandert nach 0007)
+        240     erg     ; Zelle 0003: (erg) := AC
+        164     0001    ; Zelle 0004: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0005: Halt
+l0001   dw      5       
+l0002   dw      7       
+erg:    dw      0       ; ohne Optimierer Zelle 0041; mit Optimierer Zelle 0010 (erg wird nur als Adressteil benutzt)
+        equ40   00040       ; Zaehler springt von 0006 auf 0040, Sprungbereich 0006 bis 0037 ist frei
+        dw      3       ; Zelle 0040: Fueller ohne Marke, nie verlegbar (dw unmittelbar hinter equ40)

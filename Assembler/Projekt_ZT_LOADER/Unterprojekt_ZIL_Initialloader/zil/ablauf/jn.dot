@@ -1,0 +1,34 @@
+digraph G {
+ graph [rankdir=TB, fontname="Helvetica", labelloc=t, fontsize=16, nodesep=0.6, ranksep=0.45, forcelabels=true,
+   label="UP jneingabe – Antwort J oder N lesen (zil.asm)\nSeite 2 von 4; Nummern setzen die von Seite 1 fort"];
+ node [fontname="Helvetica", fontsize=11, style=filled, fillcolor="#ffffff", color="#333333"];
+ edge [fontname="Helvetica", fontsize=10];
+ a [shape=oval, fillcolor="#e8e8e8", label="UP jneingabe (Aufruf 025)\nEin:  K0 angewählt\nAus: R2 = 1 (J) oder 0 (N)", xlabel=<<font color="#c00000" point-size="12"><b>22</b></font>>];
+ rd [shape=box, label="lesen:  Befehl 011 tab\nZeichen von K0 lesen, AC := Tabellenwert", xlabel=<<font color="#c00000" point-size="12"><b>23</b></font>>];
+ tz [shape=diamond, fillcolor="#fff2cc", label="Art des Zeichens\n(Tabelle, 64 Zellen)", xlabel=<<font color="#c00000" point-size="12"><b>24</b></font>>];
+ st [shape=box, label="Steuerzeichen:\nUm. GB: KBGB := 1   Um. KB: KBGB := 0\nSprungzeichen (Leertaste, :, WRZL, Punkt, …): ohne\n       Wirkung", xlabel=<<font color="#c00000" point-size="12"><b>25</b></font>>];
+ w [shape=box, label="zeich := Tabellenwert\n(1 = j, 2 = n, sonst 0)", xlabel=<<font color="#c00000" point-size="12"><b>26</b></font>>];
+ k0 [shape=diamond, fillcolor="#fff2cc", label="KBGB = 0 ?\n(Kleinschreibung)", xlabel=<<font color="#c00000" point-size="12"><b>27</b></font>>];
+ wl [shape=box, style="filled,dashed", fillcolor="#f2f2f2", label="Zeichen zählt nicht:\nzurück zu lesen", xlabel=<<font color="#c00000" point-size="12"><b>28</b></font>>];
+ d1 [shape=diamond, fillcolor="#fff2cc", label="zeich = 1 ?", xlabel=<<font color="#c00000" point-size="12"><b>29</b></font>>];
+ d2 [shape=diamond, fillcolor="#fff2cc", label="zeich = 2 ?", xlabel=<<font color="#c00000" point-size="12"><b>30</b></font>>];
+ aj [shape=box, fillcolor="#e2f0d9", label="antj:  R2 := 1  (Ja)", xlabel=<<font color="#c00000" point-size="12"><b>31</b></font>>];
+ an [shape=box, fillcolor="#e2f0d9", label="antn:  R2 := 0  (Nein)", xlabel=<<font color="#c00000" point-size="12"><b>32</b></font>>];
+ ret [shape=oval, fillcolor="#f4cccc", label="Rückkehr zum Aufrufer", xlabel=<<font color="#c00000" point-size="12"><b>33</b></font>>];
+ a->rd->tz;
+ tz->st [label=" Steuerzeichen"];
+ tz->w [label=" alle übrigen"];
+ w->k0;
+ k0->wl [label=" ja (KB)"];
+ wl->rd [constraint=false];
+ st->rd [constraint=false];
+ k0->d1 [label=" nein (GB)"];
+ d1->aj [label=" ja"];
+ d1->d2 [label=" nein"];
+ d2->an [label=" ja"];
+ d2->wl [label=" nein: anderes\nZeichen"];
+ aj->ret;
+ an->ret;
+ leg [shape=note, fillcolor="#fafafa", fontsize=9, label="Nur ein großgeschriebenes J oder N zählt (Um. GB, dann j\nbzw. n). Kleines j/n und alle anderen Zeichen werden\nübergangen,\nweil auf Ja eine Löschung folgt. KBGB = globale Zelle 7775\n(0 = KB, 1 = GB), vom Hauptprogramm nach dem Start auf KB\ngesetzt."];
+ a->leg [style=invis];
+}

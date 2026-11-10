@@ -1,0 +1,133 @@
+                211             l0001           ; ZT3 Spur 127 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT3 Spur 127 mit spuf00 belegen: Pufferspur merken
+                211             l0002           ; ZT3 Spur 127 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT3 Spur 127 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT3 Spur 127 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0003           ; ZT3 Spur 127 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT3 Spur 127 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT3 Spur 127 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT3 Spur 127 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT3 Spur 127 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                211             l0001           ; ZT3 Spur 63 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT3 Spur 63 mit spuf00 belegen: Pufferspur merken
+                211             l0002           ; ZT3 Spur 63 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT3 Spur 63 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT3 Spur 63 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0005           ; ZT3 Spur 63 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT3 Spur 63 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT3 Spur 63 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT3 Spur 63 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT3 Spur 63 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                211             l0001           ; ZT2 Spur 64 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT2 Spur 64 mit spuf00 belegen: Pufferspur merken
+                211             l0006           ; ZT2 Spur 64 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT2 Spur 64 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT2 Spur 64 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0007           ; ZT2 Spur 64 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT2 Spur 64 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT2 Spur 64 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT2 Spur 64 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT2 Spur 64 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                211             l0001           ; ZT1 Spur 0 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT1 Spur 0 mit spuf00 belegen: Pufferspur merken
+                211             l0008           ; ZT1 Spur 0 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT1 Spur 0 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT1 Spur 0 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0009           ; ZT1 Spur 0 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT1 Spur 0 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT1 Spur 0 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT1 Spur 0 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT1 Spur 0 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                211             l0001           ; ZT0 Spur 1 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT0 Spur 1 mit spuf00 belegen: Pufferspur merken
+                211             l0009           ; ZT0 Spur 1 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT0 Spur 1 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT0 Spur 1 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0008           ; ZT0 Spur 1 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT0 Spur 1 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT0 Spur 1 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT0 Spur 1 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT0 Spur 1 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                211             l0001           ; ZT0 Spur 127 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT0 Spur 127 mit spuf00 belegen: Pufferspur merken
+                211             l0009           ; ZT0 Spur 127 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT0 Spur 127 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT0 Spur 127 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0003           ; ZT0 Spur 127 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT0 Spur 127 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT0 Spur 127 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT0 Spur 127 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT0 Spur 127 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                211             l0001           ; ZT0 Spur 0 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+                240             zc_adr          ; ZT0 Spur 0 mit spuf00 belegen: Pufferspur merken
+                211             l0009           ; ZT0 Spur 0 mit spuf00 belegen: AC := Trommel t
+                240             zt_t            ; ZT0 Spur 0 mit spuf00 belegen: Trommel merken
+                025             zt_anw          ; ZT0 Spur 0 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+                211             l0009           ; ZT0 Spur 0 mit spuf00 belegen: AC := Spur
+                240             zc_spur         ; ZT0 Spur 0 mit spuf00 belegen: Spur merken
+                211             l0004           ; ZT0 Spur 0 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+                240             zc_op           ; ZT0 Spur 0 mit spuf00 belegen: Operationscode merken
+                025             zt_ausf         ; ZT0 Spur 0 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+                020             0               ; Halt
+zt_anw:         240             rueck_zt_anw    ; Rueckkehrwort sichern: Zusatztrommel zt_t anwaehlen (5d00 030, d = t = 0 bis 3)
+                211             zt_t            ; AC := t
+                646             07675           ; um 15 Bit nach links: AC um 15 Bit zyklisch links
+                210             l0010           ; plus Befehl 5000 030
+                240             zw_x            ; Befehl ablegen
+zw_x:           db              01              ; hier steht 5d00 030
+rueck_zt_anw:   db              01              ; Rueckkehrzelle von zt_anw: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+zt_ausf:        240             rueck_zt_ausf   ; Rueckkehrwort sichern: Befehl zzz0 bbbb 601/661 aus zc_spur, zc_adr und zc_op bilden und ausfuehren
+                211             zc_spur         ; AC := Spur
+                646             07656           ; um 26 Bit nach links (zzz0): AC um 26 Bit zyklisch links
+                210             zc_adr          ; plus Adresse der Pufferspur
+                210             zc_op           ; plus Operationscode
+                240             za_x            ; Befehl ablegen
+za_x:           db              01              ; hier steht der ZT-Befehl
+rueck_zt_ausf:  db              01              ; Rueckkehrzelle von zt_ausf: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+zt_t:           db              01              ; Trommel
+zc_spur:        db              01              ; Spur
+zc_op:          db              01              ; Operationscode
+zc_adr:         db              01              ; Adresse der Pufferspur
+                db              06              ; SPUF-00 auf die Spurgrenze
+spuf00:         dw              0111            ; spuf00[0] = 73
+                dw              0222            ; spuf00[1] = 146
+                dw              0               ; spuf00[2] = 0
+                dw              0               ; spuf00[3] = 0
+                dw              0               ; spuf00[4] = 0
+                dw              0777            ; spuf00[5] = 511
+                dw              0               ; spuf00[6] = 0
+                dw              0               ; spuf00[7] = 0
+                dw              0               ; spuf00[8] = 0
+                dw              0               ; spuf00[9] = 0
+                dw              0               ; spuf00[10] = 0
+                dw              0               ; spuf00[11] = 0
+                dw              0               ; spuf00[12] = 0
+                dw              0               ; spuf00[13] = 0
+                dw              0               ; spuf00[14] = 0
+                dw              0               ; spuf00[15] = 0
+                dw              0               ; spuf00[16] = 0
+                dw              0444            ; spuf00[17] = 292
+                dw              0666            ; spuf00[18] = 438
+                dw              0               ; spuf00[19] = 0
+                dw              0               ; spuf00[20] = 0
+                dw              0               ; spuf00[21] = 0
+                dw              0               ; spuf00[22] = 0
+                dw              0555            ; spuf00[23] = 365
+                dw              0               ; spuf00[24] = 0
+                dw              0               ; spuf00[25] = 0
+                dw              0               ; spuf00[26] = 0
+                dw              0               ; spuf00[27] = 0
+                dw              0               ; spuf00[28] = 0
+                dw              0               ; spuf00[29] = 0
+                dw              0               ; spuf00[30] = 0
+                dw              0333            ; spuf00[31] = 219
+l0001           da              spuf00          
+l0002           dw              000000000003    
+l0003           dw              000000000177    
+l0004           dw              000000000601    
+l0005           dw              000000000077    
+l0006           dw              000000000002    
+l0007           dw              000000000100    
+l0008           dw              000000000001    
+l0009           dw              000000000000    
+l0010           dw              000005000030    

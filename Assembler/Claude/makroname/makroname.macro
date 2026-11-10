@@ -1,0 +1,6 @@
+; makroname.macro - Projektmakrodatei fuer den Test der benannten Makro-Parameter (Assemblerdokumentation 4.26)
+; DATEIMAK: Makro mit Namen in einer Makrodatei; breite plus hoehe als erstes Wort, hoehe als zweites Wort
+DATEIMAK:       MACRO breite hoehe
+                dw      $CALC($breite+$hoehe)   ; Summe von breite und hoehe
+                dw      $hoehe                  ; hoehe allein
+                MEND                            ; Ende von DATEIMAK

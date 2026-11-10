@@ -1,8 +1,8 @@
 # Lochstreifenleser
 
-Version: 0.95-001
+Version: 0.95-004
 
-Hardwarebeschreibung des Lochstreifenlesers 303 am Rechner C 8205.
+Hardwarebeschreibung des Lochstreifenlesers 303 am Rechner C 8205 (Standardleser; als zweiter Typ gibt es den Leser FS751, siehe A3).
 
 Die Zeichenkode-Tabellen (Zeichenkode des Lochbands) stehen in der Datei
 "C8205-Interpreter-Kodetabellen.md", Abschnitt 1; dorthin wird an
@@ -62,8 +62,14 @@ gesetzt und der Rechner stoppt. Ausgenommen sind Zeilen ohne Datenlochung
 
 ## A3 Geschwindigkeit
 
-130 Zeichen/s. Der Leser ist der Standardleser des C 8205 (mechanisch,
-Metallbürsten).
+Es gibt zwei Lesertypen (Wahl in GRAFIK mit `--LS-LESER-TYP=303|FS751`, Standard 303; die Wahl gilt immer für beide Leser K1 und K2):
+
+| Typ | Abtastung | Geschwindigkeit |
+|---|---|---|
+| **303** (Standard) | Lochbandleser Modell 303, arbeitet elektrisch über Metallbürsten: Bei einem Loch im Band stellt die Bürste einen elektrischen Kontakt zur Gegenseite her. Der Standardleser des C 8205. | 130 Zeichen/s |
+| **FS751** | optoelektronische (fotoelektrische) Abtastung: Das Lochband läuft an einer Lichtquelle vorbei, Fotodioden oder Fototransistoren auf der Gegenseite erfassen das Licht, das durch die gestanzten Löcher fällt. | 750 Zeichen/s |
+
+Der Typ ändert nur das Lesetempo (in GRAFIK; im Modus TEST sind alle Zeiten 0, der Schalter ist dort erlaubt und ohne Wirkung). Der Leserton ist für beide Typen derselbe. Schreibt man den Typ „FS715“, wird er als FS751 angenommen.
 
 
 ## A4 Lochbandkode (Tabelle 1)
@@ -207,7 +213,7 @@ Es werden Namensgleichheiten dokumentiert, nicht aufgelöst.
 
 ## A7 Töne und Haltzeit im Modus GRAFIK
 
-**GRAFIK:** Im Modus GRAFIK klingt der Leser: Jedes Zeichen, das K1 oder K2 liefert, löst den Leserton aus (Einzelschritt, bei dichter Folge Dauergeräusch, danach Auslaufen; Lesetempo 130 Zeichen/s). Die reine Rechnerzeit bis zum nächsten Halt, auch bis zum E/A-Halt an einem Eingabebefehl, zeigt der Hardware-Check. Einzelheiten: `C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitte 6.3 und 8.3.
+**GRAFIK:** Im Modus GRAFIK klingt der Leser: Jedes Zeichen, das K1 oder K2 liefert, löst den Leserton aus (Einzelschritt, bei dichter Folge Dauergeräusch, danach Auslaufen; Lesetempo 130 Zeichen/s beim Typ 303, 750 Zeichen/s beim Typ FS751, siehe A3). Die reine Rechnerzeit bis zum nächsten Halt, auch bis zum E/A-Halt an einem Eingabebefehl, zeigt der Hardware-Check. Einzelheiten: `C8205-Interpreter-GRAFIK_Beschreibung.md`, Abschnitte 6.3 und 8.3.
 
 # Lochstreifenstanzer
 
@@ -258,7 +264,12 @@ als bei den zwei Lesern.
    Ausgabe-Adresse) für das auszugebende Zeichen gestanzt.
 5. Flag A wird mit der Umstellung des Ausgabebefehls gelöscht, also sobald das Zeichen im 1-Zeichen-Puffer liegt, nicht erst nach Abschluss
    des Stanzens (Bedienungsanleitung 2.3.2); der nächste Befehl kann verarbeitet
-   werden. (Beim Interpreter gilt Wartezeit=0: Puffer und Stanzvorgang werden nicht zeitlich nachgebildet.)
+   werden. (Modus TEST: Wartezeit 0, Puffer und Stanzvorgang werden nicht zeitlich nachgebildet. Modus GRAFIK: Das Zeichen steht sofort in
+   der Stanzerdatei; das Stanztempo (50 Zeichen/s, G4-003) gilt auch mit `--STUMM`. **Abweichung vom Original, noch nicht umgesetzt:** Im
+   Original nimmt der 1-Zeichen-Puffer das Zeichen sofort ab; der Ausgabebefehl wartet nur, wenn der Puffer noch belegt ist, und die
+   Befehlsschleife arbeitet während des Stanzens weiter. GRAFIK bildet den Puffer noch nicht nach: Der Ausgabebefehl kehrt erst zurück,
+   wenn seit dem vorigen Zeichen 1/50 s vergangen sind (Rechenzeit dazwischen zählt mit); der Rechner läuft dadurch ein Zeichen weniger
+   weit voraus als im Original. Dasselbe gilt für das Schreibwerk (C3).)
 6. Die zu stanzende Bitkombination ist identisch mit den Bits z₁₃ bis z₂₀ des Adreßteils; mit 1 besetzte Bits werden gelocht,
    mit 0 besetzte bleiben ungelocht (Lochkanal 1 = z₂₀, 2 = z₁₉, 3 = z₁₈, 4 = z₁₇, 5 = z₁₆, 6 = z₁₅, 7 = z₁₄, 8 = z₁₃).
    Damit kann jeder beliebige Kode mit höchstens 8 Kanälen realisiert werden.

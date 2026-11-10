@@ -1,4 +1,0 @@
-        equ     00001      
-        020     00010   ; Stopp 020 mit Adreßteil 0010
-        equ     07777   
-        dw      0555    ; wird mit AC überschrieben

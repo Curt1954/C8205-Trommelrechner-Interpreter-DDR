@@ -1,0 +1,15 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000101000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0100: 00000000000 # erg: dw 0 ; Zelle 0100: Ergebnis
+0101: 00000104211 # haupt: 211 l0001 ; Zelle 0101: AC := Literal 7
+0102: 00000100240 # 240 erg ; Zelle 0102: (erg) := AC
+0103: 00000000020 # 020 0 ; Zelle 0103: Halt
+0104: 00000000007 # l0001 dw 7
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0104 AC=00000000007 US=1
+0100: 00000000007   # erg

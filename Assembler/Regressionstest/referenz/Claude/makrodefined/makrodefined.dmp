@@ -1,0 +1,65 @@
+0000: 01 0077 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000001        dw  1     ; 1  Variable gesetzt
+0002: 0                     dw  0     ; 0  Name unbekannt, kein Fehler
+0003: 00 00000000001        dw  1     ; 1  Feld sichtbar
+0004: 00 00000000001        dw  1     ; 1  Feld
+0005: 0                     dw  0     ; 0  einfache Variable ist kein Feld
+0006: 0                     dw  0     ; 0  Name unbekannt
+0007: 00 00000000001        dw  1     ; 1  letztes Element
+0010: 0                     dw  0     ; 0  Index ausserhalb, kein Fehler
+0011: 00 00000000001        dw  1     ; 1  Index als Rechenausdruck
+0012: 0                     dw  0     ; 0  glob ist kein Feld
+0013: 0                     dw  0     ; 0  vor $LOCAL
+0014: 00 00000000001        dw  1     ; 1  lokal vereinbart, ohne $SET
+0015: 00 00000000001        dw  1     ; 1  lokales Feld
+0016: 00 00000000001        dw  1     ; 1  Element 1
+0017: 0                     dw  0     ; 0  ausserhalb
+0020: 0                     dw  0     ; 0  lok ist kein Feld
+0021: 0                     dw  0     ; 0  Wert einer lokalen Variable ohne $SET
+0022: 0                     dw  0     ; 0  lokale Variable des Aufrufers unsichtbar
+0023: 0                     dw  0     ; 0  lokales Feld des Aufrufers unsichtbar
+0024: 00 00000000001        dw  1     ; 1  globale Variable sichtbar
+0025: 00 00000000005        dw  5     ; 5  globaler Wert
+0026: 0                     dw  0     ; 0  die lokale verdeckt die globale
+0027: 00 00000000010        dw  8     ; 8  lokaler Wert
+0030: 00 00000000001        dw  1     ; 1  lokale Variable
+0031: 0                     dw  0     ; 0  das globale Feld ist verdeckt
+0032: 0                     dw  0     ; 0  ebenso das Element
+0033: 0                     dw  0     ; 0  die lokale von DFLOK ist mit dessen Ende verschwunden
+0034: 00 00000000005        dw  5     ; 5  globale Variable unberuehrt
+0035: 00 00000000001        dw  1     ; 1  globales Feld wieder sichtbar
+0036: 0                     dw  0     ; 0  a2 ist noch nicht gesetzt
+0037: 00 00000000001        dw  1     ; 1  jetzt gesetzt
+0040: 00 00000000001        dw  1     ; 1  Klammer um das ganze Argument
+0041: 00 00000000001        dw  1     ; 1  Element 2 des Feldes fe
+0042: 0                     dw  0     ; 0  Element 3 gibt es nicht
+0043: 00 00000000002        dw  2     ; 2  1+1+0
+0044: 00 00000000013        dw  11    ; erzeugt: a2 vorhanden
+0045: 00 00000000026        dw  22    ; erzeugt: der ELIF-Zweig
+0046: 00 00000000004        dw  4     ; 4  vier Elemente vorhanden
+0047: 00 00000000007        dw  7     ; dreimal: 1+2
+0050: 00 00000000007        dw  7     ; dreimal: 1+2
+0051: 00 00000000007        dw  7     ; dreimal: 1+2
+0052: 00 00000000011 M1:    dw  9     ; Marke M1; 1 im Kommentar und 1
+0053: 00 00000000001        dw  1     ; 1  Makro im Quelltext
+0054: 00 00000000001        dw  1     ; 1  Makro in der Projektdatei
+0055: 00 00000000001        dw  1     ; 1  Makro aus c82ass.makros
+0056: 0                     dw  0     ; 0  unbekannt, kein Fehler
+0057: 00 00000000001        dw  1     ; 1  Makro erst hinter dem Aufruf definiert
+0060: 00 00000000001        dw  1     ; 1  in Quelltext und Datei, zaehlt einmal
+0061: 0                     dw  0     ; 0  Variable ist kein Makro
+0062: 0                     dw  0     ; 0  Anweisung ist kein Makro
+0063: 0                     dw  0     ; 0  Symbol des Quelltexts ist kein Makro
+0064: 00 00000000001        dw  1     ; 1  das laufende Makro selbst
+0065: 0                     dw  0     ; 0  Kleinschreibung zaehlt
+0066: 00 00000000007        dw  7     ; 100 oder der vorher gesetzte Wert
+0067: 00 00000000007        dw  7     ; 100 oder der vorher gesetzte Wert
+0070: 00 00000000144        dw  100   ; 100
+0071: 00 00000000144        dw  100   ; 100
+0072: 00 00000000115        dw  77    ; Wort 77 dezimal
+0073: 00 00000000007        dw  7     ; in jedem Fall
+0074: 00 00000000007        dw  7     ; in jedem Fall
+0075: 00 00000000051        dw  41    ; Wort 41 dezimal (051 oktal)
+0076: 00 00000000076        dw  62    ; Wort 62 dezimal
+0077: 01 0001 164    haupt: 164 0001  ; Zelle 0077: Diagnoseausgabe (nur im Test)
+0100: 01 0000 020           020 0     ; Zelle 0100: Halt

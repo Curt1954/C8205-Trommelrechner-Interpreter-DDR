@@ -1,0 +1,4 @@
+rc 16
+stderr makro_if_elif_nach_else.asm:11: Fehler: E2 $ELIF hinter $ELSE.
+datei-weg obj mqo test
+escape-weg

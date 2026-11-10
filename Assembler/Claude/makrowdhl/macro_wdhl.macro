@@ -1,0 +1,17 @@
+ZWEISCHIEB: MACRO 4
+# AC: Konjunktion mit der Spur ab `$3`, erst `$1`-fach, dann `$2`-fach, jeweils mit Linksverschiebung ohne Löschen; das Zwischenergebnis steht auch in `$4`. Zerstörte Zellen: `$4`. Arbeitsspur: liest die Spur ab `$3`.
+# Zwei !$wdhl-Zeilen mit je fünf Operanden (Löschen Resultat Operation Anzahl Adresse); die erste Zeile trägt ein Label.
+; ZWEISCHIEB: zwei Wiederholungsbefehle in einem Makro (Doku 4.16)
+$PR1 $TYPZAHL 1 32
+$PR2 $TYPZAHL 1 32
+ML0001%:     !$wdhl   NE LI KON $1 $3   ; erster Wiederholungsbefehl
+             240      $4                ; Zwischenergebnis sichern
+             !$wdhl   NE LI KON $2 $3   ; zweiter Wiederholungsbefehl
+         MEND
+
+ZWEIALT: MACRO 5
+# AC: zwei gleiche Wiederholungsbefehle hintereinander in der alten Form (`!$wdhl $5`): Löschen `$1`, Resultat `$2`, Operation `$3`, Anzahl `$4`, Adresse `$5`. Zerstörte Zellen: keine. Arbeitsspur: liest die Spur ab `$5`.
+; ZWEIALT: Der Wiederholungsbefehl steht zweimal im Makro; beide Zeilen werden aufgelöst
+             !$wdhl   $5                ; erste Zeile, alte Form
+             !$wdhl   $5                ; zweite Zeile, alte Form
+         MEND

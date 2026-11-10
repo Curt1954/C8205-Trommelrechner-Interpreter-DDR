@@ -1,0 +1,3 @@
+EINS: MACRO
+         dw 1
+         MEND

@@ -1,0 +1,37 @@
+0000: 01 0026 000           000 haupt              ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000011        dw  9                  ; Zellenzahl des Blocks in Pass 0 (tab_a,tab_e werden eingeklammert eingesetzt)
+0002: 00 00000000011        dw  tab_e-tab_a        ; echter Abstand der beiden Marken nach Pass 2: muss gleich sein
+0003: 00 00000000013        dw  11                 ; Zellenzahl des Blocks in Pass 0 (b_von,b_bis werden eingeklammert eingesetzt)
+0004: 00 00000000013        dw  b_bis-b_von        ; echter Abstand der beiden Marken nach Pass 2: muss gleich sein
+0005: 0                     dw  0                  ; Zellenzahl des Blocks in Pass 0 (c_von,c_bis werden eingeklammert eingesetzt)
+0006: 0                     dw  c_bis-c_von        ; echter Abstand der beiden Marken nach Pass 2: muss gleich sein
+0007: 00 00000000012        dw  10                 ; Zellenzahl des Blocks in Pass 0 (tab_a,b_von werden eingeklammert eingesetzt)
+0010: 00 00000000012        dw  b_von-tab_a        ; echter Abstand der beiden Marken nach Pass 2: muss gleich sein
+0011: 0                     dw  0                  ; Zellenzahl des Blocks in Pass 0 (marke_allein,tab_e werden eingeklammert eingesetzt)
+0012: 0                     dw  tab_e-marke_allein ; echter Abstand der beiden Marken nach Pass 2: muss gleich sein
+0013: 0                     dw  0                  ; 0, 1, 2, ...
+0014: 00 00000000001        dw  1                  ; 0, 1, 2, ...
+0015: 00 00000000002        dw  2                  ; 0, 1, 2, ...
+0016: 00 00000000003        dw  3                  ; 0, 1, 2, ...
+0017: 00 00000000004        dw  4                  ; 0, 1, 2, ...
+0020: 00 00000000005        dw  5                  ; 0, 1, 2, ...
+0021: 00 00000000006        dw  6                  ; 0, 1, 2, ...
+0022: 00 00000000007        dw  7                  ; 0, 1, 2, ...
+0023: 00 00000000010        dw  8                  ; 0, 1, 2, ...
+0024: 00 00000000001        dw  1                  ; Block groesser als 8 Zellen
+0025: 00 00000000002        dw  2                  ; 11-9 = 2
+0026: 01 0000 020    haupt: 020 0                  ; Zelle 0026: Halt
+0027: 20 0034        tab_a: db  5                  ; 5 Zellen
+0034: 00 00000000001        dw  1                  ; 1 Zelle
+0035: 00 00000000002        dw  2                  ; 1 Zelle
+0036: 01 0000 211           211 0                  ; 1 Zelle
+0037: 01 0000 240           240 0                  ; 1 Zelle
+0040: 00 00000000003 tab_e: dw  3                  ; hier endet Block A (diese Zeile zaehlt nicht mehr)
+0041: 00 0           b_von: dbn 3                  ; 3 Zellen
+0042: 00 0           ;    
+0043: 00 0           ;    
+0044: 01 27000              da  tab_a              ; 1 Zelle
+0045: 20 0053               db  06                 ; 6 Zellen
+0053: 00 00000000001        dw  1                  ; 1 Zelle
+0054: 0              b_bis: dw  0                  ; hier endet Block B
+0055: 0              c_bis: dw  0                  ; hier endet Block C

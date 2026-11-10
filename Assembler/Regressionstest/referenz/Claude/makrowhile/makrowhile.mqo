@@ -1,0 +1,21 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      1       ; Quadrat des Zaehlers i
+        dw      4       ; Quadrat des Zaehlers i
+        dw      9       ; Quadrat des Zaehlers i
+        dw      16      ; Quadrat des Zaehlers i
+        dw      25      ; Quadrat des Zaehlers i
+        dw      0       ; Zaehler k
+        dw      1       ; Zaehler k
+        dw      2       ; Zaehler k
+        dw      077     ; Fundstelle
+        dw      11      ; Zehner a, Einer b
+        dw      21      ; Zehner a, Einer b
+        dw      22      ; Zehner a, Einer b
+        dw      31      ; Zehner a, Einer b
+        dw      32      ; Zehner a, Einer b
+        dw      33      ; Zehner a, Einer b
+        dw      1       ; immer
+        dw      1       ; immer
+        dw      2       ; nur bei 1 ungleich 0
+haupt:  164     0001    ; Zelle 19: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 20: Halt

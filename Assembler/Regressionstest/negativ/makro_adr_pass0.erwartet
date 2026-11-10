@@ -1,0 +1,7 @@
+args --pass0
+rc 0
+nicht-stderr Probelauf
+nicht-stderr Fehler
+nicht-stdout Probelaeufe
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

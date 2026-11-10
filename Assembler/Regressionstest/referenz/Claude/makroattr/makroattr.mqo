@@ -1,0 +1,97 @@
+          000       haupt     ; Zelle 0: Sprung zum Hauptprogramm
+erz_marke: dw        99        ; Marke aus einem Makro
+          dw        1         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        0         ; Art des Symbols
+          dw        0         ; Art des Symbols
+          dw        4         ; Art des Symbols
+          dw        0         ; Art des Symbols
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        0         ; 1, wenn das Symbol vorhanden ist
+          dw        0         ; 1, wenn das Symbol vorhanden ist
+          dw        0         ; 1, wenn das Symbol vorhanden ist
+          dw        5         ; Zellenzahl der Anweisung
+          dw        8         ; Zellenzahl der Anweisung
+          dw        3         ; Zellenzahl der Anweisung
+          dw        6         ; Zellenzahl der Anweisung
+          dw        4         ; Zellenzahl der Anweisung
+          dw        1         ; Zellenzahl der Anweisung
+          dw        1         ; Zellenzahl der Anweisung
+          dw        1         ; Zellenzahl der Anweisung
+          dw        1         ; Zellenzahl der Anweisung
+          dw        1         ; Zellenzahl der Anweisung
+          dw        1         ; ohne Klammer: 1
+          dw        2         ; mit einer Klammer: 2
+          dw        2         ; 1 + 1 = 2
+          dw        10        ; 5 * 2 = 10
+          dw        21        ; 1 + 2 * 10 = 21
+          dw        5         ; 5
+          dw        63        ; Probemarke
+          dw        78        ; wird erzeugt
+          dw        0         ; 0, 1, 2
+          dw        1         ; 0, 1, 2
+          dw        2         ; 0, 1, 2
+          dw        10        ; 10, 11, 12
+          dw        11        ; 10, 11, 12
+          dw        12        ; 10, 11, 12
+          dw        6         ; 5 + 1 = 6
+          dw        14        ; 6 + 8 = 14
+          dw        41        ; def = 0, also Parameter 1
+          dw        42        ; def = 1, also Parameter 2
+          dw        5         ; Parameter art(a_equ)+3 = 5
+haupt:    164       0001      ; Diagnoseausgabe (nur im Test)
+          020       0         ; Halt
+a_befehl: 020       0         ; Marke auf einem Befehl
+a_dw:     dw        7         ; Marke auf dw
+a_da:     da        a_dw      ; Marke auf da
+a_dz:     dz        $wrzl     ; Marke auf dz
+a_db:     db        5         ; 5 Zellen, Dezimalzahl
+a_dbo:    db        010       ; 8 Zellen, Oktalzahl
+a_dbn:    dbn       3         ; 3 Zellen, auf 0 gesetzt
+
+
+a_dbno:   dbn       06        ; 6 Zellen, Oktalzahl
+
+
+
+
+
+a_dbk:    db        4         ; 4 Zellen, mit Kommentar
+a_dt:     dt        abc       ; Marke auf dt
+; 
+; 
+a_kat4:   kat4      abcd      ; Marke auf kat4
+a_mk:     dw        55        ; Wort 55
+a_ld:     211       a_dw      ; Marke auf einem markierten Namen (3.3.17)
+a_equ:    equ       07640     ; equ mit Oktalzahl
+a_equd:   equ       00144       ; equ mit Dezimalzahl
+a_equs:   equ       00010   ; equ mit einem weiteren Symbol
+a_stern:  equ       00010         ; Adresse
+a_lbl:    equ       00104    ; equ mit Label im Ausdruck
+a_e10:    equ10     00110         ; auf Vielfaches von 010
+a_e40:    equ40     00140         ; auf Vielfaches von 040
+a_e100:   equ100    00200         ; auf Vielfaches von 0100
+a_spa:    spa       00220     ; Sektoradresse

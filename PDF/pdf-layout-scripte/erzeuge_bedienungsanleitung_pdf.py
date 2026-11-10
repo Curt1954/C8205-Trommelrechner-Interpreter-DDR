@@ -1772,7 +1772,8 @@ def kap4(lab):
     s += L.code("""python3 c8205_interp.py --MODUS=TEST [--mdverz VERZ] [--trommel PFAD] [--out VERZ|DATEI.log]
         [--leser1 PFAD] [--leser2 PFAD] [--stanzer1 PFAD] [--sw-ausgabe PFAD]
         [--k0 datei=PFAD] [--knotentest] [--NO-TERMOUT] [--SW-TERMINAL]
-        [--zwischenablage auto|tk|system] [--LOADONLY]
+        [--zwischenablage auto|tk|system] [--LOADONLY] [--max-knoten N] [--C8205Z[=VERZ]]
+        [--LS-LESER-TYP 303|FS751]
         [--pruefe-stanzer1 DATEI] [--pruefe-sw-ausgabe DATEI] [--BASP abcdef]  TEST.txt [TEST2.txt ...]
 python3 c8205_interp.py --version""")
     s += tbl([['Schalter', 'Wirkung', 'Vorgabe'],
@@ -1837,6 +1838,14 @@ python3 c8205_interp.py --version""")
                                              'kein Programmstart, keine Prüfungen, kein Protokoll, keine Geräte. Die formale '
                                              'Vorab-Prüfung bleibt (bei einem Fehler Code 16, die Trommel bleibt unverändert). '
                                              'Mehrere Testdateien werden nacheinander geladen.', '`aus`'],
+              ['`--LS-LESER-TYP=303|FS751`, `--ls-leser-typ`', 'Typ des Lochbandlesers für beide Leser K1 und K2: `303` (Metallbürsten, '
+                                                                '130 Zeichen/s) oder `FS751` (optoelektronisch, 750 Zeichen/s); `FS715` wird als `FS751` angenommen. '
+                                                                'Wirkt nur im Modus GRAFIK (Lesetempo); im Modus TEST erlaubt und ohne Wirkung, weil alle Zeiten 0 sind. '
+                                                                'Anderer Wert: Aufruffehler (Rückkehrcode 2).', '`303`'],
+              ['`--max-knoten N`', 'Nur im Modus TEST: Obergrenze der Knoten je Testlauf (Schutz vor Endlosschleifen).', '`2000000`'],
+              ['`--C8205Z[=VERZ]`, `--c8205z`', 'Schaltet die vier Zusatztrommeln des experimentellen Prototyps C 8205Z ein '
+                                               '(Befehle `5k00 030`, `zzz0 bbbb 601`, `zzz0 bbbb 661`; Dateien `zt1.txt` bis `zt4.txt` in `VERZ`, '
+                                               'Vorgabe `Trommel/ZT/`). Ohne den Schalter bleibt alles wie bisher.', '`aus`'],
               ['`--version`', 'Gibt die Versionsnummer des Interpreters (Form `y.xx-zzz`) aus und endet mit Rückkehrcode 0, ohne '
                               'einen Test auszuführen; eine Testdatei ist nicht anzugeben.', '–'],
               ['`-h`, `--help`', 'Hilfetext mit allen Schaltern.', '–']],

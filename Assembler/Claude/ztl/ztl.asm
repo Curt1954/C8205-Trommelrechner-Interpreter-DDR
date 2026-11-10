@@ -1,0 +1,363 @@
+; ztl.asm - ZTL, der resident gehaltene Lader des ZT-Repositories (experimenteller Prototyp C8205Z), Version 0.01-001
+; Format: C8205Z/zt/ZT-Repository_Format.md (0.01-006), Abschnitte 5, 6, 7 und 11.
+; Einsprung: Relativadresse 0000 (Start durch Sprung auf die Hauptleitadresse, Zelle 0000 = 000 haupt).
+; Laden: wie jedes Programm ueber das BIS (H G K0 R, 2 1 aaaa . als Hauptleitadresse, K1 R); lageunabhaengig, keine feste Ladeadresse.
+; Ablauf beim Start: Arbeitsspur berechnen; ZT0 bis ZT3 der Reihe nach auf den Anker pruefen (Spur 0, Zellen 4 und 5); Formatversion
+;   pruefen; ersten Namensblock lesen; Eintrag 0 muss "ZTD" heissen; ZTD hinter die Arbeitsspur laden; ZTD mit dem Sprungwort
+;   auf den Dienst-Einsprung im AC starten (Sprung auf die Hauptleitadresse = Relativadresse 0 von ZTD).
+; Fehler beim Start: Statusnummer (Format 11.3) als vier Oktalziffern auf dem Schreibwerk, Zeilenschaltung, Halt.
+; Dienst (Aufruf 025 auf ein Sprungwort 000 dienst, das ZTD aus dem AC beim Start gesichert hat): laedt das Programm
+;   ZTL_LAGE/ZTL_LAENGE (7622, 7623) nach Hauptleitadresse 7611 + RA 7742, Grenze ZTL_GRENZE 7625; meldet in ZTL_STATUS 7626
+;   (0 = in Ordnung, sonst Nummer nach Format 11.3), in ZTL_PUFFER 7624 die Arbeitsspur. Der Dienst druckt nichts.
+; Benutzt: BIS-Zellen 7610 (0. Leitadresse, wird auf 0 gesetzt), 7611, 7612 bis 7621 (Leitadressen), 7622 bis 7626, 7742 (RA),
+;   7773 (R1) und 0220 (Adressdruck) nur beim Start-Fehler; die Nullspur 7640 bis 7677 des BIS (wird mit 441 geloescht) fuer die
+;   Drehungen (616); die Arbeitsspur = 32 Zellen auf der ersten Spurgrenze hinter dem Ende von ZTL.
+; Zeitbedarf: eine Spur je Uebertragung (661), danach 25 Woerter je Spur.
+; Annahmen: K1 im Archiv ist 0 (Format 7.2), wird nicht geprueft; Kennzeichen K2 = 0 bis 9.
+                start                ; Zaehlung beginnt bei 0000 (relativ)
+anfang:         000     haupt        ; rel 0000: Einsprung
+a_anfang:       da      anfang       ; Adresswort: Anfang von ZTL
+a_ende:         da      ende         ; Adresswort: Ende von ZTL
+a_dienst:       da      dienst       ; Adresswort = Sprungwort 000 dienst (geht beim Start im AC an ZTD)
+
+; ---- feste Zellen und Befehle des BIS (absolut) -------------------------------------------------------------------------
+adr7610:        abs     07610        ; 0. Leitadresse (immer 0)
+adr7611:        abs     07611        ; Hauptleitadresse (Adresswort 0 aaaa 000)
+adr7622:        abs     07622        ; ZTL_LAGE (Lagewort des ersten Segments)
+adr7623:        abs     07623        ; ZTL_LAENGE (Worte)
+adr7624:        abs     07624        ; ZTL_PUFFER (Ausgabe: Adresswort der Arbeitsspur)
+adr7625:        abs     07625        ; ZTL_GRENZE (Adresswort; 0 = Vorgabe 07540)
+adr7626:        abs     07626        ; ZTL_STATUS (Ausgabe)
+adr7742:        abs     07742        ; RA, Relativadresse (Adresseneinheiten)
+adr7773:        abs     07773        ; R1, Uebergabezelle der Druckprogramme
+adr0220:        abs     00220        ; Adressdruck des BIS
+nullspur:       abs     07640        ; Nullspur des BIS
+rot26:          abs     07656        ; Wiederholungsbefehl 616 ab hier: 26 Rotationen (physisch 26 Zellen bis Spurende)
+rot15:          abs     07675        ; 15 Rotationen
+rot9:           abs     07653        ; 9 Rotationen
+rot6:           abs     07662        ; 6 Rotationen
+
+; ---- Konstanten ----------------------------------------------------------------------------------------------------------
+c0:             dw      0            ; 0
+c1:             dw      1            ; 1
+c2:             dw      2            ; 2
+c3:             dw      3            ; 3 (auch Maske der Trommelnummer)
+c4:             dw      4            ; 4
+c5:             dw      5            ; 5
+c16:            dw      020          ; 16 Spuren je Segment
+c200:           dw      0200         ; Lagewort-Schritt je Trommel (t * 0200)
+c600:           dw      0600         ; Lagewort der Spur 0 auf ZT3
+c1e:            dw      01000        ; Adresseneinheit
+cz4:            dw      04000        ; Zelle 4, in Adresseneinheiten
+cz5:            dw      05000        ; Zelle 5
+cz6:            dw      06000        ; Zelle 6 (zugleich Gruppenschritt 6 Zellen)
+cz7:            dw      07000        ; Zelle 7
+cz36:           dw      036000       ; Zelle 36 (Verkettung; zugleich Ende der fuenf Gruppen)
+c37a:           dw      037000       ; 37 Adresseneinheiten (zum Aufrunden auf die Spurgrenze)
+c40a:           dw      040000       ; 40 Adresseneinheiten: eine Spur
+cpmask:         dw      07740000     ; Maske: Spurteil eines Adresswortes
+ck2m:           dw      017000       ; Maske: K2 in Bit 12 bis 9
+c7610a:         dw      07610000     ; Adresswort 7610: Tabelle der Leitadressen
+c540:           dw      07540000     ; Vorgabe der Obergrenze: Adresswort 7540
+c240:           dw      0240         ; Befehlscode 240 (Speichern)
+c661:           dw      0661         ; Befehlscode 661 (Eingabe ZT -> HT)
+c_anw:          dw      05100030     ; Befehl 030 5100 (Anwahl ZT0); je Trommel + t * 0100000
+c_lk:           dw      025147361025 ; LISTENKENNUNG
+c_rk:           dw      061350247316 ; REPOSITORY_KENNUNG
+c_bk:           dw      034716052613 ; BLOCKKENNUNG
+n_ztd0:         dw      071632412120 ; Name ZTD, Zeichen 1 bis 5
+n_ztd1:         dw      012121212120 ; Name ZTD, Zeichen 6 bis 10
+
+; ---- Arbeitszellen -------------------------------------------------------------------------------------------------------
+status:         dw      0            ; Status des laufenden Aufrufs
+pufw:           dw      0            ; Adresswort der Arbeitsspur
+pufend:         dw      0            ; Adresswort hinter der Arbeitsspur
+lage:           dw      0            ; Lagewort der zu lesenden Spur (t * 0200 + Spur)
+rt:             dw      0            ; Lagewort 26 nach links gedreht: Spur * 2^26 + t
+tt:             dw      0            ; Trommelnummer t
+laenge:         dw      0            ; L des Eintrags 0
+grenze:         dw      0            ; wirksame Obergrenze
+zende:          dw      0            ; Ende des Ziels (Adresswort)
+rest:           dw      0            ; noch zu ladende Worte
+seglage:        dw      0            ; Lagewort des laufenden Segments
+spn:            dw      0            ; Spur im Segment
+gidx:           dw      0            ; Zelle des Kennungswortes der Gruppe (Adresseneinheiten)
+widx:           dw      0            ; Zelle des Maschinenwortes (Adresseneinheiten)
+gz:             dw      0            ; Worte je Gruppe noch zu laden
+kenn:           dw      0            ; gedrehtes Kennungswort
+leit:           dw      0            ; Leitadresse zum Kennzeichen K2
+wert:           dw      0            ; Maschinenwort mit Adressenaenderung
+; Rueckkehrzellen der Unterprogramme (Rueckkehrwort 000 <Adresse hinter dem 025>)
+in_r:           dw      0            ; init
+ll_r:           dw      0            ; lies_lage
+pz_r:           dw      0            ; pz
+la_r:           dw      0            ; lade
+sv_r:           dw      0            ; sv
+d_r:            dw      0            ; dienst
+
+; ---- Start ---------------------------------------------------------------------------------------------------------------
+haupt:          025     init         ; Arbeitsspur berechnen, Nullspur loeschen
+                241     status       ; status := 0, AC := 0
+                241     lage         ; Lagewort der Spur 0 auf ZT0
+suche:          025     pz           ; Anker auf dieser Trommel? AC := 1 ja, 0 nein
+                330     c1           ; AC = 1 ?
+                170     gefunden     ; ja
+                211     lage         ; nein: war es ZT3?
+                330     c600
+                170     kein_repo    ; ja: kein Repository
+                210     c200         ; naechste Trommel
+                240     lage
+                000     suche
+kein_repo:      211     c2           ; Status 2: kein Repository
+st_fehl:        240     status       ; Fehler beim Start: Status merken
+                000     meldung
+
+gefunden:       211     cz6          ; Zelle 6 der Spur 0: Formatversion
+                210     pufw
+                251     0
+                330     c1           ; Version 1 ?
+                170     fv_ok
+                211     c3           ; Status 3: Formatversion fremd
+                000     st_fehl
+fv_ok:          211     cz7          ; Zelle 7: Spur des ersten Namensblocks (Trommel wie der Anker)
+                210     pufw
+                251     0
+                210     lage         ; Lagewort = t * 0200 + Spur
+                240     lage
+                025     lies_lage    ; ersten Namensblock lesen
+                211     pufw         ; Zelle 0: Blockkennung
+                251     0
+                330     c_bk
+                170     bk_ok
+                211     c2           ; Status 2: Block ungueltig
+                000     st_fehl
+bk_ok:          211     cz4          ; Eintrag 0, Zelle 4: Name, Zeichen 1 bis 5
+                210     pufw
+                251     0
+                330     n_ztd0
+                170     nm_1
+                000     nm_fehl
+nm_1:           211     cz5          ; Zelle 5: Name, Zeichen 6 bis 10
+                210     pufw
+                251     0
+                330     n_ztd1
+                170     nm_ok
+nm_fehl:        211     c4           ; Status 4: ZTD nicht als Eintrag 0
+                000     st_fehl
+nm_ok:          211     cz6          ; Zelle 6: L
+                210     pufw
+                251     0
+                240     laenge
+                211     cz7          ; Zelle 7: Lagewort des ersten Segments
+                210     pufw
+                251     0
+                330     c0
+                170     nm_fehl      ; Lagewort 0: Eintrag frei, Status 4
+                240     adr7622      ; ZTL_LAGE
+                211     laenge
+                240     adr7623      ; ZTL_LAENGE
+                211     pufw         ; ZTD kommt hinter die Arbeitsspur
+                210     c40a
+                240     adr7611      ; Hauptleitadresse
+                241     adr7742      ; RA := 0
+                241     adr7625      ; Grenze: Vorgabe
+                025     lade         ; ZTD laden
+                211     status
+                330     c0
+                170     start_zd     ; in Ordnung
+                000     meldung      ; Fehler beim Laden
+start_zd:       211     a_dienst     ; AC := Sprungwort 000 dienst fuer ZTD
+                000     adr7611      ; Zelle 7611 (000 aaaa) wirkt als Sprung auf die Hauptleitadresse = Einsprung 0 von ZTD
+
+; ---- Fehlermeldung beim Start: Statusnummer als vier Oktalziffern ---------------------------------------------------------
+meldung:        441     nullspur     ; Nullspur := 0 (AC := 0)
+                211     status
+                616     rot9         ; Status * 01000: als Adresswort fuer den Adressdruck
+                240     adr7773      ; R1
+                030     04500        ; Kanal K2: Schreibwerk
+                dz      $inkb        ; Umschaltung auf Kleinbuchstaben (Zeichenlage des Schreibwerks ist unbestimmt): Ziffern
+                025     adr0220      ; Adressdruck: vier Ziffern
+                dz      $wrzl        ; Zeilenschaltung
+                030     04700        ; Kanal K0 wieder anwaehlen
+                020     0            ; Halt
+
+; ---- init: Arbeitsspur und Nullspur ---------------------------------------------------------------------------------------
+init:           240     in_r         ; Rueckkehrwort
+                441     nullspur     ; Nullspur := 0 (fuer die Drehungen), AC := 0
+                211     a_ende       ; Adresswort des Endes von ZTL
+                210     c37a         ; aufrunden auf die naechste Spurgrenze
+                200     cpmask       ; Spurteil: Adresswort der Arbeitsspur
+                240     pufw
+                210     c40a
+                240     pufend       ; Adresswort hinter der Arbeitsspur
+                211     pufw
+                240     adr7624      ; ZTL_PUFFER
+                000     in_r
+
+; ---- lies_lage: ZT waehlen und die Spur "lage" in die Arbeitsspur lesen -----------------------------------------------------
+lies_lage:      240     ll_r         ; Rueckkehrwort
+                211     lage         ; t * 0200 + Spur
+                616     rot26        ; um 26 nach links drehen: Spur nach Bit 26 bis 32, t nach Bit 0 und 1
+                240     rt
+                200     c3           ; AC := t
+                240     tt
+                616     rot15        ; t * 0100000
+                210     c_anw        ; Befehl 030 5k00 (k = t + 1)
+                240     gen1
+gen1:           dw      0            ; hier steht zur Laufzeit 030 5k00 (k = t + 1) (Anwahl der Trommel t) und wird ausgefuehrt
+                211     rt           ; Lagewort gedreht
+                220     tt           ; minus t: Spur * 2^26 = zzz0 des Befehls
+                210     pufw         ; bbbb = Arbeitsspur
+                210     c661         ; Befehlscode 661
+                240     gen2
+gen2:           dw      0            ; hier steht zur Laufzeit zzz0 bbbb 661 (ZT-Spur -> Arbeitsspur) und wird ausgefuehrt
+                000     ll_r         ; zurueck
+
+; ---- pz: Spur 0 der Trommel "lage" lesen und den Anker pruefen; AC := 1 Anker vorhanden, 0 nicht -----------------------------
+pz:             240     pz_r         ; Rueckkehrwort
+                025     lies_lage
+                211     cz4          ; Zelle 4: Listenkennung
+                210     pufw
+                251     0
+                330     c_lk
+                170     pz_a
+pz_nein:        211     c0           ; kein Anker
+                000     pz_r
+pz_a:           211     cz5          ; Zelle 5: Repository-Kennung
+                210     pufw
+                251     0
+                330     c_rk
+                170     pz_ja
+                000     pz_nein
+pz_ja:          211     c1           ; Anker vorhanden
+                000     pz_r
+
+; ---- lade: Programm ZTL_LAGE/ZTL_LAENGE nach Hauptleitadresse + RA laden; Ergebnis in "status" ---------------------------------
+lade:           240     la_r         ; Rueckkehrwort
+                241     status       ; status := 0
+                241     adr7610      ; 0. Leitadresse := 0
+                211     adr7622      ; Lagewort des ersten Segments
+                330     c0
+                170     la_f4        ; 0: kein Verweis, Status 4
+                211     adr7625      ; ZTL_GRENZE
+                330     c0
+                170     la_gv        ; 0: Vorgabe
+                000     la_g1
+la_gv:          211     c540
+la_g1:          240     grenze
+                211     adr7623      ; L
+                616     rot9         ; L * 01000
+                210     adr7611      ; + Hauptleitadresse: Ende des Ziels
+                240     zende
+                211     grenze       ; Grenze - Ende < 0: reicht nicht
+                220     zende
+                040     la_f5
+                211     adr7611      ; Ueberschneidung mit ZTL und Arbeitsspur [anfang, pufend)?
+                220     pufend
+                050     la_ok        ; Hauptleitadresse >= pufend: frei
+                211     a_anfang
+                220     zende
+                050     la_ok        ; anfang >= Ende des Ziels: frei
+                000     la_f5
+la_ok:          211     adr7623
+                240     rest         ; noch zu ladende Worte
+                211     adr7622
+                240     seglage      ; laufendes Segment
+la_seg:         241     spn          ; Spur im Segment := 0
+la_spur:        211     rest
+                330     c0
+                170     la_fertig    ; alles uebertragen
+                211     seglage
+                210     spn
+                240     lage         ; Lagewort der Spur
+                025     lies_lage
+                025     sv           ; 25 Worte der Spur uebernehmen
+                211     spn
+                210     c1
+                240     spn
+                330     c16
+                170     la_vk        ; 16 Spuren: Segmentende
+                000     la_spur
+la_vk:          211     rest
+                330     c0
+                170     la_fertig
+                211     cz36         ; Zelle 36 der 16. Spur: Lagewort des naechsten Segments
+                210     pufw
+                251     0
+                240     seglage
+                330     c0
+                170     la_f2        ; Kette zu kurz: Status 2
+                000     la_seg
+la_f2:          211     c2
+                000     la_f
+la_f4:          211     c4
+                000     la_f
+la_f5:          211     c5
+la_f:           240     status
+la_fertig:      000     la_r
+
+; ---- sv: die 25 Woerter der Spur in der Arbeitsspur uebernehmen (5 Gruppen zu Kennungswort und 5 Woertern) ---------------------
+sv:             240     sv_r         ; Rueckkehrwort
+                241     gidx         ; Zelle des Kennungswortes der Gruppe 0
+sv_g:           211     gidx
+                210     pufw
+                251     0            ; Kennungswort
+                616     rot9         ; 9 vorweg; je Wort kommen 6 dazu, das erste K2 steht dann in Bit 12 bis 9
+                240     kenn
+                211     gidx
+                210     c1e
+                240     widx         ; Zelle des ersten Maschinenwortes
+                211     c5
+                240     gz           ; 5 Worte je Gruppe
+sv_w:           211     rest
+                330     c0
+                170     sv_ende      ; nichts mehr zu laden
+                211     kenn
+                616     rot6         ; naechstes Kennzeichen: K2 in Bit 12 bis 9
+                240     kenn
+                200     ck2m         ; K2 * 01000
+                210     c7610a       ; (7610 + K2) * 01000
+                251     0            ; Leitadresse Nummer K2
+                240     leit
+                211     widx
+                210     pufw
+                251     0            ; Maschinenwort
+                210     leit         ; Adressenaenderung 1. Art
+                240     wert
+                211     adr7611      ; Hauptleitadresse
+                210     adr7742      ; + RA
+                210     c240         ; Befehl 240 <Hauptleitadresse + RA>
+                240     gen3
+                211     wert
+gen3:           dw      0            ; hier steht zur Laufzeit 240 <Ziel> und wird ausgefuehrt: Wort ablegen
+                211     adr7742
+                210     c1e
+                240     adr7742      ; RA := RA + 1 Wort
+                211     rest
+                220     c1
+                240     rest
+                211     widx
+                210     c1e
+                240     widx
+                211     gz
+                220     c1
+                240     gz
+                330     c0
+                170     sv_gn        ; 5 Worte der Gruppe uebernommen
+                000     sv_w
+sv_gn:          211     gidx
+                210     cz6          ; naechste Gruppe: 6 Zellen weiter
+                240     gidx
+                330     cz36         ; Zelle 36 erreicht: fuenf Gruppen fertig
+                170     sv_ende
+                000     sv_g
+sv_ende:        000     sv_r
+
+; ---- dienst: Aufruf durch ZTD (025), Parameter in 7622 bis 7625, 7611 und 7742, Ergebnis in 7626 --------------------------------
+dienst:         240     d_r          ; Rueckkehrwort von ZTD
+                025     init
+                025     lade
+                211     status
+                240     adr7626      ; ZTL_STATUS
+                000     d_r          ; zurueck zu ZTD
+ende:           end

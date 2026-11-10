@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zahl_valo_buchstabe.asm:6: Fehler: M1 $VALO n: Der Text "12a" ist keine oktale ganze Zahl (erlaubt sind die Ziffern 0 bis 7, davor ein einzelnes -)
+datei-weg obj mqo test
+escape-weg

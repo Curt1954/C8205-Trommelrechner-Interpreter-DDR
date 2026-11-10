@@ -1,0 +1,41 @@
+rc 0
+anzahl-stderr 30 Spur ZWEIG
+anzahl-stderr 1 Spur FELD 1: $DIM g 2 => Feld g(2) vereinbart
+anzahl-stderr 3 Spur ZWEIG 1: $LOCAL w t u s f(3) => lokal vereinbart: w t u s f(3)
+anzahl-stderr 3 Spur ZWEIG 2: $SET f(1) 5 => f(1): 0 -> 5 (lokal)
+anzahl-stderr 3 Spur ZWEIG 3: $SET t "ab" => t: 0 -> "ab" (lokal)
+anzahl-stderr 3 => Makro beendet
+stderr-reihe Spur ZWEIG 4: $IF 1 = 1 => wahr
+stderr-reihe Spur ZWEIG 5: $SET w 10 => w: 0 -> 10 (lokal)
+stderr-reihe Spur ZWEIG 6: $UPPER u "ab" => u: 0 -> "AB" (lokal)
+stderr-reihe Spur ZWEIG 7: $SUBSTR s "hallo" 2 3 => s: 0 -> "all" (lokal)
+stderr-reihe Spur ZWEIG 8: erzeugt markeDKR: dw 10
+stderr-reihe Spur ZWEIG 9: $EXIT => Makro beendet
+stderr-reihe Spur ZWEIG 4: $IF 2 = 1 => falsch
+stderr-reihe Spur ZWEIG 5: $ELIF 2 = 2 => wahr
+stderr-reihe Spur ZWEIG 6: $SET w 20 => w: 0 -> 20 (lokal)
+stderr-reihe Spur ZWEIG 7: $UPPER u "ab" => u: 0 -> "AB" (lokal)
+stderr-reihe Spur ZWEIG 8: $SUBSTR s "hallo" 2 3 => s: 0 -> "all" (lokal)
+stderr-reihe Spur ZWEIG 9: erzeugt markeGNU: dw 20
+stderr-reihe Spur ZWEIG 10: $EXIT => Makro beendet
+stderr-reihe Spur ZWEIG 4: $IF 3 = 1 => falsch
+stderr-reihe Spur ZWEIG 5: $ELIF 3 = 2 => falsch
+stderr-reihe Spur ZWEIG 6: $ELSE => betreten
+stderr-reihe Spur ZWEIG 7: $SET w 30 => w: 0 -> 30 (lokal)
+stderr-reihe Spur ZWEIG 8: $UPPER u "ab" => u: 0 -> "AB" (lokal)
+stderr-reihe Spur ZWEIG 9: $SUBSTR s "hallo" 2 3 => s: 0 -> "all" (lokal)
+stderr-reihe Spur ZWEIG 10: erzeugt markeJQX: dw 30
+stderr-reihe Spur ZWEIG 11: $EXIT => Makro beendet
+stderr-reihe Spur FELD 1: $DIM g 2 => Feld g(2) vereinbart
+nicht-stderr dw 99
+nicht-stderr ZWEIG 12
+nicht-stderr $ENDIF
+stdout 0000: 00 00000000012 markeDKR: dw 10 ; Wort
+stdout 0001: 00 00000000024 markeGNU: dw 20 ; Wort
+stdout 0002: 00 00000000036 markeJQX: dw 30 ; Wort
+nicht-stderr Warnung
+nicht-stderr Fehler
+log-weg Spur
+dmp-weg Spur
+datei-da obj mqo test
+escape-weg

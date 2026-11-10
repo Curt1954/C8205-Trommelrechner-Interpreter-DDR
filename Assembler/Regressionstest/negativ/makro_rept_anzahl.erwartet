@@ -1,0 +1,4 @@
+rc 16
+stderr makro_rept_anzahl.asm:7: Fehler: R4 $REPT 5000: Die Anzahl 5000 liegt nicht im Bereich 0 bis 4096
+datei-weg obj mqo test
+escape-weg

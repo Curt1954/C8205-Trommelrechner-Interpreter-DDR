@@ -1,0 +1,45 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000037241 # 241 summe ; summe := 0, AC := 0
+0001: 00000041241 # 241 i ; i := 0, AC := 0
+0002: 00000043210 # 210 l0001 ; AC := Index + Anfangsadresse feld
+0003: 00000000251 # 251 0 ; AC := feld[Index] (R-Lesebefehl)
+0004: 00000040240 # 240 max ; max := AC
+0005: 00000041211 # schl: 211 i ; AC := Index i
+0006: 00000043210 # 210 l0001 ; AC := Index + Anfangsadresse feld
+0007: 00000000251 # 251 0 ; AC := feld[Index] (R-Lesebefehl)
+0010: 00000042240 # 240 wert ; wert := AC
+0011: 00000037210 # 210 summe ; AC := AC + summe
+0012: 00000037240 # 240 summe ; summe := AC
+0013: 00000042211 # 211 wert ; wert <= max: max bleibt
+0014: 00000040330 # 330 max ; wert <= max: max bleibt
+0015: 00000017140 # 140 weiter ; wert <= max: max bleibt
+0016: 00000040240 # 240 max ; max := wert
+0017: 00000041211 # weiter: 211 i ; AC := i
+0020: 00000044210 # 210 l0002 ; AC := AC + 01000
+0021: 00000041240 # 240 i ; i := AC
+0022: 00000045330 # 330 l0003 ; i = n (in Adresseneinheiten): fertig
+0023: 00000025170 # 170 fertig ; i = n (in Adresseneinheiten): fertig
+0024: 00000005000 # 000 schl ; weiter bei schl
+0025: 00000001164 # fertig: 164 0001 ; Diagnoseausgabe (nur im Test)
+0026: 00000000020 # 020 0 ; Halt: Ergebnis in summe und max
+0027: 00000000007 # feld: dw 07 ; feld[0] = 7
+0030: 77777777775 # dw -03 ; feld[1] = -3
+0031: 00000000014 # dw 014 ; feld[2] = 12
+0032: 00000000005 # dw 05 ; feld[3] = 5
+0033: 77777777767 # dw -011 ; feld[4] = -9
+0034: 00000000014 # dw 014 ; feld[5] = 12
+0035: 00000000000 # dw 0 ; feld[6] = 0
+0036: 00000000004 # dw 04 ; feld[7] = 4
+0043: 00000027000 # l0001 da feld
+0044: 00000001000 # l0002 dw 000000001000
+0045: 00000010000 # l0003 dw 000000010000
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0027 US=1
+0037: 00000000034   # summe
+0040: 00000000014   # max

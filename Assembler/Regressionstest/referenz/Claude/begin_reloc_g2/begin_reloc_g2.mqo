@@ -1,0 +1,10 @@
+                 000              haupt            ; Zelle 0000: Sprung zum Hauptprogramm
+erg:             dw               0                ; Zelle 0001: Ergebnis
+haupt            211              l0001            ; Zelle 0002: AC := 9 (Literal)
+                 210              x1               ; Zelle 0003: AC := AC + (x1), Block X
+                 240              erg              ; Zelle 0004: (erg) := AC
+                 020              0                ; Zelle 0005: Halt
+blkX:            equ              07540            ; vorher equ40 *    erste Anweisung: Gruppe 2
+x1:              dw               5                ; erste Zelle von Block X
+                 db               2                ; Rest: zusammen 3 Zellen
+l0001            dw               9                

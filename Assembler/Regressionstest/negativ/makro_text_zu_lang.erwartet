@@ -1,0 +1,4 @@
+rc 16
+stderr Parameter $1: Text hat 7 Zeichen, erlaubt sind höchstens 5
+datei-weg obj mqo test
+escape-weg

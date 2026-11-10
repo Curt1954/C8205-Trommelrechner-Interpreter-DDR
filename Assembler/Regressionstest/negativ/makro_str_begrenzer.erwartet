@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_begrenzer.asm:7: Fehler: M1 $UPPER z: Der Text enthält nach dem Auflösen das Anführungszeichen ", mit dem er begrenzt ist; das andere Anführungszeichen (') nehmen
+datei-weg obj mqo test
+escape-weg

@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.95-006
+Version: 0.95-008
 
 [Deutsch](README.md) | **English**
 
@@ -46,7 +46,7 @@ as regression tests.
 | `CLAUDE.md`, `C8205-Programmierhandbuch_fuer_Claude.md` | entry point for AI sessions (in German): one-page card and handbook for assembly programming |
 | `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik_*.py` | GRAFIK mode: panel window, typewriter window, sounds (mixer, typewriter, reader, punch, computer) |
 | `c-module/` | C modules: drum, track lock, interrupt, sound mixer `tonmisch`; extension module in `c-module/python/` |
-| `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
+| `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, `pult_toene/` key sounds of the panel, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | checks and test scripts, e.g. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
 | `Hilfsprogramme/` | helper programs: `c8205_lochstreifen_anzeige.py` (shows a virtual punched tape as plain text in a window), `c8205_lochstreifen_eingabe.py` (creates a virtual punched tape from keyboard input), `c8205_lochstreifen_umwandlung.py` (converts a text file to a binary-coded R300 punched tape and back) |
 | `testscripte/` | test scripts; each one changes to the project directory itself and can be started from anywhere: `compute_all_tests.sh` (all test definitions in `Tests/`), `c8205_bis_test.sh` (BIS tests: first loads the minimal program `Tests/pj2-bis_minimalprogramm.test`, then the given test file), `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` (BIS tests one after another: empty drum, minimal program, then the `pj2-bis_*` tests; each a larger set), `test.sh` (older version of `test_bis.sh`), `erzeuge_leere_trommel.py` (creates the empty drum file `Trommel/trommel.txt`, also resets a used drum) |
@@ -59,6 +59,7 @@ as regression tests.
 | `Test-Protokolle/` | Logs (`.log`) of the runs |
 | `Test-virtuelleGeraete/` | Virtual devices of the TEST interpreter (punched tape readers, punch, typewriter unit output, keyboard input) |
 | `virtuelle_Geraete/` | Virtual devices of the GRAFIK interpreter (`Leser1/`, `Leser2/`, `Stanzer1/`) |
+| `Lochstreifen/` | Ready-made punched tape and load files, sorted by format (`im_KEP-Format/`, `im_BIS-Format/`, `das_KEP_im_TEST-Format/`, `Datenformat/`) |
 | `Trommel/` | The drum file `trommel.txt`, shared by both interpreters |
 | `Testausfuehrungen/` | Running tests and overviewing them: `testwahl.sh` (choose a test from the list and run it), `kep_test.sh`, `interpreter_test.sh` and `bis_test.sh` (demonstration runs with KEP, TEST interpreter and BIS); plus the overview table of all tests (`test_tabelle.py` produces `.csv`, `.md`, `.xlsx`; `test_tabelle_csv_anzeigen.sh` opens it in LibreOffice Calc) |
 | `Bausteininterpretiersystem BIS/` | Sub-project BIS (documentation only for now) |
@@ -86,6 +87,7 @@ C8205/
 ├── Test-Protokolle/                Logs of the runs (.log); in the total zip only as Test-Protokolle.zip (unpack in the project root; otherwise the interpreter recreates it)
 ├── Testausfuehrungen/              Test execution (testwahl.sh etc.) and overview table of all tests (test_tabelle.py)
 ├── Bausteininterpretiersystem BIS/ Sub-project BIS (documentation only for now)
+├── Lochstreifen/                   ready-made punched tape and load files, sorted by format
 ├── Trommel/                        Drum file trommel.txt (shared by TEST and GRAFIK)
 ├── Test-virtuelleGeraete/          virtual devices of the TEST interpreter
 │   ├── Leser1/, Leser1_02/, Leser2/   Punched tape input
@@ -191,7 +193,7 @@ Assembler/asm_alle.sh [base directory]   # default: Assembler/; can be started f
 To build it from the source code: `Assembler/make_c82ass.sh` (Linux) or `Assembler/make_c82ass.bat`
 (Windows, MinGW-w64).
 
-Among other files, the assembler produces the object code (`.obj`), a memory listing (`.dmp`) and a `.test` file.
+Among other files, the assembler produces the object code (`.obj`, a binary-coded R300 punched tape that can be put straight into the tape reader), a memory listing (`.dmp`) and a `.test` file.
 The latter contains the drum file in the interpreter's test format and, once the test markers and the key
 sequence have been added, can be used as a test order in `Tests/`. Language, directives and macros are described
 in `Assembler/Dokumentation/` (the `.odt` is authoritative; German).

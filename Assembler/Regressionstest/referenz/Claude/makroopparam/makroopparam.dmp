@@ -1,0 +1,7 @@
+0000: 01 0003 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000017 wert:  dw  017   ; Zelle 0001: Konstante
+0002: 0              erg:   dw  0     ; Zelle 0002: Ergebnis (initialisiert)
+0003: 01 0001 211    haupt: 211 wert  ; Operation und Operand aus den Parametern
+0004: 01 0002 240           240 erg   ; Operation und Operand aus den Parametern
+0005: 01 0001 164           164 0001  ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 01 0000 020           020 0     ; Zelle 0006: Halt

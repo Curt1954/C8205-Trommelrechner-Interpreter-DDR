@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_set_selbst.asm:6: Fehler: M1 $SET a: Variable a ist nicht definiert ($SET fehlt)
+datei-weg obj mqo test
+escape-weg

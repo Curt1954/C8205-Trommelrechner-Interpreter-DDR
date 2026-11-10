@@ -1,0 +1,9 @@
+args --makros
+rc 0
+stdout Makroliste
+stdout Quelltext, Zeile 8
+stdout Quelltext, Zeile 4
+stdout ZAEHL
+log-da Makroliste
+dmp-da ;+++ Makro ZAEHL aus Quelltext, Zeile 8, aufgerufen in Quelltextzeile
+dmp-da ;+++ Makro ZINIT aus Quelltext, Zeile 4, aufgerufen in Quelltextzeile

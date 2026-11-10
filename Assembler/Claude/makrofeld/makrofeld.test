@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Acht Quadrate in einem Feld berechnen und in umgekehrter Reihenfolge ausgeben
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000061 # dw 49 ; Elemente von hinten nach vorn
+0002: 00000000044 # dw 36 ; Elemente von hinten nach vorn
+0003: 00000000031 # dw 25 ; Elemente von hinten nach vorn
+0004: 00000000020 # dw 16 ; Elemente von hinten nach vorn
+0005: 00000000011 # dw 9 ; Elemente von hinten nach vorn
+0006: 00000000004 # dw 4 ; Elemente von hinten nach vorn
+0007: 00000000001 # dw 1 ; Elemente von hinten nach vorn
+0010: 00000000000 # dw 0 ; Elemente von hinten nach vorn
+0011: 00000001164 # haupt: 164 0001 ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 00000000020 # 020 0 ; Zelle 0012: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 00000000061   # q(7) = 49
+0002: 00000000044   # q(6) = 36
+0003: 00000000031   # q(5) = 25
+0004: 00000000020   # q(4) = 16
+0005: 00000000011   # q(3) = 9
+0006: 00000000004   # q(2) = 4
+0007: 00000000001   # q(1) = 1
+0010: 00000000000   # q(0) = 0

@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0001 Test: sq0=10 und sq1=20 aus $REPT im Quelltext, GROESSE erzeugt gr=$1*2, die Makros N1 bis N3 lesen sie in $CALC, $IF und $REPT
+#PROT STUFE=2
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000036 # dw 30 ; 10+20 = 30
+0002: 00000000017 # dw 15 ; 14+1 = 15
+0003: 00000000001 # dw 1 ; gr = 14 > 10: wahr
+0004: 00000000024 # dw 20 ; 20, 21
+0005: 00000000025 # dw 21 ; 20, 21
+0006: 00000000020 # haupt: 020 0 ; Zelle 0006: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 US=1
+0001: 00000000036   # sq0+sq1 = 30
+0002: 00000000017   # gr+1 = 15
+0003: 00000000001   # $IF gr>10: wahr
+0004: 00000000024   # $REPT gr/7, Durchlauf 0: 20
+0005: 00000000025   # Durchlauf 1: 21

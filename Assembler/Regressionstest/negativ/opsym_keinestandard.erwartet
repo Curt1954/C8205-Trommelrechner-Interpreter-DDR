@@ -1,0 +1,6 @@
+rc 16
+vorher-weg c82ass.opsym
+stderr Fehler: Die Standardtabelle c82ass.opsym für markierte Namen konnte weder im aktuellen Verzeichnis noch unter Sourcecode/ noch neben dem Programm geöffnet werden.
+nicht-stderr ist unbekannt
+datei-weg obj mqo test
+escape-weg

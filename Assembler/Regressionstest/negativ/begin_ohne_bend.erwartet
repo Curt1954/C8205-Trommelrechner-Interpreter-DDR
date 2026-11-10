@@ -1,0 +1,5 @@
+rc 16
+stderr begin_ohne_bend.asm:7: Fehler: end zwischen begin und bend nicht zulässig
+stderr begin_ohne_bend.asm:7: Fehler: begin (Zeile 5) ohne abschließendes bend
+datei-weg obj mqo test
+escape-weg

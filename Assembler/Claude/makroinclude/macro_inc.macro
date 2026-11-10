@@ -1,0 +1,6 @@
+; macro_inc.macro - Makrodatei fuer den Test von $INCLUDE (Assemblerdokumentation 4.14)
+INCTEST:        MACRO 1
+                dw      $1              ; erste Zeile vor dem Include
+                $INCLUDE teil/a.inc     ; Pfad relativ zu dieser Makrodatei
+                dw      $CALC($1+100)   ; letzte Zeile nach dem Include
+                MEND

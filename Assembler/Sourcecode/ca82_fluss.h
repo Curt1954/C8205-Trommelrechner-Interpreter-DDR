@@ -10,6 +10,7 @@ extern int warnTot;   // 1 = Aufruf mit -WARN=TOT
 void flussZuruecksetzen(void);
 void flussMerkeBefehl(int adresse, const char *opcode, int hatZiel, int ziel, int zielAbsolut, int zeile);
 void flussMerkeDaten(int von, int bis, const char *operation, int zeile);
+extern int flussZahlwortIstNull;   // Pass 3 setzt 1, wenn das Wort von dwf/dwg 0 ist (Platzhalter fuer -WARN=SPR)
 void flussMerkeVerweis(int adresse);   // ein da-Wort enthaelt diese (relative) Adresse
 
 // Nach fehlerfreiem Pass 3 aufgerufen (main).

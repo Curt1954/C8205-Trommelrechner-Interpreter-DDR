@@ -1,0 +1,8 @@
+args --PROBEAUSGABE
+rc 0
+stderr Probelauf 1: Hinweis: Makro CHK (
+stderr chk probe=1 abstand=0
+stderr Probelauf 2: Hinweis: Makro CHK (
+anzahl-stderr 1 chk probe=0
+datei-weg adr1 adr2 adrlog adrdbg
+escape-weg

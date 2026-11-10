@@ -1,0 +1,50 @@
+0000: 01 0060 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000007        dw  7     ; Parameter Nummer i
+0002: 00 00000000001        dw  1     ; Zeichenzahl des Parameters i
+0003: 00 00000000016        dw  14    ; Doppelte
+0004: 00 00000000013        dw  11    ; Parameter Nummer i
+0005: 00 00000000002        dw  2     ; Zeichenzahl des Parameters i
+0006: 00 00000000026        dw  22    ; Doppelte
+0007: 00 00000000002        dw  2     ; nur wenn das Doppelte ueber 20 liegt: der Index
+0010: 00 00000000015        dw  13    ; Parameter Nummer i
+0011: 00 00000000002        dw  2     ; Zeichenzahl des Parameters i
+0012: 00 00000000032        dw  26    ; Doppelte
+0013: 00 00000000003        dw  3     ; nur wenn das Doppelte ueber 20 liegt: der Index
+0014: 00 00000000016        dw  14    ; Element mit dem Index aus dem Parameter i
+0015: 00 00000000034        dw  28    ; Element mit dem Index aus dem Parameter i
+0016: 00 00000000043        dw  35    ; Element mit dem Index aus dem Parameter i
+0017: 00 00000000005        dw  5     ; Parameter 1
+0020: 00 00000000011        dw  9     ; Parameter 2
+0021: 00 00000000007        dw  7     ; Parameter 1 des aeusseren Aufrufs
+0022: 00 00000000024        dw  20    ; Parameter n des inneren Aufrufs
+0023: 00 00000000002        dw  2     ; Zeichenzahl des Parameters n des inneren Aufrufs
+0024: 00 00000000007        dw  7     ; nach der Rueckkehr wieder der aeussere Aufruf
+0025: 00 00000000454        dw  300   ; Parameter n des inneren Aufrufs
+0026: 00 00000000003        dw  3     ; Zeichenzahl des Parameters n des inneren Aufrufs
+0027: 00 00000000013        dw  11    ; aussen: Parameter 2
+0030: 0                     dw  0     ; Laenge 0
+0031: 0                     dw  0     ; Laenge 0
+0032: 0                     dw  0     ; Laenge 0
+0033: 0                     dw  0     ; Laenge 0
+0034: 00 00000000002        dw  2     ; Laenge 2
+0035: 0                     dw  0     ; Laenge 0
+0036: 00 00000000001        dw  1     ; z ist leer
+0037: 00 00000000003        dw  3     ; Laenge 3
+0040: 00 00000000002        dw  2     ; 2
+0041: 00 00000000003        dw  3     ; 3
+0042: 00 00000000001        dw  1     ; Laenge 1
+0043: 00 00000000073        dw  59    ; 59
+0044: 00 00000000007        dw  7     ; Laenge 7
+0045: 00 00000000003        dw  3     ; 3
+0046: 00 00000000454        dw  300   ; 300
+0047: 00 00000001604        dw  900   ; 900
+0050: 00 00000001750        dw  1000  ; 1000
+0051: 00 00000000002        dw  2     ; 2
+0052: 00 00000010727        dw  4567  ; 4567
+0053: 00 00000000012        dw  10    ; 10
+0054: 00 00000001607        dw  903   ; 903
+0055: 00 00000001605        dw  901   ; 901
+0056: 00 00000001605        dw  901   ; 901
+0057: 00 00000001607        dw  903   ; 903
+0060: 01 0001 164    haupt: 164 0001  ; Zelle 0060: Diagnoseausgabe (nur im Test)
+0061: 01 0000 020           020 0     ; Zelle 0061: Halt

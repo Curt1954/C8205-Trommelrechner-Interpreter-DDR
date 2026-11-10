@@ -1,0 +1,21 @@
+0000: 01 0023 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000001        dw  1     ; Zahl der uebergebenen Parameter
+0002: 00 00000000005        dw  5     ; zweiter Parameter (oder Vorgabe)
+0003: 0                     dw  0     ; dritter Parameter (oder Vorgabe)
+0004: 00 00000000013        dw  11    ; erster Parameter plus Anzahl
+0005: 00 00000000077        dw  077   ; je uebergebenem Parameter ein Wort
+0006: 00 00000000002        dw  2     ; Zahl der uebergebenen Parameter
+0007: 00 00000000006        dw  6     ; zweiter Parameter (oder Vorgabe)
+0010: 0                     dw  0     ; dritter Parameter (oder Vorgabe)
+0011: 00 00000000014        dw  12    ; erster Parameter plus Anzahl
+0012: 00 00000000077        dw  077   ; je uebergebenem Parameter ein Wort
+0013: 00 00000000077        dw  077   ; je uebergebenem Parameter ein Wort
+0014: 00 00000000003        dw  3     ; Zahl der uebergebenen Parameter
+0015: 00 00000000006        dw  6     ; zweiter Parameter (oder Vorgabe)
+0016: 00 00000000007        dw  7     ; dritter Parameter (oder Vorgabe)
+0017: 00 00000000015        dw  13    ; erster Parameter plus Anzahl
+0020: 00 00000000077        dw  077   ; je uebergebenem Parameter ein Wort
+0021: 00 00000000077        dw  077   ; je uebergebenem Parameter ein Wort
+0022: 00 00000000077        dw  077   ; je uebergebenem Parameter ein Wort
+0023: 01 0001 164    haupt: 164 0001  ; Zelle 0023: Diagnoseausgabe (nur im Test)
+0024: 01 0000 020           020 0     ; Zelle 0024: Halt

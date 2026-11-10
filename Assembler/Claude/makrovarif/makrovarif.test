@@ -1,0 +1,25 @@
+Trommeldatei:
+#DOK-0001 Test von $V in $IF/$ELIF: Zaehler ueber mehrere Makroaufrufe, Vergleich mit Zahl und mit $CALC
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000010000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Zaehler kleiner 3
+0002: 00000000001 # dw 1 ; Zaehler kleiner 3
+0003: 00000000002 # dw 2 ; Zaehler gleich 3
+0004: 00000000003 # dw 3 ; Zaehler groesser 3
+0005: 00000000077 # dw 077 ; doppelter Zaehler groesser 6
+0006: 00000000003 # dw 3 ; Zaehler groesser 3
+0007: 00000000077 # dw 077 ; doppelter Zaehler groesser 6
+0010: 00000001164 # haupt: 164 0001 ; Zelle 0008: Diagnoseausgabe (nur im Test)
+0011: 00000000020 # 020 0 ; Zelle 0009: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0012 US=1
+0001: 00000000001   # n=1
+0002: 00000000001   # n=2
+0003: 00000000002   # n=3
+0004: 00000000003   # n=4
+0005: 00000000077   # 2*4=8 > 6
+0006: 00000000003   # n=5
+0007: 00000000077   # 2*5=10 > 6

@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 3 der eingebundenen Datei 'quelltext_include_kreis.asm': $INCLUDE 'quelltext_include_kreis.asm' ist zu tief verschachtelt (höchstens 4
+datei-weg obj mqo test
+escape-weg

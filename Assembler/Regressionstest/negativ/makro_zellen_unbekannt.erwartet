@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_unbekannt.asm:6: Fehler: $CALC(zellen(a,b)): zellen(a,b): Quelltextzeile 8: "FOO" ist weder Befehl noch Anweisung (bei "zellen(a,b)")
+datei-weg obj mqo test
+escape-weg

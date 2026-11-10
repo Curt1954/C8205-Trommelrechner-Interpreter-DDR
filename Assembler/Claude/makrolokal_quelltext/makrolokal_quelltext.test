@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0001 Test Quelltext-Variable: $SET im Quelltext ist global; ein Makro liest sie ohne $GLOBAL, schreibt sie nur mit $GLOBAL; $SET ohne $GLOBAL verdeckt sie
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000050 # dw 40 ; globaler Wert
+0002: 00000000001 # dw 1 ; 1 (lokal)
+0003: 00000000052 # dw 42 ; Zelle 0003: 42
+0004: 00000000052 # dw 42 ; globaler Wert
+0005: 00000001164 # haupt: 164 0001 ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 00000000020 # 020 0 ; Zelle 0006: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 US=1
+0001: 00000000050   # LIES: 40
+0002: 00000000001   # VERDECKT: lokale basis = 1
+0003: 00000000052   # Quelltext: basis = 42 (40, SCHREIB 41, INKR 42)
+0004: 00000000052   # LIES: 42

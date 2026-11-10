@@ -1,0 +1,4 @@
+rc 16
+stderr makro_dim_lokal_anzahl.asm:8: Fehler: G8 $DIM a: Anzahl 4, früher vereinbart mit 3
+datei-weg obj mqo test
+escape-weg

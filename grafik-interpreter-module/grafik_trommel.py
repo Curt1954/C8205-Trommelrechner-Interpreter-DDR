@@ -2,7 +2,7 @@
 """
 grafik_trommel.py - Trommel des Modus GRAFIK (Stufe 1): gleiche Schnittstelle wie die Klasse Trommel des Interpreters
 (rd, wr, schliessen), aber ueber das C-Modul c8205_trommel (echte Trommel mit Koinzidenz, Hintergrund-Thread).
-Version: G5-001  (Kennung neu eingefuehrt; fruehere Staende sind im Archiv nicht belegt)
+Version: G5-002  (08.11.2026: abschaltbare Taktmitschrift, Attribut 'takt', siehe grafik_takt.py; ohne Schalter unveraendert. G5-001: Kennung neu eingefuehrt; fruehere Staende sind im Archiv nicht belegt)
 
 Regeln (GRAFIK_Beschreibung §7 (alt: Dok. 02 Abschnitt 6), GRAFIK_Beschreibung §7 (alt: Dok. 04 Abschnitt 4)):
   * Nur das C-Modul greift auf die Trommeldatei zu; es gibt keinen Zwischenspeicher (kein "mem").
@@ -63,6 +63,7 @@ class GrafikTrommel:
         self.zeitmodell = zeitmodell
         self.vt = 0                  # G4-009: virtuelle Zeit in Wortzeiten (Modell 'echt' und 'schnell')
         self._w0 = self._v0 = None   # Bezug der Echtzeit-Anpassung
+        self.takt = None             # G5-002: None = aus; sonst ein grafik_takt.TaktProtokoll (nur Modell 'echt' und 'schnell')
         self.T = modul or lade_modul()
         self.eingeschaltet = False
         self.zugriffe = 0
@@ -83,12 +84,14 @@ class GrafikTrommel:
 
     # --- Schnittstelle des Knotengraphen --------------------------------------------------------------------------
     # --- virtuelle Zeit (G4-009): die Trommel dreht nach dem Tick-Zaehler des Modells, nicht nach der Wanduhr -----------------------
-    def _warte_ticks(self, adresse):
+    def _warte_ticks(self, adresse, art='L'):
         """Wortzeiten bis der Sektor der Adresse unter dem Kopf liegt (0 = jetzt), und Fortschreiben der Zeit."""
         soll = adresse & 0o37
         w = 0
         while PERM[(self.vt + w) & 31] != soll:
             w += 1
+        if self.takt is not None:
+            self.takt.zugriff(art, self.vt, w, adresse & MASK12)     # G5-002: vt VOR der Wartezeit
         self.vt += w
         self._pace()
         return w
@@ -96,6 +99,8 @@ class GrafikTrommel:
     def tick(self, n=1):
         """Eine (oder n) Wortzeit(en) vergehen (Phasen der Befehlsschleife)."""
         if self.zeitmodell != 'alt':
+            if self.takt is not None:
+                self.takt.tick(self.vt, n)                              # G5-002: vt VOR der Phase
             self.vt += n
             self._pace()
 
@@ -132,7 +137,7 @@ class GrafikTrommel:
 
     def wr(self, adresse, wert):
         if self.zeitmodell != 'alt':
-            wz = self._warte_ticks(adresse)
+            wz = self._warte_ticks(adresse, 'S')
             gesperrt = self.T.schreiben(adresse & MASK12, wert & MASK33)
             self.zugriffe += 1
             self.wartezeit_summe += wz

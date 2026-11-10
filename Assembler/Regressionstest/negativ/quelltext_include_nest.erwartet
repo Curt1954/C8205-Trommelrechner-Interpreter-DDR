@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_include_nest_2.inc:3: Fehler: Operationscode 'baz' ist ungültig
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,19 @@
+            000           haupt         ; Zelle 0000: Sprung zum Hauptprogramm
+t1:         kat5          abcde         ; Zelle 0001: genau ein volles Wort
+t2:         kat5          hallo         ; Zelle 0002: Beispiel der Doku
+t3:         kat5          \ a b \       ; Zelle 0003: fuenf Zeichen, fuehrendes und abschliessendes Leerzeichen bleiben
+t4:         kat5          x$wrzl        ; Zelle 0004: Buchstabe und Marke $wrzl (Code 053)
+t5:         kat5          $ingb=$inkb   ; Zelle 0005: Marken $ingb (055), $inkb (054) und = (05)
+t6:         kat5          01234         ; Zelle 0006: Ziffern 0 bis 4 (Codes 07 bis 013)
+t7:         kat5          56789         ; Zelle 0007: Ziffern 5 bis 9 (Codes 014 bis 020)
+t8:         kat5          a$WRZL        ; Zelle 0010: Marke in Grossbuchstaben wird erkannt
+t9:         kat5          a$wrzlb       ; Zelle 0011: Zeichen folgt unmittelbar auf die Marke
+t10:        kat5          ,-.+:         ; Zelle 0012: Satzzeichen (Codes 02 bis 06)
+t11:        kat5          z             ; Zelle 0013: ein einziges Zeichen, Fuellung 00 rechts
+t12:        kat5          ab            ; Zelle 0014: zwei Zeichen (Beispiel der Doku)
+t13:        kat5          b             ; Zelle 0015: groesser als abc und ab (Sortierung)
+t14:        kat5          a:b           ; Zelle 0016: Doppelpunkt im Text (Beispiel der Doku)
+t15:        kat5          abc           ; Zelle 0017: groesser als ab, kleiner als b (Beispiel der Doku)
+t16:        kat5          a b           ; Zelle 0020: Leerzeichen im Text ohne Backslash
+t17:        kat5          abcd$wrzl     ; Zelle 0021: Marke als fuenftes Zeichen
+haupt:      020           0             ; Zelle 0022: Halt

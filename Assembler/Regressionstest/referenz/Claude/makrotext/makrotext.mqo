@@ -1,0 +1,23 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      7       ; Zeichenzahl des Textes (Parameter 1)
+        dw      10      ; Zeichenzahl plus Parameter 2
+        dw      2       ; Zahl der Parameter: der Text zaehlt als ein Parameter
+        dw      3       ; Zeichenzahl des Textes (Parameter 1)
+        dw      13      ; Zeichenzahl plus Parameter 2
+        dw      2       ; Zahl der Parameter: der Text zaehlt als ein Parameter
+        dw      5       ; Zeichenzahl des Textes (Parameter 1)
+        dw      6       ; Zeichenzahl plus Parameter 2
+        dw      2       ; Zahl der Parameter: der Text zaehlt als ein Parameter
+        dw      1       ; Text laenger als 5 Zeichen
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+        dw      2       ; Text hoechstens 5 Zeichen
+        dw      3       ; je Zeichen ein Wort
+        dw      3       ; je Zeichen ein Wort
+haupt:  164     0001    ; Zelle 0025: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0026: Halt

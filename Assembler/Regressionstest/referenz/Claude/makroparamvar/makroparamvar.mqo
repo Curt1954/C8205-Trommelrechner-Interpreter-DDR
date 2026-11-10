@@ -1,0 +1,27 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      1       ; Zahl der uebergebenen Parameter
+        dw      5       ; Parameter Nummer 0+1
+        dw      10      ; erster plus letzter Parameter
+        dw      10      ; fester Parameter 5 mal 2
+        dw      3       ; Zahl der uebergebenen Parameter
+        dw      3       ; Parameter Nummer 0+1
+        dw      4       ; Parameter Nummer 1+1
+        dw      7       ; Parameter Nummer 2+1
+        dw      10      ; erster plus letzter Parameter
+        dw      6       ; fester Parameter 3 mal 2
+        dw      11      ; Zahl der uebergebenen Parameter
+        dw      1       ; Parameter Nummer 0+1
+        dw      2       ; Parameter Nummer 1+1
+        dw      3       ; Parameter Nummer 2+1
+        dw      4       ; Parameter Nummer 3+1
+        dw      5       ; Parameter Nummer 4+1
+        dw      6       ; Parameter Nummer 5+1
+        dw      7       ; Parameter Nummer 6+1
+        dw      8       ; Parameter Nummer 7+1
+        dw      9       ; Parameter Nummer 8+1
+        dw      10      ; Parameter Nummer 9+1
+        dw      11      ; Parameter Nummer 10+1
+        dw      12      ; erster plus letzter Parameter
+        dw      2       ; fester Parameter 1 mal 2
+haupt:  164     0001    ; Zelle 0031: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0032: Halt

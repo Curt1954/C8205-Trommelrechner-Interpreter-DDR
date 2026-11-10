@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Zweiter Packversuch mit dem genauen Zaehler (equ10 * im Programmrest): uebernommen mit Endadresse 0200 statt 0212
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # haupt: 020 0 ; Zelle 0001: Halt (die UP werden nicht aufgerufen, nur erzeugt)
+0002: 00000110000 # kopf: da 000000000110 ; Zelle 0002: Adresse der Marke am Aufruf von M4A (Wert der Marke mal 01000)
+0010: 00000000111 # t1: dw 0111 ; Programmrest, Zelle 1
+0011: 00000000222 # t2: dw 0222 ; Programmrest, Zelle 2
+0012: 00000000711 # dw 0711 ; erste Rumpfzelle (Marke fuer den Test)
+0021: 00000000712 # dw 0712 ; letzte Rumpfzelle (Marke fuer den Test)
+0100: 00000000731 # dw 0731 ; erste Rumpfzelle (Marke fuer den Test)
+0107: 00000000732 # dw 0732 ; letzte Rumpfzelle (Marke fuer den Test)
+0110: 00000000701 # m4a: dw 0701 ; erste Rumpfzelle (Marke fuer den Test)
+0177: 00000000702 # dw 0702 ; letzte Rumpfzelle (Marke fuer den Test)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0002
+0002: 00000110000   # kopf: da m4a, m4a = 0110 (Zaehler vor M4A im zweiten Versuch)
+0010: 00000000111   # t1: Programmrest auf der 010-Grenze
+0011: 00000000222   # t2
+0012: 00000000711   # M4B, erste Zelle (Luecke vor M1A)
+0021: 00000000712   # M4B, letzte Zelle
+0100: 00000000731   # M1A, erste Zelle
+0107: 00000000732   # M1A, letzte Zelle
+0110: 00000000701   # M4A, erste Zelle (Phase C, hinter M1A)
+0177: 00000000702   # M4A, letzte Zelle
+0200: 00000000000   # hinter M4A steht nichts (Endadresse 0200)

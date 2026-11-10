@@ -1,0 +1,7 @@
+args --probeausgabe
+farbe an
+rc 0
+stderr Probelauf 1: Hinweis: Makro CHK (
+stderr chk probe=1 abstand=0
+escape-da
+datei-weg adr1 adr2 adrlog adrdbg

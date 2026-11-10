@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_else_ohne_if.asm:2: Fehler: (Quelltext) $ELSE ohne vorheriges $IF.
+datei-weg obj mqo test
+escape-weg

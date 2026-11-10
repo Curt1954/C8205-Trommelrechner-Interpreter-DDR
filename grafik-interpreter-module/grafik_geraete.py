@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_geraete.py - Lochbandleser und Lochbandstanzer fuer den Modus GRAFIK (Stufe 1, Checkpoint 3).
-Version: G4-002
+Version: G4-003
 
 Regeln (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 2.5), GRAFIK_Beschreibung Anhang A (alt: Dok. 05) F-11 und F-12, entschieden 15./16.10.2026):
 
@@ -37,7 +37,7 @@ import re
 import shutil
 import time
 
-from c8205_interp import KonfigFehler
+from c8205_interp import KonfigFehler, LaufFehler
 from grafik_trommel import GrafikAbbruch
 
 VERSION_GERAETE = 'G4-002'
@@ -68,6 +68,7 @@ class GrafikLeser:
         self.bei_halt = None         # HZ-001: Aufruf ohne Argument, wenn der Leser zu warten beginnt (E/A-Halt: keine Lochbanddatei)
         self.bei_weiter = None       # HZ-001: Aufruf ohne Argument, wenn er danach ein Zeichen liefert
         self.bei_zeichen = None      # Stufe 4 (S4-09): Aufruf ohne Argument bei jedem gelieferten Zeichen (Ton, Lesetempo); sonst None
+        self.ende_wenn_leer = False  # G4-003: True nur im Entwicklerlauf ohne Fenster (--entwickler-tasten): keine Datei mehr -> LaufFehler statt endlos warten
 
     # --- Dateisuche -----------------------------------------------------------------------------------------------
     def _kandidaten(self):
@@ -117,6 +118,8 @@ class GrafikLeser:
                 if self._abbruch:
                     raise GrafikAbbruch('Lochbandleser: Warten abgebrochen')
                 if self.zeilen is None and not self._oeffne_naechste():
+                    if self.ende_wenn_leer:
+                        raise LaufFehler(f'Lochbandleser {self.nr}: keine Lochstreifendatei mehr (ohne Fenster kann keine nachgelegt werden, Entwicklerlauf endet)')
                     if not self.wartet and self.bei_halt is not None:
                         self.bei_halt()
                     self.wartet = True

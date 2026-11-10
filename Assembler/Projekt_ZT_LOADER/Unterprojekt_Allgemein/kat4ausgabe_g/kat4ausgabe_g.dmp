@@ -1,0 +1,88 @@
+0000: 01 0015 000               000 haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 40014427461 text1:     dw  040014427461 ; Zelle 0001: a (061), Um. GB (057), b (062), z0
+0002: 00 40015047443 text2:     dw  040015047443 ; Zelle 0002: c (043), Um. KB (0117), d (064), z0
+0003: 00 40015027443 text3:     dw  040015027443 ; Zelle 0003: c (043), Um. GB (057), d (064), z0
+0004: 00 04313631061 text4a:    dw  004313631061 ; Zelle 0004: a (061), b (062), Um. GB (057), c (043), kein z0
+0005: 00 40000000064 text4b:    dw  040000000064 ; Zelle 0005: d (064), z0
+0006: 01 1000        radr1:     da  text1        ; Zelle 0006: Adresse von Text 1 (Adressfeld)
+0007: 01 2000        radr2:     da  text2        ; Zelle 0007: Adresse von Text 2 (Adressfeld)
+0010: 01 3000        radr3:     da  text3        ; Zelle 0010: Adresse von Text 3 (Adressfeld)
+0011: 01 4000        radr4:     da  text4a       ; Zelle 0011: Adresse von Text 4 (Adressfeld)
+0012: 0              zw1:       dw  0            ; Zelle 0012: KBGB nach Text 1 (Pruefung)
+0013: 0              zw2:       dw  0            ; Zelle 0013: KBGB nach Text 2 (Pruefung)
+0014: 0              zw3:       dw  0            ; Zelle 0014: KBGB nach Text 3 (Pruefung)
+0015: 00 7775 241    haupt:     241 kbgb         ; KBGB := 0 (Anfangszustand KB)
+0016: 00 4500 030               030 04500        ; 4500 oder K2 oder LSL2 oder SW1 Output
+0017: 01 0006 211               211 radr1        ; AC := Adresse von Text 1
+0020: 00 7773 240               240 r1           ; R1 := Adresse von Text 1
+0021: 01 0042 025               025 ausgabe      ; Aufruf KAT4AUSGABE_G (Text 1)
+0022: 00 7775 211               211 kbgb         ; AC := KBGB nach Text 1
+0023: 01 0012 240               240 zw1          ; zw1 := KBGB nach Text 1
+0024: 01 0007 211               211 radr2        ; AC := Adresse von Text 2
+0025: 00 7773 240               240 r1           ; R1 := Adresse von Text 2
+0026: 01 0042 025               025 ausgabe      ; Aufruf (Text 2, KBGB = GB aus Text 1)
+0027: 00 7775 211               211 kbgb         ; AC := KBGB nach Text 2
+0030: 01 0013 240               240 zw2          ; zw2 := KBGB nach Text 2
+0031: 01 0010 211               211 radr3        ; AC := Adresse von Text 3
+0032: 00 7773 240               240 r1           ; R1 := Adresse von Text 3
+0033: 01 0042 025               025 ausgabe      ; Aufruf (Text 3)
+0034: 00 7775 211               211 kbgb         ; AC := KBGB nach Text 3
+0035: 01 0014 240               240 zw3          ; zw3 := KBGB nach Text 3
+0036: 01 0011 211               211 radr4        ; AC := Adresse von Text 4
+0037: 00 7773 240               240 r1           ; R1 := Adresse von Text 4
+0040: 01 0042 025               025 ausgabe      ; Aufruf (Text 4, KBGB = GB aus Text 3)
+0041: 01 0000 020               020 0            ; Halt
+0042: 01 0102 240    ausgabe:   240 ML0001GNU    ; Rueckkehrwort sichern
+0043: 00 7775 211               211 ML0017GNU    ; AC := KBGB (0 = KB, 1 = GB)
+0044: 01 0120 330               330 l0001        ; Vergleich mit 0 (keine Operation)
+0045: 01 0050 170               170 ML0018GNU    ; KB: nichts auszugeben, der Text beginnt in KB
+      00 1170 030               dz  $inkb        ; GB: erst Um. KB ausgeben
+0047: 00 7775 241               241 ML0017GNU    ; KBGB := 0 (241 loescht den AC und speichert 0)
+0050: 00 7773 211    ML0018GNU: 211 ML0010GNU    ; AC := Startadresse des Textes
+0051: 01 0111 240               240 ML0009GNU    ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+0052: 00 0000 251    ML0002GNU: 251 0            ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0053: 01 0107 240               240 ML0007GNU    ; tw := Textwort (mit z0)
+0054: 01 0121 200               200 l0002        ; z0 ausblenden, nur 32 Bit Zeichen
+0055: 01 0110 240               240 ML0008GNU    ; wort := Zeichenrest
+0056: 01 0110 211    ML0003GNU: 211 ML0008GNU    ; AC := Zeichenrest
+0057: 01 0120 330               330 l0001        ; Vergleich mit 0 (keine Operation)
+0060: 01 0100 170               170 ML0005GNU    ; Rest 0: Wort fertig
+0061: 01 0122 200               200 l0003        ; unterstes Zeichen ausblenden
+0062: 01 0112 240               240 ML0011GNU    ; zeichen := Zeichen
+0063: 01 0123 330               330 l0004        ; Vergleich mit kat4 057 (Um. GB)
+0064: 01 0113 170               170 ML0012GNU    ; Um. GB: KBGB := 1
+0065: 01 0124 330               330 l0005        ; Vergleich mit kat4 117 (Um. KB)
+0066: 01 0116 170               170 ML0013GNU    ; Um. KB: KBGB := 0
+0067: 01 0112 211    ML0014GNU: 211 ML0011GNU    ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+0070: 01 7644 644               644 07644        ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0071: 01 0125 210               210 l0006        ; Operationscode 030 (Ausgabe) dazu
+0072: 01 0073 240               240 ML0004GNU    ; Ausgabebefehl auf die naechste Zelle speichern
+0073: 20 0074        ML0004GNU: db  1            ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+0074: 01 0110 211               211 ML0008GNU    ; AC := Zeichenrest
+0075: 01 7670 642               642 07670        ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0076: 01 0110 240               240 ML0008GNU    ; wort := Rest
+0077: 01 0056 000               000 ML0003GNU    ; naechstes Zeichen
+0100: 01 0107 211    ML0005GNU: 211 ML0007GNU    ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0101: 01 0103 050               050 ML0006GNU    ; kein z0: naechstes Wort
+0102: 20 0103        ML0001GNU: db  1            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0103: 01 0111 211    ML0006GNU: 211 ML0009GNU    ; AC := Adresse des Textwortes
+0104: 01 0126 210               210 l0007        ; plus eine Adresseneinheit
+0105: 01 0111 240               240 ML0009GNU    ; zeiger := Adresse des naechsten Wortes
+0106: 01 0052 000               000 ML0002GNU    ; AC ist der Zeiger, Textwort lesen
+0107: 20 0110        ML0007GNU: db  1            ; Arbeitszelle: aktuelles Textwort
+0110: 20 0111        ML0008GNU: db  1            ; Arbeitszelle: noch auszugebender Zeichenrest
+0111: 20 0112        ML0009GNU: db  1            ; Arbeitszelle: Adresse des aktuellen Textwortes
+0112: 20 0113        ML0011GNU: db  1            ; Arbeitszelle: aktuelles Zeichen (waehrend der Zustandspruefung)
+0113: 01 0127 211    ML0012GNU: 211 l0008        ; Um. GB: AC := 1 (Zustand GB)
+0114: 00 7775 240               240 ML0017GNU    ; KBGB := 1
+0115: 01 0067 000               000 ML0014GNU    ; zurueck zur Ausgabe des Zeichens
+0116: 00 7775 241    ML0013GNU: 241 ML0017GNU    ; Um. KB: KBGB := 0 (241 loescht den AC und speichert 0)
+0117: 01 0067 000               000 ML0014GNU    ; zurueck zur Ausgabe des Zeichens
+0120: 0              l0001      dw  000000000000 
+0121: 00 37777777777 l0002      dw  037777777777 
+0122: 00 00000000377 l0003      dw  000000000377 
+0123: 00 00000000057 l0004      dw  000000000057 
+0124: 00 00000000117 l0005      dw  000000000117 
+0125: 00 00000000030 l0006      dw  000000000030 
+0126: 00 00000001000 l0007      dw  000000001000 
+0127: 00 00000000001 l0008      dw  1            

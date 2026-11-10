@@ -1,0 +1,4 @@
+rc 16
+stderr symbolliteral_name_ausdruck.asm:1: Fehler: Operand !x+1 ist kein gültiges Symbol-Literal
+datei-weg obj mqo test
+escape-weg

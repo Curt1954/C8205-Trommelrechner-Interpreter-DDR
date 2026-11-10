@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001 Test verschachtelte Aufrufe: INNEN hat sein eigenes x, AUSSEN behaelt x und z, Werte gehen nur ueber Parameter
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000050 # dw 40 ; 2 * 20
+0002: 00000000000 # dw 0 ; 0: z gehoert AUSSEN
+0003: 00000000001 # dw 1 ; 1: unveraendert nach der Rueckkehr
+0004: 00000000005 # dw 5 ; 5
+0005: 00000000000 # dw 0 ; 0: y gehoert INNEN
+0006: 00000000000 # dw 0 ; Zelle 0006: 0 (nach dem Aufruf gibt es kein x)
+0007: 00000001164 # haupt: 164 0001 ; Zelle 0007: Diagnoseausgabe (nur im Test)
+0010: 00000000020 # 020 0 ; Zelle 0010: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011 US=1
+0001: 00000000050   # INNEN: y = 40
+0002: 00000000000   # INNEN: $DEFINED(z) = 0
+0003: 00000000001   # AUSSEN: x unveraendert = 1
+0004: 00000000005   # AUSSEN: z = 5
+0005: 00000000000   # AUSSEN: $DEFINED(y) = 0
+0006: 00000000000   # Quelltext: $DEFINED(x) = 0

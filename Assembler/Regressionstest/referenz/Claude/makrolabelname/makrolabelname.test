@@ -1,0 +1,81 @@
+Trommeldatei:
+#DOK-0001 Test: Labels der Form name% (statt ML0001%) in Makros: einfacher Sprung, Namen ende% und weiterende% in einem Makro, Schleife mit $REPT, Label als Parameter eines verschachtelten Makros
+#PROT STUFE=2
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # eins: dw 1 ; Zelle 0001: Konstante 1
+0002: 00000000000 # zahl: dw 0 ; Zelle 0002: Zaehler von ZAEHL
+0003: 00000000000 # zahl2: dw 0 ; Zelle 0003: Zaehler von PAAR
+0004: 00000000000 # zahl3: dw 0 ; Zelle 0004: Zaehler von SCHLEIFE
+0005: 00000000000 # zahl4: dw 0 ; Zelle 0005: Zaehler von AUSSEN
+0006: 00000000000 # fehler: dw 0 ; Zelle 0006: bleibt 0, wenn nur die richtigen Spruenge ausgefuehrt werden
+0007: 00000011000 # haupt: 000 weiterDKR ; Sprung ueber die naechste Zelle
+0010: 00000006240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0011: 00000002211 # weiterDKR: 211 zahl ; AC := zahl
+0012: 00000001210 # 210 eins ; AC := zahl + 1
+0013: 00000002240 # 240 zahl ; zahl := AC
+0014: 00000016000 # 000 weiterGNU ; Sprung ueber die naechste Zelle
+0015: 00000006240 # 240 fehler ; wird uebersprungen (sonst fehler := AC)
+0016: 00000002211 # weiterGNU: 211 zahl ; AC := zahl
+0017: 00000001210 # 210 eins ; AC := zahl + 1
+0020: 00000002240 # 240 zahl ; zahl := AC
+0021: 00000023000 # 000 weiterendeJQX ; Sprung auf die dritte Zelle; enthaelt ende% als Wortende, das nicht ersetzt werden darf
+0022: 00000006240 # endeJQX: 240 fehler ; wird uebersprungen
+0023: 00000003211 # weiterendeJQX: 211 zahl2 ; AC := zahl2
+0024: 00000001210 # 210 eins ; AC := zahl2 + 1
+0025: 00000003240 # 240 zahl2 ; zahl2 := AC
+0026: 00000030000 # 000 weiterendeMTA ; Sprung auf die dritte Zelle; enthaelt ende% als Wortende, das nicht ersetzt werden darf
+0027: 00000006240 # endeMTA: 240 fehler ; wird uebersprungen
+0030: 00000003211 # weiterendeMTA: 211 zahl2 ; AC := zahl2
+0031: 00000001210 # 210 eins ; AC := zahl2 + 1
+0032: 00000003240 # 240 zahl2 ; zahl2 := AC
+0033: 00000035000 # 000 naechstPWD_0 ; Sprung ueber die naechste Zelle
+0034: 00000006240 # 240 fehler ; wird uebersprungen
+0035: 00000004211 # naechstPWD_0: 211 zahl3 ; AC := zahl3
+0036: 00000001210 # 210 eins ; AC := zahl3 + 1
+0037: 00000004240 # 240 zahl3 ; zahl3 := AC
+0040: 00000042000 # 000 naechstPWD_1 ; Sprung ueber die naechste Zelle
+0041: 00000006240 # 240 fehler ; wird uebersprungen
+0042: 00000004211 # naechstPWD_1: 211 zahl3 ; AC := zahl3
+0043: 00000001210 # 210 eins ; AC := zahl3 + 1
+0044: 00000004240 # 240 zahl3 ; zahl3 := AC
+0045: 00000047000 # 000 naechstPWD_2 ; Sprung ueber die naechste Zelle
+0046: 00000006240 # 240 fehler ; wird uebersprungen
+0047: 00000004211 # naechstPWD_2: 211 zahl3 ; AC := zahl3
+0050: 00000001210 # 210 eins ; AC := zahl3 + 1
+0051: 00000004240 # 240 zahl3 ; zahl3 := AC
+0052: 00000054000 # 000 naechstSZG_0 ; Sprung ueber die naechste Zelle
+0053: 00000006240 # 240 fehler ; wird uebersprungen
+0054: 00000004211 # naechstSZG_0: 211 zahl3 ; AC := zahl3
+0055: 00000001210 # 210 eins ; AC := zahl3 + 1
+0056: 00000004240 # 240 zahl3 ; zahl3 := AC
+0057: 00000061000 # 000 naechstSZG_1 ; Sprung ueber die naechste Zelle
+0060: 00000006240 # 240 fehler ; wird uebersprungen
+0061: 00000004211 # naechstSZG_1: 211 zahl3 ; AC := zahl3
+0062: 00000001210 # 210 eins ; AC := zahl3 + 1
+0063: 00000004240 # 240 zahl3 ; zahl3 := AC
+0064: 00000066000 # 000 naechstSZG_2 ; Sprung ueber die naechste Zelle
+0065: 00000006240 # 240 fehler ; wird uebersprungen
+0066: 00000004211 # naechstSZG_2: 211 zahl3 ; AC := zahl3
+0067: 00000001210 # 210 eins ; AC := zahl3 + 1
+0070: 00000004240 # 240 zahl3 ; zahl3 := AC
+0071: 00000073000 # 000 zielVCJ ; Sprung auf das uebergebene Label
+0072: 00000006240 # 240 fehler ; wird uebersprungen
+0073: 00000005211 # zielVCJ: 211 zahl4 ; AC := zahl4
+0074: 00000001210 # 210 eins ; AC := zahl4 + 1
+0075: 00000005240 # 240 zahl4 ; zahl4 := AC
+0076: 00000100000 # 000 zielBIP ; Sprung auf das uebergebene Label
+0077: 00000006240 # 240 fehler ; wird uebersprungen
+0100: 00000005211 # zielBIP: 211 zahl4 ; AC := zahl4
+0101: 00000001210 # 210 eins ; AC := zahl4 + 1
+0102: 00000005240 # 240 zahl4 ; zahl4 := AC
+0103: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0104: 00000000020 # 020 0 ; Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0105 AC=00000000002 US=1
+0002: 00000000002   # zahl: 2 Aufrufe von ZAEHL
+0003: 00000000002   # zahl2: 2 Aufrufe von PAAR
+0004: 00000000006   # zahl3: 2 Aufrufe von SCHLEIFE mit je 3 Durchlaeufen
+0005: 00000000002   # zahl4: 2 Aufrufe von AUSSEN
+0006: 00000000000   # fehler: keine uebersprungene Zelle wurde ausgefuehrt

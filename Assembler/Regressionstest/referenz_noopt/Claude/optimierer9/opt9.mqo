@@ -1,0 +1,17 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+haupt:  211     l0001   ; Zelle 0001: AC := 1 (Literal l0001, wandert nach 0006)
+        210     l0002   ; Zelle 0002: AC := AC + 2 (Literal l0002, wandert nach 0007)
+        210     l0003   ; Zelle 0003: AC := AC + 3 (Literal l0003, wandert nach 0012, nicht nach 0011: dort liegt voll)
+        164     0001    ; Zelle 0004: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0005: Halt
+        equ10   00010       ; Zaehler springt von 0006 auf 0010, Sprungbereich 0006 bis 0007
+        dw      9       ; Zelle 0010: Fueller
+        equ40   00040       ; Zaehler springt von 0011 auf 0040, Sprungbereich 0011 bis 0037
+        dw      9       ; Zelle 0040: Fueller
+        equ     00011    ; Zaehler zurueck auf 0011 (belegt die erste Zelle des Sprungbereichs von equ40 *)
+voll:   dw      077     ; Zelle 0011: belegt
+        equ     00100    ; Zaehler vor, hinter den Sprungbereich (Literalbereich laege sonst darin)
+ende:   dw      5       ; Zelle 0100: Fueller
+l0001   dw      1       
+l0002   dw      2       
+l0003   dw      3       

@@ -1,0 +1,6 @@
+rc 16
+stderr makro_while_label_ohne_endwhile.asm:9: Fehler: W5 Fehlendes $ENDWHILE für ein $WHILE.
+anzahl-stderr 1 : Fehler:
+nicht-stderr ist ungültig
+datei-weg obj mqo test
+escape-weg

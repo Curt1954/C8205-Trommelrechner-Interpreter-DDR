@@ -1,6 +1,6 @@
-# ** Bausteininterpretationssystem (BIS) **
+# ** Bausteininterpretiersystem (BIS) **
 
-Version: 0.03-025
+Version: 0.03-028
 
 Dieses Dokument gibt den Inhalt der Quelle wieder und ordnet ihn in das Projekt ein. Die Gliederungsnummern der Quelle werden nicht
 übernommen; Verweise auf Abschnitte oder andere Dokumente enthält dieses Dokument nicht.
@@ -12,7 +12,7 @@ Einordnung im Projekt: Das BIS ist das dritte Teilprojekt neben Interpreter und 
 
 ## BIS-1 Allgemeine Beschreibung des BIS
 
-- **Wesen:** Das vollständige Bausteininterpretationssystem „BIS" stellt ein **offenes Unterprogrammsystem** dar. Es enthält alle Routinen für
+- **Wesen:** Das vollständige Bausteininterpretiersystem „BIS" stellt ein **offenes Unterprogrammsystem** dar. Es enthält alle Routinen für
   - Ein- und Ausgabe von Dezimalzahlen,
   - Multiplikation und Division von Festkomma- und Gleitkommazahlen,
   - Addition und Subtraktion von Gleitkommazahlen,
@@ -87,11 +87,24 @@ Zahlenbereiche der Eingabe (BIS-2.2.6) sind enger als der Zahlenbereich des Masc
   (Ziffern 0 bis 9, handschriftlicher Zusatz „Dezimal 0–9").
 - **Beispiel der Quelle:** externes Wort 2 8 1 3 6 9 0 5 ergibt das interne Wort `0010 1000 0001 0011 0110 1001 0000 0101 0`
   (33 Bit, letzte Stelle z₃₂ = 0), oktal `12011551012` (nachgerechnet).
-- **Rechnen:** Im Bausteininterpretationssystem gibt es nur Programme für die Ein- und Ausgabe von Tetraden. Rechenoperationen mit
+- **Rechnen:** Im Bausteininterpretiersystem gibt es nur Programme für die Ein- und Ausgabe von Tetraden. Rechenoperationen mit
   Zahlen in Tetradendarstellung können nicht durchgeführt werden. Der Rechner selbst hat dafür keine Befehle; die Darstellung
   ist wie die Gleitkommadarstellung reine Programmkonvention.
 - Anmerkung: Der Assembler `c82ass` kennt kein Tetraden-Literal; ein Tetradenwort wird wie jedes andere Wort als Oktalzahl mit
   führender 0 angegeben (obiges Beispiel: `dw 012011551012`).
+
+
+### BIS-1.2 Anschlusszellen: wie ein Programm die Bausteine findet
+
+Anmerkung (Festlegung des Projektinhabers, 07.11.2026; zentrales Prinzip des BIS, steht so nicht im Wortlaut der Quelle):
+
+- **Ausgangslage:** Ein eigenständiges Programm (Standalone-Programm, einfaches Testprogramm) braucht nur seinen Assemblercode. Im Praxiseinsatz werden dagegen zuerst ein oder mehrere Programme, die Bausteine, über das Minimalprogramm geladen und zuletzt das eigentliche, zum Beispiel zu testende Programm. Jeder Baustein liefert bestimmte Programmfunktionen, die aufeinander abgestimmt sind; das zu testende Programm benötigt diese Funktionen. Die Bausteine dürfen in gewissen Grenzen frei im Speicher liegen.
+- **Das Problem:** Das Programm kann nicht wissen, wo ein Baustein im Speicher liegt, und braucht doch die Einsprungstelle seiner Unterprogramme.
+- **Die Lösung, die Anschlusszellen:** Für jede Funktion, die ein Baustein anbietet, gibt es eine Zelle mit **fester, dauerhaft definierter Adresse**, die Anschlusszelle (beim Aufruf durch ein Programm auch Ansprungzelle genannt). Die Adressen stehen in BIS-A.1 (Eingabe- und Hilfsprogramme, 201 bis 430), in BIS-A.2 (Rechen-, Ausgabe- und Satzeingabeprogramme, 7540 bis 7575) und für die Unterprogramme des Minimalprogramms selbst in BIS-A.4. Sie sind auch für Bausteine festgelegt, die noch nicht programmiert sind.
+- **Pflicht des Bausteins:** Beim Laden schreibt der Baustein in seine Anschlusszelle einen **unbedingten Sprung auf den Beginn seines Unterprogramms** (`000 <UP-Beginn>`). Mehr braucht er nicht zu tun.
+- **Aufruf:** Das Programm springt die Anschlusszelle mit Rückkehrabsicht an (`025 <Anschlusszelle>`) und landet über den eingetragenen Sprung im Unterprogramm, ohne zu wissen, wo der Baustein liegt. Aufrufer kann auch das Minimalprogramm sein (Kennzeichen K₁, siehe BIS-A.1).
+- **Baustein nicht geladen:** Wird ein Baustein nicht benötigt oder nicht geladen, ist seine Anschlusszelle **undefiniert**. Das muß der Bediener des Rechners koordinieren: Er lädt alle Bausteine, deren Funktionen das Programm aufruft. Das Programm prüft das nicht.
+- **Minimalprogramm:** Es liegt fest und braucht keinen Eintrag. Seine sechs Ansprungzellen sind 0200, 0220 und 0240 (Triaden-, Adreß- und Befehlsdruck; dort steht der Beginn des Unterprogramms selbst) sowie 0262, 0263 und 0316 (Eingabe eines Wortes mit Kennzeichen, Eingabe eines Programmstückes, Adresseneingabe; dort steht je ein unbedingter Sprung, `000 kz_anf` bzw. `000 ae_anf`). Die Zelle 0001 (Sprung zum Druck von BZ und AC) ist kein Unterprogrammaufruf, sondern wird über die Tastenfolge angesprungen.
 
 
 ## BIS-2 Beschreibung der Bausteine
@@ -857,6 +870,8 @@ im Interpreter ausführen.
 
 ## BIS-A Anhang: Ansprungzellen, Anschlußbedingungen und Arbeitszellen
 
+Das Prinzip der Anschluß- und Ansprungzellen steht in BIS-1.2; die folgenden Tabellen legen die Adressen fest.
+
 ### BIS-A.1 Eingabe- und Hilfsprogramme (Anschlußzellen 201 bis 430)
 
 Erläuterung der Quelle (Wortlaut sinngemäß, Seitenabbild „Anschluß- und Ansprungzellen"): Das Minimalprogramm verarbeitet die Kennzeichen K₁ = 3 bis 9 nicht selbst, sondern enthält nur die Anschlußbedingungen für die entsprechenden Leseprogramme. Wird z. B. K₁ = 5 eingegeben, muss außer dem Minimalprogramm noch der Baustein B 2.2 abgespeichert sein. K₁ = 5 bewirkt dann einen Sprung zu dem in B 2.2 enthaltenen Eingabeprogramm für Dezimalzahlen. Nach dem Einlesen der Zahl erfolgt die Rückkehr zum Minimalprogramm; dieses speichert die Zahl ab und geht über zur Eingabe eines neuen ersten Kennzeichens.
@@ -923,6 +938,8 @@ nur 204 ist frei. Ein Baustein, der seine Anschlussbedingung dort ablegt, würde
 | B 2.2 | Eingabe einer Dezimalzahl (Umwandlung in Festkommazahl, K. h.) ohne Kennzeichen | 7573 | 02 121 000. |
 | B 2.1 | Eingabe einer Dezimalzahl (Umwandlung in Gleitkommazahl) ohne Kennzeichen | 7574 | 02 335 000. |
 | B 2.1 | Eingabe einer Gleitkommazahl ohne Kennzeichen | 7575 | 02 336 000. |
+
+Anmerkung (Deutung, vom Projektinhaber am 07.11.2026 als sehr plausibel bezeichnet, nicht aus der Quelle belegt): Die Zellen 7555 und 7560 enthalten statt eines Sprungs den Maschinenbefehl `210 0027` (Anschlußbedingung `00 27 210.`). Er läuft in die Folgezelle 7556 bzw. 7561 weiter, die den Sprung der Ausgabe mit Runden enthält. Für diese beiden Zellen gilt die Regel aus BIS-1.2 (Baustein trägt nur einen unbedingten Sprung ein) also nicht.
 
 ### BIS-A.3 Arbeitszellen des Minimalprogramms
 

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_nach_global.asm:7: Fehler: G6 $LOCAL a: Der Name ist in diesem Makroaufruf schon mit $GLOBAL als global vereinbart
+datei-weg obj mqo test
+escape-weg

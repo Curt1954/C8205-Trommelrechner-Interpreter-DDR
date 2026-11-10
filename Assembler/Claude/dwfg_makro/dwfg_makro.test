@@ -1,0 +1,28 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 20000000000 # w_dwf: dwf 0.5 ; Zelle 0001: Wort 20000000000
+0002: 22600000000 # w_dwg: dwg 16 ; Zelle 0002: Wort 22600000000
+0003: 00000000004 # dw 4 ; Art des Symbols
+0004: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0005: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0006: 00000000004 # dw 4 ; Art des Symbols
+0007: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0010: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0011: 00000001164 # haupt: 164 0001 ; Zelle 0011: Diagnoseausgabe (nur im Test)
+0012: 00000000020 # 020 0 ; Zelle 0012: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 20000000000   # w_dwf
+0002: 22600000000   # w_dwg
+0003: 00000000004   # FRAGE_ART w_dwf
+0004: 00000000001   # FRAGE_DEF w_dwf
+0005: 00000000001   # FRAGE_ZELLEN w_dwf
+0006: 00000000004   # FRAGE_ART w_dwg
+0007: 00000000001   # FRAGE_DEF w_dwg
+0010: 00000000001   # FRAGE_ZELLEN w_dwg

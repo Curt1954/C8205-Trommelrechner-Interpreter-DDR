@@ -1,0 +1,43 @@
+               000            haupt          ; Zelle 0000: Sprung zum Hauptprogramm
+text:          kat4           abcde          ; Zellen 0001 und 0002: Wort a b c d, dann e mit z0
+; 
+radr:          da             text           ; Zelle 0003: Startadresse des Textes (Adressfeld)
+haupt:         211            radr           ; Zelle 0004: AC := Startadresse des Textes
+               240            07773          ; Zelle 0005: R1 := Startadresse (Register 7773)
+               030            04500          ; 4500 oder K2 oder LSL2 oder SW1 Output
+               025            ausgabe        ; Zelle 0007: Aufruf, AC := Rueckkehrwort 000 0010
+               020            0              ; Zelle 0010: Halt, BZ = 0011
+ausgabe:       240            ML0001GNU      ; Rueckkehrwort sichern
+               211            ML0010GNU      ; AC := Startadresse des Textes
+               240            ML0009GNU      ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+ML0002GNU:     251            0              ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+               240            ML0007GNU      ; tw := Textwort (mit z0)
+               200            l0001          ; z0 ausblenden, nur 32 Bit Zeichen
+               240            ML0008GNU      ; wort := Zeichenrest
+ML0003GNU:     211            ML0008GNU      ; AC := Zeichenrest
+               330            l0002          ; Vergleich mit 0 (keine Operation)
+               170            ML0005GNU      ; Rest 0: Wort fertig
+               200            l0003          ; unterstes Zeichen ausblenden
+               644            07644          ; 12 Stellen links: Zeichen auf die Adresse des Ausgabebefehls
+               210            l0004          ; Operationscode 030 (Ausgabe) dazu
+               240            ML0004GNU      ; Ausgabebefehl auf die naechste Zelle speichern
+ML0004GNU:     db             1              ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+               211            ML0008GNU      ; AC := Zeichenrest
+               642            07670          ; 8 Stellen rechts: naechstes Zeichen nach unten
+               240            ML0008GNU      ; wort := Rest
+               000            ML0003GNU      ; naechstes Zeichen
+ML0005GNU:     211            ML0007GNU      ; AC := Textwort mit z0 (negativ beim letzten Wort)
+               050            ML0006GNU      ; kein z0: naechstes Wort
+ML0001GNU:     db             1              ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0006GNU:     211            ML0009GNU      ; AC := Adresse des Textwortes
+               210            l0005          ; plus eine Adresseneinheit
+               240            ML0009GNU      ; zeiger := Adresse des naechsten Wortes
+               000            ML0002GNU      ; AC ist der Zeiger, Textwort lesen
+ML0007GNU:     db             1              ; Arbeitszelle: aktuelles Textwort
+ML0008GNU:     db             1              ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0009GNU:     db             1              ; Arbeitszelle: Adresse des aktuellen Textwortes
+l0001          dw             037777777777   
+l0002          dw             000000000000   
+l0003          dw             000000000377   
+l0004          dw             000000000030   
+l0005          dw             000000001000   

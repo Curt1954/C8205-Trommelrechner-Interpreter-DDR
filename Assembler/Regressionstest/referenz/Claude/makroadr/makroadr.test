@@ -1,0 +1,25 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000003000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000010 # dw 8 ; Abstand der beiden Marken
+0002: 00000000015 # dw 13 ; Adresse der Marke
+0003: 00000001164 # haupt: 164 0001 ; Zelle 0003: Diagnoseausgabe (nur im Test)
+0004: 00000000020 # 020 0 ; Zelle 0004: Halt
+0012: 00000000001 # dw 1 ; erstes Wort des Makros
+0013: 00000000002 # dw 2 ; zweites Wort des Makros
+0014: 00000000003 # dw 3 ; Zelle 0014 (dezimal 12)
+0015: 00000000004 # tab_e: dw 4 ; Zelle 0015 (dezimal 13)
+0016: 00000000003 # dw 3 ; Adresse der Marke
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0005 US=1
+0001: 00000000010   # ABST tab_a tab_e
+0002: 00000000015   # ADRW tab_e
+0012: 00000000001   # ZWEI, erstes Wort (oktal 12 = dezimal 10)
+0013: 00000000002   # ZWEI, zweites Wort
+0014: 00000000003   # dw 3
+0015: 00000000004   # tab_e
+0016: 00000000003   # ADRW haupt

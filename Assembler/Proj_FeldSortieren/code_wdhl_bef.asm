@@ -18,9 +18,8 @@
 
              start 
              241 i           ; i löschen, damit Programm mehrfach gestartet werden kann.
-             TEST      i
-             441 nullspur   ; Nullspur selbst bereitstellen: alle 32 Zellen der Spur 0200 mit 0 füllen (löscht auch AC)
-             MACHE_ADRESSEINHEIT2 len0 len 9 0200 ; Lade Schleifenbegrenzung (length - 1) von len, verschiebe 9x links über die Nullspur 0200
+             GB                ; Schreibwerk auf Großbuchstaben stellen (vorher TEST i)
+             MACHE_ADRESSEINHEIT2 len0 len 9 ; Lade Schleifenbegrenzung (length - 1) von len, verschiebe 9x links (Arbeitsspur 7640, keine eigene Nullspur)
              000 firstEntry
 
 loop1:       211 i           ; Lade i
@@ -99,7 +98,7 @@ swap:        ARRAY_SWAP  afeld_base i min_index tmp_element
 len0:        dw feld_ende-feld_base  ; Anzahl der Elemente im Array
 len:         db 1           ; Länge des Array in Adreßeinheiten umgerechnet
 ausgabe:     ANWAHL  SW1O   ; Anwahl Schreibwerk 1 für Output
-             dz $inkb       ; Schreibwerk auf Kleinbuchstabenlage (KB) umschalten; TEST hat es mit $ingb auf GB gestellt
+             dz $inkb       ; Schreibwerk auf Kleinbuchstabenlage (KB) umschalten; GB hat es mit $ingb auf GB gestellt
 feld_base:   dto 4172k0     ; Startelement des Arrays, alles Kleinbuchstaben-Ausgabebefehle
 feld_ende:   equ *
              020            ; Programm-Ende, Halt-Befehl
@@ -109,6 +108,3 @@ j:           db 1           ; Laufvariable für innere Schleife, wird immer bere
 min_index:   db 1           ; Temporärer Speicher für das Minimum, wird immer berechnet
 tmp_element: db 1           ; Hilfsspeicherplatz für ein Arrayelement beim swap
 
-; Nullspur für den Wiederholungsbefehl von MACHE_ADRESSEINHEIT2 (32 Zellen, Anfang durch 040 teilbar, Adresse 0200 wie im Aufruf)
-             equ40 0200
-nullspur:    db 32          ; wird zu Programmbeginn mit 441 gelöscht

@@ -1,0 +1,95 @@
+Trommeldatei:
+#DOK-0001 KAT6AUSGABE: abcde / abcdefghij mit leerem Endwort / leerer Text
+#SPEI-0001 0001-0012
+#PROT STUFE=2
+#TROMMEL=LEER
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/kat6ausgabe_voll
+0000: 00000013000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 52524232221 # text1: kat6 abcde ; Zelle 0001: genau 5 Zeichen, z0 im selben Wort
+0002: 12524232221 # text2: dw 012524232221 ; Zelle 0002: abcde ohne z0, mit Stoppbit z2
+0003: 14131302726 # dw 014131302726 ; Zelle 0003: fghij ohne z0, mit Stoppbit z2
+0004: 40000000001 # dw 040000000001 ; Zelle 0004: leeres Endwort (nur z0 und Stoppbit in z32)
+0005: 40000000001 # text3: dw 040000000001 ; Zelle 0005: leerer Text (nur z0 und Stoppbit in z32)
+0006: 00000001000 # radr1: da text1 ; Zelle 0006: Adresse von Text 1 (Adressfeld)
+0007: 00000002000 # radr2: da text2 ; Zelle 0007: Adresse von Text 2 (Adressfeld)
+0010: 00000005000 # radr3: da text3 ; Zelle 0010: Adresse von Text 3 (Adressfeld)
+0011: 00000000000 # kbaus: dw 0 ; Zelle 0011: KB/GB-Zustand (0 = KB), bleibt 0
+0012: 00000011000 # rkb: da kbaus ; Zelle 0012: Adresse der Zustandszelle (Adressfeld)
+0013: 00000012211 # haupt: 211 rkb ; AC := Adresse der Zustandszelle
+0014: 00007774240 # 240 r3 ; R3 := Adresse der Zustandszelle
+0015: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0016: 00000006211 # 211 radr1 ; AC := Adresse von Text 1
+0017: 00007773240 # 240 r1 ; R1 := Adresse von Text 1
+0020: 00000030025 # 025 ausgabe ; Aufruf KAT6AUSGABE (Text 1)
+0021: 00000007211 # 211 radr2 ; AC := Adresse von Text 2
+0022: 00007773240 # 240 r1 ; R1 := Adresse von Text 2
+0023: 00000030025 # 025 ausgabe ; Aufruf (Text 2)
+0024: 00000010211 # 211 radr3 ; AC := Adresse von Text 3
+0025: 00007773240 # 240 r1 ; R1 := Adresse von Text 3
+0026: 00000030025 # 025 ausgabe ; Aufruf (Text 3, leer)
+0027: 00000000020 # 020 0 ; Halt
+0030: 00000074240 # ausgabe: 240 ML0001GNU ; Rueckkehrwort sichern
+0031: 00007773211 # 211 ML0014GNU ; AC := Startadresse des Textes
+0032: 00000112220 # 220 l0001 ; eine Adresseneinheit weniger, weil ML0006% sie gleich wieder dazuzaehlt
+0033: 00000107240 # 240 ML0002GNU ; zeiger := Adresse des Wortes vor dem ersten (R1 bleibt unveraendert)
+0034: 00000107211 # ML0006GNU: 211 ML0002GNU ; neues Wort: Zeiger auf das naechste Wort
+0035: 00000112210 # 210 l0001 ; plus eine Adresseneinheit
+0036: 00000107240 # 240 ML0002GNU ; zeiger := Adresse des aktuellen Wortes
+0037: 00000000251 # 251 0 ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0040: 00000105240 # 240 ML0003GNU ; tw := Textwort (mit z0)
+0041: 00000113200 # 200 l0002 ; z0 ausblenden, nur 32 Bit (Zeichen und Stoppbit)
+0042: 00000106240 # 240 ML0004GNU ; rest := Zeichenrest mit Stoppbit
+0043: 00000114330 # ML0007GNU: 330 l0003 ; Vergleich des Rests mit 1 (keine Operation), der AC bleibt der Rest
+0044: 00000072170 # 170 ML0010GNU ; Rest 1: nur noch das Stoppbit uebrig, Wort fertig
+0045: 00000115200 # 200 l0004 ; unterstes Zeichen (6 Bit) ausblenden
+0046: 00000110240 # 240 ML0005GNU ; zeichen := kat6-Code
+0047: 00000116330 # 330 l0005 ; Vergleich mit kat6 037 (Um. GB)
+0050: 00000075170 # 170 ML0011GNU ; Um. GB: Zustand := GB
+0051: 00000117330 # 330 l0006 ; Vergleich mit kat6 057 (Um. KB)
+0052: 00000075170 # 170 ML0011GNU ; Um. KB: Zustand := KB
+0053: 00000110211 # ML0008GNU: 211 ML0005GNU ; AC := kat6-Code (auch nach der Zustandsuebergabe)
+0054: 00000120200 # 200 l0007 ; Bits u und v (020 und 040) ausblenden
+0055: 00000111240 # 240 ML0015GNU ; hilf := Code UND 060
+0056: 00000110211 # 211 ML0005GNU ; AC := kat6-Code
+0057: 00000121200 # 200 l0008 ; Bits 8 4 2 1
+0060: 00000111210 # 210 ML0015GNU ; plus (Code UND 060)
+0061: 00000111210 # 210 ML0015GNU ; plus (Code UND 060) noch einmal: AC := Zeichen (8 Bit, p = w = 0)
+0062: 00007644644 # 644 07644 ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0063: 00000122210 # 210 l0009 ; plus Operationscode 030 (Ausgabe)
+0064: 00000065240 # 240 ML0009GNU ; Ausgabebefehl auf die naechste Zelle speichern
+0066: 00000106211 # 211 ML0004GNU ; AC := Zeichenrest
+0067: 00007662642 # 642 07662 ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0070: 00000106240 # 240 ML0004GNU ; rest := Rest
+0071: 00000043000 # 000 ML0007GNU ; naechstes Zeichen (der AC ist der Rest)
+0072: 00000105211 # ML0010GNU: 211 ML0003GNU ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0073: 00000034050 # 050 ML0006GNU ; kein z0: naechstes Wort
+0075: 00007774211 # ML0011GNU: 211 ML0016GNU ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0076: 00000123210 # 210 l0010 ; plus Operationscode 240: Speicherbefehl
+0077: 00000103240 # 240 ML0012GNU ; Speicherbefehl auf die uebernaechste Zelle
+0100: 00000110211 # 211 ML0005GNU ; AC := kat6-Code (037 oder 057)
+0101: 00000124200 # 200 l0011 ; Bit u: 037 hat es (Um. GB), 057 nicht (Um. KB)
+0102: 00007654642 # 642 07654 ; 4 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0104: 00000053000 # 000 ML0008GNU ; Zeichen ausgeben
+0112: 00000001000 # l0001 dw 000000001000
+0113: 37777777777 # l0002 dw 037777777777
+0114: 00000000001 # l0003 dw 1
+0115: 00000000077 # l0004 dw 000000000077
+0116: 00000000037 # l0005 dw 000000000037
+0117: 00000000057 # l0006 dw 000000000057
+0120: 00000000060 # l0007 dw 000000000060
+0121: 00000000017 # l0008 dw 000000000017
+0122: 00000000030 # l0009 dw 000000000030
+0123: 00000000240 # l0010 dw 000000000240
+0124: 00000000020 # l0011 dw 000000000020
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0030 AC=40000000001
+0001: 52524232221
+0002: 12524232221
+0003: 14131302726
+0004: 40000000001
+0011: 00000000000
+7773: 00000005000
+7774: 00000011000
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/kat6ausgabe_voll-sw-ausgabe.txt

@@ -1,0 +1,21 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000002000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # erg: dw 0 ; Zelle 0001: Ergebnis
+0002: 00007500211 # haupt: 211 z1 ; Zelle 0002: AC := Wort der Zelle z1
+0003: 00000001240 # 240 erg ; Zelle 0003: (erg) := AC
+0004: 00000000020 # 020 0 ; Zelle 0004: Halt
+7500: 00002720030 # z1: dz $wrzl ; erste Zelle des Blocks
+7501: 00000001000 # da erg ; zweite Zelle: Adresse von erg
+7502: 00000000005 # dw 5 ; dritte Zelle
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0005 AC=00002720030 US=1
+0001: 00002720030   # erg
+7500: 00002720030   # z1, Anfang des Blocks
+7501: 00000001000   # da erg
+7502: 00000000005   # dw 5

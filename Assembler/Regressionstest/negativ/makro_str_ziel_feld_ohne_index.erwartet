@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_ziel_feld_ohne_index.asm:7: Fehler: M1 $UPPER f: f ist ein Feld, der Index fehlt
+datei-weg obj mqo test
+escape-weg

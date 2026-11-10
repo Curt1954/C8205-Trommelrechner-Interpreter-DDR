@@ -1,0 +1,31 @@
+                                    000                                 haupt                               ; Zelle 0000: Sprung zum Hauptprogramm
+                                    dwb                                 1010                                ; 10 = 1010 binaer = 012 oktal
+                                    dwb                                 0                                   ; 0 ergibt die Ziffer 0
+                                    dwb                                 00000101                            ; mit Breite 8: 00000101 = 5
+                                    dwb                                 000000000000000000000000000000101   ; Breite 33 (ein ganzes Wort) = 5
+                                    dwb                                 111111111111111111111111111111111   ; 2^33-1: 33 Einsen = 77777777777 oktal
+                                    dwb                                 1                                   ; Breite 1: Ziffer 1
+                                    dwb                                 1110                                ; 14 = 1110 binaer = 016 oktal
+                                    dw                                  255                                 ; 255 = 0377
+                                    dw                                  10                                  ; grosses B, 5*2 = 10 = 012
+                                    dw                                  1048576                             ; 2^20 = 04000000
+                                    dw                                  13                                  ; 5 ODER 010 (oktal 8) = 13 = 015
+                                    dwb                                 1000                                ; 3+5 = 8 = 1000 binaer = 010
+                                    dw                                  5                                   ; fuehrende Nullen zaehlen nicht: 5
+                                    dw                                  95                                  ; -5 + 100 = 95 = 0137
+                                    dw                                  5                                   ; 101 dual = 5
+                                    dw                                  5                                   ; fuehrende Nullen: 5
+                                    dw                                  95                                  ; -5 + 100 = 95 = 0137
+                                    dw                                  0                                   ; 0
+                                    dw                                  1                                   ; 1
+                                    dw                                  511                                 ; 63 Einsen = 2^63-1, durch 2^54 geteilt = 511 = 0777
+                                    dw                                  101                                 ; $VAL liest unveraendert dezimal: 101 = 0145
+                                    dw                                  11                                  ; 11 Zeichen = 013
+                                    dw                                  1234                                ; 1234 = 02322
+                                    dw                                  16                                  ; 16 Zeichen = 020
+                                    dw                                  1234                                ; 1234 = 02322
+                                    dw                                  202                                 ; 101 Werte, je zwei Pruefungen: 202 = 0312
+                                    dw                                  63                                  ; 63 Zeichen = 077
+                                    dw                                  0                                   ; gleiche Zahl zurueck: Unterschied 0
+haupt:                              164                                 0001                                ; Zelle 29: Diagnoseausgabe (nur im Test)
+                                    020                                 0                                   ; Zelle 30: Halt

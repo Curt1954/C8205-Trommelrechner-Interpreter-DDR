@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_dim_zuviele.asm:23: Fehler: L9 $DIM f17: mehr als 16 lokale Felder in einem Makroaufruf (auch die mit $LOCAL angelegten zählen; global mit $GLOBAL)
+datei-weg obj mqo test
+escape-weg

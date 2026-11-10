@@ -1,0 +1,65 @@
+digraph G {
+ graph [rankdir=TB, fontname="Helvetica", labelloc=t, fontsize=16, nodesep=0.6, ranksep=0.45, forcelabels=true,
+   label="ZIL (Initialloader der Zusatztrommeln) – Ablauf des Hauptprogramms haupt (zil.asm)\nSeite 1 von 4; rote Nummer = laufende Nummer des Elements"];
+ node [fontname="Helvetica", fontsize=11, style=filled, fillcolor="#ffffff", color="#333333"];
+ edge [fontname="Helvetica", fontsize=10];
+ start [shape=oval, fillcolor="#e8e8e8", label="Start\nZelle 0000: Sprung nach haupt", xlabel=<<font color="#c00000" point-size="12"><b>1</b></font>>];
+ kb [shape=box, label="Hauptprogramm setzt die globale Zelle KBGB := 0\n       (KB)\nKBGB = Zelle 7775 (Arbeitsspur 77xx), gilt für das\n       ganze Projekt;\nalle HP und UP benutzen sie", xlabel=<<font color="#c00000" point-size="12"><b>1a</b></font>>];
+ zs [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Hauptprogramm gibt vor der ersten Ausgabe eine\n       Zeilenschaltung aus\nK2 anwählen (Schreibwerk), WRZL (danach K0\n       angewählt)", xlabel=<<font color="#c00000" point-size="12"><b>1b</b></font>>];
+ repo [shape=box, style="filled,rounded", fillcolor="#dbe9f7", label="UP repo  (Platzhalter, meldet „UP Repository\n       pruefen“)", xlabel=<<font color="#c00000" point-size="12"><b>2</b></font>>];
+ repo_p [shape=box, style="filled,dashed", fillcolor="#f7fbff", fontsize=10, label="Ein:  R1 = Adresse SPUF-00 (Spurpuffer Spur\n      0 von ZT 0)\nAus: R2 = 1 (Repository vorhanden) oder 0\n      (keines)\nWirkung: liest Spur 0 von ZT 0 nach SPUF-00\n      und prüft das Repository-Kennzeichen\n      (Zelle 0 = 52525252525)"];
+ repo->repo_p [style=dashed, arrowhead=none, constraint=false];
+ {rank=same; repo; repo_p}
+ d1 [shape=diamond, fillcolor="#fff2cc", label="R2 = 0 ?", xlabel=<<font color="#c00000" point-size="12"><b>3</b></font>>];
+ m1 [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Ausschrift\n„Repository gefunden“", xlabel=<<font color="#c00000" point-size="12"><b>4</b></font>>];
+ m2 [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Ausschrift\n„Zusatztrommel loeschen [J/N]“", xlabel=<<font color="#c00000" point-size="12"><b>5</b></font>>];
+ jn [shape=box, style="filled,rounded", fillcolor="#dbe9f7", label="UP jneingabe  (siehe Seite 2)", xlabel=<<font color="#c00000" point-size="12"><b>6</b></font>>];
+ jn_p [shape=box, style="filled,dashed", fillcolor="#f7fbff", fontsize=10, label="Ein:  K0 angewählt (SW-Eingabe)\nAus: R2 = 1 (J) oder 0 (N); nur\n      Großbuchstabe zählt"];
+ jn->jn_p [style=dashed, arrowhead=none, constraint=false];
+ {rank=same; jn; jn_p}
+ d2 [shape=diamond, fillcolor="#fff2cc", label="R2 = 1 ?", xlabel=<<font color="#c00000" point-size="12"><b>7</b></font>>];
+ zn [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Hauptprogramm gibt nach der Antwort N eine\n       Zeilenschaltung aus (vor „Programmende“)\nK2 anwählen (Schreibwerk), WRZL (danach K0\n       angewählt)", xlabel=<<font color="#c00000" point-size="12"><b>7b</b></font>>];
+ m3 [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Ausschrift\n„Programmende“", xlabel=<<font color="#c00000" point-size="12"><b>8</b></font>>];
+ s2 [shape=box, label="status := 2\n(Weg Nein)", xlabel=<<font color="#c00000" point-size="12"><b>9</b></font>>];
+ zj [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Hauptprogramm gibt nach der Antwort J eine\n       Zeilenschaltung aus (vor „UP Zusatztrommeln\n       initialisieren“)\nK2 anwählen (Schreibwerk), WRZL (danach K0\n       angewählt)", xlabel=<<font color="#c00000" point-size="12"><b>7a</b></font>>];
+ zi [shape=box, style="filled,rounded", fillcolor="#dbe9f7", label="UP ztinit  (siehe Seite 3; im Prototyp noch\n       Platzhalter, meldet „UP Zusatztrommeln\n       initialisieren“)", xlabel=<<font color="#c00000" point-size="12"><b>10</b></font>>];
+ zi_p [shape=box, style="filled,dashed", fillcolor="#f7fbff", fontsize=10, label="Ein:  R1 = Adresse SPUF-00 (Spurpuffer Spur\n      0 von ZT 0, auf Spurgrenze; wie bei\n      repo)\nAus: – (SPUF-00 enthält danach Spur 0 wie\n      auf ZT 0 geschrieben; ZT 0 bleibt\n      angewählt)\nWirkung: löscht alle vier Trommeln (513\n      Ausgaben, rund 44 s, keine Meldung),\n      legt Spur 0 von ZT 0 an: Zelle 0 =\n      Repository-Kennzeichen 52525252525,\n      Repository-Kopf (Zelle 16) = 1,\n      höchste Programm-ID (Zelle 17) = 0,\n      letzte belegte Trommel (Zelle 18) = 0,\n      letzte belegte Spur (Zelle 19) = 48\n      (60 oktal; Länge des größten\n      Programmverzeichnisses in ganzen\n      Spuren, fester Wert)"];
+ zi->zi_p [style=dashed, arrowhead=none, constraint=false];
+ {rank=same; zi; zi_p}
+ s3 [shape=box, label="status := 3\n(Weg Ja)", xlabel=<<font color="#c00000" point-size="12"><b>11</b></font>>];
+ pv [shape=box, label="Hauptprogramm bereitet den Spurpuffer\n       „Namensverzeichnis“ (SPUF-PN) vor: Bereich\n       (2 Spuren) auf Spurgrenze legen und löschen\n       (alle Wörter 0 = leere Einträge); ebenso\n       liegt der Puffer „Programmcode“ (1 Spur =\n       32 Zellen) auf einer Spurgrenze", xlabel=<<font color="#c00000" point-size="12"><b>11a</b></font>>];
+ k1 [shape=box, label="Hauptprogramm wählt K1 an (Lochbandleser 1)", xlabel=<<font color="#c00000" point-size="12"><b>14a</b></font>>];
+ a1 [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Ausschrift\n„Lochband mit ZTD in Leser 1 einlegen“", xlabel=<<font color="#c00000" point-size="12"><b>12</b></font>>];
+ a2 [shape=box, style="filled,rounded", fillcolor="#dbe9f7", label="UP „Programmname eintragen“  (allgemeines UP,\n       Projektmakro; später nachnutzbar)", xlabel=<<font color="#c00000" point-size="12"><b>13</b></font>>];
+ a2_p [shape=box, style="filled,dashed", fillcolor="#f7fbff", fontsize=10, label="Ein:  R1 = Adresse SPUF-PN (Spurgrenze),\n       R2 = Adresse der Zelle des\n      kat5-Namens „ztd“ (Wort 1),\n       R3 = Adresse SPUF-00 (Spurgrenze)\nAus: –\nWirkung: ermittelt aus SPUF-00 (Zellen 17\n      bis 19) die Lage des neuen Eintrags\n      (ID = Zähler + 1; Eintrag ab SPUF-PN +\n      2 · (ID − 1)) und den nächsten freien\n      Platz (Spur nach der letzten\n      belegten); danach Zähler (Zelle 17 in\n      SPUF-00) := ID; trägt ein: Wort 1 =\n      Name; Wort 2 nur die Bitfelder Typ\n      z1–z2 = 10, ID z3–z11, Trommel\n      z12–z13, Spur z14–z20, alle übrigen\n      Bits von Wort 2 bleiben unverändert\nVERMERK: Hier müsste die Prüfung auf\n      doppelte Namen stehen\n      (Aufgabenstellung 4.4); nicht\n      programmiert, Speicherbedarf offen"];
+ a2->a2_p [style=dashed, arrowhead=none, constraint=false];
+ {rank=same; a2; a2_p}
+ a3 [shape=box, style="filled,rounded", fillcolor="#dbe9f7", label="UP „neuanlage Programm“", xlabel=<<font color="#c00000" point-size="12"><b>14</b></font>>];
+ a3_p [shape=box, style="filled,dashed", fillcolor="#f7fbff", fontsize=10, label="Ein:  R1 = Adresse SPUF-PN (2 Spuren),\n       R2 = Trommelnummer, R3 = Spurnummer\n      (Zahlen, der ersten Spur)\nAus: –\nWirkung: schreibt SPUF-PN (Programmnamen-\n      Puffer) auf die Zusatztrommel\n      (Trommel/Spur aus der Übergabe;\n      Verzeichnis: Trommel 0, Spur 1 und 2);\n      Länge noch 0, SPUF-PN wird in Element\n      16 noch einmal geschrieben"];
+ a3->a3_p [style=dashed, arrowhead=none, constraint=false];
+ {rank=same; a3; a3_p}
+ a4 [shape=box, style="filled,rounded", fillcolor="#dbe9f7", label="UP „Hauptschleife Ls nach ZT“  (hschl, Makro\n       HSCHL; siehe Seite 4)", xlabel=<<font color="#c00000" point-size="12"><b>15</b></font>>];
+ a4_p [shape=box, style="filled,dashed", fillcolor="#f7fbff", fontsize=10, label="Ein:  R1 = Adresse Puffer „Programmcode“ (1\n      Spur),\n       R2 = Trommelnummer, R3 = Spurnummer\n      (Zahlen, der ersten Zielspur;\n       ZTD: Trommel 0, Spur 33)\nAus: R2 = Sektoranzahl = 2 · Zahl der\n      Eingaben (R1, R3 und KBGB unverändert)\nDer Streifen wird als Typ 10 abgelegt\n      (Eingaben zu je 2 Worten, gelesen mit\n      dem UP eingabe = Makro TYP10EINGABE).\nFehler im Lochstreifen (mehr als 4095\n      Sektoren): das UP springt auf den\n      Fehlerausgang fe_lang des\n      Hauptprogramms: Ausschrift auf dem SW\n      („lochstreifen zu lang“) und Halt;\n      keine Fehlerrückgabe"];
+ a4->a4_p [style=dashed, arrowhead=none, constraint=false];
+ {rank=same; a4; a4_p}
+ a5 [shape=box, label="Sektoranzahl in SPUF-PN eintragen (Wort 2 = Zelle\n       1 des Eintrags, nur Länge z21–z32; übrige\n       Bits bleiben)\nSPUF-PN (2 Spuren) noch einmal auf ZT schreiben\n       (erstes Mal in Element 14, dort Länge 0)\nUP neuanl: R1 = SPUF-PN, R2 = 0, R3 = 1 (ZT 0 Spur\n       1 und 2; ZT 0 bleibt angewählt)", xlabel=<<font color="#c00000" point-size="12"><b>16</b></font>>];
+ a6 [shape=box, label="SPUF-00 auf ZT 0, Spur 0 schreiben\nAnwahl ZT 0 (5100 030), Ausgabe 601 mit Spur 0 und\n       Adresse SPUF-00 (Zähler in Zelle 17 = 1;\n       Zellen 18/19 nicht nachgeführt)", xlabel=<<font color="#c00000" point-size="12"><b>17</b></font>>];
+ a7 [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Ausschrift\n„ZTD geladen mit Programm-ID 1“", xlabel=<<font color="#c00000" point-size="12"><b>18</b></font>>];
+ m0 [shape=box, style="filled,rounded", fillcolor="#e2f0d9", label="Ausschrift\n„Kein Repository gefunden“", xlabel=<<font color="#c00000" point-size="12"><b>19</b></font>>];
+ s1 [shape=box, label="status := 1\n(Weg kein Repository)", xlabel=<<font color="#c00000" point-size="12"><b>20</b></font>>];
+ halt [shape=oval, fillcolor="#f4cccc", label="Halt (ende)\nalle Wege enden hier", xlabel=<<font color="#c00000" point-size="12"><b>21</b></font>>];
+ start->kb->zs->repo->d1;
+ d1->m1 [label=" nein (R2 = 1)"];
+ d1->m0 [label=" ja (R2 = 0)"];
+ m1->m2->jn->d2;
+ d2->zj [label=" ja (J)"];
+ zj->zi;
+ d2->zn [label=" nein (N)"];
+ zn->m3;
+ m3->s2->halt;
+ zi->s3->pv->a2->a3->a1->k1->a4->a5;
+ a5->a6->a7->halt;
+ m0->s1->halt;
+ leg [shape=note, fillcolor="#fafafa", fontsize=9, label="Legende:  Wort 2 eines Verzeichniseintrags entsteht\nnacheinander (jedes Element ändert nur seine Bitfelder):\nleer (alles 0, ztinit und Element 11a), Element 13 = Typ\nz1–z2, ID z3–z11, Trommel z12–z13, Spur z14–z20, Element 16\n= Länge z21–z32.   Element 14 schreibt SPUF-PN auf die ZT\n(Länge 0), Element 16 schreibt es nach Eintragen der Länge\nnochmals.   SPUF-00 = Spurpuffer Spur 0 von ZT 0, SPUF-PN =\n2-Spur-Puffer Namensverzeichnis (IDs 1 bis 32)   blau =\nUnterprogramm (025), gestrichelt rechts daneben seine\nParameter (Ein/Aus/Wirkung)   grün = Ausschrift auf\nSchreibwerk K2, eigene Zeile (Makro MELDUNG)   gelb =\nVerzweigung\nEin/Aus = Aufruf- bzw. Rückgabeparameter; Register gelten\nnur für die Dauer des UP-Aufrufs.   status = Zelle 0001, nur\nfür den Test.   KBGB = globale Zelle 7775 (0 = KB, 1 = GB):\nJedes Element, das KB/GB ändert, führt sie nach (ein UP muss\ndafür dtm nicht verwenden).   Alle Elemente sind als\nPrototyp in zil.asm umgesetzt (die blauen UP außer jneingabe\nals Platzhalter, die nur ihren Namen melden). Elemente\n15a/15b und die Zelle lsfehl sind gestrichen (Fehler im\nLochstreifen meldet hschl selbst); im Prototyp zil.asm noch\nnicht nachgeführt."];
+ halt->leg [style=invis];
+}

@@ -1,0 +1,12 @@
+rc 0
+stderr-reihe makro_dump_feld.asm:12): $DUMP
+stderr-reihe q(40) = 0 0 0 7 0 0 0 0 0 0 0 0 0 0 0 0
+stderr-reihe q(16..31) = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+stderr-reihe q(32..39) = 0 0 0 0 0 0 0 5  (global)
+stderr-reihe r(33) = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+stderr-reihe r(16..31) = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+stderr-reihe r(32..32) = 4  (global)
+anzahl-stderr 1 Hinweis: Makro FELD (
+nicht-stderr (keine Variablen)
+datei-da obj mqo test
+escape-weg

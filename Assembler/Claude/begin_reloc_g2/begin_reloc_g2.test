@@ -1,0 +1,21 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000002000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # erg: dw 0 ; Zelle 0001: Ergebnis
+0002: 00007543211 # haupt 211 l0001 ; Zelle 0002: AC := 9 (Literal)
+0003: 00007540210 # 210 x1 ; Zelle 0003: AC := AC + (x1), Block X
+0004: 00000001240 # 240 erg ; Zelle 0004: (erg) := AC
+0005: 00000000020 # 020 0 ; Zelle 0005: Halt
+7540: 00000000005 # x1: dw 5 ; erste Zelle von Block X
+7543: 00000000011 # l0001 dw 9
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0006 AC=00000000016 US=1
+0001: 00000000016   # erg
+7540: 00000000005   # x1, Anfang Block X
+7543: 00000000011   # Literal 9 in der Luecke
+7544: 00000000000   # Luecke bleibt leer

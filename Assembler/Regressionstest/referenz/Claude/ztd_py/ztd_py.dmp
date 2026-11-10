@@ -1,0 +1,2120 @@
+0000: 01 0001 000                        000 haupt                     ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 3260 240    haupt:              240 dienst                    ; Dienstwort 000 <Dienst von ZTL> aus dem AC sichern
+0002: 01 3072 025                        025 eing_init_tk              ; Eingabetafel waehlen: Aufruf eing_init_tk
+0003: 00 4500 030                        030 04500                     ; Meldung: Kanal K2 anwaehlen
+      00 0570 030                        dtm ZTD                       ; Meldung: Text 'ZTD'
+      00 1710 030    ;    
+      00 1630 030    ;    
+      00 0640 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Meldung: Zeilenschaltung
+0011: 00 4500 030    kdo:                030 04500                     ; Aufforderung: Kanal K2 anwaehlen
+      00 0570 030                        dtm >                         ; Aufforderung: Text '>'
+      00 0250 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Aufforderung: Zeilenschaltung
+0015: 00 4700 030                        030 04700                     ; Tastatur: Kanal K0 anwaehlen
+0016: 01 3261 241                        241 cmd                       ; Kommando := 0
+0017: 01 3263 240                        240 fld                       ; fld := 0
+0020: 01 3264 240                        240 nmn                       ; nmn := 0
+0021: 01 3265 240                        240 nm0                       ; nm0 := 0
+0022: 01 3266 240                        240 nm1                       ; nm1 := 0
+0023: 01 3267 240                        240 acc                       ; acc := 0
+0024: 01 3270 240                        240 nd                        ; nd := 0
+0025: 01 3271 240                        240 bad                       ; bad := 0
+0026: 01 3262 240                        240 ctx                       ; ctx := 0
+0027: 00 0           k_lies:             dbn 01                        ; Zeichen der Kommandozeile: zur Laufzeit 011 <Tafel tk>
+0030: 01 3272 240                        240 v                         ; Zeichenwert merken
+0031: 01 3263 211                        211 fld                       ; AC := Feld
+0032: 01 3203 330                        330 k_0                       ; Feld 0 (Kommando)?
+0033: 01 0067 170                        170 k_f0                      ; ja
+0034: 01 3206 220                        220 k_3                       ; Feld - 3
+0035: 01 0027 050                        050 k_lies                    ; mehr als zwei Angaben: ueberlesen
+0036: 01 3261 211                        211 cmd                       ; AC := Kommando
+0037: 01 3213 330                        330 k_27                      ; Kommando G (Angabe ist Zahl)?
+0040: 01 0051 170                        170 k_num                     ; ja
+0041: 01 3263 211                        211 fld                       ; AC := Feld
+0042: 01 3205 330                        330 k_2                       ; Feld 2 (Zahl)?
+0043: 01 0051 170                        170 k_num                     ; ja
+0044: 01 3272 211                        211 v                         ; AC := Zeichenwert
+0045: 01 3214 220                        220 k_72                      ; Zeichen unter 072 (Buchstabe oder Ziffer)?
+0046: 01 0064 050                        050 k_bad                     ; nein: ungueltiges Zeichen
+0047: 01 1345 025                        025 nm_add                    ; Zeichen an den Namen haengen: Aufruf nm_add
+0050: 01 0027 000                        000 k_lies                    ; weiter lesen
+0051: 01 3272 211    k_num:              211 v                         ; AC := Zeichenwert
+0052: 01 3211 220                        220 k_10                      ; Ziffer 0 bis 7?
+0053: 01 0064 050                        050 k_bad                     ; nein: ungueltig
+0054: 01 3267 211                        211 acc                       ; AC := Zahl
+0055: 01 4071 616                        616 nz+031                    ; mal 8: AC um 3 Bit zyklisch links
+0056: 01 3272 210                        210 v                         ; plus Ziffer
+0057: 01 3267 240                        240 acc                       ; Zahl merken
+0060: 01 3270 211                        211 nd                        ; Ziffernzahl + 1: AC := nd
+0061: 01 3204 210                        210 k_1                       ; Ziffernzahl + 1: AC := AC + k_1
+0062: 01 3270 240                        240 nd                        ; Ziffernzahl + 1: nd := AC
+0063: 01 0027 000                        000 k_lies                    ; weiter lesen
+0064: 01 3204 211    k_bad:              211 k_1                       ; AC := 1
+0065: 01 3271 240                        240 bad                       ; ungueltige Angabe merken
+0066: 01 0027 000                        000 k_lies                    ; weiter lesen
+0067: 01 3261 211    k_f0:               211 cmd                       ; schon ein Kommando da?
+0070: 01 3203 330                        330 k_0                       ; cmd = 0?
+0071: 01 0073 170                        170 k_neu                     ; nein: dieses Zeichen ist das Kommando
+0072: 01 0027 000                        000 k_lies                    ; ja: Rest des Kommandowortes ueberlesen
+0073: 01 3272 211    k_neu:              211 v                         ; AC := Zeichenwert
+0074: 01 3261 240                        240 cmd                       ; Kommando merken
+0075: 01 0027 000                        000 k_lies                    ; weiter lesen
+0076: 01 3262 211    t_zr:               211 ctx                       ; AC := Zusammenhang (0 Tastatur, 1 Leser)
+0077: 01 3203 330                        330 k_0                       ; Tastatur?
+0100: 01 0102 170                        170 t_zr0                     ; ja
+0101: 01 2364 000                        000 bw_lies                   ; Leser: Zeichen ueberlesen
+0102: 01 3263 211    t_zr0:              211 fld                       ; AC := Feld
+0103: 01 3203 330                        330 k_0                       ; Feld 0?
+0104: 01 0123 170                        170 z_f0                      ; ja
+0105: 01 3261 211                        211 cmd                       ; AC := Kommando
+0106: 01 3213 330                        330 k_27                      ; Kommando G?
+0107: 01 0117 170                        170 z_num                     ; ja: Zahlfeld
+0110: 01 3263 211                        211 fld                       ; AC := Feld
+0111: 01 3205 330                        330 k_2                       ; Feld 2?
+0112: 01 0117 170                        170 z_num                     ; ja: Zahlfeld
+0113: 01 3264 211                        211 nmn                       ; AC := Zeichen im Namen
+0114: 01 3203 330                        330 k_0                       ; Name leer?
+0115: 01 0027 170                        170 k_lies                    ; ja: Zwischenraum ueberlesen
+0116: 01 0126 000                        000 z_vor                     ; nein: naechstes Feld
+0117: 01 3270 211    z_num:              211 nd                        ; AC := Ziffern
+0120: 01 3203 330                        330 k_0                       ; Zahl leer?
+0121: 01 0027 170                        170 k_lies                    ; ja: Zwischenraum ueberlesen
+0122: 01 0126 000                        000 z_vor                     ; nein: naechstes Feld
+0123: 01 3261 211    z_f0:               211 cmd                       ; AC := Kommando
+0124: 01 3203 330                        330 k_0                       ; noch kein Kommando?
+0125: 01 0027 170                        170 k_lies                    ; ja: Zwischenraum ueberlesen
+0126: 01 3263 211    z_vor:              211 fld                       ; naechstes Feld: AC := fld
+0127: 01 3204 210                        210 k_1                       ; naechstes Feld: AC := AC + k_1
+0130: 01 3263 240                        240 fld                       ; naechstes Feld: fld := AC
+0131: 01 0027 000                        000 k_lies                    ; weiter lesen
+0132: 01 3262 211    t_ign:              211 ctx                       ; AC := Zusammenhang (0 Tastatur, 1 Leser)
+0133: 01 3203 330                        330 k_0                       ; Tastatur?
+0134: 01 0027 170                        170 k_lies                    ; ja: Zeichen ueberlesen
+0135: 01 2364 000                        000 bw_lies                   ; Leser: Zeichen ueberlesen
+0136: 01 3262 211    t_pkt:              211 ctx                       ; AC := Zusammenhang
+0137: 01 3203 330                        330 k_0                       ; Tastatur?
+0140: 01 0027 170                        170 k_lies                    ; ja: Punkt ueberlesen
+0141: 01 2426 000                        000 bw_pkt                    ; Leser: Wortende
+0142: 01 3262 211    t_cr:               211 ctx                       ; AC := Zusammenhang
+0143: 01 3203 330                        330 k_0                       ; Tastatur?
+0144: 01 0146 170                        170 t_cr0                     ; ja
+0145: 01 2364 000                        000 bw_lies                   ; Leser: Zeichen ueberlesen
+0146: 01 3261 211    t_cr0:              211 cmd                       ; AC := Kommando
+0147: 01 3203 330                        330 k_0                       ; leere Zeile?
+0150: 01 0011 170                        170 kdo                       ; ja: neue Aufforderung
+0151: 01 3264 211                        211 nmn                       ; AC := Zeichen im Namen
+0152: 01 3203 330                        330 k_0                       ; kein Name?
+0153: 01 0171 170                        170 cr_k                      ; ja: nichts aufzufuellen
+0154: 01 3264 211    cr_pad:             211 nmn                       ; AC := Zeichen im Namen
+0155: 01 3212 220                        220 k_12                      ; zehn Zeichen (012 = 10 dezimal)?
+0156: 01 0163 050                        050 cr_ausr                   ; ja
+0157: 01 3212 211                        211 k_12                      ; AC := Zwischenraum
+0160: 01 3272 240                        240 v                         ; Zeichen
+0161: 01 1345 025                        025 nm_add                    ; mit Zwischenraum auffuellen: Aufruf nm_add
+0162: 01 0154 000                        000 cr_pad                    ; weiter
+0163: 01 3265 211    cr_ausr:            211 nm0                       ; AC := Zeichen 1 bis 5
+0164: 01 4071 616                        616 nz+031                    ; linksbuendig in z0 bis z29: AC um 3 Bit zyklisch links
+0165: 01 3265 240                        240 nm0                       ; merken
+0166: 01 3266 211                        211 nm1                       ; AC := Zeichen 6 bis 10
+0167: 01 4071 616                        616 nz+031                    ; linksbuendig in z0 bis z29: AC um 3 Bit zyklisch links
+0170: 01 3266 240                        240 nm1                       ; merken
+0171: 01 3261 211    cr_k:               211 cmd                       ; AC := Kommando
+0172: 01 3215 330                        330 k_43                      ; Kommando L?
+0173: 01 0407 170                        170 c_l                       ; ja
+0174: 01 3216 330                        330 k_50                      ; Kommando Q?
+0175: 01 0000 170                        170 0                         ; ja
+0176: 01 3217 330                        330 k_30                      ; Kommando H?
+0177: 01 0216 170                        170 c_h                       ; ja
+0200: 01 3220 330                        330 k_44                      ; Kommando M?
+0201: 01 0412 170                        170 c_m                       ; ja
+0202: 01 3213 330                        330 k_27                      ; Kommando G?
+0203: 01 1330 170                        170 c_g                       ; ja
+0204: 01 3221 330                        330 k_24                      ; Kommando D?
+0205: 01 0551 170                        170 c_d                       ; ja
+0206: 01 3222 330                        330 k_21                      ; Kommando A?
+0207: 01 0665 170                        170 c_a                       ; ja
+0210: 00 4500 030    c_frage:            030 04500                     ; unbekanntes Kommando oder fehlerhafte Angabe: Kanal K2 anwaehlen
+      00 0570 030                        dtm ?                         ; unbekanntes Kommando oder fehlerhafte Angabe: Text '?'
+      00 1530 030    ;    
+      00 2720 030                        dz  $wrzl                     ; unbekanntes Kommando oder fehlerhafte Angabe: Zeilenschaltung
+0214: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0215: 01 0000 000    c_q:                000 0                         ; q: Sprung 0000 000
+0216: 00 4500 030    c_h:                030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm L LISTE                   ; Hilfezeile: Text 'L LISTE'
+      00 1030 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 0510 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0450 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0230: 00 4500 030                        030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm A NAME EINLESEN (LESER 1) ; Hilfezeile: Text 'A NAME EINLESEN (LESER 1)'
+      00 0610 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0150 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 0320 030    ;    
+      00 1170 030    ;    
+      00 0010 030    ;    
+      00 0570 030    ;    
+      00 1410 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0266: 00 4500 030                        030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm D NAME LOESCHEN           ; Hilfezeile: Text 'D NAME LOESCHEN'
+      00 0640 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 1060 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0310: 00 4500 030                        030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm M NAME ADRESSE LADEN      ; Hilfezeile: Text 'M NAME ADRESSE LADEN'
+      00 1240 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0337: 00 4500 030                        030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm G ADRESSE STARTEN         ; Hilfezeile: Text 'G ADRESSE STARTEN'
+      00 0670 030    ;    
+      00 0320 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 0610 030    ;    
+      00 1110 030    ;    
+      00 1630 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0363: 00 4500 030                        030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm Q ENDE                    ; Hilfezeile: Text 'Q ENDE'
+      00 1300 030    ;    
+      00 0320 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0374: 00 4500 030                        030 04500                     ; Hilfezeile: Kanal K2 anwaehlen
+      00 0570 030                        dtm H HILFE                   ; Hilfezeile: Text 'H HILFE'
+      00 0700 030    ;    
+      00 0320 030    ;    
+      00 0700 030    ;    
+      00 0510 030    ;    
+      00 1030 030    ;    
+      00 0460 030    ;    
+      00 0450 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Hilfezeile: Zeilenschaltung
+0406: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0407: 01 3273 241    c_l:                241 mode                      ; Betriebsart 0 = Liste
+0410: 01 1371 025                        025 rep_lauf                  ; alle Eintraege durchlaufen und anzeigen: Aufruf rep_lauf
+0411: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0412: 01 3264 211    c_m:                211 nmn                       ; AC := Zeichen im Namen
+0413: 01 3203 330                        330 k_0                       ; Name fehlt?
+0414: 01 0210 170                        170 c_frage                   ; ja
+0415: 01 3270 211                        211 nd                        ; AC := Ziffern der Adresse
+0416: 01 3203 330                        330 k_0                       ; Adresse fehlt?
+0417: 01 0210 170                        170 c_frage                   ; ja
+0420: 01 3271 211                        211 bad                       ; AC := ungueltig
+0421: 01 3203 330                        330 k_0                       ; Angabe in Ordnung?
+0422: 01 0424 170                        170 m_ok                      ; ja
+0423: 01 0210 000                        000 c_frage                   ; nein
+0424: 01 3204 211    m_ok:               211 k_1                       ; AC := 1
+0425: 01 3273 240                        240 mode                      ; Betriebsart 1 = suchen
+0426: 01 1371 025                        025 rep_lauf                  ; Eintrag suchen: Aufruf rep_lauf
+0427: 01 3274 211                        211 fnd                       ; AC := gefunden?
+0430: 01 3203 330                        330 k_0                       ; nicht gefunden?
+0431: 01 0512 170                        170 m_unbek                   ; ja
+0432: 01 3673 211                        211 e_lage                    ; AC := Lagewort
+0433: 00 7622 240                        240 zl_lage                   ; ZTL_LAGE
+0434: 01 3672 211                        211 e_len                     ; AC := Laenge
+0435: 00 7623 240                        240 zl_laenge                 ; ZTL_LAENGE
+0436: 01 3267 211                        211 acc                       ; AC := Ladeadresse
+0437: 01 4053 616                        616 nz+013                    ; als Adresswort: AC um 9 Bit zyklisch links
+0440: 00 7611 240                        240 zl_hla                    ; Hauptleitadresse
+0441: 00 7742 241                        241 zl_ra                     ; RA := 0
+0442: 00 7625 240                        240 zl_grenze                 ; ZTL_GRENZE := 0 (Vorgabe 07540)
+0443: 01 3260 025                        025 dienst                    ; Dienst von ZTL: Programm laden
+0444: 00 7626 211                        211 zt_status                 ; AC := Status von ZTL
+0445: 01 3203 330                        330 k_0                       ; in Ordnung?
+0446: 01 0536 170                        170 m_gut                     ; ja
+0447: 01 3275 240                        240 st                        ; Status merken
+0450: 01 3210 330                        330 k_5                       ; Status 5?
+0451: 01 0464 170                        170 m_platz                   ; ja
+0452: 00 4500 030                        030 04500                     ; anderer Status von ZTL: Kanal K2 anwaehlen
+      00 0570 030                        dtm FEHLER                    ; anderer Status von ZTL: Text 'FEHLER'
+      00 0460 030    ;    
+      00 0450 030    ;    
+      00 0700 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 2720 030                        dz  $wrzl                     ; anderer Status von ZTL: Zeilenschaltung
+0463: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0464: 00 4500 030    m_platz:            030 04500                     ; Meldung Status 5: Kanal K2 anwaehlen
+      00 0570 030                        dtm PLATZ REICHT NICHT        ; Meldung Status 5: Text 'PLATZ REICHT NICHT'
+      00 1270 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 1630 030    ;    
+      00 1710 030    ;    
+      00 0320 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 0320 030    ;    
+      00 1050 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Meldung Status 5: Zeilenschaltung
+0511: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0512: 00 4500 030    m_unbek:            030 04500                     ; Meldung Status 4: Kanal K2 anwaehlen
+      00 0570 030                        dtm NAME UNBEKANNT            ; Meldung Status 4: Text 'NAME UNBEKANNT'
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1440 030    ;    
+      00 1050 030    ;    
+      00 0620 030    ;    
+      00 0450 030    ;    
+      00 1220 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 1050 030    ;    
+      00 1630 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Meldung Status 4: Zeilenschaltung
+0533: 01 3207 211                        211 k_4                       ; AC := Status 4
+0534: 00 7626 240                        240 zt_status                 ; Status eintragen
+0535: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0536: 00 4500 030    m_gut:              030 04500                     ; Meldung: Kanal K2 anwaehlen
+      00 0570 030                        dtm GELADEN                   ; Meldung: Text 'GELADEN'
+      00 0670 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Meldung: Zeilenschaltung
+0550: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0551: 01 3264 211    c_d:                211 nmn                       ; AC := Zeichen im Namen
+0552: 01 3203 330                        330 k_0                       ; Name fehlt?
+0553: 01 0210 170                        170 c_frage                   ; ja
+0554: 01 3204 211                        211 k_1                       ; AC := 1
+0555: 01 3273 240                        240 mode                      ; Betriebsart 1 = suchen
+0556: 01 1371 025                        025 rep_lauf                  ; Eintrag suchen: Aufruf rep_lauf
+0557: 01 3274 211                        211 fnd                       ; AC := gefunden?
+0560: 01 3203 330                        330 k_0                       ; nicht gefunden?
+0561: 01 0512 170                        170 m_unbek                   ; ja: Meldung NAME UNBEKANNT
+0562: 01 3673 211                        211 e_lage                    ; AC := Lagewort des ersten Segments
+0563: 01 3426 240                        240 fz_lage                   ; Parameter
+0564: 01 2106 025                        025 seg_frei                  ; Segmentkette freigeben: Aufruf seg_frei
+0565: 01 3226 211                        211 a_puf                     ; Spur des Eintrags lesen: AC := Adresse der Pufferspur puf
+0566: 01 4003 240                        240 zc_adr                    ; Spur des Eintrags lesen: Pufferspur merken
+0567: 01 3401 211                        211 bl_t                      ; Spur des Eintrags lesen: AC := Trommel t
+0570: 01 3223 240                        240 zt_t                      ; Spur des Eintrags lesen: Trommel merken
+0571: 01 3107 025                        025 zt_anw                    ; Spur des Eintrags lesen: ZT anwaehlen: Aufruf zt_anw
+0572: 01 3665 211                        211 e_sp                      ; Spur des Eintrags lesen: AC := Spur
+0573: 01 3224 240                        240 zc_spur                   ; Spur des Eintrags lesen: Spur merken
+0574: 01 3227 211                        211 k_661                     ; Spur des Eintrags lesen: AC := Operationscode 661 (ZT -> HT)
+0575: 01 3225 240                        240 zc_op                     ; Spur des Eintrags lesen: Operationscode merken
+0576: 01 3116 025                        025 zt_ausf                   ; Spur des Eintrags lesen: Spur uebertragen: Aufruf zt_ausf
+0577: 01 3666 211                        211 e_ix                      ; AC := Index der Zelle des Eintrags
+0600: 01 3230 210                        210 ae_3                      ; plus 3: Lagewort
+0601: 01 3667 240                        240 ix                        ; Index
+0602: 01 3226 210                        210 a_puf                     ; Lagewort := 0 (Eintrag frei): AC := Index + Anfangsadresse puf
+0603: 01 3231 210                        210 k_240                     ; Lagewort := 0 (Eintrag frei): AC := Befehl 240 puf[Index]
+0604: 01 0606 240                        240 fs_1                      ; Lagewort := 0 (Eintrag frei): Befehl auf Zelle fs_1 ablegen
+0605: 01 3203 211                        211 k_0                       ; Lagewort := 0 (Eintrag frei): AC := k_0
+0606: 00 0           fs_1:               dbn 01                        ; Lagewort := 0 (Eintrag frei): zur Laufzeit 240 puf[Index]
+0607: 01 3226 211                        211 a_puf                     ; Spur des Eintrags zurueckschreiben: AC := Adresse der Pufferspur puf
+0610: 01 4003 240                        240 zc_adr                    ; Spur des Eintrags zurueckschreiben: Pufferspur merken
+0611: 01 3401 211                        211 bl_t                      ; Spur des Eintrags zurueckschreiben: AC := Trommel t
+0612: 01 3223 240                        240 zt_t                      ; Spur des Eintrags zurueckschreiben: Trommel merken
+0613: 01 3107 025                        025 zt_anw                    ; Spur des Eintrags zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+0614: 01 3665 211                        211 e_sp                      ; Spur des Eintrags zurueckschreiben: AC := Spur
+0615: 01 3224 240                        240 zc_spur                   ; Spur des Eintrags zurueckschreiben: Spur merken
+0616: 01 3232 211                        211 k_601                     ; Spur des Eintrags zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+0617: 01 3225 240                        240 zc_op                     ; Spur des Eintrags zurueckschreiben: Operationscode merken
+0620: 01 3116 025                        025 zt_ausf                   ; Spur des Eintrags zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+0621: 01 3226 211                        211 a_puf                     ; Kopfspur des Blocks lesen: AC := Adresse der Pufferspur puf
+0622: 01 4003 240                        240 zc_adr                    ; Kopfspur des Blocks lesen: Pufferspur merken
+0623: 01 3401 211                        211 bl_t                      ; Kopfspur des Blocks lesen: AC := Trommel t
+0624: 01 3223 240                        240 zt_t                      ; Kopfspur des Blocks lesen: Trommel merken
+0625: 01 3107 025                        025 zt_anw                    ; Kopfspur des Blocks lesen: ZT anwaehlen: Aufruf zt_anw
+0626: 01 3402 211                        211 bl_sp                     ; Kopfspur des Blocks lesen: AC := Spur
+0627: 01 3224 240                        240 zc_spur                   ; Kopfspur des Blocks lesen: Spur merken
+0630: 01 3227 211                        211 k_661                     ; Kopfspur des Blocks lesen: AC := Operationscode 661 (ZT -> HT)
+0631: 01 3225 240                        240 zc_op                     ; Kopfspur des Blocks lesen: Operationscode merken
+0632: 01 3116 025                        025 zt_ausf                   ; Kopfspur des Blocks lesen: Spur uebertragen: Aufruf zt_ausf
+0633: 01 3543 211                        211 000000003540+3            ; AC := Zahl der belegten Eintraege
+0634: 01 3204 220                        220 k_1                       ; minus 1
+0635: 01 3543 240                        240 000000003540+3            ; zurueck
+0636: 01 3226 211                        211 a_puf                     ; Kopfspur zurueckschreiben: AC := Adresse der Pufferspur puf
+0637: 01 4003 240                        240 zc_adr                    ; Kopfspur zurueckschreiben: Pufferspur merken
+0640: 01 3401 211                        211 bl_t                      ; Kopfspur zurueckschreiben: AC := Trommel t
+0641: 01 3223 240                        240 zt_t                      ; Kopfspur zurueckschreiben: Trommel merken
+0642: 01 3107 025                        025 zt_anw                    ; Kopfspur zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+0643: 01 3402 211                        211 bl_sp                     ; Kopfspur zurueckschreiben: AC := Spur
+0644: 01 3224 240                        240 zc_spur                   ; Kopfspur zurueckschreiben: Spur merken
+0645: 01 3232 211                        211 k_601                     ; Kopfspur zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+0646: 01 3225 240                        240 zc_op                     ; Kopfspur zurueckschreiben: Operationscode merken
+0647: 01 3116 025                        025 zt_ausf                   ; Kopfspur zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+0650: 00 4500 030                        030 04500                     ; Meldung: Kanal K2 anwaehlen
+      00 0570 030                        dtm GELOESCHT                 ; Meldung: Text 'GELOESCHT'
+      00 0670 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 1060 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1630 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Meldung: Zeilenschaltung
+0664: 01 0011 000                        000 kdo                       ; neue Aufforderung
+0665: 01 3264 211    c_a:                211 nmn                       ; AC := Zeichen im Namen
+0666: 01 3203 330                        330 k_0                       ; Name fehlt?
+0667: 01 0210 170                        170 c_frage                   ; ja
+0670: 01 3204 211                        211 k_1                       ; AC := 1
+0671: 01 3273 240                        240 mode                      ; Betriebsart 1 = suchen
+0672: 01 1371 025                        025 rep_lauf                  ; Name im Verzeichnis suchen: Aufruf rep_lauf
+0673: 01 3276 211                        211 rep_ok                    ; AC := Repository da?
+0674: 01 3203 330                        330 k_0                       ; kein Repository?
+0675: 01 0011 170                        170 kdo                       ; ja: Meldung ist ausgegeben
+0676: 01 3274 211                        211 fnd                       ; AC := Name gefunden?
+0677: 01 3203 330                        330 k_0                       ; Name noch frei?
+0700: 01 0703 170                        170 a_neu                     ; ja
+0701: 01 3211 211                        211 k_10                      ; AC := Status 10 oktal (8 dezimal)
+0702: 01 1153 000                        000 a_fehl0                   ; Name vorhanden
+0703: 01 3204 211    a_neu:              211 k_1                       ; AC := 1
+0704: 01 3262 240                        240 ctx                       ; Zusammenhang 1 = Leser
+0705: 01 3655 241                        241 pk_len                    ; Programmlaenge L := 0
+0706: 01 3650 240                        240 pk_cnt                    ; Worte in der Spur := 0
+0707: 01 3651 240                        240 pk_g5                     ; Worte in der Gruppe := 0
+0710: 01 3654 240                        240 pk_kwacc                  ; Kennzeichen der Gruppe := 0
+0711: 01 3657 240                        240 sg_i                      ; Spur im Segment := 0
+0712: 01 3656 240                        240 fl_more                   ; keine weiteren Worte
+0713: 01 3653 240                        240 pk_kwptr                  ; Kennungszelle der Gruppe 0
+0714: 01 3233 211                        211 ae_1                      ; AC := 1 Zelle
+0715: 01 3652 240                        240 pk_ptr                    ; erste Wortzelle
+0716: 01 3600 441                        441 000000003600              ; Datenspur := 0
+0717: 01 3234 211                        211 k_20                      ; AC := 16 Spuren
+0720: 01 3430 240                        240 su_n                      ; gesucht
+0721: 01 2227 025                        025 seg_such                  ; erstes Segment suchen: Aufruf seg_such
+0722: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+0723: 01 3203 330                        330 k_0                       ; Trommeln voll?
+0724: 01 1152 170                        170 a_voll0                   ; ja
+0725: 01 2051 025                        025 seg_belege                ; Segment su_t/su_s in der Belegungsliste belegen: Aufruf seg_belege
+0726: 01 3432 211                        211 su_t                      ; AC := Trommel des ersten Segments
+0727: 01 3410 240                        240 sg_t                      ; laufendes Segment
+0730: 01 3413 240                        240 sg_1t                     ; erstes Segment (Trommel)
+0731: 01 3433 211                        211 su_s                      ; AC := Spur des ersten Segments
+0732: 01 3411 240                        240 sg_s                      ; laufendes Segment
+0733: 01 3414 240                        240 sg_1s                     ; erstes Segment (Spur)
+0734: 00 4600 030                        030 04600                     ; Leser 1: Kanal K1 anwaehlen
+0735: 01 2354 025    a_wort:             025 band_wort                 ; ein Wort lesen: Aufruf band_wort
+0736: 01 3643 211                        211 bw_err                    ; AC := Fehler?
+0737: 01 3203 330                        330 k_0                       ; Lochstreifen fehlerhaft?
+0740: 01 0743 170                        170 a_e1                      ; nein
+0741: 01 3235 211                        211 k_11                      ; AC := Status 11 oktal (9 dezimal)
+0742: 01 1155 000                        000 a_fehl                    ; Fehler
+0743: 01 3642 211    a_e1:               211 bw_ende                   ; AC := Ende?
+0744: 01 3203 330                        330 k_0                       ; Schlusszeichen?
+0745: 01 0747 170                        170 a_e2                      ; nein
+0746: 01 0761 000                        000 a_ende                    ; ja: alle Worte gelesen
+0747: 01 3644 211    a_e2:               211 bw_k1                     ; AC := K1
+0750: 01 3203 330                        330 k_0                       ; K1 = 0?
+0751: 01 0754 170                        170 a_e3                      ; ja
+0752: 01 3236 211                        211 k_7                       ; AC := Status 7
+0753: 01 1155 000                        000 a_fehl                    ; Kennzeichen unzulaessig
+0754: 01 2445 025    a_e3:               025 put_wort                  ; Wort in die Datenspur packen: Aufruf put_wort
+0755: 01 3275 211                        211 st                        ; AC := Status
+0756: 01 3203 330                        330 k_0                       ; Fehler (Trommeln voll)?
+0757: 01 0735 170                        170 a_wort                    ; nein: naechstes Wort
+0760: 01 1155 000                        000 a_fehl                    ; Fehler
+0761: 01 3655 211    a_ende:             211 pk_len                    ; AC := Zahl der Worte
+0762: 01 3203 330                        330 k_0                       ; leerer Lochstreifen?
+0763: 01 1150 170                        170 a_leer                    ; ja: Lochstreifen fehlerhaft
+0764: 01 3656 241                        241 fl_more                   ; letzte Spur: keine weiteren Worte
+0765: 01 3275 241                        241 st                        ; Status := 0
+0766: 01 2532 025                        025 flush                     ; letzte Spur schreiben: Aufruf flush
+0767: 01 3275 211                        211 st                        ; AC := Status
+0770: 01 3203 330                        330 k_0                       ; Fehler?
+0771: 01 0773 170                        170 a_e5                      ; nein
+0772: 01 1155 000                        000 a_fehl                    ; Fehler
+0773: 01 3657 211    a_e5:               211 sg_i                      ; AC := Spur im Segment
+0774: 01 3204 210                        210 k_1                       ; plus 1
+0775: 01 3427 240                        240 rs_i                      ; ab hier mit 0 fuellen
+0776: 01 2200 025                        025 seg_rest                  ; Rest des letzten Segments mit 0 fuellen: Aufruf seg_rest
+0777: 01 3205 211                        211 k_2                       ; AC := 2
+1000: 01 3273 240                        240 mode                      ; Betriebsart 2 = freien Eintrag suchen
+1001: 01 1371 025                        025 rep_lauf                  ; freien Eintrag suchen: Aufruf rep_lauf
+1002: 01 3274 211                        211 fnd                       ; AC := freier Eintrag gefunden?
+1003: 01 3203 330                        330 k_0                       ; keiner frei?
+1004: 01 1006 170                        170 a_blk                     ; ja: neuen Block anlegen
+1005: 01 1013 000                        000 a_slot                    ; nein: vorhanden
+1006: 01 2645 025    a_blk:              025 block_neu                 ; neuen Namensblock anlegen: Aufruf block_neu
+1007: 01 3275 211                        211 st                        ; AC := Status
+1010: 01 3203 330                        330 k_0                       ; Fehler?
+1011: 01 1013 170                        170 a_slot                    ; nein
+1012: 01 1155 000                        000 a_fehl                    ; Fehler
+1013: 01 3226 211    a_slot:             211 a_puf                     ; Spur des freien Eintrags lesen: AC := Adresse der Pufferspur puf
+1014: 01 4003 240                        240 zc_adr                    ; Spur des freien Eintrags lesen: Pufferspur merken
+1015: 01 3401 211                        211 bl_t                      ; Spur des freien Eintrags lesen: AC := Trommel t
+1016: 01 3223 240                        240 zt_t                      ; Spur des freien Eintrags lesen: Trommel merken
+1017: 01 3107 025                        025 zt_anw                    ; Spur des freien Eintrags lesen: ZT anwaehlen: Aufruf zt_anw
+1020: 01 3665 211                        211 e_sp                      ; Spur des freien Eintrags lesen: AC := Spur
+1021: 01 3224 240                        240 zc_spur                   ; Spur des freien Eintrags lesen: Spur merken
+1022: 01 3227 211                        211 k_661                     ; Spur des freien Eintrags lesen: AC := Operationscode 661 (ZT -> HT)
+1023: 01 3225 240                        240 zc_op                     ; Spur des freien Eintrags lesen: Operationscode merken
+1024: 01 3116 025                        025 zt_ausf                   ; Spur des freien Eintrags lesen: Spur uebertragen: Aufruf zt_ausf
+1025: 01 3666 211                        211 e_ix                      ; AC := Index der Zelle des Eintrags
+1026: 01 3667 240                        240 ix                        ; Index
+1027: 01 3226 210                        210 a_puf                     ; Name 1 bis 5: AC := Index + Anfangsadresse puf
+1030: 01 3231 210                        210 k_240                     ; Name 1 bis 5: AC := Befehl 240 puf[Index]
+1031: 01 1033 240                        240 fs_2                      ; Name 1 bis 5: Befehl auf Zelle fs_2 ablegen
+1032: 01 3265 211                        211 nm0                       ; Name 1 bis 5: AC := nm0
+1033: 00 0           fs_2:               dbn 01                        ; Name 1 bis 5: zur Laufzeit 240 puf[Index]
+1034: 01 3667 211                        211 ix                        ; naechste Zelle: AC := ix
+1035: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+1036: 01 3667 240                        240 ix                        ; naechste Zelle: ix := AC
+1037: 01 3226 210                        210 a_puf                     ; Name 6 bis 10: AC := Index + Anfangsadresse puf
+1040: 01 3231 210                        210 k_240                     ; Name 6 bis 10: AC := Befehl 240 puf[Index]
+1041: 01 1043 240                        240 fs_3                      ; Name 6 bis 10: Befehl auf Zelle fs_3 ablegen
+1042: 01 3266 211                        211 nm1                       ; Name 6 bis 10: AC := nm1
+1043: 00 0           fs_3:               dbn 01                        ; Name 6 bis 10: zur Laufzeit 240 puf[Index]
+1044: 01 3667 211                        211 ix                        ; naechste Zelle: AC := ix
+1045: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+1046: 01 3667 240                        240 ix                        ; naechste Zelle: ix := AC
+1047: 01 3226 210                        210 a_puf                     ; Laenge L: AC := Index + Anfangsadresse puf
+1050: 01 3231 210                        210 k_240                     ; Laenge L: AC := Befehl 240 puf[Index]
+1051: 01 1053 240                        240 fs_4                      ; Laenge L: Befehl auf Zelle fs_4 ablegen
+1052: 01 3655 211                        211 pk_len                    ; Laenge L: AC := pk_len
+1053: 00 0           fs_4:               dbn 01                        ; Laenge L: zur Laufzeit 240 puf[Index]
+1054: 01 3667 211                        211 ix                        ; naechste Zelle: AC := ix
+1055: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+1056: 01 3667 240                        240 ix                        ; naechste Zelle: ix := AC
+1057: 01 3413 211                        211 sg_1t                     ; AC := Trommel des ersten Segments
+1060: 01 4045 616                        616 nz+05                     ; mal 0200: AC um 7 Bit zyklisch links
+1061: 01 3414 210                        210 sg_1s                     ; plus Spur
+1062: 01 3663 240                        240 lage                      ; Lagewort
+1063: 01 3667 211                        211 ix                        ; Lagewort des ersten Segments: AC := Index ix
+1064: 01 3226 210                        210 a_puf                     ; Lagewort des ersten Segments: AC := Index + Anfangsadresse puf
+1065: 01 3231 210                        210 k_240                     ; Lagewort des ersten Segments: AC := Befehl 240 puf[Index]
+1066: 01 1070 240                        240 fs_5                      ; Lagewort des ersten Segments: Befehl auf Zelle fs_5 ablegen
+1067: 01 3663 211                        211 lage                      ; Lagewort des ersten Segments: AC := lage
+1070: 00 0           fs_5:               dbn 01                        ; Lagewort des ersten Segments: zur Laufzeit 240 puf[Index]
+1071: 01 3226 211                        211 a_puf                     ; Spur des Eintrags zurueckschreiben: AC := Adresse der Pufferspur puf
+1072: 01 4003 240                        240 zc_adr                    ; Spur des Eintrags zurueckschreiben: Pufferspur merken
+1073: 01 3401 211                        211 bl_t                      ; Spur des Eintrags zurueckschreiben: AC := Trommel t
+1074: 01 3223 240                        240 zt_t                      ; Spur des Eintrags zurueckschreiben: Trommel merken
+1075: 01 3107 025                        025 zt_anw                    ; Spur des Eintrags zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+1076: 01 3665 211                        211 e_sp                      ; Spur des Eintrags zurueckschreiben: AC := Spur
+1077: 01 3224 240                        240 zc_spur                   ; Spur des Eintrags zurueckschreiben: Spur merken
+1100: 01 3232 211                        211 k_601                     ; Spur des Eintrags zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+1101: 01 3225 240                        240 zc_op                     ; Spur des Eintrags zurueckschreiben: Operationscode merken
+1102: 01 3116 025                        025 zt_ausf                   ; Spur des Eintrags zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+1103: 01 3226 211                        211 a_puf                     ; Kopfspur des Blocks lesen: AC := Adresse der Pufferspur puf
+1104: 01 4003 240                        240 zc_adr                    ; Kopfspur des Blocks lesen: Pufferspur merken
+1105: 01 3401 211                        211 bl_t                      ; Kopfspur des Blocks lesen: AC := Trommel t
+1106: 01 3223 240                        240 zt_t                      ; Kopfspur des Blocks lesen: Trommel merken
+1107: 01 3107 025                        025 zt_anw                    ; Kopfspur des Blocks lesen: ZT anwaehlen: Aufruf zt_anw
+1110: 01 3402 211                        211 bl_sp                     ; Kopfspur des Blocks lesen: AC := Spur
+1111: 01 3224 240                        240 zc_spur                   ; Kopfspur des Blocks lesen: Spur merken
+1112: 01 3227 211                        211 k_661                     ; Kopfspur des Blocks lesen: AC := Operationscode 661 (ZT -> HT)
+1113: 01 3225 240                        240 zc_op                     ; Kopfspur des Blocks lesen: Operationscode merken
+1114: 01 3116 025                        025 zt_ausf                   ; Kopfspur des Blocks lesen: Spur uebertragen: Aufruf zt_ausf
+1115: 01 3543 211                        211 000000003540+3            ; belegte Eintraege + 1: AC := puf+3
+1116: 01 3204 210                        210 k_1                       ; belegte Eintraege + 1: AC := AC + k_1
+1117: 01 3543 240                        240 000000003540+3            ; belegte Eintraege + 1: puf+3 := AC
+1120: 01 3226 211                        211 a_puf                     ; Kopfspur zurueckschreiben: AC := Adresse der Pufferspur puf
+1121: 01 4003 240                        240 zc_adr                    ; Kopfspur zurueckschreiben: Pufferspur merken
+1122: 01 3401 211                        211 bl_t                      ; Kopfspur zurueckschreiben: AC := Trommel t
+1123: 01 3223 240                        240 zt_t                      ; Kopfspur zurueckschreiben: Trommel merken
+1124: 01 3107 025                        025 zt_anw                    ; Kopfspur zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+1125: 01 3402 211                        211 bl_sp                     ; Kopfspur zurueckschreiben: AC := Spur
+1126: 01 3224 240                        240 zc_spur                   ; Kopfspur zurueckschreiben: Spur merken
+1127: 01 3232 211                        211 k_601                     ; Kopfspur zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+1130: 01 3225 240                        240 zc_op                     ; Kopfspur zurueckschreiben: Operationscode merken
+1131: 01 3116 025                        025 zt_ausf                   ; Kopfspur zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+1132: 00 4500 030                        030 04500                     ; Meldung: Kanal K2 anwaehlen
+      00 0570 030                        dtm EINGELESEN                ; Meldung: Text 'EINGELESEN'
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0670 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Meldung: Zeilenschaltung
+1147: 01 0011 000                        000 kdo                       ; neue Aufforderung
+1150: 01 3235 211    a_leer:             211 k_11                      ; AC := Status 11 oktal (9 dezimal)
+1151: 01 1155 000                        000 a_fehl                    ; Lochstreifen fehlerhaft
+1152: 01 3237 211    a_voll0:            211 k_6                       ; AC := Status 6
+1153: 01 3275 240    a_fehl0:            240 st                        ; Status
+1154: 01 1166 000                        000 a_melde                   ; nur melden (nichts belegt)
+1155: 01 3275 240    a_fehl:             240 st                        ; Status merken
+1156: 01 3657 211                        211 sg_i                      ; AC := Spur im Segment
+1157: 01 3427 240                        240 rs_i                      ; ab hier mit 0 fuellen
+1160: 01 2200 025                        025 seg_rest                  ; laufendes Segment mit 0 abschliessen: Aufruf seg_rest
+1161: 01 3413 211                        211 sg_1t                     ; AC := Trommel des ersten Segments
+1162: 01 4045 616                        616 nz+05                     ; mal 0200: AC um 7 Bit zyklisch links
+1163: 01 3414 210                        210 sg_1s                     ; plus Spur
+1164: 01 3426 240                        240 fz_lage                   ; Parameter
+1165: 01 2106 025                        025 seg_frei                  ; alle bisher belegten Segmente freigeben: Aufruf seg_frei
+1166: 01 3275 211    a_melde:            211 st                        ; AC := Status
+1167: 00 7626 240                        240 zt_status                 ; Status eintragen (nach Fehlernummer: 6, 7, 10 = 8 dezimal, 11 = 9 dezimal)
+1170: 01 3237 330                        330 k_6                       ; Status 6?
+1171: 01 1232 170                        170 a_m6                      ; ja
+1172: 01 3236 330                        330 k_7                       ; Status 7?
+1173: 01 1253 170                        170 a_m7                      ; ja
+1174: 01 3211 330                        330 k_10                      ; Status 10?
+1175: 01 1306 170                        170 a_m10                     ; ja
+1176: 00 4500 030                        030 04500                     ; Status 11: Kanal K2 anwaehlen
+      00 0570 030                        dtm LOCHSTREIFEN FEHLERHAFT   ; Status 11: Text 'LOCHSTREIFEN FEHLERHAFT'
+      00 1030 030    ;    
+      00 1060 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 0460 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0460 030    ;    
+      00 0450 030    ;    
+      00 0700 030    ;    
+      00 1030 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 0700 030    ;    
+      00 0610 030    ;    
+      00 0460 030    ;    
+      00 1630 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Status 11: Zeilenschaltung
+1230: 01 3235 211                        211 k_11                      ; AC := Status 11 oktal
+1231: 01 0011 000                        000 kdo                       ; Status eintragen
+1232: 00 4500 030    a_m6:               030 04500                     ; Status 6: Kanal K2 anwaehlen
+      00 0570 030                        dtm TROMMELN VOLL             ; Status 6: Text 'TROMMELN VOLL'
+      00 1630 030    ;    
+      00 1110 030    ;    
+      00 1060 030    ;    
+      00 1240 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 1030 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1650 030    ;    
+      00 1060 030    ;    
+      00 1030 030    ;    
+      00 1030 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Status 6: Zeilenschaltung
+1252: 01 0011 000                        000 kdo                       ; neue Aufforderung
+1253: 00 4500 030    a_m7:               030 04500                     ; Status 7: Kanal K2 anwaehlen
+      00 0570 030                        dtm KENNZEICHEN UNZULAESSIG   ; Status 7: Text 'KENNZEICHEN UNZULAESSIG'
+      00 1220 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 1050 030    ;    
+      00 1710 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 0430 030    ;    
+      00 0700 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1440 030    ;    
+      00 1050 030    ;    
+      00 1710 030    ;    
+      00 1440 030    ;    
+      00 1030 030    ;    
+      00 0610 030    ;    
+      00 0450 030    ;    
+      00 1420 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 0670 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Status 7: Zeilenschaltung
+1305: 01 0011 000                        000 kdo                       ; neue Aufforderung
+1306: 00 4500 030    a_m10:              030 04500                     ; Status 10: Kanal K2 anwaehlen
+      00 0570 030                        dtm NAME VORHANDEN            ; Status 10: Text 'NAME VORHANDEN'
+      00 1050 030    ;    
+      00 0610 030    ;    
+      00 1240 030    ;    
+      00 0450 030    ;    
+      00 0320 030    ;    
+      00 1650 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 0700 030    ;    
+      00 0610 030    ;    
+      00 1050 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 1050 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Status 10: Zeilenschaltung
+1327: 01 0011 000    a_st:               000 kdo                       ; neue Aufforderung
+1330: 01 3270 211    c_g:                211 nd                        ; AC := Ziffern der Adresse
+1331: 01 3203 330                        330 k_0                       ; Adresse fehlt?
+1332: 01 0210 170                        170 c_frage                   ; ja
+1333: 01 3271 211                        211 bad                       ; AC := ungueltig
+1334: 01 3203 330                        330 k_0                       ; Angabe in Ordnung?
+1335: 01 1337 170                        170 g_ok                      ; ja
+1336: 01 0210 000                        000 c_frage                   ; nein
+1337: 01 3267 211    g_ok:               211 acc                       ; AC := Einsprungadresse
+1340: 01 4053 616                        616 nz+013                    ; als Adresswort: AC um 9 Bit zyklisch links
+1341: 01 3240 210                        210 k_25                      ; plus Operationscode 025
+1342: 01 1343 240                        240 g_x                       ; Befehl ablegen
+1343: 00 0           g_x:                dbn 01                        ; hier steht 025 <Einsprung>; Rueckkehr ist Sache des Programms
+1344: 01 0011 000                        000 kdo                       ; Programm ist zurueckgekehrt: neue Aufforderung
+1345: 01 1370 240    nm_add:             240 rueck_nm_add              ; Rueckkehrwort sichern: Zeichen v an den Namen haengen
+1346: 01 3264 211                        211 nmn                       ; AC := Zeichen im Namen
+1347: 01 3212 220                        220 k_12                      ; schon zehn Zeichen?
+1350: 01 1370 050                        050 rueck_nm_add              ; ja: ueberzaehliges Zeichen verwerfen
+1351: 01 3264 211                        211 nmn                       ; AC := Zeichen im Namen
+1352: 01 3210 220                        220 k_5                       ; erste Haelfte?
+1353: 01 1361 040                        040 na_0                      ; ja
+1354: 01 3266 211                        211 nm1                       ; AC := Zeichen 6 bis 10
+1355: 01 4062 616                        616 nz+022                    ; Platz fuer ein Zeichen: AC um 6 Bit zyklisch links
+1356: 01 3272 210                        210 v                         ; plus Zeichen
+1357: 01 3266 240                        240 nm1                       ; merken
+1360: 01 1365 000                        000 na_n                      ; zaehlen
+1361: 01 3265 211    na_0:               211 nm0                       ; AC := Zeichen 1 bis 5
+1362: 01 4062 616                        616 nz+022                    ; Platz fuer ein Zeichen: AC um 6 Bit zyklisch links
+1363: 01 3272 210                        210 v                         ; plus Zeichen
+1364: 01 3265 240                        240 nm0                       ; merken
+1365: 01 3264 211    na_n:               211 nmn                       ; Zeichenzahl + 1: AC := nmn
+1366: 01 3204 210                        210 k_1                       ; Zeichenzahl + 1: AC := AC + k_1
+1367: 01 3264 240                        240 nmn                       ; Zeichenzahl + 1: nmn := AC
+1370: 00 0           rueck_nm_add:       dbn 01                        ; Rueckkehrzelle von nm_add: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+1371: 01 1635 240    rep_lauf:           240 rueck_rep_lauf            ; Rueckkehrwort sichern: Eintraege des Verzeichnisses durchlaufen
+1372: 01 3274 241                        241 fnd                       ; nichts gefunden
+1373: 01 1636 025                        025 rep_finde                 ; Repository suchen: Aufruf rep_finde
+1374: 01 3276 211                        211 rep_ok                    ; AC := gefunden?
+1375: 01 3203 330                        330 k_0                       ; kein Repository?
+1376: 01 1635 170                        170 rueck_rep_lauf            ; ja: Meldung ist ausgegeben
+1377: 01 3277 211                        211 rep_t                     ; AC := Trommel des Repositorys
+1400: 01 3401 240                        240 bl_t                      ; erster Block auf dieser Trommel
+1401: 01 3400 211                        211 rep_sp                    ; AC := Spur des ersten Blocks
+1402: 01 3402 240                        240 bl_sp                     ; erster Block ab dieser Spur
+1403: 01 3226 211    bl_lies:            211 a_puf                     ; Kopfspur des Blocks lesen: AC := Adresse der Pufferspur puf
+1404: 01 4003 240                        240 zc_adr                    ; Kopfspur des Blocks lesen: Pufferspur merken
+1405: 01 3401 211                        211 bl_t                      ; Kopfspur des Blocks lesen: AC := Trommel t
+1406: 01 3223 240                        240 zt_t                      ; Kopfspur des Blocks lesen: Trommel merken
+1407: 01 3107 025                        025 zt_anw                    ; Kopfspur des Blocks lesen: ZT anwaehlen: Aufruf zt_anw
+1410: 01 3402 211                        211 bl_sp                     ; Kopfspur des Blocks lesen: AC := Spur
+1411: 01 3224 240                        240 zc_spur                   ; Kopfspur des Blocks lesen: Spur merken
+1412: 01 3227 211                        211 k_661                     ; Kopfspur des Blocks lesen: AC := Operationscode 661 (ZT -> HT)
+1413: 01 3225 240                        240 zc_op                     ; Kopfspur des Blocks lesen: Operationscode merken
+1414: 01 3116 025                        025 zt_ausf                   ; Kopfspur des Blocks lesen: Spur uebertragen: Aufruf zt_ausf
+1415: 01 3540 211                        211 000000003540              ; AC := Blockkennung
+1416: 01 3241 330                        330 k_34716052613             ; Blockkennung stimmt?
+1417: 01 1445 170                        170 bl_ok                     ; ja
+1420: 00 4500 030                        030 04500                     ; Blockkennung falsch: Kanal K2 anwaehlen
+      00 0570 030                        dtm KEIN REPOSITORY           ; Blockkennung falsch: Text 'KEIN REPOSITORY'
+      00 1220 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1270 030    ;    
+      00 1060 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 1630 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 1500 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Blockkennung falsch: Zeilenschaltung
+1442: 01 3205 211                        211 k_2                       ; AC := Status 2
+1443: 00 7626 240                        240 zt_status                 ; Status eintragen
+1444: 01 1635 000                        000 rueck_rep_lauf            ; Ende
+1445: 01 3541 211    bl_ok:              211 000000003540+1            ; AC := Lagewort des Folgeblocks
+1446: 01 3403 240                        240 folge                     ; merken
+1447: 01 3542 211                        211 000000003540+2            ; AC := nn
+1450: 01 3404 240                        240 nn                        ; merken
+1451: 01 3405 241                        241 j                         ; Eintrag j := 0
+1452: 01 3207 211                        211 k_4                       ; AC := 4
+1453: 01 3406 240                        240 w                         ; Wortindex des ersten Eintrags 4
+1454: 01 3407 241                        241 cur                       ; geladene Spur des Blocks := 0 (Kopfspur)
+1455: 01 3405 211    en_next:            211 j                         ; AC := j
+1456: 01 3404 330                        330 nn                        ; alle Eintraege durch?
+1457: 01 1624 170                        170 bl_fertig                 ; ja
+1460: 01 3406 211                        211 w                         ; AC := Wortindex
+1461: 01 4077 612                        612 nz+037                    ; Spur im Block = Wortindex durch 32: AC um 5 Bit nach rechts
+1462: 01 3664 240                        240 tr                        ; Spur im Block
+1463: 01 3407 330                        330 cur                       ; schon geladen?
+1464: 01 1504 170                        170 en_ok                     ; ja
+1465: 01 3402 211                        211 bl_sp                     ; AC := erste Spur des Blocks
+1466: 01 3664 210                        210 tr                        ; plus Spur im Block
+1467: 01 3665 240                        240 e_sp                      ; Spur auf der Trommel
+1470: 01 3226 211                        211 a_puf                     ; Spur des Blocks lesen: AC := Adresse der Pufferspur puf
+1471: 01 4003 240                        240 zc_adr                    ; Spur des Blocks lesen: Pufferspur merken
+1472: 01 3401 211                        211 bl_t                      ; Spur des Blocks lesen: AC := Trommel t
+1473: 01 3223 240                        240 zt_t                      ; Spur des Blocks lesen: Trommel merken
+1474: 01 3107 025                        025 zt_anw                    ; Spur des Blocks lesen: ZT anwaehlen: Aufruf zt_anw
+1475: 01 3665 211                        211 e_sp                      ; Spur des Blocks lesen: AC := Spur
+1476: 01 3224 240                        240 zc_spur                   ; Spur des Blocks lesen: Spur merken
+1477: 01 3227 211                        211 k_661                     ; Spur des Blocks lesen: AC := Operationscode 661 (ZT -> HT)
+1500: 01 3225 240                        240 zc_op                     ; Spur des Blocks lesen: Operationscode merken
+1501: 01 3116 025                        025 zt_ausf                   ; Spur des Blocks lesen: Spur uebertragen: Aufruf zt_ausf
+1502: 01 3664 211                        211 tr                        ; AC := Spur im Block
+1503: 01 3407 240                        240 cur                       ; jetzt geladen
+1504: 01 3402 211    en_ok:              211 bl_sp                     ; AC := erste Spur des Blocks
+1505: 01 3664 210                        210 tr                        ; plus Spur im Block
+1506: 01 3665 240                        240 e_sp                      ; Spur des Eintrags auf der Trommel
+1507: 01 3406 211                        211 w                         ; AC := Wortindex
+1510: 01 3242 200                        200 k_37                      ; Zelle in der Spur
+1511: 01 4053 616                        616 nz+013                    ; in Adresseneinheiten: AC um 9 Bit zyklisch links
+1512: 01 3667 240                        240 ix                        ; Index auf die Zelle des Eintrags
+1513: 01 3666 240                        240 e_ix                      ; fuer d: Zelle des Eintrags
+1514: 01 3667 211                        211 ix                        ; Name 1 bis 5: AC := Index ix
+1515: 01 3226 210                        210 a_puf                     ; Name 1 bis 5: AC := Index + Anfangsadresse puf
+1516: 00 0000 251                        251 0                         ; Name 1 bis 5: AC := puf[Index] (R-Lesebefehl)
+1517: 01 3670 240                        240 en0                       ; merken
+1520: 01 3667 211                        211 ix                        ; naechste Zelle: AC := ix
+1521: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+1522: 01 3667 240                        240 ix                        ; naechste Zelle: ix := AC
+1523: 01 3226 210                        210 a_puf                     ; Name 6 bis 10: AC := Index + Anfangsadresse puf
+1524: 00 0000 251                        251 0                         ; Name 6 bis 10: AC := puf[Index] (R-Lesebefehl)
+1525: 01 3671 240                        240 en1                       ; merken
+1526: 01 3667 211                        211 ix                        ; naechste Zelle: AC := ix
+1527: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+1530: 01 3667 240                        240 ix                        ; naechste Zelle: ix := AC
+1531: 01 3226 210                        210 a_puf                     ; Laenge L: AC := Index + Anfangsadresse puf
+1532: 00 0000 251                        251 0                         ; Laenge L: AC := puf[Index] (R-Lesebefehl)
+1533: 01 3672 240                        240 e_len                     ; merken
+1534: 01 3667 211                        211 ix                        ; naechste Zelle: AC := ix
+1535: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+1536: 01 3667 240                        240 ix                        ; naechste Zelle: ix := AC
+1537: 01 3226 210                        210 a_puf                     ; Lagewort des ersten Segments: AC := Index + Anfangsadresse puf
+1540: 00 0000 251                        251 0                         ; Lagewort des ersten Segments: AC := puf[Index] (R-Lesebefehl)
+1541: 01 3673 240                        240 e_lage                    ; merken
+1542: 01 3203 330                        330 k_0                       ; Eintrag frei (Lagewort 0)?
+1543: 01 1564 170                        170 en_frei                   ; ja
+1544: 01 3273 211                        211 mode                      ; AC := Betriebsart
+1545: 01 3203 330                        330 k_0                       ; anzeigen?
+1546: 01 1570 170                        170 en_zeige                  ; ja
+1547: 01 3205 330                        330 k_2                       ; freien Eintrag suchen (Betriebsart 2)?
+1550: 01 1615 170                        170 en_weiter                 ; ja: belegter Eintrag interessiert nicht
+1551: 01 3265 211                        211 nm0                       ; AC := gesuchter Name 1 bis 5
+1552: 01 3670 330                        330 en0                       ; gleich?
+1553: 01 1555 170                        170 en_c2                     ; ja
+1554: 01 1615 000                        000 en_weiter                 ; nein: naechster Eintrag
+1555: 01 3266 211    en_c2:              211 nm1                       ; AC := gesuchter Name 6 bis 10
+1556: 01 3671 330                        330 en1                       ; gleich?
+1557: 01 1561 170                        170 en_fund                   ; ja
+1560: 01 1615 000                        000 en_weiter                 ; nein: naechster Eintrag
+1561: 01 3204 211    en_fund:            211 k_1                       ; AC := 1
+1562: 01 3274 240                        240 fnd                       ; gefunden
+1563: 01 1635 000                        000 rueck_rep_lauf            ; Ende des Durchlaufs
+1564: 01 3273 211    en_frei:            211 mode                      ; AC := Betriebsart
+1565: 01 3205 330                        330 k_2                       ; freien Eintrag suchen?
+1566: 01 1561 170                        170 en_fund                   ; ja
+1567: 01 1615 000                        000 en_weiter                 ; nein: ueberspringen
+1570: 00 4500 030    en_zeige:           030 04500                     ; Schreibwerk: Kanal K2 anwaehlen
+      00 0570 030                        dz  $ingb                     ; Grossbuchstabenzustand
+1572: 01 3670 211                        211 en0                       ; AC := Name 1 bis 5
+1573: 01 3675 240                        240 pn_w                      ; Parameter
+1574: 01 3027 025                        025 prt5                      ; fuenf Zeichen ausgeben: Aufruf prt5
+1575: 01 3671 211                        211 en1                       ; AC := Name 6 bis 10
+1576: 01 3675 240                        240 pn_w                      ; Parameter
+1577: 01 3027 025                        025 prt5                      ; fuenf Zeichen ausgeben: Aufruf prt5
+      00 0320 030                        dz  $zr                       ; Zwischenraum
+1601: 01 3672 211                        211 e_len                     ; L (4 Oktalziffern): AC := Zahl
+1602: 01 3243 240                        240 po_wert                   ; L (4 Oktalziffern): Parameter po_wert
+1603: 00 4500 030                        030 04500                     ; L (4 Oktalziffern): Kanal K2 anwaehlen
+      00 1170 030                        dz  $inkb                     ; L (4 Oktalziffern): Kleinbuchstabenzustand fuer Ziffern
+1605: 01 3136 025                        025 prt_okt4                  ; L (4 Oktalziffern): Aufruf prt_okt4
+      00 0320 030                        dz  $zr                       ; Zwischenraum
+1607: 01 3673 211                        211 e_lage                    ; Lagewort (3 Oktalziffern): AC := Zahl
+1610: 01 3243 240                        240 po_wert                   ; Lagewort (3 Oktalziffern): Parameter po_wert
+1611: 00 4500 030                        030 04500                     ; Lagewort (3 Oktalziffern): Kanal K2 anwaehlen
+      00 1170 030                        dz  $inkb                     ; Lagewort (3 Oktalziffern): Kleinbuchstabenzustand fuer Ziffern
+1613: 01 3163 025                        025 prt_okt3                  ; Lagewort (3 Oktalziffern): Aufruf prt_okt3
+      00 2720 030                        dz  $wrzl                     ; Zeilenschaltung
+1615: 01 3406 211    en_weiter:          211 w                         ; naechster Eintrag: AC := w
+1616: 01 3207 210                        210 k_4                       ; naechster Eintrag: AC := AC + k_4
+1617: 01 3406 240                        240 w                         ; naechster Eintrag: w := AC
+1620: 01 3405 211                        211 j                         ; j := j + 1: AC := j
+1621: 01 3204 210                        210 k_1                       ; j := j + 1: AC := AC + k_1
+1622: 01 3405 240                        240 j                         ; j := j + 1: j := AC
+1623: 01 1455 000                        000 en_next                   ; weiter
+1624: 01 3403 211    bl_fertig:          211 folge                     ; AC := Lagewort des Folgeblocks
+1625: 01 3203 330                        330 k_0                       ; letzter Block?
+1626: 01 1635 170                        170 rueck_rep_lauf            ; ja
+1627: 01 4045 612                        612 nz+05                     ; Trommel t = Lagewort durch 0200: AC um 7 Bit nach rechts
+1630: 01 3401 240                        240 bl_t                      ; Trommel des Folgeblocks
+1631: 01 3403 211                        211 folge                     ; AC := Lagewort
+1632: 01 3244 200                        200 k_177                     ; Spur
+1633: 01 3402 240                        240 bl_sp                     ; Spur des Folgeblocks
+1634: 01 1403 000                        000 bl_lies                   ; Folgeblock lesen
+1635: 00 0           rueck_rep_lauf:     dbn 01                        ; Rueckkehrzelle von rep_lauf: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+1636: 01 1756 240    rep_finde:          240 rueck_rep_finde           ; Rueckkehrwort sichern: Repository suchen
+1637: 01 3276 241                        241 rep_ok                    ; rep_ok := 0
+1640: 01 3674 241                        241 u                         ; Trommel u := 0
+1641: 01 3226 211    rf_next:            211 a_puf                     ; Spur 0 der Trommel u lesen: AC := Adresse der Pufferspur puf
+1642: 01 4003 240                        240 zc_adr                    ; Spur 0 der Trommel u lesen: Pufferspur merken
+1643: 01 3674 211                        211 u                         ; Spur 0 der Trommel u lesen: AC := Trommel t
+1644: 01 3223 240                        240 zt_t                      ; Spur 0 der Trommel u lesen: Trommel merken
+1645: 01 3107 025                        025 zt_anw                    ; Spur 0 der Trommel u lesen: ZT anwaehlen: Aufruf zt_anw
+1646: 01 3203 211                        211 k_0                       ; Spur 0 der Trommel u lesen: AC := Spur
+1647: 01 3224 240                        240 zc_spur                   ; Spur 0 der Trommel u lesen: Spur merken
+1650: 01 3227 211                        211 k_661                     ; Spur 0 der Trommel u lesen: AC := Operationscode 661 (ZT -> HT)
+1651: 01 3225 240                        240 zc_op                     ; Spur 0 der Trommel u lesen: Operationscode merken
+1652: 01 3116 025                        025 zt_ausf                   ; Spur 0 der Trommel u lesen: Spur uebertragen: Aufruf zt_ausf
+1653: 01 3544 211                        211 000000003540+4            ; AC := Listenkennung?
+1654: 01 3245 330                        330 k_25147361025             ; formatiert?
+1655: 01 1710 170                        170 rf_lk                     ; ja
+1656: 01 3674 211    rf_weiter:          211 u                         ; naechste Trommel: AC := u
+1657: 01 3204 210                        210 k_1                       ; naechste Trommel: AC := AC + k_1
+1660: 01 3674 240                        240 u                         ; naechste Trommel: u := AC
+1661: 01 3207 220                        220 k_4                       ; u - 4
+1662: 01 1641 040                        040 rf_next                   ; noch eine Trommel
+1663: 00 4500 030                        030 04500                     ; kein Anker: Kanal K2 anwaehlen
+      00 0570 030                        dtm KEIN REPOSITORY           ; kein Anker: Text 'KEIN REPOSITORY'
+      00 1220 030    ;    
+      00 0450 030    ;    
+      00 0510 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1270 030    ;    
+      00 1060 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 1630 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 1500 030    ;    
+      00 2720 030                        dz  $wrzl                     ; kein Anker: Zeilenschaltung
+1705: 01 3205 211                        211 k_2                       ; AC := Status 2
+1706: 00 7626 240                        240 zt_status                 ; Status eintragen
+1707: 01 1756 000                        000 rueck_rep_finde           ; Rueckkehr: nicht gefunden aus rep_finde
+1710: 01 3545 211    rf_lk:              211 000000003540+5            ; AC := Repository-Kennung?
+1711: 01 3246 330                        330 k_61350247316             ; Anker?
+1712: 01 1714 170                        170 rf_anker                  ; ja
+1713: 01 1656 000                        000 rf_weiter                 ; nein: naechste Trommel
+1714: 01 3546 211    rf_anker:           211 000000003540+6            ; AC := Formatversion
+1715: 01 3204 330                        330 k_1                       ; Formatversion 1?
+1716: 01 1750 170                        170 rf_ver                    ; ja
+1717: 00 4500 030                        030 04500                     ; Formatversion unbekannt: Kanal K2 anwaehlen
+      00 0570 030                        dtm FORMATVERSION FREMD       ; Formatversion unbekannt: Text 'FORMATVERSION FREMD'
+      00 0460 030    ;    
+      00 1060 030    ;    
+      00 1110 030    ;    
+      00 1240 030    ;    
+      00 0610 030    ;    
+      00 1630 030    ;    
+      00 1650 030    ;    
+      00 0450 030    ;    
+      00 1110 030    ;    
+      00 1420 030    ;    
+      00 0510 030    ;    
+      00 1060 030    ;    
+      00 1050 030    ;    
+      00 0320 030    ;    
+      00 0460 030    ;    
+      00 1110 030    ;    
+      00 0450 030    ;    
+      00 1240 030    ;    
+      00 0640 030    ;    
+      00 2720 030                        dz  $wrzl                     ; Formatversion unbekannt: Zeilenschaltung
+1745: 01 3206 211                        211 k_3                       ; AC := Status 3
+1746: 00 7626 240                        240 zt_status                 ; Status eintragen
+1747: 01 1756 000                        000 rueck_rep_finde           ; Rueckkehr: nicht verwendbar aus rep_finde
+1750: 01 3674 211    rf_ver:             211 u                         ; AC := Trommel
+1751: 01 3277 240                        240 rep_t                     ; Trommel des Repositorys
+1752: 01 3547 211                        211 000000003540+7            ; AC := Spur des ersten Namensblocks
+1753: 01 3400 240                        240 rep_sp                    ; merken
+1754: 01 3204 211                        211 k_1                       ; AC := 1
+1755: 01 3276 240                        240 rep_ok                    ; gefunden
+1756: 00 0           rueck_rep_finde:    dbn 01                        ; Rueckkehrzelle von rep_finde: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+1757: 01 2005 240    sp_setze:           240 rueck_sp_setze            ; Rueckkehrwort sichern: Belegungsbits der Spuren fr_von bis fr_bis - 1 auf fr_val setzen
+1760: 01 3421 241                        241 sf_s                      ; Spur := 0
+1761: 01 3540 211                        211 000000003540+0            ; AC := Listenwort 0
+1762: 01 3422 240                        240 sf_alt                    ; altes Wort merken
+1763: 01 2006 025                        025 sf_wort                   ; Wort umbauen: Aufruf sf_wort
+1764: 01 3423 211                        211 sf_neu                    ; AC := neues Wort
+1765: 01 3540 240                        240 000000003540+0            ; Listenwort 0 zurueck
+1766: 01 3541 211                        211 000000003540+1            ; AC := Listenwort 1
+1767: 01 3422 240                        240 sf_alt                    ; altes Wort merken
+1770: 01 2006 025                        025 sf_wort                   ; Wort umbauen: Aufruf sf_wort
+1771: 01 3423 211                        211 sf_neu                    ; AC := neues Wort
+1772: 01 3541 240                        240 000000003540+1            ; Listenwort 1 zurueck
+1773: 01 3542 211                        211 000000003540+2            ; AC := Listenwort 2
+1774: 01 3422 240                        240 sf_alt                    ; altes Wort merken
+1775: 01 2006 025                        025 sf_wort                   ; Wort umbauen: Aufruf sf_wort
+1776: 01 3423 211                        211 sf_neu                    ; AC := neues Wort
+1777: 01 3542 240                        240 000000003540+2            ; Listenwort 2 zurueck
+2000: 01 3543 211                        211 000000003540+3            ; AC := Listenwort 3
+2001: 01 3422 240                        240 sf_alt                    ; altes Wort merken
+2002: 01 2006 025                        025 sf_wort                   ; Wort umbauen: Aufruf sf_wort
+2003: 01 3423 211                        211 sf_neu                    ; AC := neues Wort
+2004: 01 3543 240                        240 000000003540+3            ; Listenwort 3 zurueck
+2005: 00 0           rueck_sp_setze:     dbn 01                        ; Rueckkehrzelle von sp_setze: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2006: 01 2050 240    sf_wort:            240 rueck_sf_wort             ; Rueckkehrwort sichern: ein Listenwort umbauen (32 Bits)
+2007: 01 3423 241                        241 sf_neu                    ; neues Wort := 0
+2010: 01 3247 211                        211 k_40                      ; AC := 32
+2011: 01 3424 240                        240 sf_zb                     ; Bitzaehler
+2012: 01 3425 241    sf_bit:             241 sf_b                      ; Bit := 0
+2013: 01 3421 211                        211 sf_s                      ; AC := Spur
+2014: 01 3416 220                        220 fr_von                    ; Spur - von
+2015: 01 2024 040                        040 sf_aus                    ; vor dem Bereich: altes Bit
+2016: 01 3421 211                        211 sf_s                      ; AC := Spur
+2017: 01 3417 220                        220 fr_bis                    ; Spur - bis
+2020: 01 2024 050                        050 sf_aus                    ; hinter dem Bereich: altes Bit
+2021: 01 3420 211                        211 fr_val                    ; AC := neues Bit
+2022: 01 3425 240                        240 sf_b                      ; Bit
+2023: 01 2030 000                        000 sf_nb                     ; weiter
+2024: 01 3422 211    sf_aus:             211 sf_alt                    ; AC := altes Wort
+2025: 01 2030 050                        050 sf_nb                     ; z0 = 0: Bit bleibt 0
+2026: 01 3204 211                        211 k_1                       ; AC := 1
+2027: 01 3425 240                        240 sf_b                      ; Bit := 1
+2030: 01 3423 215    sf_nb:              215 sf_neu                    ; AC := neues Wort um 1 Bit nach links
+2031: 01 3425 210                        210 sf_b                      ; plus Bit
+2032: 01 3423 240                        240 sf_neu                    ; merken
+2033: 01 3422 215                        215 sf_alt                    ; AC := altes Wort um 1 Bit nach links
+2034: 01 3422 240                        240 sf_alt                    ; merken
+2035: 01 3421 211                        211 sf_s                      ; Spur + 1: AC := sf_s
+2036: 01 3204 210                        210 k_1                       ; Spur + 1: AC := AC + k_1
+2037: 01 3421 240                        240 sf_s                      ; Spur + 1: sf_s := AC
+2040: 01 3424 211                        211 sf_zb                     ; AC := Bitzaehler
+2041: 01 3204 220                        220 k_1                       ; minus 1
+2042: 01 3424 240                        240 sf_zb                     ; merken
+2043: 01 3203 330                        330 k_0                       ; fertig?
+2044: 01 2046 170                        170 sf_we                     ; ja
+2045: 01 2012 000                        000 sf_bit                    ; naechstes Bit
+2046: 01 3423 215    sf_we:              215 sf_neu                    ; AC := neues Wort um 1 Bit nach links (z32 bleibt 0)
+2047: 01 3423 240                        240 sf_neu                    ; merken
+2050: 00 0           rueck_sf_wort:      dbn 01                        ; Rueckkehrzelle von sf_wort: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2051: 01 2105 240    seg_belege:         240 rueck_seg_belege          ; Rueckkehrwort sichern: Segment su_t / su_s belegen
+2052: 01 3433 211                        211 su_s                      ; AC := erste Spur
+2053: 01 3416 240                        240 fr_von                    ; von
+2054: 01 3234 210                        210 k_20                      ; plus 16
+2055: 01 3417 240                        240 fr_bis                    ; bis
+2056: 01 3204 211                        211 k_1                       ; AC := 1
+2057: 01 3420 240                        240 fr_val                    ; Bits := 1
+2060: 01 3226 211                        211 a_puf                     ; Belegungsliste lesen: AC := Adresse der Pufferspur puf
+2061: 01 4003 240                        240 zc_adr                    ; Belegungsliste lesen: Pufferspur merken
+2062: 01 3432 211                        211 su_t                      ; Belegungsliste lesen: AC := Trommel t
+2063: 01 3223 240                        240 zt_t                      ; Belegungsliste lesen: Trommel merken
+2064: 01 3107 025                        025 zt_anw                    ; Belegungsliste lesen: ZT anwaehlen: Aufruf zt_anw
+2065: 01 3203 211                        211 k_0                       ; Belegungsliste lesen: AC := Spur
+2066: 01 3224 240                        240 zc_spur                   ; Belegungsliste lesen: Spur merken
+2067: 01 3227 211                        211 k_661                     ; Belegungsliste lesen: AC := Operationscode 661 (ZT -> HT)
+2070: 01 3225 240                        240 zc_op                     ; Belegungsliste lesen: Operationscode merken
+2071: 01 3116 025                        025 zt_ausf                   ; Belegungsliste lesen: Spur uebertragen: Aufruf zt_ausf
+2072: 01 1757 025                        025 sp_setze                  ; Bits setzen: Aufruf sp_setze
+2073: 01 3226 211                        211 a_puf                     ; Belegungsliste zurueckschreiben: AC := Adresse der Pufferspur puf
+2074: 01 4003 240                        240 zc_adr                    ; Belegungsliste zurueckschreiben: Pufferspur merken
+2075: 01 3432 211                        211 su_t                      ; Belegungsliste zurueckschreiben: AC := Trommel t
+2076: 01 3223 240                        240 zt_t                      ; Belegungsliste zurueckschreiben: Trommel merken
+2077: 01 3107 025                        025 zt_anw                    ; Belegungsliste zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+2100: 01 3203 211                        211 k_0                       ; Belegungsliste zurueckschreiben: AC := Spur
+2101: 01 3224 240                        240 zc_spur                   ; Belegungsliste zurueckschreiben: Spur merken
+2102: 01 3232 211                        211 k_601                     ; Belegungsliste zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+2103: 01 3225 240                        240 zc_op                     ; Belegungsliste zurueckschreiben: Operationscode merken
+2104: 01 3116 025                        025 zt_ausf                   ; Belegungsliste zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+2105: 00 0           rueck_seg_belege:   dbn 01                        ; Rueckkehrzelle von seg_belege: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2106: 01 2177 240    seg_frei:           240 rueck_seg_frei            ; Rueckkehrwort sichern: Segmentkette ab fz_lage freigeben
+2107: 01 3426 211                        211 fz_lage                   ; AC := Lagewort des ersten Segments
+2110: 01 4045 612                        612 nz+05                     ; Trommel = Lagewort durch 0200: AC um 7 Bit nach rechts
+2111: 01 3410 240                        240 sg_t                      ; Trommel des Segments
+2112: 01 3426 211                        211 fz_lage                   ; AC := Lagewort
+2113: 01 3244 200                        200 k_177                     ; Spur des Segments
+2114: 01 3411 240                        240 sg_s                      ; Spur des Segments
+2115: 01 3411 211    d_seg:              211 sg_s                      ; AC := erste Spur des Segments
+2116: 01 3250 210                        210 k_17                      ; plus 15: letzte Spur mit der Verkettung
+2117: 01 3415 240                        240 sp                        ; Spur
+2120: 01 3226 211                        211 a_puf                     ; letzte Spur des Segments lesen: AC := Adresse der Pufferspur puf
+2121: 01 4003 240                        240 zc_adr                    ; letzte Spur des Segments lesen: Pufferspur merken
+2122: 01 3410 211                        211 sg_t                      ; letzte Spur des Segments lesen: AC := Trommel t
+2123: 01 3223 240                        240 zt_t                      ; letzte Spur des Segments lesen: Trommel merken
+2124: 01 3107 025                        025 zt_anw                    ; letzte Spur des Segments lesen: ZT anwaehlen: Aufruf zt_anw
+2125: 01 3415 211                        211 sp                        ; letzte Spur des Segments lesen: AC := Spur
+2126: 01 3224 240                        240 zc_spur                   ; letzte Spur des Segments lesen: Spur merken
+2127: 01 3227 211                        211 k_661                     ; letzte Spur des Segments lesen: AC := Operationscode 661 (ZT -> HT)
+2130: 01 3225 240                        240 zc_op                     ; letzte Spur des Segments lesen: Operationscode merken
+2131: 01 3116 025                        025 zt_ausf                   ; letzte Spur des Segments lesen: Spur uebertragen: Aufruf zt_ausf
+2132: 01 3576 211                        211 000000003540+036          ; AC := Lagewort des naechsten Segments (Zelle 36)
+2133: 01 3412 240                        240 sg_n                      ; merken
+2134: 01 3411 211                        211 sg_s                      ; AC := erste Spur
+2135: 01 3416 240                        240 fr_von                    ; von
+2136: 01 3234 210                        210 k_20                      ; plus 16 Spuren
+2137: 01 3417 240                        240 fr_bis                    ; bis (ausschliesslich)
+2140: 01 3420 241                        241 fr_val                    ; Bits := 0
+2141: 01 3226 211                        211 a_puf                     ; Spur 0 mit der Belegungsliste lesen: AC := Adresse der Pufferspur puf
+2142: 01 4003 240                        240 zc_adr                    ; Spur 0 mit der Belegungsliste lesen: Pufferspur merken
+2143: 01 3410 211                        211 sg_t                      ; Spur 0 mit der Belegungsliste lesen: AC := Trommel t
+2144: 01 3223 240                        240 zt_t                      ; Spur 0 mit der Belegungsliste lesen: Trommel merken
+2145: 01 3107 025                        025 zt_anw                    ; Spur 0 mit der Belegungsliste lesen: ZT anwaehlen: Aufruf zt_anw
+2146: 01 3203 211                        211 k_0                       ; Spur 0 mit der Belegungsliste lesen: AC := Spur
+2147: 01 3224 240                        240 zc_spur                   ; Spur 0 mit der Belegungsliste lesen: Spur merken
+2150: 01 3227 211                        211 k_661                     ; Spur 0 mit der Belegungsliste lesen: AC := Operationscode 661 (ZT -> HT)
+2151: 01 3225 240                        240 zc_op                     ; Spur 0 mit der Belegungsliste lesen: Operationscode merken
+2152: 01 3116 025                        025 zt_ausf                   ; Spur 0 mit der Belegungsliste lesen: Spur uebertragen: Aufruf zt_ausf
+2153: 01 1757 025                        025 sp_setze                  ; Bits der 16 Spuren auf 0: Aufruf sp_setze
+2154: 01 3226 211                        211 a_puf                     ; Belegungsliste zurueckschreiben: AC := Adresse der Pufferspur puf
+2155: 01 4003 240                        240 zc_adr                    ; Belegungsliste zurueckschreiben: Pufferspur merken
+2156: 01 3410 211                        211 sg_t                      ; Belegungsliste zurueckschreiben: AC := Trommel t
+2157: 01 3223 240                        240 zt_t                      ; Belegungsliste zurueckschreiben: Trommel merken
+2160: 01 3107 025                        025 zt_anw                    ; Belegungsliste zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+2161: 01 3203 211                        211 k_0                       ; Belegungsliste zurueckschreiben: AC := Spur
+2162: 01 3224 240                        240 zc_spur                   ; Belegungsliste zurueckschreiben: Spur merken
+2163: 01 3232 211                        211 k_601                     ; Belegungsliste zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+2164: 01 3225 240                        240 zc_op                     ; Belegungsliste zurueckschreiben: Operationscode merken
+2165: 01 3116 025                        025 zt_ausf                   ; Belegungsliste zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+2166: 01 3412 211                        211 sg_n                      ; AC := Lagewort des naechsten Segments
+2167: 01 3203 330                        330 k_0                       ; letztes Segment?
+2170: 01 2177 170                        170 rueck_seg_frei            ; ja
+2171: 01 4045 612                        612 nz+05                     ; Trommel: AC um 7 Bit nach rechts
+2172: 01 3410 240                        240 sg_t                      ; Trommel des naechsten Segments
+2173: 01 3412 211                        211 sg_n                      ; AC := Lagewort
+2174: 01 3244 200                        200 k_177                     ; Spur
+2175: 01 3411 240                        240 sg_s                      ; Spur des naechsten Segments
+2176: 01 2115 000                        000 d_seg                     ; naechstes Segment
+2177: 00 0           rueck_seg_frei:     dbn 01                        ; Rueckkehrzelle von seg_frei: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2200: 01 2226 240    seg_rest:           240 rueck_seg_rest            ; Rueckkehrwort sichern: Rest des laufenden Segments mit 0 fuellen
+2201: 01 3600 441                        441 000000003600              ; Datenspur := 0
+2202: 01 3427 211    sr_l:               211 rs_i                      ; AC := Spur im Segment
+2203: 01 3234 220                        220 k_20                      ; minus 16
+2204: 01 2226 050                        050 rueck_seg_rest            ; alle Spuren durch
+2205: 01 3411 211                        211 sg_s                      ; AC := erste Spur des Segments
+2206: 01 3427 210                        210 rs_i                      ; plus Spur im Segment
+2207: 01 3415 240                        240 sp                        ; Spur
+2210: 01 3251 211                        211 a_dpuf                    ; Nullspur schreiben: AC := Adresse der Pufferspur dpuf
+2211: 01 4003 240                        240 zc_adr                    ; Nullspur schreiben: Pufferspur merken
+2212: 01 3410 211                        211 sg_t                      ; Nullspur schreiben: AC := Trommel t
+2213: 01 3223 240                        240 zt_t                      ; Nullspur schreiben: Trommel merken
+2214: 01 3107 025                        025 zt_anw                    ; Nullspur schreiben: ZT anwaehlen: Aufruf zt_anw
+2215: 01 3415 211                        211 sp                        ; Nullspur schreiben: AC := Spur
+2216: 01 3224 240                        240 zc_spur                   ; Nullspur schreiben: Spur merken
+2217: 01 3232 211                        211 k_601                     ; Nullspur schreiben: AC := Operationscode 601 (HT -> ZT)
+2220: 01 3225 240                        240 zc_op                     ; Nullspur schreiben: Operationscode merken
+2221: 01 3116 025                        025 zt_ausf                   ; Nullspur schreiben: Spur uebertragen: Aufruf zt_ausf
+2222: 01 3427 211                        211 rs_i                      ; naechste Spur: AC := rs_i
+2223: 01 3204 210                        210 k_1                       ; naechste Spur: AC := AC + k_1
+2224: 01 3427 240                        240 rs_i                      ; naechste Spur: rs_i := AC
+2225: 01 2202 000                        000 sr_l                      ; weiter
+2226: 00 0           rueck_seg_rest:     dbn 01                        ; Rueckkehrzelle von seg_rest: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2227: 01 2312 240    seg_such:           240 rueck_seg_such            ; Rueckkehrwort sichern: su_n freie Spuren suchen
+2230: 01 3431 241                        241 su_ok                     ; nichts gefunden
+2231: 01 3434 241                        241 su_u                      ; Trommel u := 0
+2232: 01 3226 211    ss_next:            211 a_puf                     ; Spur 0 der Trommel lesen: AC := Adresse der Pufferspur puf
+2233: 01 4003 240                        240 zc_adr                    ; Spur 0 der Trommel lesen: Pufferspur merken
+2234: 01 3434 211                        211 su_u                      ; Spur 0 der Trommel lesen: AC := Trommel t
+2235: 01 3223 240                        240 zt_t                      ; Spur 0 der Trommel lesen: Trommel merken
+2236: 01 3107 025                        025 zt_anw                    ; Spur 0 der Trommel lesen: ZT anwaehlen: Aufruf zt_anw
+2237: 01 3203 211                        211 k_0                       ; Spur 0 der Trommel lesen: AC := Spur
+2240: 01 3224 240                        240 zc_spur                   ; Spur 0 der Trommel lesen: Spur merken
+2241: 01 3227 211                        211 k_661                     ; Spur 0 der Trommel lesen: AC := Operationscode 661 (ZT -> HT)
+2242: 01 3225 240                        240 zc_op                     ; Spur 0 der Trommel lesen: Operationscode merken
+2243: 01 3116 025                        025 zt_ausf                   ; Spur 0 der Trommel lesen: Spur uebertragen: Aufruf zt_ausf
+2244: 01 3544 211                        211 000000003540+4            ; AC := Listenkennung?
+2245: 01 3245 330                        330 k_25147361025             ; formatiert?
+2246: 01 2255 170                        170 ss_scan                   ; ja
+2247: 01 3434 211    ss_weiter:          211 su_u                      ; naechste Trommel: AC := su_u
+2250: 01 3204 210                        210 k_1                       ; naechste Trommel: AC := AC + k_1
+2251: 01 3434 240                        240 su_u                      ; naechste Trommel: su_u := AC
+2252: 01 3207 220                        220 k_4                       ; u - 4
+2253: 01 2232 040                        040 ss_next                   ; noch eine Trommel
+2254: 01 2312 000                        000 rueck_seg_such            ; keine Luecke gefunden aus seg_such
+2255: 01 3435 241    ss_scan:            241 su_lauf                   ; Laenge der freien Folge := 0
+2256: 01 3436 240                        240 su_sc                     ; Spur := 0
+2257: 01 3540 211                        211 000000003540+0            ; AC := Listenwort 0
+2260: 01 3437 240                        240 su_alt                    ; merken
+2261: 01 2314 025                        025 ss_wort                   ; Wort durchsuchen: Aufruf ss_wort
+2262: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+2263: 01 3203 330                        330 k_0                       ; noch nicht?
+2264: 01 2266 170                        170 ss_k0                     ; ja: weiter
+2265: 01 2312 000                        000 rueck_seg_such            ; Rueckkehr: gefunden aus seg_such
+2266: 01 3541 211    ss_k0:              211 000000003540+1            ; AC := Listenwort 1
+2267: 01 3437 240                        240 su_alt                    ; merken
+2270: 01 2314 025                        025 ss_wort                   ; Wort durchsuchen: Aufruf ss_wort
+2271: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+2272: 01 3203 330                        330 k_0                       ; noch nicht?
+2273: 01 2275 170                        170 ss_k1                     ; ja: weiter
+2274: 01 2312 000                        000 rueck_seg_such            ; Rueckkehr: gefunden aus seg_such
+2275: 01 3542 211    ss_k1:              211 000000003540+2            ; AC := Listenwort 2
+2276: 01 3437 240                        240 su_alt                    ; merken
+2277: 01 2314 025                        025 ss_wort                   ; Wort durchsuchen: Aufruf ss_wort
+2300: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+2301: 01 3203 330                        330 k_0                       ; noch nicht?
+2302: 01 2304 170                        170 ss_k2                     ; ja: weiter
+2303: 01 2312 000                        000 rueck_seg_such            ; Rueckkehr: gefunden aus seg_such
+2304: 01 3543 211    ss_k2:              211 000000003540+3            ; AC := Listenwort 3
+2305: 01 3437 240                        240 su_alt                    ; merken
+2306: 01 2314 025                        025 ss_wort                   ; Wort durchsuchen: Aufruf ss_wort
+2307: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+2310: 01 3203 330                        330 k_0                       ; noch nicht?
+2311: 01 2247 170                        170 ss_weiter                 ; ja: weiter
+2312: 00 0           rueck_seg_such:     dbn 01                        ; Rueckkehrzelle von seg_such: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2313: 01 2247 000    ss_k3:              000 ss_weiter                 ; naechste Trommel
+2314: 01 2353 240    ss_wort:            240 rueck_ss_wort             ; Rueckkehrwort sichern: ein Listenwort durchsuchen (32 Bits)
+2315: 01 3247 211                        211 k_40                      ; AC := 32
+2316: 01 3640 240                        240 su_zb                     ; Bitzaehler
+2317: 01 3437 211    sw_bit:             211 su_alt                    ; AC := altes Wort
+2320: 01 2327 040                        040 sw_bel                    ; z0 = 1: belegt
+2321: 01 3435 211                        211 su_lauf                   ; freie Folge + 1: AC := su_lauf
+2322: 01 3204 210                        210 k_1                       ; freie Folge + 1: AC := AC + k_1
+2323: 01 3435 240                        240 su_lauf                   ; freie Folge + 1: su_lauf := AC
+2324: 01 3430 330                        330 su_n                      ; genug?
+2325: 01 2343 170                        170 sw_fund                   ; ja
+2326: 01 2330 000                        000 sw_n                      ; weiter
+2327: 01 3435 241    sw_bel:             241 su_lauf                   ; Folge unterbrochen
+2330: 01 3437 215    sw_n:               215 su_alt                    ; AC := Wort um 1 Bit nach links
+2331: 01 3437 240                        240 su_alt                    ; merken
+2332: 01 3436 211                        211 su_sc                     ; Spur + 1: AC := su_sc
+2333: 01 3204 210                        210 k_1                       ; Spur + 1: AC := AC + k_1
+2334: 01 3436 240                        240 su_sc                     ; Spur + 1: su_sc := AC
+2335: 01 3640 211                        211 su_zb                     ; AC := Bitzaehler
+2336: 01 3204 220                        220 k_1                       ; minus 1
+2337: 01 3640 240                        240 su_zb                     ; merken
+2340: 01 3203 330                        330 k_0                       ; fertig?
+2341: 01 2353 170                        170 rueck_ss_wort             ; ja
+2342: 01 2317 000                        000 sw_bit                    ; naechstes Bit
+2343: 01 3436 211    sw_fund:            211 su_sc                     ; AC := Spur dieses Bits
+2344: 01 3430 220                        220 su_n                      ; minus Laenge
+2345: 01 3204 210                        210 k_1                       ; plus 1: erste Spur der Folge
+2346: 01 3433 240                        240 su_s                      ; Ergebnis Spur
+2347: 01 3434 211                        211 su_u                      ; AC := Trommel
+2350: 01 3432 240                        240 su_t                      ; Ergebnis Trommel
+2351: 01 3204 211                        211 k_1                       ; AC := 1
+2352: 01 3431 240                        240 su_ok                     ; gefunden
+2353: 00 0           rueck_ss_wort:      dbn 01                        ; Rueckkehrzelle von ss_wort: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2354: 01 2444 240    band_wort:          240 rueck_band_wort           ; Rueckkehrwort sichern: ein Wort der .obj vom Leser lesen
+2355: 01 3641 241                        241 bw_stufe                  ; bw_stufe := 0
+2356: 01 3642 240                        240 bw_ende                   ; bw_ende := 0
+2357: 01 3643 240                        240 bw_err                    ; bw_err := 0
+2360: 01 3644 240                        240 bw_k1                     ; bw_k1 := 0
+2361: 01 3645 240                        240 bw_k2                     ; bw_k2 := 0
+2362: 01 3646 240                        240 bw_wert                   ; bw_wert := 0
+2363: 01 3647 240                        240 bw_cnt                    ; bw_cnt := 0
+2364: 00 0           bw_lies:            dbn 01                        ; Zeichen vom Leser: zur Laufzeit 011 <Tafel tk>
+2365: 01 3272 240                        240 v                         ; Zeichenwert merken
+2366: 01 3252 330                        330 k_76                      ; Schraegstrich (Wert 076 in der Tafel)?
+2367: 01 2432 170                        170 bw_sl                     ; ja: Ende des Lochstreifens
+2370: 01 3212 220                        220 k_12                      ; Ziffer (Wert unter 10)?
+2371: 01 2364 050                        050 bw_lies                   ; nein: Zeichen ueberlesen
+2372: 01 3641 211                        211 bw_stufe                  ; AC := Stufe
+2373: 01 3203 330                        330 k_0                       ; Stufe 0 (K1)?
+2374: 01 2414 170                        170 bw_s0                     ; ja
+2375: 01 3204 330                        330 k_1                       ; Stufe 1 (K2)?
+2376: 01 2421 170                        170 bw_s1                     ; ja
+2377: 01 3272 211                        211 v                         ; AC := Ziffer
+2400: 01 3211 220                        220 k_10                      ; oktale Ziffer 0 bis 7?
+2401: 01 2441 050                        050 bw_fehl                   ; nein
+2402: 01 3647 211                        211 bw_cnt                    ; Ziffern + 1: AC := bw_cnt
+2403: 01 3204 210                        210 k_1                       ; Ziffern + 1: AC := AC + k_1
+2404: 01 3647 240                        240 bw_cnt                    ; Ziffern + 1: bw_cnt := AC
+2405: 01 3253 220                        220 k_14                      ; mehr als 11 Ziffern?
+2406: 01 2441 050                        050 bw_fehl                   ; ja
+2407: 01 3646 211                        211 bw_wert                   ; AC := Wert
+2410: 01 4071 616                        616 nz+031                    ; mal 8: AC um 3 Bit zyklisch links
+2411: 01 3272 210                        210 v                         ; plus Ziffer
+2412: 01 3646 240                        240 bw_wert                   ; merken
+2413: 01 2364 000                        000 bw_lies                   ; weiter
+2414: 01 3272 211    bw_s0:              211 v                         ; AC := K1
+2415: 01 3644 240                        240 bw_k1                     ; merken
+2416: 01 3204 211                        211 k_1                       ; AC := 1
+2417: 01 3641 240                        240 bw_stufe                  ; Stufe 1
+2420: 01 2364 000                        000 bw_lies                   ; weiter
+2421: 01 3272 211    bw_s1:              211 v                         ; AC := K2
+2422: 01 3645 240                        240 bw_k2                     ; merken
+2423: 01 3205 211                        211 k_2                       ; AC := 2
+2424: 01 3641 240                        240 bw_stufe                  ; Stufe 2
+2425: 01 2364 000                        000 bw_lies                   ; weiter
+2426: 01 3641 211    bw_pkt:             211 bw_stufe                  ; AC := Stufe
+2427: 01 3203 330                        330 k_0                       ; Punkt ohne K1?
+2430: 01 2441 170                        170 bw_fehl                   ; ja
+2431: 01 2444 000                        000 rueck_band_wort           ; Wort vollstaendig aus band_wort
+2432: 01 3641 211    bw_sl:              211 bw_stufe                  ; AC := Stufe
+2433: 01 3203 330                        330 k_0                       ; am Wortanfang?
+2434: 01 2436 170                        170 bw_sl1                    ; ja: Schlusszeichen
+2435: 01 2441 000                        000 bw_fehl                   ; nein: mitten im Wort ist / ein Fehler
+2436: 01 3204 211    bw_sl1:             211 k_1                       ; AC := 1
+2437: 01 3642 240                        240 bw_ende                   ; Schlusszeichen
+2440: 01 2444 000                        000 rueck_band_wort           ; Ende des Lochstreifens aus band_wort
+2441: 01 3204 211    bw_fehl:            211 k_1                       ; AC := 1
+2442: 01 3643 240                        240 bw_err                    ; Lochstreifen fehlerhaft
+2443: 01 3642 240                        240 bw_ende                   ; Lesen beenden
+2444: 00 0           rueck_band_wort:    dbn 01                        ; Rueckkehrzelle von band_wort: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2445: 01 2531 240    put_wort:           240 rueck_put_wort            ; Rueckkehrwort sichern: Wort in die Datenspur packen
+2446: 01 3275 241                        241 st                        ; Status := 0
+2447: 01 3650 211                        211 pk_cnt                    ; AC := Worte in der Spur
+2450: 01 3254 220                        220 k_31                      ; Spur voll?
+2451: 01 2461 040                        040 pw_ok                     ; nein
+2452: 01 3204 211                        211 k_1                       ; AC := 1
+2453: 01 3656 240                        240 fl_more                   ; es folgen weitere Worte
+2454: 01 2532 025                        025 flush                     ; Spur schreiben: Aufruf flush
+2455: 01 3275 211                        211 st                        ; AC := Status
+2456: 01 3203 330                        330 k_0                       ; Fehler?
+2457: 01 2461 170                        170 pw_ok                     ; nein
+2460: 01 2531 000                        000 rueck_put_wort            ; Rueckkehr mit Fehler aus put_wort
+2461: 01 3652 211    pw_ok:              211 pk_ptr                    ; Wort in die Zelle: AC := Index pk_ptr
+2462: 01 3251 210                        210 a_dpuf                    ; Wort in die Zelle: AC := Index + Anfangsadresse dpuf
+2463: 01 3231 210                        210 k_240                     ; Wort in die Zelle: AC := Befehl 240 dpuf[Index]
+2464: 01 2466 240                        240 fs_6                      ; Wort in die Zelle: Befehl auf Zelle fs_6 ablegen
+2465: 01 3646 211                        211 bw_wert                   ; Wort in die Zelle: AC := bw_wert
+2466: 00 0           fs_6:               dbn 01                        ; Wort in die Zelle: zur Laufzeit 240 dpuf[Index]
+2467: 01 3654 211                        211 pk_kwacc                  ; AC := Kennzeichen der Gruppe
+2470: 01 4062 616                        616 nz+022                    ; Platz fuer ein Kennzeichen: AC um 6 Bit zyklisch links
+2471: 01 3645 210                        210 bw_k2                     ; plus K2
+2472: 01 3654 240                        240 pk_kwacc                  ; merken
+2473: 01 3652 211                        211 pk_ptr                    ; naechste Zelle: AC := pk_ptr
+2474: 01 3233 210                        210 ae_1                      ; naechste Zelle: AC := AC + ae_1
+2475: 01 3652 240                        240 pk_ptr                    ; naechste Zelle: pk_ptr := AC
+2476: 01 3650 211                        211 pk_cnt                    ; Worte in der Spur + 1: AC := pk_cnt
+2477: 01 3204 210                        210 k_1                       ; Worte in der Spur + 1: AC := AC + k_1
+2500: 01 3650 240                        240 pk_cnt                    ; Worte in der Spur + 1: pk_cnt := AC
+2501: 01 3655 211                        211 pk_len                    ; L + 1: AC := pk_len
+2502: 01 3204 210                        210 k_1                       ; L + 1: AC := AC + k_1
+2503: 01 3655 240                        240 pk_len                    ; L + 1: pk_len := AC
+2504: 01 3651 211                        211 pk_g5                     ; Worte in der Gruppe + 1: AC := pk_g5
+2505: 01 3204 210                        210 k_1                       ; Worte in der Gruppe + 1: AC := AC + k_1
+2506: 01 3651 240                        240 pk_g5                     ; Worte in der Gruppe + 1: pk_g5 := AC
+2507: 01 3210 220                        220 k_5                       ; Gruppe voll?
+2510: 01 2531 040                        040 rueck_put_wort            ; nein
+2511: 01 3654 211                        211 pk_kwacc                  ; AC := Kennzeichen der Gruppe
+2512: 01 4071 616                        616 nz+031                    ; linksbuendig in z0 bis z29: AC um 3 Bit zyklisch links
+2513: 01 3660 240                        240 kw_w                      ; merken
+2514: 01 3653 211                        211 pk_kwptr                  ; Kennungswort der Gruppe: AC := Index pk_kwptr
+2515: 01 3251 210                        210 a_dpuf                    ; Kennungswort der Gruppe: AC := Index + Anfangsadresse dpuf
+2516: 01 3231 210                        210 k_240                     ; Kennungswort der Gruppe: AC := Befehl 240 dpuf[Index]
+2517: 01 2521 240                        240 fs_7                      ; Kennungswort der Gruppe: Befehl auf Zelle fs_7 ablegen
+2520: 01 3660 211                        211 kw_w                      ; Kennungswort der Gruppe: AC := kw_w
+2521: 00 0           fs_7:               dbn 01                        ; Kennungswort der Gruppe: zur Laufzeit 240 dpuf[Index]
+2522: 01 3652 211                        211 pk_ptr                    ; AC := Zelle hinter dem Wort
+2523: 01 3653 240                        240 pk_kwptr                  ; Kennungszelle der naechsten Gruppe
+2524: 01 3652 211                        211 pk_ptr                    ; erste Wortzelle der naechsten Gruppe: AC := pk_ptr
+2525: 01 3233 210                        210 ae_1                      ; erste Wortzelle der naechsten Gruppe: AC := AC + ae_1
+2526: 01 3652 240                        240 pk_ptr                    ; erste Wortzelle der naechsten Gruppe: pk_ptr := AC
+2527: 01 3651 241                        241 pk_g5                     ; Gruppe leer
+2530: 01 3654 240                        240 pk_kwacc                  ; Kennzeichen leer
+2531: 00 0           rueck_put_wort:     dbn 01                        ; Rueckkehrzelle von put_wort: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2532: 01 2644 240    flush:              240 rueck_flush               ; Rueckkehrwort sichern: Datenspur schreiben
+2533: 01 3651 211                        211 pk_g5                     ; AC := Worte in der angefangenen Gruppe
+2534: 01 3203 330                        330 k_0                       ; keine angefangene Gruppe?
+2535: 01 2557 170                        170 fl_k                      ; ja
+2536: 01 3654 211    fl_pad:             211 pk_kwacc                  ; AC := Kennzeichen der Gruppe
+2537: 01 4062 616                        616 nz+022                    ; leeres Kennzeichen anfuegen: AC um 6 Bit zyklisch links
+2540: 01 3654 240                        240 pk_kwacc                  ; merken
+2541: 01 3651 211                        211 pk_g5                     ; Gruppe auffuellen: AC := pk_g5
+2542: 01 3204 210                        210 k_1                       ; Gruppe auffuellen: AC := AC + k_1
+2543: 01 3651 240                        240 pk_g5                     ; Gruppe auffuellen: pk_g5 := AC
+2544: 01 3210 220                        220 k_5                       ; fuenf?
+2545: 01 2536 040                        040 fl_pad                    ; nein
+2546: 01 3654 211                        211 pk_kwacc                  ; AC := Kennzeichen der Gruppe
+2547: 01 4071 616                        616 nz+031                    ; linksbuendig in z0 bis z29: AC um 3 Bit zyklisch links
+2550: 01 3660 240                        240 kw_w                      ; merken
+2551: 01 3653 211                        211 pk_kwptr                  ; Kennungswort der Gruppe: AC := Index pk_kwptr
+2552: 01 3251 210                        210 a_dpuf                    ; Kennungswort der Gruppe: AC := Index + Anfangsadresse dpuf
+2553: 01 3231 210                        210 k_240                     ; Kennungswort der Gruppe: AC := Befehl 240 dpuf[Index]
+2554: 01 2556 240                        240 fs_8                      ; Kennungswort der Gruppe: Befehl auf Zelle fs_8 ablegen
+2555: 01 3660 211                        211 kw_w                      ; Kennungswort der Gruppe: AC := kw_w
+2556: 00 0           fs_8:               dbn 01                        ; Kennungswort der Gruppe: zur Laufzeit 240 dpuf[Index]
+2557: 01 3656 211    fl_k:               211 fl_more                   ; AC := weitere Worte?
+2560: 01 3203 330                        330 k_0                       ; keine?
+2561: 01 2600 170                        170 fl_w                      ; ja: nichts zu verketten
+2562: 01 3657 211                        211 sg_i                      ; AC := Spur im Segment
+2563: 01 3250 220                        220 k_17                      ; letzte Spur des Segments?
+2564: 01 2600 040                        040 fl_w                      ; nein
+2565: 01 3234 211                        211 k_20                      ; AC := 16 Spuren
+2566: 01 3430 240                        240 su_n                      ; gesucht
+2567: 01 2227 025                        025 seg_such                  ; naechstes Segment suchen: Aufruf seg_such
+2570: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+2571: 01 3203 330                        330 k_0                       ; Trommeln voll?
+2572: 01 2642 170                        170 fl_voll                   ; ja
+2573: 01 2051 025                        025 seg_belege                ; Segment belegen: Aufruf seg_belege
+2574: 01 3432 211                        211 su_t                      ; AC := Trommel
+2575: 01 4045 616                        616 nz+05                     ; mal 0200: AC um 7 Bit zyklisch links
+2576: 01 3433 210                        210 su_s                      ; plus Spur
+2577: 01 3636 240                        240 000000003600+036          ; Verkettung: Lagewort des naechsten Segments in Zelle 36
+2600: 01 3411 211    fl_w:               211 sg_s                      ; AC := erste Spur des Segments
+2601: 01 3657 210                        210 sg_i                      ; plus Spur im Segment
+2602: 01 3415 240                        240 sp                        ; Spur
+2603: 01 3251 211                        211 a_dpuf                    ; Datenspur schreiben: AC := Adresse der Pufferspur dpuf
+2604: 01 4003 240                        240 zc_adr                    ; Datenspur schreiben: Pufferspur merken
+2605: 01 3410 211                        211 sg_t                      ; Datenspur schreiben: AC := Trommel t
+2606: 01 3223 240                        240 zt_t                      ; Datenspur schreiben: Trommel merken
+2607: 01 3107 025                        025 zt_anw                    ; Datenspur schreiben: ZT anwaehlen: Aufruf zt_anw
+2610: 01 3415 211                        211 sp                        ; Datenspur schreiben: AC := Spur
+2611: 01 3224 240                        240 zc_spur                   ; Datenspur schreiben: Spur merken
+2612: 01 3232 211                        211 k_601                     ; Datenspur schreiben: AC := Operationscode 601 (HT -> ZT)
+2613: 01 3225 240                        240 zc_op                     ; Datenspur schreiben: Operationscode merken
+2614: 01 3116 025                        025 zt_ausf                   ; Datenspur schreiben: Spur uebertragen: Aufruf zt_ausf
+2615: 01 3600 441                        441 000000003600              ; Datenspur := 0
+2616: 01 3656 211                        211 fl_more                   ; AC := weitere Worte?
+2617: 01 3203 330                        330 k_0                       ; keine?
+2620: 01 2633 170                        170 fl_r                      ; ja
+2621: 01 3657 211                        211 sg_i                      ; naechste Spur: AC := sg_i
+2622: 01 3204 210                        210 k_1                       ; naechste Spur: AC := AC + k_1
+2623: 01 3657 240                        240 sg_i                      ; naechste Spur: sg_i := AC
+2624: 01 3234 220                        220 k_20                      ; Segment voll?
+2625: 01 2633 040                        040 fl_r                      ; nein
+2626: 01 3657 241                        241 sg_i                      ; Spur im Segment := 0
+2627: 01 3432 211                        211 su_t                      ; AC := Trommel des neuen Segments
+2630: 01 3410 240                        240 sg_t                      ; laufendes Segment
+2631: 01 3433 211                        211 su_s                      ; AC := Spur des neuen Segments
+2632: 01 3411 240                        240 sg_s                      ; laufendes Segment
+2633: 01 3650 241    fl_r:               241 pk_cnt                    ; Worte in der Spur := 0
+2634: 01 3651 240                        240 pk_g5                     ; Worte in der Gruppe := 0
+2635: 01 3654 240                        240 pk_kwacc                  ; Kennzeichen := 0
+2636: 01 3653 240                        240 pk_kwptr                  ; Kennungszelle der Gruppe 0
+2637: 01 3233 211                        211 ae_1                      ; AC := 1 Zelle
+2640: 01 3652 240                        240 pk_ptr                    ; erste Wortzelle
+2641: 01 2644 000                        000 rueck_flush               ; Rueckkehr aus flush
+2642: 01 3237 211    fl_voll:            211 k_6                       ; AC := Status 6
+2643: 01 3275 240                        240 st                        ; Trommeln voll
+2644: 00 0           rueck_flush:        dbn 01                        ; Rueckkehrzelle von flush: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+2645: 01 3026 240    block_neu:          240 rueck_block_neu           ; Rueckkehrwort sichern: neuen Namensblock anlegen
+2646: 01 3275 241                        241 st                        ; Status := 0
+2647: 01 3404 211                        211 nn                        ; AC := nn des letzten Blocks
+2650: 01 4046 616                        616 nz+06                     ; mal 4: AC um 2 Bit zyklisch links
+2651: 01 3215 210                        210 k_43                      ; plus 4 Kopfworte und 31 (aufrunden)
+2652: 01 4077 612                        612 nz+037                    ; durch 32: Spuren des Blocks: AC um 5 Bit nach rechts
+2653: 01 3661 240                        240 nb_n                      ; Spuren des Blocks
+2654: 01 3430 240                        240 su_n                      ; gesucht
+2655: 01 2227 025                        025 seg_such                  ; Luecke suchen: Aufruf seg_such
+2656: 01 3431 211                        211 su_ok                     ; AC := gefunden?
+2657: 01 3203 330                        330 k_0                       ; Trommeln voll?
+2660: 01 3024 170                        170 bn_voll                   ; ja
+2661: 01 3433 211                        211 su_s                      ; AC := erste Spur
+2662: 01 3416 240                        240 fr_von                    ; von
+2663: 01 3661 210                        210 nb_n                      ; plus Spuren
+2664: 01 3417 240                        240 fr_bis                    ; bis
+2665: 01 3204 211                        211 k_1                       ; AC := 1
+2666: 01 3420 240                        240 fr_val                    ; Bits := 1
+2667: 01 3226 211                        211 a_puf                     ; Belegungsliste lesen: AC := Adresse der Pufferspur puf
+2670: 01 4003 240                        240 zc_adr                    ; Belegungsliste lesen: Pufferspur merken
+2671: 01 3432 211                        211 su_t                      ; Belegungsliste lesen: AC := Trommel t
+2672: 01 3223 240                        240 zt_t                      ; Belegungsliste lesen: Trommel merken
+2673: 01 3107 025                        025 zt_anw                    ; Belegungsliste lesen: ZT anwaehlen: Aufruf zt_anw
+2674: 01 3203 211                        211 k_0                       ; Belegungsliste lesen: AC := Spur
+2675: 01 3224 240                        240 zc_spur                   ; Belegungsliste lesen: Spur merken
+2676: 01 3227 211                        211 k_661                     ; Belegungsliste lesen: AC := Operationscode 661 (ZT -> HT)
+2677: 01 3225 240                        240 zc_op                     ; Belegungsliste lesen: Operationscode merken
+2700: 01 3116 025                        025 zt_ausf                   ; Belegungsliste lesen: Spur uebertragen: Aufruf zt_ausf
+2701: 01 1757 025                        025 sp_setze                  ; Spuren belegen: Aufruf sp_setze
+2702: 01 3226 211                        211 a_puf                     ; Belegungsliste zurueckschreiben: AC := Adresse der Pufferspur puf
+2703: 01 4003 240                        240 zc_adr                    ; Belegungsliste zurueckschreiben: Pufferspur merken
+2704: 01 3432 211                        211 su_t                      ; Belegungsliste zurueckschreiben: AC := Trommel t
+2705: 01 3223 240                        240 zt_t                      ; Belegungsliste zurueckschreiben: Trommel merken
+2706: 01 3107 025                        025 zt_anw                    ; Belegungsliste zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+2707: 01 3203 211                        211 k_0                       ; Belegungsliste zurueckschreiben: AC := Spur
+2710: 01 3224 240                        240 zc_spur                   ; Belegungsliste zurueckschreiben: Spur merken
+2711: 01 3232 211                        211 k_601                     ; Belegungsliste zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+2712: 01 3225 240                        240 zc_op                     ; Belegungsliste zurueckschreiben: Operationscode merken
+2713: 01 3116 025                        025 zt_ausf                   ; Belegungsliste zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+2714: 01 3540 441                        441 000000003540              ; Pufferspur := 0
+2715: 01 3241 211                        211 k_34716052613             ; AC := Blockkennung
+2716: 01 3540 240                        240 000000003540              ; Wort 0 des Blocks
+2717: 01 3404 211                        211 nn                        ; AC := nn
+2720: 01 3542 240                        240 000000003540+2            ; Wort 2 des Blocks
+2721: 01 3226 211                        211 a_puf                     ; erste Spur des Blocks schreiben: AC := Adresse der Pufferspur puf
+2722: 01 4003 240                        240 zc_adr                    ; erste Spur des Blocks schreiben: Pufferspur merken
+2723: 01 3432 211                        211 su_t                      ; erste Spur des Blocks schreiben: AC := Trommel t
+2724: 01 3223 240                        240 zt_t                      ; erste Spur des Blocks schreiben: Trommel merken
+2725: 01 3107 025                        025 zt_anw                    ; erste Spur des Blocks schreiben: ZT anwaehlen: Aufruf zt_anw
+2726: 01 3433 211                        211 su_s                      ; erste Spur des Blocks schreiben: AC := Spur
+2727: 01 3224 240                        240 zc_spur                   ; erste Spur des Blocks schreiben: Spur merken
+2730: 01 3232 211                        211 k_601                     ; erste Spur des Blocks schreiben: AC := Operationscode 601 (HT -> ZT)
+2731: 01 3225 240                        240 zc_op                     ; erste Spur des Blocks schreiben: Operationscode merken
+2732: 01 3116 025                        025 zt_ausf                   ; erste Spur des Blocks schreiben: Spur uebertragen: Aufruf zt_ausf
+2733: 01 3540 441                        441 000000003540              ; Pufferspur := 0
+2734: 01 3204 211                        211 k_1                       ; AC := 1
+2735: 01 3662 240                        240 bn_i                      ; Spur im Block := 1
+2736: 01 3662 211    bn_l:               211 bn_i                      ; AC := Spur im Block
+2737: 01 3661 330                        330 nb_n                      ; alle Spuren?
+2740: 01 2762 170                        170 bn_e                      ; ja
+2741: 01 3433 211                        211 su_s                      ; AC := erste Spur
+2742: 01 3662 210                        210 bn_i                      ; plus Spur im Block
+2743: 01 3415 240                        240 sp                        ; Spur
+2744: 01 3226 211                        211 a_puf                     ; Nullspur schreiben: AC := Adresse der Pufferspur puf
+2745: 01 4003 240                        240 zc_adr                    ; Nullspur schreiben: Pufferspur merken
+2746: 01 3432 211                        211 su_t                      ; Nullspur schreiben: AC := Trommel t
+2747: 01 3223 240                        240 zt_t                      ; Nullspur schreiben: Trommel merken
+2750: 01 3107 025                        025 zt_anw                    ; Nullspur schreiben: ZT anwaehlen: Aufruf zt_anw
+2751: 01 3415 211                        211 sp                        ; Nullspur schreiben: AC := Spur
+2752: 01 3224 240                        240 zc_spur                   ; Nullspur schreiben: Spur merken
+2753: 01 3232 211                        211 k_601                     ; Nullspur schreiben: AC := Operationscode 601 (HT -> ZT)
+2754: 01 3225 240                        240 zc_op                     ; Nullspur schreiben: Operationscode merken
+2755: 01 3116 025                        025 zt_ausf                   ; Nullspur schreiben: Spur uebertragen: Aufruf zt_ausf
+2756: 01 3662 211                        211 bn_i                      ; naechste Spur: AC := bn_i
+2757: 01 3204 210                        210 k_1                       ; naechste Spur: AC := AC + k_1
+2760: 01 3662 240                        240 bn_i                      ; naechste Spur: bn_i := AC
+2761: 01 2736 000                        000 bn_l                      ; weiter
+2762: 01 3432 211    bn_e:               211 su_t                      ; AC := Trommel
+2763: 01 4045 616                        616 nz+05                     ; mal 0200: AC um 7 Bit zyklisch links
+2764: 01 3433 210                        210 su_s                      ; plus Spur
+2765: 01 3663 240                        240 lage                      ; Lagewort des neuen Blocks
+2766: 01 3226 211                        211 a_puf                     ; letzten Block lesen: AC := Adresse der Pufferspur puf
+2767: 01 4003 240                        240 zc_adr                    ; letzten Block lesen: Pufferspur merken
+2770: 01 3401 211                        211 bl_t                      ; letzten Block lesen: AC := Trommel t
+2771: 01 3223 240                        240 zt_t                      ; letzten Block lesen: Trommel merken
+2772: 01 3107 025                        025 zt_anw                    ; letzten Block lesen: ZT anwaehlen: Aufruf zt_anw
+2773: 01 3402 211                        211 bl_sp                     ; letzten Block lesen: AC := Spur
+2774: 01 3224 240                        240 zc_spur                   ; letzten Block lesen: Spur merken
+2775: 01 3227 211                        211 k_661                     ; letzten Block lesen: AC := Operationscode 661 (ZT -> HT)
+2776: 01 3225 240                        240 zc_op                     ; letzten Block lesen: Operationscode merken
+2777: 01 3116 025                        025 zt_ausf                   ; letzten Block lesen: Spur uebertragen: Aufruf zt_ausf
+3000: 01 3663 211                        211 lage                      ; AC := Lagewort
+3001: 01 3541 240                        240 000000003540+1            ; Folgeblock eintragen
+3002: 01 3226 211                        211 a_puf                     ; Kopfspur des alten Blocks zurueckschreiben: AC := Adresse der Pufferspur puf
+3003: 01 4003 240                        240 zc_adr                    ; Kopfspur des alten Blocks zurueckschreiben: Pufferspur merken
+3004: 01 3401 211                        211 bl_t                      ; Kopfspur des alten Blocks zurueckschreiben: AC := Trommel t
+3005: 01 3223 240                        240 zt_t                      ; Kopfspur des alten Blocks zurueckschreiben: Trommel merken
+3006: 01 3107 025                        025 zt_anw                    ; Kopfspur des alten Blocks zurueckschreiben: ZT anwaehlen: Aufruf zt_anw
+3007: 01 3402 211                        211 bl_sp                     ; Kopfspur des alten Blocks zurueckschreiben: AC := Spur
+3010: 01 3224 240                        240 zc_spur                   ; Kopfspur des alten Blocks zurueckschreiben: Spur merken
+3011: 01 3232 211                        211 k_601                     ; Kopfspur des alten Blocks zurueckschreiben: AC := Operationscode 601 (HT -> ZT)
+3012: 01 3225 240                        240 zc_op                     ; Kopfspur des alten Blocks zurueckschreiben: Operationscode merken
+3013: 01 3116 025                        025 zt_ausf                   ; Kopfspur des alten Blocks zurueckschreiben: Spur uebertragen: Aufruf zt_ausf
+3014: 01 3432 211                        211 su_t                      ; AC := Trommel
+3015: 01 3401 240                        240 bl_t                      ; aktueller Block
+3016: 01 3433 211                        211 su_s                      ; AC := Spur
+3017: 01 3402 240                        240 bl_sp                     ; aktueller Block
+3020: 01 3665 240                        240 e_sp                      ; Spur des Eintrags 0
+3021: 01 3255 211                        211 ae_4                      ; AC := 4 Zellen (Wort 4)
+3022: 01 3666 240                        240 e_ix                      ; Index des Eintrags 0
+3023: 01 3026 000                        000 rueck_block_neu           ; Rueckkehr aus block_neu
+3024: 01 3237 211    bn_voll:            211 k_6                       ; AC := Status 6
+3025: 01 3275 240                        240 st                        ; Trommeln voll
+3026: 00 0           rueck_block_neu:    dbn 01                        ; Rueckkehrzelle von block_neu: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3027: 01 3045 240    prt5:               240 rueck_prt5                ; Rueckkehrwort sichern: fuenf Namenszeichen ausgeben
+3030: 01 3677 241                        241 i5                        ; Zaehler := 0
+3031: 01 3675 211    p5_l:               211 pn_w                      ; AC := Wort
+3032: 01 4062 616                        616 nz+022                    ; naechstes Zeichen nach unten (zyklisch): AC um 6 Bit zyklisch links
+3033: 01 3675 240                        240 pn_w                      ; Rest merken
+3034: 01 3256 200                        200 k_77                      ; Zeichen ausblenden
+3035: 01 3676 240                        240 pc_ch                     ; Parameter
+3036: 01 3046 025                        025 prt_zeichen               ; Zeichen ausgeben: Aufruf prt_zeichen
+3037: 01 3677 211                        211 i5                        ; Zaehler + 1: AC := i5
+3040: 01 3204 210                        210 k_1                       ; Zaehler + 1: AC := AC + k_1
+3041: 01 3677 240                        240 i5                        ; Zaehler + 1: i5 := AC
+3042: 01 3210 330                        330 k_5                       ; fuenf Zeichen?
+3043: 01 3045 170                        170 rueck_prt5                ; ja
+3044: 01 3031 000                        000 p5_l                      ; naechstes Zeichen
+3045: 00 0           rueck_prt5:         dbn 01                        ; Rueckkehrzelle von prt5: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3046: 01 3071 240    prt_zeichen:        240 rueck_prt_zeichen         ; Rueckkehrwort sichern: Zeichen pc_ch ausgeben
+3047: 01 3676 211                        211 pc_ch                     ; AC := Zeichencode
+3050: 01 3212 220                        220 k_12                      ; Ziffer (Code unter 012)?
+3051: 01 3061 040                        040 pz_zif                    ; ja
+3052: 01 3676 211                        211 pc_ch                     ; AC := Zeichencode
+3053: 01 4053 616                        616 nz+013                    ; in Adresseneinheiten: AC um 9 Bit zyklisch links
+3054: 01 3257 210                        210 a_ausg_tab                ; plus Tafel der Ausgabebefehle
+3055: 00 0000 251                        251 0                         ; AC := Ausgabebefehl (R-Lesebefehl)
+3056: 01 3057 240                        240 pz_y                      ; Befehl ablegen
+3057: 00 0           pz_y:               dbn 01                        ; hier steht der Ausgabebefehl
+3060: 01 3071 000                        000 rueck_prt_zeichen         ; Rueckkehr aus prt_zeichen
+      00 1170 030    pz_zif:             dz  $inkb                     ; Kleinbuchstabenzustand fuer Ziffern
+3062: 01 3676 211                        211 pc_ch                     ; AC := Zeichencode
+3063: 01 4053 616                        616 nz+013                    ; in Adresseneinheiten: AC um 9 Bit zyklisch links
+3064: 01 3257 210                        210 a_ausg_tab                ; plus Tafel der Ausgabebefehle
+3065: 00 0000 251                        251 0                         ; AC := Ausgabebefehl (R-Lesebefehl)
+3066: 01 3067 240                        240 pz_z                      ; Befehl ablegen
+3067: 00 0           pz_z:               dbn 01                        ; hier steht der Ausgabebefehl
+      00 0570 030                        dz  $ingb                     ; Grossbuchstabenzustand
+3071: 00 0           rueck_prt_zeichen:  dbn 01                        ; Rueckkehrzelle von prt_zeichen: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3072: 01 3106 240    eing_init_tk:       240 rueck_eing_init_tk        ; Rueckkehrwort sichern: Eingabetafel tk waehlen
+3073: 01 4000 211                        211 a_tk_a                    ; AC := Adresse Tafel A
+3074: 01 4002 200                        200 k_40000                   ; Adressbit 040 von Tafel A (Ladeadresse ist Vielfaches von 040)
+3075: 01 3203 330                        330 k_0                       ; Bit 0 ?
+3076: 01 3102 170                        170 wa_9                      ; ja: Tafel A liegt auf Vielfachem von 0100 (Ladeadresse ist Vielfaches von 0100)
+3077: 01 4001 211                        211 a_tk_b                    ; nein: AC := Adresse Tafel B
+3100: 01 3235 210                        210 k_11                      ; plus Operationscode 011
+3101: 01 3104 000                        000 sp_10                     ; weiter
+3102: 01 4000 211    wa_9:               211 a_tk_a                    ; AC := Adresse Tafel A
+3103: 01 3235 210                        210 k_11                      ; plus Operationscode 011
+3104: 01 0027 240    sp_10:              240 k_lies                    ; Eingabebefehl auf Stelle k_lies
+3105: 01 2364 240                        240 bw_lies                   ; Eingabebefehl auf Stelle bw_lies
+3106: 00 0           rueck_eing_init_tk: dbn 01                        ; Rueckkehrzelle von eing_init_tk: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3107: 01 3115 240    zt_anw:             240 rueck_zt_anw              ; Rueckkehrwort sichern: Zusatztrommel zt_t anwaehlen (5k00 030, k = t + 1; 5100 = ZT0 bis 5400 = ZT3)
+3110: 01 3223 211                        211 zt_t                      ; AC := t
+3111: 01 4075 616                        616 nz+035                    ; um 15 Bit nach links: AC um 15 Bit zyklisch links
+3112: 01 4004 210                        210 k_5100030                 ; plus Befehl 5100 030
+3113: 01 3114 240                        240 zw_x                      ; Befehl ablegen
+3114: 00 0           zw_x:               dbn 01                        ; hier steht 5k00 030
+3115: 00 0           rueck_zt_anw:       dbn 01                        ; Rueckkehrzelle von zt_anw: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3116: 01 3125 240    zt_ausf:            240 rueck_zt_ausf             ; Rueckkehrwort sichern: Befehl zzz0 bbbb 601/661 aus zc_spur, zc_adr und zc_op bilden und ausfuehren
+3117: 01 3224 211                        211 zc_spur                   ; AC := Spur
+3120: 01 4056 616                        616 nz+016                    ; um 26 Bit nach links (zzz0): AC um 26 Bit zyklisch links
+3121: 01 4003 210                        210 zc_adr                    ; plus Adresse der Pufferspur
+3122: 01 3225 210                        210 zc_op                     ; plus Operationscode
+3123: 01 3124 240                        240 za_x                      ; Befehl ablegen
+3124: 00 0           za_x:               dbn 01                        ; hier steht der ZT-Befehl
+3125: 00 0           rueck_zt_ausf:      dbn 01                        ; Rueckkehrzelle von zt_ausf: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3126: 01 3135 240    prt_ziff:           240 rueck_prt_ziff            ; Rueckkehrwort sichern: Ziffer ausgeben
+3127: 01 4005 211                        211 pz_wert                   ; AC := Ziffer
+3130: 01 4053 616                        616 nz+013                    ; mal 01000 (Adresseneinheiten): AC um 9 Bit zyklisch links
+3131: 01 4006 210                        210 a_pz_tab                  ; plus Anfang der Ausgabebefehle
+3132: 00 0000 251                        251 0                         ; AC := Ausgabebefehl der Ziffer (R-Lesebefehl)
+3133: 01 3134 240                        240 pz_x                      ; Befehl ablegen
+3134: 00 0           pz_x:               dbn 01                        ; hier steht der Ausgabebefehl 030 xxxx
+3135: 00 0           rueck_prt_ziff:     dbn 01                        ; Rueckkehrzelle von prt_ziff: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3136: 01 3162 240    prt_okt4:           240 rueck_prt_okt4            ; Rueckkehrwort sichern: Zahl mit 4 Oktalziffern ausgeben
+3137: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3140: 01 4053 612                        612 nz+013                    ; Ziffer 1 nach unten: AC um 9 Bit nach rechts
+3141: 01 3236 200                        200 k_7                       ; Ziffer 1 ausblenden (Maske 7)
+3142: 01 4005 240                        240 pz_wert                   ; Ziffer 1
+3143: 01 3126 025                        025 prt_ziff                  ; Ziffer 1: Aufruf prt_ziff
+3144: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3145: 01 4062 612                        612 nz+022                    ; Ziffer 2 nach unten: AC um 6 Bit nach rechts
+3146: 01 3236 200                        200 k_7                       ; Ziffer 2 ausblenden (Maske 7)
+3147: 01 4005 240                        240 pz_wert                   ; Ziffer 2
+3150: 01 3126 025                        025 prt_ziff                  ; Ziffer 2: Aufruf prt_ziff
+3151: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3152: 01 4071 612                        612 nz+031                    ; Ziffer 3 nach unten: AC um 3 Bit nach rechts
+3153: 01 3236 200                        200 k_7                       ; Ziffer 3 ausblenden (Maske 7)
+3154: 01 4005 240                        240 pz_wert                   ; Ziffer 3
+3155: 01 3126 025                        025 prt_ziff                  ; Ziffer 3: Aufruf prt_ziff
+3156: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3157: 01 3236 200                        200 k_7                       ; Ziffer 4 ausblenden (Maske 7)
+3160: 01 4005 240                        240 pz_wert                   ; Ziffer 4
+3161: 01 3126 025                        025 prt_ziff                  ; Ziffer 4: Aufruf prt_ziff
+3162: 00 0           rueck_prt_okt4:     dbn 01                        ; Rueckkehrzelle von prt_okt4: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3163: 01 3202 240    prt_okt3:           240 rueck_prt_okt3            ; Rueckkehrwort sichern: Zahl mit 3 Oktalziffern ausgeben
+3164: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3165: 01 4062 612                        612 nz+022                    ; Ziffer 1 nach unten: AC um 6 Bit nach rechts
+3166: 01 3236 200                        200 k_7                       ; Ziffer 1 ausblenden (Maske 7)
+3167: 01 4005 240                        240 pz_wert                   ; Ziffer 1
+3170: 01 3126 025                        025 prt_ziff                  ; Ziffer 1: Aufruf prt_ziff
+3171: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3172: 01 4071 612                        612 nz+031                    ; Ziffer 2 nach unten: AC um 3 Bit nach rechts
+3173: 01 3236 200                        200 k_7                       ; Ziffer 2 ausblenden (Maske 7)
+3174: 01 4005 240                        240 pz_wert                   ; Ziffer 2
+3175: 01 3126 025                        025 prt_ziff                  ; Ziffer 2: Aufruf prt_ziff
+3176: 01 3243 211                        211 po_wert                   ; AC := Zahl
+3177: 01 3236 200                        200 k_7                       ; Ziffer 3 ausblenden (Maske 7)
+3200: 01 4005 240                        240 pz_wert                   ; Ziffer 3
+3201: 01 3126 025                        025 prt_ziff                  ; Ziffer 3: Aufruf prt_ziff
+3202: 00 0           rueck_prt_okt3:     dbn 01                        ; Rueckkehrzelle von prt_okt3: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+3203: 0              k_0:                dw  0                         ; Konstante 0
+3204: 00 00000000001 k_1:                dw  01                        ; Konstante 1
+3205: 00 00000000002 k_2:                dw  02                        ; Konstante 2
+3206: 00 00000000003 k_3:                dw  03                        ; Konstante 3
+3207: 00 00000000004 k_4:                dw  04                        ; Konstante 4
+3210: 00 00000000005 k_5:                dw  05                        ; Konstante 5
+3211: 00 00000000010 k_10:               dw  010                       ; Konstante 8
+3212: 00 00000000012 k_12:               dw  012                       ; Konstante 10
+3213: 00 00000000027 k_27:               dw  027                       ; Code G
+3214: 00 00000000072 k_72:               dw  072                       ; Konstante 58
+3215: 00 00000000043 k_43:               dw  043                       ; Code L
+3216: 00 00000000050 k_50:               dw  050                       ; Code Q
+3217: 00 00000000030 k_30:               dw  030                       ; Code H
+3220: 00 00000000044 k_44:               dw  044                       ; Code M
+3221: 00 00000000024 k_24:               dw  024                       ; Code D
+3222: 00 00000000021 k_21:               dw  021                       ; Code A
+3223: 00 0           zt_t:               dbn 01                        ; Trommel
+3224: 00 0           zc_spur:            dbn 01                        ; Spur
+3225: 00 0           zc_op:              dbn 01                        ; Operationscode
+3226: 01 3540000     a_puf:              da  000000003540              ; Anfangsadresse von puf
+3227: 00 00000000661 k_661:              dw  0661                      ; Konstante 433
+3230: 00 00000003000 ae_3:               dw  03000                     ; 3 Adresseneinheit(en)
+3231: 00 00000000240 k_240:              dw  0240                      ; Konstante 160
+3232: 00 00000000601 k_601:              dw  0601                      ; Konstante 385
+3233: 00 00000001000 ae_1:               dw  01000                     ; 1 Adresseneinheit(en)
+3234: 00 00000000020 k_20:               dw  020                       ; Konstante 16
+3235: 00 00000000011 k_11:               dw  011                       ; Konstante 9
+3236: 00 00000000007 k_7:                dw  07                        ; Konstante 7
+3237: 00 00000000006 k_6:                dw  06                        ; Konstante 6
+3240: 00 00000000025 k_25:               dw  025                       ; Konstante 21
+3241: 00 34716052613 k_34716052613:      dw  034716052613              ; Blockkennung
+3242: 00 00000000037 k_37:               dw  037                       ; Konstante 31
+3243: 00 0           po_wert:            dbn 01                        ; auszugebende Zahl
+3244: 00 00000000177 k_177:              dw  0177                      ; Konstante 127
+3245: 00 25147361025 k_25147361025:      dw  025147361025              ; Listenkennung
+3246: 00 61350247316 k_61350247316:      dw  061350247316              ; Repository-Kennung
+3247: 00 00000000040 k_40:               dw  040                       ; Konstante 32
+3250: 00 00000000017 k_17:               dw  017                       ; Konstante 15
+3251: 01 3600000     a_dpuf:             da  000000003600              ; Anfangsadresse von dpuf
+3252: 00 00000000076 k_76:               dw  076                       ; Konstante 62
+3253: 00 00000000014 k_14:               dw  014                       ; Konstante 12
+3254: 00 00000000031 k_31:               dw  031                       ; Konstante 25
+3255: 00 00000004000 ae_4:               dw  04000                     ; 4 Adresseneinheit(en)
+3256: 00 00000000077 k_77:               dw  077                       ; Maske 077
+3257: 01 3700000     a_ausg_tab:         da  000000003700              ; Anfangsadresse von ausg_tab
+3260: 0              dienst:             dw  0                         ; Variable dienst
+3261: 0              cmd:                dw  0                         ; Variable cmd
+3262: 0              ctx:                dw  0                         ; Variable ctx
+3263: 0              fld:                dw  0                         ; Variable fld
+3264: 0              nmn:                dw  0                         ; Variable nmn
+3265: 0              nm0:                dw  0                         ; Variable nm0
+3266: 0              nm1:                dw  0                         ; Variable nm1
+3267: 0              acc:                dw  0                         ; Variable acc
+3270: 0              nd:                 dw  0                         ; Variable nd
+3271: 0              bad:                dw  0                         ; Variable bad
+3272: 0              v:                  dw  0                         ; Variable v
+3273: 0              mode:               dw  0                         ; Variable mode
+3274: 0              fnd:                dw  0                         ; Variable fnd
+3275: 0              st:                 dw  0                         ; Variable st
+3276: 0              rep_ok:             dw  0                         ; Variable rep_ok
+3277: 0              rep_t:              dw  0                         ; Variable rep_t
+3300: 0              tk_a:               dw  0                         ; 00 0: Wert
+3301: 00 00000000001                     dw  01                        ; 01 1: Wert
+3302: 00 00000000002                     dw  02                        ; 02 2: Wert
+3303: 00 00000000003                     dw  03                        ; 03 3: Wert
+3304: 00 00000000004                     dw  04                        ; 04 4: Wert
+3305: 00 00000000005                     dw  05                        ; 05 5: Wert
+3306: 00 00000000006                     dw  06                        ; 06 6: Wert
+3307: 00 00000000007                     dw  07                        ; 07 7: Wert
+3310: 00 00000000010                     dw  010                       ; 10 8: Wert
+3311: 00 00000000011                     dw  011                       ; 11 9: Wert
+3312: 01 0076 000                        000 t_zr                      ; 12 ZR: Sprung
+3313: 00 00000000077                     dw  077                       ; 13 : Wert
+3314: 00 00000000077                     dw  077                       ; 14 : Wert
+3315: 01 0132 000                        000 t_ign                     ; 15 : Sprung
+3316: 01 0132 000                        000 t_ign                     ; 16 : Sprung
+3317: 00 00000000077                     dw  077                       ; 17 : Wert
+3320: 00 00000000077                     dw  077                       ; 20 : Wert
+3321: 00 00000000021                     dw  021                       ; 21 A: Wert
+3322: 00 00000000022                     dw  022                       ; 22 B: Wert
+3323: 00 00000000023                     dw  023                       ; 23 C: Wert
+3324: 00 00000000024                     dw  024                       ; 24 D: Wert
+3325: 00 00000000025                     dw  025                       ; 25 E: Wert
+3326: 00 00000000026                     dw  026                       ; 26 F: Wert
+3327: 00 00000000027                     dw  027                       ; 27 G: Wert
+3330: 00 00000000030                     dw  030                       ; 30 H: Wert
+3331: 00 00000000031                     dw  031                       ; 31 I: Wert
+3332: 01 0142 000                        000 t_cr                      ; 32 Zeilenschaltung: Sprung
+3333: 01 0136 000                        000 t_pkt                     ; 33 : Sprung
+3334: 00 00000000077                     dw  077                       ; 34 : Wert
+3335: 00 00000000077                     dw  077                       ; 35 : Wert
+3336: 01 0132 000                        000 t_ign                     ; 36 : Sprung
+3337: 01 0132 000                        000 t_ign                     ; 37 : Sprung
+3340: 01 0132 000                        000 t_ign                     ; 40 : Sprung
+3341: 00 00000000041                     dw  041                       ; 41 J: Wert
+3342: 00 00000000042                     dw  042                       ; 42 K: Wert
+3343: 00 00000000043                     dw  043                       ; 43 L: Wert
+3344: 00 00000000044                     dw  044                       ; 44 M: Wert
+3345: 00 00000000045                     dw  045                       ; 45 N: Wert
+3346: 00 00000000046                     dw  046                       ; 46 O: Wert
+3347: 00 00000000047                     dw  047                       ; 47 P: Wert
+3350: 00 00000000050                     dw  050                       ; 50 Q: Wert
+3351: 00 00000000051                     dw  051                       ; 51 R: Wert
+3352: 00 00000000077                     dw  077                       ; 52 : Wert
+3353: 00 00000000077                     dw  077                       ; 53 : Wert
+3354: 00 00000000077                     dw  077                       ; 54 : Wert
+3355: 00 00000000077                     dw  077                       ; 55 : Wert
+3356: 00 00000000077                     dw  077                       ; 56 : Wert
+3357: 01 0132 000                        000 t_ign                     ; 57 : Sprung
+3360: 01 0132 000                        000 t_ign                     ; 60 : Sprung
+3361: 00 00000000076                     dw  076                       ; 61 : Wert
+3362: 00 00000000062                     dw  062                       ; 62 S: Wert
+3363: 00 00000000063                     dw  063                       ; 63 T: Wert
+3364: 00 00000000064                     dw  064                       ; 64 U: Wert
+3365: 00 00000000065                     dw  065                       ; 65 V: Wert
+3366: 00 00000000066                     dw  066                       ; 66 W: Wert
+3367: 00 00000000067                     dw  067                       ; 67 X: Wert
+3370: 00 00000000070                     dw  070                       ; 70 Y: Wert
+3371: 00 00000000071                     dw  071                       ; 71 Z: Wert
+3372: 01 0132 000                        000 t_ign                     ; 72 : Sprung
+3373: 01 0132 000                        000 t_ign                     ; 73 : Sprung
+3374: 00 00000000077                     dw  077                       ; 74 : Wert
+3375: 01 0132 000                        000 t_ign                     ; 75 : Sprung
+3376: 00 00000000077                     dw  077                       ; 76 : Wert
+3377: 00 00000000077                     dw  077                       ; 77 : Wert
+3400: 0              rep_sp:             dw  0                         ; Variable rep_sp
+3401: 0              bl_t:               dw  0                         ; Variable bl_t
+3402: 0              bl_sp:              dw  0                         ; Variable bl_sp
+3403: 0              folge:              dw  0                         ; Variable folge
+3404: 0              nn:                 dw  0                         ; Variable nn
+3405: 0              j:                  dw  0                         ; Variable j
+3406: 0              w:                  dw  0                         ; Variable w
+3407: 0              cur:                dw  0                         ; Variable cur
+3410: 0              sg_t:               dw  0                         ; Variable sg_t
+3411: 0              sg_s:               dw  0                         ; Variable sg_s
+3412: 0              sg_n:               dw  0                         ; Variable sg_n
+3413: 0              sg_1t:              dw  0                         ; Variable sg_1t
+3414: 0              sg_1s:              dw  0                         ; Variable sg_1s
+3415: 0              sp:                 dw  0                         ; Variable sp
+3416: 0              fr_von:             dw  0                         ; Variable fr_von
+3417: 0              fr_bis:             dw  0                         ; Variable fr_bis
+3420: 0              fr_val:             dw  0                         ; Variable fr_val
+3421: 0              sf_s:               dw  0                         ; Variable sf_s
+3422: 0              sf_alt:             dw  0                         ; Variable sf_alt
+3423: 0              sf_neu:             dw  0                         ; Variable sf_neu
+3424: 0              sf_zb:              dw  0                         ; Variable sf_zb
+3425: 0              sf_b:               dw  0                         ; Variable sf_b
+3426: 0              fz_lage:            dw  0                         ; Variable fz_lage
+3427: 0              rs_i:               dw  0                         ; Variable rs_i
+3430: 0              su_n:               dw  0                         ; Variable su_n
+3431: 0              su_ok:              dw  0                         ; Variable su_ok
+3432: 0              su_t:               dw  0                         ; Variable su_t
+3433: 0              su_s:               dw  0                         ; Variable su_s
+3434: 0              su_u:               dw  0                         ; Variable su_u
+3435: 0              su_lauf:            dw  0                         ; Variable su_lauf
+3436: 0              su_sc:              dw  0                         ; Variable su_sc
+3437: 0              su_alt:             dw  0                         ; Variable su_alt
+3440: 0              tk_b:               dw  0                         ; 00 0: Wert
+3441: 00 00000000001                     dw  01                        ; 01 1: Wert
+3442: 00 00000000002                     dw  02                        ; 02 2: Wert
+3443: 00 00000000003                     dw  03                        ; 03 3: Wert
+3444: 00 00000000004                     dw  04                        ; 04 4: Wert
+3445: 00 00000000005                     dw  05                        ; 05 5: Wert
+3446: 00 00000000006                     dw  06                        ; 06 6: Wert
+3447: 00 00000000007                     dw  07                        ; 07 7: Wert
+3450: 00 00000000010                     dw  010                       ; 10 8: Wert
+3451: 00 00000000011                     dw  011                       ; 11 9: Wert
+3452: 01 0076 000                        000 t_zr                      ; 12 ZR: Sprung
+3453: 00 00000000077                     dw  077                       ; 13 : Wert
+3454: 00 00000000077                     dw  077                       ; 14 : Wert
+3455: 01 0132 000                        000 t_ign                     ; 15 : Sprung
+3456: 01 0132 000                        000 t_ign                     ; 16 : Sprung
+3457: 00 00000000077                     dw  077                       ; 17 : Wert
+3460: 00 00000000077                     dw  077                       ; 20 : Wert
+3461: 00 00000000021                     dw  021                       ; 21 A: Wert
+3462: 00 00000000022                     dw  022                       ; 22 B: Wert
+3463: 00 00000000023                     dw  023                       ; 23 C: Wert
+3464: 00 00000000024                     dw  024                       ; 24 D: Wert
+3465: 00 00000000025                     dw  025                       ; 25 E: Wert
+3466: 00 00000000026                     dw  026                       ; 26 F: Wert
+3467: 00 00000000027                     dw  027                       ; 27 G: Wert
+3470: 00 00000000030                     dw  030                       ; 30 H: Wert
+3471: 00 00000000031                     dw  031                       ; 31 I: Wert
+3472: 01 0142 000                        000 t_cr                      ; 32 Zeilenschaltung: Sprung
+3473: 01 0136 000                        000 t_pkt                     ; 33 : Sprung
+3474: 00 00000000077                     dw  077                       ; 34 : Wert
+3475: 00 00000000077                     dw  077                       ; 35 : Wert
+3476: 01 0132 000                        000 t_ign                     ; 36 : Sprung
+3477: 01 0132 000                        000 t_ign                     ; 37 : Sprung
+3500: 01 0132 000                        000 t_ign                     ; 40 : Sprung
+3501: 00 00000000041                     dw  041                       ; 41 J: Wert
+3502: 00 00000000042                     dw  042                       ; 42 K: Wert
+3503: 00 00000000043                     dw  043                       ; 43 L: Wert
+3504: 00 00000000044                     dw  044                       ; 44 M: Wert
+3505: 00 00000000045                     dw  045                       ; 45 N: Wert
+3506: 00 00000000046                     dw  046                       ; 46 O: Wert
+3507: 00 00000000047                     dw  047                       ; 47 P: Wert
+3510: 00 00000000050                     dw  050                       ; 50 Q: Wert
+3511: 00 00000000051                     dw  051                       ; 51 R: Wert
+3512: 00 00000000077                     dw  077                       ; 52 : Wert
+3513: 00 00000000077                     dw  077                       ; 53 : Wert
+3514: 00 00000000077                     dw  077                       ; 54 : Wert
+3515: 00 00000000077                     dw  077                       ; 55 : Wert
+3516: 00 00000000077                     dw  077                       ; 56 : Wert
+3517: 01 0132 000                        000 t_ign                     ; 57 : Sprung
+3520: 01 0132 000                        000 t_ign                     ; 60 : Sprung
+3521: 00 00000000076                     dw  076                       ; 61 : Wert
+3522: 00 00000000062                     dw  062                       ; 62 S: Wert
+3523: 00 00000000063                     dw  063                       ; 63 T: Wert
+3524: 00 00000000064                     dw  064                       ; 64 U: Wert
+3525: 00 00000000065                     dw  065                       ; 65 V: Wert
+3526: 00 00000000066                     dw  066                       ; 66 W: Wert
+3527: 00 00000000067                     dw  067                       ; 67 X: Wert
+3530: 00 00000000070                     dw  070                       ; 70 Y: Wert
+3531: 00 00000000071                     dw  071                       ; 71 Z: Wert
+3532: 01 0132 000                        000 t_ign                     ; 72 : Sprung
+3533: 01 0132 000                        000 t_ign                     ; 73 : Sprung
+3534: 00 00000000077                     dw  077                       ; 74 : Wert
+3535: 01 0132 000                        000 t_ign                     ; 75 : Sprung
+3536: 00 00000000077                     dw  077                       ; 76 : Wert
+3537: 00 00000000077                     dw  077                       ; 77 : Wert
+3540: 00 0           puf:                dbn 040                       ; Pufferspur der ZT-Uebertragung (Listen, Bloecke) puf: 32 Zellen
+3541: 00 0           ;    
+3542: 00 0           ;    
+3543: 00 0           ;    
+3544: 00 0           ;    
+3545: 00 0           ;    
+3546: 00 0           ;    
+3547: 00 0           ;    
+3550: 00 0           ;    
+3551: 00 0           ;    
+3552: 00 0           ;    
+3553: 00 0           ;    
+3554: 00 0           ;    
+3555: 00 0           ;    
+3556: 00 0           ;    
+3557: 00 0           ;    
+3560: 00 0           ;    
+3561: 00 0           ;    
+3562: 00 0           ;    
+3563: 00 0           ;    
+3564: 00 0           ;    
+3565: 00 0           ;    
+3566: 00 0           ;    
+3567: 00 0           ;    
+3570: 00 0           ;    
+3571: 00 0           ;    
+3572: 00 0           ;    
+3573: 00 0           ;    
+3574: 00 0           ;    
+3575: 00 0           ;    
+3576: 00 0           ;    
+3577: 00 0           ;    
+3600: 00 0           dpuf:               dbn 040                       ; Datenspur: Programmworte in Gruppenform dpuf: 32 Zellen
+3601: 00 0           ;    
+3602: 00 0           ;    
+3603: 00 0           ;    
+3604: 00 0           ;    
+3605: 00 0           ;    
+3606: 00 0           ;    
+3607: 00 0           ;    
+3610: 00 0           ;    
+3611: 00 0           ;    
+3612: 00 0           ;    
+3613: 00 0           ;    
+3614: 00 0           ;    
+3615: 00 0           ;    
+3616: 00 0           ;    
+3617: 00 0           ;    
+3620: 00 0           ;    
+3621: 00 0           ;    
+3622: 00 0           ;    
+3623: 00 0           ;    
+3624: 00 0           ;    
+3625: 00 0           ;    
+3626: 00 0           ;    
+3627: 00 0           ;    
+3630: 00 0           ;    
+3631: 00 0           ;    
+3632: 00 0           ;    
+3633: 00 0           ;    
+3634: 00 0           ;    
+3635: 00 0           ;    
+3636: 00 0           ;    
+3637: 00 0           ;    
+3640: 0              su_zb:              dw  0                         ; Variable su_zb
+3641: 0              bw_stufe:           dw  0                         ; Variable bw_stufe
+3642: 0              bw_ende:            dw  0                         ; Variable bw_ende
+3643: 0              bw_err:             dw  0                         ; Variable bw_err
+3644: 0              bw_k1:              dw  0                         ; Variable bw_k1
+3645: 0              bw_k2:              dw  0                         ; Variable bw_k2
+3646: 0              bw_wert:            dw  0                         ; Variable bw_wert
+3647: 0              bw_cnt:             dw  0                         ; Variable bw_cnt
+3650: 0              pk_cnt:             dw  0                         ; Variable pk_cnt
+3651: 0              pk_g5:              dw  0                         ; Variable pk_g5
+3652: 0              pk_ptr:             dw  0                         ; Variable pk_ptr
+3653: 0              pk_kwptr:           dw  0                         ; Variable pk_kwptr
+3654: 0              pk_kwacc:           dw  0                         ; Variable pk_kwacc
+3655: 0              pk_len:             dw  0                         ; Variable pk_len
+3656: 0              fl_more:            dw  0                         ; Variable fl_more
+3657: 0              sg_i:               dw  0                         ; Variable sg_i
+3660: 0              kw_w:               dw  0                         ; Variable kw_w
+3661: 0              nb_n:               dw  0                         ; Variable nb_n
+3662: 0              bn_i:               dw  0                         ; Variable bn_i
+3663: 0              lage:               dw  0                         ; Variable lage
+3664: 0              tr:                 dw  0                         ; Variable tr
+3665: 0              e_sp:               dw  0                         ; Variable e_sp
+3666: 0              e_ix:               dw  0                         ; Variable e_ix
+3667: 0              ix:                 dw  0                         ; Variable ix
+3670: 0              en0:                dw  0                         ; Variable en0
+3671: 0              en1:                dw  0                         ; Variable en1
+3672: 0              e_len:              dw  0                         ; Variable e_len
+3673: 0              e_lage:             dw  0                         ; Variable e_lage
+3674: 0              u:                  dw  0                         ; Variable u
+3675: 0              pn_w:               dw  0                         ; Variable pn_w
+3676: 0              pc_ch:              dw  0                         ; Variable pc_ch
+3677: 0              i5:                 dw  0                         ; Variable i5
+      00 0200 030    ausg_tab:           dto 0                         ; Code 00: 0
+      00 0010 030                        dto 1                         ; Code 01: 1
+      00 0020 030                        dto 2                         ; Code 02: 2
+      00 0230 030                        dto 3                         ; Code 03: 3
+      00 0040 030                        dto 4                         ; Code 04: 4
+      00 0250 030                        dto 5                         ; Code 05: 5
+      00 0260 030                        dto 6                         ; Code 06: 6
+      00 0070 030                        dto 7                         ; Code 07: 7
+      00 0100 030                        dto 8                         ; Code 10: 8
+      00 0310 030                        dto 9                         ; Code 11: 9
+      00 0320 030                        dz  $zr                       ; Code 12: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 13: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 14: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 15: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 16: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 17: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 20: Zwischenraum
+      00 0610 030                        dto A                         ; Code 21: A
+      00 0620 030                        dto B                         ; Code 22: B
+      00 0430 030                        dto C                         ; Code 23: C
+      00 0640 030                        dto D                         ; Code 24: D
+      00 0450 030                        dto E                         ; Code 25: E
+      00 0460 030                        dto F                         ; Code 26: F
+      00 0670 030                        dto G                         ; Code 27: G
+      00 0700 030                        dto H                         ; Code 30: H
+      00 0510 030                        dto I                         ; Code 31: I
+      00 0320 030                        dz  $zr                       ; Code 32: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 33: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 34: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 35: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 36: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 37: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 40: Zwischenraum
+      00 1210 030                        dto J                         ; Code 41: J
+      00 1220 030                        dto K                         ; Code 42: K
+      00 1030 030                        dto L                         ; Code 43: L
+      00 1240 030                        dto M                         ; Code 44: M
+      00 1050 030                        dto N                         ; Code 45: N
+      00 1060 030                        dto O                         ; Code 46: O
+      00 1270 030                        dto P                         ; Code 47: P
+      00 1300 030                        dto Q                         ; Code 50: Q
+      00 1110 030                        dto R                         ; Code 51: R
+      00 0320 030                        dz  $zr                       ; Code 52: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 53: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 54: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 55: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 56: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 57: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 60: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 61: Zwischenraum
+      00 1420 030                        dto S                         ; Code 62: S
+      00 1630 030                        dto T                         ; Code 63: T
+      00 1440 030                        dto U                         ; Code 64: U
+      00 1650 030                        dto V                         ; Code 65: V
+      00 1660 030                        dto W                         ; Code 66: W
+      00 1470 030                        dto X                         ; Code 67: X
+      00 1500 030                        dto Y                         ; Code 70: Y
+      00 1710 030                        dto Z                         ; Code 71: Z
+      00 0320 030                        dz  $zr                       ; Code 72: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 73: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 74: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 75: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 76: Zwischenraum
+      00 0320 030                        dz  $zr                       ; Code 77: Zwischenraum
+4000: 01 3300000     a_tk_a:             da  tk_a                      ; Anfangsadresse von tk_a
+4001: 01 3440000     a_tk_b:             da  tk_b                      ; Anfangsadresse von tk_b
+4002: 00 00000040000 k_40000:            dw  040000                    ; Konstante 16384
+4003: 00 0           zc_adr:             dbn 01                        ; Adresse der Pufferspur
+4004: 00 00005100030 k_5100030:          dw  05100030                  ; Befehl 5100 030 (Anwahl ZT0)
+4005: 00 0           pz_wert:            dbn 01                        ; auszugebende Ziffer
+4006: 01 4100000     a_pz_tab:           da  000000004100              ; Anfangsadresse von pz_tab
+4007: 00 0                               dbn 031                       ; Nullspur auf Spurgrenze
+4010: 00 0           ;    
+4011: 00 0           ;    
+4012: 00 0           ;    
+4013: 00 0           ;    
+4014: 00 0           ;    
+4015: 00 0           ;    
+4016: 00 0           ;    
+4017: 00 0           ;    
+4020: 00 0           ;    
+4021: 00 0           ;    
+4022: 00 0           ;    
+4023: 00 0           ;    
+4024: 00 0           ;    
+4025: 00 0           ;    
+4026: 00 0           ;    
+4027: 00 0           ;    
+4030: 00 0           ;    
+4031: 00 0           ;    
+4032: 00 0           ;    
+4033: 00 0           ;    
+4034: 00 0           ;    
+4035: 00 0           ;    
+4036: 00 0           ;    
+4037: 00 0           ;    
+4040: 00 0           nz:                 dbn 040                       ; Nullspur nz: 32 Zellen 0 (Operanden der Schiebebefehle 612 und 616)
+4041: 00 0           ;    
+4042: 00 0           ;    
+4043: 00 0           ;    
+4044: 00 0           ;    
+4045: 00 0           ;    
+4046: 00 0           ;    
+4047: 00 0           ;    
+4050: 00 0           ;    
+4051: 00 0           ;    
+4052: 00 0           ;    
+4053: 00 0           ;    
+4054: 00 0           ;    
+4055: 00 0           ;    
+4056: 00 0           ;    
+4057: 00 0           ;    
+4060: 00 0           ;    
+4061: 00 0           ;    
+4062: 00 0           ;    
+4063: 00 0           ;    
+4064: 00 0           ;    
+4065: 00 0           ;    
+4066: 00 0           ;    
+4067: 00 0           ;    
+4070: 00 0           ;    
+4071: 00 0           ;    
+4072: 00 0           ;    
+4073: 00 0           ;    
+4074: 00 0           ;    
+4075: 00 0           ;    
+4076: 00 0           ;    
+4077: 00 0           ;    
+      00 0200 030    pz_tab:             dto 0                         ; Ausgabebefehl Ziffer 0
+      00 0010 030                        dto 1                         ; Ausgabebefehl Ziffer 1
+      00 0020 030                        dto 2                         ; Ausgabebefehl Ziffer 2
+      00 0230 030                        dto 3                         ; Ausgabebefehl Ziffer 3
+      00 0040 030                        dto 4                         ; Ausgabebefehl Ziffer 4
+      00 0250 030                        dto 5                         ; Ausgabebefehl Ziffer 5
+      00 0260 030                        dto 6                         ; Ausgabebefehl Ziffer 6
+      00 0070 030                        dto 7                         ; Ausgabebefehl Ziffer 7

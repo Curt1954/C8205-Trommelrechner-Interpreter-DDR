@@ -1,0 +1,67 @@
+Trommeldatei:
+#DOK-0001 Test Zeichenkettenfunktionen: Teilstring, Suche, Gross-/Kleinwandlung, Vergleich mit Leerzeichen, Ziel in der Variablen selbst
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000035000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000003 # dw 3 ; ANA hat 3 Zeichen
+0002: 00000000000 # dw 0 ; gleich: 0
+0003: 00000000002 # dw 2 ; ohne Anzahl der Rest NE: 2
+0004: 00000000000 # dw 0 ; gleich: 0
+0005: 00000000006 # dw 6 ; ganzer Text: 6
+0006: 00000000001 # dw 1 ; letztes Zeichen: 1
+0007: 00000000000 # dw 0 ; gleich: 0
+0010: 00000000004 # dw 4 ; Gleichheitszeichen an Position 4
+0011: 00000000000 # dw 0 ; nicht gefunden: 0
+0012: 00000000002 # dw 2 ; erstes Vorkommen bei 2
+0013: 00000000004 # dw 4 ; ANE beginnt bei 4
+0014: 00000000000 # dw 0 ; A gross kommt in banane nicht vor: 0
+0015: 00000000002 # dw 2 ; erstes Leerzeichen an Position 2
+0016: 00000000001 # dw 1 ; ganzer Text: Position 1
+0017: 00000000000 # dw 0 ; gleich: 0
+0020: 00000000007 # dw 7 ; 7 Zeichen
+0021: 00000000000 # dw 0 ; gleich: 0
+0022: 00000000000 # dw 0 ; aus ab c-9z wird AB C-9Z: 0
+0023: 00000000003 # dw 3 ; ä zaehlt 2 Bytes, b 1: 3
+0024: 00000000000 # dw 0 ; ä unveraendert, b gross: 0
+0025: 00000000002 # dw 2 ; a kleiner
+0026: 00000000001 # dw 1 ; a groesser
+0027: 00000000000 # dw 0 ; gleich
+0030: 00000000002 # dw 2 ; a kleiner
+0031: 00000000001 # dw 1 ; a groesser
+0032: 00000000000 # dw 0 ; gleich
+0033: 00000000001 # dw 1 ; a groesser
+0034: 00000000002 # dw 2 ; a kleiner
+0035: 00000001164 # haupt: 164 0001 ; Zelle 29: Diagnoseausgabe (nur im Test)
+0036: 00000000020 # 020 0 ; Zelle 30: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0037 US=1
+0001: 00000000003   # SUBT: Laenge von ANA
+0002: 00000000000   # SUBT: ANA gleich ANA
+0003: 00000000002   # SUBT: Rest NE hat 2 Zeichen
+0004: 00000000000   # SUBT: NE gleich NE
+0005: 00000000006   # SUBT: ganzer Text 6
+0006: 00000000001   # SUBT: ein Zeichen
+0007: 00000000000   # SUBT: E gleich E
+0010: 00000000004   # INDX: = in abc=42
+0011: 00000000000   # INDX: x nicht in abc
+0012: 00000000002   # INDX: AN in BANANE
+0013: 00000000004   # INDX: ANE in BANANE
+0014: 00000000000   # INDX: A gross nicht in banane
+0015: 00000000002   # INDX: Leerzeichen in a b c
+0016: 00000000001   # INDX: ganzer Text
+0017: 00000000000   # UPLO: UPPER Ab c-9z gleich AB C-9Z
+0020: 00000000007   # UPLO: Laenge 7
+0021: 00000000000   # UPLO: LOWER gleich ab c-9z
+0022: 00000000000   # UPLO: UPPER mit Ziel gleich Quelle
+0023: 00000000003   # UPLO: Umlaut zaehlt 2 Bytes
+0024: 00000000000   # UPLO: Umlaut unveraendert
+0025: 00000000002   # STRV: abc gegen abd
+0026: 00000000001   # STRV: abd gegen abc
+0027: 00000000000   # STRV: abc gegen abc
+0030: 00000000002   # STRV: ab gegen abc
+0031: 00000000001   # STRV: abc gegen ab
+0032: 00000000000   # STRV: a b gegen a b
+0033: 00000000001   # STRV: a b gegen a  b
+0034: 00000000002   # STRV: B gegen a

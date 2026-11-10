@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # haupt: 020 0 ; Zelle 0001: Halt
+0002: 00000000004 # dw 4 ; Abstand
+0003: 00000007504 # dw 3908 ; Adresse
+7500: 00000000001 # b1: dw 1 ; erste Zelle, 07500
+7504: 00000000002 # b2: dw 2 ; 07504
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0002 US=1
+0002: 00000000004   # abstand(b1,b2)
+0003: 00000007504   # adr(b2)
+7500: 00000000001   # b1
+7504: 00000000002   # b2

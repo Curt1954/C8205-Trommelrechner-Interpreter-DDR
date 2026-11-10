@@ -1,0 +1,27 @@
+                 000              haupt            ; Zelle 0000: Sprung zum Hauptprogramm
+erg:             dw               0                ; Zelle 0001: Ergebnis (initialisiert)
+haupt            211              l0001            ; Zelle 0002: AC := 5 (Literal)
+                 210              l0002            ; Zelle 0003: AC := AC + 6 (Literal)
+                 210              l0003            ; Zelle 0004: AC := AC + 7 (Literal)
+                 210              a1               ; Zelle 0005: AC := AC + (a1), Block A
+                 210              b1               ; Zelle 0006: AC := AC + (b1), Block B
+                 210              c1               ; Zelle 0007: AC := AC + (c1), Block C
+                 210              d1               ; Zelle 0010: AC := AC + (d1), Block D
+                 240              erg              ; Zelle 0011: (erg) := AC speichern
+                 164              0001             ; Zelle 0012: Diagnoseausgabe (nur im Test)
+                 020              0                ; Zelle 0013: Halt
+blkA:            equ              07400            ; vorher equ100 *    erste Anweisung: Gruppe 1
+a1:              dw               011              ; erste Zelle von Block A
+                 db               0147             ; Rest von Block A: 0147 Zellen, zusammen 0150
+l0001            dw               5                
+l0002            dw               6                
+l0003            dw               7                
+blkB:            equ              07300            ; vorher equ100 *    Gruppe 1
+b1:              dw               022              ; erste Zelle von Block B
+                 db               037              ; Rest von Block B, zusammen 040 Zellen
+blkC:            equ              07240            ; vorher equ40 *    Gruppe 2
+c1:              dw               033              ; erste Zelle von Block C
+                 db               017              ; Rest von Block C, zusammen 020 Zellen
+blkD:            equ              07140            ; vorher equ40 *    Gruppe 2
+d1:              dw               044              ; erste Zelle von Block D
+                 db               047              ; Rest von Block D, zusammen 050 Zellen

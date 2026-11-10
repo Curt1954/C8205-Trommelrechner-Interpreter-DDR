@@ -1,0 +1,12 @@
+0000: 01 0011 000           000  haupt ; Zelle 0000: Sprung zum Hauptprogramm
+      00 2720 030    tab:   dz   $wrzl ; Zelle 0001: Zeilenschaltung, Wort 0000 2720 030
+0002: 01 1000               da   tab   ; Zelle 0002: Adresse von tab (1), um 9 Bit verschoben
+      00 0010 030           dto  1     ; Zelle 0003: Ziffer 1 ohne Umschaltzeichen
+      00 1170 030           dtm  1     ; Zellen 0004 und 0005: Umschaltzeichen auf KB, dann Ziffer 1
+      00 0010 030    ;    
+      00 0010 030           dt   1     ; Zelle 0006: Ziffer 1 im Zustand KB des vorangehenden dtm
+      00 40000000001        kat4 1     ; Zelle 0007: komprimierter Text (nur Uebersetzung, Zellenwert nicht geprueft)
+0010: 0              erg:   dw   0     ; Zelle 0010: Ergebnis
+0011: 01 0001 211    haupt: 211  tab   ; Zelle 0011: AC := Wort der Zelle 0001
+0012: 01 0010 240           240  erg   ; Zelle 0012: (erg) := AC
+0013: 01 0000 020           020  0     ; Zelle 0013: Halt

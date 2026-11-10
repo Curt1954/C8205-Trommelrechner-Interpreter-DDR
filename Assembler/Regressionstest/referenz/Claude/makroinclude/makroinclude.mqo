@@ -1,0 +1,7 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      5       ; erste Zeile vor dem Include
+        dw      10      ; aus a.inc
+        dw      15      ; aus b.inc
+        dw      105     ; letzte Zeile nach dem Include
+haupt:  164     0001    ; Zelle 0005: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0006: Halt

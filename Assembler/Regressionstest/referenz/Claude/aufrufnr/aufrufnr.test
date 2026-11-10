@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Test $AUFRUFNR: eigene Nummer je Aufruf, verschachtelter Aufruf, Nummer als Parameter weitergereicht, $AUFRUFNR in $CALC
+#PROT STUFE=2
+0000: 00000012000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; eigene Nummer
+0002: 00000000001 # dw 1 ; Nummer des aeusseren Aufrufs (als Parameter weitergereicht)
+0003: 00000000002 # dw 2 ; eigene Nummer des inneren Aufrufs
+0004: 00000000001 # dw 1 ; nach der Rueckkehr gilt wieder die eigene Nummer
+0005: 00000000003 # dw 3 ; eigene Nummer
+0006: 00000000003 # dw 3 ; Nummer des aeusseren Aufrufs (als Parameter weitergereicht)
+0007: 00000000004 # dw 4 ; eigene Nummer des inneren Aufrufs
+0010: 00000000003 # dw 3 ; nach der Rueckkehr gilt wieder die eigene Nummer
+0011: 00000000062 # dw 50 ; Nummer mal 10
+0012: 00000000020 # haupt: 020 0 ; Zelle 0012: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 00000000001
+0002: 00000000001
+0003: 00000000002
+0004: 00000000001
+0005: 00000000003
+0006: 00000000003
+0007: 00000000004
+0010: 00000000003
+0011: 00000000062

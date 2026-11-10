@@ -1,0 +1,60 @@
+0000: 01 0052 000                 000 haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0                           dw  0           ; Wort 0: Zaehler mal Schrittweite
+0002: 00 00000000003              dw  3           ; Wort 1: Zaehler mal Schrittweite
+0003: 00 00000000006              dw  6           ; Wort 2: Zaehler mal Schrittweite
+0004: 00 00000000011              dw  9           ; Wort 3: Zaehler mal Schrittweite
+0005: 00 00000000014              dw  12          ; Wort 4: Zaehler mal Schrittweite
+0006: 00 00000000017              dw  15          ; Wort 5: Zaehler mal Schrittweite
+0007: 00 00000000022              dw  18          ; Wort 6: Zaehler mal Schrittweite
+0010: 00 00000000025              dw  21          ; Wort 7: Zaehler mal Schrittweite
+0011: 0                           dw  0           ; Zeile 0, Spalte 0
+0012: 00 00000000001              dw  1           ; Zeile 0, Spalte 1
+0013: 00 00000000012              dw  10          ; Zeile 1, Spalte 0
+0014: 00 00000000013              dw  11          ; Zeile 1, Spalte 1
+0015: 00 00000000024              dw  20          ; Zeile 2, Spalte 0
+0016: 00 00000000025              dw  21          ; Zeile 2, Spalte 1
+0017: 00 00000000001              dw  1           ; beide positiv
+0020: 00 00000000002              dw  2           ; nur der erste positiv
+0021: 00 00000000003              dw  3           ; nur der zweite positiv
+0022: 00 00000000004              dw  4           ; keiner positiv
+0023: 00 00000000144              dw  100         ; null
+0024: 00 00000000145              dw  101         ; eins
+0025: 00 00000000146              dw  102         ; sonst
+0026: 0                           dw  0           ; gerader Zaehler
+0027: 00 00000000145              dw  101         ; ungerader Zaehler plus 100
+0030: 00 00000000002              dw  2           ; gerader Zaehler
+0031: 00 00000000147              dw  103         ; ungerader Zaehler plus 100
+0032: 00 00000000004              dw  4           ; gerader Zaehler
+0033: 00 00000000001              dw  1           ; Bedingung erfuellt
+0034: 0                           dw  0           ; Bedingung nicht erfuellt
+0035: 00 00000000001              dw  1           ; Bedingung erfuellt
+0036: 0                           dw  0           ; Bedingung nicht erfuellt
+0037: 00 00000000001              dw  1           ; Wert 1 bis 6
+0040: 0                           dw  0           ; anderer Wert
+0041: 0                           dw  0           ; gleich null
+0042: 00 00000000001              dw  1           ; ungleich null
+0043: 00 00000000007 w0:          dw  7           ; Label w0 mit dem Wert 7 plus Zaehler
+0044: 00 00000000010 w1:          dw  8           ; Label w1 mit dem Wert 7 plus Zaehler
+0045: 00 00000000011 w2:          dw  9           ; Label w2 mit dem Wert 7 plus Zaehler
+0046: 00 00000000001 eins:        dw  1           ; Zelle 0046: Konstante 1
+0047: 0              erg1:        dw  0           ; Zelle 0047: Ergebnis der Code-Schleife
+0050: 0              erg2:        dw  0           ; Zelle 0050: Ergebnis mit den Labels w1 und w2
+0051: 0              erg3:        dw  0           ; Zelle 0051: Ergebnis der Schleife mit Labels
+0052: 01 0046 211    haupt:       211 eins        ; AC := 1
+0053: 01 0046 210                 210 eins        ; AC := AC + 1 (Durchlauf 0)
+0054: 01 0046 210                 210 eins        ; AC := AC + 1 (Durchlauf 1)
+0055: 01 0046 210                 210 eins        ; AC := AC + 1 (Durchlauf 2)
+0056: 01 0047 240                 240 erg1        ; Ergebnis ablegen
+0057: 01 0044 211                 211 w1          ; AC := 8 (Label aus der Schleife)
+0060: 01 0045 210                 210 w2          ; AC := 8 + 9 = 17
+0061: 01 0050 240                 240 erg2        ; Ergebnis ablegen
+0062: 01 0046 211                 211 eins        ; AC := 1
+0063: 01 0064 000                 000 ML0001LSZ_0 ; Sprung zur naechsten Zelle (Durchlauf 0)
+0064: 01 0046 210    ML0001LSZ_0: 210 eins        ; AC := AC + 1
+0065: 01 0066 000                 000 ML0001LSZ_1 ; Sprung zur naechsten Zelle (Durchlauf 1)
+0066: 01 0046 210    ML0001LSZ_1: 210 eins        ; AC := AC + 1
+0067: 01 0070 000                 000 ML0001LSZ_2 ; Sprung zur naechsten Zelle (Durchlauf 2)
+0070: 01 0046 210    ML0001LSZ_2: 210 eins        ; AC := AC + 1
+0071: 01 0051 240                 240 erg3        ; Ergebnis ablegen
+0072: 01 0001 164                 164 0001        ; Diagnoseausgabe (nur im Test)
+0073: 01 0000 020                 020 0           ; Halt

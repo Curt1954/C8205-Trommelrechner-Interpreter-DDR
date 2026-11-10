@@ -1,0 +1,7 @@
+rc 0
+stderr Makro KB aus c82ass.makros wird für diesen Lauf durch die Definition in der Makrodatei
+stderr Makro ZWEI ist schon in der Makrodatei
+stderr Makro VIER aus der Makrodatei
+stderr durch die Definition im Quelltext ersetzt
+nicht-stderr Fehler
+datei-da obj

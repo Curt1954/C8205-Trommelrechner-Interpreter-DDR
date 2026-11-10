@@ -1,0 +1,15 @@
+Trommeldatei:
+#DOK-0001 Test: eine Makrozeile "$1 $2" (Operation aus Parameter) wird erzeugt und nicht verworfen
+#PROT STUFE=2
+0000: 00000003000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000017 # wert: dw 017 ; Zelle 0001: Konstante
+0002: 00000000000 # erg: dw 0 ; Zelle 0002: Ergebnis (initialisiert)
+0003: 00000001211 # haupt: 211 wert ; Operation und Operand aus den Parametern
+0004: 00000002240 # 240 erg ; Operation und Operand aus den Parametern
+0005: 00000001164 # 164 0001 ; Zelle 0005: Diagnoseausgabe (nur im Test)
+0006: 00000000020 # 020 0 ; Zelle 0006: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 AC=00000000017 US=1
+0002: 00000000017   # erg

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_set_zuviele.asm:71: Fehler: L8 Variable v65: mehr als 64 lokale Variablen in einem Makroaufruf (auch die mit $SET angelegten zählen; global mit $GLOBAL)
+datei-weg obj mqo test
+escape-weg

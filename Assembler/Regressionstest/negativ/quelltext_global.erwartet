@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_global.asm:2: Fehler: (Quelltext) $GLOBAL steht außerhalb eines Makroaufrufs
+datei-weg obj mqo test
+escape-weg

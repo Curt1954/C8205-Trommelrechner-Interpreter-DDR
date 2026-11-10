@@ -1,0 +1,155 @@
+Trommeldatei:
+#DOK-0001 Test Attributabfragen: def, art, zellen fuer jede Art von Symbol; Argument mit und ohne Klammer, $V(name), Rechnung, $IF, $WHILE, $REPT, $SET, $INC, $P, $TYPZAHL, Symbol aus einem Makro, Marke ohne Befehl
+#PROT STUFE=2
+0000: 00000100000 # 000 haupt ; Zelle 0: Sprung zum Hauptprogramm
+0001: 00000000143 # erz_marke: dw 99 ; Marke aus einem Makro
+0002: 00000000001 # dw 1 ; Art des Symbols
+0003: 00000000002 # dw 2 ; Art des Symbols
+0004: 00000000002 # dw 2 ; Art des Symbols
+0005: 00000000002 # dw 2 ; Art des Symbols
+0006: 00000000003 # dw 3 ; Art des Symbols
+0007: 00000000003 # dw 3 ; Art des Symbols
+0010: 00000000003 # dw 3 ; Art des Symbols
+0011: 00000000003 # dw 3 ; Art des Symbols
+0012: 00000000003 # dw 3 ; Art des Symbols
+0013: 00000000003 # dw 3 ; Art des Symbols
+0014: 00000000004 # dw 4 ; Art des Symbols
+0015: 00000000004 # dw 4 ; Art des Symbols
+0016: 00000000004 # dw 4 ; Art des Symbols
+0017: 00000000004 # dw 4 ; Art des Symbols
+0020: 00000000004 # dw 4 ; Art des Symbols
+0021: 00000000004 # dw 4 ; Art des Symbols
+0022: 00000000004 # dw 4 ; Art des Symbols
+0023: 00000000004 # dw 4 ; Art des Symbols
+0024: 00000000004 # dw 4 ; Art des Symbols
+0025: 00000000004 # dw 4 ; Art des Symbols
+0026: 00000000004 # dw 4 ; Art des Symbols
+0027: 00000000000 # dw 0 ; Art des Symbols
+0030: 00000000000 # dw 0 ; Art des Symbols
+0031: 00000000004 # dw 4 ; Art des Symbols
+0032: 00000000000 # dw 0 ; Art des Symbols
+0033: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0034: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0035: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0036: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0037: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0040: 00000000000 # dw 0 ; 1, wenn das Symbol vorhanden ist
+0041: 00000000000 # dw 0 ; 1, wenn das Symbol vorhanden ist
+0042: 00000000000 # dw 0 ; 1, wenn das Symbol vorhanden ist
+0043: 00000000005 # dw 5 ; Zellenzahl der Anweisung
+0044: 00000000010 # dw 8 ; Zellenzahl der Anweisung
+0045: 00000000003 # dw 3 ; Zellenzahl der Anweisung
+0046: 00000000006 # dw 6 ; Zellenzahl der Anweisung
+0047: 00000000004 # dw 4 ; Zellenzahl der Anweisung
+0050: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0051: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0052: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0053: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0054: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0055: 00000000001 # dw 1 ; ohne Klammer: 1
+0056: 00000000002 # dw 2 ; mit einer Klammer: 2
+0057: 00000000002 # dw 2 ; 1 + 1 = 2
+0060: 00000000012 # dw 10 ; 5 * 2 = 10
+0061: 00000000025 # dw 21 ; 1 + 2 * 10 = 21
+0062: 00000000005 # dw 5 ; 5
+0063: 00000000077 # dw 63 ; Probemarke
+0064: 00000000116 # dw 78 ; wird erzeugt
+0065: 00000000000 # dw 0 ; 0, 1, 2
+0066: 00000000001 # dw 1 ; 0, 1, 2
+0067: 00000000002 # dw 2 ; 0, 1, 2
+0070: 00000000012 # dw 10 ; 10, 11, 12
+0071: 00000000013 # dw 11 ; 10, 11, 12
+0072: 00000000014 # dw 12 ; 10, 11, 12
+0073: 00000000006 # dw 6 ; 5 + 1 = 6
+0074: 00000000016 # dw 14 ; 6 + 8 = 14
+0075: 00000000051 # dw 41 ; def = 0, also Parameter 1
+0076: 00000000052 # dw 42 ; def = 1, also Parameter 2
+0077: 00000000005 # dw 5 ; Parameter art(a_equ)+3 = 5
+0100: 00000001164 # haupt: 164 0001 ; Diagnoseausgabe (nur im Test)
+0101: 00000000020 # 020 0 ; Halt
+0102: 00000000020 # a_befehl: 020 0 ; Marke auf einem Befehl
+0103: 00000000007 # a_dw: dw 7 ; Marke auf dw
+0104: 00000103000 # a_da: da a_dw ; Marke auf da
+0105: 00002720030 # a_dz: dz $wrzl ; Marke auf dz
+0123: 00000000000 # a_dbn: dbn 3 ; 3 Zellen, auf 0 gesetzt
+0124: 00000000000
+0125: 00000000000
+0126: 00000000000 # a_dbno: dbn 06 ; 6 Zellen, Oktalzahl
+0127: 00000000000
+0130: 00000000000
+0131: 00000000000
+0132: 00000000000
+0133: 00000000000
+0140: 00000610030 # a_dt: dt abc ; Marke auf dt
+0141: 00000620030
+0142: 00000430030
+0143: 46410631061 # a_kat4: kat4 abcd ; Marke auf kat4
+0144: 00000000067 # a_mk: dw 55 ; Wort 55
+0145: 00000103211 # a_ld: .LD a_dw ; Marke auf einem markierten Namen (3.3.17)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0102 US=1
+0001: 00000000143   # ERZEUGE
+0002: 00000000001   # FRAGE_ART a_abs
+0003: 00000000002   # FRAGE_ART a_equ
+0004: 00000000002   # FRAGE_ART a_equd
+0005: 00000000002   # FRAGE_ART a_equs
+0006: 00000000003   # FRAGE_ART a_stern
+0007: 00000000003   # FRAGE_ART a_lbl
+0010: 00000000003   # FRAGE_ART a_e10
+0011: 00000000003   # FRAGE_ART a_e40
+0012: 00000000003   # FRAGE_ART a_e100
+0013: 00000000003   # FRAGE_ART a_spa
+0014: 00000000004   # FRAGE_ART a_befehl
+0015: 00000000004   # FRAGE_ART a_dw
+0016: 00000000004   # FRAGE_ART a_da
+0017: 00000000004   # FRAGE_ART a_dz
+0020: 00000000004   # FRAGE_ART a_db
+0021: 00000000004   # FRAGE_ART a_dbn
+0022: 00000000004   # FRAGE_ART a_dt
+0023: 00000000004   # FRAGE_ART a_kat4
+0024: 00000000004   # FRAGE_ART a_allein
+0025: 00000000004   # FRAGE_ART a_mk
+0026: 00000000004   # FRAGE_ART ende
+0027: 00000000000   # FRAGE_ART nix
+0030: 00000000000   # FRAGE_ART erz_marke
+0031: 00000000004   # FRAGE_ART a_ld
+0032: 00000000000   # FRAGE_ART opname
+0033: 00000000001   # FRAGE_DEF a_abs
+0034: 00000000001   # FRAGE_DEF a_dw
+0035: 00000000001   # FRAGE_DEF a_allein
+0036: 00000000001   # FRAGE_DEF a_mk
+0037: 00000000001   # FRAGE_DEF ende
+0040: 00000000000   # FRAGE_DEF nix
+0041: 00000000000   # FRAGE_DEF erz_marke
+0042: 00000000000   # FRAGE_DEF opname
+0043: 00000000005   # FRAGE_ZELLEN a_db
+0044: 00000000010   # FRAGE_ZELLEN a_dbo
+0045: 00000000003   # FRAGE_ZELLEN a_dbn
+0046: 00000000006   # FRAGE_ZELLEN a_dbno
+0047: 00000000004   # FRAGE_ZELLEN a_dbk
+0050: 00000000001   # FRAGE_ZELLEN a_befehl
+0051: 00000000001   # FRAGE_ZELLEN a_dw
+0052: 00000000001   # FRAGE_ZELLEN a_da
+0053: 00000000001   # FRAGE_ZELLEN a_dz
+0054: 00000000001   # FRAGE_ZELLEN a_ld
+0055: 00000000001   # DIREKT
+0056: 00000000002   # DIREKT
+0057: 00000000002   # RECHNEN
+0060: 00000000012   # RECHNEN
+0061: 00000000025   # RECHNEN
+0062: 00000000005   # MIT_V
+0063: 00000000077   # PROBE
+0064: 00000000116   # PROBE2
+0065: 00000000000   # MIT_WHILE
+0066: 00000000001   # MIT_WHILE
+0067: 00000000002   # MIT_WHILE
+0070: 00000000012   # MIT_REPT
+0071: 00000000013   # MIT_REPT
+0072: 00000000014   # MIT_REPT
+0073: 00000000006   # MIT_SET
+0074: 00000000016   # MIT_SET
+0075: 00000000051   # MIT_P 41 42
+0076: 00000000052   # MIT_P 41 42
+0077: 00000000005   # TYPT art(a_equ)+3

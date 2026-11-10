@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_while_durchlaeufe.asm:6: Fehler: (Quelltext) $WHILE: mehr als 4096 Durchläufe (Endlosschleife?).
+datei-weg obj mqo test
+escape-weg

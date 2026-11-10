@@ -1,0 +1,4 @@
+rc 16
+stderr makro_len_nummer_v.asm:7: Fehler: M1 $LEN: $LEN(5) = 5: Parameter 5 wird nicht übergeben (übergeben: 3)
+datei-weg obj mqo test
+escape-weg

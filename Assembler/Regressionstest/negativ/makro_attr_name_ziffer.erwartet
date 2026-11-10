@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_name_ziffer.asm:6: Fehler: $CALC(def(5)): def: "5" ist kein Symbolname (er darf nicht mit einer Ziffer beginnen)
+datei-weg obj mqo test
+escape-weg

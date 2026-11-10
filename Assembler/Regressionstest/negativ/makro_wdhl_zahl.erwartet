@@ -1,0 +1,4 @@
+rc 16
+stderr makro_wdhl_zahl.asm:5: Fehler: WDZ !$wdhl: Anzahl "33" ungültig (1 bis 32)
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_ausdruck.asm:6: Fehler: $CALC(zellen(a,b+1)): zellen: Das Argument ist kein einzelner Symbolname (Operator, Komma, Leerraum und weitere Klammern sind nicht erlaubt; zellen nimmt höchstens zwei Namen) (bei "zellen(a,b+1)")
+datei-weg obj mqo test
+escape-weg

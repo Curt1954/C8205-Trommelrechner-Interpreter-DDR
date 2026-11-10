@@ -1,0 +1,4 @@
+rc 16
+stderr erwartet mindestens 2 Parameter, aber 1 wurden übergeben
+datei-weg obj mqo test
+escape-weg

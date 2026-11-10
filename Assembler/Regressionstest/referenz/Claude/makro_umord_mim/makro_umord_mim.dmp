@@ -1,0 +1,12 @@
+0000: 01 0001 000           000    haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 0000 020    haupt: 020    0            ; Zelle 0001: Halt (die UP werden nicht aufgerufen, nur erzeugt)
+0002: 01 5000        kopf:  da     000000000005 ; Zelle 0002: Adresse der Marke am Aufruf von OUTER (Wert der Marke mal 01000)
+0003: 00 00000000111 t1:    dw     0111         ; Programmrest, Zelle 1
+0004: 00 00000000222 t2:    dw     0222         ; Programmrest, Zelle 2
+      20 0000 0005   outer: equ    00005        ; automatisch generiert
+      20 0000 0100          equ100 00100        ; erste Anweisung (Gruppe 1)
+0100: 00 00000000701        dw     0701         ; erste Rumpfzelle (Marke fuer den Test)
+0101: 00 00000000711        dw     0711         ; erste Rumpfzelle (Marke fuer den Test)
+0102: 20 0106               db     04           ; 4 Arbeitszellen
+0106: 00 00000000712        dw     0712         ; letzte Rumpfzelle (Marke fuer den Test)
+0107: 00 00000000702        dw     0702         ; letzte Rumpfzelle (Marke fuer den Test)

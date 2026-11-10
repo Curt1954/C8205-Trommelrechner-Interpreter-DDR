@@ -1,0 +1,269 @@
+Trommeldatei:
+#TROMMEL=LEER
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/kat5_sort2
+0000: 00002105000 # 000 haupt ; Zelle 0000: Sprung auf die Testbasis bzw. Startmarke (der Start H G R beginnt bei 0000)
+2000: 00002003000 # kat5_sort2: .JMP *+3 ; Zelle 0000: Beginn des UP, Sprung ueber die zwei Parameter
+2003: 00002076240 # .STO rueck ; erste Codezelle: Rueckkehrwort sichern
+2004: 00002002211 # .LD p_n ; AC := n
+2005: 00002340330 # .CMP l0001 ; AC mit 1 vergleichen
+2006: 00002076140 # .JVG1 rueck ; n <= 1: nichts zu sortieren, Rueckkehr
+2007: 00002077240 # .STO zz ; zz := n (Zaehler)
+2010: 00002341211 # .LD l0002 ; AC := 0
+2011: 00002100240 # .STO sn ; sn := 0 (n in Adresseneinheiten, 02000 je Paar)
+2012: 00002100211 # cvt: .LD sn ; AC := sn
+2013: 00002342210 # .ADD l0003 ; AC := sn + 02000 (ein Paar sind zwei Adresseinheiten)
+2014: 00002100240 # .STO sn ; sn := AC
+2015: 00002077211 # .LD zz ; AC := Zaehler
+2016: 00002340220 # .SUB l0001 ; AC := Zaehler - 1
+2017: 00002077240 # .STO zz ; zz := AC
+2020: 00002341330 # .CMP l0002 ; AC mit 0 vergleichen
+2021: 00002023170 # .JVG3 sinit ; Zaehler = 0: sn fertig, AC = 0, weiter
+2022: 00002012000 # .JMP cvt ; sonst naechstes Paar
+2023: 00002101240 # sinit: .STO si ; i := 0 (AC = 0), spaeter i := i + 1 (Paare)
+2024: 00002342210 # .ADD l0003 ; AC := i + 1
+2025: 00002102240 # skset: .STO sk ; k := i + 1
+2026: 00002001210 # .ADD p_adr ; AC := AC + Feldanfang
+2027: 00002343210 # .ADD l0004 ; Befehl 240 a(k) bauen (kat5-Wort des Paares k)
+2030: 00002042240 # .STO sb1 ; sb1 := AC
+2031: 00000000251 # .LDR 0 ; AC := a(k)
+2032: 00002103240 # .STO sh ; H := a(k)
+2033: 00002101211 # .LD si ; AC := si
+2034: 00002001210 # .ADD p_adr ; AC := AC + Feldanfang
+2035: 00002343210 # .ADD l0004 ; Befehl 240 a(i) bauen (kat5-Wort des Paares i)
+2036: 00002044240 # .STO sb2 ; sb2 := AC
+2037: 00000000251 # .LDR 0 ; AC := a(i)
+2040: 00002103330 # .CMP sh ; AC mit sh vergleichen
+2041: 00002063140 # .JVG1 sknext ; a(i) <= H: nicht tauschen
+2043: 00002103211 # .LD sh ; AC := alter Wert a(k)
+2045: 00002102211 # .LD sk ; AC := sk (jetzt der Wert des Paares, eine Adresseinheit hinter dem kat5-Wort)
+2046: 00002001210 # .ADD p_adr ; AC := AC + Feldanfang
+2047: 00002344210 # .ADD l0005 ; Befehl 240 w(k) bauen (01000 = eine Adresseinheit weiter, 0240 = Operationscode)
+2050: 00002060240 # .STO sv1 ; sv1 := AC
+2051: 00000000251 # .LDR 0 ; AC := w(k)
+2052: 00002104240 # .STO sw ; sw := alter Wert w(k)
+2053: 00002101211 # .LD si ; AC := si
+2054: 00002001210 # .ADD p_adr ; AC := AC + Feldanfang
+2055: 00002344210 # .ADD l0005 ; Befehl 240 w(i) bauen
+2056: 00002062240 # .STO sv2 ; sv2 := AC
+2057: 00000000251 # .LDR 0 ; AC := w(i)
+2061: 00002104211 # .LD sw ; AC := alter Wert w(k)
+2063: 00002102211 # sknext: .LD sk ; AC := sk
+2064: 00002342210 # .ADD l0003 ; AC := k + 1 (ein Paar weiter)
+2065: 00002100330 # .CMP sn ; AC mit sn vergleichen
+2066: 00002070170 # .JVG3 sinext ; k + 1 = n: innere Schleife fertig
+2067: 00002025000 # .JMP skset ; weiter bei skset (AC = k + 1)
+2070: 00002101211 # sinext: .LD si ; AC := si
+2071: 00002345210 # .ADD l0006 ; AC := i + 2
+2072: 00002100330 # .CMP sn ; AC mit sn vergleichen
+2073: 00002076170 # .JVG3 rueck ; i + 2 = n: Rueckkehr
+2074: 00002342220 # .SUB l0003 ; AC := i + 1
+2075: 00002023000 # .JMP sinit ; weiter bei sinit
+2105: 00002346211 # haupt: .LD l0007 ; AC := Adresse des Feldes
+2106: 00002001240 # .STO kat5_sort2+1 ; Parameter 1 eintragen (Zelle Marke+1)
+2107: 00002347211 # .LD l0008 ; AC := 20 (Anzahl der Paare)
+2110: 00002002240 # .STO kat5_sort2+2 ; Parameter 2 eintragen (Zelle Marke+2)
+2111: 00002000025 # 025 kat5_sort2 ; Aufruf des Unterprogramms
+2112: 00002350211 # .LD l0009 ; AC := Adresse der KB/GB-Zelle des Schreibwerks
+2113: 00007774240 # .STO r3 ; R3 := Adresse der Zustandszelle (Festlegung 030)
+2114: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+2115: 00002351211 # .LD l0010 ; AC := Adresse des Wortes Zeilenschaltung + Um. KB
+2116: 00007773240 # .STO r1 ; R1 := Adresse von init
+2117: 00002221025 # 025 ausgabe ; neue Zeile und Um. KB drucken (das BIS laesst das Schreibwerk auf GB)
+2120: 00002346211 # .LD l0007 ; AC := Adresse des (sortierten) Feldes
+2121: 00002217240 # .STO pa ; pa := Adresse des ersten Textes
+2122: 00002347211 # .LD l0008 ; AC := 20 (Anzahl der Paare)
+2123: 00002220240 # .STO pz ; pz := Zaehler der noch zu druckenden Texte
+2124: 00002217211 # pl: .LD pa ; AC := Adresse des aktuellen Textes
+2125: 00007773240 # .STO r1 ; R1 := Adresse des Textes
+2126: 00002221025 # 025 ausgabe ; Text drucken (KAT5AUSGABE)
+2127: 00002352211 # .LD l0011 ; AC := Adresse des Wortes Zeilenschaltung
+2130: 00007773240 # .STO r1 ; R1 := Adresse von zeil
+2131: 00002221025 # 025 ausgabe ; Zeilenschaltung drucken
+2132: 00002217211 # .LD pa ; AC := Adresse des aktuellen Textes
+2133: 00002342210 # .ADD l0003 ; AC := Adresse des naechsten Textes (ein Paar = zwei Adresseinheiten weiter)
+2134: 00002217240 # .STO pa ; pa := Adresse des naechsten Textes
+2135: 00002220211 # .LD pz ; AC := Zaehler
+2136: 00002340220 # .SUB l0001 ; AC := Zaehler - 1
+2137: 00002220240 # .STO pz ; pz := AC
+2140: 00002341330 # .CMP l0002 ; AC mit 0 vergleichen
+2141: 00002143170 # .JVG3 halt ; Zaehler = 0: alle Texte gedruckt, Halt
+2142: 00002124000 # .JMP pl ; sonst naechster Text
+2143: 00000000020 # halt: .STOP 0 ; Halt: Feld ist sortiert und gedruckt
+2144: 04531335026 # feld: kat5 uikxf ; Paar[0] kat5 = uikxf, Wort 04531335026
+2145: 00000000451 # dw 0451 ; Paar[0] Wert = 0451
+2146: 03030311030 # kat5 hhi1h ; Paar[1] kat5 = hhi1h, Wort 03030311030
+2147: 00000000502 # dw 0502 ; Paar[1] Wert = 0502
+2150: 01051000000 # kat5 1y ; Paar[2] kat5 = 1y, Wort 01051000000
+2151: 00000000445 # dw 0445 ; Paar[2] Wert = 0445
+2152: 02645000000 # kat5 fu ; Paar[3] kat5 = fu, Wort 02645000000
+2153: 00000000570 # dw 0570 ; Paar[3] Wert = 0570
+2154: 01740422500 # kat5 8pre ; Paar[4] kat5 = 8pre, Wort 01740422500
+2155: 00000000702 # dw 0702 ; Paar[4] Wert = 0702
+2156: 04700000000 # kat5 w ; Paar[5] kat5 = w, Wort 04700000000
+2157: 00000000552 # dw 0552 ; Paar[5] Wert = 0552
+2160: 03430101623 # kat5 lh17c ; Paar[6] kat5 = lh17c, Wort 03430101623
+2161: 00000000550 # dw 0550 ; Paar[6] Wert = 0550
+2162: 02407360000 # kat5 d0n ; Paar[7] kat5 = d0n, Wort 02407360000
+2163: 00000000644 # dw 0644 ; Paar[7] Wert = 0644
+2164: 04211204024 # kat5 r29pd ; Paar[8] kat5 = r29pd, Wort 04211204024
+2165: 00000000022 # dw 022 ; Paar[8] Wert = 0022
+2166: 05200000000 # kat5 z ; Paar[9] kat5 = z, Wort 05200000000
+2167: 00000000674 # dw 0674 ; Paar[9] Wert = 0674
+2170: 04236430000 # kat5 rns ; Paar[10] kat5 = rns, Wort 04236430000
+2171: 00000000457 # dw 0457 ; Paar[10] Wert = 0457
+2172: 01600000000 # kat5 7 ; Paar[11] kat5 = 7, Wort 01600000000
+2173: 00000000026 # dw 026 ; Paar[11] Wert = 0026
+2174: 04052300000 # kat5 pzh ; Paar[12] kat5 = pzh, Wort 04052300000
+2175: 00000000161 # dw 0161 ; Paar[12] Wert = 0161
+2176: 02445250000 # kat5 due ; Paar[13] kat5 = due, Wort 02445250000
+2177: 00000000375 # dw 0375 ; Paar[13] Wert = 0375
+2200: 03533135200 # kat5 mk4z ; Paar[14] kat5 = mk4z, Wort 03533135200
+2201: 00000000571 # dw 0571 ; Paar[14] Wert = 0571
+2202: 02613000000 # kat5 f4 ; Paar[15] kat5 = f4, Wort 02613000000
+2203: 00000000726 # dw 0726 ; Paar[15] Wert = 0726
+2204: 05007000000 # kat5 x0 ; Paar[16] kat5 = x0, Wort 05007000000
+2205: 00000000373 # dw 0373 ; Paar[16] Wert = 0373
+2206: 05146101026 # kat5 yv11f ; Paar[17] kat5 = yv11f, Wort 05146101026
+2207: 00000000414 # dw 0414 ; Paar[17] Wert = 0414
+2210: 01150151400 # kat5 2x65 ; Paar[18] kat5 = 2x65, Wort 01150151400
+2211: 00000000723 # dw 0723 ; Paar[18] Wert = 0723
+2212: 02325430000 # kat5 ces ; Paar[19] kat5 = ces, Wort 02325430000
+2213: 00000000337 # dw 0337 ; Paar[19] Wert = 0337
+2214: 05300000000 # zeil: kat5 $wrzl ; Wort Zeilenschaltung (kat5 053), steht hinter dem Feld
+2215: 05354000000 # init: kat5 $wrzl$inkb ; Wort Zeilenschaltung und Um. KB (kat5 053, 054): Anfang des Drucks
+2216: 00000000000 # kbaus: dw 0 ; KB/GB-Zustand des Schreibwerks (0 = KB, 1 = GB), anfangs KB (Festlegung 030)
+2221: 00002247240 # ausgabe: 240 ML0001GNU ; Rueckkehrwort sichern
+2222: 00007773211 # 211 ML0014GNU ; AC := Adresse des Wortes (R1 bleibt unveraendert)
+2223: 00000000251 # 251 0 ; R-Lesebefehl: AC := Wort (Adresse im AC)
+2224: 00002261240 # 240 ML0004GNU ; rest := Wort (nie negativ, z0 bis z2 sind 0)
+2225: 00002341330 # ML0007GNU: 330 l0002 ; Vergleich des Rests mit 0 (keine Operation), der AC bleibt der Rest
+2226: 00002247170 # 170 ML0001GNU ; Rest 0: Wort fertig, Rueckkehr
+2227: 00007675642 # 642 07675 ; 15 mal Rechtsverschiebung (Operand nach Festlegung 026)
+2230: 00002353200 # 200 l0012 ; nur das Zeichen behalten
+2231: 00002262240 # 240 ML0005GNU ; zeichen := Code mal 01000
+2232: 00002354330 # 330 l0013 ; Vergleich mit kat5 054 (Um. KB)
+2233: 00002250170 # 170 ML0011GNU ; Um. KB: Zustand := KB
+2234: 00002355330 # 330 l0014 ; Vergleich mit kat5 055 (Um. GB)
+2235: 00002250170 # 170 ML0011GNU ; Um. GB: Zustand := GB
+2236: 00002356210 # ML0008GNU: 210 l0015 ; plus Adresse der Tabelle, Code 01 steht auf ML0013%
+2237: 00000000251 # 251 0 ; R-Lesebefehl: AC := fertiger Ausgabebefehl des Zeichens
+2240: 00002241240 # 240 ML0009GNU ; Ausgabebefehl auf die naechste Zelle speichern
+2242: 00002261211 # 211 ML0004GNU ; AC := Zeichenrest
+2243: 00002357200 # 200 l0016 ; erstes Zeichen entfernen (die unteren 24 Bit bleiben)
+2244: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+2245: 00002261240 # 240 ML0004GNU ; rest := Rest
+2246: 00002225000 # 000 ML0007GNU ; naechstes Zeichen (der AC ist der Rest)
+2250: 00007774211 # ML0011GNU: 211 ML0015GNU ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+2251: 00002343210 # 210 l0004 ; plus Operationscode 240: Speicherbefehl
+2252: 00002256240 # 240 ML0012GNU ; Speicherbefehl auf die uebernaechste Zelle
+2253: 00002262211 # 211 ML0005GNU ; AC := Code mal 01000 (054000 oder 055000)
+2254: 00002354220 # 220 l0013 ; AC := 0 (Um. KB) oder 01000 (Um. GB)
+2255: 00007653642 # 642 07653 ; 9 mal Rechtsverschiebung (Operand nach Festlegung 026)
+2257: 00002262211 # 211 ML0005GNU ; AC := Code mal 01000, zurueck zur Ausgabe des Zeichens
+2260: 00002236000 # 000 ML0008GNU ; Zeichen ausgeben
+2263: 00000320030 # ML0013GNU: dto \ \ ; Tabelle, Code 01: Leerzeichen
+2264: 00001530030 # dz , ; Code 02: Komma
+2265: 00001000030 # dz - ; Code 03: Minus
+2266: 00000730030 # dz . ; Code 04: Punkt
+2267: 00000400030 # dz + ; Code 05: + und =
+2270: 00000150030 # dz : ; Code 06: Doppelpunkt
+2271: 00000200030 # dto 0123456789 ; Codes 07 bis 020: 0 bis 9
+2272: 00000010030
+2273: 00000020030
+2274: 00000230030
+2275: 00000040030
+2276: 00000250030
+2277: 00000260030
+2300: 00000070030
+2301: 00000100030
+2302: 00000310030
+2303: 00000610030 # dto abcdefghijklmnopqrstuvwxyz ; Codes 021 bis 052: a bis z
+2304: 00000620030
+2305: 00000430030
+2306: 00000640030
+2307: 00000450030
+2310: 00000460030
+2311: 00000670030
+2312: 00000700030
+2313: 00000510030
+2314: 00001210030
+2315: 00001220030
+2316: 00001030030
+2317: 00001240030
+2320: 00001050030
+2321: 00001060030
+2322: 00001270030
+2323: 00001300030
+2324: 00001110030
+2325: 00001420030
+2326: 00001630030
+2327: 00001440030
+2330: 00001650030
+2331: 00001660030
+2332: 00001470030
+2333: 00001500030
+2334: 00001710030
+2335: 00002720030 # dz $wrzl ; Code 053: Zeilenschaltung (Satzmarke)
+2336: 00001170030 # dz $inkb ; Code 054: Um. KB
+2337: 00000570030 # dz $ingb ; Code 055: Um. GB
+2340: 00000000001 # l0001 dw 000000000001
+2341: 00000000000 # l0002 dw 000000000000
+2342: 00000002000 # l0003 dw 000000002000
+2343: 00000000240 # l0004 dw 000000000240
+2344: 00000001240 # l0005 dw 000000001240
+2345: 00000004000 # l0006 dw 000000004000
+2346: 00002144000 # l0007 da feld
+2347: 00000000024 # l0008 dw 000000000024
+2350: 00002216000 # l0009 da kbaus
+2351: 00002215000 # l0010 da init
+2352: 00002214000 # l0011 da zeil
+2353: 00000077000 # l0012 dw 000000077000
+2354: 00000054000 # l0013 dw 000000054000
+2355: 00000055000 # l0014 dw 000000055000
+2356: 00002262000 # l0015 da ML0013GNU-1
+2357: 00077777777 # l0016 dw 000077777777
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=2144 US=1
+2144: 01051000000   # feld+0 kat5 1y
+2145: 00000000445   # feld+1 Wert zu 1y
+2146: 01150151400   # feld+2 kat5 2x65
+2147: 00000000723   # feld+3 Wert zu 2x65
+2150: 01600000000   # feld+4 kat5 7
+2151: 00000000026   # feld+5 Wert zu 7
+2152: 01740422500   # feld+6 kat5 8pre
+2153: 00000000702   # feld+7 Wert zu 8pre
+2154: 02325430000   # feld+8 kat5 ces
+2155: 00000000337   # feld+9 Wert zu ces
+2156: 02407360000   # feld+10 kat5 d0n
+2157: 00000000644   # feld+11 Wert zu d0n
+2160: 02445250000   # feld+12 kat5 due
+2161: 00000000375   # feld+13 Wert zu due
+2162: 02613000000   # feld+14 kat5 f4
+2163: 00000000726   # feld+15 Wert zu f4
+2164: 02645000000   # feld+16 kat5 fu
+2165: 00000000570   # feld+17 Wert zu fu
+2166: 03030311030   # feld+18 kat5 hhi1h
+2167: 00000000502   # feld+19 Wert zu hhi1h
+2170: 03430101623   # feld+20 kat5 lh17c
+2171: 00000000550   # feld+21 Wert zu lh17c
+2172: 03533135200   # feld+22 kat5 mk4z
+2173: 00000000571   # feld+23 Wert zu mk4z
+2174: 04052300000   # feld+24 kat5 pzh
+2175: 00000000161   # feld+25 Wert zu pzh
+2176: 04211204024   # feld+26 kat5 r29pd
+2177: 00000000022   # feld+27 Wert zu r29pd
+2200: 04236430000   # feld+28 kat5 rns
+2201: 00000000457   # feld+29 Wert zu rns
+2202: 04531335026   # feld+30 kat5 uikxf
+2203: 00000000451   # feld+31 Wert zu uikxf
+2204: 04700000000   # feld+32 kat5 w
+2205: 00000000552   # feld+33 Wert zu w
+2206: 05007000000   # feld+34 kat5 x0
+2207: 00000000373   # feld+35 Wert zu x0
+2210: 05146101026   # feld+36 kat5 yv11f
+2211: 00000000414   # feld+37 Wert zu yv11f
+2212: 05200000000   # feld+38 kat5 z
+2213: 00000000674   # feld+39 Wert zu z
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/kat5_sort2-sw-ausgabe.txt

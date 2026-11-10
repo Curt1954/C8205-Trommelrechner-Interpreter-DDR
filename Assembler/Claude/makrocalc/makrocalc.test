@@ -1,0 +1,43 @@
+Trommeldatei:
+#DOK-0001 Test der Rechenausdruecke im Makro: Rangfolge, Parameter als Ausdruck, $IF mit $CALC, oktale Ausgabe, SCHIEBE_* mit Ausdruck
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000017000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000015 # z1: dw 13 ; Produkt der Parameter plus 1
+0002: 00000000020 # z2: dw 16 ; Produkt der Parameter plus 1
+0003: 00000000016 # z3: dw 016 ; Summe aus p1 und dreimal p2, oktal
+0004: 00000000002 # dw 2 ; Rest: 100 mod 7 = 2
+0005: 00000000043 # dw 35 ; Schieben vor ODER: (1<<5)|3 = 35
+0006: 00000000017 # dw 15 ; Klammern: 15
+0007: 00000000077 # dw 077 ; Komplement und UND: 63
+0010: 00000000022 # dw 18 ; Oktal- und Dezimalzahl: 8 + 10 = 18
+0011: 00000000001 # p1: dw 1 ; ungerade
+0012: 00000000000 # p2: dw 0 ; gerade
+0013: 00000000000 # erg1: dw 0 ; Zelle 0013: Ergebnis SCHIEBE_LI
+0014: 00000000000 # erg2: dw 0 ; Zelle 0014: Ergebnis SCHIEBE_RE
+0015: 00000000001 # eins: dw 1 ; Zelle 0015: Konstante 1
+0016: 20000000000 # bit31: dw 020000000000 ; Zelle 0016: 2 hoch 31
+0017: 00000015211 # haupt: 211 eins ; AC := 1
+0020: 00007671644 # 644 07671 ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0021: 00000013240 # 240 erg1 ; Ergebnis ablegen
+0022: 00000016211 # 211 bit31 ; AC := 2 hoch 31
+0023: 00007670642 # 642 07670 ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0024: 00000014240 # 240 erg2 ; Ergebnis ablegen
+0025: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0026: 00000000020 # 020 0 ; Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0027 US=1
+0001: 00000000015   # z1 = 3*4+1 = 13
+0002: 00000000020   # z2 = (1+2)*5+1 = 16
+0003: 00000000016   # z3 = 8+2*3 = 14
+0004: 00000000002   # 100 mod 7 = 2
+0005: 00000000043   # (1<<5)|3 = 35
+0006: 00000000017   # (2+3)*(4-1) = 15
+0007: 00000000077   # ~0&077 = 63
+0010: 00000000022   # 010+10 = 18
+0011: 00000000001   # PARI 9
+0012: 00000000000   # PARI 4
+0013: 00000000010   # 1 mal 2 hoch 3 = 8
+0014: 00040000000   # 2 hoch 31 durch 2 hoch 8 = 2 hoch 23

@@ -1,0 +1,152 @@
+Trommeldatei:
+#DOK-0001 Test Schluesselwortparameter: Vorgaben, Schluesselwoerter in beliebiger Reihenfolge und Stelle, Positionsoperanden, leere Vorgabe, Zeichenketten, + und $DEFAULT, $PR, verschachtelter Aufruf
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000110000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000007 # dw 7 ; Positionsparameter
+0002: 00000000001 # dw 1 ; Schluesselwort anzahl
+0003: 00000000001 # dw 1 ; Richtung LI
+0004: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0005: 00000000007 # dw 7 ; Positionsparameter
+0006: 00000000003 # dw 3 ; Schluesselwort anzahl
+0007: 00000000001 # dw 1 ; Richtung LI
+0010: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0011: 00000000007 # dw 7 ; Positionsparameter
+0012: 00000000001 # dw 1 ; Schluesselwort anzahl
+0013: 00000000002 # dw 2 ; Richtung RE
+0014: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0015: 00000000006 # dw 6 ; Positionsparameter
+0016: 00000000004 # dw 4 ; Schluesselwort anzahl
+0017: 00000000002 # dw 2 ; Richtung RE
+0020: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0021: 00000000005 # dw 5 ; Positionsparameter
+0022: 00000000002 # dw 2 ; Schluesselwort anzahl
+0023: 00000000001 # dw 1 ; Richtung LI
+0024: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0025: 00000000007 # dw 7 ; Positionsparameter
+0026: 00000000001 # dw 1 ; Schluesselwort anzahl
+0027: 00000000001 # dw 1 ; Richtung LI
+0030: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0031: 00000000005 # dw 5 ; Positionsparameter
+0032: 00000000002 # dw 2 ; Schluesselwort n
+0033: 00000000000 # dw 0 ; Zeichenzahl von text
+0034: 00000000005 # dw 5 ; Positionsparameter
+0035: 00000000003 # dw 3 ; Schluesselwort n
+0036: 00000000001 # dw 1 ; Zeichenzahl von text
+0037: 00000000004 # dw 4 ; Positionsparameter
+0040: 00000000007 # dw 7 ; Schluesselwort n
+0041: 00000000001 # dw 1 ; Zeichenzahl von text
+0042: 00000000003 # dw 3 ; Positionsparameter
+0043: 00000000002 # dw 2 ; Schluesselwort n
+0044: 00000000000 # dw 0 ; Zeichenzahl von text
+0045: 00000000001 # dw 1 ; Positionsparameter
+0046: 00000000000 # dw 0 ; Zeichenzahl von text
+0047: 00000000002 # dw 2 ; Positionsparameter
+0050: 00000000001 # dw 1 ; Zeichenzahl von text
+0051: 00000000001 # dw 1 ; Positionsparameter
+0052: 00000000003 # dw 3 ; Zeichenzahl von t
+0053: 00000000002 # dw 2 ; Positionsparameter
+0054: 00000000005 # dw 5 ; Zeichenzahl von t
+0055: 00000000001 # dw 1 ; Positionsparameter
+0056: 00000000004 # dw 4 ; Schluesselwort k
+0057: 00000000002 # dw 2 ; erster weiterer Positionsoperand
+0060: 00000000003 # dw 3 ; zweiter weiterer Positionsoperand
+0061: 00000000003 # dw 3 ; Zahl der Positionsoperanden
+0062: 00000000006 # dw 6 ; Positionsparameter
+0063: 00000000011 # dw 9 ; Schluesselwort k
+0064: 00000000007 # dw 7 ; erster weiterer Positionsoperand
+0065: 00000000010 # dw 8 ; zweiter weiterer Positionsoperand
+0066: 00000000003 # dw 3 ; Zahl der Positionsoperanden
+0067: 00000000001 # dw 1 ; Positionsparameter a
+0070: 00000000010 # dw 8 ; Positionsparameter b oder Vorgabe 8
+0071: 00000000003 # dw 3 ; Schluesselwort w
+0072: 00000000001 # dw 1 ; Positionsparameter a
+0073: 00000000002 # dw 2 ; Positionsparameter b oder Vorgabe 8
+0074: 00000000011 # dw 9 ; Schluesselwort w
+0075: 00000000001 # dw 1 ; Positionsparameter a
+0076: 00000000010 # dw 8 ; Positionsparameter b oder Vorgabe 8
+0077: 00000000005 # dw 5 ; Schluesselwort w
+0100: 00000000007 # dw 7 ; Positionsparameter
+0101: 00000000002 # dw 2 ; Schluesselwort anzahl
+0102: 00000000001 # dw 1 ; Richtung LI
+0103: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0104: 00000000005 # dw 5 ; Positionsparameter
+0105: 00000000004 # dw 4 ; Schluesselwort anzahl
+0106: 00000000001 # dw 1 ; Richtung LI
+0107: 00000000001 # dw 1 ; Zahl der Positionsoperanden
+0110: 00000000020 # haupt: 020 0 ; Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0111 US=1
+0001: 00000000007
+0002: 00000000001
+0003: 00000000001
+0004: 00000000001
+0005: 00000000007
+0006: 00000000003
+0007: 00000000001
+0010: 00000000001
+0011: 00000000007
+0012: 00000000001
+0013: 00000000002
+0014: 00000000001
+0015: 00000000006
+0016: 00000000004
+0017: 00000000002
+0020: 00000000001
+0021: 00000000005
+0022: 00000000002
+0023: 00000000001
+0024: 00000000001
+0025: 00000000007
+0026: 00000000001
+0027: 00000000001
+0030: 00000000001
+0031: 00000000005
+0032: 00000000002
+0033: 00000000000
+0034: 00000000005
+0035: 00000000003
+0036: 00000000001
+0037: 00000000004
+0040: 00000000007
+0041: 00000000001
+0042: 00000000003
+0043: 00000000002
+0044: 00000000000
+0045: 00000000001
+0046: 00000000000
+0047: 00000000002
+0050: 00000000001
+0051: 00000000001
+0052: 00000000003
+0053: 00000000002
+0054: 00000000005
+0055: 00000000001
+0056: 00000000004
+0057: 00000000002
+0060: 00000000003
+0061: 00000000003
+0062: 00000000006
+0063: 00000000011
+0064: 00000000007
+0065: 00000000010
+0066: 00000000003
+0067: 00000000001
+0070: 00000000010
+0071: 00000000003
+0072: 00000000001
+0073: 00000000002
+0074: 00000000011
+0075: 00000000001
+0076: 00000000010
+0077: 00000000005
+0100: 00000000007
+0101: 00000000002
+0102: 00000000001
+0103: 00000000001
+0104: 00000000005
+0105: 00000000004
+0106: 00000000001
+0107: 00000000001

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zahl_set_calco_breite.asm:7: Fehler: M1 $SET t: $CALCO2(512): Ergebnis 512 braucht mehr als 2 Oktalziffern
+datei-weg obj mqo test
+escape-weg

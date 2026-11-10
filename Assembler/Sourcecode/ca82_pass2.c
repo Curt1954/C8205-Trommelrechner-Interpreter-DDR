@@ -18,9 +18,11 @@ void sanitizeLabel(char *label) {
     }
 }
 
+int pass2Stumm = 0;   // 1 = Probelauf der Makro-Umordnung (ca82_opt.c): nichts auf stdout drucken, auch kein Listing bei einem Fehler
+
 void printLineIfNotPrinted(const char *line) {
     if (line_ausgegeben == 0) {
-        printf("%s\n", line);
+        if (!pass2Stumm) printf("%s\n", line);
         line_ausgegeben = 1;
     }
 }
@@ -98,6 +100,10 @@ typedef struct {
     char operand[256];
     char label[256];
     char textkonst[1024];       // \...\-Text, aus dem Operanden herausgeschnitten
+    int beginZeile;             // Zeilennummer des offenen `begin` (0 = kein begin-Block offen)
+    int beginIndex;             // Index in lineAsmAufgeloestTemp des offenen `begin`
+    int blockReloc;             // 1 = das offene begin hat RELOC-EQU, 2 = RELOC-ALL (Doku 5.4)
+    int blockErste;             // 1 = die erste Anweisung hinter begin steht noch aus
 } Pass2Zustand;
 
 // Zeile unveraendert nach lineAsmAufgeloest uebernehmen
@@ -108,6 +114,7 @@ static void pass2KopiereZeile(int i) {
     STRKOPIE(lineAsmAufgeloest[lineCountAsmAufgeloest].sp3, lineAsmAufgeloestTemp[i].sp3);
     STRKOPIE(lineAsmAufgeloest[lineCountAsmAufgeloest].sp4, lineAsmAufgeloestTemp[i].sp4);
     lineAsmAufgeloest[lineCountAsmAufgeloest].srcLine = lineAsmAufgeloestTemp[i].srcLine;
+    memcpy(lineAsmAufgeloest[lineCountAsmAufgeloest].opname, lineAsmAufgeloestTemp[i].opname, sizeof(lineAsmAufgeloestTemp[i].opname));
     lineCountAsmAufgeloest++;
 }
 
@@ -128,10 +135,14 @@ static void pass2ZeileVorbereiten(Pass2Zustand *z) {
     // Zeile zuerst kopieren: extractBackslashContent schneidet den \...\-Text
     // aus sp3 heraus, Pass 3 braucht ihn aber noch in lineAsmAufgeloest.
     pass2KopiereZeile(z->i);
-    extractBackslashContent(lineAsmAufgeloestTemp[z->i].sp3, z->textkonst);
+    // Der Text wird aus einer Kopie des Operanden herausgeschnitten, nicht aus lineAsmAufgeloestTemp: der zweite Pass-2-Lauf des
+    // Optimierers (und der Rueckfall) braucht den \...\-Text noch (ab 1.02-003; vorher ging er dort verloren).
+    elementType operandKopie;
+    STRKOPIE(operandKopie, lineAsmAufgeloestTemp[z->i].sp3);
+    extractBackslashContent(operandKopie, z->textkonst);
 
     STRKOPIE(z->operation, lineAsmAufgeloestTemp[z->i].sp2);
-    STRKOPIE(z->operand, lineAsmAufgeloestTemp[z->i].sp3);
+    STRKOPIE(z->operand, operandKopie);
     STRKOPIE(z->label, "");
     if ( isValidLabel(lineAsmAufgeloestTemp[z->i].sp1) )  {
         STRKOPIE(z->label, lineAsmAufgeloestTemp[z->i].sp1);
@@ -218,6 +229,13 @@ static void pass2Start(Pass2Zustand *z) {
 static void pass2Equ(Pass2Zustand *z) {
     unsigned int address = 0;
     z->raAdr = z->relativ;
+    if ((strcmp(z->operation, "equ10") == 0 || strcmp(z->operation, "equ40") == 0 || strcmp(z->operation, "equ100") == 0) && z->operand[0] != '*') {
+        char meldung[1024];
+        is_error2 = 1;
+        snprintf(meldung, sizeof(meldung), "%s erwartet den Operanden * (Aufrunden des Befehlszählers); \"%s\" ist unzulässig, für einen bestimmten Wert gilt equ.", z->operation, z->operand);
+        MELDE_FEHLER_P2(z->i, meldung);
+        return;
+    }
     if (z->operand[0] == '*') {
         address = sternadresseBearbeiten(z->operand, z->line, &z->fehlerP, z->pc) ;
         if (strcmp(z->operation, "equ100") == 0) {
@@ -296,6 +314,131 @@ static void pass2Text(Pass2Zustand *z, int nr, int kbgb) {
         z->pc += zaehleText(z->textkonst, kbgb);
     } else {
         z->pc += zaehleText(z->operand, kbgb);
+    }
+}
+
+// kat4: komprimierter Text, 4 Zeichen je Wort (Doku 3.3.14)
+static void pass2Kat4(Pass2Zustand *z) {
+    if ( isValidLabel(z->label) ) {
+        addSymbol(z->label, z->pc, z->relativ, z->operation, z->operand, 15, z->i);
+    }
+    if (z->textkonst[0] != '\0') {
+        z->pc += zaehleKat4(z->textkonst);
+    } else {
+        z->pc += zaehleKat4(z->operand);
+    }
+}
+
+// kat5: komprimierter Text, 5 Zeichen je Wort (Doku 3.3.15)
+static void pass2Kat5(Pass2Zustand *z) {
+    if ( isValidLabel(z->label) ) {
+        addSymbol(z->label, z->pc, z->relativ, z->operation, z->operand, 15, z->i);
+    }
+    if (z->textkonst[0] != '\0') {
+        z->pc += zaehleKat5(z->textkonst);
+    } else {
+        z->pc += zaehleKat5(z->operand);
+    }
+}
+
+// kat6: komprimierter Text im Eingabecode, 5 Zeichen je Wort, Stoppbit (Doku 3.3.18)
+static void pass2Kat6(Pass2Zustand *z) {
+    if ( isValidLabel(z->label) ) {
+        addSymbol(z->label, z->pc, z->relativ, z->operation, z->operand, 15, z->i);
+    }
+    if (z->textkonst[0] != '\0') {
+        z->pc += zaehleKat6(z->textkonst);
+    } else {
+        z->pc += zaehleKat6(z->operand);
+    }
+}
+
+// Ist die erste Anweisung hinter dem begin in Zeile bi ein equ100 *, equ40 * oder ein von c82ass verschobenes equ <Adresse> (verlegt 1 oder 2)?
+// *markeVor = 1, wenn davor eine Marke allein auf einer Zeile steht (sie bekaeme nicht die Blockadresse).
+static int blockBeginntMitEqu(int bi, int *markeVor) {
+    *markeVor = 0;
+    for (int j = bi + 1; j < lineCountAsmAufgeloestTemp; j++) {
+        const lineElements *e = &lineAsmAufgeloestTemp[j];
+        if (pass2IstKommentarOderLeer(e)) continue;
+        if (e->sp2[0] == '\0') { if (isValidLabel(e->sp1)) *markeVor = 1; continue; }
+        return strcmp(e->sp2, "equ100") == 0 || strcmp(e->sp2, "equ40") == 0 || (strcmp(e->sp2, "equ") == 0 && (e->verlegt == 1 || e->verlegt == 2));
+    }
+    return 0;
+}
+
+// Zwischen begin und bend erlaubt (Doku 3.3.12): alle Anweisungen, die Speicher belegen, und Befehle; nicht erlaubt sind Anweisungen, die nur
+// Adressen oder den Befehlszaehler festlegen (equ-Arten, abs, spa, start, end, opsym) und ein weiteres begin.
+static int pass2ErlaubtImBlock(const char *op) {
+    static const char *const ok[] = { "db", "dbn", "dw", "dwb", "dwh", "dwf", "dwg", "da", "dt", "dto", "dtm", "dz", "kat4", "kat5", "kat6" };
+    for (size_t k = 0; k < sizeof(ok) / sizeof(ok[0]); k++) if (strcmp(op, ok[k]) == 0) return 1;
+    return isKeywordMatch(op) == 1;   // Maschinenbefehl
+}
+
+// begin/bend (Doku 3.3.12, 3.3.13, 5.4): nur Pruefung, kein Code, kein Speicher.
+// Zwischen begin und bend sind alle speicherbelegenden Anweisungen und Befehle erlaubt (Befehle verlegt der Optimierer ohnehin nie); ein Label allein auf einer Zeile ist kein Befehl.
+// begin [RELOC-EQU] [FILL] (ab 1.01-030): Schluesselwoerter pruefen; equ100 * oder equ40 * ist nur als erste Anweisung hinter begin RELOC-EQU erlaubt
+// (auch mit --no-opt).
+static void pass2BeginBend(Pass2Zustand *z) {
+    char message[1024];
+    const char *op = z->operation;
+    if (op[0] == '\0') return;
+    if (strcmp(op, "begin") == 0) {
+        if (z->beginZeile != 0) {
+            is_error2 = 1;
+            MELDE_FEHLER_P2(z->i, "begin innerhalb eines begin-Blocks: ein vorangehendes begin wurde noch nicht mit bend beendet.");
+        } else {
+            z->beginZeile = lineAsmAufgeloestTemp[z->i].srcLine;
+            z->beginIndex = z->i;
+            int reloc = 0, fill = 0;
+            if (beginSchluesselwoerter(z->operand, &reloc, &fill, message, sizeof(message)) != 0) {
+                is_error2 = 1;
+                MELDE_FEHLER_P2(z->i, message);
+            }
+            z->blockReloc = reloc;
+            z->blockErste = 1;
+            if (lineAsmAufgeloestTemp[z->i].verlegt == 4) {
+                is_error2 = 1;
+                MELDE_FEHLER_P2(z->i, "Die Blöcke mit begin RELOC-EQU oder RELOC-ALL passen nicht unter 07600 (der Anfang eines Blocks läge unter Adresse 0).");
+            }
+            if (reloc) {
+                int markeVor = 0;
+                if (blockBeginntMitEqu(z->i, &markeVor)) {
+                    if (z->label[0] != '\0') {
+                        is_error2 = 1;
+                        snprintf(message, sizeof(message), "Marke \"%s\" auf begin RELOC-EQU/RELOC-ALL: sie bekäme nicht die Adresse des verschobenen Blocks; die Marke gehört auf die equ100/equ40-Zeile.", z->label);
+                        MELDE_FEHLER_P2(z->i, message);
+                    }
+                    if (markeVor) {
+                        is_error2 = 1;
+                        MELDE_FEHLER_P2(z->i, "Marke allein auf einer Zeile vor equ100/equ40 in einem Block mit RELOC-EQU/RELOC-ALL: sie bekäme nicht die Adresse des verschobenen Blocks; die Marke gehört auf die equ100/equ40-Zeile.");
+                    }
+                }
+            }
+        }
+    } else if (strcmp(op, "bend") == 0) {
+        if (z->beginZeile == 0) {
+            is_error2 = 1;
+            MELDE_FEHLER_P2(z->i, "bend ohne vorangehendes begin.");
+        } else {
+            z->beginZeile = 0;
+        }
+    } else if (z->beginZeile != 0) {
+        int erste = z->blockErste;
+        int verlegt = lineAsmAufgeloestTemp[z->i].verlegt;
+        z->blockErste = 0;
+        if (erste && (strcmp(op, "equ100") == 0 || strcmp(op, "equ40") == 0)) {
+            if (!z->blockReloc) {
+                is_error2 = 1;
+                snprintf(message, sizeof(message), "%s als erste Anweisung zwischen begin und bend ist nur bei begin RELOC-EQU oder RELOC-ALL zulässig.", op);
+                MELDE_FEHLER_P2(z->i, message);
+            }
+        } else if (erste && strcmp(op, "equ") == 0 && z->blockReloc && (verlegt == 1 || verlegt == 2)) {
+            // vom Optimierer verschobener Block: equ <Adresse> an der Stelle des equ100 * bzw. equ40 *
+        } else if (!pass2ErlaubtImBlock(op)) {
+            is_error2 = 1;
+            snprintf(message, sizeof(message), "%s zwischen begin und bend nicht zulässig: erlaubt sind Befehle und speicherbelegende Anweisungen (db, dbn, dw, dwb, dwh, dwf, dwg, da, dt, dto, dtm, dz, kat4 bis kat6; bei RELOC-EQU und RELOC-ALL als erste auch equ100 * und equ40 *).", op);
+            MELDE_FEHLER_P2(z->i, message);
+        }
     }
 }
 
@@ -397,6 +540,17 @@ static void pass2DwDa(Pass2Zustand *z, int istDa) {
     z->pc++;
 }
 
+// dwb (Doku 3.3.19), dwh (3.3.19a), dwf (3.3.20), dwg (3.3.21): ein Wort. Der Operand ist eine Binaerzahl aus 0 und 1, eine
+// Hexadezimalzahl bzw. ein Dezimalbruch, kein Ausdruck; er wird hier weder ausgewertet noch als Symbol oder Zahl gedeutet (eine Ziffernfolge
+// wie 0101 ist keine Oktalzahl). Die Pruefung des Operanden macht Pass 3. Die Marke ist die Adresse der Zelle; ihr
+// Wert steht damit schon in Pass 2 fest.
+static void pass2Dwb(Pass2Zustand *z) {
+    if ( isValidLabel(z->label) ) {
+        addSymbol(z->label, z->pc, z->relativ, z->operation, z->operand, 9, z->i);
+    }
+    z->pc++;
+}
+
 // end: Marke an der Endadresse
 static void pass2Ende(Pass2Zustand *z) {
     if ( isValidLabel(z->label)) {
@@ -407,8 +561,8 @@ static void pass2Ende(Pass2Zustand *z) {
 // Der Programmzaehler zeigt auf die NAECHSTE freie Zelle. Nach einem Wort auf Zelle 7777
 // steht er daher auf 010000 (= 8 * 1024); das ist noch zulaessig. Ein Fehler liegt erst vor,
 // wenn ein Wort auf Zelle 010000 oder darueber abgelegt werden muesste.
+static int ueberlaufGemeldet = 0;   // nur die erste Zeile melden, nicht jede weitere (ein Wiederholungslauf des Optimierers beginnt von vorn)
 static void pass2PruefeUeberlauf(Pass2Zustand *z) {
-    static int ueberlaufGemeldet = 0;   // nur die erste Zeile melden, nicht jede weitere
     if ( z->pc + startAdresse > 010000 ) {
         is_error2 = 1;
         if (!ueberlaufGemeldet) {
@@ -442,6 +596,7 @@ static void pass2ErsetzeOrigOperation(const char *orig_operation, unsigned int r
         return; // nichts zu ersetzen
     }
     for (int i = 0; i < lineCountAsmAufgeloest; i++) {
+        if (strcmp(lineAsmAufgeloest[i].sp2, "dwh") == 0) continue;   // dwh (Doku 3.3.19a): Hexziffern wie "ab" oder "e" sind keine Symbole
         STRKOPIE(line_in, lineAsmAufgeloest[i].sp3);
 
         char *searchStart = line_in;
@@ -607,27 +762,32 @@ static void pass2SchreibeSymDatei(FILE *symFile) {
 }
 
 void pass2(char *symbolLogFile, char *symFileName) {
-    printf("Löse Symbole auf nach %s und %s\n", symbolLogFile, symFileName);
+    if (!pass2Wiederholung) printf("Löse Symbole auf nach %s und %s\n", symbolLogFile, symFileName);
 
+    if (pass2Wiederholung) ueberlaufGemeldet = 0;   // jeder Wiederholungslauf baut seine eigene Ausgabe; die Meldung gehoert in sie (Doku 5.6)
     FILE *symbolLog = oeffneAusgabedatei(symbolLogFile, "a");
     FILE *symFile = oeffneAusgabedatei(symFileName, "w+");
 
     // lineAsmAufgeloest wird dynamisch vergrößert
     lineCountAsmAufgeloest = 0;
     line_ausgegeben = 0;
+    zFlag = 0;   // KB/GB-Zustand der Textzaehlung beginnt in jedem Pass-2-Lauf bei GB, wie in Pass 3 (ab 1.02-003)
 
     Pass2Zustand z;
     memset(&z, 0, sizeof(z));
 
     for (z.i = 0; z.i < lineCountAsmAufgeloestTemp; z.i++) {
 
+        if (optAdrVor) optAdrVor[z.i] = z.pc;
         if ( pass2IstKommentarOderLeer(&lineAsmAufgeloestTemp[z.i]) ) {
             pass2KopiereZeile(z.i);
+            if (optAdrNach) optAdrNach[z.i] = z.pc;
             continue;
         }
 
         pass2ZeileVorbereiten(&z);
         pass2Befehl(&z);
+        pass2BeginBend(&z);
 
         // Die Anweisungen schliessen sich nicht aus: der Operationsname steht in z.operation
         if (strcmp(z.operation, "start") == 0)  pass2Start(&z);
@@ -637,11 +797,11 @@ void pass2(char *symbolLogFile, char *symFileName) {
         if (strcmp(z.operation, "db") == 0)     pass2Db(&z, 4);
         if (strcmp(z.operation, "dbn") == 0)    pass2Db(&z, 5);
 
-        if ( (strcmp(z.operation, "dt") == 0 || strcmp(z.operation, "dto") == 0 || strcmp(z.operation, "dtm") == 0)
+        if ( (strcmp(z.operation, "dt") == 0 || strcmp(z.operation, "dto") == 0 || strcmp(z.operation, "dtm") == 0 || strcmp(z.operation, "kat4") == 0)
              && z.textkonst[0] == '\0' && z.operand[0] == '\0' ) {
             char message[1024];
             snprintf(message, sizeof(message), "%s ohne Text: es wird kein Wort erzeugt.", z.operation);
-            meldeWarnungOrt(lineAsmAufgeloestTemp[z.i].srcLine, message);
+            if (!pass2Wiederholung) meldeWarnungOrt(lineAsmAufgeloestTemp[z.i].srcLine, message);
         }
 
         if (strcmp(z.operation, "dt") == 0)     pass2Text(&z, 6, 0);
@@ -649,11 +809,25 @@ void pass2(char *symbolLogFile, char *symFileName) {
         if (strcmp(z.operation, "dtm") == 0)    pass2Text(&z, 8, 2);
         if (strcmp(z.operation, "dz") == 0)     pass2Dz(&z);
         if (strcmp(z.operation, "dw") == 0)     pass2DwDa(&z, 0);
+        if (strcmp(z.operation, "dwb") == 0 || strcmp(z.operation, "dwh") == 0 || strcmp(z.operation, "dwf") == 0 || strcmp(z.operation, "dwg") == 0)    pass2Dwb(&z);
         if (strcmp(z.operation, "da") == 0)     pass2DwDa(&z, 1);
         if (strcmp(z.operation, "end") == 0)    pass2Ende(&z);
+        if (strcmp(z.operation, "begin") == 0 || strcmp(z.operation, "bend") == 0)  pass2Ende(&z);   // Label auf begin/bend: Adresse der naechsten Zelle
+        if (strcmp(z.operation, "kat4") == 0)   pass2Kat4(&z);
+        if (strcmp(z.operation, "kat5") == 0)   pass2Kat5(&z);
+        if (strcmp(z.operation, "kat6") == 0)   pass2Kat6(&z);
 
         line_ausgegeben = 0;
         pass2PruefeUeberlauf(&z);
+        if (optAdrNach) optAdrNach[z.i] = z.pc;
+    }
+
+    if (z.beginZeile != 0) {
+        char message[1024];
+        is_error2 = 1;
+        z.i = z.beginIndex;
+        snprintf(message, sizeof(message), "begin (Zeile %s) ohne abschließendes bend.", qOrt(z.beginZeile));
+        MELDE_FEHLER_P2(z.i, message);
     }
 
     pass2LoeseSpaeteSymbole();
@@ -678,7 +852,7 @@ void pass2(char *symbolLogFile, char *symFileName) {
         is_error2 = 1;
     }
 
-    if (is_error2 != 0) {
+    if (is_error2 != 0 && !pass2Stumm) {
        printFormattedAsmListing(lineAsmAufgeloest, lineCountAsmAufgeloest);
     }
 }

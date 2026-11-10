@@ -1,0 +1,5 @@
+rc 16
+stderr Rekursiver Macro-Aufruf von: A1 [Aufrufkette: A1 -> B1 -> A1]
+nicht-stderr Zu viele Zeilen
+datei-weg obj mqo test
+escape-weg

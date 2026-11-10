@@ -1,0 +1,4 @@
+rc 16
+stderr adr/abstand: Die Adresse der Marke "b" ist nach Pass 2 0002, abgefragt und verwendet wurde 0003.
+datei-weg obj mqo test adr1 adr2 adrlog
+escape-weg

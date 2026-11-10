@@ -1,0 +1,2 @@
+rc 16
+stderr Makro SCHIEBE: Unbekanntes Schluesselwort 'foo' (bekannt: anzahl, richtung)

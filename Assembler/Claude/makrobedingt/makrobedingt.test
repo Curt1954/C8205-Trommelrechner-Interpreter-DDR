@@ -1,0 +1,42 @@
+Trommeldatei:
+#DOK-0001 Bedingte Assemblierung ueber Hilfsmakro: Schalter per def (vereinbart und nicht vereinbart), Schalter als Parameter (1 und 0), $IF im Quelltext (falsche Bedingung), Marke auf der Aufrufzeile
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000017 # wert: dw 017 ; Zelle 0001: Konstante, der Akkumulator soll sie behalten
+0002: 00000000000 # merk: dw 0 ; Zelle 0002: Merkzelle fuer den Akkumulator
+0003: 00000000000 # zaehler: dw 0 ; Zelle 0003: Zaehler Fall A (soll 1 werden)
+0004: 00000000000 # zb: dw 0 ; Zelle 0004: Zaehler Fall B (bleibt 0)
+0005: 00000000000 # zc: dw 0 ; Zelle 0005: Zaehler Fall C (soll 1 werden)
+0006: 00000000000 # zd: dw 0 ; Zelle 0006: Zaehler Fall D (bleibt 0)
+0007: 00000000000 # ze: dw 0 ; Zelle 0007: Fall E (bleibt 0)
+0010: 00000000001 # eins: dw 1 ; Zelle 0010: Konstante 1
+0011: 00000001211 # haupt: 211 wert ; Zelle 0011: Akkumulator laden (017)
+0012: 00000002240 # 240 merk ; Akkumulator sichern
+0013: 00000003211 # 211 zaehler ; Zaehler laden
+0014: 00000010210 # 210 eins ; um 1 erhoehen
+0015: 00000003240 # 240 zaehler ; Zaehler zurueckspeichern
+0016: 00000002211 # 211 merk ; Akkumulator wiederherstellen
+0017: 00000002240 # 240 merk ; Akkumulator sichern
+0020: 00000005211 # 211 zc ; Zaehler laden
+0021: 00000010210 # 210 eins ; um 1 erhoehen
+0022: 00000005240 # 240 zc ; Zaehler zurueckspeichern
+0023: 00000002211 # 211 merk ; Akkumulator wiederherstellen
+0024: 00000001164 # 164 0001 ; Zelle 0024: Diagnoseausgabe (nur im Test)
+0025: 00000000020 # 020 0 ; Zelle 0025: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0026 AC=00000000017 US=1
+0002: 00000000017   # merk
+0003: 00000000001   # zaehler (Fall A)
+0004: 00000000000   # zb (Fall B)
+0005: 00000000001   # zc (Fall C)
+0006: 00000000000   # zd (Fall D)
+0007: 00000000000   # ze (Fall E): bleibt 0, 240 ze entsteht nicht
+0012: 00000002240   # Fall A: 240 merk
+0016: 00000002211   # Fall A: 211 merk
+0017: 00000002240   # Fall C: 240 merk
+0023: 00000002211   # Fall C: 211 merk
+0024: 00000001164   # Fall E: hier steht schon 164 0001, nichts davor
+0025: 00000000020   # Halt 020 auf 0025

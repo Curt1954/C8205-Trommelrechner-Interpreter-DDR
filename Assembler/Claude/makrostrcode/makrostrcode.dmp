@@ -1,0 +1,23 @@
+0000: 01 0025 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000004        dw  4     ; CDEF hat 4 Zeichen
+0002: 00 00000000103        dw  67    ; C = 67
+0003: 00 00000000003        dw  3     ; FGH hat 3 Zeichen
+0004: 00 00000000102        dw  66    ; B = 66
+0005: 00 00000000007        dw  7     ; immer erzeugt
+0006: 00 00000000002        dw  2     ; OK hat 2 Zeichen
+0007: 00 00000000010        dw  8     ; immer erzeugt
+0010: 00 00000000001        dw  1     ; Text X hat 1 Zeichen
+0011: 00 00000000011        dw  9     ; Zahl 9
+0012: 00 00000000012        dw  10    ; Zahl 10
+0013: 00 00000000005        dw  5     ; lokale z: LOKAL hat 5 Zeichen
+0014: 00 00000000002        dw  2     ; lokales Feldelement: YZ hat 2 Zeichen
+0015: 00 00000000002        dw  2     ; globale z hat 2 Zeichen
+0016: 00 00000000013        dw  11    ; gleich
+0017: 00 00000000054        dw  44    ; ungleich (zwei Leerzeichen)
+0020: 00 00000000101        dw  65    ; A, B, C = 65, 66, 67
+0021: 00 00000000102        dw  66    ; A, B, C = 65, 66, 67
+0022: 00 00000000103        dw  67    ; A, B, C = 65, 66, 67
+0023: 00 00000000310        dw  200   ; 160 + 40 = 200
+0024: 00 00000001425        dw  789   ; letzte drei Zeichen 789
+0025: 01 0001 164    haupt: 164 0001  ; Zelle 21: Diagnoseausgabe (nur im Test)
+0026: 01 0000 020           020 0     ; Zelle 22: Halt

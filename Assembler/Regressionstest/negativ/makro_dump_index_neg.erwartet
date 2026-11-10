@@ -1,0 +1,5 @@
+rc 16
+stderr makro_dump_index_neg.asm:9: Fehler: D1 $DUMP:
+nicht-stderr Hinweis:
+datei-weg obj mqo test
+escape-weg

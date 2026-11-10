@@ -39,6 +39,8 @@ block "Tastaturbelegung (--TASTATUR de|en)" python3 -I testscripte/grafik_tastat
 block "Abstand Umschalttaste und Zeichentaste (G4-011)" python3 -I testscripte/grafik_sw_abstand_tests.py
 block "Stufe 3 (Trockenlauf des Tk-Tests, ohne Tkinter; echter Lauf: testscripte/grafik_sw_tk_test.py)" python3 -I testscripte/grafik_sw_tk_test.py --ohne-tk --bericht /tmp/sw_tk_trocken.txt
 block "Stufe 2 (Stresstest Pult/Rechner-Thread, 3 x 6 s)" bash -c 'for s in 3 5 6; do python3 -I testscripte/grafik_pult_stress.py 6 $s 2>/dev/null || exit 1; done'
+block "Taktmitschrift (--taktprotokoll, G4-025)"      python3 -I testscripte/grafik_takt_tests.py
+block "Taktprotokoll Auswertung (Schleife und Takte, TS-002)" python3 -I testscripte/grafik_takt_schleife_tests.py
 block "Trommel-Erweiterungsmodul (Python)"        bash -c 'cd c-module/python && python3 -m unittest test_c8205_trommel'
 block "C-Module: make test-alle (3 Testrahmen)"   bash -c 'cd c-module && make test-alle && make clean'
 if [ "${1:-}" != "--schnell" ]; then

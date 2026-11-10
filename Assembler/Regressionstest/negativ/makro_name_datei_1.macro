@@ -1,0 +1,5 @@
+; Makrodatei zum Test makro_name_datei
+DM:     MACRO erster zweiter
+        dw $erster
+        dw $dritter
+        MEND

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_zellen_allein.asm:6: Fehler: $CALC(zellen(x)): Symbol "x": steht allein auf einer Zeile und belegt keine Zelle
+datei-weg obj mqo test
+escape-weg

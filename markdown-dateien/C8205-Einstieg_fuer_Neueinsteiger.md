@@ -1,6 +1,6 @@
 # Einstieg in das C 8205-Projekt
 
-Version: 0.95-004
+Version: 0.95-005
 
 **Zweck:** Orientierung für Leser, die das Projekt zum ersten Mal sehen: was es enthält, wie man es startet, in welcher Reihenfolge die Dokumentation zu lesen ist und wo zu einer Frage die Antwort steht. Die technischen Einzelheiten des Rechners stehen in den Fachdokumenten. Wer das Projekt kennt, kann dieses Dokument überspringen. Die README (`README.md`, englisch `README.en.md`) fasst das Projekt auf einer Seite zusammen; dieses Dokument setzt dort an.
 
@@ -52,6 +52,8 @@ Zwei Betriebsarten:
 - **TEST**: läuft ohne Fenster und prüft Programme automatisch.
 - **GRAFIK** (`c8205_grafik.py`): zeigt Bedienpult und Schreibwerk als Fenster, spielt Töne und bildet die Trommel nach. Beschreibung: `C8205-Interpreter-GRAFIK_Beschreibung.md`.
 
+Stand von GRAFIK: Unter Linux sind die Logiktests und die Hörprüfung durchgeführt. Unter Windows sind die C-Module mit MinGW-w64 gebaut, die Haupttrommel ist getestet und der Mischer (`winmm`) eingeschaltet (Grundgeräusch, Lochbandleser und Stanzer gehört). Schreibwerkton, Dauerbetrieb, Pult-Fenster und andere Python-Versionen sind nicht geprüft.
+
 ### 2.2 Assembler
 
 `Assembler/` enthält den in C geschriebenen Assembler `c82ass`. Er übersetzt Assembler-Quelltext (`.asm`) und erzeugt unter anderem:
@@ -98,7 +100,7 @@ python3 -I c8205_interp.py --MODUS=TEST Tests/trommel-001_leer.txt
 
 Mit Wrapper (im Gesamt-Zip, nicht in der Claude-Variante; Testdatei an beliebiger Stelle der Argumente, Protokoll nach `Test-Protokolle/`): `./c8205_interpreter.sh Tests/trommel-001_leer.txt` (Linux/macOS) bzw. `c8205_interpreter.bat Tests\trommel-001_leer.txt` (Windows).
 
-Erwartet: Ausgabe endet mit `Test wahr`. Rückgabecodes: 0 Test wahr, 4 ohne Prüfung, 6 Test falsch, 8 Laufzeitfehler, 16 formale Prüfung negativ, 2 Aufruf falsch. Das Protokoll liegt unter `Test-Protokolle/<Testname>/protokoll.txt`. Die Trommeldatei `Trommel/trommel.txt` wird bei jedem Lauf verändert; Tests setzen dafür `#TROMMEL=LEER`.
+Erwartet: Ausgabe endet mit `Test wahr`. Rückgabecodes: 0 Test wahr, 4 ohne Prüfung, 6 Test falsch, 8 Laufzeitfehler, 16 formale Prüfung negativ, 2 Aufruf falsch. Das Protokoll schreibt der direkte Aufruf nach `Test-Protokolle/<Testname>/protokoll.txt`, der Wrapper nach `Test-Protokolle/<Testname>.log`; die letzte Ausgabezeile „Protokolldatei: …“ nennt den Pfad. Die Trommeldatei `Trommel/trommel.txt` wird bei jedem Lauf verändert; Tests setzen dafür `#TROMMEL=LEER`.
 
 **Alle Tests** (rund 10 Sekunden): `testscripte/compute_all_tests.sh`.
 
@@ -118,7 +120,7 @@ python3 c8205_grafik.py                # mit Tönen (Linux: paplay, pw-cat, apla
 ./c8205_grafik.sh --STUMM              # Wrapper, aus jedem Ordner; Windows: c8205_grafik.bat
 ```
 
-Alle Schalter und die Geräteordner beschreibt die `README.md` (Schnellstart GRAFIK).
+Alle Schalter und die Geräteordner beschreibt `C8205-Interpreter-GRAFIK_Beschreibung.md` (Abschnitte 1, 2 und 6).
 
 ## 5. Begriffe
 
@@ -176,7 +178,7 @@ Die vollständige Dokumentenlandkarte steht in `C8205-Interpreter-Projektueberbl
 | Assemblerprogramme schreiben (auch mit KI) | `C8205-Programmierhandbuch_fuer_Claude.md` (Wurzelverzeichnis), Karte `CLAUDE.md` |
 | BIS, Objektcode | `Bausteininterpretiersystem BIS/markdown-dateien/C8205-Interpreter-BIS.md` und `C8205-Interpreter-Objektdatei_Listing.md` |
 
-Weitere Ordner: `Hilfsprogramme/` (Lochstreifen-Hilfsprogramme), `testscripte/` (Testskripte, Prüfungen), `Testausfuehrungen/` (Skripte `testwahl.sh`, `kep_test.sh`, `interpreter_test.sh`, `bis_test.sh`, Testtabelle). Das Gesamt-Zip enthält zusätzlich PDFs und weitere Dateien, die in der schlanken Claude-Variante (Name endet auf „Claude“) fehlen, darunter die Wrapper-Skripte `c8205_interpreter.sh/.bat` und `c8205_grafik.sh/.bat`; Einzelheiten: Handbuch für Claude, Abschnitt 11.
+Weitere Ordner: `Hilfsprogramme/` (Lochstreifen-Hilfsprogramme), `testscripte/` (Testskripte, Prüfungen), `Lochstreifen/` (fertige Lochstreifen- und Ladedateien, nach Format geordnet: `im_KEP-Format/`, `im_BIS-Format/`, `das_KEP_im_TEST-Format/`, `Datenformat/`), `Testausfuehrungen/` (Skripte `testwahl.sh`, `kep_test.sh`, `interpreter_test.sh`, `bis_test.sh`, Testtabelle). Das Gesamt-Zip enthält zusätzlich PDFs und weitere Dateien, die in der schlanken Claude-Variante (Name endet auf „Claude“) fehlen, darunter die Wrapper-Skripte `c8205_interpreter.sh/.bat` und `c8205_grafik.sh/.bat`; Einzelheiten: Handbuch für Claude, Abschnitt 11.
 
 ## 8. Technischer Zusammenhang, Befehle und Tests lesen
 
@@ -208,9 +210,10 @@ Die Teile eines Tests liegen in diesen Ordnern:
 |---|---|
 | `Tests/` | Testaufträge (`.test` und `.txt`; der Assembler erzeugt `.test`) |
 | `Test-Ergebnisvergleiche/` | Soll-Dateien (Namen meist auf `-ausgabe.txt` oder `_erwartet.txt`), mit denen Tests ihre Ausgabe vergleichen |
-| `Test-Protokolle/` | Protokolle der Interpreterläufe; der Ordner entsteht erst beim Lauf und ist im Zip nicht enthalten |
+| `Test-Protokolle/` | Protokolle der Interpreterläufe; der Ordner entsteht erst beim Lauf; im Gesamt-Zip liegt er als `Test-Protokolle.zip`, in der Claude-Variante fehlt er |
 | `Test-virtuelleGeraete/` | virtuelle Geräte des TEST-Interpreters: `Leser1/`, `Leser1_02/`, `Leser2/`, `Stanzer1/`, `SW-Ausgabe/`, `T-SW-Eingabe/` |
 | `virtuelle_Geraete/` | virtuelle Geräte des GRAFIK-Interpreters: `Leser1/`, `Leser2/`, `Stanzer1/` |
+| `Lochstreifen/` | fertige Lochstreifen- und Ladedateien, nach Format geordnet |
 | `Trommel/` | die gemeinsame Trommel (`trommel.txt`) für TEST und GRAFIK |
 
 ## 9. Rekonstruktion und historische Sicherheit

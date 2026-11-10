@@ -1,0 +1,27 @@
+Trommeldatei:
+#DOK-0001 Test lokale Felder: Anzahl aus Parameter, Neubeginn je Aufruf, Ueberdeckung eines globalen Felds gleichen Namens
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000011000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000011 # dw 9 ; Quadrat, von hinten
+0002: 00000000004 # dw 4 ; Quadrat, von hinten
+0003: 00000000001 # dw 1 ; Quadrat, von hinten
+0004: 00000000000 # dw 0 ; Quadrat, von hinten
+0005: 00000000001 # dw 1 ; Quadrat, von hinten
+0006: 00000000000 # dw 0 ; Quadrat, von hinten
+0007: 00000000052 # dw 42 ; 42
+0010: 00000000003 # dw 3 ; Anzahl der Elemente des globalen Felds
+0011: 00000001164 # haupt: 164 0001 ; Zelle 9: Diagnoseausgabe (nur im Test)
+0012: 00000000020 # 020 0 ; Zelle 10: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0001: 00000000011   # q(3) = 9
+0002: 00000000004   # q(2) = 4
+0003: 00000000001   # q(1) = 1
+0004: 00000000000   # q(0) = 0
+0005: 00000000001   # FELDER 2: q(1)
+0006: 00000000000   # FELDER 2: q(0)
+0007: 00000000052   # globales q(0) = 42
+0010: 00000000003   # Anzahl des globalen Felds

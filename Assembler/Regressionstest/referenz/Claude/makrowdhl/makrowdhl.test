@@ -1,0 +1,26 @@
+Trommeldatei:
+#DOK-0001 Test: Makro ZWEISCHIEB (zwei Zeilen neue Form) und ZWEIALT (zwei Zeilen alte Form) aus macro_wdhl.macro
+#PROT STUFE=2
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 77777777777 # einsen: dw 077777777777 ; Zelle 0001: alle 33 Bits auf 1
+0002: 00000000000 # zw: dw 0 ; Zelle 0002: Zwischenergebnis (initialisiert)
+0003: 00000000000 # erg1: dw 0 ; Zelle 0003: Ergebnis 1 (initialisiert)
+0004: 00000000000 # erg2: dw 0 ; Zelle 0004: Ergebnis 2 (initialisiert)
+0005: 00000001211 # haupt: 211 einsen ; Zelle 0005: AC := alle Bits 1
+0006: 00002000440 # 440 02000 ; Zelle 0006: alle 32 Zellen der Spur 2000 := AC (alle Bits 1)
+0007: 00002031604 # ML0001DKR: 604 02031 ; 3 mal Linksverschiebung
+0010: 00000002240 # 240 zw ; Zwischenergebnis sichern
+0011: 00002006604 # 604 02006 ; 2 mal Linksverschiebung
+0012: 00000003240 # 240 erg1 ; Zelle 0012: erg1 := AC
+0013: 00000001211 # 211 einsen ; Zelle 0013: AC := alle Bits 1
+0014: 00002031604 # 604 02031 ; 3 mal Linksverschiebung
+0015: 00002031604 # 604 02031 ; 3 mal Linksverschiebung
+0016: 00000004240 # 240 erg2 ; Zelle 0016: erg2 := AC
+0017: 00000000020 # 020 0 ; Zelle 0017: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0020 AC=77777777700 US=1
+0002: 77777777770   # zw
+0003: 77777777740   # erg1
+0004: 77777777700   # erg2

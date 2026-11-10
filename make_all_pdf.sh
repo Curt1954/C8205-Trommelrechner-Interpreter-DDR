@@ -4,6 +4,7 @@ arr=(
   erzeuge_bedienpult_peripherie_pdf.py
   erzeuge_bedienungsanleitung_pdf.py
   erzeuge_bis_pdf.py
+  erzeuge_datenstruktur_pdf.py
   erzeuge_durchfuehrung_pdf.py
   erzeuge_einstieg_pdf.py
   erzeuge_einzelbefehlsliste_pdf.py
@@ -17,8 +18,10 @@ arr=(
   erzeuge_projektstruktur_pdf.py
   erzeuge_projektueberblick_pdf.py
   erzeuge_rechnerbeschreibung_pdf.py
+  erzeuge_standardmakros_pdf.py
   erzeuge_testuebersicht_pdf.py
   erzeuge_ueberblick_gesamtaufbau_pdf.py
+  erzeuge_zt_makros_pdf.py
   erzeuge_zusatztrommel_pdf.py
 )
 

@@ -1,0 +1,18 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000002000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # erg: dw 0 ; Zelle 0001: Ergebnis
+0002: 00000001211 # haupt: 211 erg ; Zelle 0002: AC := (erg) = 0
+0003: 00007500210 # 210 tabDKR ; AC := AC + (tab%), Befehl im Vorderteil
+0004: 00000001240 # 240 erg ; Zelle 0004: (erg) := AC
+0005: 00000000020 # 020 0 ; Zelle 0005: Halt
+7500: 00000000007 # dw 7 ; erste Zelle
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0006 AC=00000000007 US=1
+0001: 00000000007   # erg
+7500: 00000000007   # erste Zelle des Blocks

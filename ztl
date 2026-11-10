@@ -1,0 +1,30 @@
+Neues .asm-Programm   ZTL.asm
+
+
+Das Programm ist ein BIS-Objektcodeprogramm.
+
+Es wird vom Bediener über Lochstreifen eingelesen.
+
+Seine Aufgabe ist die residente Vorhaltung von Krenfunktionen des Zusatztrommel-Loaders.
+
+Das sind: 
+- Prüfen, ob Programm-ID im ZT-Programmverzeichnis enrhalten ist
+- Laden eines Programmes per id auf speicherbereich, typgerecht
+- Speichern eines "Speicherabzuges" unter dem namen SP<id> (dreistellig mit vornull) von einer vorgegebenen Adresse 
+  unter der nächsten, freien ID
+  a) im Pogrammberzeichnis
+  b) im Codebereich als Typ 11 Daten
+
+die 3 funktionen sind als unterprogramm auch aus anderen programmen aufrufbar. 
+
+das ZTL hat eine minimale benutzerschnittstelle. es meldet sich mit ">" auf einer neuen zeile
+1) der benutzer kann l<wrzl>  == laden eines programmes eingeben,
+dann auf der nächsten zeile die Ausgabe ID=  und die benutzereingabe ... <wrzl>
+dann auf der dritten zeile die ausgabe ADR=  und die benutzereingabe  0000<wrzl>  (4 Oktalziffern)
+
+2) der benutzer kann e<wrzl> eingaben, ZTL beendet sich. die steuerung geht mit 0000 000  (sprung zur 0) an das BIS zurück.
+
+3) der benutzer kann s<wrzl> eingeben
+dann auf der nächsten zeile ausgabe ADR=  und die benutzereingabe 0000<wrzl> (4 Oktalziffern)
+dann auf der nächsten zeile LEN=  und die benutzerangabe 0000 (oktal)                                                                               
+

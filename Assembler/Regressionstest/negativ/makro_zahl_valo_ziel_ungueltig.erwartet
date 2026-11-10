@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zahl_valo_ziel_ungueltig.asm:6: Fehler: M1 $VALO a-b: Variablenname a-b ungültig
+datei-weg obj mqo test
+escape-weg

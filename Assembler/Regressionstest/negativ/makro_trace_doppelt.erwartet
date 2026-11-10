@@ -1,0 +1,19 @@
+rc 0
+anzahl-stderr 6 Spur 
+stderr-einrueckung 0 Spur AUSSEN 1: $SET a 1 => a: (neu) -> 1
+stderr-einrueckung 0 Spur AUSSEN 2: ruft INNEN
+stderr-einrueckung 2 Spur INNEN 1: $SET z 1 => z: (neu) -> 1
+stderr-einrueckung 2 Spur INNEN 2: erzeugt dw 1
+stderr-einrueckung 0 Spur AUSSEN 3: $SET a 2 => a: 1 -> 2
+stderr-einrueckung 0 Spur AUSSEN 4: erzeugt dw 2
+nicht-stderr Spur LEER
+nicht-stderr $SET b
+stdout 0000: 00 00000000001  dw 1
+stdout 0001: 00 00000000002  dw 2
+stdout 0002: 00 00000000003  dw 3
+nicht-stderr Warnung
+nicht-stderr Fehler
+log-weg Spur
+dmp-weg Spur
+datei-da obj mqo test
+escape-weg

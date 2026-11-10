@@ -1,0 +1,4 @@
+rc 16
+stderr makro_name_pr10_ohne_namen.asm:6: Fehler: $PR10 $TYPZAHL 0 5 Ungültiger Parameter: $PR10 $TYPZAHL 0 5 (Max. erlaubt: $PR2)
+datei-weg obj mqo test
+escape-weg

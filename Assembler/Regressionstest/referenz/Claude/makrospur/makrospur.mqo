@@ -1,0 +1,8 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      1       ; Summe 1 bis 1
+        dw      3       ; Summe 1 bis 2
+        dw      6       ; Summe 1 bis 3
+        dw      9       ; q(2) = 9
+        dw      5       ; Parameter
+haupt:  164     0001    ; Zelle 6: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 7: Halt

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_aufruf.asm:9: Fehler: $CALC(zellen(a,b)): zellen(a,b): Quelltextzeile 11: "M2" ist ein Makroaufruf, die Zellenzahl steht erst nach dem Auflösen fest (bei "zellen(a,b)")
+datei-weg obj mqo test
+escape-weg

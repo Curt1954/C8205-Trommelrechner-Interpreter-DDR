@@ -1,0 +1,4 @@
+rc 16
+stderr makro_rept_ohne_endrept.asm:6: Fehler: R1 $REPT ohne zugehöriges $ENDREPT.
+datei-weg obj mqo test
+escape-weg

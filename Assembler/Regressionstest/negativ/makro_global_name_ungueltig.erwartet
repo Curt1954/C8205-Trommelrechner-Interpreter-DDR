@@ -1,0 +1,4 @@
+rc 16
+stderr makro_global_name_ungueltig.asm:6: Fehler: G3 Variablenname 1x ungültig
+datei-weg obj mqo test
+escape-weg

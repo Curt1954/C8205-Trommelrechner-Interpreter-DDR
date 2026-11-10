@@ -1,0 +1,673 @@
+                   000                haupt              ; Zelle 0000: Sprung zum Hauptprogramm
+status:            dw                 0                  ; Zelle 0001: Weg des Programms (1 kein Repository, 2 Nein, 3 Ja), nur fuer den Test
+a00:               da                 000000001300       ; Zelle 0002: Adresse SPUF-00 (Spur 0 von ZT 0, Adressfeld)
+apn:               da                 000000001340       ; Zelle 0003: Adresse SPUF-PN (Namensverzeichnis, Adressfeld)
+apc:               da                 000000001440       ; Zelle 0004: Adresse des Puffers Programmcode, 1 Spur (Adressfeld)
+anm:               da                 000000000727       ; Zelle 0005: Adresse der Namenszelle kat5 "ztd" (Adressfeld)
+d_repo:            dw                 1                  ; Zelle 0006: Platzhalter-Ergebnis von repo (1 = Repository vorhanden)
+haupt              241                kbgb               ; 1a: KBGB := 0 (KB), AC := 0
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   211                a00                ; AC := Adresse SPUF-00 (Spur 0 von ZT 0)
+                   240                r1                 ; R1 := Adresse SPUF-00
+                   025                repo               ; UP repo: R2 := 1 (Repository vorhanden) oder 0
+                   211                r2                 ; AC := Ergebnis
+                   330                l0001              ; Vergleich mit 0
+                   170                keinrepo           ; gleich 0: kein Repository
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0002              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0003              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   025                jneingabe          ; Antwort lesen: R2 := 1 (J) oder 0 (N), K0 ist angewaehlt
+                   211                r2                 ; AC := Antwort
+                   330                l0004              ; Vergleich mit 1
+                   170                ja                 ; gleich 1: Ja
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0005              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   211                l0006              ; AC := 2
+                   240                status             ; Weg 2: Nein
+                   000                ende               ; zum Halt
+ja                 030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   211                a00                ; AC := Adresse SPUF-00 (Spur 0 von ZT 0)
+                   240                r1                 ; R1 := Adresse SPUF-00
+                   025                ztinit             ; UP ztinit: alle ZT loeschen, Spur 0 anlegen (SPUF-00 danach = Spur 0), ZT 0 angewaehlt, keine Ausschrift
+                   211                l0007              ; AC := 3
+                   240                status             ; Weg 3: Ja
+                   441                000000001340       ; 11a: Spur 1 von SPUF-PN (Spurgrenze) loeschen: alle 32 Zellen := 0, AC := 0
+                   441                000000001340+040   ; 11a: Spur 2 von SPUF-PN loeschen (2-Spur-Puffer, 64 Zellen)
+                   211                apn                ; AC := Adresse SPUF-PN
+                   240                r1                 ; 13: R1 := Adresse SPUF-PN
+                   211                anm                ; AC := Adresse der Namenszelle
+                   240                r2                 ; R2 := Adresse der Namenszelle (kat5 ztd)
+                   211                a00                ; AC := Adresse SPUF-00
+                   240                r3                 ; R3 := Adresse SPUF-00
+                   025                pname              ; UP Programmname eintragen (Makro PNAME): Eintrag ID 1, Zaehler in SPUF-00 := 1
+                   211                apn                ; AC := Adresse SPUF-PN
+                   240                r1                 ; 14: R1 := Adresse SPUF-PN
+                   241                r2                 ; R2 := 0 (Trommelnummer: Verzeichnis auf ZT 0), AC := 0
+                   211                l0004              ; AC := 1
+                   240                r3                 ; R3 := 1 (Spurnummer der ersten Verzeichnisspur; die zweite ist Spur 2)
+                   025                neuanl             ; UP neuanlage Programm (Makro NEUANL): SPUF-PN mit Laenge 0 auf ZT 0 Spur 1 und 2 schreiben
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0008              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   030                04600              ; 4600 oder K1 oder LSL1 oder LSS1
+                   211                apc                ; AC := Adresse des Puffers Programmcode (1 Spur)
+                   240                r1                 ; 15: R1 := Adresse Programmcode
+                   241                r2                 ; 15: R2 := 0 (Trommelnummer der ersten Zielspur), AC := 0
+                   211                l0009              ; AC := 33 (ZT_PROGSPUR1 aus ZTKONST, Literal # ist dezimal; oktal 41)
+                   240                r3                 ; 15: R3 := 33 (Spurnummer der ersten Zielspur: Spur nach der letzten belegten, Zelle 19 = 32)
+                   025                hschl              ; UP Hauptschleife Ls nach ZT (Makro HSCHL): R2 := Sektoranzahl; zu lang: kein Ruecksprung (fe_lang)
+                   211                r2                 ; 16: AC := Sektoranzahl (Laenge, hoechstens 4095)
+                   210                000000001340+1     ; plus Wort 2 (PNAME hat Typ, ID, Trommel, Spur gesetzt; z0 und Laenge sind 0): Laenge einsetzen
+                   240                000000001340+1     ; Wort 2 in SPUF-PN eintragen (Zelle 1 = Eintrag ID 1, Wort 2)
+                   211                apn                ; 16: AC := Adresse SPUF-PN
+                   240                r1                 ; 16: R1 := Adresse SPUF-PN
+                   241                r2                 ; 16: R2 := 0 (Trommelnummer: Verzeichnis auf ZT 0), AC := 0
+                   211                l0004              ; AC := 1
+                   240                r3                 ; 16: R3 := 1 (Spurnummer der ersten Verzeichnisspur; die zweite ist Spur 2)
+                   025                neuanl             ; 16: UP neuanl (Makro NEUANL) schreibt SPUF-PN, jetzt mit der Laenge, noch einmal auf ZT 0 Spur 1 und 2 (ZT 0 bleibt angewaehlt)
+                   030                05100              ; 17: Anwahl ZT 0 (5100 030)
+                   601                000000001300       ; 17: Ausgabe SPUF-00 (32 Zellen, Spurgrenze) auf Spur 0 von ZT 0 (zzz0 = 0000)
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0010              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   000                ende               ; zum Halt
+fe_lang            030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0011              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   000                ende               ; zum Halt
+keinrepo           030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0012              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   211                l0004              ; AC := 1
+                   240                status             ; Weg 1: kein Repository
+ende               020                0                  ; Halt (alle Wege)
+repo               240                rr                 ; Rueckkehrwort sichern
+                   030                04500              ; 4500 oder K2 oder LSL2 oder SW1 Output
+                   211                l0013              ; AC := Adresse des Textes (Adressfeld, Literal)
+                   240                r1                 ; R1 := Adresse des Textes
+                   025                ausgabe            ; UP ausgabe (KAT4AUSGABE_G): Text ausgeben, KBGB nachfuehren
+                   dz                 $wrzl              ; Zeilenschaltung
+                   030                04700              ; 4700 oder K0 oder SW1 Input oder KON Input
+                   211                d_repo             ; AC := Platzhalter-Ergebnis
+                   240                r2                 ; R2 := Ergebnis
+rr:                db                 1                  ; Laufzeit: Rueckkehrwort (am UP-Ende sequentiell erreicht)
+ztinit             240                ML0001CKQ          ; Rueckkehrwort sichern
+                   211                ML0010CKQ          ; AC := R1 (Adresse SPUF-00, Adressfeld)
+                   210                l0014              ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen der Spur := 0)
+                   240                ML0002CKQ          ; Befehl 441 <SPUF-00> auf die naechste Zelle
+ML0002CKQ:         db                 1                  ; Laufzeit: 441 <SPUF-00>, SPUF-00 := 0 (Nullpuffer), AC := 0
+                   241                ML0003CKQ          ; g := 0 (laufende Spur 0 bis 511)
+ML0004CKQ          211                ML0003CKQ          ; AC := g
+                   200                l0015              ; nur d (Bit 7 und 8 von g, d * 0200)
+                   644                07670              ; 8 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                l0016              ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+                   240                ML0005CKQ          ; Anwahlbefehl auf die naechste Zelle
+ML0005CKQ:         db                 1                  ; Laufzeit: 5k00 030 (k = d + 1), ZT d anwaehlen
+                   211                ML0003CKQ          ; AC := g
+                   200                l0017              ; nur s (Bit 0 bis 6 von g)
+                   644                07656              ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0010CKQ          ; plus R1 (Adresse SPUF-00)
+                   210                l0018              ; plus Operationscode 601 (Ausgabe HT -> ZT)
+                   240                ML0006CKQ          ; Ausgabebefehl auf die naechste Zelle
+ML0006CKQ:         db                 1                  ; Laufzeit: zzz0 bbbb 601, Nullpuffer auf Spur s der gewaehlten ZT
+                   211                ML0003CKQ          ; AC := g
+                   210                l0004              ; plus 1
+                   240                ML0003CKQ          ; g := g + 1
+                   330                l0019              ; Vergleich mit 512 (keine Operation)
+                   170                ML0007CKQ          ; g = 512: alle 512 Spuren geloescht
+                   000                ML0004CKQ          ; naechste Spur
+ML0007CKQ          211                ML0010CKQ          ; Spur 0 aufbauen: AC := R1
+                   210                l0020              ; plus Operationscode 240 (Speichern), Zelle 0 von SPUF-00
+                   240                ML0008CKQ          ; Speicherbefehl auf die naechste Zelle
+                   211                l0021              ; AC := Repository-Kennzeichen
+ML0008CKQ:         db                 1                  ; Laufzeit: 240 <SPUF-00 Zelle 0>
+                   211                ML0010CKQ          ; AC := R1
+                   210                l0022              ; plus 16 Adresseneinheiten (16 * 01000 = 020000) und 240: Zelle 16
+                   240                ML0009CKQ          ; Speicherbefehl auf die naechste Zelle
+                   211                l0004              ; AC := 1 (Repository-Kopf)
+ML0009CKQ:         db                 1                  ; Laufzeit: 240 <SPUF-00 Zelle 16>
+                   211                ML0010CKQ          ; AC := R1
+                   210                l0023              ; plus 19 Adresseneinheiten (023 * 01000) und 240: Zelle 19
+                   240                ML0011CKQ          ; Speicherbefehl auf die naechste Zelle
+                   211                l0024              ; AC := 32 (ZT_VERZSPUREN, 040 oktal: letzte belegte Spur, Verzeichnis Spuren 1 bis 32)
+ML0011CKQ:         db                 1                  ; Laufzeit: 240 <SPUF-00 Zelle 19>
+                   030                05100              ; Anwahl ZT 0 (5100 030)
+                   211                ML0010CKQ          ; AC := R1
+                   210                l0018              ; plus 601, zzz0 = 0000: Spur 0
+                   240                ML0012CKQ          ; Ausgabebefehl auf die naechste Zelle
+ML0012CKQ:         db                 1                  ; Laufzeit: 0000 bbbb 601, Spur 0 von ZT 0 schreiben (513. Ausgabe)
+ML0001CKQ:         db                 1                  ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0003CKQ:         db                 1                  ; Arbeitszelle g: laufende Spur 0 bis 511 (g = 128 * d + s)
+pname              240                ML0001OWC          ; Rueckkehrwort sichern
+                   211                ML0013OWC          ; AC := R3 (Adresse SPUF-00)
+                   210                l0025              ; plus 17 Zellen (17 dez = 021 okt): Zelle 17 = Zaehler
+                   251                0                  ; R-Lesebefehl: AC := Z
+                   240                ML0002OWC          ; Z merken
+                   210                ML0002OWC          ; AC := 2 * Z (Zellen des Eintrags vor dem neuen; Eintrag = 2 Zellen)
+                   644                07653              ; 9 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0012OWC          ; plus R1: Adresse von Wort 1 des neuen Eintrags
+                   240                ML0003OWC          ; Adresse des Eintrags merken
+                   210                l0020              ; plus Operationscode 240 (Speichern): Befehl 240 <Wort 1>
+                   240                ML0008OWC          ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+                   211                ML0014OWC          ; AC := R2 (Adresse der Namenszelle)
+                   251                0                  ; AC := Namenszelle (kat5-Wort)
+ML0008OWC:         db                 1                  ; Laufzeit: 240 <Wort 1>, Wort 1 := Name
+                   211                ML0002OWC          ; AC := Z
+                   210                l0004              ; AC := ID = Z + 1
+                   644                07646              ; 2 mal Linksverschiebung (Operand nach Festlegung 026)
+                   240                ML0004OWC          ; Zwischenwert
+                   211                ML0013OWC          ; AC := R3
+                   210                l0026              ; plus 18 Zellen (022 okt): Zelle 18 = letzte belegte Trommel T
+                   251                0                  ; AC := T
+                   210                ML0004OWC          ; AC := ID * 4 + T
+                   644                07645              ; 7 mal Linksverschiebung (Operand nach Festlegung 026)
+                   240                ML0004OWC          ; Zwischenwert
+                   211                ML0013OWC          ; AC := R3
+                   210                l0027              ; plus 19 Zellen (023 okt): Zelle 19 = letzte belegte Spur S
+                   251                0                  ; AC := S
+                   210                ML0004OWC          ; AC := (ID * 4 + T) * 128 + S
+                   210                l0004              ; plus 1: naechste Spur (Uebertrag S = 127 in die Trommel)
+                   644                07644              ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                l0028              ; plus Typ 10 (2 * 2^30)
+                   240                ML0004OWC          ; neue Felder von Wort 2
+                   211                ML0003OWC          ; AC := Adresse von Wort 1
+                   210                l0019              ; plus 1 Zelle: Adresse von Wort 2
+                   251                0                  ; AC := altes Wort 2
+                   200                l0029              ; nur z0 und Laenge behalten (Typ, ID, Trommel, Spur ausblenden)
+                   210                ML0004OWC          ; neue Felder einsetzen
+                   240                ML0004OWC          ; Wort 2 fertig
+                   211                ML0003OWC          ; AC := Adresse von Wort 1
+                   210                l0030              ; plus 1 Zelle (01000) und 240: Befehl 240 <Wort 2>
+                   240                ML0010OWC          ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+                   211                ML0004OWC          ; AC := Wort 2 fertig
+ML0010OWC:         db                 1                  ; Laufzeit: 240 <Wort 2>, Wort 2 := neu
+                   211                ML0013OWC          ; AC := R3
+                   210                l0031              ; plus 17 Zellen und 240: Befehl 240 <SPUF-00 Zelle 17>
+                   240                ML0011OWC          ; Speicherbefehl auf die naechste Zelle der Befehlsfolge
+                   211                ML0002OWC          ; AC := Z
+                   210                l0004              ; AC := Z + 1 = neue ID
+ML0011OWC:         db                 1                  ; Laufzeit: 240 <Zelle 17>, Zaehler := neue ID
+ML0001OWC:         db                 1                  ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002OWC:         db                 1                  ; Arbeitszelle Z: alter Zaehler
+ML0003OWC:         db                 1                  ; Arbeitszelle: Adresse des Eintrags (Wort 1, Adressfeld)
+ML0004OWC:         db                 1                  ; Arbeitszelle: Zwischenwert und neue Felder von Wort 2
+neuanl             240                ML0001DMR          ; Rueckkehrwort sichern
+                   211                ML0011DMR          ; AC := R2 (Trommelnummer d)
+                   644                07675              ; 15 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                l0016              ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+                   240                ML0002DMR          ; Anwahlbefehl auf die naechste Zelle
+ML0002DMR:         db                 1                  ; Laufzeit: 5k00 030 (k = d + 1), ZT d anwaehlen
+                   211                ML0012DMR          ; AC := R3 (Spurnummer s)
+                   644                07656              ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0010DMR          ; plus R1 (Adresse SPUF-PN)
+                   210                l0018              ; plus Operationscode 601 (Ausgabe HT -> ZT)
+                   240                ML0003DMR          ; Ausgabebefehl auf die naechste Zelle
+ML0003DMR:         db                 1                  ; Laufzeit: s zzz0 bbbb 601, Zellen 0 bis 31 von SPUF-PN auf Spur s
+                   211                ML0012DMR          ; AC := R3 (Spurnummer s)
+                   210                l0004              ; plus 1: zweite Spur
+                   644                07656              ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0010DMR          ; plus R1 (Adresse SPUF-PN)
+                   210                l0032              ; plus 32 Zellen (040 * 01000 = 040000) und Operationscode 601
+                   240                ML0004DMR          ; Ausgabebefehl auf die naechste Zelle
+ML0004DMR:         db                 1                  ; Laufzeit: (s + 1) zzz0 bbbb 601, Zellen 32 bis 63 von SPUF-PN auf Spur s + 1
+ML0001DMR:         db                 1                  ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+hschl              240                ML0001PYD          ; Rueckkehrwort sichern
+                   211                ML0050PYD          ; AC := R1 (Adresse des Spurpuffers)
+                   240                ML0030PYD          ; Adresse des Spurpuffers merken (R1 wird je Eingabe veraendert)
+                   211                ML0053PYD          ; AC := KBGB
+                   240                ML0031PYD          ; KBGB merken (der Streifen fuehrt KBGB nach, am Ende wird zurueckgestellt)
+                   211                ML0051PYD          ; AC := R2 (Trommelnummer d)
+                   644                07645              ; 7 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0052PYD          ; plus R3 (Spurnummer s)
+                   240                ML0002PYD          ; p := 128 * d + s (laufende Zielspur)
+                   241                ML0003PYD          ; Sektorzaehler := 0, AC := 0
+                   240                ML0004PYD          ; Ende-Merker := 0 (Streifen laeuft noch)
+ML0005PYD          211                ML0030PYD          ; neue Spur im Puffer: AC := Adresse des Spurpuffers
+                   240                ML0006PYD          ; Zeiger := erste Pufferstelle
+                   210                l0014              ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen := 0)
+                   240                ML0007PYD          ; Befehl 441 <Spurpuffer> auf die naechste Zelle
+ML0007PYD:         db                 1                  ; Laufzeit: 441 <Spurpuffer>, Spurpuffer := 0, AC := 0
+ML0008PYD          211                ML0006PYD          ; naechste Eingabe: AC := Zeiger auf die Pufferstelle
+                   240                ML0050PYD          ; R1 := Pufferstelle (2 Zellen fuer diese Eingabe)
+                   025                eingabe            ; UP TYP10EINGABE: liest eine Eingabe, legt Wort 1 und Wort 2 ab; bei / Sprung nach ML0009% (Streifenende)
+                   211                ML0003PYD          ; AC := Sektorzaehler
+                   210                l0006              ; plus 2 (eine Eingabe = 2 Sektoren)
+                   240                ML0003PYD          ; Sektorzaehler := Zahl der Sektoren
+                   220                l0033              ; minus 4096
+                   050                fe_lang            ; >= 0: mehr als 4095 Sektoren -> Fehlerausgang des Aufrufers
+                   211                ML0006PYD          ; AC := Zeiger
+                   210                l0034              ; plus zwei Adresseneinheiten (2 Zellen)
+                   240                ML0006PYD          ; Zeiger := naechste Pufferstelle
+                   220                ML0030PYD          ; minus Adresse des Spurpuffers
+                   330                l0035              ; Vergleich mit 32 Zellen (keine Operation)
+                   170                ML0015PYD          ; Puffer voll: Spur schreiben
+                   000                ML0008PYD          ; naechste Eingabe
+hs_ende            221                l0004              ; Streifenende (Sprung aus TYP10EINGABE), Marke hs_ + dritter Parameter: AC := -1
+                   240                ML0004PYD          ; Ende-Merker := -1
+                   211                ML0006PYD          ; AC := Zeiger
+                   220                ML0030PYD          ; minus Adresse des Spurpuffers
+                   330                l0001              ; Vergleich mit 0 (keine Operation)
+                   170                ML0020PYD          ; Puffer leer: keine Spur mehr zu schreiben
+ML0015PYD          211                ML0002PYD          ; Spur schreiben: AC := p
+                   200                l0015              ; nur die Trommelnummer (Bit 7 und 8 von p)
+                   644                07670              ; 8 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                l0016              ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+                   240                ML0016PYD          ; Anwahlbefehl auf die naechste Zelle
+ML0016PYD:         db                 1                  ; Laufzeit: 5k00 030, ZT d anwaehlen (K1 bleibt angewaehlt)
+                   211                ML0002PYD          ; AC := p
+                   200                l0017              ; nur die Spur s (Bit 0 bis 6 von p)
+                   644                07656              ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0030PYD          ; plus Adresse des Spurpuffers
+                   210                l0018              ; plus Operationscode 601 (Ausgabe HT -> ZT)
+                   240                ML0017PYD          ; Ausgabebefehl auf die naechste Zelle
+ML0017PYD:         db                 1                  ; Laufzeit: zzz0 bbbb 601, Spurpuffer auf Spur s der gewaehlten ZT
+                   211                ML0002PYD          ; AC := p
+                   210                l0004              ; plus 1
+                   240                ML0002PYD          ; p := naechste Zielspur (127 -> Spur 0 der naechsten Trommel)
+                   211                ML0004PYD          ; AC := Ende-Merker
+                   040                ML0020PYD          ; < 0: letzte Spur geschrieben, fertig
+                   000                ML0005PYD          ; sonst neue Spur im Puffer
+ML0020PYD          211                ML0003PYD          ; fertig: AC := Sektoranzahl
+                   240                ML0051PYD          ; R2 := Sektoranzahl
+                   211                ML0030PYD          ; AC := Adresse des Spurpuffers
+                   240                ML0050PYD          ; R1 := urspruenglicher Wert
+                   211                ML0031PYD          ; AC := KBGB am Anfang
+                   240                ML0053PYD          ; KBGB zurueckgestellt
+ML0001PYD:         db                 1                  ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0002PYD:         db                 1                  ; Arbeitszelle p: laufende Zielspur (128 * Trommel + Spur)
+ML0003PYD:         db                 1                  ; Arbeitszelle: Sektorzaehler (2 je Eingabe)
+ML0004PYD:         db                 1                  ; Arbeitszelle: Ende-Merker (0 = weiter, -1 = / gelesen)
+ML0006PYD:         db                 1                  ; Arbeitszelle: Zeiger auf die naechste Eingabestelle im Spurpuffer (Adressfeld)
+ML0030PYD:         db                 1                  ; Arbeitszelle: Adresse des Spurpuffers (R1 am Anfang)
+ML0031PYD:         db                 1                  ; Arbeitszelle: KBGB am Anfang
+eingabe            240                ML0001BKP          ; Rueckkehrwort sichern
+                   241                ML0013BKP          ; Wort 1 := 0, AC := 0
+                   241                ML0014BKP          ; Wort 2 := 0
+                   211                l0006              ; zwei Kennzeichen sind noch zu lesen
+                   240                ML0017BKP          ; zaehler := 2
+ML0003BKP          011                ML0012BKP          ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+                   040                ML0004BKP          ; z0 gesetzt: Ziffer oder +
+                   330                ML0022BKP          ; Vergleich mit der Tabellenzelle 61 (/), keine Operation
+                   170                hs_ende            ; gleich: Streifenende, Sprung zum Ausgang des Aufrufers
+                   000                ML0003BKP          ; sonst: Zeichen ignorieren, weiterlesen
+ML0004BKP          200                l0036              ; AC := Code des Zeichens (6 Bit)
+                   240                ML0016BKP          ; code := Code
+                   211                ML0017BKP          ; AC := noch zu lesende Kennzeichen
+                   330                l0001              ; Vergleich mit 0 (keine Operation)
+                   170                ML0005BKP          ; 0: Ziffernteil
+                   220                l0004              ; AC := zaehler - 1
+                   240                ML0017BKP          ; zaehler := zaehler - 1
+                   211                ML0014BKP          ; AC := Wort 2 bisher
+                   644                07662              ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0016BKP          ; plus Code des neuen Kennzeichens
+                   240                ML0014BKP          ; Wort 2 := neues Wort 2
+                   000                ML0003BKP          ; naechstes Zeichen
+ML0005BKP          211                ML0016BKP          ; Ziffernteil: AC := Code
+                   200                l0037              ; Bits ausser den drei unteren: 0 nur bei Oktalziffern 0 bis 7
+                   220                l0004              ; AC := AC - 1 (negativ, wenn Oktalziffer)
+                   050                ML0003BKP          ; AC >= 0: 8, 9 oder +: ignorieren
+                   211                ML0013BKP          ; AC := Wort 1 bisher
+                   644                07671              ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                ML0016BKP          ; plus Code der neuen Ziffer
+                   240                ML0013BKP          ; Wort 1 := neues Wort 1
+                   000                ML0003BKP          ; naechstes Zeichen
+ML0006BKP          211                ML0017BKP          ; Ende (. oder :): AC := noch zu lesende Kennzeichen
+                   330                l0004              ; Vergleich mit 1 (keine Operation)
+                   170                ML0007BKP          ; 1: nur ein Kennzeichen gelesen, es gehoert nach Kennzeichen 1
+                   000                ML0008BKP          ; sonst: Wort 2 ist richtig (0 oder 2 Kennzeichen; bei 2 ist Wort 2 = 0)
+ML0007BKP          211                ML0014BKP          ; AC := Wort 2 (ein Kennzeichen)
+                   644                07662              ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+                   240                ML0014BKP          ; Wort 2 := Kennzeichen 1 und 0
+ML0008BKP          211                ML0050BKP          ; AC := R1 (Adresse des Bereichs)
+                   210                l0020              ; plus Operationscode 240: Befehl 240 <Wort 1>
+                   240                ML0009BKP          ; Speicherbefehl auf die naechste Zelle
+                   211                ML0013BKP          ; AC := Wort 1
+ML0009BKP:         db                 1                  ; Laufzeit: 240 <Bereich>, Wort 1 in die erste Zelle
+                   211                ML0050BKP          ; AC := R1
+                   210                l0030              ; plus eine Adresseneinheit und 240: Befehl 240 <Bereich + 1>
+                   240                ML0010BKP          ; Speicherbefehl auf die naechste Zelle
+                   211                ML0014BKP          ; AC := Wort 2 (nichtnegativ)
+ML0010BKP:         db                 1                  ; Laufzeit: 240 <Bereich + 1>, Wort 2 in die zweite Zelle
+ML0001BKP:         db                 1                  ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0011BKP          211                l0004              ; Um. GB: AC := 1
+                   240                ML0051BKP          ; KBGB := 1
+                   000                ML0003BKP          ; weiterlesen
+ML0018BKP          241                ML0051BKP          ; Um. KB: KBGB := 0
+                   000                ML0003BKP          ; weiterlesen
+l0001              dw                 000000000000       
+l0002              da                 000000001156       
+l0003              da                 000000001164       
+l0004              dw                 1                  
+l0005              da                 000000001175       
+l0006              dw                 2                  
+l0007              dw                 3                  
+l0008              da                 000000001201       
+l0009              dw                 ZT_PROGSPUR1       
+l0010              da                 000000001221       
+l0011              da                 000000001214       
+l0012              da                 000000001232       
+l0013              da                 000000001241       
+l0014              dw                 000000000441       
+l0015              dw                 000000000600       
+l0016              dw                 000005100030       
+                   equ100             00600                  ; ML0012% muss durch 0100 teilbar sein
+                   dw                 040000000000       ; 00: 0: gueltig, z0 gesetzt, Code 00
+                   dw                 040000000001       ; 01: 1: gueltig, z0 gesetzt, Code 01
+                   dw                 040000000002       ; 02: 2: gueltig, z0 gesetzt, Code 02
+                   dw                 040000000003       ; 03: 3: gueltig, z0 gesetzt, Code 03
+                   dw                 040000000004       ; 04: 4: gueltig, z0 gesetzt, Code 04
+                   dw                 040000000005       ; 05: 5: gueltig, z0 gesetzt, Code 05
+                   dw                 040000000006       ; 06: 6: gueltig, z0 gesetzt, Code 06
+                   dw                 040000000007       ; 07: 7: gueltig, z0 gesetzt, Code 07
+                   dw                 040000000010       ; 10: 8: gueltig, z0 gesetzt, Code 10
+                   dw                 040000000011       ; 11: 9: gueltig, z0 gesetzt, Code 11
+                   000                ML0003BKP          ; 12: Leertaste: ignorieren
+ML0013BKP:         db                 1                  ; 13: Arbeitszelle: Wort 1, das gerade aufgebaut wird
+ML0014BKP:         db                 1                  ; 14: Arbeitszelle: Wort 2 (Kennzeichen)
+                   000                ML0006BKP          ; 15: : beendet die Eingabe
+                   000                ML0003BKP          ; 16: Irrung Satz: ignorieren
+ML0017BKP:         db                 1                  ; 17: Arbeitszelle: noch zu lesende Kennzeichen (2, 1, 0)
+                   dw                 040000000020       ; 20: +: gueltig, z0 gesetzt, Code 20
+                   dw                 0                  ; 21: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 22: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 23: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 24: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 25: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 26: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 27: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 30: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 31: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   000                ML0003BKP          ; 32: WRZL: ignorieren
+                   000                ML0006BKP          ; 33: . beendet die Eingabe
+ML0016BKP:         db                 1                  ; 34: Arbeitszelle: Code (6 Bit) des gelesenen Zeichens
+                   dw                 0                  ; 35: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 36: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   000                ML0011BKP          ; 37: Um. GB: KBGB := 1
+                   000                ML0003BKP          ; 40: - / Dreieck: ignorieren
+                   dw                 0                  ; 41: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 42: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 43: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 44: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 45: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 46: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 47: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 50: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 51: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 52: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 53: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 54: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 55: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 56: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   000                ML0018BKP          ; 57: Um. KB: KBGB := 0
+                   000                ML0003BKP          ; 60: ` / ;: ignorieren
+ML0022BKP:         dw                 020000000000       ; 61: /: Streifenende-Kennung (z1 gesetzt, z0 nicht), nur zum Vergleich; Sprung nach ende
+                   dw                 0                  ; 62: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 63: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 64: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 65: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 66: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 67: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 70: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 71: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   000                ML0003BKP          ; 72: BM: ignorieren
+                   000                ML0003BKP          ; 73: , / ?: ignorieren
+                   dw                 0                  ; 74: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   000                ML0003BKP          ; 75: Tabulator: ignorieren
+                   dw                 0                  ; 76: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+                   dw                 0                  ; 77: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+jneingabe          240                rj                 ; Rueckkehrwort sichern
+lesen              011                tab                ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+                   240                zeich              ; zeich := Tabellenwert (1 = j, 2 = n, sonst 0)
+                   211                kbgb               ; AC := KB/GB-Zustand (globale Zelle KBGB)
+                   330                l0001              ; Vergleich mit 0
+                   170                lesen              ; Kleinbuchstaben (KB): Zeichen zaehlt nicht
+                   211                zeich              ; AC := Tabellenwert
+                   330                l0004              ; Vergleich mit 1
+                   170                antj               ; gleich 1: J
+                   330                l0006              ; Vergleich mit 2
+                   170                antn               ; gleich 2: N
+                   000                lesen              ; anderes Zeichen: weiterlesen
+antn               241                r2                 ; N: R2 := 0, AC := 0
+                   000                rj                 ; zurueck
+antj               211                l0004              ; J: AC := 1
+                   240                r2                 ; R2 := 1
+rj:                db                 1                  ; Laufzeit: Rueckkehrwort (am UP-Ende sequentiell erreicht)
+hgb                211                l0004              ; Um. GB: AC := 1
+                   240                kbgb               ; KBGB := 1
+                   000                lesen              ; weiterlesen
+hkb                241                kbgb               ; Um. KB: KBGB := 0, AC := 0
+                   000                lesen              ; weiterlesen
+zeich:             db                 1                  ; Arbeitszelle: Tabellenwert des gelesenen Zeichens
+zname:             kat5               ztd                ; Namenszelle: kat5 "ztd" (ein Wort, 05244240000, keine Endemarke), vom UP pname in SPUF-PN einzutragen
+l0017              dw                 000000000177       
+l0018              dw                 000000000601       
+l0019              dw                 000000001000       
+l0020              dw                 000000000240       
+l0021              dw                 052525252525       
+l0022              dw                 000000020240       
+l0023              dw                 000000023240       
+l0024              dw                 32                 
+l0025              dw                 000000021000       
+l0026              dw                 000000022000       
+l0027              dw                 000000023000       
+l0028              dw                 020000000000       
+l0029              dw                 040000007777       
+l0030              dw                 000000001240       
+l0031              dw                 000000021240       
+l0032              dw                 000000040601       
+l0033              dw                 000000010000       
+l0034              dw                 000000002000       
+l0035              dw                 000000040000       
+l0036              dw                 000000000077       
+l0037              dw                 000000000070       
+l0038              dw                 037777777777       
+l0039              dw                 000000000377       
+l0040              dw                 000000000057       
+l0041              dw                 000000000117       
+l0042              dw                 000000000030       
+                   equ100             01000                  ; tab muss durch 0100 teilbar sein
+                   dw                 0                  ; 00: 0: keine Antwort, Wert 0
+                   dw                 0                  ; 01: 1: keine Antwort, Wert 0
+                   dw                 0                  ; 02: 2: keine Antwort, Wert 0
+                   dw                 0                  ; 03: 3: keine Antwort, Wert 0
+                   dw                 0                  ; 04: 4: keine Antwort, Wert 0
+                   dw                 0                  ; 05: 5: keine Antwort, Wert 0
+                   dw                 0                  ; 06: 6: keine Antwort, Wert 0
+                   dw                 0                  ; 07: 7: keine Antwort, Wert 0
+                   dw                 0                  ; 10: 8: keine Antwort, Wert 0
+                   dw                 0                  ; 11: 9: keine Antwort, Wert 0
+                   000                lesen              ; 12: Leertaste / ZWR: Sprungzeichen, zurueck zum Lesen
+                   dw                 0                  ; 13: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 14: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   000                lesen              ; 15: : (Doppelpunkt): Sprungzeichen, zurueck zum Lesen
+                   000                lesen              ; 16: Irrung Satz: Sprungzeichen, zurueck zum Lesen
+                   dw                 0                  ; 17: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 20: +: keine Antwort, Wert 0
+                   dw                 0                  ; 21: a: keine Antwort, Wert 0
+                   dw                 0                  ; 22: b: keine Antwort, Wert 0
+                   dw                 0                  ; 23: c: keine Antwort, Wert 0
+                   dw                 0                  ; 24: d: keine Antwort, Wert 0
+                   dw                 0                  ; 25: e: keine Antwort, Wert 0
+                   dw                 0                  ; 26: f: keine Antwort, Wert 0
+                   dw                 0                  ; 27: g: keine Antwort, Wert 0
+                   dw                 0                  ; 30: h: keine Antwort, Wert 0
+                   dw                 0                  ; 31: i: keine Antwort, Wert 0
+                   000                lesen              ; 32: WRZL: Sprungzeichen, zurueck zum Lesen
+                   000                lesen              ; 33: . (Punkt): Sprungzeichen, zurueck zum Lesen
+                   dw                 0                  ; 34: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 35: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 36: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   000                hgb                ; 37: Um. GB: KBGB := 1
+                   000                lesen              ; 40: - / Dreieck: Sprungzeichen, zurueck zum Lesen
+                   dw                 1                  ; 41: j: J (mit Um. GB) = Ja, Wert 1
+                   dw                 0                  ; 42: k: keine Antwort, Wert 0
+                   dw                 0                  ; 43: l: keine Antwort, Wert 0
+                   dw                 0                  ; 44: m: keine Antwort, Wert 0
+                   dw                 2                  ; 45: n: N (mit Um. GB) = Nein, Wert 2
+                   dw                 0                  ; 46: o: keine Antwort, Wert 0
+                   dw                 0                  ; 47: p: keine Antwort, Wert 0
+                   dw                 0                  ; 50: q: keine Antwort, Wert 0
+                   dw                 0                  ; 51: r: keine Antwort, Wert 0
+                   dw                 0                  ; 52: WR: keine Antwort, Wert 0
+                   dw                 0                  ; 53: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 54: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 55: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 56: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   000                hkb                ; 57: Um. KB: KBGB := 0
+                   000                lesen              ; 60: ` / ;: Sprungzeichen, zurueck zum Lesen
+                   dw                 0                  ; 61: / ): keine Antwort, Wert 0
+                   dw                 0                  ; 62: s: keine Antwort, Wert 0
+                   dw                 0                  ; 63: t: keine Antwort, Wert 0
+                   dw                 0                  ; 64: u: keine Antwort, Wert 0
+                   dw                 0                  ; 65: v: keine Antwort, Wert 0
+                   dw                 0                  ; 66: w: keine Antwort, Wert 0
+                   dw                 0                  ; 67: x: keine Antwort, Wert 0
+                   dw                 0                  ; 70: y: keine Antwort, Wert 0
+                   dw                 0                  ; 71: z: keine Antwort, Wert 0
+                   000                lesen              ; 72: BM: Sprungzeichen, zurueck zum Lesen
+                   000                lesen              ; 73: , / ?: Sprungzeichen, zurueck zum Lesen
+                   dw                 0                  ; 74: % / *: keine Antwort, Wert 0
+                   000                lesen              ; 75: Tabulator: Sprungzeichen, zurueck zum Lesen
+                   dw                 0                  ; 76: nicht belegte Eingabeadresse: keine Antwort, Wert 0
+                   dw                 0                  ; 77: Transport: keine Antwort, Wert 0
+ausgabe            240                ML0001NWB          ; Rueckkehrwort sichern
+                   211                ML0017NWB          ; AC := KBGB (0 = KB, 1 = GB)
+                   330                l0001              ; Vergleich mit 0 (keine Operation)
+                   170                ML0018NWB          ; KB: nichts auszugeben, der Text beginnt in KB
+                   dz                 $inkb              ; GB: erst Um. KB ausgeben
+                   241                ML0017NWB          ; KBGB := 0 (241 loescht den AC und speichert 0)
+ML0018NWB          211                ML0010NWB          ; AC := Startadresse des Textes
+                   240                ML0009NWB          ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+ML0002NWB          251                0                  ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+                   240                ML0007NWB          ; tw := Textwort (mit z0)
+                   200                l0038              ; z0 ausblenden, nur 32 Bit Zeichen
+                   240                ML0008NWB          ; wort := Zeichenrest
+ML0003NWB          211                ML0008NWB          ; AC := Zeichenrest
+                   330                l0001              ; Vergleich mit 0 (keine Operation)
+                   170                ML0005NWB          ; Rest 0: Wort fertig
+                   200                l0039              ; unterstes Zeichen ausblenden
+                   240                ML0011NWB          ; zeichen := Zeichen
+                   330                l0040              ; Vergleich mit kat4 057 (Um. GB)
+                   170                ML0012NWB          ; Um. GB: KBGB := 1
+                   330                l0041              ; Vergleich mit kat4 117 (Um. KB)
+                   170                ML0013NWB          ; Um. KB: KBGB := 0
+ML0014NWB          211                ML0011NWB          ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+                   644                07644              ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+                   210                l0042              ; Operationscode 030 (Ausgabe) dazu
+                   240                ML0004NWB          ; Ausgabebefehl auf die naechste Zelle speichern
+ML0004NWB:         db                 1                  ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+                   211                ML0008NWB          ; AC := Zeichenrest
+                   642                07670              ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+                   240                ML0008NWB          ; wort := Rest
+                   000                ML0003NWB          ; naechstes Zeichen
+ML0005NWB          211                ML0007NWB          ; AC := Textwort mit z0 (negativ beim letzten Wort)
+                   050                ML0006NWB          ; kein z0: naechstes Wort
+ML0001NWB:         db                 1                  ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+ML0006NWB          211                ML0009NWB          ; AC := Adresse des Textwortes
+                   210                l0019              ; plus eine Adresseneinheit
+                   240                ML0009NWB          ; zeiger := Adresse des naechsten Wortes
+                   000                ML0002NWB          ; AC ist der Zeiger, Textwort lesen
+ML0007NWB:         db                 1                  ; Arbeitszelle: aktuelles Textwort
+ML0008NWB:         db                 1                  ; Arbeitszelle: noch auszugebender Zeichenrest
+ML0009NWB:         db                 1                  ; Arbeitszelle: Adresse des aktuellen Textwortes
+ML0011NWB:         db                 1                  ; Arbeitszelle: aktuelles Zeichen (waehrend der Zustandspruefung)
+ML0012NWB          211                l0004              ; Um. GB: AC := 1 (Zustand GB)
+                   240                ML0017NWB          ; KBGB := 1
+                   000                ML0014NWB          ; zurueck zur Ausgabe des Zeichens
+ML0013NWB          241                ML0017NWB          ; Um. KB: KBGB := 0 (241 loescht den AC und speichert 0)
+                   000                ML0014NWB          ; zurueck zur Ausgabe des Zeichens
+t_repgef:          dw                 004523644457       ; "Repository gefunden" (Ende KB)
+                   dw                 005130443127       ; Fortsetzung
+                   dw                 015022243163       ; Fortsetzung
+                   dw                 004611233432       ; Fortsetzung
+                   dw                 004515042544       ; Fortsetzung
+                   dw                 040000000105       ; Fortsetzung
+t_frage:           dw                 014423674457       ; "Zusatztrommel loeschen [J/N]" (Ende GB)
+                   dw                 017134630542       ; Fortsetzung
+                   dw                 012421444563       ; Fortsetzung
+                   dw                 003220622524       ; Fortsetzung
+                   dw                 014211243103       ; Fortsetzung
+                   dw                 010511234043       ; Fortsetzung
+                   dw                 012101027432       ; Fortsetzung
+                   dw                 010513660517       ; Fortsetzung
+                   dw                 040000000031       ; Fortsetzung
+t_pende:           dw                 011123653457       ; "Programmende" (Ende KB)
+                   dw                 006122233506       ; Fortsetzung
+                   dw                 010511252124       ; Fortsetzung
+                   dw                 040000022464       ; Fortsetzung
+t_lband:           dw                 010623641457       ; "Lochband mit ZTD in Leser 1 einlegen" (Ende KB)
+                   dw                 006114434043       ; Fortsetzung
+                   dw                 012406432105       ; Fortsetzung
+                   dw                 005706471451       ; Fortsetzung
+                   dw                 003215071571       ; Fortsetzung
+                   dw                 003221224517       ; Fortsetzung
+                   dw                 004523641457       ; Fortsetzung
+                   dw                 003222222542       ; Fortsetzung
+                   dw                 005111215001       ; Fortsetzung
+                   dw                 006711241505       ; Fortsetzung
+                   dw                 040000042445       ; Fortsetzung
+t_lszu:            dw                 007010643103       ; "lochstreifen zu lang" (Ende KB)
+                   dw                 004522271542       ; Fortsetzung
+                   dw                 010511223051       ; Fortsetzung
+                   dw                 003231074432       ; Fortsetzung
+                   dw                 046721230503       ; Fortsetzung
+t_geladen:         dw                 006434674457       ; "ZTD geladen mit Programm-ID 1" (Ende KB)
+                   dw                 004515647432       ; Fortsetzung
+                   dw                 004515030503       ; Fortsetzung
+                   dw                 005125015105       ; Fortsetzung
+                   dw                 012713615163       ; Fortsetzung
+                   dw                 006721444517       ; Fortsetzung
+                   dw                 012425030511       ; Fortsetzung
+                   dw                 006412227500       ; Fortsetzung
+                   dw                 040000247432       ; Fortsetzung
+t_keinrep:         dw                 004523651057       ; "Kein Repository gefunden" (Ende KB)
+                   dw                 005706442451       ; Fortsetzung
+                   dw                 012711247511       ; Fortsetzung
+                   dw                 016312261106       ; Fortsetzung
+                   dw                 003232044506       ; Fortsetzung
+                   dw                 014411422467       ; Fortsetzung
+                   dw                 050511232105       ; Fortsetzung
+t_uprepo:          dw                 003225662057       ; "UP Repository pruefen" (Ende KB)
+                   dw                 012711247511       ; Fortsetzung
+                   dw                 016312261106       ; Fortsetzung
+                   dw                 003232044506       ; Fortsetzung
+                   dw                 004531044527       ; Fortsetzung
+                   dw                 040021222446       ; Fortsetzung
+                   equ40              01300                  ; SPUF-00 auf einer 040-Grenze
+spuf00:            db                 040                ; SPUF-00: Spurpuffer fuer Spur 0 von ZT 0 (32 Zellen)
+                   equ40              01340                  ; SPUF-PN auf einer Spurgrenze (11a), 2 Spuren
+spufpn:            db                 0100               ; SPUF-PN: Spurpuffer Namensverzeichnis, 2 Spuren = 64 Zellen (Verzeichnisspuren 1 und 2), vom Hauptprogramm mit zwei 441 geloescht
+                   equ40              01440                  ; Puffer Programmcode (1 Spur) auf einer Spurgrenze
+spufpc:            db                 040                ; Programmcode: 1 Spur = 32 Zellen (Platzhalter, wird noch nicht benutzt)

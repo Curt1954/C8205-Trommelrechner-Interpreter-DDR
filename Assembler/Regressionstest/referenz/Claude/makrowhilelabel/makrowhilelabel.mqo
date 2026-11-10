@@ -1,0 +1,49 @@
+             000          haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+schlDKR_0:   dw           1            ; Label des Durchlaufs
+             000          schlDKR_0    ; Sprung auf das Label des eigenen Durchlaufs
+schlDKR_1:   dw           1            ; Label des Durchlaufs
+             000          schlDKR_1    ; Sprung auf das Label des eigenen Durchlaufs
+schlDKR_2:   dw           1            ; Label des Durchlaufs
+             000          schlDKR_2    ; Sprung auf das Label des eigenen Durchlaufs
+             000          endeDKR      ; Sprung auf ein Label hinter der Schleife
+endeDKR:     dw           077          ; Label ausserhalb des Rumpfes (wie bisher)
+             000          vorGNU_0     ; Sprung vorwaerts im selben Durchlauf
+             dw           1            ; uebersprungenes Wort
+vorGNU_0:    dw           2            ; Ziel des Sprungs
+             000          vorGNU_1     ; Sprung vorwaerts im selben Durchlauf
+             dw           1            ; uebersprungenes Wort
+vorGNU_1:    dw           2            ; Ziel des Sprungs
+innJQX_0_0:  dw           0            ; Zehner a, Einer b
+             000          innJQX_0_0   ; Sprung auf das Label des inneren Durchlaufs
+innJQX_0_1:  dw           1            ; Zehner a, Einer b
+             000          innJQX_0_1   ; Sprung auf das Label des inneren Durchlaufs
+ausJQX_0:    dw           077          ; Label im Rumpf der aeusseren Schleife
+             000          ausJQX_0     ; Sprung auf das Label des aeusseren Durchlaufs
+innJQX_1_0:  dw           10           ; Zehner a, Einer b
+             000          innJQX_1_0   ; Sprung auf das Label des inneren Durchlaufs
+innJQX_1_1:  dw           11           ; Zehner a, Einer b
+             000          innJQX_1_1   ; Sprung auf das Label des inneren Durchlaufs
+ausJQX_1:    dw           077          ; Label im Rumpf der aeusseren Schleife
+             000          ausJQX_1     ; Sprung auf das Label des aeusseren Durchlaufs
+rMTA_0_0:    dw           0            ; Zaehler von $REPT
+             000          rMTA_0_0     ; Sprung auf das Label dieser Wiederholung
+rMTA_1_0:    dw           1            ; Zaehler von $REPT
+             000          rMTA_1_0     ; Sprung auf das Label dieser Wiederholung
+rMTA_0_1:    dw           0            ; Zaehler von $REPT
+             000          rMTA_0_1     ; Sprung auf das Label dieser Wiederholung
+rMTA_1_1:    dw           1            ; Zaehler von $REPT
+             000          rMTA_1_1     ; Sprung auf das Label dieser Wiederholung
+tagPWD_0:    dw           5            ; Label des Durchlaufs
+             000          tagPWD_0     ; Sprung auf das uebergebene Label
+tagPWD_1:    dw           5            ; Label des Durchlaufs
+             000          tagPWD_1     ; Sprung auf das uebergebene Label
+             dw           210          ; t, fe(0), fe(1) hintereinander
+             dw           211          ; t, fe(0), fe(1) hintereinander
+             dw           212          ; t, fe(0), fe(1) hintereinander
+             dw           2            ; Anzahl der Elemente
+             dw           3            ; Anzahl der Elemente
+             dw           4            ; Anzahl der Elemente
+             dw           0            ; nach der Vereinbarung immer 0
+             dw           0            ; nach der Vereinbarung immer 0
+haupt:       164          0001         ; Zelle 0057: Diagnoseausgabe (nur im Test)
+             020          0            ; Zelle 0060: Halt

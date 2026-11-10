@@ -1,0 +1,111 @@
+Trommeldatei:
+#DOK-0001 Test Attributabfragen, Randfaelle: equ-Ketten bis 15 Stufen, equ *, Namenslaenge 32, Parameter als Ausdruck, $CALCO/$CALCO4, $CALC im Text von $SET, $REPT, Operation aus Parameter, $V(i) im Namensteil, Symbole hinter end nach Literalen
+#PROT STUFE=2
+0000: 00000057000 # 000 haupt ; Zelle 0: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Art des Symbols
+0002: 00000000002 # dw 2 ; Art des Symbols
+0003: 00000000002 # dw 2 ; Art des Symbols
+0004: 00000000002 # dw 2 ; Art des Symbols
+0005: 00000000003 # dw 3 ; Art des Symbols
+0006: 00000000003 # dw 3 ; Art des Symbols
+0007: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0010: 00000000003 # dw 3 ; Wert des Ausdrucks
+0011: 00000000003 # dw 3 ; Wert des Ausdrucks
+0012: 00000000003 # dw 3 ; Art des Symbols
+0013: 00000000003 # dw 3 ; Art des Symbols
+0014: 00000000003 # dw 3 ; Art des Symbols
+0015: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0016: 00000000002 # dw 2 ; Art des Symbols
+0017: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0020: 00000000005 # dw 5 ; Wert des Ausdrucks
+0021: 00000000003 # dw 3 ; Zellenzahl der Anweisung
+0022: 00000000004 # dw 4 ; Art des Symbols
+0023: 00000000006 # dw 6 ; art(a_equ)+1 wird im Ausdruck eingeklammert eingesetzt (4.2)
+0024: 00000000014 # dw 12 ; 2*3 wird im Ausdruck eingeklammert eingesetzt (4.2)
+0025: 00000000014 # dw 12 ; zellen(a_db)+art(a_abs) wird im Ausdruck eingeklammert eingesetzt (4.2)
+0026: 00000000025 # dw 21 ; Wert des Ausdrucks
+0027: 00000000012 # dw 012 ; 012 = 10
+0030: 00000000012 # dw 00012 ; 0012 = 10
+0031: 00000000002 # dw 2 ; Text 10: 2 Zeichen
+0032: 00000000012 # dw 10 ; 10
+0033: 00000000000 # dw 0 ; 4 gleich 4: 0
+0034: 00000000000 # dw 0 ; 0, 1
+0035: 00000000001 # dw 1 ; 0, 1
+0036: 00000000026 # dw 22 ; erzeugt
+0037: 00000010016 # dw 4110 ; 10 + 100 + 4000 = 4110
+0040: 00000000012 # dw 10 ; 10
+0041: 00000000001 # dw 1 ; sym1: 1, sym2: 0, sym3: 1
+0042: 00000000000 # dw 0 ; sym1: 1, sym2: 0, sym3: 1
+0043: 00000000001 # dw 1 ; sym1: 1, sym2: 0, sym3: 1
+0044: 00000000000 # dw 0 ; sym2 gibt es nicht: 0
+0045: 00000000003 # dw 3 ; tab3 hat 3 Zellen
+0046: 00000000000 # dw 0 ; Art des Symbols
+0047: 00000000000 # dw 0 ; 1, wenn das Symbol vorhanden ist
+0050: 00000000001 # dw 1 ; Art des Symbols
+0051: 00000000002 # dw 2 ; Art des Symbols
+0052: 00000000003 # dw 3 ; Art des Symbols
+0053: 00000000001 # dw 1 ; 1, wenn das Symbol vorhanden ist
+0054: 00000000014 # dw 12 ; Wert des Ausdrucks
+0055: 00000000004 # dw 4 ; Art des Symbols
+0056: 00000000001 # dw 1 ; Zellenzahl der Anweisung
+0057: 00000114211 # haupt: 211 l0001 ; AC := 5 (Literal l0001)
+0060: 00000115210 # 210 l0002 ; AC := AC + 7 (Literal l0002)
+0061: 00000110240 # 240 erg ; erg := AC = 12
+0062: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0063: 00000000020 # 020 0 ; Halt
+0103: 00000000000 # a2: dbn 2 ; 2 Zellen
+0104: 00000000000
+0110: 00000000000 # erg: dw 0 ; Ergebnis der Rechnung
+0114: 00000000005 # l0001 dw 5
+0115: 00000000007 # l0002 dw 7
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0064 AC=00000000014 US=1
+0001: 00000000001   # FRAGE_ART ka0
+0002: 00000000002   # FRAGE_ART ka1
+0003: 00000000002   # FRAGE_ART ka14
+0004: 00000000002   # FRAGE_ART ka15
+0005: 00000000003   # FRAGE_ART ka16
+0006: 00000000003   # FRAGE_ART ka17
+0007: 00000000001   # FRAGE_DEF ka17
+0010: 00000000003   # WERT ka15
+0011: 00000000003   # WERT ka1
+0012: 00000000003   # FRAGE_ART kb0
+0013: 00000000003   # FRAGE_ART kb1
+0014: 00000000003   # FRAGE_ART kb2
+0015: 00000000001   # FRAGE_DEF kb2
+0016: 00000000002   # FRAGE_ART nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+0017: 00000000001   # FRAGE_DEF nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+0020: 00000000005   # WERT nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+0021: 00000000003   # FRAGE_ZELLEN nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnd
+0022: 00000000004   # FRAGE_ART nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnd
+0023: 00000000006   # DOPPELT art(a_equ)+1
+0024: 00000000014   # DOPPELT 2*3
+0025: 00000000014   # DOPPELT zellen(a_db)+art(a_abs)
+0026: 00000000025   # WERT art(a_abs)+art(a_equ)*10
+0027: 00000000012   # CO
+0030: 00000000012   # CO
+0031: 00000000002   # TX
+0032: 00000000012   # TX
+0033: 00000000000   # TX
+0034: 00000000000   # PE zellen(a2)
+0035: 00000000001   # PE zellen(a2)
+0036: 00000000026   # PE zellen(a2)
+0037: 00000010016   # SO AB 0
+0040: 00000000012   # AUSSEN tab
+0041: 00000000001   # SUCHE
+0042: 00000000000   # SUCHE
+0043: 00000000001   # SUCHE
+0044: 00000000000   # SUCHE
+0045: 00000000003   # SUCHE
+0046: 00000000000   # FRAGE_ART l0001
+0047: 00000000000   # FRAGE_DEF l0001
+0050: 00000000001   # FRAGE_ART h_abs
+0051: 00000000002   # FRAGE_ART h_equ
+0052: 00000000003   # FRAGE_ART h_stern
+0053: 00000000001   # FRAGE_DEF h_abs
+0054: 00000000014   # WERT h_abs+h_equ
+0055: 00000000004   # FRAGE_ART erg
+0056: 00000000001   # FRAGE_ZELLEN erg
+0110: 00000000014   # erg = 5 + 7 (Literale #5 und #7; erg liegt nach haupt (47), 4 weiteren Codezellen, a_db 5, tab 10, a2 2, tab3 3 Zellen: 46+26 = 72 = 0110)

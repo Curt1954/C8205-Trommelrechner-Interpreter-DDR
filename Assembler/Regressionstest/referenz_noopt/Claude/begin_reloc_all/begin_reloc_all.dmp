@@ -1,0 +1,18 @@
+0000: 01 0002 000           000    haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0              erg:   dw     0     ; Zelle 0001: Ergebnis
+0002: 01 0100 211    haupt: 211    a1    ; Zelle 0002: AC := (a1), Block A
+0003: 01 0103 210           210    b1    ; Zelle 0003: AC := AC + (b1), Block B
+0004: 01 0103 210           210    blkB  ; Zelle 0004: AC := AC + (blkB), Marke auf der begin-Zeile von B (= b1)
+0005: 01 0110 210           210    c1    ; Zelle 0005: AC := AC + (c1), Block C
+0006: 01 0112 210           210    d1    ; Zelle 0006: AC := AC + (d1), Block D
+0007: 01 0001 240           240    erg   ; Zelle 0007: (erg) := AC
+0010: 01 0000 020           020    0     ; Zelle 0010: Halt
+      20 0000 0100   blkA:  equ100 00100 ; erste Anweisung: Gruppe 1
+0100: 00 00000000001 a1:    dw     1     ; erste Zelle von Block A
+0101: 20 0103               db     2     ; Rest: zusammen 3 Zellen
+0103: 00 00000000002 b1:    dw     2     ; erste Zelle von Block B
+0104: 20 0110               db     4     ; Rest: zusammen 5 Zellen
+0110: 00 00000000004 c1:    dw     4     ; erste Zelle von Block C
+0111: 20 0112               db     1     ; zusammen 2 Zellen
+0112: 00 00000000010 d1:    dw     8     ; erste Zelle von Block D
+0113: 20 0212               db     077   ; zusammen 0100 Zellen

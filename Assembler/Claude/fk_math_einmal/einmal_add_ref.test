@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000004000 # 000 haupt ; Zelle 0000: Sprung ueber die Daten zum Hauptprogramm
+0001: 10000000000 # wa: dw 010000000000 ; Zelle 0001: a = 0,25 (2^30)
+0002: 14000000000 # wb: dw 014000000000 ; Zelle 0002: b = 0,375 (3 * 2^29)
+0003: 00000000000 # res_add: dw 0 ; Ergebnis add
+0004: 00000001211 # haupt: 211 wa ; AC := a
+0005: 00007773240 # 240 r1 ; R1 := a
+0006: 00000002211 # 211 wb ; AC := b
+0007: 00007776240 # 240 r2 ; R2 := b
+0010: 00000013025 # 025 fk_add ; Aufruf fk_add, Ergebnis im AC
+0011: 00000003240 # 240 res_add ; Ergebnis ablegen
+0012: 00000000020 # 020 0 ; Halt
+0013: 00000016240 # fk_add: 240 fkm_rueck ; Eintritt: Rueckkehrwort sichern
+0014: 00007773211 # 211 fkm_r1 ; AC := R1
+0015: 00007776210 # 210 fkm_r2 ; + R2 (Ueberlauf: FUE, Halt beim naechsten Befehl)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 US=1
+0003: 24000000000   # add

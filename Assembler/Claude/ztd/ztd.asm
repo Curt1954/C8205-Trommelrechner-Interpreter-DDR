@@ -1,0 +1,1873 @@
+; ztd.asm - ZTD, der Dialog des ZT-Repositories (experimenteller Prototyp C8205Z), Version 0.01-001
+; Format: C8205Z/zt/ZT-Repository_Format.md (0.01-006), Abschnitte 5, 6, 7, 11.
+; Einsprung: Relativadresse 0000 (ZTL startet ZTD mit dem Sprungwort 000 <Dienst von ZTL> im AC, Format 11.5).
+; Dialog (Eingabe ueber die Schreibwerk-Tastatur K0, Ausgabe auf K2): Kommandobuchstabe, danach Rueckfragen:
+;   l  Liste (Name, Laenge)        a  Name, dann Lochstreifen Leser 1 (.obj) ins Repository
+;   d  Name loeschen               m  Name, Adresse. : Programm laden (ZTL-Dienst, Hauptleitadresse := Adresse, RA := 0)
+;   g  Adresse. : Sprung 025 dorthin (Ruecksprung Sache des Programms)   q  Ende (Sprung 0000)   h  Hilfe
+;   Namen: Buchstaben, Ziffern, ZR, bis zu 10 Zeichen, Ende mit WRZL. Adressen: BIS-Adresseneingabe (0316), Ende mit Punkt.
+; Meldungen im Klartext nach Format 11.3 (Statusnummern oktal); der Status steht in der Zelle status.
+; Zustand nur in eigenen Zellen; jedes Kommando liest Anker und Belegungslisten neu (ini). a und d buchen erst am Ende um:
+;   Spuren werden in der RAM-Kopie der Belegungsliste (bel) reserviert, die Spur 0 wird erst nach den Daten zurueckgeschrieben.
+; Benutzt: BIS 7611, 7622 bis 7626, 7742, 7773, 0220 (Adressdruck), 0316 (Adresseneingabe), Nullspur 7640 bis 7677 (Drehungen 616);
+;   die Arbeitsspur von ZTL (Zelle ZTL_PUFFER 7624 beim Start), Eingabetabelle (64 Zellen) auf einer Adresse, die durch 0100 teilbar ist
+;   (liegt in tabraw, zur Laufzeit ausgerichtet).
+; Groesse: 4223 Worte (oktal, 2195 dezimal). ZTL (462 Worte) darf hoechstens auf 2556 geladen werden, sonst reicht der Platz bis 7540 nicht
+;   (ZTL meldet dann Status 5; ZTD liegt hinter der Arbeitsspur, Format 11.5). Test: C8205Z/Tests_Z/ztd_tests.py (ZTL auf 1200).
+; Annahmen: Leitadressen 7612 bis 7621 setzt m nicht; K1 im Archiv 0, K2 0 bis 9; .obj nur Woerter K1 K2 Ziffern Punkt, Ende "/".
+                start                ; Zaehlung beginnt bei 0000 (relativ)
+anfang:         000     haupt        ; rel 0000: Einsprung
+
+; ---- feste Zellen und Befehle des BIS (absolut) -------------------------------------------------------------------------
+adr0000:        abs     00000        ; Zelle 0000 (BIS-Start)
+adr0220:        abs     00220        ; Adressdruck
+adr0316:        abs     00316        ; Adresseneingabe
+adr7611:        abs     07611        ; Hauptleitadresse
+adr7622:        abs     07622        ; ZTL_LAGE
+adr7623:        abs     07623        ; ZTL_LAENGE
+adr7624:        abs     07624        ; ZTL_PUFFER
+adr7625:        abs     07625        ; ZTL_GRENZE
+adr7626:        abs     07626        ; ZTL_STATUS
+adr7742:        abs     07742        ; RA
+adr7773:        abs     07773        ; R1
+nullspur:       abs     07640        ; Nullspur
+rot3:           abs     07671        ; 3 Rotationen (616)
+rot6:           abs     07662        ; 6 Rotationen
+rot9:           abs     07653        ; 9 Rotationen
+rot15:          abs     07675        ; 15 Rotationen
+rot26:          abs     07656        ; 26 Rotationen
+
+; ---- Konstanten ------------------------------------------------------------------------------------------------------------
+c0:             dw      0
+c1:             dw      1
+c2:             dw      2
+c3:             dw      3
+c4:             dw      4
+c5:             dw      5
+c6:             dw      6
+c7:             dw      7
+c8:             dw      010          ; Status 10 oktal: Name vorhanden
+c9:             dw      9
+c_zehn:         dw      012          ; 10 dezimal: Namenslaenge
+c_12:           dw      014          ; 12 dezimal
+c_15:           dw      017          ; 15 dezimal
+c_16:           dw      020          ; 16 Spuren je Segment
+c_25:           dw      031          ; 25 Worte je Spur
+c_32:           dw      040          ; 32 Spuren je Belegungswort
+c_40:           dw      050          ; 40 dezimal: Obergrenze der Kettenlaenge
+c_64:           dw      0100         ; 64
+c_127:          dw      0177         ; Maske Spur in einem Lagewort
+c_128:          dw      0200         ; 128 Spuren, Lagewort-Schritt je Trommel
+c_ungl:         dw      07777        ; ungueltiges Lagewort (Puffer ohne Inhalt)
+c1e:            dw      01000        ; 1 Zelle in Adresseneinheiten
+c2e:            dw      02000
+c3e:            dw      03000
+c4e:            dw      04000
+c6e:            dw      06000
+c32e:           dw      040000       ; 32 Zellen: eine Spur
+c36e:           dw      036000       ; Zelle 36 oktal (30 dezimal)
+c37a:           dw      037000
+c77a:           dw      077000       ; 63 Zellen
+cmask77:        dw      07700000     ; Maske: Adresse durch 0100 teilbar
+cz4:            dw      04000        ; Zellen 4 bis 7 der Spur 0
+cz5:            dw      05000
+cz6:            dw      06000
+cz7:            dw      07000
+c011:           dw      011          ; Befehlscode 011 (Eingabe mit Loeschen)
+c025:           dw      025          ; Befehlscode 025
+c240:           dw      0240
+c441:           dw      0441
+c601:           dw      0601
+c661:           dw      0661
+c_anw:          dw      05100030     ; Befehl 030 5100 (Anwahl ZT0); je Trommel + t * 0100000
+c_k0anw:        dw      04700030     ; Anwahl K0
+c_k1anw:        dw      04600030     ; Anwahl K1 (Leser 1)
+c_lk:           dw      025147361025 ; LISTENKENNUNG
+c_rk:           dw      061350247316 ; REPOSITORY_KENNUNG
+c_bk:           dw      034716052613 ; BLOCKKENNUNG
+; Eingabecodes (Eingabeadresse des R-300-Codes)
+k_zr:           dw      012          ; ZR
+k_wr:           dw      032          ; WRZL
+k_pkt:          dw      033          ; Punkt
+k_sl:           dw      061          ; Schraegstrich
+k_9:            dw      011          ; Ziffer 9
+k_a:            dw      021          ; a
+k_d:            dw      024          ; d
+k_g:            dw      027          ; g
+k_h:            dw      030          ; h
+k_l:            dw      043          ; l
+k_m:            dw      044          ; m
+k_q:            dw      050          ; q
+c77:            dw      077          ; Maske 6 Bit
+
+; ---- Adresswoerter der Felder ----------------------------------------------------------------------------------------------
+a_aus:          da      aus_tab
+a_mtab:         da      mtab
+a_pcode:        da      pcode
+a_pword:        da      pword
+a_sttab:        da      sttab
+a_tabraw:       da      tabraw
+a_bel:          da      bel
+a_fmt:          da      fmt
+a_chg:          da      chg
+
+; ---- Zellen ----------------------------------------------------------------------------------------------------------------
+dienst:         dw      0            ; Sprungwort 000 <Dienst von ZTL>
+pufw:           dw      0            ; Adresswort der Arbeitsspur
+puf_lage:       dw      07777        ; Lagewort der Spur im Puffer (07777 = unbekannt)
+lage:           dw      0            ; Lagewort fuer zt_lies/zt_schr
+zt_op:          dw      0            ; Befehlscode 661 oder 601
+status:         dw      0            ; Status des laufenden Kommandos
+tab_a:          dw      0            ; Adresswort der ausgerichteten Eingabetabelle
+lz_kan:         dw      04700030     ; Kanalanwahl fuer lz (K0 oder K1)
+si_a:           dw      0            ; sp_ind: Adresswort
+si_w:           dw      0            ; sp_ind: Wert
+ak_l:           dw      0            ; Lagewort des ersten Namensblocks
+ak_s:           dw      0            ; Spur des ersten Blocks (0 = kein Anker)
+ak_fv:          dw      0            ; Formatversion
+n_0:            dw      0            ; eingegebener Name, Zeichen 1 bis 5
+n_1:            dw      0            ; Zeichen 6 bis 10
+e_n0:           dw      0            ; Eintrag: Name 1
+e_n1:           dw      0            ; Name 2
+e_l:            dw      0            ; Laenge
+e_lage:         dw      0            ; Lagewort des ersten Segments (0 = frei)
+e_blk:          dw      0            ; Block des Eintrags
+e_ps:           dw      0            ; Spur im Block
+e_cz:           dw      0            ; Zelle im Block (Adresseneinheiten)
+b_lage:         dw      0            ; laufender Block
+b_nn:           dw      0
+b_link:         dw      0
+b_cnt:          dw      0            ; noch zu liefernde Eintraege des Blocks
+b_ps:           dw      0
+b_cz:           dw      0
+b_n:            dw      0            ; Zahl der Bloecke (Schleifenschutz)
+; Rueckkehrzellen
+it_r:           dw      0
+sp_r:           dw      0
+lz_r:           dw      0
+zi_r:           dw      0
+zl_r:           dw      0
+zs_r:           dw      0
+pl_r:           dw      0
+in_r:           dw      0
+bk_r:           dw      0
+ex_r:           dw      0
+ew_r:           dw      0
+ng_r:           dw      0
+sn_r:           dw      0
+nl_r:           dw      0
+np_r:           dw      0
+nd_r:           dw      0
+n5_r:           dw      0
+nc_r:           dw      0
+sd_r:           dw      0
+ms_r:           dw      0
+be_r:           dw      0
+bb_r:           dw      0
+lu_r:           dw      0
+sa_r:           dw      0
+bs_r:           dw      0
+bw_r:           dw      0
+we_r:           dw      0
+ge_r:           dw      0
+sc_r:           dw      0
+sn2_r:          dw      0
+se_r:           dw      0
+cm_r:           dw      0
+; Arbeitszellen
+it_i:           dw      0
+it_a:           dw      0
+it_pc:          dw      0
+it_pw:          dw      0
+in_t:           dw      0
+in_k:           dw      0
+in_fa:          dw      0
+in_ba:          dw      0
+in_pc:          dw      0
+in_f:           dw      0
+zi_rt:          dw      0
+zi_tt:          dw      0
+nl_a:           dw      0
+nl_b:           dw      0
+nl_n:           dw      0
+nl_c:           dw      0
+nd_w:           dw      0
+nd_k:           dw      0
+nd_code:        dw      0
+nd_lg:          dw      0
+ea_a1:          dw      0
+bl_w:           dw      0
+bl_n:           dw      0
+bl_v:           dw      0
+bb_w:           dw      0
+bb_v:           dw      0
+bb_x:           dw      0
+bb_t:           dw      0
+bb_i:           dw      0
+bb_m:           dw      0
+bb_a:           dw      0
+bb_wd:          dw      0
+bb_tst:         dw      0
+lu_t:           dw      0
+lu_n:           dw      0
+lu_lauf:        dw      0
+lu_s:           dw      0
+lu_wa:          dw      0
+lu_tc:          dw      0
+lu_w1:          dw      0
+lu_k:           dw      0
+sa_n:           dw      0
+sa_t:           dw      0
+sa_tl:          dw      0
+sa_fa:          dw      0
+sa_lage:        dw      0
+bs_t:           dw      0
+bs_ca:          dw      0
+bs_ba:          dw      0
+bs_lg:          dw      0
+bs_k:           dw      0
+bs_pc:          dw      0
+bs_ra:          dw      0
+d_lw:           dw      0
+d_n:            dw      0
+d_ca:           dw      0
+sl_ok:          dw      0
+sl_blk:         dw      0
+sl_ps:          dw      0
+sl_cz:          dw      0
+nb_ja:          dw      0
+nb_lage:        dw      0
+nb_t:           dw      0
+lb_lage:        dw      0
+lb_nn:          dw      0
+fs_lage:        dw      0
+sg_lage:        dw      0
+sg_sp:          dw      0
+sp_n:           dw      0
+w_tot:          dw      0
+g_i:            dw      0
+g_kenn:         dw      0
+g_kcell:        dw      0
+g_cell:         dw      0
+bw_cnt:         dw      0
+bw_k1:          dw      0
+bw_k2:          dw      0
+bw_val:         dw      0
+bw_c:           dw      0
+bw_ende:        dw      0
+se_k:           dw      0
+cm_ca:          dw      0
+m_ziel:         dw      0
+m_stat:         dw      0
+
+; ---- Tabellen --------------------------------------------------------------------------------------------------------------
+; Ausgabebefehle (030 mit Ausgabeadresse) je Eingabecode; 0 = nicht fuer Namen zugelassen
+aus_tab:
+                dw      0200030   ; 00: 0
+                dw      010030   ; 01: 1
+                dw      020030   ; 02: 2
+                dw      0230030   ; 03: 3
+                dw      040030   ; 04: 4
+                dw      0250030   ; 05: 5
+                dw      0260030   ; 06: 6
+                dw      070030   ; 07: 7
+                dw      0100030   ; 10: 8
+                dw      0310030   ; 11: 9
+                dw      0320030   ; 12: ZR
+                dw      0         ; 13: -
+                dw      0         ; 14: -
+                dw      0         ; 15: -
+                dw      0         ; 16: -
+                dw      0         ; 17: -
+                dw      0         ; 20: -
+                dw      0610030   ; 21: A
+                dw      0620030   ; 22: B
+                dw      0430030   ; 23: C
+                dw      0640030   ; 24: D
+                dw      0450030   ; 25: E
+                dw      0460030   ; 26: F
+                dw      0670030   ; 27: G
+                dw      0700030   ; 30: H
+                dw      0510030   ; 31: I
+                dw      0         ; 32: -
+                dw      0         ; 33: -
+                dw      0         ; 34: -
+                dw      0         ; 35: -
+                dw      0         ; 36: -
+                dw      0         ; 37: -
+                dw      0         ; 40: -
+                dw      01210030   ; 41: J
+                dw      01220030   ; 42: K
+                dw      01030030   ; 43: L
+                dw      01240030   ; 44: M
+                dw      01050030   ; 45: N
+                dw      01060030   ; 46: O
+                dw      01270030   ; 47: P
+                dw      01300030   ; 50: Q
+                dw      01110030   ; 51: R
+                dw      0         ; 52: -
+                dw      0         ; 53: -
+                dw      0         ; 54: -
+                dw      0         ; 55: -
+                dw      0         ; 56: -
+                dw      0         ; 57: -
+                dw      0         ; 60: -
+                dw      0         ; 61: -
+                dw      01420030   ; 62: S
+                dw      01630030   ; 63: T
+                dw      01440030   ; 64: U
+                dw      01650030   ; 65: V
+                dw      01660030   ; 66: W
+                dw      01470030   ; 67: X
+                dw      01500030   ; 70: Y
+                dw      01710030   ; 71: Z
+                dw      0         ; 72: -
+                dw      0         ; 73: -
+                dw      0         ; 74: -
+                dw      0         ; 75: -
+                dw      0         ; 76: -
+                dw      0         ; 77: -
+; Masken der Belegungsliste: Spur r in einem Wort steht in Bit 32 - r
+mtab:
+                dw      040000000000   ; Spur 0 (z0)
+                dw      020000000000   ; Spur 1 (z1)
+                dw      010000000000   ; Spur 2 (z2)
+                dw      04000000000   ; Spur 3 (z3)
+                dw      02000000000   ; Spur 4 (z4)
+                dw      01000000000   ; Spur 5 (z5)
+                dw      0400000000   ; Spur 6 (z6)
+                dw      0200000000   ; Spur 7 (z7)
+                dw      0100000000   ; Spur 8 (z8)
+                dw      040000000   ; Spur 9 (z9)
+                dw      020000000   ; Spur 10 (z10)
+                dw      010000000   ; Spur 11 (z11)
+                dw      04000000   ; Spur 12 (z12)
+                dw      02000000   ; Spur 13 (z13)
+                dw      01000000   ; Spur 14 (z14)
+                dw      0400000   ; Spur 15 (z15)
+                dw      0200000   ; Spur 16 (z16)
+                dw      0100000   ; Spur 17 (z17)
+                dw      040000   ; Spur 18 (z18)
+                dw      020000   ; Spur 19 (z19)
+                dw      010000   ; Spur 20 (z20)
+                dw      04000   ; Spur 21 (z21)
+                dw      02000   ; Spur 22 (z22)
+                dw      01000   ; Spur 23 (z23)
+                dw      0400   ; Spur 24 (z24)
+                dw      0200   ; Spur 25 (z25)
+                dw      0100   ; Spur 26 (z26)
+                dw      040   ; Spur 27 (z27)
+                dw      020   ; Spur 28 (z28)
+                dw      010   ; Spur 29 (z29)
+                dw      04   ; Spur 30 (z30)
+                dw      02   ; Spur 31 (z31)
+; Eingabecodes mit Sprung-Umstellung und ihre Sprungwoerter (in die Eingabetabelle einzutragen)
+pcode:
+                dw      012     ; Code 12 mit Sprung-Umstellung
+                dw      015     ; Code 15 mit Sprung-Umstellung
+                dw      016     ; Code 16 mit Sprung-Umstellung
+                dw      032     ; Code 32 mit Sprung-Umstellung
+                dw      033     ; Code 33 mit Sprung-Umstellung
+                dw      037     ; Code 37 mit Sprung-Umstellung
+                dw      040     ; Code 40 mit Sprung-Umstellung
+                dw      057     ; Code 57 mit Sprung-Umstellung
+                dw      060     ; Code 60 mit Sprung-Umstellung
+                dw      072     ; Code 72 mit Sprung-Umstellung
+                dw      073     ; Code 73 mit Sprung-Umstellung
+                dw      075     ; Code 75 mit Sprung-Umstellung
+pword:
+                000     h_zr        ; Sprungwort fuer Code 12
+                000     h_ign        ; Sprungwort fuer Code 15
+                000     h_ign        ; Sprungwort fuer Code 16
+                000     h_wr        ; Sprungwort fuer Code 32
+                000     h_pkt        ; Sprungwort fuer Code 33
+                000     h_ign        ; Sprungwort fuer Code 37
+                000     h_ign        ; Sprungwort fuer Code 40
+                000     h_ign        ; Sprungwort fuer Code 57
+                000     h_ign        ; Sprungwort fuer Code 60
+                000     h_ign        ; Sprungwort fuer Code 72
+                000     h_ign        ; Sprungwort fuer Code 73
+                000     h_ign        ; Sprungwort fuer Code 75
+; Statusmeldungen: Index = Statusnummer 0 bis 8 (8 = 10 oktal)
+sttab:          000     m_ok         ; 0
+                000     m_s1         ; 1
+                000     m_s2         ; 2
+                000     m_s3         ; 3
+                000     m_s4         ; 4
+                000     m_s5         ; 5
+                000     m_s6         ; 6
+                000     m_s7         ; 7
+                000     m_s8         ; 10 oktal
+
+; ---- Start ------------------------------------------------------------------------------------------------------------------
+haupt:          240     dienst       ; Sprungwort des ZTL-Dienstes sichern (AC beim Start)
+                211     adr7624      ; Arbeitsspur von ZTL
+                240     pufw
+                025     init_tab     ; Nullspur loeschen, Eingabetabelle bauen
+                025     m_banner
+befehl:         025     m_prompt
+b_les:          025     lz           ; Kommandobuchstabe
+                330     k_wr
+                170     b_les        ; WRZL: ignorieren
+                330     k_zr
+                170     b_les        ; ZR: ignorieren
+                240     nl_c         ; Code merken
+                025     m_zeil       ; Zeilenschaltung nach dem Buchstaben
+                211     nl_c
+                330     k_l
+                170     c_l
+                330     k_a
+                170     c_a
+                330     k_d
+                170     c_d
+                330     k_g
+                170     c_g
+                330     k_m
+                170     c_m
+                330     k_q
+                170     c_q
+                330     k_h
+                170     c_h
+                025     m_frage      ; unbekanntes Kommando
+                000     befehl
+fehler:         025     st_druck     ; Status melden, zurueck zum Kommando
+                000     befehl
+
+; ---- q: Ende ----------------------------------------------------------------------------------------------------------------
+c_q:            030     04700        ; K0 wieder anwaehlen (das BIS liest vom angewaehlten Kanal)
+                000     adr0000      ; Sprung nach Zelle 0000 (BIS)
+; ---- h: Hilfe ---------------------------------------------------------------------------------------------------------------
+c_h:            025     m_help
+                000     befehl
+
+; ---- g: Sprung --------------------------------------------------------------------------------------------------------------
+c_g:            025     m_adr
+                030     04700        ; K0
+                025     adr0316      ; Adresswort 0 aaaa 000 im AC
+                240     m_ziel
+                025     m_zeil
+                211     m_ziel
+                210     c025         ; Befehl 025 aaaa
+                240     g_gen
+g_gen:          dw      0            ; hier steht zur Laufzeit 025 aaaa und wird ausgefuehrt
+                000     befehl       ; das Programm ist zurueckgekehrt
+
+; ---- l: Liste ---------------------------------------------------------------------------------------------------------------
+c_l:            025     ini
+                211     status
+                330     c0
+                170     l_ok
+                000     fehler
+l_ok:           025     ee_erste
+                330     c0
+                170     fehler
+l_loop:         025     ee_weiter
+                330     c0
+                170     l_ende
+                211     e_lage
+                330     c0
+                170     l_loop       ; freier Eintrag
+                025     nm_druck     ; Name (10 Zeichen), Schreibwerk K2 angewaehlt
+                dz      $zr
+                211     e_l
+                616     rot9         ; L * 01000: Adresswort fuer den Adressdruck
+                240     adr7773      ; R1
+                dz      $inkb        ; Ziffern
+                025     adr0220      ; vier Oktalziffern
+                dz      $wrzl
+                000     l_loop
+l_ende:         211     status
+                330     c0
+                170     befehl
+                000     fehler
+
+; ---- m: Programm laden ------------------------------------------------------------------------------------------------------
+c_m:            025     ini
+                211     status
+                330     c0
+                170     m_ok1
+                000     fehler
+m_ok1:          025     m_name
+                025     nm_lies
+                025     m_zeil
+                025     sn
+                330     c0
+                170     fehler
+                025     m_adr
+                030     04700
+                025     adr0316
+                240     m_ziel
+                025     m_zeil
+                211     e_lage       ; Uebergabezellen unmittelbar vor dem Aufruf setzen (Format 11.2)
+                240     adr7622
+                211     e_l
+                240     adr7623
+                211     m_ziel
+                240     adr7611      ; Hauptleitadresse := Adresse
+                241     adr7742      ; RA := 0
+                241     adr7625      ; Grenze: Vorgabe
+                025     dienst       ; ZTL-Dienst: Programm laden
+                211     adr7626
+                240     status
+                330     c0
+                170     m_fert
+                000     fehler
+m_fert:         025     m_ok
+                000     befehl
+
+; ---- d: Programm loeschen ---------------------------------------------------------------------------------------------------
+c_d:            025     ini
+                211     status
+                330     c0
+                170     d_ok1
+                000     fehler
+d_ok1:          025     m_name
+                025     nm_lies
+                025     m_zeil
+                025     sn
+                330     c0
+                170     fehler
+                211     e_lage
+                240     d_lw
+                241     d_n
+d_l:            211     d_lw
+                330     c0
+                170     d_fertig
+                200     c_127        ; Spur 0: Ende
+                330     c0
+                170     d_fertig
+                211     d_n
+                210     c1
+                240     d_n
+                211     c_40         ; Kettenschutz
+                220     d_n
+                040     d_fertig
+                211     d_lw
+                240     bl_w
+                211     c_16
+                240     bl_n
+                241     bl_v         ; freigeben
+                025     belege
+                211     d_lw         ; Verkettung: Zelle 36 der 16. Spur
+                210     c_15
+                240     lage
+                025     zt_lies
+                211     c36e
+                210     pufw
+                251     0
+                240     d_lw
+                000     d_l
+d_fertig:       211     e_blk        ; Eintrag: Lagewort := 0
+                210     e_ps
+                240     lage
+                025     zt_lies
+                211     e_cz
+                210     c3e
+                210     pufw
+                240     si_a
+                241     si_w
+                025     sp_ind
+                211     e_ps
+                330     c0
+                170     d_gl
+                025     zt_schr      ; Spur mit dem Eintrag
+                211     e_blk
+                240     lage
+                025     zt_lies      ; erste Spur des Blocks: Zahl der belegten Eintraege
+d_gl:           211     c3e
+                210     pufw
+                240     d_ca
+                251     0
+                220     c1
+                240     si_w
+                211     d_ca
+                240     si_a
+                025     sp_ind
+                211     e_blk
+                240     lage
+                025     zt_schr
+                025     bel_sichern
+                025     m_ok
+                000     befehl
+
+; ---- a: Programm vom Lochstreifen ins Repository ---------------------------------------------------------------------------
+c_a:            025     ini
+                211     status
+                330     c0
+                170     a_ok1
+                000     fehler
+a_ok1:          025     m_name
+                025     nm_lies
+                025     m_zeil
+                241     sl_ok
+                025     ee_erste
+                330     c0
+                170     fehler
+ca_l:           025     ee_weiter
+                330     c0
+                170     ca_end
+                211     e_lage
+                330     c0
+                170     ca_frei
+                025     ng
+                330     c0
+                170     ca_l
+                211     c8           ; Status 10 oktal: Name vorhanden
+                240     status
+                000     fehler
+ca_frei:        211     sl_ok
+                330     c0
+                170     ca_f1
+                000     ca_l
+ca_f1:          211     c1
+                240     sl_ok
+                211     e_blk
+                240     sl_blk
+                211     e_ps
+                240     sl_ps
+                211     e_cz
+                240     sl_cz
+                000     ca_l
+ca_end:         211     status
+                330     c0
+                170     ca_e1
+                000     fehler
+ca_e1:          211     b_lage       ; letzter Block
+                240     lb_lage
+                211     b_nn
+                240     lb_nn
+                211     sl_ok
+                330     c0
+                170     ca_nb
+                241     nb_ja
+                000     ca_seg
+ca_nb:          211     c1           ; kein freier Eintrag: neuen Namensblock mit der Groesse des letzten anlegen
+                240     nb_ja
+                211     lb_nn        ; Spuren = aufgerundet (4 nn + 4) / 32
+                210     lb_nn
+                210     lb_nn
+                210     lb_nn
+                210     c4
+                210     c_32
+                220     c1
+                241     nb_t
+ca_nbl:         220     c_32
+                040     ca_nbe
+                240     si_w         ; Rest merken
+                211     nb_t
+                210     c1
+                240     nb_t
+                211     si_w
+                000     ca_nbl
+ca_nbe:         211     nb_t
+                240     sa_n
+                025     suche_alle
+                330     c0
+                170     fehler       ; Trommeln voll (Status 6)
+                211     sa_lage
+                240     nb_lage
+ca_seg:         211     c_16         ; erstes Segment
+                240     sa_n
+                025     suche_alle
+                330     c0
+                170     fehler
+                211     sa_lage
+                240     sg_lage
+                240     fs_lage
+                241     sg_sp
+                241     w_tot
+                241     bw_ende
+                025     spur_neu
+                211     c_k1anw      ; Eingabe vom Lochstreifenleser 1
+                240     lz_kan
+ca_wort:        025     bw_lies
+                330     c1
+                170     ca_w
+                330     c0
+                170     ca_fert
+                211     c7           ; Fehler im Band: Status 7
+                240     status
+                000     ca_abbr
+ca_w:           211     bw_k1
+                330     c0
+                170     ca_k2
+                211     c7
+                240     status
+                000     ca_abbr
+ca_k2:          211     c9
+                220     bw_k2
+                050     ca_ein
+                211     c7
+                240     status
+                000     ca_abbr
+ca_ein:         025     wort_ein
+                330     c0
+                170     ca_abbr
+                000     ca_wort
+ca_abbr:        211     c_k0anw
+                240     lz_kan
+                000     fehler
+ca_fert:        211     c_k0anw
+                240     lz_kan
+                025     stream_ende
+                025     commit
+                025     bel_sichern
+                025     m_ok
+                000     befehl
+
+; ---- wort_ein: das Wort bw_val mit Kennzeichen bw_k2 in die Spur im Puffer; AC := 1 in Ordnung, 0 Trommeln voll ----------------
+wort_ein:       240     we_r
+                211     sp_n
+                330     c_25
+                170     we_voll
+we_ins:         211     g_cell
+                240     si_a
+                211     bw_val
+                240     si_w
+                025     sp_ind
+                211     g_kenn
+                616     rot6
+                210     bw_k2
+                240     g_kenn
+                211     g_cell
+                210     c1e
+                240     g_cell
+                211     sp_n
+                210     c1
+                240     sp_n
+                211     w_tot
+                210     c1
+                240     w_tot
+                211     g_i
+                210     c1
+                240     g_i
+                330     c5
+                170     we_g
+                211     c1
+                000     we_r
+we_g:           025     grp_ende
+                211     c1
+                000     we_r
+we_voll:        211     sg_sp
+                330     c_15
+                170     we_letzt
+                025     spur_schr
+                211     sg_sp
+                210     c1
+                240     sg_sp
+                000     we_neu
+we_letzt:       211     c_16         ; naechstes Segment, Verkettung in Zelle 36 der 16. Spur
+                240     sa_n
+                025     suche_alle
+                330     c0
+                170     we_f6
+                211     c36e
+                210     pufw
+                240     si_a
+                211     sa_lage
+                240     si_w
+                025     sp_ind
+                025     spur_schr
+                211     sa_lage
+                240     sg_lage
+                241     sg_sp
+we_neu:         025     spur_neu
+                000     we_ins
+we_f6:          211     c0
+                000     we_r
+
+; ---- grp_ende: Gruppe voll: Kennungswort eintragen, naechste Gruppe -----------------------------------------------------------
+grp_ende:       240     ge_r
+                211     g_kenn
+                616     rot3
+                240     si_w
+                211     g_kcell
+                240     si_a
+                025     sp_ind
+                211     g_kcell
+                210     c6e
+                240     g_kcell
+                210     c1e
+                240     g_cell
+                241     g_kenn
+                241     g_i
+                000     ge_r
+
+; ---- spur_neu: Puffer leeren, Gruppenzustand zuruecksetzen --------------------------------------------------------------------
+spur_neu:       240     sn2_r
+                025     puf_leer
+                211     pufw
+                240     g_kcell
+                210     c1e
+                240     g_cell
+                241     g_kenn
+                241     g_i
+                241     sp_n
+                000     sn2_r
+
+; ---- spur_schr: Puffer nach Segment sg_lage, Spur sg_sp schreiben -------------------------------------------------------------
+spur_schr:      240     sc_r
+                211     sg_lage
+                210     sg_sp
+                240     lage
+                025     zt_schr
+                000     sc_r
+
+; ---- stream_ende: letzte Gruppe und letzte Spur abschliessen, Rest des Segments mit Nullspuren ---------------------------------
+stream_ende:    240     se_r
+                211     g_i
+                330     c0
+                170     se_sp
+                211     c5
+                220     g_i
+                240     se_k
+se_r6:          211     se_k
+                330     c0
+                170     se_r3
+                211     g_kenn
+                616     rot6
+                240     g_kenn
+                211     se_k
+                220     c1
+                240     se_k
+                000     se_r6
+se_r3:          211     g_kenn
+                616     rot3
+                240     si_w
+                211     g_kcell
+                240     si_a
+                025     sp_ind
+se_sp:          211     sp_n
+                330     c0
+                170     se_nul
+                025     spur_schr
+                211     sg_sp
+                210     c1
+                240     sg_sp
+se_nul:         025     puf_leer
+se_z:           211     sg_sp
+                330     c_16
+                170     se_ende
+                025     spur_schr
+                211     sg_sp
+                210     c1
+                240     sg_sp
+                000     se_z
+se_ende:        000     se_r
+
+; ---- commit: Eintrag (und ggf. neuer Namensblock) ins Verzeichnis schreiben --------------------------------------------------
+commit:         240     cm_r
+                211     nb_ja
+                330     c0
+                170     cm_alt
+                025     puf_leer     ; neuer Block: erste Spur mit Kopf und Eintrag 0
+                211     pufw
+                240     cm_ca
+                211     c_bk
+                240     si_w
+                211     cm_ca
+                240     si_a
+                025     sp_ind
+                211     cm_ca        ; Zelle 2: nn
+                210     c2e
+                240     si_a
+                211     lb_nn
+                240     si_w
+                025     sp_ind
+                211     cm_ca        ; Zelle 3: belegt = 1
+                210     c3e
+                240     si_a
+                211     c1
+                240     si_w
+                025     sp_ind
+                211     cm_ca        ; Zellen 4 bis 7: Eintrag 0
+                210     c4e
+                240     si_a
+                211     n_0
+                240     si_w
+                025     sp_ind
+                211     si_a
+                210     c1e
+                240     si_a
+                211     n_1
+                240     si_w
+                025     sp_ind
+                211     si_a
+                210     c1e
+                240     si_a
+                211     w_tot
+                240     si_w
+                025     sp_ind
+                211     si_a
+                210     c1e
+                240     si_a
+                211     fs_lage
+                240     si_w
+                025     sp_ind
+                211     nb_lage
+                240     lage
+                025     zt_schr
+                025     puf_leer     ; restliche Spuren des Blocks: Nullen
+                211     c1
+                240     se_k
+cm_nl:          211     se_k
+                330     nb_t
+                170     cm_nv        ; alle Spuren des Blocks geschrieben
+                211     nb_lage
+                210     se_k
+                240     lage
+                025     zt_schr
+                211     se_k
+                210     c1
+                240     se_k
+                000     cm_nl
+cm_nv:          211     lb_lage      ; Verkettung im letzten Block: Zelle 1 := Lagewort des neuen Blocks
+                240     lage
+                025     zt_lies
+                211     c1e
+                210     pufw
+                240     si_a
+                211     nb_lage
+                240     si_w
+                025     sp_ind
+                211     lb_lage
+                240     lage
+                025     zt_schr
+                000     cm_r
+cm_alt:         211     sl_blk       ; freier Eintrag in vorhandenem Block
+                210     sl_ps
+                240     lage
+                025     zt_lies
+                211     sl_cz
+                210     pufw
+                240     si_a
+                211     n_0
+                240     si_w
+                025     sp_ind
+                211     si_a
+                210     c1e
+                240     si_a
+                211     n_1
+                240     si_w
+                025     sp_ind
+                211     si_a
+                210     c1e
+                240     si_a
+                211     w_tot
+                240     si_w
+                025     sp_ind
+                211     si_a
+                210     c1e
+                240     si_a
+                211     fs_lage
+                240     si_w
+                025     sp_ind
+                211     sl_ps
+                330     c0
+                170     cm_g
+                025     zt_schr
+                211     sl_blk
+                240     lage
+                025     zt_lies
+cm_g:           211     c3e          ; Zahl der belegten Eintraege + 1
+                210     pufw
+                240     cm_ca
+                251     0
+                210     c1
+                240     si_w
+                211     cm_ca
+                240     si_a
+                025     sp_ind
+                211     sl_blk
+                240     lage
+                025     zt_schr
+                000     cm_r
+
+; ---- bw_lies: ein Wort vom Band; AC := 1 Wort (bw_val, bw_k1, bw_k2), 0 Ende, 2 Fehler -------------------------------------------
+bw_lies:        240     bw_r
+                211     bw_ende
+                330     c0
+                170     bw_los
+                211     c0
+                000     bw_r
+bw_los:         241     bw_cnt
+                241     bw_k1
+                241     bw_k2
+                241     bw_val
+bw_z:           025     lz
+                330     k_pkt
+                170     bw_pkt
+                330     k_sl
+                170     bw_sl
+                330     k_zr
+                170     bw_z
+                330     k_wr
+                170     bw_z
+                330     k_9
+                140     bw_dig       ; Ziffer 0 bis 9
+                211     c2           ; anderes Zeichen: Fehler
+                000     bw_r
+bw_dig:         240     bw_c
+                211     bw_cnt
+                330     c0
+                170     bw_d0
+                330     c1
+                170     bw_d1
+                211     c7           ; Ziffer 8 oder 9 im Wert (nur Oktalziffern): Fehler
+                220     bw_c
+                040     bw_f
+                211     bw_val
+                616     rot3
+                210     bw_c
+                240     bw_val
+                000     bw_inc
+bw_d0:          211     bw_c
+                240     bw_k1
+                000     bw_inc
+bw_d1:          211     bw_c
+                240     bw_k2
+bw_inc:         211     bw_cnt
+                210     c1
+                240     bw_cnt
+                000     bw_z
+bw_pkt:         211     bw_cnt
+                330     c0
+                170     bw_f         ; Punkt ohne Zeichen
+                211     c1
+                000     bw_r
+bw_sl:          211     bw_cnt
+                330     c0
+                170     bw_end       ; Ende ohne Wort
+                211     c1           ; Wort und Ende
+                240     bw_ende
+                000     bw_r
+bw_end:         211     c0
+                000     bw_r
+bw_f:           211     c2
+                000     bw_r
+
+; ---- Namen -----------------------------------------------------------------------------------------------------------------
+; nm_lies: Name von K0 bis WRZL in n_0, n_1 (zu 10 Zeichen mit ZR aufgefuellt)
+nm_lies:        240     nl_r
+                211     c_k0anw
+                240     lz_kan
+                241     nl_a
+                241     nl_b
+                241     nl_n
+nl_z:           025     lz
+                330     k_wr
+                170     nl_ende
+                240     nl_c
+                616     rot9         ; Index * 01000
+                210     a_aus
+                251     0
+                330     c0
+                170     nl_z         ; kein Zeichen fuer Namen: ignorieren
+                211     nl_n
+                330     c_zehn
+                170     nl_z         ; schon 10 Zeichen: ignorieren
+                025     nl_put
+                000     nl_z
+nl_ende:        211     nl_n
+                330     c_zehn
+                170     nl_fin
+                211     k_zr
+                240     nl_c
+                025     nl_put
+                000     nl_ende
+nl_fin:         211     nl_a
+                616     rot3
+                240     n_0
+                211     nl_b
+                616     rot3
+                240     n_1
+                000     nl_r
+nl_put:         240     np_r
+                211     nl_n
+                330     c4
+                140     np_a
+                211     nl_b
+                616     rot6
+                210     nl_c
+                240     nl_b
+                000     np_i
+np_a:           211     nl_a
+                616     rot6
+                210     nl_c
+                240     nl_a
+np_i:           211     nl_n
+                210     c1
+                240     nl_n
+                000     np_r
+; nm_druck: Name e_n0, e_n1 auf K2 (Buchstaben gross, Ziffern klein)
+nm_druck:       240     nd_r
+                030     04500
+                211     c2
+                240     nd_lg        ; Zeichenlage unbekannt
+                211     e_n0
+                240     nd_w
+                025     nd_5
+                211     e_n1
+                240     nd_w
+                025     nd_5
+                000     nd_r
+nd_5:           240     n5_r
+                211     c5
+                240     nd_k
+nd_c:           211     nd_w
+                616     rot6
+                240     nd_w
+                200     c77
+                240     nd_code
+                025     nd_ch
+                211     nd_k
+                220     c1
+                240     nd_k
+                330     c0
+                170     n5_ret
+                000     nd_c
+n5_ret:         000     n5_r
+nd_ch:          240     nc_r
+                211     nd_code
+                330     k_zr
+                170     nc_out
+                330     k_9
+                140     nc_kb
+                211     nd_lg
+                330     c1
+                170     nc_out
+                dz      $ingb
+                211     c1
+                240     nd_lg
+                000     nc_out
+nc_kb:          211     nd_lg
+                330     c0
+                170     nc_out
+                dz      $inkb
+                241     nd_lg
+nc_out:         211     nd_code
+                616     rot9
+                210     a_aus
+                251     0
+                240     nc_g
+nc_g:           dw      0            ; hier steht zur Laufzeit der Ausgabebefehl und wird ausgefuehrt
+                000     nc_r
+; ng: AC := 1, wenn e_n0/e_n1 gleich n_0/n_1, sonst 0
+ng:             240     ng_r
+                211     e_n0
+                330     n_0
+                170     ng_1
+                211     c0
+                000     ng_r
+ng_1:           211     e_n1
+                330     n_1
+                170     ng_ja
+                211     c0
+                000     ng_r
+ng_ja:          211     c1
+                000     ng_r
+; sn: Eintrag mit dem Namen n_0/n_1 suchen; AC := 1 gefunden (e_* gesetzt), 0 nicht (status 4, oder 2 bei beschaedigter Kette)
+sn:             240     sn_r
+                025     ee_erste
+                330     c0
+                170     sn_f
+sn_l:           025     ee_weiter
+                330     c0
+                170     sn_e
+                211     e_lage
+                330     c0
+                170     sn_l
+                025     ng
+                330     c0
+                170     sn_l
+                211     c1
+                000     sn_r
+sn_e:           211     status
+                330     c0
+                170     sn_nf
+sn_f:           211     c0
+                000     sn_r
+sn_nf:          211     c4
+                240     status
+                211     c0
+                000     sn_r
+
+; ---- Verzeichnis durchlaufen ---------------------------------------------------------------------------------------------------
+ee_erste:       240     ex_r
+                241     b_n
+                211     ak_l
+                240     b_lage
+                025     blk_ein
+                000     ex_r
+blk_ein:        240     bk_r
+                211     b_n
+                210     c1
+                240     b_n
+                211     c_40
+                220     b_n
+                040     bk_f2
+                211     b_lage
+                200     c_127
+                330     c0
+                170     bk_f2
+                211     b_lage
+                240     lage
+                025     zt_lies
+                211     pufw
+                251     0
+                330     c_bk
+                170     bk_ok
+bk_f2:          211     c2
+                240     status
+                211     c0
+                000     bk_r
+bk_ok:          211     c1e
+                210     pufw
+                251     0
+                240     b_link
+                211     c2e
+                210     pufw
+                251     0
+                240     b_nn
+                240     b_cnt
+                241     b_ps
+                211     c4e
+                240     b_cz
+                211     c1
+                000     bk_r
+ee_weiter:      240     ew_r
+ew_a:           211     b_cnt
+                330     c0
+                170     ew_next
+                211     b_lage
+                210     b_ps
+                240     lage
+                211     puf_lage
+                330     lage
+                170     ew_gel
+                025     zt_lies
+ew_gel:         211     b_cz
+                210     pufw
+                240     ea_a1
+                251     0
+                240     e_n0
+                211     ea_a1
+                210     c1e
+                240     ea_a1
+                251     0
+                240     e_n1
+                211     ea_a1
+                210     c1e
+                240     ea_a1
+                251     0
+                240     e_l
+                211     ea_a1
+                210     c1e
+                240     ea_a1
+                251     0
+                240     e_lage
+                211     b_lage
+                240     e_blk
+                211     b_ps
+                240     e_ps
+                211     b_cz
+                240     e_cz
+                211     b_cnt
+                220     c1
+                240     b_cnt
+                211     b_cz
+                210     c4e
+                240     b_cz
+                330     c32e
+                170     ew_tr
+                000     ew_ret
+ew_tr:          241     b_cz
+                211     b_ps
+                210     c1
+                240     b_ps
+ew_ret:         211     c1
+                000     ew_r
+ew_next:        211     b_link
+                330     c0
+                170     ew_ende
+                240     b_lage
+                025     blk_ein
+                330     c0
+                170     ew_ende
+                000     ew_a
+ew_ende:        211     c0
+                000     ew_r
+
+; ---- Belegungsliste (RAM-Kopie) ---------------------------------------------------------------------------------------------
+; suche_alle: sa_n freie Spuren hintereinander (ZT0 bis ZT3); belegt sie in bel; AC := 1, sa_lage; sonst status 6, AC := 0
+suche_alle:     240     sa_r
+                241     sa_t
+                241     sa_tl
+                211     a_fmt
+                240     sa_fa
+sa_l:           211     sa_fa
+                251     0
+                330     c0
+                170     sa_nx
+                211     sa_t
+                240     lu_t
+                211     sa_n
+                240     lu_n
+                025     luecke
+                330     c0
+                170     sa_nx
+                211     sa_tl
+                210     lu_s
+                240     sa_lage
+                240     bl_w
+                211     sa_n
+                240     bl_n
+                211     c1
+                240     bl_v
+                025     belege
+                211     c1
+                000     sa_r
+sa_nx:          211     sa_t
+                210     c1
+                240     sa_t
+                211     sa_tl
+                210     c_128
+                240     sa_tl
+                211     sa_fa
+                210     c1e
+                240     sa_fa
+                211     sa_t
+                330     c4
+                170     sa_nf
+                000     sa_l
+sa_nf:          211     c6
+                240     status
+                211     c0
+                000     sa_r
+; luecke: erste Folge von lu_n freien Spuren auf Trommel lu_t; AC := 1 und lu_s (Anfang), sonst 0
+luecke:         240     lu_r
+                241     lu_lauf
+                241     lu_s
+                211     a_bel
+                240     lu_wa
+                211     lu_t
+                240     lu_tc
+lu_a:           211     lu_tc
+                330     c0
+                170     lu_w
+                211     lu_wa
+                210     c4e
+                240     lu_wa
+                211     lu_tc
+                220     c1
+                240     lu_tc
+                000     lu_a
+lu_w:           211     lu_wa
+                251     0
+                240     lu_w1
+                241     lu_k
+lu_b:           211     lu_w1
+                040     lu_bel       ; Bit z0 gesetzt: belegt
+                211     lu_lauf
+                210     c1
+                240     lu_lauf
+                330     lu_n
+                170     lu_ok
+                000     lu_nx
+lu_bel:         241     lu_lauf
+lu_nx:          217     lu_w1        ; naechstes Bit nach z0
+                240     lu_w1
+                211     lu_s
+                210     c1
+                240     lu_s
+                330     c_128
+                170     lu_nf
+                211     lu_k
+                210     c1
+                240     lu_k
+                330     c_32
+                170     lu_nw
+                000     lu_b
+lu_nw:          211     lu_wa
+                210     c1e
+                240     lu_wa
+                000     lu_w
+lu_ok:          211     lu_s         ; lu_s ist hier die letzte Spur der Folge
+                220     lu_n
+                210     c1
+                240     lu_s
+                211     c1
+                000     lu_r
+lu_nf:          211     c0
+                000     lu_r
+; belege: bl_n Spuren ab Lagewort bl_w auf bl_v setzen (1 belegen, 0 freigeben)
+belege:         240     be_r
+be_l:           211     bl_n
+                330     c0
+                170     be_e
+                211     bl_w
+                240     bb_w
+                211     bl_v
+                240     bb_v
+                025     bel_bit
+                211     bl_w
+                210     c1
+                240     bl_w
+                211     bl_n
+                220     c1
+                240     bl_n
+                000     be_l
+be_e:           000     be_r
+; bel_bit: Bit der Spur bb_w auf bb_v setzen; merkt die Trommel in chg
+bel_bit:        240     bb_r
+                211     bb_w
+                240     bb_x
+                241     bb_t
+                241     bb_i
+bb_t1:          211     bb_x
+                220     c_128
+                040     bb_t2
+                240     bb_x
+                211     bb_t
+                210     c1
+                240     bb_t
+                211     bb_i
+                210     c4
+                240     bb_i
+                000     bb_t1
+bb_t2:          211     bb_x
+                220     c_32
+                040     bb_t3
+                240     bb_x
+                211     bb_i
+                210     c1
+                240     bb_i
+                000     bb_t2
+bb_t3:          211     bb_x
+                616     rot9
+                210     a_mtab
+                251     0
+                240     bb_m
+                211     bb_i
+                616     rot9
+                210     a_bel
+                240     bb_a
+                251     0
+                240     bb_wd
+                200     bb_m
+                240     bb_tst
+                211     bb_v
+                330     c0
+                170     bb_frei
+                211     bb_tst
+                330     c0
+                170     bb_set
+                000     bb_ende
+bb_set:         211     bb_wd
+                210     bb_m
+                000     bb_sp
+bb_frei:        211     bb_tst
+                330     c0
+                170     bb_ende
+                211     bb_wd
+                220     bb_m
+bb_sp:          240     si_w
+                211     bb_a
+                240     si_a
+                025     sp_ind
+                211     bb_t
+                616     rot9
+                210     a_chg
+                240     si_a
+                211     c1
+                240     si_w
+                025     sp_ind
+bb_ende:        000     bb_r
+; bel_sichern: Spur 0 der geaenderten Trommeln zurueckschreiben
+bel_sichern:    240     bs_r
+                241     bs_t
+                241     bs_lg
+                211     a_chg
+                240     bs_ca
+                211     a_bel
+                240     bs_ba
+bs_l:           211     bs_ca
+                251     0
+                330     c0
+                170     bs_nx
+                211     bs_lg
+                240     lage
+                025     zt_lies
+                211     bs_ba
+                240     bs_ra
+                241     bs_pc
+                241     bs_k
+bs_k1:          211     bs_ra
+                251     0
+                240     si_w
+                211     bs_pc
+                210     pufw
+                240     si_a
+                025     sp_ind
+                211     bs_ra
+                210     c1e
+                240     bs_ra
+                211     bs_pc
+                210     c1e
+                240     bs_pc
+                211     bs_k
+                210     c1
+                240     bs_k
+                330     c4
+                170     bs_wr
+                000     bs_k1
+bs_wr:          025     zt_schr
+bs_nx:          211     bs_ca
+                210     c1e
+                240     bs_ca
+                211     bs_ba
+                210     c4e
+                240     bs_ba
+                211     bs_lg
+                210     c_128
+                240     bs_lg
+                211     bs_t
+                210     c1
+                240     bs_t
+                330     c4
+                170     bs_e
+                000     bs_l
+bs_e:           000     bs_r
+
+; ---- ini: Anker, Formatkennung und Belegungslisten aller vier Trommeln lesen -----------------------------------------------
+ini:            240     in_r
+                241     status
+                241     ak_s
+                241     in_t
+                241     lage
+                211     a_fmt
+                240     in_fa
+                211     a_bel
+                240     in_ba
+                211     a_chg        ; chg := 0 (vier Zellen)
+                240     in_pc
+                241     in_k
+in_c:           211     in_pc
+                240     si_a
+                241     si_w
+                025     sp_ind
+                211     in_pc
+                210     c1e
+                240     in_pc
+                211     in_k
+                210     c1
+                240     in_k
+                330     c4
+                170     in_l
+                000     in_c
+in_l:           025     zt_lies
+                241     in_f
+                211     cz4
+                210     pufw
+                251     0
+                330     c_lk
+                170     in_f1
+                000     in_f2
+in_f1:          211     c1
+                240     in_f
+in_f2:          211     in_fa
+                240     si_a
+                211     in_f
+                240     si_w
+                025     sp_ind
+                241     in_pc
+                241     in_k
+in_kl:          211     in_pc
+                210     pufw
+                251     0
+                240     si_w
+                211     in_ba
+                240     si_a
+                025     sp_ind
+                211     in_pc
+                210     c1e
+                240     in_pc
+                211     in_ba
+                210     c1e
+                240     in_ba
+                211     in_k
+                210     c1
+                240     in_k
+                330     c4
+                170     in_ke
+                000     in_kl
+in_ke:          211     in_f
+                330     c0
+                170     in_n         ; nicht formatiert: kein Anker
+                211     ak_s
+                330     c0
+                170     in_a1
+                000     in_n         ; Anker schon gefunden
+in_a1:          211     cz5
+                210     pufw
+                251     0
+                330     c_rk
+                170     in_a2
+                000     in_n
+in_a2:          211     cz6
+                210     pufw
+                251     0
+                240     ak_fv
+                211     cz7
+                210     pufw
+                251     0
+                240     ak_s
+                210     lage         ; Lagewort des ersten Blocks = t * 0200 + Spur
+                240     ak_l
+in_n:           211     in_t
+                210     c1
+                240     in_t
+                330     c4
+                170     in_e
+                211     lage
+                210     c_128
+                240     lage
+                211     in_fa
+                210     c1e
+                240     in_fa
+                000     in_l
+in_e:           211     ak_s
+                330     c0
+                170     in_kein
+                211     ak_fv
+                330     c1
+                170     in_ok
+                211     c3           ; Status 3: Formatversion fremd
+                240     status
+                000     in_r
+in_kein:        211     c2           ; Status 2: kein Repository
+                240     status
+in_ok:          000     in_r
+
+; ---- Zusatztrommel lesen und schreiben (wie ZTL, Format 11.5) ----------------------------------------------------------------
+zt_lies:        240     zl_r
+                211     c661
+                240     zt_op
+                025     zt_io
+                211     lage
+                240     puf_lage
+                000     zl_r
+zt_schr:        240     zs_r
+                211     c601
+                240     zt_op
+                025     zt_io
+                211     lage
+                240     puf_lage
+                000     zs_r
+zt_io:          240     zi_r
+                211     lage         ; t * 0200 + Spur
+                616     rot26        ; Spur * 2^26 + t
+                240     zi_rt
+                200     c3
+                240     zi_tt
+                616     rot15        ; t * 0100000
+                210     c_anw        ; Befehl 030 5k00 (k = t + 1)
+                240     zi_g1
+zi_g1:          dw      0            ; hier steht zur Laufzeit 030 5k00 (k = t + 1) (Anwahl der Trommel t) und wird ausgefuehrt
+                211     zi_rt
+                220     zi_tt        ; Spur * 2^26 = zzz0
+                210     pufw         ; bbbb = Arbeitsspur
+                210     zt_op        ; Code 661 oder 601
+                240     zi_g2
+zi_g2:          dw      0            ; hier steht zur Laufzeit zzz0 bbbb 661/601 und wird ausgefuehrt
+                000     zi_r
+puf_leer:       240     pl_r
+                211     pufw
+                210     c441
+                240     pl_g
+pl_g:           dw      0            ; hier steht zur Laufzeit 441 <Arbeitsspur> und wird ausgefuehrt
+                211     c_ungl
+                240     puf_lage
+                000     pl_r
+
+; ---- Hilfen -----------------------------------------------------------------------------------------------------------------
+; sp_ind: <si_a> := si_w (si_a Adresswort)
+sp_ind:         240     sp_r
+                211     si_a
+                210     c240
+                240     si_g
+                211     si_w
+si_g:           dw      0            ; hier steht zur Laufzeit 240 <Adresse> und wird ausgefuehrt
+                000     sp_r
+; lz: ein Zeichen vom Kanal lz_kan lesen; AC := Eingabecode (ZR 012, WRZL 032, Punkt 033, sonst Code der Taste)
+lz:             240     lz_r
+                211     lz_kan       ; Kanalanwahl (030 4700 oder 030 4600) nach lz_ka
+                240     lz_ka
+lz_ka:          dw      0            ; hier steht zur Laufzeit die Kanalanwahl und wird ausgefuehrt
+lz_rd:          dw      0            ; hier steht 011 <Eingabetabelle> (init_tab)
+lz_back:        000     lz_r
+h_zr:           211     k_zr
+                000     lz_back
+h_wr:           211     k_wr
+                000     lz_back
+h_pkt:          211     k_pkt
+                000     lz_back
+h_ign:          000     lz_ka        ; Zeichen ignorieren, Kanal neu waehlen und weiterlesen
+; init_tab: Nullspur loeschen, Eingabetabelle ausrichten und fuellen (Zelle i := i, Sprung-Codes := Sprungwort)
+init_tab:       240     it_r
+                441     nullspur
+                211     a_tabraw
+                210     c77a
+                200     cmask77
+                240     tab_a
+                210     c011
+                240     lz_rd
+                241     it_i
+                211     tab_a
+                240     it_a
+it_l:           211     it_a
+                240     si_a
+                211     it_i
+                240     si_w
+                025     sp_ind
+                211     it_a
+                210     c1e
+                240     it_a
+                211     it_i
+                210     c1
+                240     it_i
+                330     c_64
+                170     it_p
+                000     it_l
+it_p:           241     it_i
+                211     a_pcode
+                240     it_pc
+                211     a_pword
+                240     it_pw
+it_pl:          211     it_pc
+                251     0
+                616     rot9
+                210     tab_a
+                240     si_a
+                211     it_pw
+                251     0
+                240     si_w
+                025     sp_ind
+                211     it_pc
+                210     c1e
+                240     it_pc
+                211     it_pw
+                210     c1e
+                240     it_pw
+                211     it_i
+                210     c1
+                240     it_i
+                330     c_12
+                170     it_e
+                000     it_pl
+it_e:           000     it_r
+
+; ---- Meldungen (Schreibwerk K2) -----------------------------------------------------------------------------------------------
+m_banner:       240     ms_r
+                030     04500
+                dtm     ZTD
+                dz      $wrzl
+                000     ms_r
+m_prompt:       240     ms_r
+                030     04500
+                dtm     >
+                000     ms_r
+m_zeil:         240     ms_r
+                030     04500
+                dz      $wrzl
+                000     ms_r
+m_name:         240     ms_r
+                030     04500
+                dtm     NAME:
+                000     ms_r
+m_adr:          240     ms_r
+                030     04500
+                dtm     ADRESSE:
+                000     ms_r
+m_ok:           240     ms_r
+                030     04500
+                dtm     OK
+                dz      $wrzl
+                000     ms_r
+m_frage:        240     ms_r
+                030     04500
+                dtm     ?
+                dz      $wrzl
+                000     ms_r
+m_s1:           240     ms_r
+                030     04500
+                dtm     TROMMEL NICHT FORMATIERT
+                dz      $wrzl
+                000     ms_r
+m_s2:           240     ms_r
+                030     04500
+                dtm     KEIN REPOSITORY
+                dz      $wrzl
+                000     ms_r
+m_s3:           240     ms_r
+                030     04500
+                dtm     FORMATVERSION FREMD
+                dz      $wrzl
+                000     ms_r
+m_s4:           240     ms_r
+                030     04500
+                dtm     NAME UNBEKANNT
+                dz      $wrzl
+                000     ms_r
+m_s5:           240     ms_r
+                030     04500
+                dtm     PLATZ REICHT NICHT
+                dz      $wrzl
+                000     ms_r
+m_s6:           240     ms_r
+                030     04500
+                dtm     TROMMELN VOLL
+                dz      $wrzl
+                000     ms_r
+m_s7:           240     ms_r
+                030     04500
+                dtm     KENNZEICHEN UNZULAESSIG
+                dz      $wrzl
+                000     ms_r
+m_s8:           240     ms_r
+                030     04500
+                dtm     NAME VORHANDEN
+                dz      $wrzl
+                000     ms_r
+st_druck:       240     sd_r
+                211     status
+                616     rot9
+                210     a_sttab
+                210     c025
+                240     sd_g
+sd_g:           dw      0            ; hier steht zur Laufzeit 025 <Meldung> und wird ausgefuehrt
+                000     sd_r
+m_help:         240     ms_r
+                030     04500
+                dtm     L  LISTE
+                dz      $wrzl
+                dtm     A  NAME, DANN LOCHSTREIFEN IN LESER 1
+                dz      $wrzl
+                dtm     D  NAME LOESCHEN
+                dz      $wrzl
+                dtm     M  NAME, ADRESSE. LADEN
+                dz      $wrzl
+                dtm     G  ADRESSE. SPRUNG
+                dz      $wrzl
+                dtm     Q  ENDE
+                dz      $wrzl
+                dtm     H  HILFE
+                dz      $wrzl
+                000     ms_r
+
+; ---- Arbeitsbereiche (Nullen, gehoeren zum Programm) ------------------------------------------------------------------------
+bel:            dbn     020          ; Belegungslisten ZT0 bis ZT3 (je 4 Worte)
+fmt:            dbn     4            ; Trommel formatiert (1) oder nicht (0)
+chg:            dbn     4            ; Belegungsliste der Trommel geaendert
+tabraw:         dbn     0200         ; Platz fuer die Eingabetabelle (64 Zellen, auf 0100 ausgerichtet)
+ende:           end

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_hwcheck.py - Hardware-Check-Fenster des Modus GRAFIK (Schalter --HWCHECK). Nur Standardbibliothek (Tkinter).
-Version: HW-005
+Version: HW-006 (28.10.2026: Beschriftung der Zusatztrommeln ZT0 bis ZT3 statt ZT1 bis ZT4, passend zur Anwahl 5100 030 bis 5400 030; HW-005: Zusatztrommeln)
 
 Ein zweites, nur so grosses wie noetig, verschiebbares Fenster mit sechs Zeilen untereinander (alles oktal, ausser der letzten):
     BZ         4 Stellen
@@ -12,15 +12,15 @@ Ein zweites, nur so grosses wie noetig, verschiebbares Fenster mit sechs Zeilen 
     <<AR>>     Speicherinhalt (11 Stellen, ebenso 4 + 4 + 3) an der Adresse im Register AR (m.AR); die Adresse steht im Namen
     Haltzeit   (HW-004, dezimal) Millisekunden zwischen dem Start (Taste R) und dem folgenden Halt bzw. zwischen zwei aufeinanderfolgenden
                Halts (Stopp, E/A-Halt, Fehler), dazu 'von -> bis'. Messung: grafik_haltzeit.py (m.haltuhr); ohne Messung '---.- ms'
-HW-005, nur mit --C8205Z (experimenteller Prototyp C8205Z): fuenf weitere Zeilen. Je Zusatztrommel ZT1 bis ZT4 eine Zeile mit der zuletzt
+HW-005, nur mit --C8205Z (experimenteller Prototyp C8205Z): fuenf weitere Zeilen. Je Zusatztrommel ZT0 bis ZT3 eine Zeile mit der zuletzt
 bearbeiteten Adresse (Spur Sektor, wie die Zeile Spur Sektor; '--- --' = noch keine) und hinter der angewaehlten ZT ein kleiner gruener Punkt;
-darunter EIN Inhaltsfeld <<ZTk>> (11 Stellen, 4 + 4 + 3) fuer die angewaehlte ZT (es ist immer nur eine aktiv). Ohne den Schalter bleibt
+darunter EIN Inhaltsfeld <<ZTd>> (11 Stellen, 4 + 4 + 3) fuer die angewaehlte ZT (es ist immer nur eine aktiv). Ohne den Schalter bleibt
 das Fenster bei sechs Zeilen. Die Daten liefert GrafikZT.ansicht() (grafik_zt.py).
 Das Fenster bleibt aufgeblendet, solange der Grafik-Interpreter laeuft: es laesst sich nicht schliessen (X wirkt nicht), es endet mit dem
 Pult-Fenster. Es veraendert nichts: der Speicherinhalt wird ohne Koinzidenz direkt gelesen (keine Wartezeit, keine Statistik).
 Vierergruppen werden von LINKS gebildet (11 Stellen = 4 + 4 + 3; HW-003, Auftraggeber 17.10.2026; vorher von rechts). Die Formatierung (hwcheck_zeilen) braucht kein Tkinter und ist pruefbar.
 """
-VERSION_HWCHECK = 'HW-005'
+VERSION_HWCHECK = 'HW-006'
 MASK12, MASK33 = 0o7777, (1 << 33) - 1
 from grafik_haltzeit import zeile as haltzeit_zeile
 
@@ -90,12 +90,12 @@ def zt_zeilen(zt):
     except Exception:
         g, adressen, inhalt = 0, [None] * 4, None
     zeilen = []
-    for k in range(1, 5):
+    for k in range(1, 5):                      # k = 1..4 ist die Nummer im Modul; angezeigt wird d = k - 1 (ZT0..ZT3, Anwahl 5k00 030, 5100 = ZT0 bis 5400 = ZT3)
         a = adressen[k - 1]
-        zeilen.append((f'ZT{k}', f'{(a >> 5) & 0o177:03o} {a & 0o37:02o}' if a is not None else '--- --', g == k))
+        zeilen.append((f'ZT{k - 1}', f'{(a >> 5) & 0o177:03o} {a & 0o37:02o}' if a is not None else '--- --', g == k))
     if g:
         a = adressen[g - 1]
-        name = f'<<ZT{g}>>' + (f'  {a:04o}' if a is not None else '')
+        name = f'<<ZT{g - 1}>>' + (f'  {a:04o}' if a is not None else '')
     else:
         name = '<<ZT>>'
     return zeilen, (name, gruppen4(inhalt & MASK33, 11) if inhalt is not None else '---- ---- ---')

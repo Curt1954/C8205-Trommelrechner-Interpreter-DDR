@@ -1,0 +1,5 @@
+rc 0
+anzahl-stderr 3 erscheint im Zustand GB (nach $ingb) als anderes Zeichen.
+anzahl-stderr 1 erscheint im Zustand KB (nach $inkb) als '+'.
+stderr kat6_warnung.asm:2: Warnung: kat6: Zeichen '1' an Position 5
+escape-weg

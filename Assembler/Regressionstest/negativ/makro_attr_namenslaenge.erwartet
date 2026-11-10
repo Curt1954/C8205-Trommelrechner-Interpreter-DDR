@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_namenslaenge.asm:6: Fehler: $CALC(nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn): Symbolname zu lang
+datei-weg obj mqo test
+escape-weg

@@ -130,6 +130,7 @@ def kind(art, testname, arbeitsverz, ausgabe):
             fh.write(''.join(f'{a:04o}: {mem.get(a, 0):011o}\n' for a in range(4096)))
         trommel = GrafikTrommel(trommel_pfad)
         rech = G.Rechner(graph, trommel, pult_modus=False)
+        rech.m.sw_lage = 'KB'      # TEST (I.lauf) setzt die Zeichenlage seit Interpreter 0.95-012 fest auf KB; der GRAFIK-Vergleichslauf ebenso (sonst entscheidet der Zufall)
         m = rech.m
         rech.sw = Senke()
         m.sw_datei = rech.sw

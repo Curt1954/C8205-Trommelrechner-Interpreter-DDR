@@ -1,0 +1,86 @@
+0000: 01 0057 000                                      000 haupt ; Zelle 0: Sprung zum Hauptprogramm
+0001: 00 00000000001                                   dw  1     ; Art des Symbols
+0002: 00 00000000002                                   dw  2     ; Art des Symbols
+0003: 00 00000000002                                   dw  2     ; Art des Symbols
+0004: 00 00000000002                                   dw  2     ; Art des Symbols
+0005: 00 00000000003                                   dw  3     ; Art des Symbols
+0006: 00 00000000003                                   dw  3     ; Art des Symbols
+0007: 00 00000000001                                   dw  1     ; 1, wenn das Symbol vorhanden ist
+0010: 00 00000000003                                   dw  3     ; Wert des Ausdrucks
+0011: 00 00000000003                                   dw  3     ; Wert des Ausdrucks
+0012: 00 00000000003                                   dw  3     ; Art des Symbols
+0013: 00 00000000003                                   dw  3     ; Art des Symbols
+0014: 00 00000000003                                   dw  3     ; Art des Symbols
+0015: 00 00000000001                                   dw  1     ; 1, wenn das Symbol vorhanden ist
+0016: 00 00000000002                                   dw  2     ; Art des Symbols
+0017: 00 00000000001                                   dw  1     ; 1, wenn das Symbol vorhanden ist
+0020: 00 00000000005                                   dw  5     ; Wert des Ausdrucks
+0021: 00 00000000003                                   dw  3     ; Zellenzahl der Anweisung
+0022: 00 00000000004                                   dw  4     ; Art des Symbols
+0023: 00 00000000006                                   dw  6     ; art(a_equ)+1 wird im Ausdruck eingeklammert eingesetzt (4.2)
+0024: 00 00000000014                                   dw  12    ; 2*3 wird im Ausdruck eingeklammert eingesetzt (4.2)
+0025: 00 00000000014                                   dw  12    ; zellen(a_db)+art(a_abs) wird im Ausdruck eingeklammert eingesetzt (4.2)
+0026: 00 00000000025                                   dw  21    ; Wert des Ausdrucks
+0027: 00 00000000012                                   dw  012   ; 012 = 10
+0030: 00 00000000012                                   dw  00012 ; 0012 = 10
+0031: 00 00000000002                                   dw  2     ; Text 10: 2 Zeichen
+0032: 00 00000000012                                   dw  10    ; 10
+0033: 0                                                dw  0     ; 4 gleich 4: 0
+0034: 0                                                dw  0     ; 0, 1
+0035: 00 00000000001                                   dw  1     ; 0, 1
+0036: 00 00000000026                                   dw  22    ; erzeugt
+0037: 00 00000010016                                   dw  4110  ; 10 + 100 + 4000 = 4110
+0040: 00 00000000012                                   dw  10    ; 10
+0041: 00 00000000001                                   dw  1     ; sym1: 1, sym2: 0, sym3: 1
+0042: 0                                                dw  0     ; sym1: 1, sym2: 0, sym3: 1
+0043: 00 00000000001                                   dw  1     ; sym1: 1, sym2: 0, sym3: 1
+0044: 0                                                dw  0     ; sym2 gibt es nicht: 0
+0045: 00 00000000003                                   dw  3     ; tab3 hat 3 Zellen
+0046: 0                                                dw  0     ; Art des Symbols
+0047: 0                                                dw  0     ; 1, wenn das Symbol vorhanden ist
+0050: 00 00000000001                                   dw  1     ; Art des Symbols
+0051: 00 00000000002                                   dw  2     ; Art des Symbols
+0052: 00 00000000003                                   dw  3     ; Art des Symbols
+0053: 00 00000000001                                   dw  1     ; 1, wenn das Symbol vorhanden ist
+0054: 00 00000000014                                   dw  12    ; Wert des Ausdrucks
+0055: 00 00000000004                                   dw  4     ; Art des Symbols
+0056: 00 00000000001                                   dw  1     ; Zellenzahl der Anweisung
+0057: 01 0114 211    haupt:                            211 l0001 ; AC := 5 (Literal l0001)
+0060: 01 0115 210                                      210 l0002 ; AC := AC + 7 (Literal l0002)
+0061: 01 0110 240                                      240 erg   ; erg := AC = 12
+0062: 01 0001 164                                      164 0001  ; Diagnoseausgabe (nur im Test)
+0063: 01 0000 020                                      020 0     ; Halt
+0064: 20 0071        a_db:                             db  5     ; 5 Zellen
+0071: 20 0103        tab:                              db  012   ; 10 Zellen (oktal)
+0103: 00 0           a2:                               dbn 2     ; 2 Zellen
+0104: 00 0           ;    
+0105: 20 0110        tab3:                             db  3     ; 3 Zellen
+0110: 0              erg:                              dw  0     ; Ergebnis der Rechnung
+0111: 20 0114        nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnd: db  3     ; Name mit 32 Zeichen auf db
+0114: 00 00000000005 l0001                             dw  5     
+0115: 00 00000000007 l0002                             dw  7     
+      20 0000 7640   a_equ:                            equ 07640 
+      20 0000 0003   ka1:                              equ 00003 
+      20 0000 0003   ka2:                              equ 00003 
+      20 0000 0003   ka3:                              equ 00003 
+      20 0000 0003   ka4:                              equ 00003 
+      20 0000 0003   ka5:                              equ 00003 
+      20 0000 0003   ka6:                              equ 00003 
+      20 0000 0003   ka7:                              equ 00003 
+      20 0000 0003   ka8:                              equ 00003 
+      20 0000 0003   ka9:                              equ 00003 
+      20 0000 0003   ka10:                             equ 00003 
+      20 0000 0003   ka11:                             equ 00003 
+      20 0000 0003   ka12:                             equ 00003 
+      20 0000 0003   ka13:                             equ 00003 
+      20 0000 0003   ka14:                             equ 00003 
+      20 0000 0003   ka15:                             equ 00003 
+      20 0000 0003   ka16:                             equ 00003 
+      20 0000 0003   ka17:                             equ 00003 
+      20 0000 0003   kb0:                              equ 00003 
+      20 0000 0003   kb1:                              equ 00003 
+      20 0000 0003   kb2:                              equ 00003 
+      20 0000 0005   nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn: equ 00005 
+      20 0000 0003   sym3:                             equ 00003 
+      20 0000 0007   h_equ:                            equ 00007 
+      20 0000 0007   h_stern:                          equ 00007 

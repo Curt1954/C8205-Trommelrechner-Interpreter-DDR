@@ -1,0 +1,3 @@
+rc 0
+stderr weder $GLOBAL noch $BLOCK: eine Einmalerzeugung ist nicht erkennbar
+datei-da obj

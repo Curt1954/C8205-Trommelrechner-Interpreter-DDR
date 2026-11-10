@@ -1,0 +1,265 @@
+Trommeldatei:
+#ZTROMMEL=LEER
+#DOK-0001 hschl: Projektmakro HSCHL: 17 Eingaben (Typ 10), 34 Worte, zwei Spuren, Uebertrag Spur 127 -> Trommel 1 Spur 0, R1, R3 und KBGB unveraendert
+#SPEI-0001 0001-0004
+#PROT STUFE=2
+#TROMMEL=LEER
+--leser1 Test-virtuelleGeraete/Leser1/hschl.txt
+0000: 00000005000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # dif1: dw 0 ; Zelle 0001: R1 - apc nach dem Aufruf (0, wenn R1 unveraendert)
+0002: 00000000000 # dif3: dw 0 ; Zelle 0002: R3 - 0177 nach dem Aufruf (0, wenn R3 unveraendert)
+0003: 00000000000 # fehlart: dw 0 ; Zelle 0003: Fehlerart (0 kein Fehler, 2 zu lang), vom Fehlerausgang gesetzt
+0004: 00000400000 # apc: da 000000000400 ; Zelle 0004: Adresse des Spurpuffers Programmcode (Adressfeld)
+0005: 00004600030 # haupt 030 04600 ; 4600 oder K1 oder LSL1 oder LSS1
+0006: 00000223211 # 211 l0001 ; AC := 1
+0007: 00007775240 # 240 kbgb ; KBGB := 1 (GB); der Lauf darf es nicht aendern
+0010: 00000004211 # 211 apc ; AC := Adresse des Spurpuffers
+0011: 00007773240 # 240 r1 ; R1 := Spurpuffer Programmcode
+0012: 00007776241 # 241 r2 ; R2 := 0 (Trommel 0), AC := 0
+0013: 00000224211 # 211 l0002 ; AC := 127
+0014: 00007774240 # 240 r3 ; R3 := Spur 127 der Trommel 0 (die zweite Spur liegt dann auf Trommel 1, Spur 0)
+0015: 00000030025 # 025 hschl ; UP hschl: Streifen lesen, auf die ZT schreiben, R2 := Sektoranzahl
+0016: 00007773211 # 211 r1 ; AC := R1
+0017: 00000004220 # 220 apc ; minus Soll: 0, wenn R1 unveraendert
+0020: 00000001240 # 240 dif1 ; dif1 := Abweichung von R1
+0021: 00007774211 # 211 r3 ; AC := R3
+0022: 00000224220 # 220 l0002 ; minus Soll: 0, wenn R3 unveraendert
+0023: 00000002240 # 240 dif3 ; dif3 := Abweichung von R3
+0024: 00000000020 # 020 0 ; Halt (normales Ende)
+0025: 00000225211 # fe_lang 211 l0003 ; Fehlerausgang zu lang: AC := 2
+0026: 00000003240 # 240 fehlart ; fehlart := 2
+0027: 00000000020 # 020 0 ; Halt (Fehler zu lang)
+0030: 00000126240 # hschl 240 ML0001GNU ; Rueckkehrwort sichern
+0031: 00007773211 # 211 ML0050GNU ; AC := R1 (Adresse des Spurpuffers)
+0032: 00000133240 # 240 ML0030GNU ; Adresse des Spurpuffers merken (R1 wird je Eingabe veraendert)
+0033: 00007775211 # 211 ML0053GNU ; AC := KBGB
+0034: 00000134240 # 240 ML0031GNU ; KBGB merken (der Streifen fuehrt KBGB nach, am Ende wird zurueckgestellt)
+0035: 00007776211 # 211 ML0051GNU ; AC := R2 (Trommelnummer d)
+0036: 00007645644 # 644 07645 ; 7 mal Linksverschiebung (Operand nach Festlegung 026)
+0037: 00007774210 # 210 ML0052GNU ; plus R3 (Spurnummer s)
+0040: 00000127240 # 240 ML0002GNU ; p := 128 * d + s (laufende Zielspur)
+0041: 00000130241 # 241 ML0003GNU ; Sektorzaehler := 0, AC := 0
+0042: 00000131240 # 240 ML0004GNU ; Ende-Merker := 0 (Streifen laeuft noch)
+0043: 00000133211 # ML0005GNU 211 ML0030GNU ; neue Spur im Puffer: AC := Adresse des Spurpuffers
+0044: 00000132240 # 240 ML0006GNU ; Zeiger := erste Pufferstelle
+0045: 00000226210 # 210 l0004 ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen := 0)
+0046: 00000047240 # 240 ML0007GNU ; Befehl 441 <Spurpuffer> auf die naechste Zelle
+0050: 00000132211 # ML0008GNU 211 ML0006GNU ; naechste Eingabe: AC := Zeiger auf die Pufferstelle
+0051: 00007773240 # 240 ML0050GNU ; R1 := Pufferstelle (2 Zellen fuer diese Eingabe)
+0052: 00000135025 # 025 eingabe ; UP TYP10EINGABE: liest eine Eingabe, legt Wort 1 und Wort 2 ab; bei / Sprung nach ML0009% (Streifenende)
+0053: 00000130211 # 211 ML0003GNU ; AC := Sektorzaehler
+0054: 00000225210 # 210 l0003 ; plus 2 (eine Eingabe = 2 Sektoren)
+0055: 00000130240 # 240 ML0003GNU ; Sektorzaehler := Zahl der Sektoren
+0056: 00000227220 # 220 l0005 ; minus 4096
+0057: 00000025050 # 050 fe_lang ; >= 0: mehr als 4095 Sektoren -> Fehlerausgang des Aufrufers
+0060: 00000132211 # 211 ML0006GNU ; AC := Zeiger
+0061: 00000230210 # 210 l0006 ; plus zwei Adresseneinheiten (2 Zellen)
+0062: 00000132240 # 240 ML0006GNU ; Zeiger := naechste Pufferstelle
+0063: 00000133220 # 220 ML0030GNU ; minus Adresse des Spurpuffers
+0064: 00000231330 # 330 l0007 ; Vergleich mit 32 Zellen (keine Operation)
+0065: 00000075170 # 170 ML0015GNU ; Puffer voll: Spur schreiben
+0066: 00000050000 # 000 ML0008GNU ; naechste Eingabe
+0067: 00000223221 # hs_ende 221 l0001 ; Streifenende (Sprung aus TYP10EINGABE), Marke hs_ + dritter Parameter: AC := -1
+0070: 00000131240 # 240 ML0004GNU ; Ende-Merker := -1
+0071: 00000132211 # 211 ML0006GNU ; AC := Zeiger
+0072: 00000133220 # 220 ML0030GNU ; minus Adresse des Spurpuffers
+0073: 00000232330 # 330 l0008 ; Vergleich mit 0 (keine Operation)
+0074: 00000120170 # 170 ML0020GNU ; Puffer leer: keine Spur mehr zu schreiben
+0075: 00000127211 # ML0015GNU 211 ML0002GNU ; Spur schreiben: AC := p
+0076: 00000233200 # 200 l0009 ; nur die Trommelnummer (Bit 7 und 8 von p)
+0077: 00007670644 # 644 07670 ; 8 mal Linksverschiebung (Operand nach Festlegung 026)
+0100: 00000234210 # 210 l0010 ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+0101: 00000102240 # 240 ML0016GNU ; Anwahlbefehl auf die naechste Zelle
+0103: 00000127211 # 211 ML0002GNU ; AC := p
+0104: 00000224200 # 200 l0002 ; nur die Spur s (Bit 0 bis 6 von p)
+0105: 00007656644 # 644 07656 ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0106: 00000133210 # 210 ML0030GNU ; plus Adresse des Spurpuffers
+0107: 00000235210 # 210 l0011 ; plus Operationscode 601 (Ausgabe HT -> ZT)
+0110: 00000111240 # 240 ML0017GNU ; Ausgabebefehl auf die naechste Zelle
+0112: 00000127211 # 211 ML0002GNU ; AC := p
+0113: 00000223210 # 210 l0001 ; plus 1
+0114: 00000127240 # 240 ML0002GNU ; p := naechste Zielspur (127 -> Spur 0 der naechsten Trommel)
+0115: 00000131211 # 211 ML0004GNU ; AC := Ende-Merker
+0116: 00000120040 # 040 ML0020GNU ; < 0: letzte Spur geschrieben, fertig
+0117: 00000043000 # 000 ML0005GNU ; sonst neue Spur im Puffer
+0120: 00000130211 # ML0020GNU 211 ML0003GNU ; fertig: AC := Sektoranzahl
+0121: 00007776240 # 240 ML0051GNU ; R2 := Sektoranzahl
+0122: 00000133211 # 211 ML0030GNU ; AC := Adresse des Spurpuffers
+0123: 00007773240 # 240 ML0050GNU ; R1 := urspruenglicher Wert
+0124: 00000134211 # 211 ML0031GNU ; AC := KBGB am Anfang
+0125: 00007775240 # 240 ML0053GNU ; KBGB zurueckgestellt
+0135: 00000215240 # eingabe 240 ML0001JQX ; Rueckkehrwort sichern
+0136: 00000313241 # 241 ML0013JQX ; Wort 1 := 0, AC := 0
+0137: 00000314241 # 241 ML0014JQX ; Wort 2 := 0
+0140: 00000225211 # 211 l0003 ; zwei Kennzeichen sind noch zu lesen
+0141: 00000317240 # 240 ML0017JQX ; zaehler := 2
+0142: 00000300011 # ML0003JQX 011 ML0012JQX ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+0143: 00000147040 # 040 ML0004JQX ; z0 gesetzt: Ziffer oder +
+0144: 00000361330 # 330 ML0022JQX ; Vergleich mit der Tabellenzelle 61 (/), keine Operation
+0145: 00000067170 # 170 hs_ende ; gleich: Streifenende, Sprung zum Ausgang des Aufrufers
+0146: 00000142000 # 000 ML0003JQX ; sonst: Zeichen ignorieren, weiterlesen
+0147: 00000236200 # ML0004JQX 200 l0012 ; AC := Code des Zeichens (6 Bit)
+0150: 00000334240 # 240 ML0016JQX ; code := Code
+0151: 00000317211 # 211 ML0017JQX ; AC := noch zu lesende Kennzeichen
+0152: 00000232330 # 330 l0008 ; Vergleich mit 0 (keine Operation)
+0153: 00000163170 # 170 ML0005JQX ; 0: Ziffernteil
+0154: 00000223220 # 220 l0001 ; AC := zaehler - 1
+0155: 00000317240 # 240 ML0017JQX ; zaehler := zaehler - 1
+0156: 00000314211 # 211 ML0014JQX ; AC := Wort 2 bisher
+0157: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0160: 00000334210 # 210 ML0016JQX ; plus Code des neuen Kennzeichens
+0161: 00000314240 # 240 ML0014JQX ; Wort 2 := neues Wort 2
+0162: 00000142000 # 000 ML0003JQX ; naechstes Zeichen
+0163: 00000334211 # ML0005JQX 211 ML0016JQX ; Ziffernteil: AC := Code
+0164: 00000237200 # 200 l0013 ; Bits ausser den drei unteren: 0 nur bei Oktalziffern 0 bis 7
+0165: 00000223220 # 220 l0001 ; AC := AC - 1 (negativ, wenn Oktalziffer)
+0166: 00000142050 # 050 ML0003JQX ; AC >= 0: 8, 9 oder +: ignorieren
+0167: 00000313211 # 211 ML0013JQX ; AC := Wort 1 bisher
+0170: 00007671644 # 644 07671 ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0171: 00000334210 # 210 ML0016JQX ; plus Code der neuen Ziffer
+0172: 00000313240 # 240 ML0013JQX ; Wort 1 := neues Wort 1
+0173: 00000142000 # 000 ML0003JQX ; naechstes Zeichen
+0174: 00000317211 # ML0006JQX 211 ML0017JQX ; Ende (. oder :): AC := noch zu lesende Kennzeichen
+0175: 00000223330 # 330 l0001 ; Vergleich mit 1 (keine Operation)
+0176: 00000200170 # 170 ML0007JQX ; 1: nur ein Kennzeichen gelesen, es gehoert nach Kennzeichen 1
+0177: 00000203000 # 000 ML0008JQX ; sonst: Wort 2 ist richtig (0 oder 2 Kennzeichen; bei 2 ist Wort 2 = 0)
+0200: 00000314211 # ML0007JQX 211 ML0014JQX ; AC := Wort 2 (ein Kennzeichen)
+0201: 00007662644 # 644 07662 ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0202: 00000314240 # 240 ML0014JQX ; Wort 2 := Kennzeichen 1 und 0
+0203: 00007773211 # ML0008JQX 211 ML0050JQX ; AC := R1 (Adresse des Bereichs)
+0204: 00000240210 # 210 l0014 ; plus Operationscode 240: Befehl 240 <Wort 1>
+0205: 00000207240 # 240 ML0009JQX ; Speicherbefehl auf die naechste Zelle
+0206: 00000313211 # 211 ML0013JQX ; AC := Wort 1
+0210: 00007773211 # 211 ML0050JQX ; AC := R1
+0211: 00000241210 # 210 l0015 ; plus eine Adresseneinheit und 240: Befehl 240 <Bereich + 1>
+0212: 00000214240 # 240 ML0010JQX ; Speicherbefehl auf die naechste Zelle
+0213: 00000314211 # 211 ML0014JQX ; AC := Wort 2 (nichtnegativ)
+0216: 00000223211 # ML0011JQX 211 l0001 ; Um. GB: AC := 1
+0217: 00007775240 # 240 ML0051JQX ; KBGB := 1
+0220: 00000142000 # 000 ML0003JQX ; weiterlesen
+0221: 00007775241 # ML0018JQX 241 ML0051JQX ; Um. KB: KBGB := 0
+0222: 00000142000 # 000 ML0003JQX ; weiterlesen
+0223: 00000000001 # l0001 dw 1
+0224: 00000000177 # l0002 dw 000000000177
+0225: 00000000002 # l0003 dw 2
+0226: 00000000441 # l0004 dw 000000000441
+0227: 00000010000 # l0005 dw 000000010000
+0230: 00000002000 # l0006 dw 000000002000
+0231: 00000040000 # l0007 dw 000000040000
+0232: 00000000000 # l0008 dw 000000000000
+0233: 00000000600 # l0009 dw 000000000600
+0234: 00005100030 # l0010 dw 000005100030
+0235: 00000000601 # l0011 dw 000000000601
+0236: 00000000077 # l0012 dw 000000000077
+0237: 00000000070 # l0013 dw 000000000070
+0240: 00000000240 # l0014 dw 000000000240
+0241: 00000001240 # l0015 dw 000000001240
+0300: 40000000000 # dw 040000000000 ; 00: 0: gueltig, z0 gesetzt, Code 00
+0301: 40000000001 # dw 040000000001 ; 01: 1: gueltig, z0 gesetzt, Code 01
+0302: 40000000002 # dw 040000000002 ; 02: 2: gueltig, z0 gesetzt, Code 02
+0303: 40000000003 # dw 040000000003 ; 03: 3: gueltig, z0 gesetzt, Code 03
+0304: 40000000004 # dw 040000000004 ; 04: 4: gueltig, z0 gesetzt, Code 04
+0305: 40000000005 # dw 040000000005 ; 05: 5: gueltig, z0 gesetzt, Code 05
+0306: 40000000006 # dw 040000000006 ; 06: 6: gueltig, z0 gesetzt, Code 06
+0307: 40000000007 # dw 040000000007 ; 07: 7: gueltig, z0 gesetzt, Code 07
+0310: 40000000010 # dw 040000000010 ; 10: 8: gueltig, z0 gesetzt, Code 10
+0311: 40000000011 # dw 040000000011 ; 11: 9: gueltig, z0 gesetzt, Code 11
+0312: 00000142000 # 000 ML0003JQX ; 12: Leertaste: ignorieren
+0315: 00000174000 # 000 ML0006JQX ; 15: : beendet die Eingabe
+0316: 00000142000 # 000 ML0003JQX ; 16: Irrung Satz: ignorieren
+0320: 40000000020 # dw 040000000020 ; 20: +: gueltig, z0 gesetzt, Code 20
+0321: 00000000000 # dw 0 ; 21: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0322: 00000000000 # dw 0 ; 22: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0323: 00000000000 # dw 0 ; 23: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0324: 00000000000 # dw 0 ; 24: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0325: 00000000000 # dw 0 ; 25: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0326: 00000000000 # dw 0 ; 26: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0327: 00000000000 # dw 0 ; 27: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0330: 00000000000 # dw 0 ; 30: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0331: 00000000000 # dw 0 ; 31: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0332: 00000142000 # 000 ML0003JQX ; 32: WRZL: ignorieren
+0333: 00000174000 # 000 ML0006JQX ; 33: . beendet die Eingabe
+0335: 00000000000 # dw 0 ; 35: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0336: 00000000000 # dw 0 ; 36: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0337: 00000216000 # 000 ML0011JQX ; 37: Um. GB: KBGB := 1
+0340: 00000142000 # 000 ML0003JQX ; 40: - / Dreieck: ignorieren
+0341: 00000000000 # dw 0 ; 41: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0342: 00000000000 # dw 0 ; 42: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0343: 00000000000 # dw 0 ; 43: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0344: 00000000000 # dw 0 ; 44: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0345: 00000000000 # dw 0 ; 45: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0346: 00000000000 # dw 0 ; 46: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0347: 00000000000 # dw 0 ; 47: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0350: 00000000000 # dw 0 ; 50: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0351: 00000000000 # dw 0 ; 51: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0352: 00000000000 # dw 0 ; 52: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0353: 00000000000 # dw 0 ; 53: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0354: 00000000000 # dw 0 ; 54: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0355: 00000000000 # dw 0 ; 55: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0356: 00000000000 # dw 0 ; 56: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0357: 00000221000 # 000 ML0018JQX ; 57: Um. KB: KBGB := 0
+0360: 00000142000 # 000 ML0003JQX ; 60: ` / ;: ignorieren
+0361: 20000000000 # ML0022JQX: dw 020000000000 ; 61: /: Streifenende-Kennung (z1 gesetzt, z0 nicht), nur zum Vergleich; Sprung nach ende
+0362: 00000000000 # dw 0 ; 62: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0363: 00000000000 # dw 0 ; 63: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0364: 00000000000 # dw 0 ; 64: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0365: 00000000000 # dw 0 ; 65: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0366: 00000000000 # dw 0 ; 66: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0367: 00000000000 # dw 0 ; 67: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0370: 00000000000 # dw 0 ; 70: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0371: 00000000000 # dw 0 ; 71: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0372: 00000142000 # 000 ML0003JQX ; 72: BM: ignorieren
+0373: 00000142000 # 000 ML0003JQX ; 73: , / ?: ignorieren
+0374: 00000000000 # dw 0 ; 74: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0375: 00000142000 # 000 ML0003JQX ; 75: Tabulator: ignorieren
+0376: 00000000000 # dw 0 ; 76: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+0377: 00000000000 # dw 0 ; 77: kein Zeichen der Eingabe (wird ignoriert) oder nicht belegte Eingabeadresse
+Tastenfolge:
+H G R
+Prüfungen:
+US=1
+0001: 00000000000   # dif1: R1 unveraendert
+0002: 00000000000   # dif3: R3 unveraendert
+0003: 00000000000   # fehlart: kein Fehler
+7776: 00000000042   # R2: Sektoranzahl 34
+7775: 00000000001   # KBGB unveraendert 1
+ZT-Zellen-Pruefung:
+0-7740: 71234567012   # ZT 0 Spur 127: Wort 0
+0-7741: 00000002000   # ZT 0 Spur 127: Wort 1
+0-7742: 00000000123   # ZT 0 Spur 127: Wort 2
+0-7743: 00000002000   # ZT 0 Spur 127: Wort 3
+0-7744: 00000000000   # ZT 0 Spur 127: Wort 4
+0-7745: 00000000200   # ZT 0 Spur 127: Wort 5
+0-7746: 00000000005   # ZT 0 Spur 127: Wort 6
+0-7747: 00000000201   # ZT 0 Spur 127: Wort 7
+0-7750: 00000000000   # ZT 0 Spur 127: Wort 8
+0-7751: 00000000303   # ZT 0 Spur 127: Wort 9
+0-7752: 00000000000   # ZT 0 Spur 127: Wort 10
+0-7753: 00000000700   # ZT 0 Spur 127: Wort 11
+0-7754: 00000000000   # ZT 0 Spur 127: Wort 12
+0-7755: 00000001011   # ZT 0 Spur 127: Wort 13
+0-7756: 77777777777   # ZT 0 Spur 127: Wort 14
+0-7757: 00000000000   # ZT 0 Spur 127: Wort 15
+0-7760: 00000011711   # ZT 0 Spur 127: Wort 16
+0-7761: 00000000304   # ZT 0 Spur 127: Wort 17
+0-7762: 00000012712   # ZT 0 Spur 127: Wort 18
+0-7763: 00000000304   # ZT 0 Spur 127: Wort 19
+0-7764: 00000013713   # ZT 0 Spur 127: Wort 20
+0-7765: 00000000304   # ZT 0 Spur 127: Wort 21
+0-7766: 00000014714   # ZT 0 Spur 127: Wort 22
+0-7767: 00000000304   # ZT 0 Spur 127: Wort 23
+0-7770: 00000015715   # ZT 0 Spur 127: Wort 24
+0-7771: 00000000304   # ZT 0 Spur 127: Wort 25
+0-7772: 00000016716   # ZT 0 Spur 127: Wort 26
+0-7773: 00000000304   # ZT 0 Spur 127: Wort 27
+0-7774: 00000017717   # ZT 0 Spur 127: Wort 28
+0-7775: 00000000304   # ZT 0 Spur 127: Wort 29
+0-7776: 00000020720   # ZT 0 Spur 127: Wort 30
+0-7777: 00000000304   # ZT 0 Spur 127: Wort 31
+1-0000: 00000021721   # ZT 1 Spur 0 (Uebertrag der Trommel): Wort 32
+1-0001: 00000000304   # ZT 1 Spur 0 (Uebertrag der Trommel): Wort 33
+1-0002: 00000000000   # Rest der zweiten Spur: 0 (Puffer vorher geloescht)
+1-0037: 00000000000   # letzte Zelle der zweiten Spur: 0
+1-0040: 00000000000   # Spur 1 der Trommel 1 nicht beschrieben
+0-7677: 00000000000   # Spur 126 der Trommel 0 (davor) nicht beschrieben
+0-0000: 00000000000   # Spur 0 der Trommel 0 nicht beschrieben

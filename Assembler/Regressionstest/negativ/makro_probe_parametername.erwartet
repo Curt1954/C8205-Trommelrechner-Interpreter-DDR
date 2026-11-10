@@ -1,0 +1,4 @@
+rc 16
+stderr Makro M1: Parametername 'probe' ist ein festes Wort [im Quelltext Zeile 2]
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

@@ -1,0 +1,10 @@
+args --opsyms
+ohne-p-s
+rc 0
+stdout Namen für Operationscodes (Standardtabelle
+stdout Einzel-Addition mit Löschen (ac := <a>)
+stdout Einzel-Transport (<a> := <AC>)
+stdout R-Minuslesebefehl
+anzahl-stdout 24 ·
+nicht-stderr Fehler
+escape-weg

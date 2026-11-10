@@ -1,0 +1,121 @@
+0000: 01 0003 000               000   haupt        ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 01 100000      apn:       da    000000000100 ; Zelle 0001: Adresse SPUF-PN (Adressfeld)
+0002: 01 40000       amk:       da    000000000040 ; Zelle 0002: Adresse des Markerpuffers (Adressfeld)
+0003: 01 0001 211    haupt      211   apn          ; AC := Adresse SPUF-PN
+0004: 00 7773 240               240   r1           ; R1 := SPUF-PN
+0005: 01 0030 211               211   l0001        ; AC := 2
+0006: 00 7776 240               240   r2           ; R2 := Trommel 2
+0007: 01 0031 211               211   l0002        ; AC := 5
+0010: 00 7774 240               240   r3           ; R3 := Spur 5 (zweite Spur: 6)
+0011: 01 0200 025               025   neuanl       ; Element 14: SPUF-PN nach ZT 2 Spur 5 und 6
+0012: 01 0032 211               211   l0003        ; AC := neuer Wert
+0013: 01 0100 240               240   000000000100 ; Zelle 0 des Puffers := 07654
+0014: 01 0033 211               211   l0004        ; AC := 3
+0015: 00 7776 240               240   r2           ; R2 := Trommel 3 (R1 bleibt)
+0016: 01 0034 211               211   l0005        ; AC := 126
+0017: 00 7774 240               240   r3           ; R3 := Spur 126 (zweite Spur: 127)
+0020: 01 0200 025               025   neuanl       ; Element 14: SPUF-PN nach ZT 3 Spur 126 und 127
+0021: 01 0035 211               211   l0006        ; AC := Marker
+0022: 01 0040 240               240   000000000040 ; Zelle 0 des Markerpuffers := 0777
+0023: 01 0002 211               211   amk          ; AC := Adresse des Markerpuffers
+0024: 01 0036 210               210   l0007        ; plus Spur 0 und Operationscode 601, KEINE neue Anwahl
+0025: 01 0026 240               240   ab1          ; Ausgabebefehl auf die naechste Zelle
+0026: 20 0027        ab1:       db    1            ; Laufzeit: Spur 0 der angewaehlten Trommel := Markerpuffer
+0027: 01 0000 020               020   0            ; Halt
+0030: 00 00000000002 l0001      dw    2            
+0031: 00 00000000005 l0002      dw    5            
+0032: 00 00000007654 l0003      dw    000000007654 
+0033: 00 00000000003 l0004      dw    3            
+0034: 00 00000000176 l0005      dw    000000000176 
+0035: 00 00000000777 l0006      dw    000000000777 
+0036: 00 00000000601 l0007      dw    000000000601 
+0037: 00 00005100030 l0008      dw    000005100030 
+      20 0000 0040              equ40 00040        ; Markerpuffer auf einer Spurgrenze
+0040: 20 0100        spuf00:    db    040          ; Markerpuffer: 32 Zellen
+      20 0000 0100              equ40 00100        ; SPUF-PN auf einer Spurgrenze
+0100: 00 00000001000            dw    01000        ; Zelle 0 (Spur 1 des Puffers, Zelle 0)
+0101: 00 00000001001            dw    01001        ; Zelle 1 (Spur 1 des Puffers, Zelle 1)
+0102: 00 00000001002            dw    01002        ; Zelle 2 (Spur 1 des Puffers, Zelle 2)
+0103: 00 00000001003            dw    01003        ; Zelle 3 (Spur 1 des Puffers, Zelle 3)
+0104: 00 00000001004            dw    01004        ; Zelle 4 (Spur 1 des Puffers, Zelle 4)
+0105: 00 00000001005            dw    01005        ; Zelle 5 (Spur 1 des Puffers, Zelle 5)
+0106: 00 00000001006            dw    01006        ; Zelle 6 (Spur 1 des Puffers, Zelle 6)
+0107: 00 00000001007            dw    01007        ; Zelle 7 (Spur 1 des Puffers, Zelle 7)
+0110: 00 00000001010            dw    01010        ; Zelle 8 (Spur 1 des Puffers, Zelle 8)
+0111: 00 00000001011            dw    01011        ; Zelle 9 (Spur 1 des Puffers, Zelle 9)
+0112: 00 00000001012            dw    01012        ; Zelle 10 (Spur 1 des Puffers, Zelle 10)
+0113: 00 00000001013            dw    01013        ; Zelle 11 (Spur 1 des Puffers, Zelle 11)
+0114: 00 00000001014            dw    01014        ; Zelle 12 (Spur 1 des Puffers, Zelle 12)
+0115: 00 00000001015            dw    01015        ; Zelle 13 (Spur 1 des Puffers, Zelle 13)
+0116: 00 00000001016            dw    01016        ; Zelle 14 (Spur 1 des Puffers, Zelle 14)
+0117: 00 00000001017            dw    01017        ; Zelle 15 (Spur 1 des Puffers, Zelle 15)
+0120: 00 00000001020            dw    01020        ; Zelle 16 (Spur 1 des Puffers, Zelle 16)
+0121: 00 00000001021            dw    01021        ; Zelle 17 (Spur 1 des Puffers, Zelle 17)
+0122: 00 00000001022            dw    01022        ; Zelle 18 (Spur 1 des Puffers, Zelle 18)
+0123: 00 00000001023            dw    01023        ; Zelle 19 (Spur 1 des Puffers, Zelle 19)
+0124: 00 00000001024            dw    01024        ; Zelle 20 (Spur 1 des Puffers, Zelle 20)
+0125: 00 00000001025            dw    01025        ; Zelle 21 (Spur 1 des Puffers, Zelle 21)
+0126: 00 00000001026            dw    01026        ; Zelle 22 (Spur 1 des Puffers, Zelle 22)
+0127: 00 00000001027            dw    01027        ; Zelle 23 (Spur 1 des Puffers, Zelle 23)
+0130: 00 00000001030            dw    01030        ; Zelle 24 (Spur 1 des Puffers, Zelle 24)
+0131: 00 00000001031            dw    01031        ; Zelle 25 (Spur 1 des Puffers, Zelle 25)
+0132: 00 00000001032            dw    01032        ; Zelle 26 (Spur 1 des Puffers, Zelle 26)
+0133: 00 00000001033            dw    01033        ; Zelle 27 (Spur 1 des Puffers, Zelle 27)
+0134: 00 00000001034            dw    01034        ; Zelle 28 (Spur 1 des Puffers, Zelle 28)
+0135: 00 00000001035            dw    01035        ; Zelle 29 (Spur 1 des Puffers, Zelle 29)
+0136: 00 00000001036            dw    01036        ; Zelle 30 (Spur 1 des Puffers, Zelle 30)
+0137: 00 00000001037            dw    01037        ; Zelle 31 (Spur 1 des Puffers, Zelle 31)
+0140: 00 00000001040            dw    01040        ; Zelle 32 (Spur 2 des Puffers, Zelle 0)
+0141: 00 00000001041            dw    01041        ; Zelle 33 (Spur 2 des Puffers, Zelle 1)
+0142: 00 00000001042            dw    01042        ; Zelle 34 (Spur 2 des Puffers, Zelle 2)
+0143: 00 00000001043            dw    01043        ; Zelle 35 (Spur 2 des Puffers, Zelle 3)
+0144: 00 00000001044            dw    01044        ; Zelle 36 (Spur 2 des Puffers, Zelle 4)
+0145: 00 00000001045            dw    01045        ; Zelle 37 (Spur 2 des Puffers, Zelle 5)
+0146: 00 00000001046            dw    01046        ; Zelle 38 (Spur 2 des Puffers, Zelle 6)
+0147: 00 00000001047            dw    01047        ; Zelle 39 (Spur 2 des Puffers, Zelle 7)
+0150: 00 00000001050            dw    01050        ; Zelle 40 (Spur 2 des Puffers, Zelle 8)
+0151: 00 00000001051            dw    01051        ; Zelle 41 (Spur 2 des Puffers, Zelle 9)
+0152: 00 00000001052            dw    01052        ; Zelle 42 (Spur 2 des Puffers, Zelle 10)
+0153: 00 00000001053            dw    01053        ; Zelle 43 (Spur 2 des Puffers, Zelle 11)
+0154: 00 00000001054            dw    01054        ; Zelle 44 (Spur 2 des Puffers, Zelle 12)
+0155: 00 00000001055            dw    01055        ; Zelle 45 (Spur 2 des Puffers, Zelle 13)
+0156: 00 00000001056            dw    01056        ; Zelle 46 (Spur 2 des Puffers, Zelle 14)
+0157: 00 00000001057            dw    01057        ; Zelle 47 (Spur 2 des Puffers, Zelle 15)
+0160: 00 00000001060            dw    01060        ; Zelle 48 (Spur 2 des Puffers, Zelle 16)
+0161: 00 00000001061            dw    01061        ; Zelle 49 (Spur 2 des Puffers, Zelle 17)
+0162: 00 00000001062            dw    01062        ; Zelle 50 (Spur 2 des Puffers, Zelle 18)
+0163: 00 00000001063            dw    01063        ; Zelle 51 (Spur 2 des Puffers, Zelle 19)
+0164: 00 00000001064            dw    01064        ; Zelle 52 (Spur 2 des Puffers, Zelle 20)
+0165: 00 00000001065            dw    01065        ; Zelle 53 (Spur 2 des Puffers, Zelle 21)
+0166: 00 00000001066            dw    01066        ; Zelle 54 (Spur 2 des Puffers, Zelle 22)
+0167: 00 00000001067            dw    01067        ; Zelle 55 (Spur 2 des Puffers, Zelle 23)
+0170: 00 00000001070            dw    01070        ; Zelle 56 (Spur 2 des Puffers, Zelle 24)
+0171: 00 00000001071            dw    01071        ; Zelle 57 (Spur 2 des Puffers, Zelle 25)
+0172: 00 00000001072            dw    01072        ; Zelle 58 (Spur 2 des Puffers, Zelle 26)
+0173: 00 00000001073            dw    01073        ; Zelle 59 (Spur 2 des Puffers, Zelle 27)
+0174: 00 00000001074            dw    01074        ; Zelle 60 (Spur 2 des Puffers, Zelle 28)
+0175: 00 00000001075            dw    01075        ; Zelle 61 (Spur 2 des Puffers, Zelle 29)
+0176: 00 00000001076            dw    01076        ; Zelle 62 (Spur 2 des Puffers, Zelle 30)
+0177: 00 00000001077            dw    01077        ; Zelle 63 (Spur 2 des Puffers, Zelle 31)
+0200: 01 0223 240    neuanl     240   ML0001DKR    ; Rueckkehrwort sichern
+0201: 00 7776 211               211   ML0011DKR    ; AC := R2 (Trommelnummer d)
+0202: 01 7675 644               644   07675        ; 15 mal Linksverschiebung (Operand nach Festlegung 026)
+0203: 01 0037 210               210   l0008        ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+0204: 01 0205 240               240   ML0002DKR    ; Anwahlbefehl auf die naechste Zelle
+0205: 20 0206        ML0002DKR: db    1            ; Laufzeit: 5k00 030 (k = d + 1), ZT d anwaehlen
+0206: 00 7774 211               211   ML0012DKR    ; AC := R3 (Spurnummer s)
+0207: 01 7656 644               644   07656        ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0210: 00 7773 210               210   ML0010DKR    ; plus R1 (Adresse SPUF-PN)
+0211: 01 0036 210               210   l0007        ; plus Operationscode 601 (Ausgabe HT -> ZT)
+0212: 01 0213 240               240   ML0003DKR    ; Ausgabebefehl auf die naechste Zelle
+0213: 20 0214        ML0003DKR: db    1            ; Laufzeit: s zzz0 bbbb 601, Zellen 0 bis 31 von SPUF-PN auf Spur s
+0214: 00 7774 211               211   ML0012DKR    ; AC := R3 (Spurnummer s)
+0215: 01 0224 210               210   l0009        ; plus 1: zweite Spur
+0216: 01 7656 644               644   07656        ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0217: 00 7773 210               210   ML0010DKR    ; plus R1 (Adresse SPUF-PN)
+0220: 01 0225 210               210   l0010        ; plus 32 Zellen (040 * 01000 = 040000) und Operationscode 601
+0221: 01 0222 240               240   ML0004DKR    ; Ausgabebefehl auf die naechste Zelle
+0222: 20 0223        ML0004DKR: db    1            ; Laufzeit: (s + 1) zzz0 bbbb 601, Zellen 32 bis 63 von SPUF-PN auf Spur s + 1
+0223: 20 0224        ML0001DKR: db    1            ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0224: 00 00000000001 l0009      dw    1            
+0225: 00 00000040601 l0010      dw    000000040601 

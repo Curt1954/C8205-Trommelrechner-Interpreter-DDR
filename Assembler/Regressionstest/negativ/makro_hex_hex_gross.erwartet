@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_hex_gross.asm:6: Fehler: $CALC(0x8000000000000000): Zahl zu groß (bei "0x8000000000000000")
+datei-weg obj mqo test
+escape-weg

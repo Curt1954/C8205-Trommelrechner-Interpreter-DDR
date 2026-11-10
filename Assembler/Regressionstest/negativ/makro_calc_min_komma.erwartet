@@ -1,0 +1,4 @@
+rc 16
+stderr makro_calc_min_komma.asm:5: Fehler: $CALC(min(1)): Komma in min(a,b) bzw. max(a,b) fehlt
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_name_len_leer.asm:5: Fehler: $LEN: $LEN( ): unerlaubtes Zeichen
+datei-weg obj mqo test
+escape-weg

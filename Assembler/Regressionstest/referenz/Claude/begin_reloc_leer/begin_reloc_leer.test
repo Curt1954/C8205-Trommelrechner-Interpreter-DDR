@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000002000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # erg: dw 0 ; Zelle 0001: Ergebnis
+0002: 00000007211 # haupt: 211 t1 ; Zelle 0002: AC := (t1)
+0003: 00000010210 # 210 t2 ; Zelle 0003: AC := AC + (t2)
+0004: 00000100210 # 210 t3 ; Zelle 0004: AC := AC + (t3)
+0005: 00000001240 # 240 erg ; Zelle 0005: (erg) := AC
+0006: 00000000020 # 020 0 ; Zelle 0006: Halt
+0007: 00000000001 # t1: dw 1 ; Zelle 0007
+0010: 00000000002 # t2: dw 2 ; Zelle 0010
+0100: 00000000004 # t3: dw 4 ; Zelle 0100 (hinter dem leeren Block)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0007 AC=00000000007 US=1
+0001: 00000000007   # erg
+0007: 00000000001   # t1
+0010: 00000000002   # t2
+0100: 00000000004   # t3
+7500: 00000000000   # nichts verschoben

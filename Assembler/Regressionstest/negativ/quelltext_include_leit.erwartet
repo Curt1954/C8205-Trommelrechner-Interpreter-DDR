@@ -1,0 +1,4 @@
+rc 16
+stderr Zeile 2 der eingebundenen Datei 'quelltext_include_leit_1.inc': Das Pragma LEITADRESSE steht nur in der Hauptdatei
+datei-weg obj mqo test
+escape-weg

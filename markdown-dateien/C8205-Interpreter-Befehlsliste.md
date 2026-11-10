@@ -1,6 +1,6 @@
 ### Befehlslisten ###
 
-Version: 0.95-004
+Version: 0.95-005
 
 Maschinenbefehle, kurz auch nur Befehle genannt, werden bezüglich des Operationsteiles
 BAZ bitweise dekodiert. Das ist die Grundlage der folgenden generischen Befehlsbeschreibung.
@@ -849,7 +849,7 @@ Nur mit dem Schalter `--C8205Z` (Interpreter TEST und GRAFIK); sie sind kein Tei
 
 | Befehl | Wirkung | Ohne `--C8205Z` |
 |---|---|---|
-| `5k00 030` (k = 1 bis 4) | Anwahl der Zusatztrommel k, gilt bis zur nächsten Anwahl | Ausgabe-Halt ohne Löschen (Nr. 20) bzw. Stub |
+| `5k00 030` (k = 1 bis 4; 5100 = ZT0 bis 5400 = ZT3) | Anwahl der Zusatztrommel k, gilt bis zur nächsten Anwahl | Ausgabe-Halt ohne Löschen (Nr. 20) bzw. Stub |
 | `zzz0 bbbb 601` | Ausgabe: Haupttrommelspur bbbb → Spur zzz0 der gewählten Zusatztrommel (ganze Spur, 32 Worte, Sektor i auf Sektor i) | Leer-Operation mit Löschen (Nr. 67) |
 | `zzz0 bbbb 661` | Eingabe: Spur zzz0 der gewählten Zusatztrommel → Haupttrommelspur bbbb | Leer-Operation mit Löschen (Nr. 67) |
 

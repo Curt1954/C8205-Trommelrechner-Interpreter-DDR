@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_label_prozent.asm:3: Fehler: Label "schleife%:" ist unzulaessig
+datei-weg obj mqo test
+escape-weg

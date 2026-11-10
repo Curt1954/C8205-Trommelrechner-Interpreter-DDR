@@ -1,0 +1,11 @@
+0000: 01 0002 000           000    haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0              erg:   dw     0     ; Zelle 0001: Ergebnis
+0002: 01 0007 211    haupt: 211    t1    ; Zelle 0002: AC := (t1)
+0003: 01 0010 210           210    t2    ; Zelle 0003: AC := AC + (t2)
+0004: 01 0100 210           210    t3    ; Zelle 0004: AC := AC + (t3)
+0005: 01 0001 240           240    erg   ; Zelle 0005: (erg) := AC
+0006: 01 0000 020           020    0     ; Zelle 0006: Halt
+0007: 00 00000000001 t1:    dw     1     ; Zelle 0007
+0010: 00 00000000002 t2:    dw     2     ; Zelle 0010
+      20 0000 0100   blk0:  equ100 00100 ; wirkt am Ort: Zaehler auf die naechste 0100-Grenze
+0100: 00 00000000004 t3:    dw     4     ; Zelle 0100 (hinter dem leeren Block)

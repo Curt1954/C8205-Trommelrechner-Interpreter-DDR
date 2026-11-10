@@ -1,0 +1,11 @@
+rc 0
+stdout Adressen fuer adr/abstand: 2 Probelaeufe, 2 Marken.
+stderr chk probe=0 abstand=2
+stderr Spur CHK 2: erzeugt dw 2
+anzahl-stderr 1 chk probe=0
+nicht-stderr Probelauf
+nicht-stderr chk probe=1
+nicht-stderr erzeugt dw 0
+datei-da obj
+datei-weg adr1 adr2 adrlog adrdbg
+escape-weg

@@ -1,0 +1,28 @@
+0000: 01 0006 000               000 haupt     ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000017 wert:      dw  017       ; Zelle 0001: Konstante 017
+0002: 0              erg:       dw  0         ; Zelle 0002: Ergebnis
+0003: 00 00000000001 eins:      dw  1         ; Zelle 0003: Konstante 1
+0004: 20 0005        rueck:     db  1         ; Zelle 0004: Rueckkehrwort der Unterprogramme (Laufzeit: 000 <Rueckkehradresse>)
+0005: 00 00000000003 drei:      dw  3         ; Zelle 0005: Konstante 3 aus der Variablen n
+0006: 01 0001 211    haupt:     211 wert      ; AC := wert (017)
+0007: 01 0002 240               240 erg       ; erg := AC
+0010: 01 0015 025               025 verdopple ; UP aus teile/bibl.inc: erg := erg + erg
+0011: 01 0022 025               025 plus1     ; UP aus teile/bibl2.inc (dort eingebunden): erg := erg + 1
+0012: 01 0027 025               025 plus3     ; UP aus teile/bibl2.inc: erg := erg + drei
+0013: 01 0001 164               164 0001      ; Diagnoseausgabe (nur im Test)
+0014: 01 0000 020               020 0         ; Halt
+0015: 01 0004 240    verdopple: 240 rueck     ; erste Zeile des UP: Rueckkehrwort sichern
+0016: 01 0002 211               211 erg       ; AC := erg
+0017: 01 0002 210               210 erg       ; AC := AC + erg
+0020: 01 0002 240               240 erg       ; erg := AC
+0021: 01 0004 000               000 rueck     ; zurueck zum Aufrufer
+0022: 01 0004 240    plus1:     240 rueck     ; erste Zeile des UP: Rueckkehrwort sichern
+0023: 01 0002 211               211 erg       ; AC := erg
+0024: 01 0003 210               210 eins      ; AC := AC + 1
+0025: 01 0002 240               240 erg       ; erg := AC
+0026: 01 0004 000               000 rueck     ; zurueck zum Aufrufer
+0027: 01 0004 240    plus3:     240 rueck     ; erste Zeile des UP: Rueckkehrwort sichern
+0030: 01 0002 211               211 erg       ; AC := erg
+0031: 01 0005 210               210 drei      ; AC := AC + 3
+0032: 01 0002 240               240 erg       ; erg := AC
+0033: 01 0004 000               000 rueck     ; zurueck zum Aufrufer

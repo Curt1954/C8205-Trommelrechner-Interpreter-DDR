@@ -1,0 +1,21 @@
+Trommeldatei:
+#DOK-0001 Test Schalter MAKROLOKAL: SUMME und TABELLE benutzen beide i und s ohne $LOCAL und stoeren sich nicht
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Summe 1 bis 1
+0002: 00000000003 # dw 3 ; Summe 1 bis 2
+0003: 00000000006 # dw 6 ; Summe 1 bis 3
+0004: 00000000012 # dw 10 ; Summe 1 bis 4
+0005: 00000000144 # dw 100 ; bleibt 100, weil SUMME nur sein eigenes s aendert
+0006: 00000001164 # haupt: 164 0001 ; Zelle 6: Diagnoseausgabe (nur im Test)
+0007: 00000000020 # 020 0 ; Zelle 7: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0010 US=1
+0001: 00000000001   # Summe 1 bis 1
+0002: 00000000003   # Summe 1 bis 2
+0003: 00000000006   # Summe 1 bis 3
+0004: 00000000012   # Summe 1 bis 4 = 10
+0005: 00000000144   # s von TABELLE unveraendert = 100

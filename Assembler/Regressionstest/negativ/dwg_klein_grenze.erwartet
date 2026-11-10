@@ -1,0 +1,4 @@
+rc 16
+stderr Operand '5.8207660913467407226563E-11' ist ungültig (dwg: Betrag ungleich 0 kleiner als 2^-33)
+datei-weg obj mqo test
+escape-weg

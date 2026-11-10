@@ -1,0 +1,16 @@
+rc 0
+anzahl-stderr 10000 Spur Z 
+anzahl-stderr 4 Spur Z 1000:
+anzahl-stderr 3 Spur Z 3000:
+anzahl-stderr 4 Spur Z 1: $SET n 0 => n: 
+anzahl-stderr 1 Hinweis: Ablaufspur nach 10000 Zeilen abgebrochen, weitere Spurzeilen entfallen
+stderr-reihe Spur Z 3000: $INC n => n: 2998 -> 2999
+stderr-reihe Hinweis: Ablaufspur nach 10000 Zeilen abgebrochen
+nicht-stderr Spur Z 3001
+nicht-stderr Warnung
+nicht-stderr Fehler
+stdout 0000: 00 00000000005  dw 5
+log-weg Ablaufspur
+dmp-weg Spur
+datei-da obj mqo test
+escape-weg

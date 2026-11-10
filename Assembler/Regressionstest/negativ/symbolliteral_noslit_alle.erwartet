@@ -1,0 +1,4 @@
+args -WARN=ALLE
+rc 0
+anzahl-stderr 1 Warnung: Symbol-Literal x steht
+escape-weg

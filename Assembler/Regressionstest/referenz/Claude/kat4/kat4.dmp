@@ -1,0 +1,8 @@
+0000: 01 0005 000           000  haupt ; Zelle 0000: Sprung zum Hauptprogramm
+      00 40200231061 t1:    kat4 ab12  ; Zelle 0001: genau ein volles Wort
+      00 06410631061 t2:    kat4 abcde ; Zellen 0002 und 0003: volles Wort, dann Rest mit z0
+      00 40000000045 ;    
+      00 40014415061 t3:    kat4 \a b\ ; Zelle 0004: drei Zeichen mit Leerzeichen, links aufgefuellt
+0005: 01 0000 020    haupt: 020  0     ; Zelle 0005: Halt
+0006: 00 00000000007 d1:    dw   07    ; Zelle 0006: Konstante
+0007: 00 00000000010 d2:    dw   010   ; Zelle 0007: Konstante

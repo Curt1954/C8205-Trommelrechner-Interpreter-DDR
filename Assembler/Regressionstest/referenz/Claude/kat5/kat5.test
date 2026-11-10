@@ -1,0 +1,44 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+0000: 00000022000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 02122232425 # t1: kat5 abcde ; Zelle 0001: genau ein volles Wort
+0002: 03021343437 # t2: kat5 hallo ; Zelle 0002: Beispiel der Doku
+0003: 00121012201 # t3: kat5 \ a b \ ; Zelle 0003: fuenf Zeichen, fuehrendes und abschliessendes Leerzeichen bleiben
+0004: 05053000000 # t4: kat5 x$wrzl ; Zelle 0004: Buchstabe und Marke $wrzl (Code 053)
+0005: 05505540000 # t5: kat5 $ingb=$inkb ; Zelle 0005: Marken $ingb (055), $inkb (054) und = (05)
+0006: 00710111213 # t6: kat5 01234 ; Zelle 0006: Ziffern 0 bis 4 (Codes 07 bis 013)
+0007: 01415161720 # t7: kat5 56789 ; Zelle 0007: Ziffern 5 bis 9 (Codes 014 bis 020)
+0010: 02153000000 # t8: kat5 a$WRZL ; Zelle 0010: Marke in Grossbuchstaben wird erkannt
+0011: 02153220000 # t9: kat5 a$wrzlb ; Zelle 0011: Zeichen folgt unmittelbar auf die Marke
+0012: 00203040506 # t10: kat5 ,-.+: ; Zelle 0012: Satzzeichen (Codes 02 bis 06)
+0013: 05200000000 # t11: kat5 z ; Zelle 0013: ein einziges Zeichen, Fuellung 00 rechts
+0014: 02122000000 # t12: kat5 ab ; Zelle 0014: zwei Zeichen (Beispiel der Doku)
+0015: 02200000000 # t13: kat5 b ; Zelle 0015: groesser als abc und ab (Sortierung)
+0016: 02106220000 # t14: kat5 a:b ; Zelle 0016: Doppelpunkt im Text (Beispiel der Doku)
+0017: 02122230000 # t15: kat5 abc ; Zelle 0017: groesser als ab, kleiner als b (Beispiel der Doku)
+0020: 02101220000 # t16: kat5 a b ; Zelle 0020: Leerzeichen im Text ohne Backslash
+0021: 02122232453 # t17: kat5 abcd$wrzl ; Zelle 0021: Marke als fuenftes Zeichen
+0022: 00000000020 # haupt: 020 0 ; Zelle 0022: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0023
+0001: 02122232425   # t1
+0002: 03021343437   # t2 (hallo)
+0003: 00121012201   # t3
+0004: 05053000000   # t4
+0005: 05505540000   # t5
+0006: 00710111213   # t6 (0 bis 4)
+0007: 01415161720   # t7 (5 bis 9)
+0010: 02153000000   # t8
+0011: 02153220000   # t9
+0012: 00203040506   # t10 (Satzzeichen)
+0013: 05200000000   # t11
+0014: 02122000000   # t12 (ab)
+0015: 02200000000   # t13 (b)
+0016: 02106220000   # t14 (a:b)
+0017: 02122230000   # t15 (abc)
+0020: 02101220000   # t16 (a b)
+0021: 02122232453   # t17

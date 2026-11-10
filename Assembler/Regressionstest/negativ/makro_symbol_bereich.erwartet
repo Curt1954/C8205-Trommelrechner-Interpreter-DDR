@@ -1,0 +1,4 @@
+rc 16
+stderr Parameter $1: Wert "breite" (= 12) liegt nicht im Bereich 1 bis 10
+datei-weg obj mqo test
+escape-weg

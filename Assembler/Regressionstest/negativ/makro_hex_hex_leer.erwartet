@@ -1,0 +1,4 @@
+rc 16
+stderr makro_hex_hex_leer.asm:6: Fehler: $CALC(0x): ungültige Hexadezimalzahl (nach 0x folgen die Ziffern 0 bis 9 und A bis F) (bei "0x")
+datei-weg obj mqo test
+escape-weg

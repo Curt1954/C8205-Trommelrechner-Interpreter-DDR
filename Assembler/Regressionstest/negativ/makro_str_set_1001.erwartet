@@ -1,0 +1,4 @@
+rc 16
+stderr makro_str_set_1001.asm:8: Fehler: M1 $SET t: Text hat 1001 Zeichen, erlaubt sind höchstens 1000
+datei-weg obj mqo test
+escape-weg

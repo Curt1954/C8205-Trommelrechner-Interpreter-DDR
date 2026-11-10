@@ -1,0 +1,5 @@
+rc 16
+stderr equ40 erwartet den Operanden *
+stdout equ40 erwartet den Operanden *
+datei-da asm log sym
+datei-weg obj dmp test

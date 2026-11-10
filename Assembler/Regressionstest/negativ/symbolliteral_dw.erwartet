@@ -1,0 +1,4 @@
+rc 16
+stderr symbolliteral_dw.asm:1: Fehler: Operand !x ist bei dw nicht zulaessig
+datei-weg obj mqo test
+escape-weg

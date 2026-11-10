@@ -1,0 +1,4 @@
+rc 16
+stderr makro_var_set_syntax.asm:6: Fehler: M1 $SET erwartet <Name> <Ausdruck>
+datei-weg obj mqo test
+escape-weg

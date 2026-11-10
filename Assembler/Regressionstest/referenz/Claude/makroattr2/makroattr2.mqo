@@ -1,0 +1,86 @@
+          000       haupt     ; Zelle 0: Sprung zum Hauptprogramm
+          dw        1         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        3         ; Wert des Ausdrucks
+          dw        3         ; Wert des Ausdrucks
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        2         ; Art des Symbols
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        5         ; Wert des Ausdrucks
+          dw        3         ; Zellenzahl der Anweisung
+          dw        4         ; Art des Symbols
+          dw        6         ; art(a_equ)+1 wird im Ausdruck eingeklammert eingesetzt (4.2)
+          dw        12        ; 2*3 wird im Ausdruck eingeklammert eingesetzt (4.2)
+          dw        12        ; zellen(a_db)+art(a_abs) wird im Ausdruck eingeklammert eingesetzt (4.2)
+          dw        21        ; Wert des Ausdrucks
+          dw        012       ; 012 = 10
+          dw        00012     ; 0012 = 10
+          dw        2         ; Text 10: 2 Zeichen
+          dw        10        ; 10
+          dw        0         ; 4 gleich 4: 0
+          dw        0         ; 0, 1
+          dw        1         ; 0, 1
+          dw        22        ; erzeugt
+          dw        4110      ; 10 + 100 + 4000 = 4110
+          dw        10        ; 10
+          dw        1         ; sym1: 1, sym2: 0, sym3: 1
+          dw        0         ; sym1: 1, sym2: 0, sym3: 1
+          dw        1         ; sym1: 1, sym2: 0, sym3: 1
+          dw        0         ; sym2 gibt es nicht: 0
+          dw        3         ; tab3 hat 3 Zellen
+          dw        0         ; Art des Symbols
+          dw        0         ; 1, wenn das Symbol vorhanden ist
+          dw        1         ; Art des Symbols
+          dw        2         ; Art des Symbols
+          dw        3         ; Art des Symbols
+          dw        1         ; 1, wenn das Symbol vorhanden ist
+          dw        12        ; Wert des Ausdrucks
+          dw        4         ; Art des Symbols
+          dw        1         ; Zellenzahl der Anweisung
+haupt:    211       l0001     ; AC := 5 (Literal l0001)
+          210       l0002     ; AC := AC + 7 (Literal l0002)
+          240       erg       ; erg := AC = 12
+          164       0001      ; Diagnoseausgabe (nur im Test)
+          020       0         ; Halt
+a_db:     db        5         ; 5 Zellen
+tab:      db        012       ; 10 Zellen (oktal)
+a2:       dbn       2         ; 2 Zellen
+
+tab3:     db        3         ; 3 Zellen
+erg:      dw        0         ; Ergebnis der Rechnung
+nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnd: db        3         ; Name mit 32 Zeichen auf db
+l0001     dw        5         
+l0002     dw        7         
+a_equ:    equ       07640     
+ka1:      equ       00003       
+ka2:      equ       00003       
+ka3:      equ       00003       
+ka4:      equ       00003       
+ka5:      equ       00003       
+ka6:      equ       00003       
+ka7:      equ       00003       
+ka8:      equ       00003       
+ka9:      equ       00003       
+ka10:     equ       00003       
+ka11:     equ       00003      
+ka12:     equ       00003      
+ka13:     equ       00003      
+ka14:     equ       00003      
+ka15:     equ       00003      
+ka16:     equ       00003      
+ka17:     equ       00003      
+kb0:      equ       00003         
+kb1:      equ       00003       
+kb2:      equ       00003       
+nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn: equ       00005         
+sym3:     equ       00003    
+h_equ:    equ       00007   
+h_stern:  equ       00007         

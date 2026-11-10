@@ -1,0 +1,4 @@
+rc 16
+stderr makro_attr_klammer.asm:6: Fehler: $CALC(def(((tab)))): def: Das Argument ist kein einzelner Symbolname (Operator, Komma, Leerraum und weitere Klammern sind nicht erlaubt)
+datei-weg obj mqo test
+escape-weg

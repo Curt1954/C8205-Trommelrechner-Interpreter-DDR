@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001 Test von $V in $REPT: Anzahl aus Makro-Variable (Stand zu Beginn des Aufrufs), auch in $CALC
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000001 # dw 1 ; Wort Nummer Durchlauf+1
+0002: 00000000002 # dw 2 ; Wort Nummer Durchlauf+1
+0003: 00000000001 # dw 1 ; Wort Nummer Durchlauf+1
+0004: 00000000002 # dw 2 ; Wort Nummer Durchlauf+1
+0005: 00000000003 # dw 3 ; Wort Nummer Durchlauf+1
+0006: 00000000077 # dw 077 ; Auffuellwort
+0007: 00000001164 # haupt: 164 0001 ; Zelle 0007: Diagnoseausgabe (nur im Test)
+0010: 00000000020 # 020 0 ; Zelle 0010: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011 US=1
+0001: 00000000001   # erstes FELD, Wort 1
+0002: 00000000002   # erstes FELD, Wort 2
+0003: 00000000001   # zweites FELD, Wort 1
+0004: 00000000002   # zweites FELD, Wort 2
+0005: 00000000003   # zweites FELD, Wort 3
+0006: 00000000077   # REST: 4-3 = 1 Wort

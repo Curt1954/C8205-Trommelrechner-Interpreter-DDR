@@ -1,0 +1,306 @@
+0000: 01 0071 000    anfang:    000 haupt        ; rel 0000: Einsprung
+0001: 01 0000        a_anfang:  da  anfang       ; Adresswort: Anfang von ZTL
+0002: 01 462000      a_ende:    da  000000000462 ; Adresswort: Ende von ZTL
+0003: 01 454000      a_dienst:  da  000000000454 ; Adresswort = Sprungwort 000 dienst (geht beim Start im AC an ZTD)
+0004: 0              c0:        dw  0            ; 0
+0005: 00 00000000001 c1:        dw  1            ; 1
+0006: 00 00000000002 c2:        dw  2            ; 2
+0007: 00 00000000003 c3:        dw  3            ; 3 (auch Maske der Trommelnummer)
+0010: 00 00000000004 c4:        dw  4            ; 4
+0011: 00 00000000005 c5:        dw  5            ; 5
+0012: 00 00000000020 c16:       dw  020          ; 16 Spuren je Segment
+0013: 00 00000000200 c200:      dw  0200         ; Lagewort-Schritt je Trommel (t * 0200)
+0014: 00 00000000600 c600:      dw  0600         ; Lagewort der Spur 0 auf ZT3
+0015: 00 00000001000 c1e:       dw  01000        ; Adresseneinheit
+0016: 00 00000004000 cz4:       dw  04000        ; Zelle 4, in Adresseneinheiten
+0017: 00 00000005000 cz5:       dw  05000        ; Zelle 5
+0020: 00 00000006000 cz6:       dw  06000        ; Zelle 6 (zugleich Gruppenschritt 6 Zellen)
+0021: 00 00000007000 cz7:       dw  07000        ; Zelle 7
+0022: 00 00000036000 cz36:      dw  036000       ; Zelle 36 (Verkettung; zugleich Ende der fuenf Gruppen)
+0023: 00 00000037000 c37a:      dw  037000       ; 37 Adresseneinheiten (zum Aufrunden auf die Spurgrenze)
+0024: 00 00000040000 c40a:      dw  040000       ; 40 Adresseneinheiten: eine Spur
+0025: 00 00007740000 cpmask:    dw  07740000     ; Maske: Spurteil eines Adresswortes
+0026: 00 00000017000 ck2m:      dw  017000       ; Maske: K2 in Bit 12 bis 9
+0027: 00 00007610000 c7610a:    dw  07610000     ; Adresswort 7610: Tabelle der Leitadressen
+0030: 00 00007540000 c540:      dw  07540000     ; Vorgabe der Obergrenze: Adresswort 7540
+0031: 00 00000000240 c240:      dw  0240         ; Befehlscode 240 (Speichern)
+0032: 00 00000000661 c661:      dw  0661         ; Befehlscode 661 (Eingabe ZT -> HT)
+0033: 00 00005100030 c_anw:     dw  05100030     ; Befehl 030 5100 (Anwahl ZT0); je Trommel + t * 0100000
+0034: 00 25147361025 c_lk:      dw  025147361025 ; LISTENKENNUNG
+0035: 00 61350247316 c_rk:      dw  061350247316 ; REPOSITORY_KENNUNG
+0036: 00 34716052613 c_bk:      dw  034716052613 ; BLOCKKENNUNG
+0037: 00 71632412120 n_ztd0:    dw  071632412120 ; Name ZTD, Zeichen 1 bis 5
+0040: 00 12121212120 n_ztd1:    dw  012121212120 ; Name ZTD, Zeichen 6 bis 10
+0041: 0              status:    dw  0            ; Status des laufenden Aufrufs
+0042: 0              pufw:      dw  0            ; Adresswort der Arbeitsspur
+0043: 0              pufend:    dw  0            ; Adresswort hinter der Arbeitsspur
+0044: 0              lage:      dw  0            ; Lagewort der zu lesenden Spur (t * 0200 + Spur)
+0045: 0              rt:        dw  0            ; Lagewort 26 nach links gedreht: Spur * 2^26 + t
+0046: 0              tt:        dw  0            ; Trommelnummer t
+0047: 0              laenge:    dw  0            ; L des Eintrags 0
+0050: 0              grenze:    dw  0            ; wirksame Obergrenze
+0051: 0              zende:     dw  0            ; Ende des Ziels (Adresswort)
+0052: 0              rest:      dw  0            ; noch zu ladende Worte
+0053: 0              seglage:   dw  0            ; Lagewort des laufenden Segments
+0054: 0              spn:       dw  0            ; Spur im Segment
+0055: 0              gidx:      dw  0            ; Zelle des Kennungswortes der Gruppe (Adresseneinheiten)
+0056: 0              widx:      dw  0            ; Zelle des Maschinenwortes (Adresseneinheiten)
+0057: 0              gz:        dw  0            ; Worte je Gruppe noch zu laden
+0060: 0              kenn:      dw  0            ; gedrehtes Kennungswort
+0061: 0              leit:      dw  0            ; Leitadresse zum Kennzeichen K2
+0062: 0              wert:      dw  0            ; Maschinenwort mit Adressenaenderung
+0063: 0              in_r:      dw  0            ; init
+0064: 0              ll_r:      dw  0            ; lies_lage
+0065: 0              pz_r:      dw  0            ; pz
+0066: 0              la_r:      dw  0            ; lade
+0067: 0              sv_r:      dw  0            ; sv
+0070: 0              d_r:       dw  0            ; dienst
+0071: 01 0212 025    haupt:     025 init         ; Arbeitsspur berechnen, Nullspur loeschen
+0072: 01 0041 241               241 status       ; status := 0, AC := 0
+0073: 01 0044 241               241 lage         ; Lagewort der Spur 0 auf ZT0
+0074: 01 0246 025    suche:     025 pz           ; Anker auf dieser Trommel? AC := 1 ja, 0 nein
+0075: 01 0005 330               330 c1           ; AC = 1 ?
+0076: 01 0110 170               170 gefunden     ; ja
+0077: 01 0044 211               211 lage         ; nein: war es ZT3?
+0100: 01 0014 330               330 c600         
+0101: 01 0105 170               170 kein_repo    ; ja: kein Repository
+0102: 01 0013 210               210 c200         ; naechste Trommel
+0103: 01 0044 240               240 lage         
+0104: 01 0074 000               000 suche        
+0105: 01 0006 211    kein_repo: 211 c2           ; Status 2: kein Repository
+0106: 01 0041 240    st_fehl:   240 status       ; Fehler beim Start: Status merken
+0107: 01 0200 000               000 meldung      
+0110: 01 0020 211    gefunden:  211 cz6          ; Zelle 6 der Spur 0: Formatversion
+0111: 01 0042 210               210 pufw         
+0112: 00 0000 251               251 0            
+0113: 01 0005 330               330 c1           ; Version 1 ?
+0114: 01 0117 170               170 fv_ok        
+0115: 01 0007 211               211 c3           ; Status 3: Formatversion fremd
+0116: 01 0106 000               000 st_fehl      
+0117: 01 0021 211    fv_ok:     211 cz7          ; Zelle 7: Spur des ersten Namensblocks (Trommel wie der Anker)
+0120: 01 0042 210               210 pufw         
+0121: 00 0000 251               251 0            
+0122: 01 0044 210               210 lage         ; Lagewort = t * 0200 + Spur
+0123: 01 0044 240               240 lage         
+0124: 01 0225 025               025 lies_lage    ; ersten Namensblock lesen
+0125: 01 0042 211               211 pufw         ; Zelle 0: Blockkennung
+0126: 00 0000 251               251 0            
+0127: 01 0036 330               330 c_bk         
+0130: 01 0133 170               170 bk_ok        
+0131: 01 0006 211               211 c2           ; Status 2: Block ungueltig
+0132: 01 0106 000               000 st_fehl      
+0133: 01 0016 211    bk_ok:     211 cz4          ; Eintrag 0, Zelle 4: Name, Zeichen 1 bis 5
+0134: 01 0042 210               210 pufw         
+0135: 00 0000 251               251 0            
+0136: 01 0037 330               330 n_ztd0       
+0137: 01 0141 170               170 nm_1         
+0140: 01 0146 000               000 nm_fehl      
+0141: 01 0017 211    nm_1:      211 cz5          ; Zelle 5: Name, Zeichen 6 bis 10
+0142: 01 0042 210               210 pufw         
+0143: 00 0000 251               251 0            
+0144: 01 0040 330               330 n_ztd1       
+0145: 01 0150 170               170 nm_ok        
+0146: 01 0010 211    nm_fehl:   211 c4           ; Status 4: ZTD nicht als Eintrag 0
+0147: 01 0106 000               000 st_fehl      
+0150: 01 0020 211    nm_ok:     211 cz6          ; Zelle 6: L
+0151: 01 0042 210               210 pufw         
+0152: 00 0000 251               251 0            
+0153: 01 0047 240               240 laenge       
+0154: 01 0021 211               211 cz7          ; Zelle 7: Lagewort des ersten Segments
+0155: 01 0042 210               210 pufw         
+0156: 00 0000 251               251 0            
+0157: 01 0004 330               330 c0           
+0160: 01 0146 170               170 nm_fehl      ; Lagewort 0: Eintrag frei, Status 4
+0161: 00 7622 240               240 adr7622      ; ZTL_LAGE
+0162: 01 0047 211               211 laenge       
+0163: 00 7623 240               240 adr7623      ; ZTL_LAENGE
+0164: 01 0042 211               211 pufw         ; ZTD kommt hinter die Arbeitsspur
+0165: 01 0024 210               210 c40a         
+0166: 00 7611 240               240 adr7611      ; Hauptleitadresse
+0167: 00 7742 241               241 adr7742      ; RA := 0
+0170: 00 7625 241               241 adr7625      ; Grenze: Vorgabe
+0171: 01 0267 025               025 lade         ; ZTD laden
+0172: 01 0041 211               211 status       
+0173: 01 0004 330               330 c0           
+0174: 01 0176 170               170 start_zd     ; in Ordnung
+0175: 01 0200 000               000 meldung      ; Fehler beim Laden
+0176: 01 0003 211    start_zd:  211 a_dienst     ; AC := Sprungwort 000 dienst fuer ZTD
+0177: 00 7611 000               000 adr7611      ; Zelle 7611 (000 aaaa) wirkt als Sprung auf die Hauptleitadresse = Einsprung 0 von ZTD
+0200: 00 7640 441    meldung:   441 nullspur     ; Nullspur := 0 (AC := 0)
+0201: 01 0041 211               211 status       
+0202: 00 7653 616               616 rot9         ; Status * 01000: als Adresswort fuer den Adressdruck
+0203: 00 7773 240               240 adr7773      ; R1
+0204: 00 4500 030               030 04500        ; Kanal K2: Schreibwerk
+      00 1170 030               dz  $inkb        ; Umschaltung auf Kleinbuchstaben (Zeichenlage des Schreibwerks ist unbestimmt): Ziffern
+0206: 00 0220 025               025 adr0220      ; Adressdruck: vier Ziffern
+      00 2720 030               dz  $wrzl        ; Zeilenschaltung
+0210: 00 4700 030               030 04700        ; Kanal K0 wieder anwaehlen
+0211: 01 0000 020               020 0            ; Halt
+0212: 01 0063 240    init:      240 in_r         ; Rueckkehrwort
+0213: 00 7640 441               441 nullspur     ; Nullspur := 0 (fuer die Drehungen), AC := 0
+0214: 01 0002 211               211 a_ende       ; Adresswort des Endes von ZTL
+0215: 01 0023 210               210 c37a         ; aufrunden auf die naechste Spurgrenze
+0216: 01 0025 200               200 cpmask       ; Spurteil: Adresswort der Arbeitsspur
+0217: 01 0042 240               240 pufw         
+0220: 01 0024 210               210 c40a         
+0221: 01 0043 240               240 pufend       ; Adresswort hinter der Arbeitsspur
+0222: 01 0042 211               211 pufw         
+0223: 00 7624 240               240 adr7624      ; ZTL_PUFFER
+0224: 01 0063 000               000 in_r         
+0225: 01 0064 240    lies_lage: 240 ll_r         ; Rueckkehrwort
+0226: 01 0044 211               211 lage         ; t * 0200 + Spur
+0227: 00 7656 616               616 rot26        ; um 26 nach links drehen: Spur nach Bit 26 bis 32, t nach Bit 0 und 1
+0230: 01 0045 240               240 rt           
+0231: 01 0007 200               200 c3           ; AC := t
+0232: 01 0046 240               240 tt           
+0233: 00 7675 616               616 rot15        ; t * 0100000
+0234: 01 0033 210               210 c_anw        ; Befehl 030 5k00 (k = t + 1)
+0235: 01 0236 240               240 gen1         
+0236: 0              gen1:      dw  0            ; hier steht zur Laufzeit 030 5k00 (k = t + 1) (Anwahl der Trommel t) und wird ausgefuehrt
+0237: 01 0045 211               211 rt           ; Lagewort gedreht
+0240: 01 0046 220               220 tt           ; minus t: Spur * 2^26 = zzz0 des Befehls
+0241: 01 0042 210               210 pufw         ; bbbb = Arbeitsspur
+0242: 01 0032 210               210 c661         ; Befehlscode 661
+0243: 01 0244 240               240 gen2         
+0244: 0              gen2:      dw  0            ; hier steht zur Laufzeit zzz0 bbbb 661 (ZT-Spur -> Arbeitsspur) und wird ausgefuehrt
+0245: 01 0064 000               000 ll_r         ; zurueck
+0246: 01 0065 240    pz:        240 pz_r         ; Rueckkehrwort
+0247: 01 0225 025               025 lies_lage    
+0250: 01 0016 211               211 cz4          ; Zelle 4: Listenkennung
+0251: 01 0042 210               210 pufw         
+0252: 00 0000 251               251 0            
+0253: 01 0034 330               330 c_lk         
+0254: 01 0257 170               170 pz_a         
+0255: 01 0004 211    pz_nein:   211 c0           ; kein Anker
+0256: 01 0065 000               000 pz_r         
+0257: 01 0017 211    pz_a:      211 cz5          ; Zelle 5: Repository-Kennung
+0260: 01 0042 210               210 pufw         
+0261: 00 0000 251               251 0            
+0262: 01 0035 330               330 c_rk         
+0263: 01 0265 170               170 pz_ja        
+0264: 01 0255 000               000 pz_nein      
+0265: 01 0005 211    pz_ja:     211 c1           ; Anker vorhanden
+0266: 01 0065 000               000 pz_r         
+0267: 01 0066 240    lade:      240 la_r         ; Rueckkehrwort
+0270: 01 0041 241               241 status       ; status := 0
+0271: 00 7610 241               241 adr7610      ; 0. Leitadresse := 0
+0272: 00 7622 211               211 adr7622      ; Lagewort des ersten Segments
+0273: 01 0004 330               330 c0           
+0274: 01 0360 170               170 la_f4        ; 0: kein Verweis, Status 4
+0275: 00 7625 211               211 adr7625      ; ZTL_GRENZE
+0276: 01 0004 330               330 c0           
+0277: 01 0301 170               170 la_gv        ; 0: Vorgabe
+0300: 01 0302 000               000 la_g1        
+0301: 01 0030 211    la_gv:     211 c540         
+0302: 01 0050 240    la_g1:     240 grenze       
+0303: 00 7623 211               211 adr7623      ; L
+0304: 00 7653 616               616 rot9         ; L * 01000
+0305: 00 7611 210               210 adr7611      ; + Hauptleitadresse: Ende des Ziels
+0306: 01 0051 240               240 zende        
+0307: 01 0050 211               211 grenze       ; Grenze - Ende < 0: reicht nicht
+0310: 01 0051 220               220 zende        
+0311: 01 0362 040               040 la_f5        
+0312: 00 7611 211               211 adr7611      ; Ueberschneidung mit ZTL und Arbeitsspur [anfang, pufend)?
+0313: 01 0043 220               220 pufend       
+0314: 01 0321 050               050 la_ok        ; Hauptleitadresse >= pufend: frei
+0315: 01 0001 211               211 a_anfang     
+0316: 01 0051 220               220 zende        
+0317: 01 0321 050               050 la_ok        ; anfang >= Ende des Ziels: frei
+0320: 01 0362 000               000 la_f5        
+0321: 00 7623 211    la_ok:     211 adr7623      
+0322: 01 0052 240               240 rest         ; noch zu ladende Worte
+0323: 00 7622 211               211 adr7622      
+0324: 01 0053 240               240 seglage      ; laufendes Segment
+0325: 01 0054 241    la_seg:    241 spn          ; Spur im Segment := 0
+0326: 01 0052 211    la_spur:   211 rest         
+0327: 01 0004 330               330 c0           
+0330: 01 0364 170               170 la_fertig    ; alles uebertragen
+0331: 01 0053 211               211 seglage      
+0332: 01 0054 210               210 spn          
+0333: 01 0044 240               240 lage         ; Lagewort der Spur
+0334: 01 0225 025               025 lies_lage    
+0335: 01 0365 025               025 sv           ; 25 Worte der Spur uebernehmen
+0336: 01 0054 211               211 spn          
+0337: 01 0005 210               210 c1           
+0340: 01 0054 240               240 spn          
+0341: 01 0012 330               330 c16          
+0342: 01 0344 170               170 la_vk        ; 16 Spuren: Segmentende
+0343: 01 0326 000               000 la_spur      
+0344: 01 0052 211    la_vk:     211 rest         
+0345: 01 0004 330               330 c0           
+0346: 01 0364 170               170 la_fertig    
+0347: 01 0022 211               211 cz36         ; Zelle 36 der 16. Spur: Lagewort des naechsten Segments
+0350: 01 0042 210               210 pufw         
+0351: 00 0000 251               251 0            
+0352: 01 0053 240               240 seglage      
+0353: 01 0004 330               330 c0           
+0354: 01 0356 170               170 la_f2        ; Kette zu kurz: Status 2
+0355: 01 0325 000               000 la_seg       
+0356: 01 0006 211    la_f2:     211 c2           
+0357: 01 0363 000               000 la_f         
+0360: 01 0010 211    la_f4:     211 c4           
+0361: 01 0363 000               000 la_f         
+0362: 01 0011 211    la_f5:     211 c5           
+0363: 01 0041 240    la_f:      240 status       
+0364: 01 0066 000    la_fertig: 000 la_r         
+0365: 01 0067 240    sv:        240 sv_r         ; Rueckkehrwort
+0366: 01 0055 241               241 gidx         ; Zelle des Kennungswortes der Gruppe 0
+0367: 01 0055 211    sv_g:      211 gidx         
+0370: 01 0042 210               210 pufw         
+0371: 00 0000 251               251 0            ; Kennungswort
+0372: 00 7653 616               616 rot9         ; 9 vorweg; je Wort kommen 6 dazu, das erste K2 steht dann in Bit 12 bis 9
+0373: 01 0060 240               240 kenn         
+0374: 01 0055 211               211 gidx         
+0375: 01 0015 210               210 c1e          
+0376: 01 0056 240               240 widx         ; Zelle des ersten Maschinenwortes
+0377: 01 0011 211               211 c5           
+0400: 01 0057 240               240 gz           ; 5 Worte je Gruppe
+0401: 01 0052 211    sv_w:      211 rest         
+0402: 01 0004 330               330 c0           
+0403: 01 0453 170               170 sv_ende      ; nichts mehr zu laden
+0404: 01 0060 211               211 kenn         
+0405: 00 7662 616               616 rot6         ; naechstes Kennzeichen: K2 in Bit 12 bis 9
+0406: 01 0060 240               240 kenn         
+0407: 01 0026 200               200 ck2m         ; K2 * 01000
+0410: 01 0027 210               210 c7610a       ; (7610 + K2) * 01000
+0411: 00 0000 251               251 0            ; Leitadresse Nummer K2
+0412: 01 0061 240               240 leit         
+0413: 01 0056 211               211 widx         
+0414: 01 0042 210               210 pufw         
+0415: 00 0000 251               251 0            ; Maschinenwort
+0416: 01 0061 210               210 leit         ; Adressenaenderung 1. Art
+0417: 01 0062 240               240 wert         
+0420: 00 7611 211               211 adr7611      ; Hauptleitadresse
+0421: 00 7742 210               210 adr7742      ; + RA
+0422: 01 0031 210               210 c240         ; Befehl 240 <Hauptleitadresse + RA>
+0423: 01 0425 240               240 gen3         
+0424: 01 0062 211               211 wert         
+0425: 0              gen3:      dw  0            ; hier steht zur Laufzeit 240 <Ziel> und wird ausgefuehrt: Wort ablegen
+0426: 00 7742 211               211 adr7742      
+0427: 01 0015 210               210 c1e          
+0430: 00 7742 240               240 adr7742      ; RA := RA + 1 Wort
+0431: 01 0052 211               211 rest         
+0432: 01 0005 220               220 c1           
+0433: 01 0052 240               240 rest         
+0434: 01 0056 211               211 widx         
+0435: 01 0015 210               210 c1e          
+0436: 01 0056 240               240 widx         
+0437: 01 0057 211               211 gz           
+0440: 01 0005 220               220 c1           
+0441: 01 0057 240               240 gz           
+0442: 01 0004 330               330 c0           
+0443: 01 0445 170               170 sv_gn        ; 5 Worte der Gruppe uebernommen
+0444: 01 0401 000               000 sv_w         
+0445: 01 0055 211    sv_gn:     211 gidx         
+0446: 01 0020 210               210 cz6          ; naechste Gruppe: 6 Zellen weiter
+0447: 01 0055 240               240 gidx         
+0450: 01 0022 330               330 cz36         ; Zelle 36 erreicht: fuenf Gruppen fertig
+0451: 01 0453 170               170 sv_ende      
+0452: 01 0367 000               000 sv_g         
+0453: 01 0067 000    sv_ende:   000 sv_r         
+0454: 01 0070 240    dienst:    240 d_r          ; Rueckkehrwort von ZTD
+0455: 01 0212 025               025 init         
+0456: 01 0267 025               025 lade         
+0457: 01 0041 211               211 status       
+0460: 00 7626 240               240 adr7626      ; ZTL_STATUS
+0461: 01 0070 000               000 d_r          ; zurueck zu ZTD

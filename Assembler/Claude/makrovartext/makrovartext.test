@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001 Test von $SET name "text": Text mit Leerzeichen, Parameter im Text, $V(#name) = Zeichenzahl, $V(name) in $IF
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000012 # dw 10 ; Zeichenzahl des Textes in t
+0002: 00000000001 # dw 1 ; u ist ja
+0003: 00000000002 # dw 2 ; Zeichenzahl von u
+0004: 00000000002 # dw 2 ; u ist etwas anderes
+0005: 00000000004 # dw 4 ; Zeichenzahl von u
+0006: 00000000007 # dw 7 ; Zahl 7
+0007: 00000001164 # haupt: 164 0001 ; Zelle 0007: Diagnoseausgabe (nur im Test)
+0010: 00000000020 # 020 0 ; Zelle 0010: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0011 US=1
+0001: 00000000012   # 10 Zeichen
+0002: 00000000001   # u = ja
+0003: 00000000002   # 2 Zeichen
+0004: 00000000002   # u = nein
+0005: 00000000004   # 4 Zeichen
+0006: 00000000007   # w nach Text wieder Zahl

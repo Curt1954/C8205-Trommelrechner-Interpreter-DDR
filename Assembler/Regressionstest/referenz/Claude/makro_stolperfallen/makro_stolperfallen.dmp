@@ -1,0 +1,7 @@
+0000: 01 0005 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000007        dw  7     ; Konstante 7
+0002: 00 00000000003        dw  3     ; 3
+0003: 00 00000000005        dw  x1    ; Zelle 0003: 5
+0004: 00 00000000001        dw  1     ; a=1 | (b=1 & c=1) ist wahr; von links nach rechts waere es falsch gewesen
+0005: 01 0001 164    haupt: 164 0001  ; Diagnoseausgabe (nur im Test)
+0006: 01 0000 020           020 0     ; Halt

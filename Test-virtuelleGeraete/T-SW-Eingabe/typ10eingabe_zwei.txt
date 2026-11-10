@@ -1,0 +1,17 @@
+# typ10eingabe_zwei: Zelle 1: 12 Oktalziffern, Doppelpunkt; Zelle 2: +, Um. GB, Doppelpunkt
+7
+7
+1
+2
+3
+4
+5
+6
+7
+0
+1
+2
+:
++
+Um. GB
+:

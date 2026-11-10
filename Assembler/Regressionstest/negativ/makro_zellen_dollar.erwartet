@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_dollar.asm:6: Fehler: $CALC(zellen(a,b)): zellen(a,b): Quelltextzeile 8 ist eine $-Zeile, die Zellenzahl steht erst nach ihrer Auswertung fest (bei "zellen(a,b)")
+datei-weg obj mqo test
+escape-weg

@@ -643,6 +643,36 @@ import os
 import re
 import shutil
 import subprocess
+import signal
+import time
+
+# Obergrenze je Interpreter-Lauf in Sekunden (Umgebungsvariable C8205_TEST_TIMEOUT überschreibt; 0 = ohne Grenze).
+# Ein Test, der nicht endet, blockiert sonst den ganzen PDF-Build.
+TEST_TIMEOUT = float(os.environ.get('C8205_TEST_TIMEOUT', '120'))
+RC_TIMEOUT = 124            # wie `timeout(1)`
+
+
+def lauf_mit_grenze(cmd, cwd):
+    """subprocess.run mit Zeitgrenze. Bei Überschreitung wird die ganze Prozessgruppe beendet (auch Kindprozesse,
+    die die Ausgaberohre offen halten); Ergebnis: (Rückkehrcode, Ausgabe). Rückkehrcode 124 = Zeitgrenze."""
+    grenze = TEST_TIMEOUT if TEST_TIMEOUT > 0 else None
+    p = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                         stdin=subprocess.DEVNULL, start_new_session=True)
+    try:
+        out, err = p.communicate(timeout=grenze)
+        return p.returncode, (out or '') + (err or '')
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(p.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            p.kill()
+        try:
+            out, err = p.communicate(timeout=10)
+        except Exception:
+            out, err = '', ''
+        meldung = 'ZEITGRENZE: Lauf nach %g s abgebrochen: %s' % (grenze, ' '.join(cmd[-2:]))
+        print('\n' + meldung, file=sys.stderr, flush=True)
+        return RC_TIMEOUT, (out or '') + (err or '') + '\n' + meldung
 import sys
 import tempfile
 import time
@@ -729,9 +759,9 @@ class Beispiele:
             tests = [tests]
         cmd = [sys.executable, self.interp, '--MODUS=TEST', '--mdverz', self.md, '--trommel', trommel or self.trommel,
                '--out', os.path.join(self.tmp, out)] + list(extra) + list(tests)
-        r = subprocess.run(cmd, cwd=self.tmp, capture_output=True, text=True, stdin=subprocess.DEVNULL)
-        text = (r.stdout + r.stderr).replace(self.tmp + '/', '')
-        return r.returncode, text.strip('\n')
+        rc, text = lauf_mit_grenze(cmd, self.tmp)
+        text = text.replace(self.tmp + '/', '')
+        return rc, text.strip('\n')
 
     def text(self, rel):
         """Inhalt einer Datei im Arbeitsordner (relativ), ohne abschließende Leerzeilen."""
@@ -762,9 +792,9 @@ class Beispiele:
     def roh(self, args):
         """Aufruf ohne die Vorgaben von lauf() (kein --mdverz/--trommel/--out); liefert (rc, letzte Meldung, Gesamtausgabe)."""
         cmd = [sys.executable, self.interp, '--MODUS=TEST'] + list(args)
-        r = subprocess.run(cmd, cwd=self.tmp, capture_output=True, text=True, stdin=subprocess.DEVNULL)
-        text = (r.stdout + r.stderr).replace(self.tmp + '/', '').replace(self.tmp, '.').strip('\n')
-        return r.returncode, text
+        rc, text = lauf_mit_grenze(cmd, self.tmp)
+        text = text.replace(self.tmp + '/', '').replace(self.tmp, '.').strip('\n')
+        return rc, text
 
     def protokoll(self, name, stufe_datei=None):
         pfad = stufe_datei or os.path.join(self.tmp, 'Test-Protokolle', name, 'protokoll.txt')
@@ -2453,9 +2483,9 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
                             'sw_zwei_ziffern)'),
             ('betrag', 'betrag…', 'Betragsbildung (z = -|a+b| + |-b+c| + |-c+d|, erwartet z = 1; betrag, betrag-2, '
                                  'betrag_betrag)'),
-            ('asm-einzel', 'bedsprung, code, mini, sortierung, deepseek_asm_…',
+            ('asm-einzel', 'bedsprung, code, gk_ausgabe, gk_math_op, sinusfunktion_zeichnen, kat4, kat4ausgabe, kat4eingabe, kat5_sort1, mini, sortierung, zil, zt_feld, ztl, typ10eingabe_…, deepseek_asm_…',
              'Einzeltests aus Assemblerläufen und Probeprogrammen ohne Namenspräfix (bedingter Sprung, Codetabelle, '
-             'Marke allein, Minimalbeispiel, Sortierung, vier Programme aus der Fremdprüfung deepseek_asm_20261007)'),
+             'Marke allein, Minimalbeispiel, Sortierung, kat4, kat4ausgabe und kat4eingabe für die Assembleranweisung kat4 und die Makros KAT4AUSGABE und KAT4EINGABE, kat5_sort1 (Austauschsortierung von kat5-Wörtern mit eigenem Unterprogramm), gk_ausgabe (Gleitkomma-Ausgabe, Projekt_Gleitkomma, ohne Prüfung), gk_math_op (Gleitkomma-Rechenoperationen, Projekt_Gleitkomma) und sinusfunktion_zeichnen (Sinuskurve zeichnen), die Prototyp-Programme zil (Initialloader), zt_feld und ztl für die Zusatztrommeln, vier Programme aus der Fremdprüfung deepseek_asm_20261007)'),
             ('test_vorspann', 'test_vorspann…', 'Vorspann der Tests (Abschnitt 4): Druck von BZ und AC, Standardvorspann, '
                                                 'Start mit `#STARTE`'),
             ('namen_raten', 'namen_raten.test', 'Programmbeispiel Namen raten (Assembler-Projekt 1, `Assembler/Projekt_1/namen_raten`)'),
@@ -2491,7 +2521,8 @@ FAMILIEN = [('NNNN', 'NNNN-… (0001 bis 0024)',
 
 # Einzeltests ohne Namenspräfix, aus Assemblerläufen und Probeprogrammen (Dateiname = Programmname)
 ASM_EINZELTESTS = ('bedsprung.test', 'code.test', 'code_wdhl_bef.test', 'dt_test.test', 'marke_allein.test', 'mini.test',
-                   'sortierung.test')
+                   'sortierung.test', 'zt_feld.test', 'ztl.test', 'zil.test', 'kat4.test', 'kat4ausgabe.test', 'kat4eingabe.test', 'kat5_sort1.test', 'gk_ausgabe.test',
+                   'gk_math_op.test', 'sinusfunktion_zeichnen.test')
 
 
 def familie(n):
@@ -2505,7 +2536,7 @@ def familie(n):
         return 'pj2-'               # Programmbeispiele des Projekts 2 (Unterstrich statt Bindestrich)
     if n.startswith('test_vorspann'):
         return 'test_vorspann'
-    if n.startswith('deepseek_asm_') or n in ASM_EINZELTESTS:
+    if n.startswith('deepseek_asm_') or n in ASM_EINZELTESTS or n.startswith('typ10eingabe_'):
         return 'asm-einzel'
     if n.startswith(('ac-', 'acbz-', 'bz-')):
         return 'ac/bz'
@@ -2559,7 +2590,9 @@ def gesamtlauf(ex):
     for modus in ('reset', 'dirty'):
         ex.leere_trommel()
         codes = []
-        for t in txt + tst:
+        alle = txt + tst
+        for i, t in enumerate(alle, 1):
+            print('\r  Gesamtlauf %-5s %3d/%d  %-60.60s' % (modus, i, len(alle), t), end='', file=sys.stderr, flush=True)
             if modus == 'reset':
                 ex.leere_trommel()
             vor = voraussetzung(ex, t)
@@ -2567,6 +2600,7 @@ def gesamtlauf(ex):
                 ex.lauf(vor, zusatz)
             rc, _ = ex.lauf('Tests/' + t, zusatz)
             codes.append((t, rc))
+        print(file=sys.stderr)
         res[modus] = codes
     ex.leere_trommel()
     return len(txt), len(tst), res

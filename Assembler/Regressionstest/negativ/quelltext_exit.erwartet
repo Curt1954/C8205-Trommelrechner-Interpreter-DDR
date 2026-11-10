@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_exit.asm:3: Fehler: (Quelltext) $EXIT steht außerhalb eines Makroaufrufs
+datei-weg obj mqo test
+escape-weg

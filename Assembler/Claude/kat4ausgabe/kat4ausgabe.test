@@ -1,0 +1,85 @@
+Trommeldatei:
+#DOK-0001 KAT4AUSGABE: a Um.GB b / c Um.KB d, Zustandsuebergabe in R3
+#SPEI-0001 0001-0006
+#PROT STUFE=2
+#TROMMEL=LEER
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/kat4ausgabe
+0000: 00000010000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 40014427461 # text1: dw 040014427461 ; Zelle 0001: a (061), Um. GB (057), b (062), z0
+0002: 40015047443 # text2: dw 040015047443 ; Zelle 0002: c (043), Um. KB (0117), d (064), z0
+0003: 00000001000 # radr1: da text1 ; Zelle 0003: Adresse von Text 1 (Adressfeld)
+0004: 00000002000 # radr2: da text2 ; Zelle 0004: Adresse von Text 2 (Adressfeld)
+0005: 00000000000 # kbaus: dw 0 ; Zelle 0005: KB/GB-Zustand des Schreibwerks (0 = KB, 1 = GB), initial KB
+0006: 00000000000 # zw1: dw 0 ; Zelle 0006: Zustand nach Text 1 (Pruefung)
+0007: 00000005000 # rkb: da kbaus ; Zelle 0007: Adresse der Zustandszelle (Adressfeld)
+0010: 00000007211 # haupt: 211 rkb ; Zelle 0010: AC := Adresse der Zustandszelle
+0011: 00007774240 # 240 r3 ; R3 := Adresse der Zustandszelle
+0012: 00000003211 # 211 radr1 ; AC := Adresse von Text 1
+0013: 00007773240 # 240 r1 ; R1 := Adresse von Text 1
+0014: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0015: 00000024025 # 025 ausgabe ; Aufruf KAT4AUSGABE (Text 1)
+0016: 00000005211 # 211 kbaus ; AC := Zustand nach Text 1
+0017: 00000006240 # 240 zw1 ; zw1 := Zustand nach Text 1
+0020: 00000004211 # 211 radr2 ; AC := Adresse von Text 2
+0021: 00007773240 # 240 r1 ; R1 := Adresse von Text 2
+0022: 00000024025 # 025 ausgabe ; Aufruf KAT4AUSGABE (Text 2, Zustand GB aus dem ersten Aufruf)
+0023: 00000000020 # 020 0 ; Halt
+0024: 00000057240 # ausgabe: 240 ML0001GNU ; Rueckkehrwort sichern
+0025: 00007773211 # 211 ML0010GNU ; AC := Startadresse des Textes
+0026: 00000066240 # 240 ML0009GNU ; eigener Zeiger := Startadresse (R1 bleibt unveraendert)
+0027: 00000000251 # ML0002GNU: 251 0 ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0030: 00000064240 # 240 ML0007GNU ; tw := Textwort (mit z0)
+0031: 00000103200 # 200 l0001 ; z0 ausblenden, nur 32 Bit Zeichen
+0032: 00000065240 # 240 ML0008GNU ; wort := Zeichenrest
+0033: 00000065211 # ML0003GNU: 211 ML0008GNU ; AC := Zeichenrest
+0034: 00000104330 # 330 l0002 ; Vergleich mit 0 (keine Operation)
+0035: 00000055170 # 170 ML0005GNU ; Rest 0: Wort fertig
+0036: 00000105200 # 200 l0003 ; unterstes Zeichen ausblenden
+0037: 00000067240 # 240 ML0011GNU ; zeichen := Zeichen (der AC wird fuer die Zustandsuebergabe gebraucht)
+0040: 00000106330 # 330 l0004 ; Vergleich mit kat4 057 (Um. GB)
+0041: 00000070170 # 170 ML0012GNU ; Um. GB: Zustand := GB
+0042: 00000107330 # 330 l0005 ; Vergleich mit kat4 117 (Um. KB)
+0043: 00000072170 # 170 ML0013GNU ; Um. KB: Zustand := KB
+0044: 00000067211 # ML0014GNU: 211 ML0011GNU ; AC := Zeichen (Rueckkehr der Zustandsbehandlung)
+0045: 00007644644 # 644 07644 ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0046: 00000110210 # 210 l0006 ; Operationscode 030 (Ausgabe) dazu
+0047: 00000050240 # 240 ML0004GNU ; Ausgabebefehl auf die naechste Zelle speichern
+0051: 00000065211 # 211 ML0008GNU ; AC := Zeichenrest
+0052: 00007670642 # 642 07670 ; 8 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0053: 00000065240 # 240 ML0008GNU ; wort := Rest
+0054: 00000033000 # 000 ML0003GNU ; naechstes Zeichen
+0055: 00000064211 # ML0005GNU: 211 ML0007GNU ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0056: 00000060050 # 050 ML0006GNU ; kein z0: naechstes Wort
+0060: 00000066211 # ML0006GNU: 211 ML0009GNU ; AC := Adresse des Textwortes
+0061: 00000111210 # 210 l0007 ; plus eine Adresseneinheit
+0062: 00000066240 # 240 ML0009GNU ; zeiger := Adresse des naechsten Wortes
+0063: 00000027000 # 000 ML0002GNU ; AC ist der Zeiger, Textwort lesen
+0070: 00000112211 # ML0012GNU: 211 l0008 ; Um. GB: AC := 1 (Zustand GB)
+0071: 00000073000 # 000 ML0015GNU ; Zustand setzen
+0072: 00000104211 # ML0013GNU: 211 l0002 ; Um. KB: AC := 0 (Zustand KB)
+0073: 00000102240 # ML0015GNU: 240 ML0016GNU ; wert := Zustand (0 = KB, 1 = GB)
+0074: 00007774211 # 211 ML0017GNU ; AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0075: 00000113210 # 210 l0009 ; plus Operationscode 240: Speicherbefehl
+0076: 00000100240 # 240 ML0018GNU ; Speicherbefehl auf die naechste Zelle
+0077: 00000102211 # 211 ML0016GNU ; AC := Zustand
+0101: 00000044000 # 000 ML0014GNU ; zurueck zur Ausgabe des Zeichens
+0103: 37777777777 # l0001 dw 037777777777
+0104: 00000000000 # l0002 dw 000000000000
+0105: 00000000377 # l0003 dw 000000000377
+0106: 00000000057 # l0004 dw 000000000057
+0107: 00000000117 # l0005 dw 000000000117
+0110: 00000000030 # l0006 dw 000000000030
+0111: 00000001000 # l0007 dw 000000001000
+0112: 00000000001 # l0008 dw 1
+0113: 00000000240 # l0009 dw 000000000240
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0024
+0001: 40014427461   # Text 1
+0002: 40015047443   # Text 2
+0005: 00000000000   # kbaus: nach Um. KB wieder KB
+0006: 00000000001   # zw1: nach Text 1 GB
+7773: 00000002000   # R1 = Adresse von Text 2
+7774: 00000005000   # R3 = Adresse der Zustandszelle
+--pruefe-sw-ausgabe Test-Ergebnisvergleiche/kat4ausgabe_zustand-sw-ausgabe.txt

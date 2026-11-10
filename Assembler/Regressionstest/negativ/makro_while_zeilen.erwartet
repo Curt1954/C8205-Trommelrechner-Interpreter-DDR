@@ -1,0 +1,4 @@
+rc 16
+stderr makro_while_zeilen.asm:11: Fehler: W6 Das Makro erzeugt mehr als 6144 Zeilen (Endlosschleife in $WHILE?).
+datei-weg obj mqo test
+escape-weg

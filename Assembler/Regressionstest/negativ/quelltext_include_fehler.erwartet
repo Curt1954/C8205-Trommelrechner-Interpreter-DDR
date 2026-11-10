@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_include_fehler_1.inc:3: Fehler: Operationscode 'foo' ist ungültig
+datei-weg obj mqo test
+escape-weg

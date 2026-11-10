@@ -1,0 +1,14 @@
+0000: 01 0012 000              000 haupt ; Zelle 0: Sprung zum Hauptprogramm
+0001: 00 00000000001           dw  1     ; Art des Symbols
+0002: 00 00000000002           dw  2     ; Art des Symbols
+0003: 00 00000000004           dw  4     ; Art des Symbols
+0004: 0                        dw  0     ; Art des Symbols
+0005: 00 00000000115 md_marke: dw  77    ; Marke aus einem Makro der Makrodatei
+0006: 00 00000000001           dw  1     ; Symbol vorhanden
+0007: 00 00000000002           dw  2     ; Symbol fehlt
+0010: 00 00000000002           dw  2     ; Symbol fehlt
+0011: 00 00000000002           dw  2     ; Makro im Quelltext
+0012: 01 0001 164    haupt:    164 0001  ; Diagnoseausgabe (nur im Test)
+0013: 01 0000 020              020 0     ; Halt
+0014: 00 00000000007 a_dw:     dw  7     ; Marke auf dw
+      20 0000 0010   a_equ:    equ 00010 ; equ mit Symbol im Operanden

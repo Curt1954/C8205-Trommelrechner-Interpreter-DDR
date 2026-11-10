@@ -1,0 +1,29 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+a1:     dw      3       ; Zelle 0001: 3
+a2:     dw      5       ; Zelle 0002: 5
+a3:     dw      12      ; Zelle 0003: 12 dezimal = 014 oktal
+m4:     dw      7       ; Zelle 0004: Marke m4, Wert 7
+        dw      1       ; Zelle 0005: 1
+        dw      5       ; Zelle 0006: 5
+        dw      6       ; Zelle 0007: 6
+        dw      4       ; Zelle 0010: 4
+w0:     dw      1       ; Zellen 0011 bis 0013: w0 = 1, w1 = 2, w2 = 3
+w1:     dw      2       ; Zellen 0011 bis 0013: w0 = 1, w1 = 2, w2 = 3
+w2:     dw      3       ; Zellen 0011 bis 0013: w0 = 1, w1 = 2, w2 = 3
+        dw      1       ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+        dw      4       ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+        dw      9       ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+        dw      16      ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+        dw      25      ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+        dw      1       ; Stand von z
+        dw      2       ; Stand von z
+        dw      6       ; Stand von z
+        dw      7       ; Zelle 0024: 7, Kommentar mit $V(nichtda) und $CALC(1+1) bleibt Text
+erg:    dw      0       ; Zelle 0025: Ergebnis aus Fall L (soll 3 werden)
+erg2:   dw      0       ; Zelle 0026: zweites Ergebnis (soll 7 werden)
+haupt:  211     w2      ; Zelle 0027: AC := w2 = 3, Operand mit $V
+ausg:   240     erg     ; Zelle 0030: Operation mit $V, ergibt 240 erg
+        211     m4      ; Zelle 0031: AC := m4 = 7, die Marke aus Fall B
+        240     erg2    ; Zelle 0032: erg2 := 7
+        164     0001    ; Zelle 0033: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0034: Halt

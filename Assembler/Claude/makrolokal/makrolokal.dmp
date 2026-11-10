@@ -1,0 +1,15 @@
+0000: 01 0015 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000001        dw  1     ; Summe 1 bis 1
+0002: 00 00000000003        dw  3     ; Summe 1 bis 2
+0003: 00 00000000006        dw  6     ; Summe 1 bis 3
+0004: 00 00000000012        dw  10    ; Summe 1 bis 4
+0005: 00 00000000007        dw  7     ; globale g
+0006: 00 00000000144        dw  100   ; lokale g
+0007: 00 00000000002        dw  2     ; immer 2
+0010: 00 00000000002        dw  2     ; immer 2
+0011: 00 00000000005        dw  5     ; lokale x
+0012: 00 00000000006        dw  6     ; doppelter Parameter
+0013: 00 00000000007        dw  7     ; global g = 7
+0014: 00 00000000011        dw  9     ; global x = 9
+0015: 01 0001 164    haupt: 164 0001  ; Zelle 13: Diagnoseausgabe (nur im Test)
+0016: 01 0000 020           020 0     ; Zelle 14: Halt

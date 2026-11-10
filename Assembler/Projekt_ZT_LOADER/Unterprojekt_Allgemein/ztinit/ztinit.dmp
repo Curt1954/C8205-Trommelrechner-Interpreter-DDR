@@ -1,0 +1,197 @@
+0000: 01 0300 211                   211 l0001         ; ZT3 Spur 127 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0001: 01 0217 240                   240 zc_adr        ; ZT3 Spur 127 mit spuf00 belegen: Pufferspur merken
+0002: 01 0301 211                   211 l0002         ; ZT3 Spur 127 mit spuf00 belegen: AC := Trommel t
+0003: 01 0214 240                   240 zt_t          ; ZT3 Spur 127 mit spuf00 belegen: Trommel merken
+0004: 01 0175 025                   025 zt_anw        ; ZT3 Spur 127 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0005: 01 0302 211                   211 l0003         ; ZT3 Spur 127 mit spuf00 belegen: AC := Spur
+0006: 01 0215 240                   240 zc_spur       ; ZT3 Spur 127 mit spuf00 belegen: Spur merken
+0007: 01 0303 211                   211 l0004         ; ZT3 Spur 127 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0010: 01 0216 240                   240 zc_op         ; ZT3 Spur 127 mit spuf00 belegen: Operationscode merken
+0011: 01 0204 025                   025 zt_ausf       ; ZT3 Spur 127 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0012: 01 0300 211                   211 l0001         ; ZT3 Spur 63 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0013: 01 0217 240                   240 zc_adr        ; ZT3 Spur 63 mit spuf00 belegen: Pufferspur merken
+0014: 01 0301 211                   211 l0002         ; ZT3 Spur 63 mit spuf00 belegen: AC := Trommel t
+0015: 01 0214 240                   240 zt_t          ; ZT3 Spur 63 mit spuf00 belegen: Trommel merken
+0016: 01 0175 025                   025 zt_anw        ; ZT3 Spur 63 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0017: 01 0304 211                   211 l0005         ; ZT3 Spur 63 mit spuf00 belegen: AC := Spur
+0020: 01 0215 240                   240 zc_spur       ; ZT3 Spur 63 mit spuf00 belegen: Spur merken
+0021: 01 0303 211                   211 l0004         ; ZT3 Spur 63 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0022: 01 0216 240                   240 zc_op         ; ZT3 Spur 63 mit spuf00 belegen: Operationscode merken
+0023: 01 0204 025                   025 zt_ausf       ; ZT3 Spur 63 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0024: 01 0300 211                   211 l0001         ; ZT2 Spur 64 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0025: 01 0217 240                   240 zc_adr        ; ZT2 Spur 64 mit spuf00 belegen: Pufferspur merken
+0026: 01 0305 211                   211 l0006         ; ZT2 Spur 64 mit spuf00 belegen: AC := Trommel t
+0027: 01 0214 240                   240 zt_t          ; ZT2 Spur 64 mit spuf00 belegen: Trommel merken
+0030: 01 0175 025                   025 zt_anw        ; ZT2 Spur 64 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0031: 01 0306 211                   211 l0007         ; ZT2 Spur 64 mit spuf00 belegen: AC := Spur
+0032: 01 0215 240                   240 zc_spur       ; ZT2 Spur 64 mit spuf00 belegen: Spur merken
+0033: 01 0303 211                   211 l0004         ; ZT2 Spur 64 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0034: 01 0216 240                   240 zc_op         ; ZT2 Spur 64 mit spuf00 belegen: Operationscode merken
+0035: 01 0204 025                   025 zt_ausf       ; ZT2 Spur 64 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0036: 01 0300 211                   211 l0001         ; ZT1 Spur 0 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0037: 01 0217 240                   240 zc_adr        ; ZT1 Spur 0 mit spuf00 belegen: Pufferspur merken
+0040: 01 0307 211                   211 l0008         ; ZT1 Spur 0 mit spuf00 belegen: AC := Trommel t
+0041: 01 0214 240                   240 zt_t          ; ZT1 Spur 0 mit spuf00 belegen: Trommel merken
+0042: 01 0175 025                   025 zt_anw        ; ZT1 Spur 0 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0043: 01 0310 211                   211 l0009         ; ZT1 Spur 0 mit spuf00 belegen: AC := Spur
+0044: 01 0215 240                   240 zc_spur       ; ZT1 Spur 0 mit spuf00 belegen: Spur merken
+0045: 01 0303 211                   211 l0004         ; ZT1 Spur 0 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0046: 01 0216 240                   240 zc_op         ; ZT1 Spur 0 mit spuf00 belegen: Operationscode merken
+0047: 01 0204 025                   025 zt_ausf       ; ZT1 Spur 0 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0050: 01 0300 211                   211 l0001         ; ZT0 Spur 1 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0051: 01 0217 240                   240 zc_adr        ; ZT0 Spur 1 mit spuf00 belegen: Pufferspur merken
+0052: 01 0310 211                   211 l0009         ; ZT0 Spur 1 mit spuf00 belegen: AC := Trommel t
+0053: 01 0214 240                   240 zt_t          ; ZT0 Spur 1 mit spuf00 belegen: Trommel merken
+0054: 01 0175 025                   025 zt_anw        ; ZT0 Spur 1 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0055: 01 0307 211                   211 l0008         ; ZT0 Spur 1 mit spuf00 belegen: AC := Spur
+0056: 01 0215 240                   240 zc_spur       ; ZT0 Spur 1 mit spuf00 belegen: Spur merken
+0057: 01 0303 211                   211 l0004         ; ZT0 Spur 1 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0060: 01 0216 240                   240 zc_op         ; ZT0 Spur 1 mit spuf00 belegen: Operationscode merken
+0061: 01 0204 025                   025 zt_ausf       ; ZT0 Spur 1 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0062: 01 0300 211                   211 l0001         ; ZT0 Spur 127 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0063: 01 0217 240                   240 zc_adr        ; ZT0 Spur 127 mit spuf00 belegen: Pufferspur merken
+0064: 01 0310 211                   211 l0009         ; ZT0 Spur 127 mit spuf00 belegen: AC := Trommel t
+0065: 01 0214 240                   240 zt_t          ; ZT0 Spur 127 mit spuf00 belegen: Trommel merken
+0066: 01 0175 025                   025 zt_anw        ; ZT0 Spur 127 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0067: 01 0302 211                   211 l0003         ; ZT0 Spur 127 mit spuf00 belegen: AC := Spur
+0070: 01 0215 240                   240 zc_spur       ; ZT0 Spur 127 mit spuf00 belegen: Spur merken
+0071: 01 0303 211                   211 l0004         ; ZT0 Spur 127 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0072: 01 0216 240                   240 zc_op         ; ZT0 Spur 127 mit spuf00 belegen: Operationscode merken
+0073: 01 0204 025                   025 zt_ausf       ; ZT0 Spur 127 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0074: 01 0300 211                   211 l0001         ; ZT0 Spur 0 mit spuf00 belegen: AC := Adresse der Pufferspur spuf00
+0075: 01 0217 240                   240 zc_adr        ; ZT0 Spur 0 mit spuf00 belegen: Pufferspur merken
+0076: 01 0310 211                   211 l0009         ; ZT0 Spur 0 mit spuf00 belegen: AC := Trommel t
+0077: 01 0214 240                   240 zt_t          ; ZT0 Spur 0 mit spuf00 belegen: Trommel merken
+0100: 01 0175 025                   025 zt_anw        ; ZT0 Spur 0 mit spuf00 belegen: ZT anwaehlen: Aufruf zt_anw
+0101: 01 0310 211                   211 l0009         ; ZT0 Spur 0 mit spuf00 belegen: AC := Spur
+0102: 01 0215 240                   240 zc_spur       ; ZT0 Spur 0 mit spuf00 belegen: Spur merken
+0103: 01 0303 211                   211 l0004         ; ZT0 Spur 0 mit spuf00 belegen: AC := Operationscode 601 (HT -> ZT)
+0104: 01 0216 240                   240 zc_op         ; ZT0 Spur 0 mit spuf00 belegen: Operationscode merken
+0105: 01 0204 025                   025 zt_ausf       ; ZT0 Spur 0 mit spuf00 belegen: Spur uebertragen: Aufruf zt_ausf
+0106: 01 0300 211                   211 l0001         ; AC := Adresse SPUF-00
+0107: 00 7773 240                   240 r1            ; R1 := Adresse SPUF-00
+0110: 01 0116 025                   025 ztinit        ; UP ztinit: alle ZT loeschen, Spur 0 anlegen, ZT 0 angewaehlt: Aufruf ztinit
+0111: 01 0300 211                   211 l0001         ; AC := Adresse SPUF-00 (jetzt Spur 0)
+0112: 01 0311 210                   210 l0010         ; plus Spurfeld zzz0 = 0100 (Spur 2) und Operationscode 601
+0113: 01 0114 240                   240 nach          ; Ausgabebefehl auf die naechste Zelle
+0114: 20 0115        nach:          db  01            ; Laufzeit: Ausgabe auf ZT0 Spur 2 OHNE neue Anwahl
+0115: 01 0000 020                   020 0             ; Halt
+0116: 01 0173 240    ztinit:        240 ML0001DKR     ; Rueckkehrwort sichern
+0117: 00 7773 211                   211 ML0010DKR     ; AC := R1 (Adresse SPUF-00, Adressfeld)
+0120: 01 0312 210                   210 l0011         ; plus Operationscode 441 (Gruppenbefehl: alle 32 Zellen der Spur := 0)
+0121: 01 0122 240                   240 ML0002DKR     ; Befehl 441 <SPUF-00> auf die naechste Zelle
+0122: 20 0123        ML0002DKR:     db  1             ; Laufzeit: 441 <SPUF-00>, SPUF-00 := 0 (Nullpuffer), AC := 0
+0123: 01 0174 241                   241 ML0003DKR     ; g := 0 (laufende Spur 0 bis 511)
+0124: 01 0174 211    ML0004DKR:     211 ML0003DKR     ; AC := g
+0125: 01 0313 200                   200 l0012         ; nur d (Bit 7 und 8 von g, d * 0200)
+0126: 01 7670 644                   644 07670         ; 8 mal Linksverschiebung (Operand nach Festlegung 026)
+0127: 01 0314 210                   210 l0013         ; plus Anwahl ZT 0: 5k00 030 (k = d + 1)
+0130: 01 0131 240                   240 ML0005DKR     ; Anwahlbefehl auf die naechste Zelle
+0131: 20 0132        ML0005DKR:     db  1             ; Laufzeit: 5k00 030 (k = d + 1), ZT d anwaehlen
+0132: 01 0174 211                   211 ML0003DKR     ; AC := g
+0133: 01 0302 200                   200 l0003         ; nur s (Bit 0 bis 6 von g)
+0134: 01 7656 644                   644 07656         ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0135: 00 7773 210                   210 ML0010DKR     ; plus R1 (Adresse SPUF-00)
+0136: 01 0303 210                   210 l0004         ; plus Operationscode 601 (Ausgabe HT -> ZT)
+0137: 01 0140 240                   240 ML0006DKR     ; Ausgabebefehl auf die naechste Zelle
+0140: 20 0141        ML0006DKR:     db  1             ; Laufzeit: zzz0 bbbb 601, Nullpuffer auf Spur s der gewaehlten ZT
+0141: 01 0174 211                   211 ML0003DKR     ; AC := g
+0142: 01 0315 210                   210 l0014         ; plus 1
+0143: 01 0174 240                   240 ML0003DKR     ; g := g + 1
+0144: 01 0316 330                   330 l0015         ; Vergleich mit 512 (keine Operation)
+0145: 01 0147 170                   170 ML0007DKR     ; g = 512: alle 512 Spuren geloescht
+0146: 01 0124 000                   000 ML0004DKR     ; naechste Spur
+0147: 00 7773 211    ML0007DKR:     211 ML0010DKR     ; Spur 0 aufbauen: AC := R1
+0150: 01 0317 210                   210 l0016         ; plus Operationscode 240 (Speichern), Zelle 0 von SPUF-00
+0151: 01 0153 240                   240 ML0008DKR     ; Speicherbefehl auf die naechste Zelle
+0152: 01 0320 211                   211 l0017         ; AC := Repository-Kennzeichen
+0153: 20 0154        ML0008DKR:     db  1             ; Laufzeit: 240 <SPUF-00 Zelle 0>
+0154: 00 7773 211                   211 ML0010DKR     ; AC := R1
+0155: 01 0321 210                   210 l0018         ; plus 16 Adresseneinheiten (16 * 01000 = 020000) und 240: Zelle 16
+0156: 01 0160 240                   240 ML0009DKR     ; Speicherbefehl auf die naechste Zelle
+0157: 01 0315 211                   211 l0014         ; AC := 1 (Repository-Kopf)
+0160: 20 0161        ML0009DKR:     db  1             ; Laufzeit: 240 <SPUF-00 Zelle 16>
+0161: 00 7773 211                   211 ML0010DKR     ; AC := R1
+0162: 01 0322 210                   210 l0019         ; plus 19 Adresseneinheiten (023 * 01000) und 240: Zelle 19
+0163: 01 0165 240                   240 ML0011DKR     ; Speicherbefehl auf die naechste Zelle
+0164: 01 0323 211                   211 l0020         ; AC := 32 (ZT_VERZSPUREN, 040 oktal: letzte belegte Spur, Verzeichnis Spuren 1 bis 32)
+0165: 20 0166        ML0011DKR:     db  1             ; Laufzeit: 240 <SPUF-00 Zelle 19>
+0166: 00 5100 030                   030 05100         ; Anwahl ZT 0 (5100 030)
+0167: 00 7773 211                   211 ML0010DKR     ; AC := R1
+0170: 01 0303 210                   210 l0004         ; plus 601, zzz0 = 0000: Spur 0
+0171: 01 0172 240                   240 ML0012DKR     ; Ausgabebefehl auf die naechste Zelle
+0172: 20 0173        ML0012DKR:     db  1             ; Laufzeit: 0000 bbbb 601, Spur 0 von ZT 0 schreiben (513. Ausgabe)
+0173: 20 0174        ML0001DKR:     db  1             ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0174: 20 0175        ML0003DKR:     db  1             ; Arbeitszelle g: laufende Spur 0 bis 511 (g = 128 * d + s)
+0175: 01 0203 240    zt_anw:        240 rueck_zt_anw  ; Rueckkehrwort sichern: Zusatztrommel zt_t anwaehlen (5k00 030, k = t + 1; 5100 = ZT0 bis 5400 = ZT3)
+0176: 01 0214 211                   211 zt_t          ; AC := t
+0177: 01 7675 646                   646 07675         ; um 15 Bit nach links: AC um 15 Bit zyklisch links
+0200: 01 0314 210                   210 l0013         ; plus Befehl 5100 030
+0201: 01 0202 240                   240 zw_x          ; Befehl ablegen
+0202: 20 0203        zw_x:          db  01            ; hier steht 5k00 030
+0203: 20 0204        rueck_zt_anw:  db  01            ; Rueckkehrzelle von zt_anw: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0204: 01 0213 240    zt_ausf:       240 rueck_zt_ausf ; Rueckkehrwort sichern: Befehl zzz0 bbbb 601/661 aus zc_spur, zc_adr und zc_op bilden und ausfuehren
+0205: 01 0215 211                   211 zc_spur       ; AC := Spur
+0206: 01 7656 646                   646 07656         ; um 26 Bit nach links (zzz0): AC um 26 Bit zyklisch links
+0207: 01 0217 210                   210 zc_adr        ; plus Adresse der Pufferspur
+0210: 01 0216 210                   210 zc_op         ; plus Operationscode
+0211: 01 0212 240                   240 za_x          ; Befehl ablegen
+0212: 20 0213        za_x:          db  01            ; hier steht der ZT-Befehl
+0213: 20 0214        rueck_zt_ausf: db  01            ; Rueckkehrzelle von zt_ausf: zur Laufzeit 000 <Rueckkehradresse> (Festlegung 010)
+0214: 20 0215        zt_t:          db  01            ; Trommel
+0215: 20 0216        zc_spur:       db  01            ; Spur
+0216: 20 0217        zc_op:         db  01            ; Operationscode
+0217: 20 0220        zc_adr:        db  01            ; Adresse der Pufferspur
+0220: 20 0240                       db  020           ; SPUF-00 auf die Spurgrenze
+0240: 00 00000000111 spuf00:        dw  0111          ; spuf00[0] = 73
+0241: 00 00000000222                dw  0222          ; spuf00[1] = 146
+0242: 0                             dw  0             ; spuf00[2] = 0
+0243: 0                             dw  0             ; spuf00[3] = 0
+0244: 0                             dw  0             ; spuf00[4] = 0
+0245: 00 00000000777                dw  0777          ; spuf00[5] = 511
+0246: 0                             dw  0             ; spuf00[6] = 0
+0247: 0                             dw  0             ; spuf00[7] = 0
+0250: 0                             dw  0             ; spuf00[8] = 0
+0251: 0                             dw  0             ; spuf00[9] = 0
+0252: 0                             dw  0             ; spuf00[10] = 0
+0253: 0                             dw  0             ; spuf00[11] = 0
+0254: 0                             dw  0             ; spuf00[12] = 0
+0255: 0                             dw  0             ; spuf00[13] = 0
+0256: 0                             dw  0             ; spuf00[14] = 0
+0257: 0                             dw  0             ; spuf00[15] = 0
+0260: 0                             dw  0             ; spuf00[16] = 0
+0261: 00 00000000444                dw  0444          ; spuf00[17] = 292
+0262: 00 00000000666                dw  0666          ; spuf00[18] = 438
+0263: 0                             dw  0             ; spuf00[19] = 0
+0264: 0                             dw  0             ; spuf00[20] = 0
+0265: 0                             dw  0             ; spuf00[21] = 0
+0266: 0                             dw  0             ; spuf00[22] = 0
+0267: 00 00000000555                dw  0555          ; spuf00[23] = 365
+0270: 0                             dw  0             ; spuf00[24] = 0
+0271: 0                             dw  0             ; spuf00[25] = 0
+0272: 0                             dw  0             ; spuf00[26] = 0
+0273: 0                             dw  0             ; spuf00[27] = 0
+0274: 0                             dw  0             ; spuf00[28] = 0
+0275: 0                             dw  0             ; spuf00[29] = 0
+0276: 0                             dw  0             ; spuf00[30] = 0
+0277: 00 00000000333                dw  0333          ; spuf00[31] = 219
+0300: 01 240000      l0001          da  spuf00        
+0301: 00 00000000003 l0002          dw  000000000003  
+0302: 00 00000000177 l0003          dw  000000000177  
+0303: 00 00000000601 l0004          dw  000000000601  
+0304: 00 00000000077 l0005          dw  000000000077  
+0305: 00 00000000002 l0006          dw  000000000002  
+0306: 00 00000000100 l0007          dw  000000000100  
+0307: 00 00000000001 l0008          dw  000000000001  
+0310: 0              l0009          dw  000000000000  
+0311: 00 01000000601 l0010          dw  001000000601  
+0312: 00 00000000441 l0011          dw  000000000441  
+0313: 00 00000000600 l0012          dw  000000000600  
+0314: 00 00005100030 l0013          dw  000005100030  
+0315: 00 00000000001 l0014          dw  1             
+0316: 00 00000001000 l0015          dw  000000001000  
+0317: 00 00000000240 l0016          dw  000000000240  
+0320: 00 52525252525 l0017          dw  052525252525  
+0321: 00 00000020240 l0018          dw  000000020240  
+0322: 00 00000023240 l0019          dw  000000023240  
+0323: 00 00000000040 l0020          dw  32            

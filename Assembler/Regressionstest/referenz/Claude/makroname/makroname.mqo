@@ -1,0 +1,46 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      3       ; erstes Wort 3
+        dw      7       ; Summe beider Parameter
+        dw      10      ; Parameter 10 (Name zehn)
+        dw      7       ; Parameter 11 oder Vorgabe 7
+        dw      8       ; Parameter 12 oder Vorgabe 8
+        dw      10      ; Zahl der uebergebenen Parameter
+        dw      17      ; zehn plus elf
+        dw      3       ; Zeichenzahl von zehn plus Zeichenzahl von a1
+        dw      10      ; $P mit Namen: Parameter 10
+        dw      9       ; Parameter 9 mit Namen
+        dw      2       ; Parameter 2 mit Nummer
+        dw      10      ; Parameter 10 (Name zehn)
+        dw      11      ; Parameter 11 oder Vorgabe 7
+        dw      12      ; Parameter 12 oder Vorgabe 8
+        dw      12      ; Zahl der uebergebenen Parameter
+        dw      21      ; zehn plus elf
+        dw      3       ; Zeichenzahl von zehn plus Zeichenzahl von a1
+        dw      10      ; $P mit Namen: Parameter 10
+        dw      9       ; Parameter 9 mit Namen
+        dw      2       ; Parameter 2 mit Nummer
+        dw      50      ; geprueften Wert ausgeben
+        dw      1       ; Modus EIN
+        dw      7       ; geprueften Wert ausgeben
+        dw      0       ; Modus AUS
+        dw      5       ; ein Wort je Wiederholung von anzahl
+        dw      5       ; ein Wort je Wiederholung von anzahl
+        dw      6       ; ein Wort je Zeichen von text
+        dw      6       ; ein Wort je Zeichen von text
+        dw      6       ; ein Wort je Zeichen von text
+        dw      6       ; ein Wort je Zeichen von text
+        dw      4       ; Zahl der uebergebenen Parameter
+        dw      3       ; Summe der beiden benannten Parameter
+        dw      4       ; vierter Parameter, ohne Namen
+        dw      42      ; Produkt
+        dw      3       ; erster Parameter
+        dw      5       ; zweiter Parameter
+        dw      5       ; Zeichenzahl von Parameter 1
+        dw      10      ; doppelte Zeichenzahl
+        dw      32      ; Parameter 32 (Name p32)
+        dw      31      ; Parameter 31 ueber $P mit Namen
+        dw      33      ; Parameter 1 plus Parameter 32
+        dw      50      ; Summe von breite und hoehe
+        dw      30      ; hoehe allein
+haupt:  164     0001    ; Zelle 0054: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0055: Halt

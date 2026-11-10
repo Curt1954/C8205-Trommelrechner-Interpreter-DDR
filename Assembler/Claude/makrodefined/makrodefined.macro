@@ -1,0 +1,9 @@
+; makrodefined.macro - Projektmakrodatei fuer den Test von $MDEFINED (Assemblerdokumentation 4.25)
+; PROJHOOK: Makro nur in dieser Projektdatei
+PROJHOOK:       MACRO
+                dw      41              ; Wort 41 dezimal (051 oktal)
+                MEND                    ; Ende von PROJHOOK
+; BEIDE: gleicher Name wie im Quelltext, der Quelltext gewinnt (4.9); dieses Makro wird nie aufgerufen
+BEIDE:          MACRO
+                dw      51              ; waere 51 dezimal
+                MEND                    ; Ende von BEIDE

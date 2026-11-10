@@ -8,7 +8,8 @@
 // Adressausdruck. Dort sind ';' und '#' (Doku 2, <sonderzeichen>) einfache Textzeichen, und ein
 // fuehrendes '#' leitet kein Literal ein.
 int istTextAnweisung(const char *operation) {
-    return strcmp(operation, "dt") == 0 || strcmp(operation, "dto") == 0 || strcmp(operation, "dtm") == 0;
+    return strcmp(operation, "dt") == 0 || strcmp(operation, "dto") == 0 || strcmp(operation, "dtm") == 0
+           || strcmp(operation, "kat4") == 0 || strcmp(operation, "kat5") == 0 || strcmp(operation, "kat6") == 0;
 }
 
 // Liefert die Position, an der der Operand endet: das erste ';' (Kommentarbeginn) bzw. das
@@ -113,6 +114,13 @@ void processLine(char *line, lineElements linesAsm_p[], int *lineCount) {
 
         // nur Operationscode angegeben
         if (( strlen(line) > 0) ) {
+            char *semi = strchr(line, ';');   // "MACRO;Kommentar" ohne Leerzeichen: Kommentar abtrennen (ab 1.01-031; vorher war der ganze Text der Operationscode)
+            if (semi != NULL && semi != line) {
+                STRKOPIE(linesAsm_p[*lineCount].sp4, semi);
+                removeNewlines(linesAsm_p[*lineCount].sp4);
+                trimWhitespace(linesAsm_p[*lineCount].sp4);
+                *semi = '\0';
+            }
             STRKOPIE(linesAsm_p[*lineCount].sp2, line);
             removeNewlines(linesAsm_p[*lineCount].sp2);
             trimWhitespace(linesAsm_p[*lineCount].sp2);
@@ -137,6 +145,11 @@ void processLine(char *line, lineElements linesAsm_p[], int *lineCount) {
 // wurden, erhalten stattdessen den Wert xx (siehe schreibeObjZeile).
 // Bei xx = 00 entfaellt ausserdem die Kennzeichenzeile "21 0000 <zahl>" des start-Operanden (siehe pass3).
 // Liefert 1, wenn die Zeile ein LEITADRESSE-Pragma ist (auch ein fehlerhaftes), sonst 0.
+// Bezeichnung der gerade gelesenen Datei fuer Meldungen: "der Quelldatei" (Hauptdatei) oder "der eingebundenen Datei '<Pfad>'"
+// ($INCLUDE im Quelltext, Doku 4.14); ladeIstHaupt = 1 in der Hauptdatei.
+static char ladeBez[1100] = "der Quelldatei";
+static int ladeIstHaupt = 1;
+
 static int verarbeiteLeitadressePragma(const char *zeile, int zeilennr, int startGesehen) {
     const char *p = zeile;
     while (*p == ' ' || *p == '\t') p++;
@@ -155,13 +168,18 @@ static int verarbeiteLeitadressePragma(const char *zeile, int zeilennr, int star
 
     while (*p == ' ' || *p == '\t') p++;
 
+    if (!ladeIstHaupt) {
+        PRINT_FEHLER("Zeile %d %s: Das Pragma LEITADRESSE steht nur in der Hauptdatei, nicht in einer mit $INCLUDE eingebundenen Datei.", zeilennr, ladeBez);
+        is_error = 1;
+        return 1;
+    }
     if (startGesehen) {
-        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE muss vor `start` stehen.", zeilennr);
+        PRINT_FEHLER("Zeile %d %s: Das Pragma LEITADRESSE muss vor `start` stehen.", zeilennr, ladeBez);
         is_error = 1;
         return 1;
     }
     if (leitadressePragmaGesetzt) {
-        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE darf nur einmal vorkommen.", zeilennr);
+        PRINT_FEHLER("Zeile %d %s: Das Pragma LEITADRESSE darf nur einmal vorkommen.", zeilennr, ladeBez);
         is_error = 1;
         return 1;
     }
@@ -172,7 +190,7 @@ static int verarbeiteLeitadressePragma(const char *zeile, int zeilennr, int star
                  && (p[2] == '\0' || p[2] == ' ' || p[2] == '\t' || p[2] == ';' || p[2] == '\r' || p[2] == '\n');
     int wert = wertOk ? (p[0] - '0') * 10 + (p[1] - '0') : 0;
     if (!wertOk || wert < 0 || wert > 9) {
-        PRINT_FEHLER("Zeile %d der Quelldatei: Das Pragma LEITADRESSE erwartet einen zweistelligen Wert von 00 bis 09 (z. B. ;#; LEITADRESSE 02).", zeilennr);
+        PRINT_FEHLER("Zeile %d %s: Das Pragma LEITADRESSE erwartet einen zweistelligen Wert von 00 bis 09 (z. B. ;#; LEITADRESSE 02).", zeilennr, ladeBez);
         is_error = 1;
         return 1;
     }
@@ -191,19 +209,201 @@ static int istBlockkommentarGrenze(const char *s) {
     return 1;
 }
 
-void ladeAssemblerZeilen(const char *inputFileName_p) {
-    FILE *inputFile = fopen(inputFileName_p, "r");
+// ---------------------------------------------------------------------------------------------------------------
+// $INCLUDE im Quelltext (Doku 4.14): Die Zeilen der eingebundenen Datei kommen an der Stelle der $INCLUDE-Zeile nach
+// linesAsm, als stuenden sie im Quelltext. srcLine zaehlt fortlaufend ueber ALLE gelesenen Dateien (ohne $INCLUDE ist
+// das genau die Zeilennummer der Datei); die Tabelle quellAbschnitte bildet eine solche Nummer auf Datei und Zeile in
+// der Datei ab. Alle Meldungen mit Ort laufen ueber qDatei/qZeile/qOrt.
+#define QUELL_INCLUDE_TIEFE 4
+
+typedef struct { int ab; int datei; int versatz; } QuellAbschnitt;   // Zeile in der Datei = nr - versatz, gueltig ab nr = ab
+static QuellAbschnitt *quellAbschnitte = NULL;
+static int quellAbschnittN = 0, quellAbschnittKap = 0;
+static char **quellDateien = NULL;       // Index 0 = Hauptdatei (inputFileName), danach die eingebundenen Dateien
+static int quellDateiN = 0, quellDateiKap = 0;
+static char **quellTexte = NULL;         // Text jeder gelesenen Zeile (Index = fortlaufende Nummer, 0 unbenutzt)
+static int quellTextN = 0, quellTextKap = 0;
+static int quellZaehler = 0;             // fortlaufende Nummer der zuletzt gelesenen Zeile
+static int includeBenutzt = 0;           // 1, sobald eine Datei eingebunden wurde
+
+static void *quellWachsen(void *p, int *kap, int n, size_t gr) {
+    if (n < *kap) return p;
+    int neuKap = *kap ? *kap * 2 : 256;
+    void *q = realloc(p, (size_t)neuKap * gr);
+    if (!q) { fprintf(stderr, "Speicherzuweisung fehlgeschlagen!\n"); exit(RC_FEHLER); }
+    *kap = neuKap;
+    return q;
+}
+
+static void quellAbschnittNeu(int ab, int datei, int versatz) {
+    quellAbschnitte = quellWachsen(quellAbschnitte, &quellAbschnittKap, quellAbschnittN, sizeof(QuellAbschnitt));
+    quellAbschnitte[quellAbschnittN].ab = ab;
+    quellAbschnitte[quellAbschnittN].datei = datei;
+    quellAbschnitte[quellAbschnittN].versatz = versatz;
+    quellAbschnittN++;
+}
+
+static int quellDateiMerken(const char *name) {
+    quellDateien = quellWachsen(quellDateien, &quellDateiKap, quellDateiN, sizeof(char *));
+    quellDateien[quellDateiN] = strdup(name);
+    return quellDateiN++;
+}
+
+// Merkt den Text der Zeile nr (ohne Zeilenende) fuer Querverweisliste und Fehlersuche im Quelltext.
+static void quellTextMerken(int nr, const char *text) {
+    while (quellTextN <= nr) {
+        quellTexte = quellWachsen(quellTexte, &quellTextKap, quellTextN, sizeof(char *));
+        quellTexte[quellTextN++] = NULL;
+    }
+    free(quellTexte[nr]);
+    char *k = strdup(text);
+    if (k) {
+        size_t l = strlen(k);
+        while (l > 0 && (k[l - 1] == '\n' || k[l - 1] == '\r')) k[--l] = '\0';
+    }
+    quellTexte[nr] = k;
+}
+
+int quellZeilenAnzahl(void) { return quellTextN > 0 ? quellTextN - 1 : 0; }
+const char *quellZeilenText(int nr) { return (nr > 0 && nr < quellTextN && quellTexte[nr]) ? quellTexte[nr] : ""; }
+
+static int quellAbschnittFuer(int nr) {
+    int a = -1;
+    for (int i = 0; i < quellAbschnittN; i++) { if (quellAbschnitte[i].ab <= nr) a = i; else break; }
+    return a;
+}
+
+// Datei und Zeile in der Datei zur fortlaufenden Nummer nr. Ohne $INCLUDE (oder bei nr <= 0) gilt nr unveraendert.
+const char *qDatei(int nr) {
+    if (!includeBenutzt || nr <= 0) return inputFileName;
+    int a = quellAbschnittFuer(nr);
+    return (a < 0 || quellAbschnitte[a].datei <= 0) ? inputFileName : quellDateien[quellAbschnitte[a].datei];
+}
+int qZeile(int nr) {
+    if (!includeBenutzt || nr <= 0) return nr;
+    int a = quellAbschnittFuer(nr);
+    return a < 0 ? nr : nr - quellAbschnitte[a].versatz;
+}
+// Ort als Text fuer "Zeile %s": "12" in der Hauptdatei, "3 von 'inc/x.asm'" in einer eingebundenen Datei.
+const char *qOrt(int nr) {
+    static char puffer[4][1200];
+    static int next = 0;
+    char *b = puffer[next++ & 3];
+    int a = (includeBenutzt && nr > 0) ? quellAbschnittFuer(nr) : -1;
+    if (a >= 0 && quellAbschnitte[a].datei > 0)
+        snprintf(b, 1200, "%d von '%s'", nr - quellAbschnitte[a].versatz, quellDateien[quellAbschnitte[a].datei]);
+    else
+        snprintf(b, 1200, "%d", qZeile(nr));
+    return b;
+}
+
+// Ist die Zeile (nach Leerraum) eine $INCLUDE-Zeile? $INCLUDE als ganzes Wort (Leerraum oder Zeilenende dahinter).
+static int istIncludeZeile(const char *line) {
+    while (*line == ' ' || *line == '\t') line++;
+    if (strncmp(line, "$INCLUDE", 8) != 0) return 0;
+    return line[8] == ' ' || line[8] == '\t' || line[8] == '\0' || line[8] == '\r' || line[8] == '\n';
+}
+
+// Ist die Zeile ein Pragma ;#MACRODATEI... oder ;#OPSYM..., das nur in der Hauptdatei gilt?
+static int istHauptdateiPragma(const char *line) {
+    while (*line == ' ' || *line == '\t') line++;
+    if (*line != ';') return 0;
+    line++;
+    while (*line == ' ' || *line == '\t') line++;
+    return strncmp(line, "#MACRODATEI", 11) == 0 || strncmp(line, "#OPSYM", 6) == 0;
+}
+
+static int startGesehenGlobal = 0;   // 1, sobald die Anweisung `start` gelesen wurde (Pragma LEITADRESSE muss davor stehen)
+static int ladeDatei(const char *pfad, int dateiIdx, int tiefe);
+
+// Wertet eine $INCLUDE-Zeile aus und liest die Datei. nr = fortlaufende Nummer der $INCLUDE-Zeile, dateiZeile = Zeile in
+// der einbindenden Datei, basis = Pfad der einbindenden Datei.
+static void ladeInclude(const char *line, const char *basis, int nr, int dateiZeile, int tiefe) {
+    char pfad[1024];
+    const char *p = line;
+    while (*p == ' ' || *p == '\t') p++;
+    p += 8;                                          // hinter "$INCLUDE"
+    while (*p == ' ' || *p == '\t') p++;
+    snprintf(pfad, sizeof(pfad), "%s", p);
+    char *sem = strchr(pfad, ';');
+    if (sem && (sem == pfad || sem[-1] == ' ' || sem[-1] == '\t')) *sem = '\0';
+    size_t l = strlen(pfad);
+    while (l > 0 && (pfad[l - 1] == ' ' || pfad[l - 1] == '\t' || pfad[l - 1] == '\r' || pfad[l - 1] == '\n')) pfad[--l] = '\0';
+    if (l >= 2 && (pfad[0] == '"' || pfad[0] == '\'') && pfad[l - 1] == pfad[0]) { memmove(pfad, pfad + 1, l - 2); pfad[l - 2] = '\0'; }
+    if (pfad[0] == '\0') {
+        PRINT_FEHLER("Zeile %d %s: $INCLUDE braucht einen Pfad.", dateiZeile, ladeBez);
+        is_error = 1;
+        return;
+    }
+    if (tiefe > QUELL_INCLUDE_TIEFE) {
+        PRINT_FEHLER("Zeile %d %s: $INCLUDE '%s' ist zu tief verschachtelt (höchstens %d; ein Kreis wird so abgefangen).", dateiZeile, ladeBez, pfad, QUELL_INCLUDE_TIEFE);
+        is_error = 1;
+        return;
+    }
+    char voll[2048] = "";
+    FILE *inc = NULL;
+    int absolut = (pfad[0] == '/' || pfad[0] == '\\' || (isalpha((unsigned char)pfad[0]) && pfad[1] == ':'));
+    if (!absolut) {
+        snprintf(voll, sizeof(voll), "%s", basis);
+        char *slash = strrchr(voll, '/');
+        char *bslash = strrchr(voll, '\\');
+        if (bslash && (!slash || bslash > slash)) slash = bslash;
+        if (slash) {
+            slash[1] = '\0';
+            strncat(voll, pfad, sizeof(voll) - strlen(voll) - 1);
+            inc = fopen(voll, "r");
+        }
+    }
+    if (!inc) {
+        snprintf(voll, sizeof(voll), "%s", pfad);
+        inc = fopen(voll, "r");
+    }
+    if (!inc) {
+        PRINT_FEHLER("Zeile %d %s: $INCLUDE '%s' konnte nicht geöffnet werden: %s", dateiZeile, ladeBez, pfad, strerror(errno));
+        is_error = 1;
+        return;
+    }
+    fclose(inc);
+
+    // Kommentarzeile im Listing vor den eingebundenen Zeilen (wie ";+++ <Aufruf>" bei Makros)
+    {
+        char kom[1300];
+        snprintf(kom, sizeof(kom), ";+++ $INCLUDE %s", pfad);
+        lineElements *z = &linesAsm[lineCountAsm];
+        resetParsedLinesArrays(linesAsm, lineCountAsm);
+        STRKOPIE(z->sp1, kom);
+        z->srcLine = nr;
+        lineCountAsm++;
+    }
+    includeBenutzt = 1;
+    int idx = quellDateiMerken(voll);
+    char bezAlt[1100];
+    snprintf(bezAlt, sizeof(bezAlt), "%s", ladeBez);
+    int hauptAlt = ladeIstHaupt;
+    snprintf(ladeBez, sizeof(ladeBez), "der eingebundenen Datei '%s'", pfad);
+    ladeIstHaupt = 0;
+    quellAbschnittNeu(quellZaehler + 1, idx, quellZaehler);
+    ladeDatei(voll, idx, tiefe);
+    snprintf(ladeBez, sizeof(ladeBez), "%s", bezAlt);
+    ladeIstHaupt = hauptAlt;
+    quellAbschnittNeu(quellZaehler + 1, quellAbschnitte[quellAbschnittFuer(nr)].datei, quellZaehler - dateiZeile);
+}
+
+// Liest eine Datei (Hauptdatei oder $INCLUDE) Zeile fuer Zeile nach linesAsm. Rueckgabe 0 = ok, 1 = Abbruch (Zeilengrenze).
+static int ladeDatei(const char *pfad, int dateiIdx, int tiefe) {
+    (void)dateiIdx;
+    FILE *inputFile = fopen(pfad, "r");
     if (!inputFile) {
-        fprintf(stderr, "Fehler: Datei '%s' konnte nicht geöffnet werden!\n", inputFileName_p);
+        fprintf(stderr, "Fehler: Datei '%s' konnte nicht geöffnet werden!\n", pfad);
         exit(RC_FEHLER); // Programm beenden, falls Datei nicht geöffnet werden konnte
     }
 
     char line[1024];
-    int zeilennr = 0;
+    int zeilennr = 0;           // Zeilennummer in DIESER Datei
     int vorigeZeileOffen = 0;   // 1 = vorige fgets-Teilzeile hatte kein Zeilenende (Zeile laenger als Puffer)
-    int startGesehen = 0;       // 1, sobald die Anweisung `start` gelesen wurde (Pragma LEITADRESSE muss davor stehen)
     int imBlockkommentar = 0;   // 1 = zwischen zwei ```-Zeilen
-    int blockkommentarStart = 0; // Quelltextzeile, in der der offene Blockkommentar begann
+    int blockkommentarStart = 0; // Zeile (dieser Datei), in der der offene Blockkommentar begann
+    int abbruch = 0;
     while (fgets(line, sizeof(line), inputFile)) {
         int hatZeilenende = (strchr(line, '\n') != NULL);
 
@@ -215,6 +415,9 @@ void ladeAssemblerZeilen(const char *inputFileName_p) {
             memmove(line, line + 3, strlen(line + 3) + 1);   // UTF-8-Bytefolgemarke (BOM, z. B. aus dem Windows-Editor) ueberspringen
         }
         zeilennr++;
+        quellZaehler++;
+        int nr = quellZaehler;   // fortlaufende Nummer (srcLine)
+        quellTextMerken(nr, line);
 
         // Blockkommentar (```-Zeilen und alles dazwischen) - auch zu lange Zeilen darin sind kein Fehler
         int istGrenze = istBlockkommentarGrenze(line);
@@ -244,33 +447,50 @@ void ladeAssemblerZeilen(const char *inputFileName_p) {
             laenge = MAX_QUELLZEILE + 1;   // laenger als der Lesepuffer, also sicher zu lang
         }
         if (laenge > MAX_QUELLZEILE) {
-            PRINT_FEHLER("Zeile %d der Quelldatei ist zu lang (mehr als %d Zeichen); bitte kuerzen oder umbrechen.", zeilennr, MAX_QUELLZEILE);
+            PRINT_FEHLER("Zeile %d %s ist zu lang (mehr als %d Zeichen); bitte kuerzen oder umbrechen.", zeilennr, ladeBez, MAX_QUELLZEILE);
             is_error = 1;
             continue;
         }
         if (lineCountAsm >= ZEILEN_GRENZE) {
-            meldeZuVieleZeilen(zeilennr);
+            meldeZuVieleZeilen(nr);
             is_error = 1;
+            abbruch = 1;
             break;
         }
-        verarbeiteLeitadressePragma(line, zeilennr, startGesehen);   // vor processLine: line wird dort veraendert
+        if (istIncludeZeile(line)) {
+            quellTextMerken(nr, ";");   // der Dateiname soll in der Querverweisliste kein Symbol treffen
+            ladeInclude(line, pfad, nr, zeilennr, tiefe + 1);
+            continue;
+        }
+        if (!ladeIstHaupt && istHauptdateiPragma(line)) {
+            PRINT_FEHLER("Zeile %d %s: ;#MACRODATEI und ;#OPSYM gelten nur in der Hauptdatei, nicht in einer mit $INCLUDE eingebundenen Datei.", zeilennr, ladeBez);
+            is_error = 1;
+            continue;
+        }
+        verarbeiteLeitadressePragma(line, zeilennr, startGesehenGlobal);   // vor processLine: line wird dort veraendert
         int zeilenVorher = lineCountAsm;
         {
             int vorher = lineCountAsm;
             processLine(line, linesAsm, &lineCountAsm);
-            for (int k = vorher; k < lineCountAsm; k++) linesAsm[k].srcLine = zeilennr;
+            for (int k = vorher; k < lineCountAsm; k++) linesAsm[k].srcLine = nr;
         }
         if (lineCountAsm > zeilenVorher && gleichOhneGrossKlein(linesAsm[lineCountAsm - 1].sp2, "start")) {
-            startGesehen = 1;
+            startGesehenGlobal = 1;
         }
     }
-    fclose(inputFile); 
+    fclose(inputFile);
 
     if (imBlockkommentar) {
-        PRINT_FEHLER("Zeile %d der Quelldatei: Der Blockkommentar (```) wird bis zum Dateiende nicht geschlossen.", blockkommentarStart);
+        PRINT_FEHLER("Zeile %d %s: Der Blockkommentar (```) wird bis zum Dateiende nicht geschlossen.", blockkommentarStart, ladeBez);
         is_error = 1;
     }
+    return abbruch;
+}
 
+void ladeAssemblerZeilen(const char *inputFileName_p) {
+    quellDateiMerken(inputFileName_p);        // Index 0 = Hauptdatei
+    quellAbschnittNeu(1, 0, 0);
+    ladeDatei(inputFileName_p, 0, 0);
     //printAssemblerzeilenArray() ;
 }
 
@@ -400,7 +620,7 @@ int verarbeiteZeile_wdhl(char *tempLine, char *loe, char *resu, char *opcode, ch
 
         // Falls beide Werte gefunden wurden, erstelle den Ziffernstring
         if (opNum != -1 && rNum != -1) {
-            snprintf(result, 10, "%o%o", opNum, rNum);
+            snprintfGekuerzt(result, 10, "%o%o", opNum, rNum);
         } else {
             strkopiere(result, 32, "Macro gen. Op-Code Mismatch ??"); // Fehlerfall
             rc_in = -1;

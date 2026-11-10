@@ -1,0 +1,22 @@
+digraph G {
+ graph [rankdir=TB, fontname="Helvetica", labelloc=t, fontsize=16, nodesep=0.6, ranksep=0.45, forcelabels=true,
+   label="UP ztinit – alle Zusatztrommeln löschen und Spur 0 von ZT 0 anlegen (Spezifikation, ZT-Repository_Aufgabenstellung.md 6a)\nSeite 3 von 4; Nummern setzen die von Seite 2 fort"];
+ node [fontname="Helvetica", fontsize=11, style=filled, fillcolor="#ffffff", color="#333333"];
+ edge [fontname="Helvetica", fontsize=10];
+ a [shape=oval, fillcolor="#e8e8e8", label="UP ztinit (Aufruf 025)\nEin:  R1 = Adresse SPUF-00 (auf Spurgrenze, bleibt\n       unverändert)\nAus: – ; ZT 0 am Ende angewählt", xlabel=<<font color="#c00000" point-size="12"><b>34</b></font>>];
+ z1 [shape=box, label="Nullpuffer: Befehl 441 <SPUF-00>, alle 32 Zellen\n       von SPUF-00 := 0\nlaufende Spur g := 0  (g = 128 · d + s, 0 bis 511)", xlabel=<<font color="#c00000" point-size="12"><b>35</b></font>>];
+ z3 [shape=box, label="Trommel anwählen (bei jeder Spur): d = g div 128\n       (Bit 7 und 8 von g)\nAnwahlbefehl := 05100030 + d · 0100000  (5k00 030,\n       k = d + 1), ausführen", xlabel=<<font color="#c00000" point-size="12"><b>36</b></font>>];
+ z4 [shape=box, style="filled,rounded", fillcolor="#fce4d6", label="Ausgabe:  Wort := s · 2^26 + R1 + 601  (s = g mod\n       128; s um 26 Stellen\nnach links geschoben, kein Überlauf), ausführen\n       (zzz0 bbbb 601)\nSPUF-00 (lauter Nullen) → Spur s der Trommel d,\n       rund 85 ms\n(erste Ausgabe: Spur 0 von ZT 0)", xlabel=<<font color="#c00000" point-size="12"><b>37</b></font>>];
+ z5 [shape=box, label="g := g + 1", xlabel=<<font color="#c00000" point-size="12"><b>38</b></font>>];
+ d1 [shape=diamond, fillcolor="#fff2cc", label="g = 512 ?", xlabel=<<font color="#c00000" point-size="12"><b>39</b></font>>];
+ z7 [shape=box, label="SPUF-00 aufbauen (Spur 0 von ZT 0), die übrigen\n       Zellen bleiben 0:\nZelle 0 := 52525252525 (Repository-Kennzeichen)\nZelle 16 := 1 (Repository-Kopf)   Zelle 17 := 0\n       (Zähler)\nZelle 18 := 0 (letzte belegte Trommel)   Zelle 19\n       := 40 oktal (letzte belegte Spur, 32\n       dezimal)", xlabel=<<font color="#c00000" point-size="12"><b>40</b></font>>];
+ z8 [shape=box, label="Anwahl ZT 0 (030 05100 ausführen)\nAusgabebefehl := 601 + R1 · 01000  (zzz0 = 0000)", xlabel=<<font color="#c00000" point-size="12"><b>41</b></font>>];
+ z9 [shape=box, style="filled,rounded", fillcolor="#fce4d6", label="Ausgabe:  Ausgabebefehl ausführen\nSPUF-00 → Spur 0 von ZT 0 (die 513. Ausgabe)", xlabel=<<font color="#c00000" point-size="12"><b>42</b></font>>];
+ ret [shape=oval, fillcolor="#f4cccc", label="Rückkehr zum Aufrufer\n(ZT 0 angewählt, KBGB und Kanäle unverändert)", xlabel=<<font color="#c00000" point-size="12"><b>43</b></font>>];
+ a->z1->z3->z4->z5->d1;
+ d1->z3 [label=" nein: nächste Spur"];
+ d1->z7 [label=" ja (alle 512 Spuren)"];
+ z7->z8->z9->ret;
+ leg [shape=note, fillcolor="#fafafa", fontsize=9, label="g = laufende Spur (Arbeitszelle des UP, Aufgabenstellung\n6a); eine Schleife über alle 512 Spuren, kein getrennter\nTrommel- und Spurzähler. Das Löschen beginnt mit Spur 0 von\nZT 0\n(ein Abbruch hinterlässt kein halb gelöschtes Repository);\nSpur 0 wird zuletzt neu geschrieben. Das Spurfeld zzz0 = s ·\n040 entsteht durch Schieben, nicht durch Addieren\nvon 0400000000 (ab Spur 64 wäre das Wort negativ: Überlauf).\nBefehlswörter: Anwahl 5k00 030 (k = d + 1) = 05100030 + d ·\n0100000; Ausgabe zzz0 bbbb 601.\n513 Ausgaben ≈ 43,9 s; im TEST-Interpreter sind alle Zeiten\n0."];
+ a->leg [style=invis];
+}

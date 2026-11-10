@@ -1,0 +1,6 @@
+rc 0
+stderr Makro W1: $WARN n=7 und 14
+stderr Makro W1: $WARN ohne Variable 7 und 5
+nicht-stderr $V(
+datei-da obj mqo test
+escape-weg

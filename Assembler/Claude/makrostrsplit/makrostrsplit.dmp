@@ -1,0 +1,23 @@
+0000: 01 0025 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000003        dw  3     ; Laenge des Schluessels
+0002: 00 00000000052        dw  42    ; Wert als Zahl
+0003: 00 00000000001        dw  1     ; Laenge des Schluessels
+0004: 00 00000000007        dw  7     ; Wert als Zahl
+0005: 00 00000000012        dw  10    ; Laenge des Schluessels
+0006: 00 00000000173        dw  123   ; Wert als Zahl
+0007: 00 00000000002        dw  2     ; Laenge des Schluessels
+0010: 0                     dw  0     ; Wert als Zahl
+0011: 00 00000000002        dw  2     ; Anzahl der A
+0012: 00 00000000003        dw  3     ; Anzahl der A
+0013: 0                     dw  0     ; Anzahl der A
+0014: 00 00000000004        dw  4     ; Anzahl der A
+0015: 00 00000000004        dw  4     ; 4
+0016: 00 00000000002        dw  2     ; Textlaenge 2
+0017: 00 00000000052        dw  42    ; 42
+0020: 00 00000000103        dw  67    ; rueckwaerts ausgegeben
+0021: 00 00000000102        dw  66    ; rueckwaerts ausgegeben
+0022: 00 00000000101        dw  65    ; rueckwaerts ausgegeben
+0023: 00 00000000171        dw  121   ; rueckwaerts ausgegeben
+0024: 00 00000000170        dw  120   ; rueckwaerts ausgegeben
+0025: 01 0001 164    haupt: 164 0001  ; Zelle 21: Diagnoseausgabe (nur im Test)
+0026: 01 0000 020           020 0     ; Zelle 22: Halt

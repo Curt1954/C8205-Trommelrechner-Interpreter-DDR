@@ -1,0 +1,19 @@
+0000: 01 0021 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00 00000000003        dw  3     ; Minimum
+0002: 00 00000000005        dw  5     ; Maximum
+0003: 00 00000000001        dw  1     ; kleiner
+0004: 0                     dw  0     ; groesser oder gleich
+0005: 0                     dw  0     ; gleich
+0006: 00 00000000001        dw  1     ; ungleich
+0007: 00 00000000030        dw  00030 ; oktal mit vier Ziffern (Wert 8 mal 3)
+0010: 00 00000000007        dw  7     ; Minimum
+0011: 00 00000000007        dw  7     ; Maximum
+0012: 0                     dw  0     ; kleiner
+0013: 00 00000000001        dw  1     ; groesser oder gleich
+0014: 00 00000000001        dw  1     ; gleich
+0015: 0                     dw  0     ; ungleich
+0016: 00 00000000070        dw  00070 ; oktal mit vier Ziffern (Wert 8 mal 7)
+0017: 00 00000000001        dw  1     ; groesser als 2999999999 (ueber 32 Bit)
+0020: 0                     dw  0     ; nicht groesser
+0021: 01 0001 164    haupt: 164 0001  ; Zelle 0021: Diagnoseausgabe (nur im Test)
+0022: 01 0000 020           020 0     ; Zelle 0022: Halt

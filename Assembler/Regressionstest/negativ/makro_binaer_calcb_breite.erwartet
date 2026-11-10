@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_calcb_breite.asm:6: Fehler: $CALCB4(16): Ergebnis 16 braucht mehr als 4 Binärziffern
+datei-weg obj mqo test
+escape-weg

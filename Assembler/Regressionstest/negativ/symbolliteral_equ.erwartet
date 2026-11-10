@@ -1,0 +1,4 @@
+rc 16
+stderr Fehler: Symbol-Literal x ist doppelt definiert
+datei-weg obj mqo test
+escape-weg

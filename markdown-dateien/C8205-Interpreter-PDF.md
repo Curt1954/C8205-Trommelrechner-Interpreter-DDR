@@ -1,12 +1,11 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
-Version: 0.95-006
+Version: 0.95-010
 
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,
 Kodetabellen/Tabelle 1, ggf. weitere) soll ohne erneute Design-Entscheidung nach demselben Muster
-entstehen. Bei Änderungen an dieser Richtlinie: Abschnitt 9 (Änderungsprotokoll) fortschreiben, nicht
-stillschweigend überschreiben.
+entstehen.
 
 
 ## 1. Seitenformat und Ränder
@@ -280,7 +279,7 @@ Zeilen des Angabenblocks (Zone D), feste Reihenfolge; Zeilen ohne Inhalt entfall
 | RECHNER UND REGELWERK | der simulierte C 8205 selbst: Aufbau, Befehle, Kodes, Knotenautomat, Bedienpult |
 | INTERPRETER | Python-Interpreter, Tests, Lochstreifen-Hilfsprogramme |
 | ASSEMBLER | Assembler c82ass |
-| BIS | Bausteininterpretationssystem |
+| BIS | Bausteininterpretiersystem |
 
 - **Kurzbeschreibung (Zone C):** Bei PDFs, die eine Quelle im Wortlaut wiedergeben (Abschnitt 6a), genügt der Standardsatz:
   „Dieses PDF gibt die Quelle im Wortlaut wieder; Listen, Tabellen und Codeblöcke entsprechen der Quelle, weich
@@ -366,8 +365,10 @@ ergänzt, bevor das PDF erzeugt wird.
 | `C8205-Knotentabellen_A4.pdf` | Knotentabellen | Knotentabelle und Variablentabelle T2 im Wortlaut der Quellen | REFERENZ | RECHNER UND REGELWERK |
 | `C8205-Einzelbefehlsliste_A4.pdf` | Einzelbefehlsliste | Generische Befehlsbeschreibung und vollständige Übersicht der Einzelbefehle | REFERENZ | RECHNER UND REGELWERK |
 | `C8205-Kodetabellen_A4.pdf` | Kodetabellen | Zeichenkodetabelle des C 8205: R-300-Lochstreifenkode (Tabelle 1) | REFERENZ | RECHNER UND REGELWERK |
-| `C8205-BIS_A4.pdf` | Bausteininterpretationssystem | Bausteine, Kleines Eingabeprogramm (KEP) und Minimalprogramm | BESCHREIBUNG | BIS |
-| `C8205-Assemblerdokumentation_A4.pdf` | Assemblerdokumentation | Cross-Assembler c82ass: Installation, Sprachdefinition, Anweisungen, Makros und Prüfbericht | BESCHREIBUNG | ASSEMBLER |
+| `C8205-BIS_A4.pdf` | Bausteininterpretiersystem | Bausteine, Kleines Eingabeprogramm (KEP) und Minimalprogramm | BESCHREIBUNG | BIS |
+| `C8205-Assemblerdokumentation_A4.pdf` | Assemblerdokumentation | Cross-Assembler c82ass: Installation, Sprachdefinition, Anweisungen, Makros und Compilierungsbeispiel | BESCHREIBUNG | ASSEMBLER |
+| `C8205-Standardmakros_A4.pdf` | Standardmakros | Makros aus c82ass.makros nach Themen: Aufrufparameter, Wirkung und Mehrfachaufruf | REFERENZ | ASSEMBLER |
+| `C8205-ZT_Makros_A4.pdf` | ZT-Makros | Makros aus macro_zt_loader.macro: Aufrufparameter, Wirkung, Mehrfachaufruf und Spezifikationszeile | REFERENZ | ASSEMBLER |
 | `C8205-Projektstruktur_A4.pdf` | Projektstruktur | Verzeichnisse, Skripte und erzeugte Dateien des Gesamtprojekts: welcher Pfad wofür zuständig ist | RICHTLINIE | GESAMTPROJEKT |
 | `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | PDF-Gestaltungsrichtlinie | Seitenformat, Folgeseiten, Deckblatt, Farben und Kachelung aller PDF-Ausgaben | RICHTLINIE | GESAMTPROJEKT |
 | `C8205-Testuebersicht_A4.pdf` | Testübersicht | Alle Tests mit Inhalt, Geräte- und Vergleichsdateien und zugehörigem ASM-Quelltext | REFERENZ | INTERPRETER |
@@ -515,11 +516,3 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
   mit `PDF/pdf-layout-scripte/md2pdf.py`)
 - `C8205-Testuebersicht_A4.pdf` (Quelle: `Testausfuehrungen/test_tabelle.md`, von `Testausfuehrungen/test_tabelle.py` aus `Tests/` und `Assembler/` erzeugt; Tabelle nach
   Abschnitt 3a.3, erzeugt mit `Testausfuehrungen/pdf-layout-scripte/erzeuge_testuebersicht_pdf.py`, das weder `md2pdf.py` noch `pdflib` braucht; liegt in `Testausfuehrungen/`)
-
-## 9. Änderungsprotokoll
-
-Neueste Änderung zuerst. Erledigte Einträge werden gestrichen; zurzeit gibt es keine offenen Einträge.
-
-| Datum | Änderung | Abschnitt |
-|---|---|---|
-

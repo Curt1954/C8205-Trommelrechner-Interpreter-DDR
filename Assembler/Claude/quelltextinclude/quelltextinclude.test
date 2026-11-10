@@ -1,0 +1,61 @@
+Trommeldatei:
+#DOK-0001 Test fuer $INCLUDE im Quelltext: Datenteil, UP-Bibliothek und verschachteltes Include
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000017 # wert: dw 017 ; Zelle 0001: Konstante 017
+0002: 00000000000 # erg: dw 0 ; Zelle 0002: Ergebnis
+0003: 00000000001 # eins: dw 1 ; Zelle 0003: Konstante 1
+0005: 00000000003 # drei: dw 3 ; Zelle 0005: Konstante 3 aus der Variablen n
+0006: 00000001211 # haupt: 211 wert ; AC := wert (017)
+0007: 00000002240 # 240 erg ; erg := AC
+0010: 00000015025 # 025 verdopple ; UP aus teile/bibl.inc: erg := erg + erg
+0011: 00000022025 # 025 plus1 ; UP aus teile/bibl2.inc (dort eingebunden): erg := erg + 1
+0012: 00000027025 # 025 plus3 ; UP aus teile/bibl2.inc: erg := erg + drei
+0013: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0014: 00000000020 # 020 0 ; Halt
+0015: 00000004240 # verdopple: 240 rueck ; erste Zeile des UP: Rueckkehrwort sichern
+0016: 00000002211 # 211 erg ; AC := erg
+0017: 00000002210 # 210 erg ; AC := AC + erg
+0020: 00000002240 # 240 erg ; erg := AC
+0021: 00000004000 # 000 rueck ; zurueck zum Aufrufer
+0022: 00000004240 # plus1: 240 rueck ; erste Zeile des UP: Rueckkehrwort sichern
+0023: 00000002211 # 211 erg ; AC := erg
+0024: 00000003210 # 210 eins ; AC := AC + 1
+0025: 00000002240 # 240 erg ; erg := AC
+0026: 00000004000 # 000 rueck ; zurueck zum Aufrufer
+0027: 00000004240 # plus3: 240 rueck ; erste Zeile des UP: Rueckkehrwort sichern
+0030: 00000002211 # 211 erg ; AC := erg
+0031: 00000005210 # 210 drei ; AC := AC + 3
+0032: 00000002240 # 240 erg ; erg := AC
+0033: 00000004000 # 000 rueck ; zurueck zum Aufrufer
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0015 AC=00000000042 US=1
+0000: 00000006000   # 000 haupt
+0001: 00000000017   # wert
+0002: 00000000042   # erg
+0003: 00000000001   # eins
+0004: 00000013000   # rueck
+0005: 00000000003   # drei
+0006: 00000001211   # 211 wert
+0007: 00000002240   # 240 erg
+0010: 00000015025   # 025 verdopple
+0011: 00000022025   # 025 plus1
+0012: 00000027025   # 025 plus3
+0013: 00000001164   # 164 0001
+0014: 00000000020   # 020 0
+0015: 00000004240   # verdopple: 240 rueck
+0016: 00000002211   # 211 erg
+0017: 00000002210   # 210 erg
+0020: 00000002240   # 240 erg
+0021: 00000004000   # 000 rueck
+0022: 00000004240   # plus1: 240 rueck
+0023: 00000002211   # 211 erg
+0024: 00000003210   # 210 eins
+0025: 00000002240   # 240 erg
+0026: 00000004000   # 000 rueck
+0027: 00000004240   # plus3: 240 rueck
+0030: 00000002211   # 211 erg
+0031: 00000005210   # 210 drei
+0032: 00000002240   # 240 erg
+0033: 00000004000   # 000 rueck

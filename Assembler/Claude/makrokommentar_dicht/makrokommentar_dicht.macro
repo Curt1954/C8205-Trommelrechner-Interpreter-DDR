@@ -1,0 +1,4 @@
+; makrokommentar_dicht.macro - MACRO;Kommentar ohne Leerzeichen ist in einer Makrodatei eine Makrodefinition (Assemblerdokumentation 4.9, ab c82ass 1.01-031)
+MKDICHT:        MACRO;Kommentar ohne Leerzeichen
+                dw      1               ; Wort 1
+                MEND                    ; Ende von MKDICHT

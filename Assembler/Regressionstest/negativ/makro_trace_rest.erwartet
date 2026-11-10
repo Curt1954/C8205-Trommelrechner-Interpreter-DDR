@@ -1,0 +1,5 @@
+rc 16
+stderr makro_trace_rest.asm:7: Fehler: T1 $TRACE: ON oder OFF erwartet
+nicht-stderr Spur
+datei-weg obj mqo test
+escape-weg

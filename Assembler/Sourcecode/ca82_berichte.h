@@ -4,7 +4,9 @@
 #define CA82_BERICHTE_H
 
 extern int warnSym;     // 1 = Aufruf mit -WARN=SYM
+extern int warnNoSlit;  // 1 = Aufruf mit -WARN=NOSLIT (Warnung bei Symbol-Literal im Ausdruck aus, ab 1.03-006)
 extern int xrefAktiv;   // 1 = Aufruf mit --xref
+extern int makrolisteAktiv;   // 1 = Aufruf mit --makros (Makroliste und Herkunft je Aufruf im Listing)
 
 void printUsage(const char *programName);
 void greetings(void);

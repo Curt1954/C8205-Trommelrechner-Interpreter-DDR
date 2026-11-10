@@ -1,0 +1,66 @@
+Trommeldatei:
+#DOK-0001 $SET, $INC, $V (in Marke, Operation, Operand, $CALC), $IF/$ELIF/$ELSE mit def, verschachteltes $IF, $REPT mit $Z1 und Marke, $REPT 0, $WHILE, Makroaufruf nach $SET, Kommentar mit $V( bleibt Text
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000027000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000003 # a1: dw 3 ; Zelle 0001: 3
+0002: 00000000005 # a2: dw 5 ; Zelle 0002: 5
+0003: 00000000014 # a3: dw 12 ; Zelle 0003: 12 dezimal = 014 oktal
+0004: 00000000007 # m4: dw 7 ; Zelle 0004: Marke m4, Wert 7
+0005: 00000000001 # dw 1 ; Zelle 0005: 1
+0006: 00000000005 # dw 5 ; Zelle 0006: 5
+0007: 00000000006 # dw 6 ; Zelle 0007: 6
+0010: 00000000004 # dw 4 ; Zelle 0010: 4
+0011: 00000000001 # w0: dw 1 ; Zellen 0011 bis 0013: w0 = 1, w1 = 2, w2 = 3
+0012: 00000000002 # w1: dw 2 ; Zellen 0011 bis 0013: w0 = 1, w1 = 2, w2 = 3
+0013: 00000000003 # w2: dw 3 ; Zellen 0011 bis 0013: w0 = 1, w1 = 2, w2 = 3
+0014: 00000000001 # dw 1 ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+0015: 00000000004 # dw 4 ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+0016: 00000000011 # dw 9 ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+0017: 00000000020 # dw 16 ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+0020: 00000000031 # dw 25 ; Zellen 0014 bis 0020: 1, 4, 9, 16, 25 dezimal
+0021: 00000000001 # dw 1 ; Stand von z
+0022: 00000000002 # dw 2 ; Stand von z
+0023: 00000000006 # dw 6 ; Stand von z
+0024: 00000000007 # dw 7 ; Zelle 0024: 7, Kommentar mit $V(nichtda) und $CALC(1+1) bleibt Text
+0025: 00000000000 # erg: dw 0 ; Zelle 0025: Ergebnis aus Fall L (soll 3 werden)
+0026: 00000000000 # erg2: dw 0 ; Zelle 0026: zweites Ergebnis (soll 7 werden)
+0027: 00000013211 # haupt: 211 w2 ; Zelle 0027: AC := w2 = 3, Operand mit $V
+0030: 00000025240 # ausg: 240 erg ; Zelle 0030: Operation mit $V, ergibt 240 erg
+0031: 00000004211 # 211 m4 ; Zelle 0031: AC := m4 = 7, die Marke aus Fall B
+0032: 00000026240 # 240 erg2 ; Zelle 0032: erg2 := 7
+0033: 00000001164 # 164 0001 ; Zelle 0033: Diagnoseausgabe (nur im Test)
+0034: 00000000020 # 020 0 ; Zelle 0034: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0035 AC=00000000007 US=1
+0000: 00000027000   # 000 haupt
+0001: 00000000003   # Fall A: n = 3
+0002: 00000000005   # Fall A: n = 5
+0003: 00000000014   # Fall A: $CALC(6*2) = 12 dezimal = 014 oktal
+0004: 00000000007   # Fall B: Marke m4
+0005: 00000000001   # Fall C: wahr
+0006: 00000000005   # Fall D: $ELIF-Zweig
+0007: 00000000006   # Fall E: $ELSE-Zweig
+0010: 00000000004   # Fall F: verschachtelt, innen $ELSE
+0011: 00000000001   # Fall G: w0
+0012: 00000000002   # Fall G: w1
+0013: 00000000003   # Fall G: w2 (Fall H dahinter erzeugt nichts)
+0014: 00000000001   # Fall I: 1
+0015: 00000000004   # Fall I: 4
+0016: 00000000011   # Fall I: 9 dezimal = 011 oktal
+0017: 00000000020   # Fall I: 16 dezimal = 020 oktal
+0020: 00000000031   # Fall I: 25 dezimal = 031 oktal
+0021: 00000000001   # Fall J: erster Aufruf von NUM
+0022: 00000000002   # Fall J: zweiter Aufruf
+0023: 00000000006   # Fall J: Aufruf nach $SET z 6
+0024: 00000000007   # Fall K: Zeile mit $V( im Kommentar
+0025: 00000000003   # erg
+0026: 00000000007   # erg2
+0027: 00000013211   # 211 w2 (Operand aus $V)
+0030: 00000025240   # 240 erg (Operation aus $V)
+0031: 00000004211   # 211 m4
+0032: 00000026240   # 240 erg2
+0033: 00000001164   # 164 0001
+0034: 00000000020   # Halt 020 auf 0034

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_while_label.asm:6: Fehler: Adresse (3) 'inn%' ist ungültig
+datei-weg obj mqo test
+escape-weg

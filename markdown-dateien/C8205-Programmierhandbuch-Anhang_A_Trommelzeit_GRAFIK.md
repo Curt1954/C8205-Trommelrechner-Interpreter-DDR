@@ -1,6 +1,6 @@
 # C 8205 – Programmierhandbuch für Claude, Anhang A: Trommelzeit und GRAFIK-Interpreter
 
-Version: 0.01-001
+Version: 0.01-002
 
 Gehört zu `C8205-Programmierhandbuch_fuer_Claude.md` (Wurzel des Projekts). Nur lesen, wenn Geschwindigkeit zählt. Kennzeichen **[geprüft]** wie dort.
 
@@ -17,7 +17,7 @@ python3 c8205_grafik.py --ohne-fenster --STUMM --trommelzeit echt \
 ```
 
 - `--trommel` nimmt eine vollständige Trommeldatei (4096 Zeilen `aaaa: ttttttttttt`). Aus der `.test` des Assemblers erzeuge ich sie mit einem kleinen Skript (nicht die Standardtrommel überschreiben).
-- `--entwickler-tasten "H G R"` bedient das Pult, `--entwickler-k0 DATEI` legt K0-Zeichen in die Warteschlange, `--leser1`, `--leser2`, `--stanzer1` wie im TEST-Interpreter. Weitere Schalter: `--AUFZEICHNUNG`, `--WIEDERGABE` (Klickspur, wirken nur mit Pult-Fenster), `--DEBUGLOG`, `--pult-protokoll`, `--netz-schnell`.
+- `--entwickler-tasten "H G R"` bedient das Pult (mit `--ohne-fenster` ohne Fenster, wie hier; ohne diesen Schalter öffnet sich seit G4-026 das Pult-Fenster, und die Tasten folgen nach dem Hochlauf), `--entwickler-k0 DATEI` legt K0-Zeichen in die Warteschlange, `--leser1`, `--leser2`, `--stanzer1` wie im TEST-Interpreter. Weitere Schalter: `--AUFZEICHNUNG`, `--WIEDERGABE` (Klickspur, wirken nur mit Pult-Fenster), `--DEBUGLOG`, `--pult-protokoll`, `--netz-schnell`.
 - `--trommelzeit`: `schnell` = virtuelle Zeit ohne Warten, `echt` = virtuelle Zeit mit Wortzeit 104 µs je Phase und Echtzeit-Anpassung, `alt` = Wartezeiten nach der Wanduhr (Standard). Alle drei sind wählbare Zeitmodelle (`markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md`, „Zeitmodelle und Zähler der Trommelstatistik“).
 - Die Endzeile entspricht der des TEST-Interpreters. Danach folgt eine Trommelstatistik; die Bedeutung der Zähler steht in derselben GRAFIK-Beschreibung (Abschnitt „Zeitmodelle und Zähler der Trommelstatistik“). Beim Summenprogramm (Handbuch, Abschnitt 5.2) ergab `echt` 1549 Takte, davon `wartezeit_summe_ticks_aufrufer` 1358 **[geprüft]** (die Werte streuen leicht von Lauf zu Lauf).
 - Der Lauf prüft **nichts** selbst (keine `Prüfungen:`). Ergebniszellen lese ich danach aus der Trommeldatei.

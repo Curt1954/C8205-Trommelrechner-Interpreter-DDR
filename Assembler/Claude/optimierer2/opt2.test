@@ -1,0 +1,19 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000005211 # haupt 211 l0001 ; Zelle 0001: AC := 5 (Literal, wandert nach 0005)
+0002: 00000041240 # 240 erg+0 ; Zelle 0002: (erg) := AC; Marke im Ausdruck, daher bleibt erg an seinem Platz
+0003: 00000001164 # 164 0001 ; Zelle 0003: Diagnoseausgabe (nur im Test)
+0004: 00000000020 # 020 0 ; Zelle 0004: Halt
+0005: 00000000005 # l0001 dw 5
+0040: 00000000003 # dw 3 ; Zelle 0040: Fueller
+0041: 00000000000 # erg: dw 0 ; Zelle 0041: nicht verlegt (Regel c)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0005 AC=00000000005 US=1
+0005: 00000000005   # Literal
+0041: 00000000005   # erg

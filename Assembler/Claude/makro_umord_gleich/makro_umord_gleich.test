@@ -1,0 +1,17 @@
+Trommeldatei:
+#TROMMEL=LEER
+#DOK-0001 Gleichstand der Endadresse: Umordnung verworfen, Reihenfolge der Aufrufe bleibt (M4B vor M4A)
+0000: 00000001000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000020 # haupt: 020 0 ; Zelle 0001: Halt (die UP werden nicht aufgerufen, nur erzeugt)
+0002: 00000000711 # dw 0711 ; erste Rumpfzelle (Marke fuer den Test)
+0005: 00000000712 # dw 0712 ; letzte Rumpfzelle (Marke fuer den Test)
+0006: 00000000701 # dw 0701 ; erste Rumpfzelle (Marke fuer den Test)
+0013: 00000000702 # dw 0702 ; letzte Rumpfzelle (Marke fuer den Test)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0002
+0002: 00000000711   # M4B, erste Zelle: bleibt vorn
+0005: 00000000712   # M4B, letzte Zelle
+0006: 00000000701   # M4A, erste Zelle
+0013: 00000000702   # M4A, letzte Zelle

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_binaer_valb_ohne_anfuehrung.asm:6: Fehler: M1 $VALB n: Argument 1 muss ein Text in Anführungszeichen sein ("..." oder '...'), steht aber: 101
+datei-weg obj mqo test
+escape-weg

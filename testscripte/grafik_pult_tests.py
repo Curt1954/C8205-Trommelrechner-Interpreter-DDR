@@ -960,6 +960,32 @@ class EImEingabeHaltAbgebrochen(unittest.TestCase):
         self.assertFalse(r.laeuft); self.assertFalse(r.m.k0.annehmen('T', '1'))
         self.assertEqual(list(r.m.k0._q['T']), [])
 
+    # G4-016 (26.10.2026): H im Eingabe-Halt des R-Laufs, dann E-Schritte, dann wieder R. Der von H abgebrochene Eingabebefehl (r.wiederaufnahme)
+    # blieb stehen; R setzte dort fort statt beim durch E aufgestellten BR, die Befehle liefen nicht mehr los.
+    def _h_im_r_lauf_dann_e(self):
+        r = self.r
+        r.pult_taste('G'); time.sleep(0.1); r.pult_taste('R')
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T'), 5), 'R-Lauf erreicht den Eingabe-Halt nicht')
+        r.pult_taste('H')
+        self.assertTrue(self._warte(lambda: not r.m.k0.erwartet('T')))
+        time.sleep(0.2)
+        self.assertIsNotNone(r.wiederaufnahme)                      # der halbe Eingabebefehl liegt fuer R bereit
+        r.pult_taste('E')
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T')), 'E nach H wirkt nicht')
+        self.assertTrue(r.m.k0.annehmen('T', '1'))
+        self.assertTrue(self._warte(lambda: not r.m.k0.erwartet('T') and not r._schritt and r.m.AC == 0o40000000000))
+
+    def test_r_nach_h_und_e_beginnt_beim_aufgestellten_br(self):
+        self._h_im_r_lauf_dann_e(); r = self.r
+        self.assertEqual(r.m.BZ, 0o32)                              # nach dem Zeichen: Befehl 0032 als naechster aufgestellt
+        r.pult_taste('R')
+        self.assertTrue(self._warte(lambda: r.laeuft), 'R startet den Lauf nicht')
+        self.assertIsNone(r.wiederaufnahme)                         # der alte Eingabeknoten ist verbraucht
+        self.assertTrue(self._warte(lambda: r.m.k0.erwartet('T')), 'der Lauf erreicht den naechsten Eingabebefehl nicht')
+        # Neu: R fuehrt BR 0032 aus, das KEP springt zurueck und liest das naechste Zeichen (BZ 0031, AC 1 = Zeichen 1 als Wert).
+        # Alt: R setzte im alten Eingabeknoten fort (BZ blieb 0032, AC 40000000000), die Befehle liefen nicht los.
+        self.assertEqual((r.m.BZ, r.m.AC), (0o31, 1))
+
 
 class DebugLog(unittest.TestCase):
     """--DEBUGLOG: Protokolldatei mit Klicks, Tokens und Rechnerzustand; ohne Start wirkungslos."""
@@ -1447,6 +1473,66 @@ class Op47Buchstaben(unittest.TestCase):
                 if vorher == 'E': s.tastatur('E', 1.0, umschalt=True)
                 erwartet = s.taste_klickbar(z); r.tokens.clear()
                 self.assertEqual(s.tastatur(z, 2.0), erwartet, (z, vorher))
+
+
+class PultTastenTon(unittest.TestCase):
+    """G2-015: Tastengeraeusche des Pults (art 'impuls', 'einrast', 'radio'); nur bei wirksamem Klick, nie beim Loslassen."""
+    def neu(self):
+        self.ev = []
+        s, r = betrieb(taste_ton=self.ev.append)
+        return s, r
+    def test_wippe_hr_und_t_sw_radio(self):
+        s, r = self.neu()
+        self.assertTrue(s.klick('R', 1.0)); self.assertEqual(self.ev, ['radio'])
+        self.assertTrue(s.klick('H', 2.0)); self.assertEqual(self.ev, ['radio', 'radio'])
+        self.ev.clear(); self.assertTrue(s.klick('SW', 3.0)); self.assertTrue(s.klick('T', 4.0)); self.assertEqual(self.ev, ['radio', 'radio'])
+    def test_einrastschalter_und_kanaltasten_einrast_beim_einrasten_und_loesen(self):
+        s, r = self.neu()
+        for t in ('SP', 'SP', 'BS', 'LS', 'LS', 'SW_umschalt'):
+            self.assertTrue(s.klick(t, 1.0), t)
+        self.assertEqual(self.ev, ['einrast'] * 6)
+        self.ev.clear(); self.assertTrue(s.klick('K1', 2.0)); self.assertTrue(s.klick('K0', 3.0)); self.assertEqual(self.ev, ['einrast', 'einrast'])
+    def test_impulstasten_impuls(self):
+        s, r = self.neu(); r.m.k0.erw = True
+        for t in ('G', 'UE', 'ST', '5', 'PLUS', 'B'):
+            self.assertTrue(s.klick(t, 1.0), t)
+        self.assertEqual(self.ev, ['impuls'] * 6)
+    def test_e_und_m_klick_ein_ton_beim_druecken_keiner_beim_loslassen(self):
+        s, r = self.neu()
+        self.assertTrue(s.klick('E', 1.0)); self.assertEqual(self.ev, ['impuls'])
+        self.assertTrue(s.loslassen('E', 1.1)); self.assertEqual(self.ev, ['impuls'])            # kein Loslass-Ton
+        self.assertTrue(s.klick('M', 2.0)); self.assertTrue(s.loslassen('M', 2.1)); self.assertEqual(self.ev, ['impuls', 'impuls'])
+    def test_halter_umschalt_klick_je_ein_ton_loslassen_der_maus_stumm(self):
+        s, r = self.neu()
+        self.assertTrue(s.klick('E', 1.0, umschalt=True)); self.assertEqual(self.ev, ['impuls'])
+        self.assertFalse(s.loslassen('E', 1.1)); self.assertEqual(self.ev, ['impuls'])
+        self.assertTrue(s.klick('E', 2.0, umschalt=True)); self.assertEqual(self.ev, ['impuls', 'impuls'])        # Halter loesen = ein Tastendruck
+    def test_wirkungslose_klicks_stumm_M25(self):
+        s, r = self.neu()
+        self.assertFalse(s.klick('H', 1.0))                          # H rastet schon
+        self.assertFalse(s.klick('5', 2.0))                          # Eingabetaste ohne erwarteten Eingabe-Halt
+        s.klick('R', 3.0); self.ev.clear()
+        for t in ('E', 'M', 'G', 'UE', 'T', 'SW'):                   # Rollensperre bei R
+            self.assertFalse(s.klick(t, 4.0), t)
+        self.assertFalse(s.klick('R', 5.0))                          # R rastet schon
+        self.assertEqual(self.ev, [])
+        s.klick('H', 6.0); s.klick('E', 7.0, umschalt=True); self.ev.clear()
+        self.assertFalse(s.klick('R', 8.0)); self.assertFalse(s.klick('E', 9.0)); self.assertEqual(self.ev, [])   # R bei gehaltenem E, E schon gehalten
+    def test_nicht_im_betrieb_stumm_netzschalter_ohne_klick_ton(self):
+        ev = []; r = FakeRechner(); s = PultSteuerung(PULT, r, hochlauf_s=10, auslauf_s=2, taste_ton=ev.append)
+        for t in ('H', 'R', 'E', 'K1', 'G', 'SP'): self.assertFalse(s.klick(t, 0), t)
+        s.netz_klick(1.0); self.assertFalse(s.klick('SP', 2.0)); s.tick(11.0); s.netz_klick(12.0); self.assertFalse(s.klick('SP', 13.0))
+        self.assertEqual(ev, [])
+    def test_tastatur_loest_denselben_ton_aus(self):
+        s, r = self.neu()
+        self.assertTrue(s.tastatur('r', 1.0)); self.assertEqual(self.ev, ['radio'])
+        self.assertTrue(s.tastatur('H', 2.0)); self.assertEqual(self.ev, ['radio', 'radio'])
+    def test_fehler_im_ton_verhindert_die_taste_nicht(self):
+        def kaputt(art): raise RuntimeError('Ton kaputt')
+        s, r = betrieb(taste_ton=kaputt)
+        self.assertTrue(s.klick('R', 1.0)); self.assertIn('R', r.tokens)
+    def test_ohne_taste_ton_wie_bisher(self):
+        s, r = betrieb(); self.assertIsNone(s.taste_ton); self.assertTrue(s.klick('R', 1.0))
 
 if __name__ == '__main__':
     unittest.main(verbosity=1)

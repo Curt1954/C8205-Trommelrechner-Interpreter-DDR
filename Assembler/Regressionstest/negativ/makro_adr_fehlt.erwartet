@@ -1,0 +1,5 @@
+rc 16
+stderr makro_adr_fehlt.asm:6: Fehler: $CALC(adr(gibtsnicht)): adr(gibtsnicht): die Marke "gibtsnicht" kommt nach Pass 2 nicht in der Symboltabelle vor
+stdout Adressen fuer adr/abstand: 2 Probelaeufe, 1 Marken.
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

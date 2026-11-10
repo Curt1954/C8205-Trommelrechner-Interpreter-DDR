@@ -1,0 +1,13 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+erg:    dw      0       ; Zelle 0001: Ergebnis
+        equ40   00040       ; Zaehler 0002 -> 0040, Luecke 0002 bis 0037
+haupt:  211     l0001   ; Zelle 0040: AC := 5
+        240     hilf    ; Zelle 0041: (hilf) := 5
+        211     l0002   ; Zelle 0042: AC := 7
+        210     hilf    ; Zelle 0043: AC := AC + (hilf) = 12 (dezimal) = 014 oktal
+        240     erg     ; Zelle 0044: (erg) := AC
+        164     0001    ; Zelle 0045: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0046: Halt
+l0001   dw      5       
+hilf    dbn     1       
+l0002   dw      7       

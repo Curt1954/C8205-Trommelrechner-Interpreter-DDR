@@ -1,0 +1,23 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000010000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00001170030 # t1: dtm \12\ ; Zellen 0001 bis 0003: Umschaltzeichen KB, Ziffer 1, Ziffer 2
+0002: 00000010030
+0003: 00000020030
+0004: 00000000005 # l0001 dw 5
+0010: 00000004211 # haupt 211 l0001 ; Zelle 0010: AC := Literal 5 (Zelle 0004)
+0011: 00000013240 # 240 erg ; Zelle 0011: (erg) := AC
+0012: 00000000020 # 020 0 ; Zelle 0012: Halt
+0013: 00000000000 # erg: dw 0 ; Zelle 0013: Ergebnis
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0013 AC=00000000005 US=1
+0001: 00001170030   # dtm: Umschaltzeichen KB
+0002: 00000010030   # dtm: Ziffer 1
+0003: 00000020030   # dtm: Ziffer 2
+0004: 00000000005   # Literal 5 in der Luecke
+0013: 00000000005   # erg

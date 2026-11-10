@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zellen_leerraum.asm:6: Fehler: $CALC(zellen(a, b)): zellen(von,bis): Hinter dem Komma darf kein Leerraum stehen (zellen(a,b), nicht zellen(a, b)) (bei "zellen(a, b)")
+datei-weg obj mqo test
+escape-weg

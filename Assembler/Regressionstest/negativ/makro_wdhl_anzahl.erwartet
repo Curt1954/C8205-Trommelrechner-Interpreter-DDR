@@ -1,0 +1,4 @@
+rc 16
+stderr makro_wdhl_anzahl.asm:5: Fehler: WDA !$wdhl erwartet fünf Operanden (Löschen Resultat Operation Anzahl Adresse), nicht 4
+datei-weg obj mqo test
+escape-weg

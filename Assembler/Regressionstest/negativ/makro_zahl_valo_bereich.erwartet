@@ -1,0 +1,4 @@
+rc 16
+stderr makro_zahl_valo_bereich.asm:6: Fehler: M1 $VALO n: Die Zahl 1000000000000000000000 liegt außerhalb des Zahlenbereichs
+datei-weg obj mqo test
+escape-weg

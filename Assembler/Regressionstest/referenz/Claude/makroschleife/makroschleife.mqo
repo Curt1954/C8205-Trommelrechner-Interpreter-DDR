@@ -1,0 +1,60 @@
+              000           haupt         ; Zelle 0000: Sprung zum Hauptprogramm
+              dw            0             ; Wort 0: Zaehler mal Schrittweite
+              dw            3             ; Wort 1: Zaehler mal Schrittweite
+              dw            6             ; Wort 2: Zaehler mal Schrittweite
+              dw            9             ; Wort 3: Zaehler mal Schrittweite
+              dw            12            ; Wort 4: Zaehler mal Schrittweite
+              dw            15            ; Wort 5: Zaehler mal Schrittweite
+              dw            18            ; Wort 6: Zaehler mal Schrittweite
+              dw            21            ; Wort 7: Zaehler mal Schrittweite
+              dw            0             ; Zeile 0, Spalte 0
+              dw            1             ; Zeile 0, Spalte 1
+              dw            10            ; Zeile 1, Spalte 0
+              dw            11            ; Zeile 1, Spalte 1
+              dw            20            ; Zeile 2, Spalte 0
+              dw            21            ; Zeile 2, Spalte 1
+              dw            1             ; beide positiv
+              dw            2             ; nur der erste positiv
+              dw            3             ; nur der zweite positiv
+              dw            4             ; keiner positiv
+              dw            100           ; null
+              dw            101           ; eins
+              dw            102           ; sonst
+              dw            0             ; gerader Zaehler
+              dw            101           ; ungerader Zaehler plus 100
+              dw            2             ; gerader Zaehler
+              dw            103           ; ungerader Zaehler plus 100
+              dw            4             ; gerader Zaehler
+              dw            1             ; Bedingung erfuellt
+              dw            0             ; Bedingung nicht erfuellt
+              dw            1             ; Bedingung erfuellt
+              dw            0             ; Bedingung nicht erfuellt
+              dw            1             ; Wert 1 bis 6
+              dw            0             ; anderer Wert
+              dw            0             ; gleich null
+              dw            1             ; ungleich null
+w0:           dw            7             ; Label w0 mit dem Wert 7 plus Zaehler
+w1:           dw            8             ; Label w1 mit dem Wert 7 plus Zaehler
+w2:           dw            9             ; Label w2 mit dem Wert 7 plus Zaehler
+eins:         dw            1             ; Zelle 0046: Konstante 1
+erg1:         dw            0             ; Zelle 0047: Ergebnis der Code-Schleife
+erg2:         dw            0             ; Zelle 0050: Ergebnis mit den Labels w1 und w2
+erg3:         dw            0             ; Zelle 0051: Ergebnis der Schleife mit Labels
+haupt:        211           eins          ; AC := 1
+              210           eins          ; AC := AC + 1 (Durchlauf 0)
+              210           eins          ; AC := AC + 1 (Durchlauf 1)
+              210           eins          ; AC := AC + 1 (Durchlauf 2)
+              240           erg1          ; Ergebnis ablegen
+              211           w1            ; AC := 8 (Label aus der Schleife)
+              210           w2            ; AC := 8 + 9 = 17
+              240           erg2          ; Ergebnis ablegen
+              211           eins          ; AC := 1
+              000           ML0001LSZ_0   ; Sprung zur naechsten Zelle (Durchlauf 0)
+ML0001LSZ_0:  210           eins          ; AC := AC + 1
+              000           ML0001LSZ_1   ; Sprung zur naechsten Zelle (Durchlauf 1)
+ML0001LSZ_1:  210           eins          ; AC := AC + 1
+              000           ML0001LSZ_2   ; Sprung zur naechsten Zelle (Durchlauf 2)
+ML0001LSZ_2:  210           eins          ; AC := AC + 1
+              240           erg3          ; Ergebnis ablegen
+              164           0001          ; Diagnoseausgabe (nur im Test)
+              020           0             ; Halt

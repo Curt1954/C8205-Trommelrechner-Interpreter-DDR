@@ -1,0 +1,8 @@
+rc 16
+stderr Die Adressen fuer adr/abstand konvergieren nach 8 Probelaeufen nicht: Marke "ende": Adresse 0007 im vorigen Probelauf, 0006 im letzten
+stderr Verlauf der Adressen fuer adr/abstand (Probelauf 1 bis 8)
+stderr Marke "ende": 0007 0006 0007 0006 0007 0006 0007 0006
+stderr Die Tabelle von Probelauf 8 gleicht der von Probelauf 6: die Adressen wiederholen sich im Zyklus der Laenge 2.
+stderr Abbruch.
+datei-weg obj mqo test sym log dmp adr1 adr2 adrlog
+escape-weg

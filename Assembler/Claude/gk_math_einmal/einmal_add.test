@@ -1,0 +1,161 @@
+Trommeldatei:
+#DOK-0001
+#SPEI-0001 0000-0000
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000007000 # 000 haupt ; Zelle 0000: Sprung ueber die Daten zum Hauptprogramm
+0001: 21300000000 # wa: dw 021300000000 ; Zelle 0001: a = 3
+0002: 21200000000 # wb: dw 021200000000 ; Zelle 0002: b = 2
+0003: 00000000000 # res_add: dw 0 ; Ergebnis add
+0004: 00000000000 # res_sub: dw 0 ; Ergebnis sub
+0005: 00000000000 # res_mul: dw 0 ; Ergebnis mul
+0006: 00000000000 # res_div: dw 0 ; Ergebnis div
+0007: 00000001211 # haupt: 211 wa ; AC := a
+0010: 00007773240 # 240 r1 ; R1 := a
+0011: 00000002211 # 211 wb ; AC := b
+0012: 00007776240 # 240 r2 ; R2 := b
+0013: 00000021025 # 025 gk_add ; Aufruf gk_add, Ergebnis im AC
+0014: 00000003240 # 240 res_add ; Ergebnis ablegen
+0015: 00000000020 # 020 0 ; Halt
+0021: 00000204240 # gk_add: 240 gkm_rueck ; Eintritt: Rueckkehrwort sichern
+0022: 00007773211 # 211 gkm_r1 ; R1
+0023: 00000217240 # 240 gkm_xa ; Operand a
+0024: 00007776211 # 211 gkm_r2 ; R2
+0025: 00000220240 # 240 gkm_xb ; Operand b
+0026: 00000220311 # gkm_ad: 311 gkm_xb ; AC := b, V3 bei b = 0
+0027: 00000166170 # 170 gkm_ad_b0 ; b = 0: Ergebnis a
+0030: 00000217311 # 311 gkm_xa ; AC := a, V3 bei a = 0
+0031: 00000170170 # 170 gkm_ad_a0 ; a = 0: Ergebnis b
+0032: 00000217211 # 211 gkm_xa ; |a|
+0033: 00000227200 # 200 l0001 ; z0 loeschen
+0034: 00000221240 # 240 gkm_t ; |a| merken
+0035: 00000220211 # 211 gkm_xb ; |b|
+0036: 00000227200 # 200 l0001 ; z0 loeschen
+0037: 00000221330 # 330 gkm_t ; |b| mit |a| vergleichen
+0040: 00000047140 # 140 gkm_ad_ok ; |b| <= |a|: kein Tausch
+0041: 00000217211 # 211 gkm_xa ; Tausch: a ...
+0042: 00000221240 # 240 gkm_t ; ... merken
+0043: 00000220211 # 211 gkm_xb ; b ...
+0044: 00000217240 # 240 gkm_xa ; ... nach a
+0045: 00000221211 # 211 gkm_t ; altes a ...
+0046: 00000220240 # 240 gkm_xb ; ... nach b
+0047: 00000217211 # gkm_ad_ok: 211 gkm_xa ; |a|
+0050: 00000227200 # 200 l0001 ; z0 loeschen
+0051: 00007656642 # 642 07656 ; 26 rechts: Exponent ea (e + 32)
+0052: 00000222240 # 240 gkm_ee ; Ergebnisexponent := ea
+0053: 00000220211 # 211 gkm_xb ; |b|
+0054: 00000227200 # 200 l0001 ; z0 loeschen
+0055: 00007656642 # 642 07656 ; 26 rechts: Exponent eb
+0056: 00000221240 # 240 gkm_t ; eb merken
+0057: 00000222211 # 211 gkm_ee ; ea
+0060: 00000221220 # 220 gkm_t ; ea - eb = d (Schiebeweite)
+0061: 00000225240 # 240 gkm_cn ; Zaehler d
+0062: 00000217211 # 211 gkm_xa ; a
+0063: 00000230200 # 200 l0002 ; Mantisse Ma (26 Bit)
+0064: 00007677644 # 644 07677 ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+0065: 00000226240 # 240 gkm_r ; r := Ma << 5
+0066: 00000220211 # 211 gkm_xb ; b
+0067: 00000230200 # 200 l0002 ; Mantisse Mb
+0070: 00007677644 # 644 07677 ; 5 mal Linksverschiebung (Operand nach Festlegung 026)
+0071: 00000016240 # 240 gkm_br ; br := Mb << 5
+0072: 00000017241 # 241 gkm_st ; Klebebit-Summe := 0
+0073: 00000225311 # gkm_ad_sl: 311 gkm_cn ; AC := d, V3 bei d = 0
+0074: 00000110170 # 170 gkm_ad_sx ; fertig geschoben
+0075: 00000016211 # 211 gkm_br ; br
+0076: 00000231200 # 200 l0003 ; Bit 0 (geht verloren)
+0077: 00000017210 # 210 gkm_st ; zur Summe
+0100: 00000017240 # 240 gkm_st ; merken
+0101: 00000016211 # 211 gkm_br ; br
+0102: 00000232212 # 212 l0004 ; 1 rechts
+0103: 00000016240 # 240 gkm_br ; merken
+0104: 00000225211 # 211 gkm_cn ; d
+0105: 00000231220 # 220 l0003 ; - 1
+0106: 00000225240 # 240 gkm_cn ; merken
+0107: 00000073000 # 000 gkm_ad_sl ; weiter
+0110: 00000017311 # gkm_ad_sx: 311 gkm_st ; AC := Summe, V3 bei 0
+0111: 00000116170 # 170 gkm_ad_vz ; nichts verloren: ohne Klebebit
+0112: 00000016211 # 211 gkm_br ; br
+0113: 00000233200 # 200 l0005 ; Bit 0 loeschen
+0114: 00000231210 # 210 l0003 ; Klebebit setzen
+0115: 00000016240 # 240 gkm_br ; merken
+0116: 00000217211 # gkm_ad_vz: 211 gkm_xa ; Vorzeichen a
+0117: 00000123040 # 040 gkm_ad_xn ; negativ
+0120: 00000220211 # 211 gkm_xb ; a >= 0: Vorzeichen b
+0121: 00000125040 # 040 gkm_ad_df ; negativ: verschieden
+0122: 00000130000 # 000 gkm_ad_gl ; gleich
+0123: 00000220211 # gkm_ad_xn: 211 gkm_xb ; a < 0: Vorzeichen b
+0124: 00000130040 # 040 gkm_ad_gl ; auch negativ: gleich
+0125: 00000226211 # gkm_ad_df: 211 gkm_r ; verschieden: r - br
+0126: 00000016220 # 220 gkm_br ; ... subtrahieren
+0127: 00000132000 # 000 gkm_ad_nz ; weiter
+0130: 00000226211 # gkm_ad_gl: 211 gkm_r ; gleich: r + br
+0131: 00000016210 # 210 gkm_br ; ... addieren
+0132: 00000020240 # gkm_ad_nz: 240 gkm_rr ; R merken
+0133: 00000020311 # 311 gkm_rr ; AC := R, V3 bei 0
+0134: 00000213170 # 170 gkm_null ; R = 0: Ergebnis 0
+0135: 00000234330 # 330 l0006 ; R mit 2^31 vergleichen
+0136: 00000150150 # 150 gkm_ad_rr ; R >= 2^31: 1 rechts
+0137: 00000020211 # gkm_ad_nl: 211 gkm_rr ; R
+0140: 00000235330 # 330 l0007 ; mit 2^30 vergleichen
+0141: 00000156150 # 150 gkm_ad_nm ; R >= 2^30: normiert
+0142: 00000020210 # 210 gkm_rr ; R := 2 R
+0143: 00000020240 # 240 gkm_rr ; merken
+0144: 00000222211 # 211 gkm_ee ; Exponent
+0145: 00000231220 # 220 l0003 ; - 1
+0146: 00000222240 # 240 gkm_ee ; merken
+0147: 00000137000 # 000 gkm_ad_nl ; weiter normieren
+0150: 00000020211 # gkm_ad_rr: 211 gkm_rr ; R
+0151: 00000232212 # 212 l0004 ; 1 rechts
+0152: 00000020240 # 240 gkm_rr ; merken
+0153: 00000222211 # 211 gkm_ee ; Exponent
+0154: 00000231210 # 210 l0003 ; + 1
+0155: 00000222240 # 240 gkm_ee ; merken
+0156: 00000020211 # gkm_ad_nm: 211 gkm_rr ; R
+0157: 00000236210 # 210 l0008 ; + 16 (Rundung)
+0160: 00007677642 # 642 07677 ; 5 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0161: 00000224240 # 240 gkm_m ; m merken
+0162: 00000217211 # 211 gkm_xa ; a
+0163: 00000237200 # 200 l0009 ; Vorzeichen
+0164: 00000223240 # 240 gkm_sg ; sg merken
+0165: 00000172000 # 000 gkm_pk ; Packen
+0166: 00000217211 # gkm_ad_b0: 211 gkm_xa ; b = 0: Ergebnis a
+0167: 00000204000 # 000 gkm_rueck ; zurueck
+0170: 00000220211 # gkm_ad_a0: 211 gkm_xb ; a = 0: Ergebnis b
+0171: 00000204000 # 000 gkm_rueck ; zurueck
+0172: 00000224211 # gkm_pk: 211 gkm_m ; Mantisse
+0173: 00000240330 # 330 l0010 ; mit 2^26 vergleichen
+0174: 00000205170 # 170 gkm_pk_ue ; = 2^26: auf 2^25 und Exponent + 1
+0175: 00000222211 # gkm_pk_1: 211 gkm_ee ; Exponent
+0176: 00000213040 # 040 gkm_null ; < 0: Unterlauf, Ergebnis 0 (Annahme A8)
+0177: 00000241330 # 330 l0011 ; mit 64 vergleichen
+0200: 00000214150 # 150 gkm_fue ; >= 64: Ueberlauf (Annahme A9)
+0201: 00007656644 # 644 07656 ; 26 mal Linksverschiebung (Operand nach Festlegung 026)
+0202: 00000224210 # 210 gkm_m ; + Mantisse
+0203: 00000223210 # 210 gkm_sg ; + Vorzeichen
+0205: 00000242211 # gkm_pk_ue: 211 l0012 ; 2^25
+0206: 00000224240 # 240 gkm_m ; Mantisse := 2^25
+0207: 00000222211 # 211 gkm_ee ; Exponent
+0210: 00000231210 # 210 l0003 ; + 1
+0211: 00000222240 # 240 gkm_ee ; merken
+0212: 00000175000 # 000 gkm_pk_1 ; weiter
+0213: 00000204001 # gkm_null: 001 gkm_rueck ; Ergebnis 0: AC loeschen, zurueck
+0214: 00000227211 # gkm_fue: 211 l0001 ; kuenstlicher Ueberlauf: 2^32 - 1
+0215: 00000231210 # 210 l0003 ; + 1: Ueberlauf (FUE), Halt beim naechsten Befehl
+0216: 00000204000 # 000 gkm_rueck ; (nie erreicht)
+0227: 37777777777 # l0001 dw 037777777777
+0230: 00377777777 # l0002 dw 000377777777
+0231: 00000000001 # l0003 dw 1
+0232: 00000000000 # l0004 dw 000000000000
+0233: 37777777776 # l0005 dw 037777777776
+0234: 20000000000 # l0006 dw 020000000000
+0235: 10000000000 # l0007 dw 010000000000
+0236: 00000000020 # l0008 dw 000000000020
+0237: 40000000000 # l0009 dw 040000000000
+0240: 00400000000 # l0010 dw 000400000000
+0241: 00000000100 # l0011 dw 64
+0242: 00200000000 # l0012 dw 000200000000
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0016 US=1
+0003: 21640000000   # add

@@ -1,0 +1,81 @@
+Trommeldatei:
+#DOK-0001 Test Rechenausdruecke im Text: Oktaltext aus Variable, Parameter, gemischt, Textargumente der Zeichenkettenfunktionen, Feldelement, lokale Variable, Marken mit Oktalnummer
+#PROT STUFE=2
+#TROMMEL=LEER
+0000: 00000044000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000007 # z007: dw 7 ; Marke z007, z010, z011
+0002: 00000000010 # z010: dw 8 ; Marke z007, z010, z011
+0003: 00000000011 # z011: dw 9 ; Marke z007, z010, z011
+0004: 00000000003 # dw 3 ; 3 Zeichen
+0005: 00000000000 # dw 0 ; gleich: 0
+0006: 00000000002 # dw 2 ; 2 Zeichen
+0007: 00000000020 # dw 16 ; 16
+0010: 00000000007 # dw 7 ; 1 + 5 + 1 = 7 Zeichen
+0011: 00000000003 # dw 3 ; 3 Zeichen
+0012: 00000000000 # dw 0 ; gleich: 0
+0013: 00000000001 # dw 1 ; 1 Zeichen
+0014: 00000000007 # dw 7 ; 7
+0015: 00000000023 # dw 19 ; 19
+0016: 00000000002 # dw 2 ; 2 Zeichen
+0017: 00000000004 # dw 4 ; 4 Zeichen
+0020: 00000000000 # dw 0 ; gleich: 0
+0021: 00000000003 # dw 3 ; 3 Zeichen
+0022: 00000000125 # dw 85 ; -15 + 100 = 85
+0023: 00000000000 # dw 0 ; 017 gleich 017: 0
+0024: 00000000001 # dw 1 ; 020 gegen 017: 1
+0025: 00000000002 # dw 2 ; 2 Zeichen
+0026: 00000000021 # dw 17 ; dezimal gelesen: 17
+0027: 00000000017 # dw 15 ; oktal gelesen: 15
+0030: 00000000003 # dw 3 ; die 7 steht an Position 3
+0031: 00000000000 # dw 0 ; gleich: 0
+0032: 00000000000 # dw 0 ; gleich: 0
+0033: 00000000067 # dw 55 ; 55
+0034: 00000000003 # dw 3 ; 3 Zeichen
+0035: 00000000017 # dw 15 ; 15
+0036: 00000000002 # dw 2 ; 2 Zeichen
+0037: 00000000022 # dw 18 ; 18
+0040: 00000000003 # dw 3 ; 3 Zeichen
+0041: 00000000036 # dw 30 ; 30
+0042: 00000000001 # dw z010-z007 ; Zelle 34: Marken aus TAB3 liegen eine Zelle auseinander
+0043: 00000000002 # dw z011-z007 ; Zelle 35: und zwei Zellen
+0044: 00000001164 # haupt: 164 0001 ; Zelle 36: Diagnoseausgabe (nur im Test)
+0045: 00000000020 # 020 0 ; Zelle 37: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0046 US=1
+0001: 00000000007   # TAB3: Wort 7 (Marke z007)
+0002: 00000000010   # TAB3: Wort 8 (Marke z010)
+0003: 00000000011   # TAB3: Wort 9 (Marke z011)
+0004: 00000000003   # TXTSET: 017 hat 3 Zeichen
+0005: 00000000000   # TXTSET: Text gleich 017
+0006: 00000000002   # TXTSET: 16 hat 2 Zeichen
+0007: 00000000020   # TXTSET: 16
+0010: 00000000007   # TXTSET: x00017y hat 7 Zeichen
+0011: 00000000003   # TXTSET: 027 aus Parameter und Variable hat 3 Zeichen
+0012: 00000000000   # TXTSET: Text gleich 027
+0013: 00000000001   # TXTSET: Parameter $CALC(2+5) ergibt 1 Zeichen
+0014: 00000000007   # TXTSET: Parameter $CALC(2+5) ergibt 7
+0015: 00000000023   # TXTSET: Variable plus Parameter 15 + 4
+0016: 00000000002   # TXTSET: 19 hat 2 Zeichen
+0017: 00000000004   # TXTSET: ab15 ohne $CALC hat 4 Zeichen
+0020: 00000000000   # TXTSET: Text gleich ab15
+0021: 00000000003   # TXTSET: -15 hat 3 Zeichen
+0022: 00000000125   # TXTSET: -15 + 100
+0023: 00000000000   # TXTARG: 017 gleich 017
+0024: 00000000001   # TXTARG: 020 groesser als 017
+0025: 00000000002   # TXTARG: Teilstring 17 hat 2 Zeichen
+0026: 00000000021   # TXTARG: $VAL liest 17 dezimal
+0027: 00000000017   # TXTARG: $VALO liest 17 oktal
+0030: 00000000003   # TXTARG: die 7 steht an Position 3
+0031: 00000000000   # TXTARG: $UPPER a16 gleich A16
+0032: 00000000000   # TXTARG: $LOWER X2 gleich x2
+0033: 00000000067   # TXTARG: Code der Ziffer 7
+0034: 00000000003   # FELDLOK: Feldelement 017 hat 3 Zeichen
+0035: 00000000017   # FELDLOK: Feldelement oktal gelesen
+0036: 00000000002   # FELDLOK: Feldelement 18 hat 2 Zeichen
+0037: 00000000022   # FELDLOK: Feldelement 15 + 3
+0040: 00000000003   # FELDLOK: lokale Variable 036 hat 3 Zeichen
+0041: 00000000036   # FELDLOK: lokale Variable oktal gelesen
+0042: 00000000001   # Marken: z010 - z007
+0043: 00000000002   # Marken: z011 - z007

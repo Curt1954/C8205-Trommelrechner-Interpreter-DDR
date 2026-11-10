@@ -1,0 +1,16 @@
+               000            haupt          ; Zelle 0000: Sprung zum Hauptprogramm
+einsen:        dw             077777777777   ; Zelle 0001: alle 33 Bits auf 1
+zw:            dw             0              ; Zelle 0002: Zwischenergebnis (initialisiert)
+erg1:          dw             0              ; Zelle 0003: Ergebnis 1 (initialisiert)
+erg2:          dw             0              ; Zelle 0004: Ergebnis 2 (initialisiert)
+haupt:         211            einsen         ; Zelle 0005: AC := alle Bits 1
+               440            02000          ; Zelle 0006: alle 32 Zellen der Spur 2000 := AC (alle Bits 1)
+ML0001DKR:     604            02031          ; 3 mal Linksverschiebung
+               240            zw             ; Zwischenergebnis sichern
+               604            02006          ; 2 mal Linksverschiebung
+               240            erg1           ; Zelle 0012: erg1 := AC
+               211            einsen         ; Zelle 0013: AC := alle Bits 1
+               604            02031          ; 3 mal Linksverschiebung
+               604            02031          ; 3 mal Linksverschiebung
+               240            erg2           ; Zelle 0016: erg2 := AC
+               020            0              ; Zelle 0017: Halt

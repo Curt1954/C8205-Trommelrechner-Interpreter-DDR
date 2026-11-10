@@ -1,0 +1,3 @@
+rc 16
+stderr equ zwischen begin und bend nicht zulässig
+datei-weg obj mqo test

@@ -1,0 +1,38 @@
+            000         haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+z007:       dw          7           ; Marke z007, z010, z011
+z010:       dw          8           ; Marke z007, z010, z011
+z011:       dw          9           ; Marke z007, z010, z011
+            dw          3           ; 3 Zeichen
+            dw          0           ; gleich: 0
+            dw          2           ; 2 Zeichen
+            dw          16          ; 16
+            dw          7           ; 1 + 5 + 1 = 7 Zeichen
+            dw          3           ; 3 Zeichen
+            dw          0           ; gleich: 0
+            dw          1           ; 1 Zeichen
+            dw          7           ; 7
+            dw          19          ; 19
+            dw          2           ; 2 Zeichen
+            dw          4           ; 4 Zeichen
+            dw          0           ; gleich: 0
+            dw          3           ; 3 Zeichen
+            dw          85          ; -15 + 100 = 85
+            dw          0           ; 017 gleich 017: 0
+            dw          1           ; 020 gegen 017: 1
+            dw          2           ; 2 Zeichen
+            dw          17          ; dezimal gelesen: 17
+            dw          15          ; oktal gelesen: 15
+            dw          3           ; die 7 steht an Position 3
+            dw          0           ; gleich: 0
+            dw          0           ; gleich: 0
+            dw          55          ; 55
+            dw          3           ; 3 Zeichen
+            dw          15          ; 15
+            dw          2           ; 2 Zeichen
+            dw          18          ; 18
+            dw          3           ; 3 Zeichen
+            dw          30          ; 30
+            dw          z010-z007   ; Zelle 34: Marken aus TAB3 liegen eine Zelle auseinander
+            dw          z011-z007   ; Zelle 35: und zwei Zellen
+haupt:      164         0001        ; Zelle 36: Diagnoseausgabe (nur im Test)
+            020         0           ; Zelle 37: Halt

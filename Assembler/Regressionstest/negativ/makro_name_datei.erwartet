@@ -1,0 +1,5 @@
+rc 16
+stderr Makro DM: Unbekannter Parametername $dritter (Zeile: $dritter) [definiert in
+stderr makro_name_datei_1.macro:2]
+datei-weg obj mqo test
+escape-weg

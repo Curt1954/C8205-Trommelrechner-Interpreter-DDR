@@ -1,0 +1,105 @@
+0000: 01 0034 000               000  haupt                                         ; Zelle 0000: Sprung zum Hauptprogramm
+      00 12524232221 text1:     kat6 abcdefghijklmnopqrstuvwxyz 0123456789.,-+:/%` ; Zellen 0001 bis 0011: 45 Zeichen, 9 Worte
+      00 14131302726 ;    
+      00 14645444342 ;    
+      00 16362515047 ;    
+      00 17067666564 ;    
+      00 10201001271 ;    
+      00 10706050403 ;    
+      00 14073331110 ;    
+      00 56074611520 ;    
+      00 12423222137 text2:     kat6 $ingbabcdefghijklmnopqrstuvwxyz               ; Zellen 0012 bis 0017: Um. GB und a bis z, 6 Worte
+      00 13130272625 ;    
+      00 14544434241 ;    
+      00 16251504746 ;    
+      00 16766656463 ;    
+      00 40000017170 ;    
+      00 10504020100 text3:     kat6 01245689 .,=:/%`                              ; Zellen 0020 bis 0023: 16 Zeichen, 4 Worte
+      00 13312111006 ;    
+      00 17461152073 ;    
+      00 40000000160 ;    
+      00 12332222157 text4:     kat6 $inkbab$wrzlcd                                ; Zellen 0024 bis 0025: Um. KB, a, b, Zeilenschaltung, c, d
+      00 40000000124 ;    
+0026: 01 1000        radr1:     da   text1                                         ; Zelle 0026: Adresse von Text 1 (Adressfeld)
+0027: 01 12000       radr2:     da   text2                                         ; Zelle 0027: Adresse von Text 2 (Adressfeld)
+0030: 01 20000       radr3:     da   text3                                         ; Zelle 0030: Adresse von Text 3 (Adressfeld)
+0031: 01 24000       radr4:     da   text4                                         ; Zelle 0031: Adresse von Text 4 (Adressfeld)
+0032: 0              kbaus:     dw   0                                             ; Zelle 0032: KB/GB-Zustand (0 = KB, 1 = GB), initial KB
+0033: 01 32000       rkb:       da   kbaus                                         ; Zelle 0033: Adresse der Zustandszelle (Adressfeld)
+0034: 01 0033 211    haupt:     211  rkb                                           ; AC := Adresse der Zustandszelle
+0035: 00 7774 240               240  r3                                            ; R3 := Adresse der Zustandszelle
+0036: 00 4500 030               030  04500                                         ; 4500 oder K2 oder LSL2 oder SW1 Output
+0037: 01 0026 211               211  radr1                                         ; AC := Adresse von Text 1
+0040: 00 7773 240               240  r1                                            ; R1 := Adresse von Text 1
+0041: 01 0054 025               025  ausgabe                                       ; Aufruf KAT6AUSGABE (Text 1)
+0042: 01 0027 211               211  radr2                                         ; AC := Adresse von Text 2
+0043: 00 7773 240               240  r1                                            ; R1 := Adresse von Text 2
+0044: 01 0054 025               025  ausgabe                                       ; Aufruf KAT6AUSGABE (Text 2)
+0045: 01 0030 211               211  radr3                                         ; AC := Adresse von Text 3
+0046: 00 7773 240               240  r1                                            ; R1 := Adresse von Text 3
+0047: 01 0054 025               025  ausgabe                                       ; Aufruf KAT6AUSGABE (Text 3)
+0050: 01 0031 211               211  radr4                                         ; AC := Adresse von Text 4
+0051: 00 7773 240               240  r1                                            ; R1 := Adresse von Text 4
+0052: 01 0054 025               025  ausgabe                                       ; Aufruf KAT6AUSGABE (Text 4)
+0053: 01 0000 020               020  0                                             ; Halt
+0054: 01 0120 240    ausgabe:   240  ML0001GNU                                     ; Rueckkehrwort sichern
+0055: 00 7773 211               211  ML0014GNU                                     ; AC := Startadresse des Textes
+0056: 01 0136 220               220  l0001                                         ; eine Adresseneinheit weniger, weil ML0006% sie gleich wieder dazuzaehlt
+0057: 01 0133 240               240  ML0002GNU                                     ; zeiger := Adresse des Wortes vor dem ersten (R1 bleibt unveraendert)
+0060: 01 0133 211    ML0006GNU: 211  ML0002GNU                                     ; neues Wort: Zeiger auf das naechste Wort
+0061: 01 0136 210               210  l0001                                         ; plus eine Adresseneinheit
+0062: 01 0133 240               240  ML0002GNU                                     ; zeiger := Adresse des aktuellen Wortes
+0063: 00 0000 251               251  0                                             ; R-Lesebefehl: AC := Textwort (Adresse im AC)
+0064: 01 0131 240               240  ML0003GNU                                     ; tw := Textwort (mit z0)
+0065: 01 0137 200               200  l0002                                         ; z0 ausblenden, nur 32 Bit (Zeichen und Stoppbit)
+0066: 01 0132 240               240  ML0004GNU                                     ; rest := Zeichenrest mit Stoppbit
+0067: 01 0140 330    ML0007GNU: 330  l0003                                         ; Vergleich des Rests mit 1 (keine Operation), der AC bleibt der Rest
+0070: 01 0116 170               170  ML0010GNU                                     ; Rest 1: nur noch das Stoppbit uebrig, Wort fertig
+0071: 01 0141 200               200  l0004                                         ; unterstes Zeichen (6 Bit) ausblenden
+0072: 01 0134 240               240  ML0005GNU                                     ; zeichen := kat6-Code
+0073: 01 0142 330               330  l0005                                         ; Vergleich mit kat6 037 (Um. GB)
+0074: 01 0121 170               170  ML0011GNU                                     ; Um. GB: Zustand := GB
+0075: 01 0143 330               330  l0006                                         ; Vergleich mit kat6 057 (Um. KB)
+0076: 01 0121 170               170  ML0011GNU                                     ; Um. KB: Zustand := KB
+0077: 01 0134 211    ML0008GNU: 211  ML0005GNU                                     ; AC := kat6-Code (auch nach der Zustandsuebergabe)
+0100: 01 0144 200               200  l0007                                         ; Bits u und v (020 und 040) ausblenden
+0101: 01 0135 240               240  ML0015GNU                                     ; hilf := Code UND 060
+0102: 01 0134 211               211  ML0005GNU                                     ; AC := kat6-Code
+0103: 01 0145 200               200  l0008                                         ; Bits 8 4 2 1
+0104: 01 0135 210               210  ML0015GNU                                     ; plus (Code UND 060)
+0105: 01 0135 210               210  ML0015GNU                                     ; plus (Code UND 060) noch einmal: AC := Zeichen (8 Bit, p = w = 0)
+0106: 01 7644 644               644  07644                                         ; 12 mal Linksverschiebung (Operand nach Festlegung 026)
+0107: 01 0146 210               210  l0009                                         ; plus Operationscode 030 (Ausgabe)
+0110: 01 0111 240               240  ML0009GNU                                     ; Ausgabebefehl auf die naechste Zelle speichern
+0111: 20 0112        ML0009GNU: db   1                                             ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+0112: 01 0132 211               211  ML0004GNU                                     ; AC := Zeichenrest
+0113: 01 7662 642               642  07662                                         ; 6 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0114: 01 0132 240               240  ML0004GNU                                     ; rest := Rest
+0115: 01 0067 000               000  ML0007GNU                                     ; naechstes Zeichen (der AC ist der Rest)
+0116: 01 0131 211    ML0010GNU: 211  ML0003GNU                                     ; AC := Textwort mit z0 (negativ beim letzten Wort)
+0117: 01 0060 050               050  ML0006GNU                                     ; kein z0: naechstes Wort
+0120: 20 0121        ML0001GNU: db   1                                             ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0121: 00 7774 211    ML0011GNU: 211  ML0016GNU                                     ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0122: 01 0147 210               210  l0010                                         ; plus Operationscode 240: Speicherbefehl
+0123: 01 0127 240               240  ML0012GNU                                     ; Speicherbefehl auf die uebernaechste Zelle
+0124: 01 0134 211               211  ML0005GNU                                     ; AC := kat6-Code (037 oder 057)
+0125: 01 0150 200               200  l0011                                         ; Bit u: 037 hat es (Um. GB), 057 nicht (Um. KB)
+0126: 01 7654 642               642  07654                                         ; 4 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0127: 20 0130        ML0012GNU: db   1                                             ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+0130: 01 0077 000               000  ML0008GNU                                     ; Zeichen ausgeben
+0131: 20 0132        ML0003GNU: db   1                                             ; Arbeitszelle: aktuelles Textwort
+0132: 20 0133        ML0004GNU: db   1                                             ; Arbeitszelle: noch auszugebender Zeichenrest
+0133: 20 0134        ML0002GNU: db   1                                             ; Arbeitszelle: Adresse des aktuellen Textwortes
+0134: 20 0135        ML0005GNU: db   1                                             ; Arbeitszelle: aktueller kat6-Code
+0135: 20 0136        ML0015GNU: db   1                                             ; Arbeitszelle: Code UND 060
+0136: 00 00000001000 l0001      dw   000000001000                                  
+0137: 00 37777777777 l0002      dw   037777777777                                  
+0140: 00 00000000001 l0003      dw   1                                             
+0141: 00 00000000077 l0004      dw   000000000077                                  
+0142: 00 00000000037 l0005      dw   000000000037                                  
+0143: 00 00000000057 l0006      dw   000000000057                                  
+0144: 00 00000000060 l0007      dw   000000000060                                  
+0145: 00 00000000017 l0008      dw   000000000017                                  
+0146: 00 00000000030 l0009      dw   000000000030                                  
+0147: 00 00000000240 l0010      dw   000000000240                                  
+0150: 00 00000000020 l0011      dw   000000000020                                  

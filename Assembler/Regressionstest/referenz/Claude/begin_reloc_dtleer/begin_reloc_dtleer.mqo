@@ -1,0 +1,7 @@
+            000         haupt       ; Zelle 0000: Sprung zum Hauptprogramm
+            equ100      00100           ; wirkt dann am Ort: Zaehler auf 0100 aufrunden
+erg:        dw          0           ; Zelle 0100: Ergebnis
+haupt:      211         l0001       ; Zelle 0101: AC := Literal 7
+            240         erg         ; Zelle 0102: (erg) := AC
+            020         0           ; Zelle 0103: Halt
+l0001       dw          7           

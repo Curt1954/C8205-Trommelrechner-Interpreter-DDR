@@ -1,0 +1,18 @@
+                     000                  haupt                ; Zelle 0000: Sprung zum Hauptprogramm
+t1:                  kat6                 hallo welt           ; Zellen 0001 und 0002: Beispiel der Doku, Leerzeichen im Text ohne Backslash
+; 
+t2:                  kat6                 10                   ; Zelle 0003: Ziffer 0 hat den Code 00, das Stoppbit steht darueber
+t3:                  kat6                 000                  ; Zelle 0004: drei Nullen gehen nicht verloren
+t4:                  kat6                 x$ingb=$inkb1$wrzl   ; Zellen 0005 und 0006: alle drei Marken, volles erstes Wort
+; 
+t5:                  kat6                 a/b                  ; Zelle 0007: / hat den Code 061
+t6:                  kat6                 abcde                ; Zelle 0010: genau ein volles Wort, Stoppbit in z2
+t7:                  kat6                 ,%`.-                ; Zelle 0011: , % Akzent . - (Codes 073 074 060 033 040)
+t8:                  kat6                 :+=89                ; Zelle 0012: : + = 8 9 (+ und = haben denselben Code 020)
+t9:                  kat6                 z                    ; Zelle 0013: ein einziges Zeichen
+t10:                 kat6                 abcdef               ; Zellen 0014 und 0015: ein Zeichen im zweiten Wort
+; 
+t11:                 kat6                 \ a \                ; Zelle 0016: drei Zeichen, fuehrendes und abschliessendes Leerzeichen bleiben
+t12:                 kat6                 a$WRZL               ; Zelle 0017: Marke in Grossbuchstaben wird erkannt
+t13:                 kat6                 $ingb=               ; Zelle 0020: Marke $ingb (037) und = (020), keine Warnung
+haupt:               020                  0                    ; Zelle 0021: Halt

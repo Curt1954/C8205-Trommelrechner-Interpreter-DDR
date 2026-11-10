@@ -1,0 +1,12 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      12      ; 5 + 7 = 12
+        dw      11      ; 11
+        dw      22      ; 22
+        dw      99      ; 99
+        dw      0       ; 0 (Element des lokalen Feldes)
+        dw      11      ; 11
+        dw      22      ; 22
+        dw      0       ; Zelle 0010: 0 (lokales Feld a ist weg)
+        dw      1       ; Zelle 0011: 1
+haupt:  164     0001    ; Zelle 0012: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0013: Halt (Zelle 11 dezimal)

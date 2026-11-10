@@ -1,0 +1,9 @@
+0000: 01 0002 000           000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 0              erg:   dw  0     ; Zelle 0001: Ergebnis
+0002: 01 7500 211    haupt: 211 z1    ; Zelle 0002: AC := Wort der Zelle z1
+0003: 01 0001 240           240 erg   ; Zelle 0003: (erg) := AC
+0004: 01 0000 020           020 0     ; Zelle 0004: Halt
+      20 0000 7500   blkx:  equ 07500 ; vorher equ100 *    erste Anweisung: Gruppe 1
+      00 2720 030    z1:    dz  $wrzl ; erste Zelle des Blocks
+7501: 01 1000               da  erg   ; zweite Zelle: Adresse von erg
+7502: 00 00000000005        dw  5     ; dritte Zelle

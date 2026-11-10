@@ -1,0 +1,4 @@
+rc 16
+stderr makro_local_ohne_name.asm:6: Fehler: L2 $LOCAL erwartet mindestens einen Namen
+datei-weg obj mqo test
+escape-weg

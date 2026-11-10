@@ -1,0 +1,4 @@
+rc 16
+stderr makro_default_syntax.asm:6: Fehler: $DEFAULT erwartet <Nummer 1 bis 3>
+datei-weg obj mqo test
+escape-weg

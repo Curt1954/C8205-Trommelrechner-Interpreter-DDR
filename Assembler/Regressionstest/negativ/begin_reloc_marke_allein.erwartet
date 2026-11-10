@@ -1,0 +1,3 @@
+rc 16
+stderr Marke allein auf einer Zeile vor equ100/equ40 in einem Block mit RELOC-EQU
+datei-weg obj mqo test

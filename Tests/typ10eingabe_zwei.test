@@ -1,0 +1,154 @@
+Trommeldatei:
+#DOK-0001 typ10eingabe_zwei: Doppelpunkt beendet Zelle 1, nur ein Zeichen in Zelle 2 (Vornull), Um. GB als letztes Umschaltzeichen
+#SPEI-0001 2001-2004
+#PROT STUFE=2
+#TROMMEL=MP
+--k0 datei=Test-virtuelleGeraete/T-SW-Eingabe/typ10eingabe_zwei.txt
+--sw-ausgabe Test-virtuelleGeraete/SW-Ausgabe/typ10eingabe_zwei
+0000: 00000006000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0003: 00000001000 # radr: da zelle1 ; Zelle 0003: Adresse des Bereichs (Adressfeld)
+0004: 00000000000 # kbein: dw 0 ; Zelle 0004: KB/GB-Zustand der SW-Eingabe (0 = KB, 1 = GB), initial KB (Festlegung 030)
+0005: 00000004000 # rkbe: da kbein ; Zelle 0005: Adresse der Zustandszelle (Adressfeld)
+0006: 00004700030 # haupt 030 04700 ; 4700 oder K0 oder SW1 Input oder KON Input
+0007: 00000003211 # 211 radr ; AC := Adresse des Bereichs
+0010: 00007773240 # 240 r1 ; R1 := Adresse des Bereichs
+0011: 00000005211 # 211 rkbe ; AC := Adresse der Zustandszelle
+0012: 00007774240 # 240 r3 ; R3 := Adresse der Zustandszelle
+0013: 00000027025 # 025 eingabe ; Aufruf des Eingabe-UP (genau einmal), AC := Rueckkehrwort
+0014: 00004500030 # 030 04500 ; 4500 oder K2 oder LSL2 oder SW1 Output
+0015: 00001170030 # dz $inkb ; Zeichenlage Kleinbuchstaben (Ziffern)
+0016: 00000001211 # 211 zelle1 ; AC := Zelle 1
+0017: 00007773240 # 240 r1 ; R1 := Zelle 1 (Uebergabe an den Triadendruck)
+0020: 00000200025 # 025 triad ; Triadendruck Zelle 1
+0021: 00002720030 # dz $wrzl ; Zeilenschaltung
+0022: 00000002211 # 211 zelle2 ; AC := Zelle 2
+0023: 00007773240 # 240 r1 ; R1 := Zelle 2
+0024: 00000200025 # 025 triad ; Triadendruck Zelle 2
+0025: 00002720030 # dz $wrzl ; Zeilenschaltung
+0026: 00000000020 # 020 0 ; Halt
+0027: 00000236240 # eingabe 240 ML0001JQX ; Rueckkehrwort sichern
+0030: 00007773211 # 211 ML0018JQX ; AC := Adresse der 1. Zelle
+0031: 00000213240 # 240 ML0013JQX ; ziel := Adresse der Zelle, die als naechste gespeichert wird
+0032: 00000112211 # 211 l0001 ; Zelle 1: nur Codes 0 bis 7 (Oktalziffern)
+0033: 00000214240 # 240 ML0014JQX ; mask := 070
+0034: 00000113211 # 211 l0002 ; Befehl 644 07671: Linksverschiebung um 3 Bit (Spur 7640, Festlegung 026)
+0035: 00000052240 # 240 ML0005JQX ; Schiebebefehl fuer Zelle 1 setzen
+0036: 00000114211 # 211 l0003 ; Zelle 1: praktisch unbegrenzt viele Zeichen
+0037: 00000235240 # 240 ML0017JQX ; rest := grosse Zahl
+0040: 00000217241 # ML0002JQX 241 ML0015JQX ; wort := 0, AC := 0
+0041: 00000200011 # ML0003JQX 011 ML0012JQX ; Zeichen lesen: AC := Tabellenzelle (Sprungzeichen springen von selbst)
+0042: 00000044040 # 040 ML0004JQX ; z0 gesetzt: Ziffer oder +
+0043: 00000041000 # 000 ML0003JQX ; sonst: Zeichen ignorieren, weiterlesen
+0044: 00000115200 # ML0004JQX 200 l0004 ; AC := Code des Zeichens (6 Bit)
+0045: 00000234240 # 240 ML0016JQX ; zeich := Code
+0046: 00000214200 # 200 ML0014JQX ; AC := Code ohne die zulaessigen Bits (0 bei Oktalziffern in Zelle 1)
+0047: 00000116220 # 220 l0005 ; AC := AC - 1 (negativ, wenn zulaessig)
+0050: 00000041050 # 050 ML0003JQX ; AC >= 0: in Zelle 1 keine Oktalziffer (8, 9, +): ignorieren
+0051: 00000217211 # 211 ML0015JQX ; AC := bisheriges Wort
+0052: 00007671644 # ML0005JQX 644 07671 ; 3 mal Linksverschiebung (Operand nach Festlegung 026)
+0053: 00000234210 # 210 ML0016JQX ; plus Code des neuen Zeichens
+0054: 00000217240 # 240 ML0015JQX ; wort := neues Wort
+0055: 00000235211 # 211 ML0017JQX ; AC := rest
+0056: 00000116220 # 220 l0005 ; AC := rest - 1
+0057: 00000235240 # 240 ML0017JQX ; rest := AC
+0060: 00000041050 # 050 ML0003JQX ; AC >= 0: weitere Zeichen zulaessig
+0061: 00000213211 # ML0006JQX 211 ML0013JQX ; Zelle fertig (Punkt, Doppelpunkt oder Zeichenzahl erreicht): AC := Zieladresse
+0062: 00000117210 # 210 l0006 ; plus Operationscode 240: Speicherbefehl
+0063: 00000065240 # 240 ML0007JQX ; Speicherbefehl auf die naechste Zelle
+0064: 00000217211 # 211 ML0015JQX ; AC := fertiges Wort
+0066: 00000213211 # 211 ML0013JQX ; AC := Zieladresse
+0067: 00000120210 # 210 l0007 ; plus eine Adresseneinheit: naechste Zelle
+0070: 00000213240 # 240 ML0013JQX ; ziel := Adresse der naechsten Zelle
+0071: 00007773220 # 220 ML0018JQX ; AC := ziel - R1 (01000 nach Zelle 1, 02000 nach Zelle 2)
+0072: 00000121220 # 220 l0008 ; AC := AC - 01001 (negativ nach Zelle 1)
+0073: 00000236050 # 050 ML0001JQX ; beide Zellen fertig: Rueckkehr
+0074: 00000214241 # 241 ML0014JQX ; Zelle 2: mask := 0, alle Codes zulaessig, AC := 0
+0075: 00000122211 # 211 l0009 ; Befehl 644 07662: Linksverschiebung um 6 Bit
+0076: 00000052240 # 240 ML0005JQX ; Schiebebefehl fuer Zelle 2 setzen
+0077: 00000116211 # 211 l0005 ; Zelle 2: hoechstens 2 Zeichen
+0100: 00000235240 # 240 ML0017JQX ; rest := 1 (nach dem 2. Zeichen negativ)
+0101: 00000040000 # 000 ML0002JQX ; Zelle 2 lesen
+0102: 00000117211 # ML0008JQX 211 l0006 ; Um. GB: Speicherbefehl 240 (Zustand 1 speichern)
+0103: 00000105000 # 000 ML0010JQX ; weiter beim Zustand
+0104: 00000123211 # ML0009JQX 211 l0010 ; Um. KB: Befehl 241 (Zelle := 0)
+0105: 00007774210 # ML0010JQX 210 ML0019JQX ; AC := Befehl + Adresse der Zustandszelle (R3)
+0106: 00000110240 # 240 ML0011JQX ; Speicherbefehl auf die naechste Zelle
+0107: 00000116211 # 211 l0005 ; AC := 1 (Zustand GB; 241 loescht den AC und speichert 0)
+0111: 00000041000 # 000 ML0003JQX ; weiterlesen
+0112: 00000000070 # l0001 dw 000000000070
+0113: 00007671644 # l0002 dw 000007671644
+0114: 00007777777 # l0003 dw 000007777777
+0115: 00000000077 # l0004 dw 000000000077
+0116: 00000000001 # l0005 dw 1
+0117: 00000000240 # l0006 dw 000000000240
+0120: 00000001000 # l0007 dw 000000001000
+0121: 00000001001 # l0008 dw 000000001001
+0122: 00007662644 # l0009 dw 000007662644
+0123: 00000000241 # l0010 dw 000000000241
+0200: 40000000000 # dw 040000000000 ; 00: 0: gueltig, z0 gesetzt, Code 00
+0201: 40000000001 # dw 040000000001 ; 01: 1: gueltig, z0 gesetzt, Code 01
+0202: 40000000002 # dw 040000000002 ; 02: 2: gueltig, z0 gesetzt, Code 02
+0203: 40000000003 # dw 040000000003 ; 03: 3: gueltig, z0 gesetzt, Code 03
+0204: 40000000004 # dw 040000000004 ; 04: 4: gueltig, z0 gesetzt, Code 04
+0205: 40000000005 # dw 040000000005 ; 05: 5: gueltig, z0 gesetzt, Code 05
+0206: 40000000006 # dw 040000000006 ; 06: 6: gueltig, z0 gesetzt, Code 06
+0207: 40000000007 # dw 040000000007 ; 07: 7: gueltig, z0 gesetzt, Code 07
+0210: 40000000010 # dw 040000000010 ; 10: 8: gueltig, z0 gesetzt, Code 10
+0211: 40000000011 # dw 040000000011 ; 11: 9: gueltig, z0 gesetzt, Code 11
+0212: 00000041000 # 000 ML0003JQX ; 12: Leertaste / ZWR: ignorieren
+0215: 00000061000 # 000 ML0006JQX ; 15: : beendet die Eingabe der Zelle
+0216: 00000041000 # 000 ML0003JQX ; 16: Irrung Satz: ignorieren
+0220: 40000000020 # dw 040000000020 ; 20: +: gueltig, z0 gesetzt, Code 20
+0221: 00000000000 # dw 0 ; 21: a: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0222: 00000000000 # dw 0 ; 22: b: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0223: 00000000000 # dw 0 ; 23: c: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0224: 00000000000 # dw 0 ; 24: d: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0225: 00000000000 # dw 0 ; 25: e: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0226: 00000000000 # dw 0 ; 26: f: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0227: 00000000000 # dw 0 ; 27: g: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0230: 00000000000 # dw 0 ; 30: h: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0231: 00000000000 # dw 0 ; 31: i: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0232: 00000041000 # 000 ML0003JQX ; 32: WRZL: ignorieren
+0233: 00000061000 # 000 ML0006JQX ; 33: . beendet die Eingabe der Zelle
+0237: 00000102000 # 000 ML0008JQX ; 37: Um. GB: Zustand nachziehen
+0240: 00000041000 # 000 ML0003JQX ; 40: - / Dreieck: ignorieren
+0241: 00000000000 # dw 0 ; 41: j: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0242: 00000000000 # dw 0 ; 42: k: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0243: 00000000000 # dw 0 ; 43: l: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0244: 00000000000 # dw 0 ; 44: m: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0245: 00000000000 # dw 0 ; 45: n: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0246: 00000000000 # dw 0 ; 46: o: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0247: 00000000000 # dw 0 ; 47: p: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0250: 00000000000 # dw 0 ; 50: q: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0251: 00000000000 # dw 0 ; 51: r: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0252: 00000000000 # dw 0 ; 52: WR: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0253: 00000000000 # dw 0 ; 53: nicht belegte Eingabeadresse
+0254: 00000000000 # dw 0 ; 54: nicht belegte Eingabeadresse
+0255: 00000000000 # dw 0 ; 55: nicht belegte Eingabeadresse
+0256: 00000000000 # dw 0 ; 56: nicht belegte Eingabeadresse
+0257: 00000104000 # 000 ML0009JQX ; 57: Um. KB: Zustand nachziehen
+0260: 00000041000 # 000 ML0003JQX ; 60: ` / ;: ignorieren
+0261: 00000000000 # dw 0 ; 61: / ): kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0262: 00000000000 # dw 0 ; 62: s: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0263: 00000000000 # dw 0 ; 63: t: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0264: 00000000000 # dw 0 ; 64: u: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0265: 00000000000 # dw 0 ; 65: v: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0266: 00000000000 # dw 0 ; 66: w: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0267: 00000000000 # dw 0 ; 67: x: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0270: 00000000000 # dw 0 ; 70: y: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0271: 00000000000 # dw 0 ; 71: z: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0272: 00000041000 # 000 ML0003JQX ; 72: BM: ignorieren
+0273: 00000041000 # 000 ML0003JQX ; 73: , / ?: ignorieren
+0274: 00000000000 # dw 0 ; 74: % / *: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+0275: 00000041000 # 000 ML0003JQX ; 75: Tabulator: ignorieren
+0276: 00000000000 # dw 0 ; 76: nicht belegte Eingabeadresse
+0277: 00000000000 # dw 0 ; 77: Transport: kein Zeichen der Eingabe, Datenwort mit z0 = 0 (wird ignoriert)
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=2027
+2001: 71234567012   # Zelle 1: Datenwort
+2002: 00000000020   # Zelle 2: ein Zeichen (+), Vornull
+2004: 00000000001   # kbein: Um. GB als letztes Umschaltzeichen
+7773: 00000000020   # R1: zuletzt Zelle 2 an den Triadendruck uebergeben
+7774: 00002004000   # R3: Adresse von kbein, unveraendert

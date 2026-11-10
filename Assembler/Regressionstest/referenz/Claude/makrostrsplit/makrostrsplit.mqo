@@ -1,0 +1,23 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+        dw      3       ; Laenge des Schluessels
+        dw      42      ; Wert als Zahl
+        dw      1       ; Laenge des Schluessels
+        dw      7       ; Wert als Zahl
+        dw      10      ; Laenge des Schluessels
+        dw      123     ; Wert als Zahl
+        dw      2       ; Laenge des Schluessels
+        dw      0       ; Wert als Zahl
+        dw      2       ; Anzahl der A
+        dw      3       ; Anzahl der A
+        dw      0       ; Anzahl der A
+        dw      4       ; Anzahl der A
+        dw      4       ; 4
+        dw      2       ; Textlaenge 2
+        dw      42      ; 42
+        dw      67      ; rueckwaerts ausgegeben
+        dw      66      ; rueckwaerts ausgegeben
+        dw      65      ; rueckwaerts ausgegeben
+        dw      121     ; rueckwaerts ausgegeben
+        dw      120     ; rueckwaerts ausgegeben
+haupt:  164     0001    ; Zelle 21: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 22: Halt

@@ -1,0 +1,107 @@
+Trommeldatei:
+#DOK-0001 Test der Makro-Schleife und der geschachtelten Bedingungen: Zaehler $Z1/$Z2, Schleifen im $IF, $IF im $IF, $ELSE, Klammern, bis zu acht Bedingungsbloecke
+#PROT STUFE=2
+0000: 00000052000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000000 # dw 0 ; Wort 0: Zaehler mal Schrittweite
+0002: 00000000003 # dw 3 ; Wort 1: Zaehler mal Schrittweite
+0003: 00000000006 # dw 6 ; Wort 2: Zaehler mal Schrittweite
+0004: 00000000011 # dw 9 ; Wort 3: Zaehler mal Schrittweite
+0005: 00000000014 # dw 12 ; Wort 4: Zaehler mal Schrittweite
+0006: 00000000017 # dw 15 ; Wort 5: Zaehler mal Schrittweite
+0007: 00000000022 # dw 18 ; Wort 6: Zaehler mal Schrittweite
+0010: 00000000025 # dw 21 ; Wort 7: Zaehler mal Schrittweite
+0011: 00000000000 # dw 0 ; Zeile 0, Spalte 0
+0012: 00000000001 # dw 1 ; Zeile 0, Spalte 1
+0013: 00000000012 # dw 10 ; Zeile 1, Spalte 0
+0014: 00000000013 # dw 11 ; Zeile 1, Spalte 1
+0015: 00000000024 # dw 20 ; Zeile 2, Spalte 0
+0016: 00000000025 # dw 21 ; Zeile 2, Spalte 1
+0017: 00000000001 # dw 1 ; beide positiv
+0020: 00000000002 # dw 2 ; nur der erste positiv
+0021: 00000000003 # dw 3 ; nur der zweite positiv
+0022: 00000000004 # dw 4 ; keiner positiv
+0023: 00000000144 # dw 100 ; null
+0024: 00000000145 # dw 101 ; eins
+0025: 00000000146 # dw 102 ; sonst
+0026: 00000000000 # dw 0 ; gerader Zaehler
+0027: 00000000145 # dw 101 ; ungerader Zaehler plus 100
+0030: 00000000002 # dw 2 ; gerader Zaehler
+0031: 00000000147 # dw 103 ; ungerader Zaehler plus 100
+0032: 00000000004 # dw 4 ; gerader Zaehler
+0033: 00000000001 # dw 1 ; Bedingung erfuellt
+0034: 00000000000 # dw 0 ; Bedingung nicht erfuellt
+0035: 00000000001 # dw 1 ; Bedingung erfuellt
+0036: 00000000000 # dw 0 ; Bedingung nicht erfuellt
+0037: 00000000001 # dw 1 ; Wert 1 bis 6
+0040: 00000000000 # dw 0 ; anderer Wert
+0041: 00000000000 # dw 0 ; gleich null
+0042: 00000000001 # dw 1 ; ungleich null
+0043: 00000000007 # w0: dw 7 ; Label w0 mit dem Wert 7 plus Zaehler
+0044: 00000000010 # w1: dw 8 ; Label w1 mit dem Wert 7 plus Zaehler
+0045: 00000000011 # w2: dw 9 ; Label w2 mit dem Wert 7 plus Zaehler
+0046: 00000000001 # eins: dw 1 ; Zelle 0046: Konstante 1
+0047: 00000000000 # erg1: dw 0 ; Zelle 0047: Ergebnis der Code-Schleife
+0050: 00000000000 # erg2: dw 0 ; Zelle 0050: Ergebnis mit den Labels w1 und w2
+0051: 00000000000 # erg3: dw 0 ; Zelle 0051: Ergebnis der Schleife mit Labels
+0052: 00000046211 # haupt: 211 eins ; AC := 1
+0053: 00000046210 # 210 eins ; AC := AC + 1 (Durchlauf 0)
+0054: 00000046210 # 210 eins ; AC := AC + 1 (Durchlauf 1)
+0055: 00000046210 # 210 eins ; AC := AC + 1 (Durchlauf 2)
+0056: 00000047240 # 240 erg1 ; Ergebnis ablegen
+0057: 00000044211 # 211 w1 ; AC := 8 (Label aus der Schleife)
+0060: 00000045210 # 210 w2 ; AC := 8 + 9 = 17
+0061: 00000050240 # 240 erg2 ; Ergebnis ablegen
+0062: 00000046211 # 211 eins ; AC := 1
+0063: 00000064000 # 000 ML0001LSZ_0 ; Sprung zur naechsten Zelle (Durchlauf 0)
+0064: 00000046210 # ML0001LSZ_0: 210 eins ; AC := AC + 1
+0065: 00000066000 # 000 ML0001LSZ_1 ; Sprung zur naechsten Zelle (Durchlauf 1)
+0066: 00000046210 # ML0001LSZ_1: 210 eins ; AC := AC + 1
+0067: 00000070000 # 000 ML0001LSZ_2 ; Sprung zur naechsten Zelle (Durchlauf 2)
+0070: 00000046210 # ML0001LSZ_2: 210 eins ; AC := AC + 1
+0071: 00000051240 # 240 erg3 ; Ergebnis ablegen
+0072: 00000001164 # 164 0001 ; Diagnoseausgabe (nur im Test)
+0073: 00000000020 # 020 0 ; Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0074 US=1
+0001: 00000000000   # TAB8 3: Wort 0 = 0
+0002: 00000000003   # Wort 1 = 3
+0003: 00000000006   # Wort 2 = 6
+0004: 00000000011   # Wort 3 = 9
+0005: 00000000014   # Wort 4 = 12
+0006: 00000000017   # Wort 5 = 15
+0007: 00000000022   # Wort 6 = 18
+0010: 00000000025   # Wort 7 = 21
+0011: 00000000000   # MATRIX: 10*0+0
+0012: 00000000001   # 10*0+1
+0013: 00000000012   # 10*1+0 = 10
+0014: 00000000013   # 10*1+1 = 11
+0015: 00000000024   # 10*2+0 = 20
+0016: 00000000025   # 10*2+1 = 21
+0017: 00000000001   # IFN 1 1: beide positiv
+0020: 00000000002   # IFN 1 0: nur der erste
+0021: 00000000003   # IFN 0 1: nur der zweite
+0022: 00000000004   # IFN 0 0: keiner
+0023: 00000000144   # KLASSE 0: 100
+0024: 00000000145   # KLASSE 1: 101
+0025: 00000000146   # KLASSE 5: 102
+0026: 00000000000   # MISCH 5: Zaehler 0 gerade -> 0
+0027: 00000000145   # Zaehler 1 ungerade -> 101
+0030: 00000000002   # Zaehler 2 gerade -> 2
+0031: 00000000147   # Zaehler 3 ungerade -> 103
+0032: 00000000004   # Zaehler 4 gerade -> 4
+0033: 00000000001   # KL 1 0 1: (1|0)&1 = 1
+0034: 00000000000   # KL 0 0 1: (0|0)&1 = 0
+0035: 00000000001   # KL 0 1 1: (0|1)&1 = 1
+0036: 00000000000   # KL 1 1 0: (1|1)&0 = 0
+0037: 00000000001   # SECHS 6: im Bereich 1..6
+0040: 00000000000   # SECHS 7: ausserhalb
+0041: 00000000000   # UNGL 0: gleich null
+0042: 00000000001   # UNGL 5: ungleich null
+0043: 00000000007   # LABELS: w0 = 7
+0044: 00000000010   # w1 = 8
+0045: 00000000011   # w2 = 9
+0047: 00000000004   # ADDIERE 3: 1 + 3 = 4
+0050: 00000000021   # w1 + w2 = 8 + 9 = 17 (oktal 021)
+0051: 00000000004   # SPRUENGE: 1 + 3 = 4 (drei Durchlaeufe mit eigenem Label)

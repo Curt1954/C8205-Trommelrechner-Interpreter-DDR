@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_while_label.asm:5: Fehler: (Quelltext) Im Rumpf von $WHILE darf kein lokales Label mit % definiert werden: schleife%:
+datei-weg obj mqo test
+escape-weg

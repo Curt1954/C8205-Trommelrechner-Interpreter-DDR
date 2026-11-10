@@ -1,0 +1,7 @@
+        000     haupt   ; Zelle 0000: Sprung zum Hauptprogramm
+wert:   dw      017     ; Zelle 0001: Konstante
+erg:    dw      0       ; Zelle 0002: Ergebnis (initialisiert)
+haupt:  211     wert    ; Operation und Operand aus den Parametern
+        240     erg     ; Operation und Operand aus den Parametern
+        164     0001    ; Zelle 0005: Diagnoseausgabe (nur im Test)
+        020     0       ; Zelle 0006: Halt

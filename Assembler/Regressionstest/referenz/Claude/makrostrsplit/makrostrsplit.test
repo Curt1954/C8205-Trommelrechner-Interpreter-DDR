@@ -1,0 +1,50 @@
+Trommeldatei:
+#DOK-0001 Test Zeichenketten: Parameter name=wert zerlegen, Buchstaben zaehlen, Zeichenfolge in ein Feld zerlegen und rueckwaerts ausgeben
+#PROT STUFE=2
+0000: 00000025000 # 000 haupt ; Zelle 0000: Sprung zum Hauptprogramm
+0001: 00000000003 # dw 3 ; Laenge des Schluessels
+0002: 00000000052 # dw 42 ; Wert als Zahl
+0003: 00000000001 # dw 1 ; Laenge des Schluessels
+0004: 00000000007 # dw 7 ; Wert als Zahl
+0005: 00000000012 # dw 10 ; Laenge des Schluessels
+0006: 00000000173 # dw 123 ; Wert als Zahl
+0007: 00000000002 # dw 2 ; Laenge des Schluessels
+0010: 00000000000 # dw 0 ; Wert als Zahl
+0011: 00000000002 # dw 2 ; Anzahl der A
+0012: 00000000003 # dw 3 ; Anzahl der A
+0013: 00000000000 # dw 0 ; Anzahl der A
+0014: 00000000004 # dw 4 ; Anzahl der A
+0015: 00000000004 # dw 4 ; 4
+0016: 00000000002 # dw 2 ; Textlaenge 2
+0017: 00000000052 # dw 42 ; 42
+0020: 00000000103 # dw 67 ; rueckwaerts ausgegeben
+0021: 00000000102 # dw 66 ; rueckwaerts ausgegeben
+0022: 00000000101 # dw 65 ; rueckwaerts ausgegeben
+0023: 00000000171 # dw 121 ; rueckwaerts ausgegeben
+0024: 00000000170 # dw 120 ; rueckwaerts ausgegeben
+0025: 00000001164 # haupt: 164 0001 ; Zelle 21: Diagnoseausgabe (nur im Test)
+0026: 00000000020 # 020 0 ; Zelle 22: Halt
+Tastenfolge:
+H G R
+Prüfungen:
+BZ=0027 US=1
+0001: 00000000003   # SPLIT abc=42: Schluessellaenge
+0002: 00000000052   # SPLIT abc=42: Wert 42
+0003: 00000000001   # SPLIT x=7: Schluessellaenge
+0004: 00000000007   # SPLIT x=7: Wert
+0005: 00000000012   # SPLIT schluessel=123: Laenge 10
+0006: 00000000173   # SPLIT schluessel=123: Wert 123
+0007: 00000000002   # SPLIT ab=0: Schluessellaenge
+0010: 00000000000   # SPLIT ab=0: Wert 0
+0011: 00000000002   # ANZAHL Banane
+0012: 00000000003   # ANZAHL Ananas
+0013: 00000000000   # ANZAHL xyz
+0014: 00000000004   # ANZAHL AaAa
+0015: 00000000004   # FELDZ: f(0), Position des Gleichheitszeichens
+0016: 00000000002   # FELDZ: Laenge des Textelements f(1)
+0017: 00000000052   # FELDZ: f(2) = 42
+0020: 00000000103   # ZERLEG ABC: C
+0021: 00000000102   # ZERLEG ABC: B
+0022: 00000000101   # ZERLEG ABC: A
+0023: 00000000171   # ZERLEG xy: y
+0024: 00000000170   # ZERLEG xy: x

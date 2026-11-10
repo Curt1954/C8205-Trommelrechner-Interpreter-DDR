@@ -1,0 +1,4 @@
+rc 16
+stderr quelltext_while_ohne_endwhile.asm:3: Fehler: (Quelltext) Fehlendes $ENDWHILE für ein $WHILE.
+datei-weg obj mqo test
+escape-weg

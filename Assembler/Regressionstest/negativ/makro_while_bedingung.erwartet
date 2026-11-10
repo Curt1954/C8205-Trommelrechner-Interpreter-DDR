@@ -1,0 +1,4 @@
+rc 16
+stderr makro_while_bedingung.asm:9: Fehler: W7 $WHILE benötigt 3, 7, 11, 15, 19, 23, 27 oder 31 Parameter
+datei-weg obj mqo test
+escape-weg

@@ -1,0 +1,4 @@
+rc 16
+stderr makro_while_if_offen.asm:11: Fehler: W5 $ENDWHILE ohne vorheriges $WHILE: ein $IF ist noch offen (fehlendes $ENDIF?).
+datei-weg obj mqo test
+escape-weg

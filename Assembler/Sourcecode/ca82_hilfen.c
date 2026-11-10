@@ -35,6 +35,7 @@ void copyLineElements(lineElements *output, lineElements *ergebnis, int i) {
     STRKOPIE(output[i].sp3, ergebnis[i].sp3);
     STRKOPIE(output[i].sp4, ergebnis[i].sp4);
     output[i].srcLine = ergebnis[i].srcLine;
+    memcpy(output[i].opname, ergebnis[i].opname, sizeof(output[i].opname));
 }
 
 
@@ -74,6 +75,9 @@ void copyAndIncrementLineElements(int i) {
     STRKOPIE(lineAsmAufgeloestTemp[lineCountAsmAufgeloestTemp].sp3, lineAsmAufgeloest[i].sp3);
     STRKOPIE(lineAsmAufgeloestTemp[lineCountAsmAufgeloestTemp].sp4, lineAsmAufgeloest[i].sp4);
     lineAsmAufgeloestTemp[lineCountAsmAufgeloestTemp].srcLine = lineAsmAufgeloest[i].srcLine;
+    memcpy(lineAsmAufgeloestTemp[lineCountAsmAufgeloestTemp].opname, lineAsmAufgeloest[i].opname, sizeof(lineAsmAufgeloest[i].opname));
+    lineAsmAufgeloestTemp[lineCountAsmAufgeloestTemp].verlegt = 0;   // keine Optimierermarke (Doku 5.4)
+    lineAsmAufgeloestTemp[lineCountAsmAufgeloestTemp].makroInst = lineAsmAufgeloest[i].makroInst;   // Herkunft aus einem TYP=M-Makro (Doku 5.6)
     
     lineCountAsmAufgeloestTemp++; 
 }
@@ -198,8 +202,6 @@ void printMacroParameterError(const char *label, char *typ, char *text, char *li
 
 // ##############################
 
-int macroIfAufloesen(lineElements *macroline, int *imIf, int * inBedingung);
-
 void trimLeadingSpaces(char *line) {
     char *start = line;
     
@@ -274,10 +276,10 @@ void meldeZuVieleZeilen(int quellzeile) {
 
 void meldeWarnungOrt(int quellzeile, const char *text) {
     fflush(stdout);
-    if (quellzeile > 0) fprintf(stderr, "%s:%d: %sWarnung:%s %s\n", inputFileName, quellzeile, _gelb, _normal, text);
+    if (quellzeile > 0) fprintf(stderr, "%s:%d: %sWarnung:%s %s\n", qDatei(quellzeile), qZeile(quellzeile), _gelb, _normal, text);
     else                fprintf(stderr, "%s: %sWarnung:%s %s\n", inputFileName, _gelb, _normal, text);
     if (berichtLog) {
-        if (quellzeile > 0) fprintf(berichtLog, "%s:%d: Warnung: %s\n", inputFileName, quellzeile, text);
+        if (quellzeile > 0) fprintf(berichtLog, "%s:%d: Warnung: %s\n", qDatei(quellzeile), qZeile(quellzeile), text);
         else                fprintf(berichtLog, "%s: Warnung: %s\n", inputFileName, text);
     }
 }

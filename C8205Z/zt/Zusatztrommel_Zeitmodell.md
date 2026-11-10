@@ -1,8 +1,8 @@
 # Zusatztrommeln des C 8205Z – Zeitmodell und Modulspezifikation
 
-Version: 0.01-008
+Version: 0.01-009
 
-Eigenes Projekt C 8205Z, nicht Teil des C-8205-Simulators (Interpreter, Assembler). Rekonstruktion; was der Inhaber festgelegt hat und was Annahme ist, steht in Abschnitt 8. Rechnung: `zt/zt_zeitmodell.py`.
+Eigenes Projekt C 8205Z, nicht Teil des C-8205-Simulators (Interpreter, Assembler). Rekonstruktion; was festgelegt und was Annahme ist, steht in Abschnitt 8. Rechnung: `zt/zt_zeitmodell.py`.
 
 ## 1. Eckdaten
 
@@ -46,7 +46,7 @@ Block n (n = 0..3 in der Reihenfolge des Befehls) benutzt Puffer n mod 2:
 
 Der Befehl endet, wenn der Empfänger den letzten Block geschrieben hat (alle Semaphore frei).
 
-Blockreihenfolge: Sie legen die Lage der HT- und der ZT-Adresse fest (Inhaber). Modell: Es beginnt der Block k, dessen Position p ≡ k (mod 4) als nächste an der ZT-Kopf kommt; dann folgen k+1, k+2, k+3 (mod 4). Zwischen Blockende und Beginn des nächsten Blocks liegt eine Umschaltzeit u (Vorgabe 0,3 ms), danach beginnt der nächste Block an der ersten passenden Position.
+Blockreihenfolge: Sie legen die Lage der HT- und der ZT-Adresse fest. Modell: Es beginnt der Block k, dessen Position p ≡ k (mod 4) als nächste an der ZT-Kopf kommt; dann folgen k+1, k+2, k+3 (mod 4). Zwischen Blockende und Beginn des nächsten Blocks liegt eine Umschaltzeit u (Vorgabe 0,3 ms), danach beginnt der nächste Block an der ersten passenden Position.
 
 ## 4. Zeiten (aus dem Modell, 64 × 64 Phasen)
 
@@ -56,7 +56,7 @@ Blockreihenfolge: Sie legen die Lage der HT- und der ZT-Adresse fest (Inhaber). 
 | Spur Eingabe 661, Doppelpuffer | u = 0,3 ms | 80,9 / 82,8 / 84,7 ms (min / Mittel / max) |
 | Spur Ausgabe 601, Doppelpuffer | u = 0,3 ms | 82,5 / 83,8 / 85,6 ms |
 | Spur ohne Doppelpuffer (Vergleich) | Eingabe / Ausgabe | 81,4 / 84,3 / 87,5 und 82,5 / 85,1 / 88,1 ms |
-| Angabe Inhaber | 4,2 + 4 · 20 | 85 ms (Obergrenze, wird vom Modell bestätigt) |
+| Angabe | 4,2 + 4 · 20 | 85 ms (Obergrenze) |
 | Einzeladresse (Lesen, Ändern, Schreiben) | 20 + 3,33 + 20 | 43,3 ms (Angabe 44) |
 | Einzeladresse, beide Trommeln synchron aktuell | 3,33 + 20 | 23,3 ms (Angabe 24) |
 
@@ -68,11 +68,11 @@ Vergleichsmodell „fester Start“ (der Block beginnt erst an Position k, bis 2
 
 | Befehl | Wirkung |
 |---|---|
-| `5k00 030` (k = 1..4) | Anwahl der Zusatztrommel k (Festlegung: 5100 = ZT1 … 5400 = ZT4); gilt bis zur nächsten Anwahl |
+| `5k00 030` (k = 1..4) | Anwahl der Zusatztrommel k (Festlegung des Inhabers, korrigiert 30.10.2026: 5100 = ZT1 (Trommel 0) … 5400 = ZT4 (Trommel 3)); gilt bis zur nächsten Anwahl |
 | `zzz0 bbbb 601` | Ausgabe: HT-Spur bbbb → gewählte ZT, Spur zzz0 (Befehlswort 11 Oktalziffern; zzz0 = obere vier Ziffern, bisher ohne Bedeutung) |
 | `zzz0 bbbb 661` | Eingabe: gewählte ZT, Spur zzz0 → HT-Spur bbbb |
 
-Der Adreßtransport `aaaa 032` entfällt (Entscheidung des Inhabers 25.10.2026); die ZT-Adresse steht im selben Befehlswort. Adreßteil zzz0: wie die Ausgabe-Adresse des R-300-Kodes (vier Oktalstellen, die letzte „x“ ist beliebig und wird ignoriert). Wirksam ist nur die Spur: `spur = (adresse >> 5) & 0x7F`. Der Sektorteil ist ohne Bedeutung, es gibt keinen Anfangsblock.
+Der Adreßtransport `aaaa 032` entfällt; die ZT-Adresse steht im selben Befehlswort. Adreßteil zzz0: wie die Ausgabe-Adresse des R-300-Kodes (vier Oktalstellen, die letzte „x“ ist beliebig und wird ignoriert). Wirksam ist nur die Spur: `spur = (adresse >> 5) & 0x7F`. Der Sektorteil ist ohne Bedeutung, es gibt keinen Anfangsblock.
 
 Fehlerfälle: Beide Trommeln haben 128 Spuren und es wird immer eine ganze Spur übertragen; Adreß- und Kapazitätsfehler gibt es nicht. Der E/A-Befehl kommt immer NACH der Anwahl (wie die Ausgabe auf SW). Fehlt die Anwahl, verhält er sich wie ein Befehl ohne angewähltes Gerät: Halt mit Flag A (Ausgabe-Halt bzw. Eingabe-Halt).
 
@@ -170,7 +170,7 @@ Prüfung (`make test`, 153 Prüfungen): Permutationen (`ZT[4i+k] = HT[8k+i]`); d
 
 ### 6.7 Anbindung an GRAFIK (Erweiterungsmodul `c8205_ztmodul`, `grafik_zt.py`)
 
-Entscheidung des Inhabers (25.10.2026): Der Python-Interpreter (TEST) rechnet die Zusatztrommeln mit Zeit 0 (`c8205_zt.py`, wie die Haupttrommel dort); das C-Modul mit Zeitmodell gehört an den GRAFIK-Interpreter. Aufruf: `c8205_grafik.py --C8205Z[=VERZ]`; die Dateien `zt1.txt` bis `zt4.txt` (Format der HT) liegen in `VERZ` (Vorgabe `Trommel/ZT/`) und sind mit denen des Python-Moduls austauschbar.
+Der Python-Interpreter (TEST) rechnet die Zusatztrommeln mit Zeit 0 (`c8205_zt.py`, wie die Haupttrommel dort); das C-Modul mit Zeitmodell gehört an den GRAFIK-Interpreter. Aufruf: `c8205_grafik.py --C8205Z[=VERZ]`; die Dateien `zt1.txt` bis `zt4.txt` (Format der HT) liegen in `VERZ` (Vorgabe `Trommel/ZT/`) und sind mit denen des Python-Moduls austauschbar.
 
 - `C8205Z/zt_modul/python/c8205_ztmodul.c` bindet `zt_modul.c` mit `-DZT_OHNE_TROMMEL` ein (kein zweites `trommel.c`, es gibt nur die eine Haupttrommel in `c8205_trommel`). Die HT wird über drei Rückrufe angekoppelt: `c8205_trommel.lesen`, `.schreiben` (Direktzugriffe ohne Koinzidenz, wie in 6.3 vorgesehen) und `.aktueller_sektor`. Die Rückrufe laufen im Aufrufer- und im Empfängerthread und nehmen die GIL; blockierende Aufrufe geben sie frei. Bauen: `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace` (liefert `c8205_ztmodul.abi3.so`; `SIM` = Ordner `c-module`, Vorgabe `../../../c-module`).
 - Zeit je nach `--trommelzeit` der Haupttrommel: `alt` (Wanduhr): Modus ECHT, Phasen aus Uhr und `aktueller_sektor()`; der Befehl dauert in Echtzeit 81 bis 86 ms. `echt` und `schnell` (virtuelle Zeit `vt`, Wortzeit 104 µs): Modus VIRTUELL mit festen Phasen aus `vt` (HT-Phase = `(vt mod 32) · 104 µs`, ZT-Phase aus der Startlage `idx0` und `vt`); die Dauer wird als Ticks auf `vt` aufgeschlagen, bei `echt` schläft `_pace()` sie ab, bei `schnell` nicht.
@@ -194,9 +194,9 @@ Weitere Prüfungen: `pruefe_folgen()` (ZT[k::4] = HT[8k..8k+7]); über alle Phas
 
 ## 8. Festlegungen, Annahmen, offen
 
-Entschieden (Inhaber): Ein E/A-Befehl überträgt immer eine ganze Spur (32 Worte); der Rechner wartet im Befehl, die Pufferarbeit läuft innerhalb des Befehls im Hintergrund; es läuft nie ein zweiter Befehl auf der Trommel; je Puffer ein Zugriffssemaphor (Initiator setzt, Empfänger gibt frei), nur innerhalb des Befehls wirksam; zwei Puffer zu je 8 Worten; Adresse wie die R-300-Ausgabeadresse; Blockreihenfolge ergibt sich aus der Lage der Adressen; es gibt keine Adreßfehler; Anwahl vor dem E/A-Befehl, sonst Halt wie bei einem Gerät ohne Anwahl; Zuordnung 5100 = ZT1 … 5400 = ZT4; Anbindung an den Interpreter c8205_interp.py (Simulator) versuchsweise mit dem Schalter `--C8205Z` (Python-Modul `c8205_zt.py`, Zeit 0), Entscheidung 25.10.2026. Befehlscodes 601/661 (Wiederholungsbefehl W) statt 401/461, Entscheidung 25.10.2026.
+Festgelegt: Ein E/A-Befehl überträgt immer eine ganze Spur (32 Worte); der Rechner wartet im Befehl, die Pufferarbeit läuft innerhalb des Befehls im Hintergrund; es läuft nie ein zweiter Befehl auf der Trommel; je Puffer ein Zugriffssemaphor (Initiator setzt, Empfänger gibt frei), nur innerhalb des Befehls wirksam; zwei Puffer zu je 8 Worten; Adresse wie die R-300-Ausgabeadresse; Blockreihenfolge ergibt sich aus der Lage der Adressen; es gibt keine Adreßfehler; Anwahl vor dem E/A-Befehl, sonst Halt wie bei einem Gerät ohne Anwahl; Zuordnung 5100 = ZT1 … 5400 = ZT4; Anbindung an den Interpreter c8205_interp.py (Simulator) versuchsweise mit dem Schalter `--C8205Z` (Python-Modul `c8205_zt.py`, Zeit 0). Befehlscodes 601/661 (Wiederholungsbefehl W) statt 401/461.
 
-Festlegung Claude: Mindestabstand der ZT-Zugriffe g = 4 Sektoren. Gründe: (1) nur g = 4 macht „jede 4. ZT-Position = eine HT-Achtergruppe“; (2) g ≥ 5 paßt nicht (7 · 5 + 1 = 36 > 32 Sektoren, mehr als ein Umlauf); (3) ein kleineres g bräuchte schnellere Elektronik, als bei gleicher Bauart und Einzeltransistoren zu erwarten ist.
+Festlegung: Mindestabstand der ZT-Zugriffe g = 4 Sektoren. Gründe: (1) nur g = 4 macht „jede 4. ZT-Position = eine HT-Achtergruppe“; (2) g ≥ 5 paßt nicht (7 · 5 + 1 = 36 > 32 Sektoren, mehr als ein Umlauf); (3) ein kleineres g bräuchte schnellere Elektronik, als bei gleicher Bauart und Einzeltransistoren zu erwarten ist.
 
 Annahmen: ZT und HT sind unsynchron (zufällige Phase); die Umschaltzeit u = 0,3 ms liegt im Bereich 0 < u ≤ 2,5 ms, in dem das Ergebnis kaum von u abhängt; der Block darf an jeder seiner 8 ZT-Positionen beginnen; die HT-Blöcke werden wie mit einem Gruppenbefehl in einem Durchlauf übertragen; der Simulator behandelt sie als Einheit mit berechneter Zeit.
 

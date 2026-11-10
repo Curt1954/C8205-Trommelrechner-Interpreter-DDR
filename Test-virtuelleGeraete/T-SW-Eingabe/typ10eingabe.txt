@@ -1,0 +1,24 @@
+# typ10eingabe: Zelle 1: 13 Oktalziffern mit eingestreuten a, 8, +, WRZL, Um. GB / Um. KB; Punkt; Zelle 2: a, 9, +
+1
+2
+3
+a
+4
+5
+8
+6
++
+7
+0
+WRZL
+1
+Um. GB
+2
+3
+Um. KB
+4
+5
+.
+a
+9
++

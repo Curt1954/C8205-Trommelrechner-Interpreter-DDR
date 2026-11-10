@@ -1,0 +1,4 @@
+rc 16
+stderr makro_set_dim_lokal_art.asm:8: Fehler: G9 $DIM a: Der Name ist schon eine einfache Variable
+datei-weg obj mqo test
+escape-weg

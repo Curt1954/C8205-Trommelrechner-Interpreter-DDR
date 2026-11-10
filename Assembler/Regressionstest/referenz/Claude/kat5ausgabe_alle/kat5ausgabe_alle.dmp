@@ -1,0 +1,130 @@
+0000: 01 0031 000               000  haupt                      ; Zelle 0000: Sprung zum Hauptprogramm
+      00 02122232425 text1:     kat5 abcde                      ; Zelle 0001: Text 1, Wort 1
+      00 02627303132            kat5 fghij                      ; Zelle 0002: Text 1, Wort 2
+      00 03334353637            kat5 klmno                      ; Zelle 0003: Text 1, Wort 3
+      00 04041424344            kat5 pqrst                      ; Zelle 0004: Text 1, Wort 4
+      00 04546475051            kat5 uvwxy                      ; Zelle 0005: Text 1, Wort 5
+      00 05201071011            kat5 z 012                      ; Zelle 0006: Text 1, Wort 6: z, Leerzeichen, 0, 1, 2
+      00 01213141516            kat5 34567                      ; Zelle 0007: Text 1, Wort 7
+      00 01720040203            kat5 89.,-                      ; Zelle 0010: Text 1, Wort 8: 8, 9, Punkt, Komma, Minus
+      00 00506000000            kat5 +:                         ; Zelle 0011: Text 1, Wort 9: Plus, Doppelpunkt
+      00 05521222324            kat5 $ingbabcd                  ; Zelle 0012: Text 2, Wort 1: Um. GB, a, b, c, d
+      00 02526273031            kat5 efghi                      ; Zelle 0013: Text 2, Wort 2
+      00 03233343536            kat5 jklmn                      ; Zelle 0014: Text 2, Wort 3
+      00 03740414243            kat5 opqrs                      ; Zelle 0015: Text 2, Wort 4
+      00 04445464750            kat5 tuvwx                      ; Zelle 0016: Text 2, Wort 5
+      00 05152000000            kat5 yz                         ; Zelle 0017: Text 2, Wort 6: y, z
+      00 00710111314            kat5 01245                      ; Zelle 0020: Text 3, Wort 1
+      00 01517200104            kat5 689 .                      ; Zelle 0021: Text 3, Wort 2: 6, 8, 9, Leerzeichen, Punkt
+      00 00205060000            kat5 ,=:                        ; Zelle 0022: Text 3, Wort 3: Komma, Gleichheitszeichen, Doppelpunkt
+      00 05421225323            kat5 $inkbab$wrzlc              ; Zelle 0023: Text 4, Wort 1: Um. KB, a, b, Zeilenschaltung, c
+      00 02400000000            kat5 d                          ; Zelle 0024: Text 4, Wort 2: d
+0025: 01 1000        radr1:     da   text1                      ; Zelle 0025: Adresse von Text 1, Wort 1 (Adressfeld)
+0026: 0              kbaus:     dw   0                          ; Zelle 0026: KB/GB-Zustand (0 = KB, 1 = GB), initial KB
+0027: 01 26000       rkb:       da   kbaus                      ; Zelle 0027: Adresse der Zustandszelle (Adressfeld)
+0030: 0              zaehl:     dw   0                          ; Zelle 0030: Schleifenzaehler (noch auszugebende Worte minus 1)
+0031: 01 0027 211    haupt:     211  rkb                        ; AC := Adresse der Zustandszelle
+0032: 00 7774 240               240  r3                         ; R3 := Adresse der Zustandszelle
+0033: 00 4500 030               030  04500                      ; 4500 oder K2 oder LSL2 oder SW1 Output
+0034: 01 0025 211               211  radr1                      ; AC := Adresse von Wort 1
+0035: 00 7773 240               240  r1                         ; R1 := Adresse von Wort 1
+0036: 01 0170 211               211  l0001                      ; AC := 19 (dezimal: 20 Worte minus 1)
+0037: 01 0030 240               240  zaehl                      ; zaehl := 19
+0040: 01 0051 025    schl:      025  ausgabe                    ; Aufruf KAT5AUSGABE: ein Wort ab R1
+0041: 00 7773 211               211  r1                         ; AC := Adresse des ausgegebenen Wortes
+0042: 01 0171 210               210  l0002                      ; plus eine Adresseinheit: naechstes Wort
+0043: 00 7773 240               240  r1                         ; R1 := Adresse des naechsten Wortes
+0044: 01 0030 211               211  zaehl                      ; AC := zaehl
+0045: 01 0172 220               220  l0003                      ; AC := zaehl - 1
+0046: 01 0030 240               240  zaehl                      ; zaehl := zaehl - 1
+0047: 01 0040 050               050  schl                       ; zaehl >= 0: naechstes Wort
+0050: 01 0000 020               020  0                          ; Halt
+0051: 01 0077 240    ausgabe:   240  ML0001GNU                  ; Rueckkehrwort sichern
+0052: 00 7773 211               211  ML0014GNU                  ; AC := Adresse des Wortes (R1 bleibt unveraendert)
+0053: 00 0000 251               251  0                          ; R-Lesebefehl: AC := Wort (Adresse im AC)
+0054: 01 0111 240               240  ML0004GNU                  ; rest := Wort (nie negativ, z0 bis z2 sind 0)
+0055: 01 0173 330    ML0007GNU: 330  l0004                      ; Vergleich des Rests mit 0 (keine Operation), der AC bleibt der Rest
+0056: 01 0077 170               170  ML0001GNU                  ; Rest 0: Wort fertig, Rueckkehr
+0057: 01 7675 642               642  07675                      ; 15 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0060: 01 0174 200               200  l0005                      ; nur das Zeichen behalten
+0061: 01 0112 240               240  ML0005GNU                  ; zeichen := Code mal 01000
+0062: 01 0175 330               330  l0006                      ; Vergleich mit kat5 054 (Um. KB)
+0063: 01 0100 170               170  ML0011GNU                  ; Um. KB: Zustand := KB
+0064: 01 0176 330               330  l0007                      ; Vergleich mit kat5 055 (Um. GB)
+0065: 01 0100 170               170  ML0011GNU                  ; Um. GB: Zustand := GB
+0066: 01 0177 210    ML0008GNU: 210  l0008                      ; plus Adresse der Tabelle, Code 01 steht auf ML0013%
+0067: 00 0000 251               251  0                          ; R-Lesebefehl: AC := fertiger Ausgabebefehl des Zeichens
+0070: 01 0071 240               240  ML0009GNU                  ; Ausgabebefehl auf die naechste Zelle speichern
+0071: 20 0072        ML0009GNU: db   1                          ; Laufzeit: Ausgabebefehl, wird sofort ausgefuehrt
+0072: 01 0111 211               211  ML0004GNU                  ; AC := Zeichenrest
+0073: 01 0200 200               200  l0009                      ; erstes Zeichen entfernen (die unteren 24 Bit bleiben)
+0074: 01 7662 644               644  07662                      ; 6 mal Linksverschiebung (Operand nach Festlegung 026)
+0075: 01 0111 240               240  ML0004GNU                  ; rest := Rest
+0076: 01 0055 000               000  ML0007GNU                  ; naechstes Zeichen (der AC ist der Rest)
+0077: 20 0100        ML0001GNU: db   1                          ; Laufzeit: Rueckkehrsprung, hier am Ende des UP sequentiell erreicht
+0100: 00 7774 211    ML0011GNU: 211  ML0015GNU                  ; Um. KB / Um. GB: AC := R3 = Adresse der Zustandszelle (Adressfeld)
+0101: 01 0201 210               210  l0010                      ; plus Operationscode 240: Speicherbefehl
+0102: 01 0106 240               240  ML0012GNU                  ; Speicherbefehl auf die uebernaechste Zelle
+0103: 01 0112 211               211  ML0005GNU                  ; AC := Code mal 01000 (054000 oder 055000)
+0104: 01 0175 220               220  l0006                      ; AC := 0 (Um. KB) oder 01000 (Um. GB)
+0105: 01 7653 642               642  07653                      ; 9 mal Rechtsverschiebung (Operand nach Festlegung 026)
+0106: 20 0107        ML0012GNU: db   1                          ; Laufzeit: 240 <Zustandszelle>, speichert den Zustand
+0107: 01 0112 211               211  ML0005GNU                  ; AC := Code mal 01000, zurueck zur Ausgabe des Zeichens
+0110: 01 0066 000               000  ML0008GNU                  ; Zeichen ausgeben
+0111: 20 0112        ML0004GNU: db   1                          ; Arbeitszelle: noch auszugebender Zeichenrest
+0112: 20 0113        ML0005GNU: db   1                          ; Arbeitszelle: aktueller kat5-Code mal 01000
+      00 0320 030    ML0013GNU: dto  \ \                        ; Tabelle, Code 01: Leerzeichen
+      00 1530 030               dz   ,                          ; Code 02: Komma
+      00 1000 030               dz   -                          ; Code 03: Minus
+      00 0730 030               dz   .                          ; Code 04: Punkt
+      00 0400 030               dz   +                          ; Code 05: + und =
+      00 0150 030               dz   :                          ; Code 06: Doppelpunkt
+      00 0200 030               dto  0123456789                 ; Codes 07 bis 020: 0 bis 9
+      00 0010 030    ;    
+      00 0020 030    ;    
+      00 0230 030    ;    
+      00 0040 030    ;    
+      00 0250 030    ;    
+      00 0260 030    ;    
+      00 0070 030    ;    
+      00 0100 030    ;    
+      00 0310 030    ;    
+      00 0610 030               dto  abcdefghijklmnopqrstuvwxyz ; Codes 021 bis 052: a bis z
+      00 0620 030    ;    
+      00 0430 030    ;    
+      00 0640 030    ;    
+      00 0450 030    ;    
+      00 0460 030    ;    
+      00 0670 030    ;    
+      00 0700 030    ;    
+      00 0510 030    ;    
+      00 1210 030    ;    
+      00 1220 030    ;    
+      00 1030 030    ;    
+      00 1240 030    ;    
+      00 1050 030    ;    
+      00 1060 030    ;    
+      00 1270 030    ;    
+      00 1300 030    ;    
+      00 1110 030    ;    
+      00 1420 030    ;    
+      00 1630 030    ;    
+      00 1440 030    ;    
+      00 1650 030    ;    
+      00 1660 030    ;    
+      00 1470 030    ;    
+      00 1500 030    ;    
+      00 1710 030    ;    
+      00 2720 030               dz   $wrzl                      ; Code 053: Zeilenschaltung (Satzmarke)
+      00 1170 030               dz   $inkb                      ; Code 054: Um. KB
+      00 0570 030               dz   $ingb                      ; Code 055: Um. GB
+0170: 00 00000000023 l0001      dw   19                         
+0171: 00 00000001000 l0002      dw   000000001000               
+0172: 00 00000000001 l0003      dw   1                          
+0173: 0              l0004      dw   000000000000               
+0174: 00 00000077000 l0005      dw   000000077000               
+0175: 00 00000054000 l0006      dw   000000054000               
+0176: 00 00000055000 l0007      dw   000000055000               
+0177: 01 112000      l0008      da   ML0013GNU-1                
+0200: 00 00077777777 l0009      dw   000077777777               
+0201: 00 00000000240 l0010      dw   000000000240               

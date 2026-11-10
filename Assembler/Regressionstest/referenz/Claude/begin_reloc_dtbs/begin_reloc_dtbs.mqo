@@ -1,0 +1,10 @@
+                 000              haupt            ; Zelle 0000: Sprung zum Hauptprogramm
+erg:             dw               0                ; Zelle 0001: Ergebnis
+haupt            211              l0001            ; Zelle 0002: AC := Literal 5 (der Assembler legt es in die Luecke des Blocks)
+                 240              erg              ; Zelle 0003: (erg) := AC
+                 020              0                ; Zelle 0004: Halt
+                 equ              07500            ; vorher equ100 *    Rasterung 0100
+bl:              dtm              \12\             ; drei Zellen: Umschaltzeichen KB, Ziffer 1, Ziffer 2
+; 
+; 
+l0001            dw               5                
