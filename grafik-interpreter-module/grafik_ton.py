@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_ton.py - Rechnertoene fuer GRAFIK (vorgezogener Anfang von Stufe 4): fade_in (Hochlauf), Grundgeraeusch (Betrieb), fade_out (Ausschalten).
-Version: G2-003. Nur Standardbibliothek. Schreibwerk, Leser und Stanzer folgen in Stufe 4 (Mischer: GRAFIK_Beschreibung §6 (alt: Dok. 03)).
+Nur Standardbibliothek. Schreibwerk, Leser und Stanzer folgen in Stufe 4 (Mischer: GRAFIK_Beschreibung §6 (alt: Dok. 03)).
 
 Abspielen: Windows winsound (nur ein Klang gleichzeitig, also Grundgeraeusch und andere Toene noch NICHT gemischt); sonst ein
 Kommandozeilenspieler (paplay, pw-play, aplay, play, ffplay), je Klang ein eigener Prozess. Ohne Spieler: Meldung auf stderr, kein Ton, kein Fehler.
@@ -18,7 +18,7 @@ import time
 import wave
 import array
 
-VERSION_TON = 'G2-003'
+VERSION_TON = 'G2-004'
 GRUND_PEGEL = 0.8       # Grundgeraeusch 20 % leiser (Projektinhaber 17.10.2026)
 SPIELER = (['paplay'], ['pw-play'], ['aplay', '-q'], ['play', '-q'], ['ffplay', '-nodisp', '-autoexit', '-loglevel', 'quiet'])
 

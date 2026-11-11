@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_schreibwerk.py - Schreibwerkzeit und Klangwahl des Schreibwerks fuer GRAFIK (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-05 bis S4-08, S4-17).
-Version: G4-004.  Nur Standardbibliothek.
+Nur Standardbibliothek.
 G4-004 (22.10.2026, Projektinhaber: 'bei gedrueckt gehaltenem Selektor SW geht die Ausgabe verloren, muss aber nach dem Loesen wieder beginnen'): Selektor SW
 unterdrueckt Anzeige und Klang, NICHT mehr die Schreibwerkzeit: ausgabe(text, stumm=True) laesst das Schreibwerk je Zeichen still durchlaufen (gleiche
 Zeiten, gleiches Warten als E/A-Halt). Sonst waere der Rest eines laufenden Textes in Millisekunden verbraucht und beim Loesen nichts mehr da.
@@ -31,7 +31,7 @@ import time
 
 import grafik_tonmisch as TM
 
-VERSION_SCHREIBWERK = 'G4-004'
+VERSION_SCHREIBWERK = 'G4-005'
 SELEKTOR_MIT_ZEIT = True                    # G4-004: Selektor SW unterdrueckt nur Anzeige und Klang, die Schreibwerkzeit laeuft weiter
 SCHREIBWERKZEIT_MS = 82.5                   # Mittel (G4-003: 75 bis 90 ms, vorher 70 bis 90 ms)
 SCHREIBWERKZEIT_STREUUNG_MS = 7.5           # 75 bis 90 ms

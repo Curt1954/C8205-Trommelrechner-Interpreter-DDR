@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 grafik_geraete.py - Lochbandleser und Lochbandstanzer fuer den Modus GRAFIK (Stufe 1, Checkpoint 3).
-Version: G4-003
 
 Regeln (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 2.5), GRAFIK_Beschreibung Anhang A (alt: Dok. 05) F-11 und F-12, entschieden 15./16.10.2026):
 
@@ -40,7 +39,7 @@ import time
 from c8205_interp import KonfigFehler, LaufFehler
 from grafik_trommel import GrafikAbbruch
 
-VERSION_GERAETE = 'G4-002'
+VERSION_GERAETE = 'G4-004'
 KORB = 'LOCHSTREIFENKORB'
 STANZER_DATEI = 'stanzer.ls'
 _LOCHBILD = re.compile(r'[01]{8}')

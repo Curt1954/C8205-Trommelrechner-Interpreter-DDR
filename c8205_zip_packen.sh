@@ -35,6 +35,9 @@
 # erzeugten Dateien .log .mqo .obj .sym unter Assembler/. Es bleiben .asm, .dmp und .test.
 # virtuelle_Geraete/ bleibt drin (Standardpfade von Leser und Stanzer, nur wenige KB).
 # C8205Z/ (ZT-Zusatztrommel) kommt komplett in die schlanke Variante, auch seine PDFs.
+# In KEINER Fassung liegt C8205Z/zt_modul/python/build/ (Bau-Zwischenstand mit Objektdateien von
+# setup.py build_ext --inplace; kein Quelltext, entsteht beim Bauen neu; die vorübersetzten Binaries
+# c8205_ztmodul.abi3.so und .pyd liegen eine Ebene darüber und bleiben im Zip).
 # Der GRAFIK-Interpreter läuft mit --ohne-fenster --STUMM auch ohne pult/ und ton/.
 # Wer am GRAFIK-Fenster, am Pult oder an den Klängen arbeitet, nimmt das Gesamt-Zip.
 # In beiden Fassungen tragen alle .sh-Dateien die Rechte 0755 (das Skript schreibt das Zip dafür nach dem Packen mit
@@ -49,7 +52,8 @@
 #      Regressionstest.zip   <- Assembler/Regressionstest/   (Pfade im Zip: Assembler/Regressionstest/...,
 #                                                              entpacken also im Projektstamm)
 # 3. Das Gesamt-Zip enthält alles im Projektstamm (wie  zip -r name.zip * ),
-#    aber nicht .git, nicht __pycache__, nicht Test-Protokolle/ und nicht Assembler/Regressionstest/
+#    aber nicht .git, nicht __pycache__, nicht C8205Z/zt_modul/python/build/, nicht Test-Protokolle/ und
+#    nicht Assembler/Regressionstest/
 #    (dafür aber die beiden Sub-Zips) und nicht frühere Gesamt-Zips "C8205 Simulator *.zip".
 # 4. Danach werden die beiden Sub-Zips im Projektstamm wieder entfernt; sie liegen im Gesamt-Zip.
 set -u
@@ -215,6 +219,7 @@ gesamt_zip() {
        -x "C8205 Simulator *.zip"
        -x "*__pycache__*"
        -x ".build-nummer"
+       -x "C8205Z/zt_modul/python/build" "C8205Z/zt_modul/python/build/*"
    )
    if [ "$schlank" = 1 ]; then
        ausschluss+=(
@@ -231,6 +236,7 @@ gesamt_zip() {
    # Schlanke Variante: C8205Z/ komplett nachlegen (der Ausschluss "*.pdf" oben hat dort PDFs entfernt)
    if [ "$schlank" = 1 ] && [ -d C8205Z ]; then
        zip -q -r "$ziel" C8205Z -x "*__pycache__*" -x ".git/*" -x "*/.git/*" \
+          -x "C8205Z/zt_modul/python/build" "C8205Z/zt_modul/python/build/*" \
           || { echo "Packen fehlgeschlagen: $ziel (C8205Z)"; exit 1; }
    fi
    zip_rechte_setzen "$ziel"

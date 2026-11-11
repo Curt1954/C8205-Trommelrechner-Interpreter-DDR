@@ -1,6 +1,6 @@
 # C8205-Interpreter: Projektüberblick
 
-Version: 0.95-004
+Version: 0.95-008
 
 Dieses Dokument richtet sich an Menschen, die das Projekt nicht im Detail verfolgt haben, und
 beschreibt zusammenhängend, was hier entsteht und wie die Einzeldokumente zueinander stehen. Es
@@ -23,9 +23,11 @@ Befehlsablaufs (die "vier Phasen" der Befehlsabarbeitung, phasenweise als Knoten
 Knoten beschrieben) aus Originalunterlagen so genau wie möglich als Regelwerk rekonstruiert. Darauf
 aufbauend wird dieses Regelwerk **interpretativ** ausgeführt — wortlautgetreu, ohne stillschweigende
 Vereinfachung: Ist eine Stelle des Regelwerks unklar, wird das als offener Punkt gemeldet statt
-eigenmächtig "repariert" ("laut scheitern"-Prinzip). Alle Zeitabhängigkeiten der realen Hardware
-(Wortzeit, Wartezeit der Trommel) werden für die Simulation auf 0 gesetzt: Die zeitliche Reihenfolge
-der Ereignisse bleibt erhalten, es entstehen aber keine echten Wartezeiten.
+eigenmächtig "repariert" ("laut scheitern"-Prinzip). Im Stapelbetrieb **TEST** werden alle
+Zeitabhängigkeiten der realen Hardware (Wortzeit, Wartezeit der Trommel) auf 0 gesetzt: Die zeitliche
+Reihenfolge der Ereignisse bleibt erhalten, es entstehen aber keine echten Wartezeiten. Der Modus
+**GRAFIK** (Abschnitt 4a) bildet die Trommelzeit dagegen nach (Wortzeit 104 µs, 32 Sektoren; Zeitmodell
+wählbar mit `--trommelzeit alt|echt|schnell`).
 
 Das Gesamtprojekt gliedert sich dafür in drei Teilprojekte mit unterschiedlichem Zweck: Der
 **Interpreter** (Python, Wurzel des Projektverzeichnisses; Abschnitt 2) führt Maschinencode gegen das
@@ -35,7 +37,8 @@ rekonstruierte Regelwerk aus, der **Assembler** (C, Unterverzeichnis `Assembler/
 läuft. Interpreter und Assembler sind eigenständige Werkzeuge, die über den von ihnen erzeugten bzw.
 verarbeiteten Objektcode zusammenhängen, aber unabhängig voneinander entwickelt werden. Das BIS ist kein
 Werkzeug, sondern Anwendungs-Software für den C 8205; als Teilprojekt steht es gleichberechtigt neben den
-beiden anderen.
+beiden anderen. Daneben gibt es als experimentellen Zusatzpfad den Prototyp der Zusatztrommeln C8205Z
+(Abschnitt 3b); er ist kein viertes Teilprojekt und verändert den Simulator nur mit dem Schalter `--C8205Z`.
 
 ## 2. Zwei-Wege-Architektur: Python-Interpreter und Claude-Interpreter
 
@@ -65,33 +68,49 @@ Startanweisung aussehen kann, steht in `C8205-Interpreter-Durchführung_eines_Te
 
 ## 3. Teilprojekt Assembler
 
-Der Assembler `c82ass` (Cross-Assembler für C8205/C8205Z, Version 0.2, in C geschrieben, läuft unter
-Linux und Windows 10) ist ein eigenständiges Werkzeug, kein Interpreter oder Simulator: Er übersetzt
+Der Assembler `c82ass` (Cross-Assembler für C8205/C8205Z, in C geschrieben, läuft unter
+Linux und Windows 10; die Versionsnummer nennt `c82ass --version`, die Stellen der Hochzählung stehen in `C8205-Versionierung.md`) ist ein eigenständiges Werkzeug, kein Interpreter oder Simulator: Er übersetzt
 lesbaren Assembler-Quelltext (`.asm`) in ladefähigen Objektcode (K1K2-Textformat) für das "Kleine
 Eingabeprogramm" des C 8205, denselben Maschinencode, den der Interpreter (Abschnitt 2) als
 Trommeldatei ausführt. Aufruf, Sprachdefinition, Anweisungen, Makros und Beispiel stehen in der
-Assemblerdokumentation (`Assembler/Dokumentation/`, die `.odt` ist maßgeblich); hier nur das Wesentliche:
+Assemblerdokumentation (`Assembler/Dokumentation/`, die `.md` ist maßgeblich); hier nur das Wesentliche:
 
 - **Vier Pässe:** Pass 0 löst die Makros auf (`c82ass.makros`), Pass 1 ermittelt die Literaltabelle, Pass 2 die
   Symboltabelle (beide im `.log`, die Symbole zusätzlich in der `.sym`), Pass 3 erzeugt die
-  Kennzeichenbefehle im Objektfile (`.obj`) sowie `.mqo`, `.dmp` und `.test`.
-- **Sprache:** Maschinenbefehle (3 Oktalziffern) gemischt mit Assembleranweisungen: Datendefinition
-  (`db`/`dbn` Bereich frei/auf Null, `dw` Wert, `da` Adresse, `dt`/`dto`/`dtm` Text als R300-Zeichenfolge,
-  `dz` Sonderzeichen), Adressdefinition (`equ` relativ, `abs` absolut) und Programmrahmen (`start`/`end`).
-  Adresssymbole (bis 32 Zeichen, mit Doppelpunkt abgeschlossen) und Literale (`#Werteausdruck` bzw.
-  `@Adressausdruck`, vom Assembler automatisch auf einem eigenen Speicherplatz abgelegt) ergänzen die Sprache.
+  Kennzeichenbefehle im Objektfile (`.obj`) sowie `.mqo`, `.dmp` und `.test`. Zwischen Pass 2 und Pass 3 läuft der
+  **Optimierer** (standardmäßig an, `--no-opt` schaltet ihn ab): Er verlegt Literale in freie Zellen, verschiebt Blöcke
+  (`begin RELOC-EQU`, `begin RELOC-ALL`) und ordnet Makro-Rümpfe um (Assemblerdokumentation, Abschnitt 5). Mit `--pass0` läuft nur Pass 0.
+- **Sprache:** Maschinenbefehle (3 Oktalziffern, oder Namen mit vorangestelltem Punkt wie `.LD` über die Tabelle
+  `c82ass.opsym`) gemischt mit Assembleranweisungen: Datendefinition (`db`/`dbn` Bereich frei/auf Null, `dw` Wert, `dwb`
+  Bitfolge, `dwh` hexadezimal, `dwf` Festkommabruch, `dwg` Gleitkommazahl, `da` Adresse, `dt`/`dto`/`dtm` Text als
+  R300-Zeichenfolge, `kat4`/`kat5`/`kat6` komprimierter Text, `dz` Sonderzeichen), Adressdefinition (`equ` relativ, `equ10`/`equ40`/`equ100`
+  Ausrichtung, `abs` absolut, `spa` Sektoradresse), Programmrahmen (`start`/`end`) und zusammenhängende Folgen (`begin`/`bend`).
+  Adresssymbole (bis 32 Zeichen, mit Doppelpunkt abgeschlossen) und Literale (`#Werteausdruck`, `@Adressausdruck`,
+  `!Name` als benannte Arbeitszelle; vom Assembler automatisch auf einem eigenen Speicherplatz abgelegt) ergänzen die Sprache.
 - **Makro-Präprozessor:** `MACRO`/`MEND`-Blöcke mit Parameterersetzung (`$1`, `$2`, …), bedingter
   Codegenerierung (`$IF`/`$ELIF`/`$ENDIF` mit bis zu vier über `|`/`&` verknüpften Vergleichsblöcken) und
   generischen, mehrfach verwendbaren Labels über einen `%`-Platzhalter, der bei jedem Aufruf durch eine
-  fortlaufende Nummer ersetzt wird.
+  fortlaufende Nummer ersetzt wird. Dazu kommen weitere `$`-Direktiven, Funktionen, benannte Parameter und
+  Schlüsselwortparameter (Assemblerdokumentation, Abschnitt 4). Die mitgelieferten Makros beschreiben
+  `Assembler/Dokumentation/C8205_Standardmakros_c82ass.md` (Standardmakros) und `C8205_ZT_Makros_Uebersicht.md` (ZT-Makros).
+- **Programmprojekte und Generatoren:** Unter `Assembler/` liegen neben dem Quelltext des Assemblers die
+  Assemblerprogramme selbst, je Projekt ein Ordner (`Projekt_1/`, `Projekt_2/` mit dem BIS-Minimalprogramm,
+  `Projekt_Festkomma/`, `Projekt_Gleitkomma/`, `Proj_FeldSortieren/`, `Projekt_ZT_LOADER/` für die Zusatztrommeln,
+  `Claude/` mit kleinen Prüfprogrammen je Assemblermerkmal). Größere Programme (ab etwa 30 Zellen mit Schleife,
+  Feld, Unterprogramm oder Ein-/Ausgabe) entstehen als Python-Generator im Unterordner `gen/` des Programms; die
+  gemeinsame Bibliothek `Assembler/Claude/gen_lib/c82gen.py` (Messung und Einsatzregel: `gen_lib_messung.md`)
+  macht Python zur Makrosprache. Die erzeugte `.asm` bleibt maßgeblich und lesbar (Programmierhandbuch 5.7).
+  Der Assembler selbst wird mit `Assembler/Regressionstest/` geprüft (Beschreibung: `LIESMICH.md` darin; der
+  Ordner liegt als `Regressionstest.zip` im Projektstamm).
 - **Erzeugte Dateien:** Wichtig sind `.obj` (Objektcode) und `.test` (Trommeldatei für den Interpreter, mit Platzhaltern für Testmarken und Tastenfolge); `.log`,
   `.mqo`, `.sym` und `.dmp` sind Tabellen, Listing und Hilfsdateien. Die vollständige Liste steht in
   `Projektstruktur.md`, Abschnitt 3.
 - **Brücke zum Interpreter:** Die zusätzlich erzeugte `.test`-Datei enthält die vollständige Trommeldatei im
   Testformat des Interpreters (`Adresse: Wert`, oktal, mit der jeweiligen Quelltextzeile als Kommentar) sowie
   Platzhalter-Definitionen für Testmarken und Tastenfolge und ggf. den Leerbefehl `164`. Diese Platzhalter müssen
-  für den jeweiligen Fall ergänzt bzw. erweitert werden (Testmarken, Tastenfolge und Prüfungen: `Durchführung_eines_Tests.md`, Abschnitte 2 bis 3b). Danach wird die Datei als
-  Testauftrag `Tests/asm_NNNN_<Programmname>.txt` abgelegt (Namensschema: `Projektstruktur.md`, Abschnitt 2).
+  für den jeweiligen Fall ergänzt bzw. erweitert werden (Testmarken, Tastenfolge und Prüfungen: `Durchführung_eines_Tests.md`, Abschnitte 2 bis 3b). Den Standardweg erledigt `Assembler/asm_und_test.sh`: Es assembliert, ergänzt die `.test` (Sollwerte aus dem
+  `;#PRUEFE`-Block des `.asm`) und startet den Interpreter. Ältere Testaufträge liegen als
+  `Tests/asm_NNNN_<Programmname>.txt` (Namensschema: `Projektstruktur.md`, Abschnitt 2).
   Der Code selbst stammt unverändert aus dem Assemblerlauf (`Durchführung_eines_Tests.md`, Abschnitt 2a).
 
 ## 3a. Teilprojekt BIS
@@ -120,11 +139,25 @@ Minimalprogramm; weitere Bausteine sind noch nicht erfasst (`C8205-Interpreter-B
   die Tetraden des BIS in `C8205-Interpreter-BIS.md` (Abschnitt BIS-1.1).
 - Der Objektcode des Assemblers (K1K2-Format, Abschnitt 3) ist für das KEP bestimmt, also für den ersten
   Baustein des BIS.
-- Interpreter und Assembler kennen das BIS nicht: Es ist kein Teil der simulierten Hardware. Anmerkung
-  (Folgerung, nicht aus der Quelle): Bausteine ließen sich als Trommeldatei eines Tests im Interpreter
-  ausführen.
+- Interpreter und Assembler kennen das BIS nicht: Es ist kein Teil der simulierten Hardware. Bausteine lassen
+  sich aber als Trommeldatei eines Tests im Interpreter ausführen, und das geschieht auch: Das
+  Minimalprogramm liegt als Assemblerprojekt in `Assembler/Projekt_2/` (Fassung v6, daneben v7 mit optimierter
+  Ziffernschleife), seine Testaufträge in `Tests/` (`pj2-bis_v6_*`, `pj2-bis_v7_*`), fertige Lochstreifen in
+  `Lochstreifen/`. Der Ordner `Bausteininterpretiersystem BIS/` selbst enthält nur die Dokumentation.
 
 Einzelheiten stehen nicht hier, sondern in `C8205-Interpreter-BIS.md`. Das Format der Objektdatei, die das KEP liest, und der Weg vom Vorgabebild zum Testauftrag stehen in `C8205-Interpreter-Objektdatei_Listing.md` (ebenfalls im Ordner `Bausteininterpretiersystem BIS/markdown-dateien/`).
+
+## 3b. Experimenteller Prototyp C8205Z (Zusatztrommeln)
+
+Der Ordner `C8205Z/` enthält einen **experimentellen Prototyp** der vier Zusatztrommeln des C 8205Z. Er ist kein
+Teilprojekt: Ohne den Aufrufschalter `--C8205Z` bleibt der Simulator unverändert, und der Assembler wird dafür nicht
+verändert. Eckdaten, Zeitmodell, Befehle (`5k00 030`, `zzz0 bbbb 601`, `zzz0 bbbb 661`) und Modulspezifikation stehen in
+`C8205Z/zt/Zusatztrommel_Zeitmodell.md`; das ZT-Repository und der Urlader ZIL in `C8205Z/zt/ZT-Repository_Aufgabenstellung.md`.
+Die zugehörigen Assemblerprogramme liegen im Projekt ZT-Loader (`Assembler/Projekt_ZT_LOADER/`). Der Prototyp hat ein
+C-Modul (`C8205Z/zt_modul/`) mit Python-Erweiterungsmodul und eigene Tests (`C8205Z/Tests_Z/`, Aufruf
+`bash C8205Z/Tests_Z/zt_tests.sh`); im Simulator selbst hängt er an `c8205_zt.py` (TEST) und
+`grafik-interpreter-module/grafik_zt.py` (GRAFIK). Verzeichnisse und Tests:
+`C8205-Projektstruktur.md`, Abschnitt 3b.
 
 ## 4. Virtuelle Hardware im Überblick
 
@@ -152,10 +185,11 @@ mit denselben Kanal- und Adresszuordnungen wie beim Original, aber ohne mechanis
 - **Tastatur und Schreibwerk-Eingabe (Kanal K0):** Das Zeichen kommt im Standardfall von der Tastatur des
   Host-Systems, mit `--k0 datei=PFAD` aus einer Datei.
 
-**Hilfsprogramme für die Lochstreifen:** Zwei eigenständige Python-Programme arbeiten mit denselben virtuellen
+**Hilfsprogramme für die Lochstreifen:** Drei eigenständige Python-Programme arbeiten mit denselben virtuellen
 Lochstreifen wie der Interpreter. `c8205_lochstreifen_anzeige.py` schreibt einen Lochstreifen (etwa die Ausgabe von
 `--stanzer1`) als lesbaren Text in einem Fenster aus; `c8205_lochstreifen_eingabe.py` erzeugt aus Tastatureingaben
-einen Lochstreifen, den man dem Interpreter mit `--leser1`/`--leser2` übergeben kann. Beide gehören zum
+einen Lochstreifen, den man dem Interpreter mit `--leser1`/`--leser2` übergeben kann; `c8205_lochstreifen_umwandlung.py` wandelt ohne Fenster eine
+Textdatei in einen virtuellen Lochstreifen um und umgekehrt. Alle drei gehören zum
 Interpreter-Teilprojekt, werden vom Interpreter aber nicht aufgerufen (Doku: `C8205-Interpreter-Lochstreifen-Hilfsprogramme.md`).
 
 Jede virtuelle Datei wird nur angelegt, wenn der jeweilige Test das Gerät tatsächlich benutzt, und am
@@ -164,7 +198,7 @@ Interpreter nie angelegt (Hilfsskript `testscripte/erzeuge_leere_trommel.py`).
 
 ### 4a. Zwei Betriebsarten: TEST und GRAFIK
 
-**GRAFIK:** Der Python-Interpreter läuft in zwei Betriebsarten. **TEST** ist der Stapelbetrieb für automatische Tests (Trommeldatei, Tastenfolge, Testmarken). **GRAFIK** (Vorgabe ohne Angabe) bedient den Rechner wie am Pult: Bedienpult- und Schreibwerk-Fenster, Töne, echte Trommel. Beschreibung: `C8205-Interpreter-GRAFIK_Beschreibung.md`; Prüfung: `C8205-Interpreter-GRAFIK_Pruefverfahren.md`.
+**GRAFIK:** Der Python-Interpreter läuft in zwei Betriebsarten. **TEST** ist der Stapelbetrieb für automatische Tests (Trommeldatei, Tastenfolge, Testmarken). **GRAFIK** (Vorgabe ohne Angabe) bedient den Rechner wie am Pult: Bedienpult- und Schreibwerk-Fenster, Töne, echte Trommel. Beschreibung: `C8205-Interpreter-GRAFIK_Beschreibung.md`; Prüfung: `C8205-Interpreter-GRAFIK_Pruefverfahren.md`. Treiber ist `c8205_grafik.py` (Module in `grafik-interpreter-module/`, die Trommel mit Hintergrund-Thread als C-Modul in `c-module/`; Prüfskripte `testscripte/grafik_*`, alle über `testscripte/grafik_alle_tests.sh`). Die virtuellen Geräte von GRAFIK liegen in `virtuelle_Geraete/`, die des TEST-Interpreters in `Test-virtuelleGeraete/`.
 
 ## 5. Testkonzept: Trommeldatei, Tastenfolge, Testmarken, automatische Prüfung
 
@@ -189,8 +223,9 @@ Gegenprobe (Claude) ausgeführt werden kann, lassen sich für jeden Test **Sollw
 Endzustand von Register/Flags, erwartete Speicherinhalte, erwartete Ausgaben. Damit wird jeder Testlauf
 zu einem Regressionstest: Ein neuer Lauf wird automatisch gegen die zuletzt bestätigten Sollwerte
 verglichen, ohne dass ein Mensch das Protokoll erneut Zeile für Zeile lesen muss. Voraussetzung ist ein definierter Trommelstand: Weil die Trommel Tests überdauert, gelten Sollwerte für einen Lauf
-auf leerer Trommel oder für einen Test, der alle benutzten Zellen selbst nennt (Abschnitt 2c der Testbeschreibung). Referenzläufe dieser
-Art sind bereits für mehrere Tests festgehalten (u. a. Tests `0004` bis `0021`, `s1-R1` bis `s4-spur`).
+auf leerer Trommel oder für einen Test, der alle benutzten Zellen selbst nennt (Abschnitt 2c der Testbeschreibung). Der Gesamtlauf
+`testscripte/compute_all_tests.sh` führt alle Testaufträge in `Tests/` aus (zuletzt 168 Läufe ohne Abweichung);
+Assemblerprogramme testet `Assembler/asm_und_test.sh` mit den Sollwerten aus dem `;#PRUEFE`-Block des `.asm`.
 
 Ergänzend dazu prüft `c8205_befehlssweep.py` systematisch alle 512 möglichen Operationscodes (000–777
 oktal) gegen den Knotengraphen: Für jeden Code wird ein Minimalprogramm gebaut und direkt über dieselbe
@@ -212,19 +247,32 @@ zusätzlich zu den inhaltlichen Einzeltests.
 | `C8205-Interpreter-Datenstruktur_und_Verarbeitungseinheiten.md` | Register (AC, BZ, AR, OR, BR), Flags, Maschinenwort- und Befehlswortaufbau (Bitfelder), Übersicht der Zahlendarstellungen |
 | `C8205-Interpreter-Eingänge_der_Knoten.md` | Der Knotengraph selbst: alle Knoten (Konnektor/Phasenzuordnung/Anweisung/Test), Ein-/Ausgänge, Verzweigungen |
 | `C8205-Interpreter-Beschreibung_der_Knoten.md` | Variablentabelle T2: Bedeutung jeder ANWEISUNG-nnn, die im Knotengraph referenziert wird |
-| `C8205-Interpreter-Befehlsliste.md` | Generische Befehlsbeschreibung nach B/A/Z sowie die vollständige, nach Oktalcode geordnete Einzelbefehlsübersicht (372 Befehle) |
+| `C8205-Interpreter-Befehlsliste.md` | Generische Befehlsbeschreibung nach B/A/Z sowie die vollständige, nach Oktalcode geordnete Einzelbefehlsübersicht (alle 512 Operationscodes) |
 | `C8205-Interpreter-Kodetabellen.md` | Zeichenkodetabelle: R300-Lochstreifenkode (Tabelle 1) |
-| `C8205-Interpreter-BIS.md` | Teilprojekt BIS (Abschnitt 3a): Bausteininterpretiersystem, Kleines Eingabeprogramm (KEP) auf Spur 0, Minimalprogramm mit den Eingabekennzeichen K₁/K₂ |
+| `Bausteininterpretiersystem BIS/markdown-dateien/C8205-Interpreter-BIS.md` | Teilprojekt BIS (Abschnitt 3a): Bausteininterpretiersystem, Kleines Eingabeprogramm (KEP) auf Spur 0, Minimalprogramm mit den Eingabekennzeichen K₁/K₂ |
 | `Bausteininterpretiersystem BIS/markdown-dateien/C8205-Interpreter-Objektdatei_Listing.md` | Objektdatei-Ausdrucke der Beispielprogramme (Vorgabebilder): Spalten einer Befehlszeile, Relokationskennung K1K2, vom Vorgabebild zum Testauftrag, Beispiel Maximum von drei Zahlen; liegt im BIS-Ordner |
 | `C8205-Interpreter-Durchführung_eines_Tests.md` | Das Testkonzept selbst (Abschnitt 5 dieses Dokuments): Trommeldatei, Tastenfolge, Testmarken, virtuelle Geräte, Protokollierung, Python-/Claude-Interpreter, Start eines Tests auf beiden Wegen (Abschnitt 1b) |
-| `C8205-Interpreter-Lochstreifen-Hilfsprogramme.md` | Bedienung und Technik der beiden Lochstreifen-Hilfsprogramme (Anzeige, Eingabe): Format des virtuellen Lochstreifens, Zeichenlage, Irrung, Kopieren in die Zwischenablage, Installation unter Linux, Windows, macOS |
+| `C8205-Interpreter-Lochstreifen-Hilfsprogramme.md` | Bedienung und Technik der drei Lochstreifen-Hilfsprogramme (Anzeige, Eingabe, Umwandlung): Format des virtuellen Lochstreifens, Zeichenlage, Irrung, Kopieren in die Zwischenablage, Installation unter Linux, Windows, macOS |
+| `C8205-Interpreter-GRAFIK_Beschreibung.md` | Der Interpreter in der Betriebsart GRAFIK (Abschnitt 4a): Fenster (Bedienpult, Schreibwerk, HW-Check), Geräte, Töne, Takt, Aufruf und Grenzen |
+| `C8205-Interpreter-GRAFIK_Pruefverfahren.md` | Prüfverfahren für GRAFIK: Läufe, Tests und Abnahme gegen das Soll der Beschreibung |
 | `C8205-Interpreter-Python_Interpreter.md` | Bedienung von `c8205_interp.py`: Installation, Aufruf, Schalter, Fehlermeldungen, Beispiele; Vorgaben für die Bedienungsanleitung (PDF) |
 | `baz-wirkungstabelle.md` | Cache bereits hergeleiteter Knotenpfade/Formeln je getestetem BAZ-Wert, um wiederholte Herleitung zu vermeiden |
 | `C8205-Projektstruktur.md` | Wurzeldokument der Verzeichnisstruktur: welches Verzeichnis/welche Endung welchen Zweck hat, für Interpreter und Assembler |
+| `C8205-Programmierhandbuch_fuer_Claude.md` | Nachschlagewerk zum Schreiben, Assemblieren und Testen von Assemblerprogrammen für den C 8205 (Wurzelordner); Regeln des Projektinhabers, Idiome, Festlegungen, Stolperfallen |
+| `C8205-Programmierhandbuch-Anhang_A_Trommelzeit_GRAFIK.md`, `C8205-Programmierhandbuch-Anhang_B_BIS_Anschluss.md` | Anhänge zum Programmierhandbuch: Trommelzeit und GRAFIK-Zeitmessung (A), Anschluss an das BIS-Minimalprogramm (B) |
+| `C8205-Schleifenoptimierung_Eingabeschleife.md` | Gerechnete Untersuchung der Lage der Ziffern-Eingabeschleife des BIS-Minimalprogramms auf der Trommel (nur Dokumentation) |
+| `CLAUDE.md` | Karte für Claude (Wurzelordner): zuerst zu lesen; Schnellstart, Regeln des Projektinhabers, Zuordnung Aufgabe → Dokument |
 | `C8205-Versionierung.md` | Wurzeldokument der Versionsnummern: Aufbau `y.xx-zzz`, welche Dateien eine tragen, wo sie steht und wann sie sich ändert |
 | `C8205-Interpreter-Projektueberblick.md` | dieses Dokument: Ziel, Zwei-Wege-Architektur, Teilprojekte, virtuelle Hardware, Testkonzept, diese Dokumentenlandkarte, PDF-Übersicht, Stand |
 | `README.md`, `README.en.md` | Einstiegsseiten für GitHub (deutsch, englisch) im Wurzelverzeichnis: fassen das Projekt auf einer Seite zusammen und verweisen auf die Dokumente; keine eigenen Regeln |
-| `C8205_Assembler_Dokumentation.md` | Durchsuchbare Textableitung der maßgeblichen `C8205_Assembler_Dokumentation.odt`: Sprache, Anweisungen, Makro-Präprozessor, Beispiel |
+| `C8205_Assembler_Dokumentation.md` | Maßgebliche Assemblerdokumentation: Sprache, Anweisungen, Makro-Präprozessor, Beispiel |
+| `Assembler/Dokumentation/C8205_Standardmakros_c82ass.md` | Übersicht der Standardmakros aus `c82ass.makros`: Aufruf, Wirkung, Zellenzahl |
+| `Assembler/Dokumentation/C8205_ZT_Makros_Uebersicht.md` | Übersicht der ZT-Makros aus `macro_zt_loader.macro` (Projekt ZT-Loader) |
+| `Assembler/Claude/gen_lib/gen_lib_messung.md` | Messung und Einsatzregel der Python-Bibliothek `c82gen.py` (Python als Makrosprache): ab wann sich ein Generator lohnt |
+| `Assembler/Regressionstest/LIESMICH.md` | Beschreibung der automatischen Prüfung des Assemblers (Regressionstest, `pruefe_alles.sh`, Negativtests, Fuzz); liegt nur im `Regressionstest.zip` des Projektstamms |
+| `C8205Z/zt/Zusatztrommel_Zeitmodell.md`, `C8205Z/zt/ZT-Repository_Aufgabenstellung.md`, `C8205Z/zt/ZIL_Pruefung_Realisierbarkeit.md` | Prototyp C8205Z (Abschnitt 3b): Zeitmodell und Modulspezifikation der Zusatztrommeln, ZT-Repository und Urlader, Prüfung der Realisierbarkeit des ZIL-Ablaufs (historisch) |
+| `C8205Z/pult_z/aufgabe_pult.md` | Arbeitsstand der Zeichnung des Bedienpults der Z-Ausführung (ruht) |
+| `ton/SW_Ton_Beschreibung.md` | Geräusche von Schreibwerk und Lochstreifenleser für GRAFIK (nur im Gesamt-Zip) |
 | `C8205-Interpreter-PDF.md` | Gestaltungsrichtlinie für alle PDF-Ausgaben; Dateibenennung und Liste der erzeugten PDFs (Abschnitt 8) |
 
 Alle Dateien werden zwischen Sitzungen erneut hochgeladen, da sie sich auch außerhalb einzelner
@@ -245,6 +293,11 @@ Hauptversion und Unterversion werden nur auf ausdrückliche Aufforderung des Pro
 | `Hilfsprogramme/c8205_lochstreifen_eingabe.py` | Hilfsprogramm: erzeugt einen virtuellen Lochstreifen aus Tastatureingaben (Abschnitt 4) |
 | `Hilfsprogramme/c8205_lochstreifen_umwandlung.py` | Hilfsprogramm: wandelt eine Textdatei in einen virtuellen Lochstreifen um und umgekehrt, ohne Fenster (Abschnitt 4) |
 | `Assembler/Sourcecode/` (C-Dateien) | C-Quellcode des Assemblers `c82ass` selbst (Abschnitt 3) |
+| `Assembler/asm_und_test.sh` | Standardweg für ein Assemblerprogramm: assemblieren, `.test` ergänzen, Interpreter starten (Abschnitt 3) |
+| `Assembler/Claude/gen_lib/c82gen.py` | Python-Bibliothek für Assembler-Generatoren (Abschnitt 3, Programmprojekte und Generatoren) |
+| `c8205_grafik.py`, `grafik-interpreter-module/`, `c-module/` | Modus GRAFIK: Treiber, Python-Module (Pult, Schreibwerk, Geräte, Töne, Takt) und C-Module (Trommel, Bahnsperre, Unterbrechung, Tonmischer) (Abschnitt 4a) |
+| `c8205_zt.py`, `C8205Z/zt_modul/` | Anbindung der Zusatztrommeln (Prototyp C8205Z) an den Interpreter und ihr C-Modul (Abschnitt 3b) |
+| `lieferung_packen.sh`, `c8205_zip_packen.sh` | Packen einer Lieferung für KI-Sitzungen bzw. der Zips des Projektinhabers (`C8205-Projektstruktur.md`, Abschnitt 1) |
 
 ## 7. PDF-Dokumente im Überblick
 
@@ -252,12 +305,15 @@ Zusätzlich zu den .md-Quellen liegen gut lesbare, A4-taugliche PDF-Ausgaben vor
 einheitlicher Richtlinie (`C8205-Interpreter-PDF.md`). Die PDFs sind fertige Dokumente und werden nicht
 automatisch aus den .md-Dateien nachgeführt; sie können daher einen älteren Stand haben als ihre Quelle (der
 Stand steht auf dem Deckblatt bzw. in der Kopfzeile). Dateibenennung und Quelldateien: PDF-Richtlinie,
-Abschnitt 8.
+Abschnitt 8. Die schlanke Claude-Fassung des Zips (Name endet auf „Claude“) enthält keine PDFs; die Tabelle gilt für das
+Gesamt-Zip.
 
 | PDF | Inhalt |
 |---|---|
 | `C8205-Projektueberblick_A4.pdf` | dieses Dokument |
 | `C8205-Einstieg_fuer_Neueinsteiger_A4.pdf` | Was das Projekt enthält, in welcher Reihenfolge man liest und wo man bei einer Frage weiterliest |
+| `C8205-Ueberblick_und_Gesamtaufbau_A4.pdf` | Einordnung, Geräteaufbau, Rechen- und Leitwerk, die vier Phasen der Befehlsabarbeitung (im Wortlaut der Quelle) |
+| `C8205-Datenstruktur_und_Verarbeitungseinheiten_A4.pdf` | Register, Flags, Maschinenwort- und Befehlswortaufbau, Zahlendarstellungen |
 | `C8205-Rechnerbeschreibung_A4.pdf` | Aufbau, Register, Maschinenwort, Magnettrommel, Befehlszyklus und Befehlsarten des Rechners (redaktionell) |
 | `C8205-Bedienpult_und_Peripherie_A4.pdf` | Tasten, Schalter, Lampen, Kanäle, Lochstreifenleser, -stanzer und Schreibwerk; Token der Tastenfolge (redaktionell) |
 | `C8205-Bedienungsanleitung_Interpreter_A4.pdf` | Bedienung von `c8205_interp.py`: Aufruf, Schalter, Geräte (redaktionell) |
@@ -270,9 +326,24 @@ Abschnitt 8.
 | `C8205-Einzelbefehlsliste_A4.pdf` | Generische Befehlsbeschreibung und vollständige Einzelbefehlsübersicht |
 | `C8205-Kodetabellen_A4.pdf` | Die Zeichenkodetabelle (Tabelle 1), Lochbild-Spalten als ●/○-Grafik |
 | `C8205-Lochstreifen-Hilfsprogramme_A4.pdf` | Anzeige, Eingabe und Umwandlung virtueller Lochstreifen: Format, Aufruf, Zwischenablage und Installation |
+| `C8205-Zusatztrommeln_A4.pdf` | Experimenteller Prototyp C8205Z: Eckdaten, Ablauf, Zeiten, Befehle und Modulspezifikation der Zusatztrommeln |
+| `C8205-Testuebersicht_A4.pdf` | Alle Tests mit Inhalt, Geräte- und Vergleichsdateien und zugehörigem ASM-Quelltext; liegt in `Testausfuehrungen/` |
+| `C8205-BIS_A4.pdf` | Bausteininterpretiersystem: Bausteine, KEP und Minimalprogramm; liegt in `Bausteininterpretiersystem BIS/markdown-dateien/` |
+| `C8205-Standardmakros_A4.pdf`, `C8205-ZT_Makros_A4.pdf` | Standardmakros aus `c82ass.makros` und ZT-Makros aus `macro_zt_loader.macro`; liegen in `Assembler/Dokumentation/` |
 | `C8205-Projektstruktur_A4.pdf` | Verzeichnisse, Skripte und erzeugte Dateien des Gesamtprojekts: welcher Pfad wofür zuständig ist |
 | `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` | Seitenformat, Folgeseiten, Deckblatt, Farben und Kachelung aller PDF-Ausgaben |
-| `C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: Aufruf, Sprache, Anweisungen, Makros, Beispiel; liegt in `Assembler/Dokumentation/` (im Wortlaut der `.md`, die `.odt` bleibt maßgeblich) |
+| `C8205-Assemblerdokumentation_A4.pdf` | Assembler `c82ass`: Aufruf, Sprache, Anweisungen, Makros, Beispiel; liegt in `Assembler/Dokumentation/` (im Wortlaut der `.md`) |
 
 ## 8. Stand und offene Punkte
 
+Dieser Überblick nennt keine Versionsnummern von Assembler, Interpreter oder Zip; maßgeblich sind der Dateiname des Zips,
+`c82ass --version`, die Zeile `Version:` der jeweiligen Datei und `C8205-Versionierung.md`. Den laufenden Arbeitsstand hält
+die Datei `aufgabe` im Zip-Stamm fest (eine leere Datei ist gewollt: dann steht der Arbeitsstand nur in der Nachricht des Inhabers). Die Gesamtversion
+eines Releases (Form `V.M.P`) steht im Namen des Zips und in `C8205-Versionierung.md`, Abschnitt 8. Es gibt zwei Zip-Fassungen: das Gesamt-Zip und die schlanke Claude-Fassung
+(ohne PDFs, `pult/`, `ton/` und einiges mehr; Programmierhandbuch, Abschnitt 11).
+
+- **Prüfläufe:** Die Regressionstests laufen mit `testscripte/compute_all_tests.sh` (Interpreter), `Assembler/Regressionstest/` (Assembler), `testscripte/grafik_alle_tests.sh` (GRAFIK) und `C8205Z/Tests_Z/zt_tests.sh` (Zusatztrommeln).
+- **BIS:** Dokumentiert sind die allgemeine Beschreibung, das KEP und das Minimalprogramm; weitere Bausteine sind noch nicht erfasst (Abschnitt 3a). Der Ordner des BIS besteht nur aus Dokumentation; das Minimalprogramm (v6, v7) liegt als Assemblerprojekt in `Assembler/Projekt_2/`.
+- **Prototyp C8205Z:** experimentell (Abschnitt 3b); die Zeichnung des Bedienpults der Z-Ausführung ruht und wartet auf Fotos (`C8205Z/pult_z/`).
+- **PDFs:** Sie werden nicht automatisch aus den `.md`-Dateien nachgeführt und können älter sein als ihre Quelle (Abschnitt 7).
+- **Offene Punkte der Fachdokumente:** Sie stehen dort, nicht hier: Projektstruktur (Abschnitt 4: derzeit keine), Überblick und Gesamtaufbau (Abschnitt 8), GRAFIK-Beschreibung (Abschnitt 10) und Programmierhandbuch (Abschnitt 9). Die Versionierung hat keinen eigenen Abschnitt mit offenen Punkten.

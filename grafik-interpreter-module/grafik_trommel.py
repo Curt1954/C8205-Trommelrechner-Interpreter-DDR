@@ -2,7 +2,7 @@
 """
 grafik_trommel.py - Trommel des Modus GRAFIK (Stufe 1): gleiche Schnittstelle wie die Klasse Trommel des Interpreters
 (rd, wr, schliessen), aber ueber das C-Modul c8205_trommel (echte Trommel mit Koinzidenz, Hintergrund-Thread).
-Version: G5-002  (08.11.2026: abschaltbare Taktmitschrift, Attribut 'takt', siehe grafik_takt.py; ohne Schalter unveraendert. G5-001: Kennung neu eingefuehrt; fruehere Staende sind im Archiv nicht belegt)
+Aenderungen (08.11.2026: abschaltbare Taktmitschrift, Attribut 'takt', siehe grafik_takt.py; ohne Schalter unveraendert. G5-001: Kennung neu eingefuehrt; fruehere Staende sind im Archiv nicht belegt)
 
 Regeln (GRAFIK_Beschreibung §7 (alt: Dok. 02 Abschnitt 6), GRAFIK_Beschreibung §7 (alt: Dok. 04 Abschnitt 4)):
   * Nur das C-Modul greift auf die Trommeldatei zu; es gibt keinen Zwischenspeicher (kein "mem").
@@ -14,6 +14,8 @@ Regeln (GRAFIK_Beschreibung §7 (alt: Dok. 02 Abschnitt 6), GRAFIK_Beschreibung 
   * Ist das C-Modul nicht ladbar oder die Trommel nicht einschaltbar: KonfigFehler (der Treiber meldet und beendet mit Code 16).
   * Strg+C: Python behandelt es; schliessen() gehoert in das finally des Aufrufers und beendet das C-Modul.
 """
+VERSION_TROMMEL = 'G5-003'      # Kennung dieses Moduls (G5-003); frueher in der Kopfzeile
+
 import os
 import sys
 import time

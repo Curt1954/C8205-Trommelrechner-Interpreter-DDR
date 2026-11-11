@@ -1,6 +1,6 @@
 # C 8205 – Standardmakros aus `c82ass.makros`
 
-Version: 0.01-020
+Version: 0.01-021
 
 Stand: 10.11.2026 · Quelle: `Assembler/Sourcecode/c82ass.makros` (1978 Zeilen, mit `KAT5SORT` und `KAT5SORT2`, jedes Makro mit `$SPEC`-Zeile; Assembler c82ass 1.03-009); Stand der kat5-Abschnitte: Lieferung 030, `KAT5SORT` ergänzt in Lieferung 007, `KAT5SORT2` ergänzt in Lieferung 011
 Art: Übersicht, abgeleitet aus den `#`-Kommentaren der Makrodatei. Die Standardmakros sind nur hier und in diesen Kommentaren beschrieben, nicht in der Assemblerdokumentation; deren Abschnitte 4.25 und 4.26 erklären nur den Makromechanismus. Bei Abweichung gilt der `#`-Kommentar des Makros in `c82ass.makros`.
@@ -16,7 +16,7 @@ Alle Zahlen sind oktal, wie in der Quelle.
 - **Mehrfachbenutzung / Einfachspeicherung:** Die Spalte „Mehrfachaufruf“ nennt je Makro, ob mehrere Aufrufe nur **einmal** Code erzeugen (Einfachspeicherung, über `$GLOBAL`-Merker, c82ass ab 1.02-001) oder bei **jedem** Aufruf neuen Code.
 - **Einfachspeicherung (Ja):** KAT4/5/6 AUSGABE und EINGABE, GK_MATH, GK_SIN, FK_MATH.
 - **Jeder Aufruf erzeugt Code (Nein):** alle übrigen (WRZL, KB, GB, ANWAHL, TANWAHL, TROUT, TRIN, WDHL, SCHIEBE_*, MACHE_ADRESSEINHEIT*, ARRAY_*, ERHOEHE, ZEIGER_NAECHST); sie sind Einzelbefehle oder kurze Befehlsfolgen und stehen bei jedem Aufruf im Ablauf. Diese 20 Makros bekommen die Spezifikationszeile `$SPEC TYP=A ACTION=None` (Abschnitt 10).
-- **Version der Makrodatei:** Sie hat keine eigene Versionsnummer; maßgeblich ist der Assemblerstand (c82ass 1.03-009).
+- **Version der Makrodatei:** Sie hat keine eigene Versionsnummer; maßgeblich ist der Assemblerstand (`c82ass --version`).
 
 ## 1. Übersicht
 

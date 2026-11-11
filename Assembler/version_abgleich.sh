@@ -18,12 +18,10 @@
 #   2. Quelltext-Kopfzeilen "Version y.xx-zzz (siehe ca82_version.h)": keine Nummer ist neuer als ASM_VERSION
 #      (ungeaenderte Dateien behalten ihre aeltere Nummer; ob eine Datei haette nachgezogen werden muessen, laesst sich
 #      ohne Vergleichsstand nicht entscheiden: HINWEIS, wenn keine Kopfzeile die aktuelle Nummer traegt)
-#   3. .odt (content.xml, massgeblich): Titelzeile und die drei Texte "C82aas Version ..."
-#   4. .md: Zeile "Version:", Kopfsatz und Titelzeile gegen die Titelzeile der .odt, die drei Texte "C82aas Version ...",
-#      neuester Eintrag des Aenderungsprotokolls (hoechstens drei Eintraege; ein Protokoll gibt es seit 1.03-011 nicht mehr, dann nicht geprueft)
-#   5. Regressionstest: negativ/version.erwartet und negativ/pass0_version.erwartet (ohne Nummer oder mit ASM_VERSION),
+#   3. .md (Assemblerdokumentation, massgeblich): Zeile "Version:" und die drei Texte "C82aas Version ..."
+#   4. Regressionstest: negativ/version.erwartet und negativ/pass0_version.erwartet (ohne Nummer oder mit ASM_VERSION),
 #      LIESMICH.md (Kopfzeile = neuester Eintrag, dessen c82ass-Nummer = ASM_VERSION)
-#   6. nur mit --binary: Ausgabe von c82ass --version
+#   5. nur mit --binary: Ausgabe von c82ass --version
 # Rueckgabe: 0 alles in Ordnung (Hinweise zaehlen nicht), 1 mindestens eine ABWEICHUNG, 2 Aufruf falsch oder Datei fehlt.
 # Nur lesend; schreibt nichts.
 
@@ -122,82 +120,22 @@ if not neuer:
 if not aktuell:
     hinweis('Quelltext-Kopfzeilen', 'keine Kopfzeile traegt %s; pruefen, ob die geaenderte Datei nachgezogen ist (Dateien ohne Nummer in der Kopfzeile bleiben so)' % asm)
 
-# 3. .odt
+# 3. .md
 dok = os.path.join(stamm, 'Assembler', 'Dokumentation')
-odt_pfad = os.path.join(dok, 'C8205_Assembler_Dokumentation.odt')
-if not os.path.isfile(odt_pfad):
-    fehlt(odt_pfad)
-content = zipfile.ZipFile(odt_pfad).read('content.xml').decode('utf-8')
-text = re.sub(r'<[^>]+>', '', content)
-mt = re.search(r'Cross-Assembler für C8205 / C8205Z\s*Version (%s)' % NUM, text)
-odt_v = None
-if mt:
-    odt_v = mt.group(1)
-    ok('.odt Titelzeile', 'Version %s' % odt_v)
-else:
-    abw('.odt Titelzeile', '"Cross-Assembler für C8205 / C8205Z Version y.xx-zzz" nicht gefunden')
-drei = re.findall(r'C82aas Version (%s)' % NUM, text)
-if len(drei) == 3 and all(v == asm for v in drei):
-    ok('.odt drei Texte "C82aas Version"', asm)
-else:
-    abw('.odt drei Texte "C82aas Version"', 'gefunden %s, erwartet dreimal %s' % (drei, asm))
-
-# 4. .md
 md = lies(os.path.join(dok, 'C8205_Assembler_Dokumentation.md'))
-zeilen = md.split('\n')
 mv = re.search(r'^Version: (%s)$' % NUM, md, re.M)
 md_v = mv.group(1) if mv else None
 if md_v:
     ok('.md Zeile "Version:"', md_v)
 else:
     abw('.md Zeile "Version:"', 'nicht gefunden oder falsche Form')
-if odt_v:
-    ks = re.search(r'Textableitung von `C8205_Assembler_Dokumentation\.odt` in der Version (%s)' % NUM, md)
-    if ks and ks.group(1) == odt_v:
-        ok('.md Kopfsatz (Version der .odt)', odt_v)
-    else:
-        abw('.md Kopfsatz (Version der .odt)', 'gefunden %s, erwartet %s' % (ks.group(1) if ks else 'nichts', odt_v))
-    ts = re.search(r'^# Cross-Assembler für C8205 / C8205Z – Version (%s)$' % NUM, md, re.M)
-    if ts and ts.group(1) == odt_v:
-        ok('.md Titelzeile', odt_v)
-    else:
-        abw('.md Titelzeile', 'gefunden %s, erwartet %s' % (ts.group(1) if ts else 'nichts', odt_v))
-eintrag = re.compile(r'^Stand \d\d\.\d\d\.\d{4} \((%s)\):' % NUM)
-protokoll = [z for z in zeilen if eintrag.match(z)]
-# die drei Texte ausserhalb des Aenderungsprotokolls
-drei_md = []
-for z in zeilen:
-    if eintrag.match(z):
-        continue
-    drei_md += re.findall(r'C82aas Version (%s)' % NUM, z)
+drei_md = re.findall(r'C82aas Version (%s)' % NUM, md)
 if len(drei_md) == 3 and all(v == asm for v in drei_md):
     ok('.md drei Texte "C82aas Version"', asm)
 else:
-    abw('.md drei Texte "C82aas Version"', 'gefunden %s (ohne Aenderungsprotokoll), erwartet dreimal %s' % (drei_md, asm))
-if not protokoll:
-    ok('.md Aenderungsprotokoll', 'entfaellt seit 1.03-011 (Inhaber, 09.11.2026); nicht geprueft')
-else:
-    letzter = protokoll[-1]
-    me = re.match(r'^Stand \d\d\.\d\d\.\d{4} \((%s)\): Die \.odt trägt jetzt (%s), diese \.md (%s); das Programm c82ass steht im Quelltext bei (%s)' % (NUM, NUM, NUM, NUM), letzter)
-    if not me:
-        abw('.md Aenderungsprotokoll', 'neuester Eintrag hat nicht die erwartete Form "Die .odt traegt jetzt ..., diese .md ...; das Programm c82ass steht im Quelltext bei ..."')
-    else:
-        e_md, e_odt, e_md2, e_asm = me.groups()
-        fehler = []
-        if e_md != md_v or e_md2 != md_v:
-            fehler.append('.md %s/%s statt %s' % (e_md, e_md2, md_v))
-        if odt_v and e_odt != odt_v:
-            fehler.append('.odt %s statt %s' % (e_odt, odt_v))
-        if e_asm != asm:
-            fehler.append('c82ass %s statt %s' % (e_asm, asm))
-        if fehler:
-            abw('.md Aenderungsprotokoll (neuester Eintrag)', '; '.join(fehler))
-        else:
-            ok('.md Aenderungsprotokoll (neuester Eintrag)', 'passt zu .odt %s, .md %s, c82ass %s' % (odt_v, md_v, asm))
-    if len(protokoll) > 3:
-        abw('.md Aenderungsprotokoll', '%d Eintraege, erlaubt sind hoechstens drei (der aelteste faellt weg)' % len(protokoll))
+    abw('.md drei Texte "C82aas Version"', 'gefunden %s, erwartet dreimal %s' % (drei_md, asm))
 
-# 5. Regressionstest (Ordner oder Zip)
+# 4. Regressionstest (Ordner oder Zip)
 def regr_leser():
     kandidaten = []
     if regr:
@@ -266,7 +204,7 @@ else:
             else:
                 ok('LIESMICH.md', 'Version %s, neuester Eintrag nennt c82ass %s' % (mk.group(1), asm))
 
-# 6. Binary
+# 5. Binary
 if mit_binary:
     bin_pfad = os.path.join(stamm, 'Assembler', '_Linux', 'c82ass')
     if not os.path.isfile(bin_pfad):

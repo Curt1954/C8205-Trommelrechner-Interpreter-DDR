@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_k0.py - Eingabewarteschlange des Kanals K0 im Modus GRAFIK (Stufe 1).
-Version: G5-002  (G5-001: Kennung neu eingefuehrt, fruehere Staende sind im Archiv nicht belegt; G5-002, 21.10.2026: OP-20, naechstes() loescht das Warten beim Verlassen durch eine Ausnahme)
+Aenderungen (G5-001: Kennung neu eingefuehrt, fruehere Staende sind im Archiv nicht belegt; G5-002, 21.10.2026: OP-20, naechstes() loescht das Warten beim Verlassen durch eine Ausnahme)
 
 Ersetzt K0Quelle des Interpreters (Terminal oder Datei): In GRAFIK gibt es weder Terminal noch Datei als Quelle.
 Es fuellen zwei Quellen die Warteschlange (GRAFIK_Beschreibung §11 (alt: Dok. 04 Abschnitt 2.4), Punkt 19):
@@ -19,6 +19,8 @@ Schnittstelle zu den Fenstern:
   annehmen(quelle, token)    liefert das Zeichen, wenn es jetzt erwartet wird (True), sonst verworfen (False)
   einspeisen(token, quelle)  legt das Zeichen in Vorrat (fuer Pruefungen und fuer Vormerkung); quelle None = fuer jede Quelle
 """
+VERSION_K0 = 'G5-003'      # Kennung dieses Moduls (G5-003); frueher in der Kopfzeile
+
 import collections
 import threading
 

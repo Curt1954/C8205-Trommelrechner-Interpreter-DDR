@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 grafik_pult.py - Pult-Steuerung des Modus GRAFIK (Stufe 2). Reine Standardbibliothek, KEIN Tkinter (dadurch testbar).
-Version: G2-015
 
 Aufgaben (GRAFIK_Beschreibung §4.5, §5.7 (alt: Dok. 01 Abschnitte 1.3, 1.7, 1.8, 3.5); GRAFIK_Beschreibung §4 (alt: Dok. 06)):
   * Netzablauf: AUS (Start) -> HOCHLAUF (B rot, 11,3 s) -> BETRIEB (B gruen) -> AUSLAUF (B dunkel, ~2 s) -> ENDE.
@@ -21,7 +20,7 @@ import threading
 
 from grafik_debuglog import log
 
-VERSION_PULT = 'G2-015'
+VERSION_PULT = 'G2-016'
 
 HOCHLAUF_S = 11.3       # Laenge von fade_in (GRAFIK_Beschreibung §3.6 (alt: Dok. 01 Abschnitt 1.8 Nr. 4)); Ton folgt in Stufe 4
 AUSLAUF_S = 2.0         # Laenge von fade_out (rund 2 s)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 grafik_tastatur.py - Tastaturbelegung des Rechners, an dem GRAFIK laeuft (Schalter --TASTATUR=de|en).
-Version: G4-010
 
 Wofuer die Belegung gebraucht wird:
   * Beim ECHTEN Tippen liefert Tk das Zeichen (ev.char) schon in der Belegung des Betriebssystems; SW-Fenster und Pult werten das Zeichen
@@ -13,6 +12,8 @@ Wofuer die Belegung gebraucht wird:
 
 Vorgabe: de. Gesetzt wird einmal beim Start (c8205_grafik.py); setze() ist auch fuer Pruefungen gedacht.
 """
+
+VERSION_TASTATUR = 'G4-011'      # Kennung dieses Moduls (G4-011); frueher in der Kopfzeile
 
 BELEGUNGEN = ('de', 'en')
 VORGABE = 'de'

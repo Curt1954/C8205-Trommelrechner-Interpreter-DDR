@@ -1,6 +1,6 @@
 # C 8205 – Programmierhandbuch für Claude, Anhang A: Trommelzeit und GRAFIK-Interpreter
 
-Version: 0.01-002
+Version: 0.01-003
 
 Gehört zu `C8205-Programmierhandbuch_fuer_Claude.md` (Wurzel des Projekts). Nur lesen, wenn Geschwindigkeit zählt. Kennzeichen **[geprüft]** wie dort.
 
@@ -22,5 +22,6 @@ python3 c8205_grafik.py --ohne-fenster --STUMM --trommelzeit echt \
 - Die Endzeile entspricht der des TEST-Interpreters. Danach folgt eine Trommelstatistik; die Bedeutung der Zähler steht in derselben GRAFIK-Beschreibung (Abschnitt „Zeitmodelle und Zähler der Trommelstatistik“). Beim Summenprogramm (Handbuch, Abschnitt 5.2) ergab `echt` 1549 Takte, davon `wartezeit_summe_ticks_aufrufer` 1358 **[geprüft]** (die Werte streuen leicht von Lauf zu Lauf).
 - Der Lauf prüft **nichts** selbst (keine `Prüfungen:`). Ergebniszellen lese ich danach aus der Trommeldatei.
 
+- **Takte einer Schleife messen** (Beschreibung §7.11, Prüfverfahren §7.9): Mit `--trommelzeit echt|schnell` und `--taktprotokoll takt.tsv` schreibt GRAFIK jede Zeitfortschreibung in eine Textdatei (ohne den Schalter ändert sich nichts; mit `alt` Rückkehrcode 16). Danach `python3 testscripte/grafik_takt_schleife.py takt.tsv --liste` (Anker finden) und `--befehl <Adresse> --takte` (Takte je Zyklus; ein Befehl zählt von Phase III bis Phase III des Folgebefehls, Wartezeit eingeschlossen). Eingabe-Halt zählt nicht mit. Messwert und gerechnete Lage der Ziffernschleife: `markdown-dateien/C8205-Schleifenoptimierung_Eingabeschleife.md`. Auf einer Trommelkopie arbeiten.
 Einzelheiten: `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` (bei Bedarf gezielt lesen).
 Die Zahl „23" und „00" beim W-Befehl widersprechen sich in `markdown-dateien/C8205-Interpreter-Befehlsliste.md` nur scheinbar: Logischer Sektor 23 ist der physisch letzte, danach folgt wieder 00.

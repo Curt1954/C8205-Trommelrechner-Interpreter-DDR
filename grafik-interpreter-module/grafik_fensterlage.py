@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_fensterlage.py - merkt sich die letzte Position der Fenster im Modus GRAFIK (Pult und SW-Fenster). Nur Standardbibliothek.
-Version: FL-001 (19.10.2026, Wunsch des Projektinhabers)
+Aenderungen (19.10.2026, Wunsch des Projektinhabers)
 
 Die Positionen stehen in einer kleinen JSON-Datei im Benutzerordner (nicht im Projektordner, der kann schreibgeschuetzt oder ein Zip sein):
   Windows  %APPDATA%\\C8205\\fensterlage.json
@@ -18,7 +18,7 @@ import os
 import re
 import sys
 
-VERSION_FENSTERLAGE = 'FL-001'
+VERSION_FENSTERLAGE = 'FL-002'
 _GEOM = re.compile(r'^(?:\d+x\d+)?([+-]-?\d+)([+-]-?\d+)$')
 
 

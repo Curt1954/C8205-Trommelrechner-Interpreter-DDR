@@ -6,10 +6,11 @@
 # Wertargument (z. B. "--out DATEI") werden dabei erkannt, damit ihr Wert
 # nicht versehentlich als Testdatei gilt.
 
-# Schalter des Interpreters, die ein eigenes Wertargument mitnehmen:
+# Schalter des Interpreters, die ein eigenes Wertargument mitnehmen
+# (nicht --C8205Z: sein Wert ist optional und steht nur in der Form --C8205Z=VERZ):
 ist_wertschalter() {
     case "$1" in
-        --mdverz|--leser1|--lochbandleser1|--leser2|--lochbandleser2|--stanzer1|--lochbandstanzer1|--sw-ausgabe|--k0|--out|--pruefe-stanzer1|--pruefe-sw-ausgabe|--zwischenablage)
+        --mdverz|--leser1|--lochbandleser1|--leser2|--lochbandleser2|--stanzer1|--lochbandstanzer1|--sw-ausgabe|--k0|--out|--pruefe-stanzer1|--pruefe-sw-ausgabe|--zwischenablage|--trommel|--max-knoten|--BASP|--basp|--LS-LESER-TYP|--ls-leser-typ|--MODUS|--modus)
             return 0 ;;
         *)
             return 1 ;;

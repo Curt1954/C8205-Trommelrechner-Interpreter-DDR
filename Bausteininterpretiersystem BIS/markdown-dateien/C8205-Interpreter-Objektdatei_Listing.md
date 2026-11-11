@@ -1,12 +1,12 @@
 ** Objektdatei-Ausdrucke der Beispielprogramme (Vorgabebilder) **
 
-Version: 0.03-004
+Version: 0.03-005
 
 Dieses Dokument erklärt, wie die in den Büchern abgedruckten Beispielprogramme zu lesen sind und wie man daraus
 einen Testauftrag macht. Es wiederholt nichts aus den Teildokumenten, sondern verweist auf sie (Assemblerdokumentation,
 "C8205-Interpreter-Durchführung_eines_Tests.md", "C8205-Interpreter-BIS.md").
 Quellen: Erläuterung des Projektinhabers (07.10.2026), Assemblerdokumentation Abschnitte 3.1, 3.3.7 bis 3.3.9, 3.3.12 und 5.2
-(die `.odt` ist maßgeblich), BIS-Dokumentation Abschnitte BIS-2.2.2 bis BIS-2.2.5, Beispiel "Ermittlung des Maximums von drei
+(die `.md` ist maßgeblich), BIS-Dokumentation Abschnitte BIS-2.2.2 bis BIS-2.2.5, Beispiel "Ermittlung des Maximums von drei
 Zahlen" mit den daraus entstandenen Tests. Was nicht belegt ist, steht unter "Offene Punkte" (Abschnitt 6).
 
 

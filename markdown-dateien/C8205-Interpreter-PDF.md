@@ -1,6 +1,6 @@
 ** PDF-Gestaltungsrichtlinie (Wurzeldokument für alle PDF-Ausgaben) **
 
-Version: 0.95-010
+Version: 0.95-012
 
 Dieses Dokument legt fest, nach welchen Konventionen die .md-Quelldateien dieses Projekts als
 menschenlesbare PDFs ausgegeben werden. Ziel: jede künftige PDF-Ausgabe (Knotengraph, Einzelbefehlsliste,
@@ -292,8 +292,7 @@ Zeilen des Angabenblocks (Zone D), feste Reihenfolge; Zeilen ohne Inhalt entfall
 - **Aktualitätshinweis (Zone E), Wortlaut fest:** „Maßgeblich bleibt die Quelldatei. Dieses PDF wird nicht automatisch
   nachgeführt: Es ist aktuell, solange die Version oben mit der Versionszeile der Quelldatei übereinstimmt.“ Bei mehreren
   Quellen: „Maßgeblich bleiben die Quelldateien … solange die Versionen oben mit den Versionszeilen der Quelldateien
-  übereinstimmen.“ Damit ist der in `C8205-Versionierung.md`, Abschnitt 8, offene Punkt „Nummer der Quelldatei auf das
-  Deckblatt“ entschieden: **ja**.
+  übereinstimmen.“
 
 
 ### 4.4 Seite 2 und folgende
@@ -509,7 +508,7 @@ entfällt er). Bisher (die Reihenfolge mehrerer Quellen ist die Reihenfolge auf 
   C8205-Interpreter-Durchführung_eines_Tests.md)
 - `C8205-Testhandbuch_A4.pdf` (redaktionell; Quelle: C8205-Interpreter-Durchführung_eines_Tests.md)
 - `C8205-Assemblerdokumentation_A4.pdf` (Quelle: C8205_Assembler_Dokumentation.md; Wortlaut nach Abschnitt 6a, erzeugt
-  mit `PDF/pdf-layout-scripte/md2pdf.py`; liegt in `Assembler/Dokumentation/` neben der .odt und der .md)
+  mit `PDF/pdf-layout-scripte/md2pdf.py`; liegt in `Assembler/Dokumentation/` neben der .md)
 - `C8205-Projektstruktur_A4.pdf` (Quelle: C8205-Projektstruktur.md; Wortlaut nach Abschnitt 6a, erzeugt mit
   `PDF/pdf-layout-scripte/erzeuge_projektstruktur_pdf.py`, das `md2pdf.py` aufruft)
 - `C8205-PDF_Gestaltungsrichtlinie_A4.pdf` (Quelle: C8205-Interpreter-PDF.md, diese Datei; Wortlaut nach Abschnitt 6a, erzeugt

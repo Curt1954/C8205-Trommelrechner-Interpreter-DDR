@@ -1,6 +1,6 @@
 ** Überblick und Gesamtaufbau (Wurzeldokument für Rechner und Regelwerk) **
 
-Version: 0.95-009
+Version: 0.95-010
 
 Dieses Dokument fasst die allgemeinen, einführenden Angaben zum C 8205 zusammen, wie sie in den
 Übersichtsgrafiken (upload_c8205-1 … upload_c8205-6) enthalten sind, und ordnet die Teilprojekte
@@ -376,8 +376,7 @@ Testmarken und Tastenfolge), aus der sich ein Testauftrag zur Prüfung eines ass
 ergänzen lässt.
 
 Einzelheiten stehen nicht hier, sondern an einer Stelle:
-- Aufruf, Sprache, Anweisungen, Pässe, Makros, Beispiel: `Assembler/Dokumentation/C8205_Assembler_Dokumentation.odt`
-  (maßgeblich; die `.md`-Datei ist nur eine durchsuchbare Ableitung),
+- Aufruf, Sprache, Anweisungen, Pässe, Makros, Beispiel: `Assembler/Dokumentation/C8205_Assembler_Dokumentation.md`,
 - Verzeichnisse und vom Assembler erzeugte Dateien: "C8205-Projektstruktur.md", Abschnitt 3,
 - vom Assemblerergebnis zum Testauftrag des Interpreters: "C8205-Interpreter-Durchführung_eines_Tests.md",
   Abschnitt 2a.
@@ -424,7 +423,7 @@ Einzelheiten stehen nicht hier, sondern in "C8205-Interpreter-BIS.md"; Einordnun
 
 **Assembler**
 - Teilprojekt, Verzeichnisse, erzeugte Dateien: "C8205-Projektstruktur.md", Abschnitt 3.
-- Sprache, Anweisungen, Makros, Beispiel: "C8205_Assembler_Dokumentation.odt" (maßgeblich) bzw. ".md" (Ableitung).
+- Sprache, Anweisungen, Makros, Beispiel: "C8205_Assembler_Dokumentation.md".
 - Vom Assemblerergebnis zum Testauftrag des Interpreters: "C8205-Interpreter-Durchführung_eines_Tests.md", Abschnitt 2a.
 
 **BIS**

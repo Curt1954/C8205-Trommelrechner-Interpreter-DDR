@@ -61,9 +61,9 @@ python c8205_interp.py --MODUS=TEST --mdverz .\markdown-dateien --out "Test-Prot
 endlocal & exit /b %ERRORLEVEL%
 
 rem Schalter des Interpreters, die ein eigenes Wertargument mitnehmen
-rem (Liste wie in c8205_interpreter.sh). Rueckgabe 0 = Wertschalter, 1 = nicht.
+rem (Liste wie in c8205_interpreter.sh; ohne --C8205Z, dessen Wert optional ist). Rueckgabe 0 = Wertschalter, 1 = nicht.
 :ist_wertschalter
-for %%s in (--mdverz --leser1 --lochbandleser1 --leser2 --lochbandleser2 --stanzer1 --lochbandstanzer1 --sw-ausgabe --k0 --out --pruefe-stanzer1 --pruefe-sw-ausgabe --zwischenablage) do (
+for %%s in (--mdverz --leser1 --lochbandleser1 --leser2 --lochbandleser2 --stanzer1 --lochbandstanzer1 --sw-ausgabe --k0 --out --pruefe-stanzer1 --pruefe-sw-ausgabe --zwischenablage --trommel --max-knoten --BASP --basp --LS-LESER-TYP --ls-leser-typ --MODUS --modus) do (
     if "%~1"=="%%s" exit /b 0
 )
 exit /b 1

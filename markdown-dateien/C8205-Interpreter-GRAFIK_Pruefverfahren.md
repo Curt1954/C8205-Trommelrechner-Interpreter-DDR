@@ -1,8 +1,8 @@
 # C 8205 – GRAFIK-Interpreter: Prüfverfahren
 
-Version: 0.95-028
+Version: 0.95-030
 
-**Stand 19.10.2026 (Checkpoint G6-009): §1 bis §10 geschrieben, Entwurf, nicht abgenommen.** Das PDF dazu (`C8205-GRAFIK_Pruefverfahren_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Stufe-6-Beschreibung (Dokument 12, fällt nach Abschluss weg). Das Soll (was GRAFIK tun muss) steht in `C8205-Interpreter-GRAFIK_Beschreibung.md`; dieses Dokument sagt, **wie man prüft, dass er es tut**.
+**Stand 19.10.2026 (Checkpoint G6-009): §1 bis §10 geschrieben, Entwurf, nicht abgenommen.** Das PDF dazu (`C8205-GRAFIK_Pruefverfahren_A4.pdf`) wird mit `make_all_pdf.sh` erzeugt. Entstanden in Stufe 6 (Dokumentation konsolidieren); Plan und Anforderungen: Stufe-6-Beschreibung (Dokument 12, fällt nach Abschluss weg). **Nachgeführt 10.11.2026 (Version 0.95-029):** Der Sammellauf hat jetzt 22 Blöcke (neu: die beiden Takt-Blöcke 15 und 16; frühere Blöcke 15 bis 20 tragen die Nummern 17 bis 22), §3.3 nennt die Proben, §7.9 beschreibt die Taktmessung, §10.1 ist als Stand 19.10.2026 gekennzeichnet. Der Vermerk „nicht abgenommen“ bleibt, die Abnahme entscheidet der Projektinhaber. **Nachgeführt 10.11.2026 (Version 0.95-030):** neu §3.4 (Log-Möglichkeiten von GRAFIK: Schalter, Dateien, Kategorien des Debug-Logs, Klickspur aufnehmen und abspielen) und §3.5 (Zuordnung Prüfverfahren → GRAFIK-Aufruf → Log); Verweise in §1, §5.10 und §6.2 ergänzt. Das Soll (was GRAFIK tun muss) steht in `C8205-Interpreter-GRAFIK_Beschreibung.md`; dieses Dokument sagt, **wie man prüft, dass er es tut**.
 
 Leser: wer GRAFIK prüft oder abnimmt.
 
@@ -21,6 +21,7 @@ GRAFIK (`c8205_grafik.py`, Aufruf auch über `c8205_interp.py` ohne `--MODUS`) i
 | Testformat, Tastenfolgen und Prüfungen des TEST-Interpreters | `C8205-Interpreter-Durchführung_eines_Tests.md` (dort steht ein Verweis auf dieses Dokument) |
 | Soll-Verhalten von GRAFIK | `C8205-Interpreter-GRAFIK_Beschreibung.md` |
 | Prüfen von GRAFIK, Abnahme, Handlisten | dieses Dokument |
+| Schalter und Log-Möglichkeiten von GRAFIK, Zuordnung Prüfverfahren → Aufruf → Log | §3.4, §3.5 (Soll der Schalter: `C8205-Interpreter-GRAFIK_Beschreibung.md` §2) |
 
 **Prüfweg (F-04 b):** Der Projektinhaber hatte auf die Frage nach dem Prüfweg („nur von Hand“ oder „Einspielmodus“) mit „beide müssen die gleichen Ergebnisse liefern“ geantwortet; vorläufig galt Handabnahme. Seither gibt es beides: skriptbare Läufe (Klickspur, `--WIEDERGABE`, Debug-Log) und die Handlisten in §7. Was nur von Hand geht, steht in §7.
 
@@ -30,7 +31,7 @@ GRAFIK (`c8205_grafik.py`, Aufruf auch über `c8205_interp.py` ohne `--MODUS`) i
 
 | Ebene | Was sie prüft | Was sie nicht prüft | Wer kann sie laufen lassen |
 |---|---|---|---|
-| **1 Logiktests ohne Fenster** (§3, Blöcke 1 bis 12, 14 bis 16 und 19) | Kern, Geräte, Pult-Steuerung, SW-Logik, Töne (Mischer, Klangwahl, Zeiten) gegen Ersatzmodule für Tk und Audio | Aussehen, echtes Tk, Hören | Entwickler und Projektinhaber; kein Bildschirm nötig |
+| **1 Logiktests ohne Fenster** (§3, Blöcke 1 bis 12, 14 bis 18 und 21) | Kern, Geräte, Pult-Steuerung, SW-Logik, Töne (Mischer, Klangwahl, Zeiten) gegen Ersatzmodule für Tk und Audio | Aussehen, echtes Tk, Hören | Entwickler und Projektinhaber; kein Bildschirm nötig |
 | **2 Gleichwertigkeit TEST/GRAFIK** (§4) | dieselben Ergebnisse in beiden Modi, je Test aus `Tests/` | Fenster, Töne, Zeiten | beide; dauert am längsten |
 | **3 Trockenläufe** (Block 13, `--ohne-tk`, `r300_eingabe_trockenlauf.py`) | Skripte, Klickspuren, Pult-Modell, Rechner-Thread im selben Prozess **ohne Tkinter** | Tkinter selbst | beide |
 | **4 Tk-Tests am echten Fenster** (§5, §6, `grafik_sw_tk_test.py`) | Klick → Pult-Steuerung → Rechner-Thread → Zustand im laufenden Fenster; Tasten im SW-Fenster; HW-Check | Aussehen, Gehör, Treffer- und Fokusprüfung des Pult-Fensters (die Wiedergabe umgeht das Tk-Mausereignis) | nur wer Tkinter und Bildschirm hat (bisher der Projektinhaber) |
@@ -45,13 +46,13 @@ GRAFIK (`c8205_grafik.py`, Aufruf auch über `c8205_interp.py` ohne `--MODUS`) i
 ### 3.1 Sammellauf
 
 ```
-bash testscripte/grafik_alle_tests.sh            alle 20 Blöcke
-bash testscripte/grafik_alle_tests.sh --schnell  ohne die beiden Gleichwertigkeitsläufe (18 Blöcke)
+bash testscripte/grafik_alle_tests.sh            alle 22 Blöcke
+bash testscripte/grafik_alle_tests.sh --schnell  ohne die beiden Gleichwertigkeitsläufe (20 Blöcke)
 ```
 
 Je Block eine Zeile `OK` oder `FEHLER` mit Laufzeit, bei Fehler die letzten 40 Ausgabezeilen; am Ende „Blöcke bestanden: n, fehlgeschlagen: m“. Rückgabewert 0 nur, wenn alle Blöcke bestanden sind. Das Skript setzt für sich `C8205_FENSTERLAGE=aus` (die Tests dürfen die gemerkte Fensterlage des Benutzers nicht beschreiben), `PYTHONDONTWRITEBYTECODE=1` und `PYTHONWARNINGS=ignore::ResourceWarning` (die Warnungen stammen aus dem unveränderten `c8205_interp.py`).
 
-### 3.2 Die 20 Blöcke
+### 3.2 Die 22 Blöcke
 
 Die Spalte „Erwartung“ ist bei allen: Rückgabewert 0 (alle Prüfungen des Skripts bestanden). Zahlen in Klammern sind die Prüfungszahlen zum Zeitpunkt der Abnahme laut Quelle, nicht neu gezählt.
 
@@ -71,14 +72,16 @@ Die Spalte „Erwartung“ ist bei allen: Rückgabewert 0 (alle Prüfungen des S
 | 12 | Abstand Umschalt-/Zeichentaste | `grafik_sw_abstand_tests.py` (mit `-I`) | Abstand bei gehaltener Umschalttaste (G4-011) |
 | 13 | Trockenlauf Tk-Test | `grafik_sw_tk_test.py --ohne-tk --bericht /tmp/sw_tk_trocken.txt` | Trockenlauf des Tk-Tests ohne Tkinter (der echte Lauf steht in §3.3) |
 | 14 | Stresstest Pult/Rechner | `grafik_pult_stress.py 6 <Seed>` für Seed 3, 5, 6 | Zufallsklicks gegen den echten Rechner mit Rechner-Thread; hängt ein Klick länger als 3 s, werden alle Threads ausgegeben (Exit 1) |
-| 15 | Trommel-Erweiterungsmodul | `cd c-module/python && python3 -m unittest test_c8205_trommel` | Python-Seite des C-Moduls |
-| 16 | C-Module | `cd c-module && make test-alle && make clean` | drei Testrahmen (Trommel, Koinzidenz, `tonmisch`); `make clean` räumt die Objekte auf; die vorübersetzte `c8205_trommel.abi3.so` blieb im Probelauf (§10.1) byte-gleich |
-| 17 | Gleichwertigkeit `--alle` | `grafik_gleichwertigkeit.py --alle` | → §4 |
-| 18 | Gleichwertigkeit neue Geräte | `grafik_gleichwertigkeit.py --neue-geraete` | → §4 |
-| 19 | Trommelwächter, Selbsttest | `grafik_trommel_waechter_tests.py` (mit `-I`) | elf Prüfungen des Wächters mit Gegenproben in einem Temp-Ordner: unverändert → 0; geänderte, gelöschte oder neu entstandene `trommel.txt` bzw. `trommel.basp` → 1; Stand fehlt oder Aufruf falsch → 2 (OP-19, Variante b, 21.10.2026) |
-| 20 | Trommelwächter, Vergleich | `grafik_trommel_waechter.py pruefen <Stand>` | Letzter Block des Sammellaufs: vergleicht die Prüfsummen von `Trommel/trommel.txt` und `Trommel/trommel.basp` mit dem Stand, den das Skript vor dem ersten Block gemerkt hat; **FEHLER, wenn sich eine der beiden Dateien während des Laufs geändert hat** (die Datei wird nicht zurückgesetzt). Gilt auch bei `--schnell` |
+| 15 | Taktmitschrift | `grafik_takt_tests.py` (mit `-I`) | `--taktprotokoll` (§7.9): Lauf mit und ohne Mitschrift gleich (`vt`, Wartezeitsumme, Zugriffe, BZ, AC), Stetigkeit der Zeilen, Summen gegen die Trommelstatistik, Phase I nur bei Knoten 2 (16 Prüfungen) |
+| 16 | Taktprotokoll, Auswertung | `grafik_takt_schleife_tests.py` | Auswertungsskript `grafik_takt_schleife.py` an von Hand gebauten Taktprotokollen: Befehlsadresse aus Knoten 9, Schleifenauswahl, `--takte`, TSV, Rückkehrcodes 0/2/4 (36 Prüfungen; kein GRAFIK-Lauf) |
+| 17 | Trommel-Erweiterungsmodul | `cd c-module/python && python3 -m unittest test_c8205_trommel` | Python-Seite des C-Moduls |
+| 18 | C-Module | `cd c-module && make test-alle && make clean` | drei Testrahmen (Trommel, Koinzidenz, `tonmisch`); `make clean` räumt die Objekte auf; die vorübersetzte `c8205_trommel.abi3.so` blieb im Probelauf (§10.1) byte-gleich |
+| 19 | Gleichwertigkeit `--alle` | `grafik_gleichwertigkeit.py --alle` | → §4 |
+| 20 | Gleichwertigkeit neue Geräte | `grafik_gleichwertigkeit.py --neue-geraete` | → §4 |
+| 21 | Trommelwächter, Selbsttest | `grafik_trommel_waechter_tests.py` (mit `-I`) | elf Prüfungen des Wächters mit Gegenproben in einem Temp-Ordner: unverändert → 0; geänderte, gelöschte oder neu entstandene `trommel.txt` bzw. `trommel.basp` → 1; Stand fehlt oder Aufruf falsch → 2 (OP-19, Variante b, 21.10.2026) |
+| 22 | Trommelwächter, Vergleich | `grafik_trommel_waechter.py pruefen <Stand>` | Letzter Block des Sammellaufs: vergleicht die Prüfsummen von `Trommel/trommel.txt` und `Trommel/trommel.basp` mit dem Stand, den das Skript vor dem ersten Block gemerkt hat; **FEHLER, wenn sich eine der beiden Dateien während des Laufs geändert hat** (die Datei wird nicht zurückgesetzt). Gilt auch bei `--schnell` |
 
-Die Nummern 1 bis 20 zählen die Blöcke in der Reihenfolge des Skripts (bei `--schnell` fehlen 17 und 18, 19 und 20 laufen trotzdem); Block 13 ist im Skript der Trockenlauf des Tk-Tests, Block 14 der Stresstest.
+Die Nummern 1 bis 22 zählen die Blöcke in der Reihenfolge des Skripts (bei `--schnell` fehlen 19 und 20, 21 und 22 laufen trotzdem); Block 13 ist im Skript der Trockenlauf des Tk-Tests, Block 14 der Stresstest, die Blöcke 15 und 16 sind die Takt-Tests.
 
 ### 3.3 Skripte außerhalb des Sammellaufs
 
@@ -89,10 +92,88 @@ Die Nummern 1 bis 20 zählen die Blöcke in der Reihenfolge des Skripts (bei `--
 | `r300_eingabe_*` | Eingabeprogramm „alle Zeichen des R300-Codes“, → §6 | siehe §6 | 3, 4 |
 | `grafik_sw_vormerkung_s3_13.py` | Prüfmittel VM-003 zu S3-13/S3-18 (keine Vormerkung, Sperre statt Warten; Eingabe nur bei aktivem `011`). Ändert keinen Programmcode. **Nicht** Teil des Sammellaufs | Rückgabewert 0 (4 von 4, ohne `expectedFailure`) | 1 |
 | `k0_schatten_haken.py` | Messwerkzeug zu 0.03-016: baut in eine **Kopie** von `c8205_interp.py` einen Zusatz, der Anwahlbefehle K0 mit abweichender Entscheidung von alter und neuer Regel in die Datei aus `C8205_SCHATTEN` schreibt. **Nur auf eine Projektkopie anwenden** | kein Prüfskript, kein Rückgabewert | – |
+| `grafik_takt_schleife.py` | Auswertung eines Taktprotokolls (Schleife um einen Befehl, Takte), → §7.9. Aufruf `python3 testscripte/grafik_takt_schleife.py LOG [--liste] [--befehl ADR] [--op OC] [--takte] [--voll] [--varianten N] [--tsv DATEI]` | Rückgabewert 0; 2 Aufruf oder Datei falsch; 4 Anker nicht gefunden oder weniger als zwei Ausführungen | – |
+| `grafik_op09_rechnerzeit_probe.py`, `grafik_trommel_zaehler_probe.py`, `grafik_e_im_eingabe_halt_probe.py` | **Proben mit Ausgabe, keine Tests und nicht im Sammellauf:** Rechnerzeit nach einem Umschaltzeichen bis zum nächsten `011` (OP-09, Beschreibung §6.10), Zähler der Trommelstatistik je Zeitmodell (Beschreibung §7.8; `--startlagen` misst die Streuung über die 32 Startlagen), E-Schritt im Eingabe-Halt nach H (OP-20, behoben). Alle arbeiten auf einer Trommelkopie im Temp-Ordner und ändern nichts im Projekt | Rückgabewert 0 = Probe lief durch, sagt nichts über den Befund | – |
 | `erzeuge_leere_trommel.py` | erzeugt eine leere Trommeldatei | – | – |
 | `c8205_bis_test.sh`, `compute_all_tests.sh` | Stapelläufe der TEST-Seite (BIS-Bausteintests, Regressionsschleife; die früheren `test.sh`, `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` sind entfallen); beschrieben in `Durchführung_eines_Tests` und der Projektstruktur, hier nicht wiederholt | – | TEST |
 
-**Reihenfolge nach einer Änderung:** zuerst `grafik_alle_tests.sh --schnell`, danach der volle Lauf. Der volle Lauf mit den Gleichwertigkeitsläufen braucht am Rechner des Projektinhabers einige Minuten (Block 17 allein 159 s, Stand 19.10.2026).
+**Reihenfolge nach einer Änderung:** zuerst `grafik_alle_tests.sh --schnell`, danach der volle Lauf. Der volle Lauf mit den Gleichwertigkeitsläufen braucht am Rechner des Projektinhabers einige Minuten (Block 19 allein 159 s, Stand 19.10.2026).
+
+### 3.4 Log-Möglichkeiten von GRAFIK (Schalter von `c8205_grafik.py`)
+
+Alle Schalter gehen unverändert durch `./c8205_grafik.sh` und `c8205_grafik.bat` an `c8205_grafik.py` (`-h` zeigt die Hilfe). Quelle der Angaben: `c8205_grafik.py`, Kopf von `grafik_debuglog.py` (DL-004) und `GRAFIK_Beschreibung` §2, §5, §7.11.
+
+| Schalter | Standard (Datei oder Ausgabe) | Was geschrieben wird | Bemerkung |
+|---|---|---|---|
+| `--DEBUGLOG [DATEI]` | `c8205_grafik_debug.log` im aktuellen Ordner; beim Start meldet GRAFIK auf stderr „Debug-Log wird geschrieben: …“ | Fehlersuche-Protokoll mit Zeitstempel, jede Zeile sofort geschrieben (auch nach einem Absturz lesbar); Kategorien siehe unten | Ohne den Schalter ist das Log aus. Keine Wirkung auf das Rechnerverhalten. Schaltet automatisch auch `--AUFZEICHNUNG` ein (`<DATEI ohne Endung>_klickspur.txt`) |
+| `--AUFZEICHNUNG [DATEI]` | `c8205_pult_klickspur.txt` | Klickspur: jeder Klick auf eine Pult-Taste (auch ohne Wirkung) und jedes Loslassen von E/M mit der Zeit seit dem ersten Ereignis; Kopf mit Zeitpunkt, Version, `trommel_md5`, `basp` und dem vollständigen Aufruf | Nur mit Pult-Fenster. Format `C8205-Klickspur 1` (§5.5), von Hand änderbar. Die Aufzeichnung schreibt nur `klick` und `los` (`grafik_pult.py`); die Ereignisart `tipp <keysym>` (Taste im SW-Fenster) kennt das Format, die Wiedergabe führt sie aus, sie kommt aus dem Erzeuger der Klickspur (§6.1). Beim Start meldet GRAFIK auf stderr „Klickspur wird aufgezeichnet: …“ |
+| `--WIEDERGABE [DATEI]` | `c8205_pult_klickspur.txt` | spielt eine Klickspur im selben Zeitabstand selbst ab; Abweichungen der Wirkung stehen im Log (`ABWEICHUNG`) | Schaltet `--DEBUGLOG` ein (Hinweis auf stderr). Ist die Trommel nicht mehr die der Aufzeichnung (MD5 verschieden), warnt GRAFIK auf stderr und im Log (`WIEDERGABE`). Nur mit Pult-Fenster. Dieselbe Datei für `--AUFZEICHNUNG` und `--WIEDERGABE` ist ein Fehler |
+| `--pult-protokoll` | stderr (keine Datei) | jeder Pult-Klick mit Ergebnis und Grund | Entwicklerschalter; mit `--DEBUGLOG` stehen dieselben Zeilen zusätzlich als `KLICK` im Log |
+| `--taktprotokoll DATEI` [`--takt-max N`] | keine; Schalter ist standardmäßig aus | Taktmitschrift der virtuellen Trommelzeit, tabulatorgetrennt (§7.9, Beschreibung §7.11) | Nur mit `--trommelzeit echt` oder `schnell`, sonst Rückkehrcode 16. `--takt-max`: Höchstzahl der Zeilen, Standard 5 000 000, 0 = unbegrenzt |
+| Endzeilen auf der Konsole | stdout, bei Läufen mit `--ohne-fenster`, `--entwickler-tasten` oder `--entwickler-k0` | `Ende: <Grund> \| BZ= AC= AR= FE= FUE= BS= US= E= A= V1= V2=`, `SW-Ausgabe: …`, `Trommel: {Zähler}`, bei `--taktprotokoll` die Zeile `Taktprotokoll: …`, bei `--C8205Z` die Zeile `Zusatztrommeln: …` | Die Zustandsfelder der Zeile `Ende:` entsprechen der Zustandszeile der Prüfungen in einer TEST-Datei; die Zähler der Zeile `Trommel:` erklärt Beschreibung §7.8 |
+| Rückkehrcode | Rückgabewert des Prozesses | 0 normal (auch Netz aus), 8 Strg+C oder Fenster geschlossen, 16 Start nicht möglich | gilt für `.sh` und `.bat` |
+
+**Hilfsschalter für Läufe ohne Bedienung** (Beschreibung §2, Netz-Automatik G4-026): `--ohne-fenster` (kein Pult-Fenster), `--entwickler-tasten "H G R"` (Pult-Tasten nacheinander), `--entwickler-k0 DATEI` (K0-Zeichen, eines je Zeile), `--netz-schnell` (Hochlauf und Auslauf 0,3 s statt Wartezeit). Ohne Pult-Fenster schaltet GRAFIK das Netz selbst ein und aus: Netz aus, sobald der Rechner 15 s lang keine Befehlsgrenze durchlaufen hat (z. B. Eingabe-Halt vor einem leeren Leser); Meldung „Netz aus (automatisch) …“, Rückkehrcode 0.
+
+**Kategorien im Debug-Log** (Zeilenform `Sekunden seit Start [Thread] KATEGORIE Text`):
+
+| Kategorie | Inhalt | Wofür lesen |
+|---|---|---|
+| `START` | Kopfzeile: Versionen, Python, Betriebssystem, Tastaturbelegung, vollständiger Aufruf | welcher Lauf war das? (Aufruf steht im Log, nicht nachfragen) |
+| `MAUS`, `TASTE`, `FOKUS` | rohe Ereignisse des Fensters (Position, Umschalt, Fokus, getroffenes Ziel). Bei laufender Wiedergabe: `MAUS … ignoriert: Wiedergabe laeuft` | Fokus- und Treffer-Fragen (H-3), Wiedergabe-Artefakt oder echter Fehler (§2) |
+| `KLICK`, `TOKEN` | Entscheidung der Pult-Steuerung (`wirkt=0/1`, Grund) und das Token an den Rechner | Rollensperre, Halter, welche Taste kam beim Rechner an (§5.6) |
+| `RECHNER` | Taste vorgemerkt; Ausführung beginnt/endet, jeweils mit dem Rechnerzustand (BZ, AC, AR, Flags); `Lauf endet` | Endzustand (§5.6), Reaktionszeit zwischen `KLICK` und `RECHNER` (H-5) |
+| `SW` | SW-Fenster (`grafik_sw_fenster.py`): `Taste char=… keysym=… -> geliefert\|folgt\|vorgemerkt\|voll\|blockiert\|angehalten\|verworfen (Puffer: n, 011 aktiv: …)`, `Taste ignoriert …`, `zweite Eingabe beim Loslassen -> …`, `Eingabe erwartet: Fokus angefordert`, `Eingabe erledigt: Fokus zum Pult`, `Puffer -> verworfen`, je Eingabeklang eine Zeile `Eingabeklang …` (mit „Stimmen im Mischer danach: n“) | §6, §7.2, H-3, H-6, H-7 |
+| `SWAUS` | jedes Stück Text, das im SW-Fenster angezeigt wird | „angezeigt = beim Rechner angekommen“ (H-6, §6.3 Punkt 4) |
+| `K0` | `Rechner uebernimmt Token … (Quelle …)`: das Zeichen wurde vom Rechner wirklich übernommen (`grafik_k0.py`) | Annahme beim Rechner, Gegenstück zu `SW … -> geliefert` |
+| `HALT` | Halt mit Art und Zeit seit dem Start (`Halt n (art): … ms seit …`) | Haltzeit (Beschreibung §8) |
+| `WIEDERGABE` | je abgespieltes Ereignis eine Zeile (`i/n t=… klick H: wirkt=… (aufgezeichnet …)`, `tipp …`, `los …`); bei abweichender Wirkung hängt `ABWEICHUNG` an der Zeile; Schlusszeile `Ende: n Ereignisse, m Abweichung(en) der Wirkung`; Warnung, wenn die Trommel nicht mehr die der Aufzeichnung ist | Wiedergabe-Artefakt oder echter Fehler (§5.6) |
+| `STATUS` | jede Sekunde: Alter des letzten Fenstertaktes, Rechner-Thread, Zustand | hängt etwas? |
+| `WATCHDOG` | Fenstertakt steht länger als 1,5 s oder ein Einzelschritt hängt länger als 3 s: Stacks aller Threads | Endlosschleife, Sperre |
+| `FEHLER`, `LANGSAM` | Ausnahmen in Tk-Rückrufen und im Takt; Takt oder HW-Check-Aktualisierung länger als 0,15 s | Auswertung §5.6 zählt `FEHLER` und `WATCHDOG` als Fehler, `LANGSAM` nur als Hinweis |
+
+**Klickspur aufnehmen und abspielen** (Fenster nötig; die Trommel bei der Wiedergabe so wie bei der Aufnahme, am einfachsten eine Kopie mit gleichem Anfangsstand; der Kopf der Spur nennt die MD5 der Anfangs-Trommel):
+
+```
+./c8205_grafik.sh --trommel KOPIE.txt --AUFZEICHNUNG spur.txt                    Bedienung am Fenster aufnehmen
+./c8205_grafik.sh --trommel KOPIE.txt --WIEDERGABE spur.txt --DEBUGLOG lauf.log   dieselbe Bedienung abspielen, Log lesen
+```
+
+### 3.5 Zuordnung: Prüfverfahren, GRAFIK-Aufruf und Log
+
+Die Tabelle zeigt für jedes Prüfverfahren, **womit man es startet**, **welcher Aufruf von `c8205_grafik.py` dahintersteht** und **wo das Ergebnis oder Log liegt**. Die Schalter erklärt §3.4. Zeilen mit „Vorschlag“ sind aus §3.4 abgeleitet und noch nicht erprobt; alles andere steht so in den Skripten oder in den Abschnitten, auf die die Spalte „§“ zeigt. „kein Aufruf“ heißt: Das Skript prüft Kern, Pult oder SW-Logik im selben Prozess (Ersatzmodule, Python-Schnittstelle), nicht über die Kommandozeile von `c8205_grafik.py`.
+
+| § | Prüfverfahren | Start | GRAFIK-Aufruf dahinter | Log, Ergebnis |
+|---|---|---|---|---|
+| 3.2 | Blöcke 1 bis 9, 11 bis 16, 21 (Logiktests, Takt-Blöcke) | `bash testscripte/grafik_alle_tests.sh` oder je Skript `python3 -I testscripte/<skript>` | kein Aufruf | Konsole: je Block `OK`/`FEHLER`, bei Fehler die letzten 40 Zeilen; Rückgabewert |
+| 3.2 | Block 10 (`--MODUS`) | wie oben | Unterprozesse von `c8205_interp.py` und `c8205_grafik.py` mit eigener Trommelkopie (Aufrufe im Skript `grafik_stufe5_tests.py`) | Konsole |
+| 3.2 | Block 13 (Trockenlauf Tk-Test) | `grafik_sw_tk_test.py --ohne-tk --bericht /tmp/sw_tk_trocken.txt` | kein Aufruf | Bericht-Datei |
+| 3.2 | Block 14 (Stresstest) | `grafik_pult_stress.py 6 <Seed>` | kein Aufruf (echter Rechner-Thread ohne Tk) | hängt ein Klick länger als 3 s, gibt das Skript alle Threads aus (Exit 1) |
+| 3.2 | Blöcke 17, 18 (C-Module) | `python3 -m unittest test_c8205_trommel`, `make test-alle` | kein Aufruf | Konsole |
+| 3.2, 10 (B-2) | Block 22 (Trommelwächter) | letzter Block des Sammellaufs | kein Aufruf | Konsole: `FEHLER`, wenn sich `trommel.txt` oder `trommel.basp` änderte |
+| 4 | Gleichwertigkeit TEST/GRAFIK (Blöcke 19, 20) | `python3 testscripte/grafik_gleichwertigkeit.py --alle` (oder `--neue-geraete`, oder Testnamen) | kein Aufruf (Lauf B und C über `c8205_grafik.Rechner`) | `--bericht DATEI`; Abweichung nachstellen: Tastenfolge des Tests mit `--ohne-fenster --entwickler-tasten "…" --STUMM --trommel KOPIE` (Endzeile `Ende: …` gegen die Zustandszeile des Tests; eine Trommelkopie aus einem Test legt `testscripte/op09_eingabeklang.sh NAME --nur-vorbereiten` an, Datei `op09_trommel.txt`) |
+| 5 | Pult-Tastentest am echten Fenster | `python3 testscripte/grafik_pult_tk_test.py [--faelle …] [--xvfb] [--langsam F] [--ohne-tk]` | `python3 c8205_grafik.py --STUMM --netz-schnell --BASP 000000 --trommel <Kopie> --leser1 … --leser2 … --stanzer1 … --WIEDERGABE <Klickspur> --DEBUGLOG <debug.log>` (§5.2 Nr. 4) | `Test-Protokolle/pult_tk/<Zeitstempel>/`: `bericht.txt`, je Fall `debug.log`, `klickspur.txt`, `grafik_stdout.txt`, `grafik_stderr.txt`, `trommel.txt` (§5.3) |
+| 6 | R300-Eingabe, echter Lauf | `sh testscripte/r300_eingabe_lauf_und_auswertung.sh [F]` (nur Lauf: `r300_eingabe_grafik.sh [F]`; Windows: `.bat`) | `python3 c8205_grafik.py --STUMM --netz-schnell --HWCHECK --BASP 000000 --trommel r300_eingabe_trommel_nach_lauf.txt --WIEDERGABE <Klickspur> --DEBUGLOG r300_eingabe_debug.log` (aus `r300_eingabe_grafik.sh`; `F` streckt die Zeitabstände der Klickspur) | `r300_eingabe_debug.log`, `r300_eingabe_trommel_nach_lauf.txt`, `r300_eingabe_bericht.txt` (Auswertung `r300_eingabe_log_auswerten.py`) |
+| 6 | R300-Eingabe, Trockenlauf | `python3 -I testscripte/r300_eingabe_trockenlauf.py` | kein Aufruf (ohne Tkinter) | Konsole: je Prüfung `OK`/`FEHLER` |
+| 7.2 (H-2, H-3) | SW-Fenster von Hand, Fokus | `python3 testscripte/grafik_sw_tk_test.py --manuell --DEBUGLOG` | kein Aufruf (das Skript öffnet Pult-Attrappe, HW-Check und SW-Fenster selbst) | `sw_tk_test_debug.log`; Zeilen `Rechner bekommt: …` im Terminal; für Fokus die Kategorie `FOKUS` |
+| 7.3 (H-4) | Hörprüfung | `./c8205_grafik.sh --HWCHECK [--TON=pppp]` (ohne `--STUMM`) | der Aufruf selbst | kein Log; Befund wird nach der Tabelle §7.3 abgehakt. Mit `--DEBUGLOG` zeigt `SW Eingabeklang …`, ob ein Klang angefordert wurde |
+| 7.1 (H-5) | Taktgefühl im Dauerlauf R | Vorschlag: `./c8205_grafik.sh --trommel KOPIE.txt --DEBUGLOG h5.log` (Programm ohne Halt, R, dann H und Tasten klicken) | der Aufruf selbst | Zeitabstand zwischen `KLICK`/`TOKEN` und der folgenden `RECHNER`-Zeile; Soll höchstens 50 ms (OP-17) |
+| 7.1 (H-6) | Puffer im SW-Fenster | Vorschlag: `./c8205_grafik.sh --trommel KOPIE.txt --DEBUGLOG h6.log`, Schnelltipp `a A a A` | der Aufruf selbst | Zeilen `SW Taste … voll` zeigen das Überlaufen; „angezeigt = beim Rechner angekommen“ über `SWAUS` und die `K0`-Zeilen „Rechner uebernimmt Token“ |
+| 7.1 (H-7) | Eingabeklang beim ersten Zeichen (OP-09) | `testscripte/op09_eingabeklang.sh [NAME] [--nur-vorbereiten]` | `./c8205_grafik.sh --BASP 000000 --trommel op09_trommel.txt --DEBUGLOG op09_debug.log` (aus dem Skript) | `grep -E "Taste\|Loslassen\|Eingabeklang" op09_debug.log` |
+| 7.1 (H-8) | E+ und G bei gehaltenem E | Vorschlag: `./c8205_grafik.sh --trommel KOPIE.txt --pult-protokoll` | der Aufruf selbst | stderr: jeder Pult-Klick mit Ergebnis und Grund; Lampenreihe AR am Fenster ablesen |
+| 7.1 (H-9) | Ausfall des Tonstroms im Betrieb | Vorschlag: `./c8205_grafik.sh --trommel KOPIE.txt --DEBUGLOG h9.log` (ohne `--STUMM`), Abspielprogramm im Lauf beenden | der Aufruf selbst | Fehlermeldung auf stderr, Rückkehrcode 16 (S4-04); im Log `FEHLER` |
+| 7.5 (H-12) | Lampenmittelung | `./c8205_grafik.sh --trommel EIGENE_KOPIE.txt` (mit `--STUMM`, wenn der Hochlauf nicht abgewartet werden soll) | der Aufruf selbst | Sichtprüfung, kein Log |
+| 7.4 | Trommel, Referenzwerte | Blöcke 17 und 18 (Zeilen oben) | kein Aufruf (C-Modul) | Konsole |
+| 7.6 | Trommelzeit der Befehlsschleife | `python3 testscripte/grafik_sektor_pruefung.py [--art sprung\|einzel\|gruppe] …` | kein Aufruf (Arbeitskopie der Trommel im Temp-Ordner) | Tabelle auf der Konsole und `testscripte/sektor_pruefung_ergebnis.csv` |
+| 7.7 | Zeitmessung Pult, Abtastung, HW-Check | `python3 testscripte/grafik_zeit_messung.py [--dauer S --wiederholungen N --varianten …]` | kein Aufruf (je Messung ein eigener Prozess mit den Bauteilen von GRAFIK) | `testscripte/zeit_messung_ergebnis.csv` (wird bei jedem Aufruf überschrieben) |
+| 7.9 | Taktmessung einer Programmschleife | `python3 c8205_grafik.py --ohne-fenster --STUMM --trommelzeit schnell --trommel EIGENE_TROMMEL.txt --entwickler-tasten "H G R" --taktprotokoll takt.tsv`, danach `python3 testscripte/grafik_takt_schleife.py takt.tsv --liste` | der Aufruf selbst | `takt.tsv`; Endzeile `Taktprotokoll: …`; Auswertung auf der Konsole, `--tsv DATEI` je Befehl eine Zeile |
+| 9 | Windows | `c8205_grafik.bat [Schalter]`, `c8205_interpreter.bat`, `testscripte/r300_eingabe_grafik.bat` | die `.bat` rufen `python c8205_grafik.py %*` auf; alle Schalter aus §3.4 gelten wie unter Linux | Windows-Läufe möglichst mit `--DEBUGLOG`, weil ein großer Teil noch ungeprüft ist (§9.4) |
+
+**Lesart und Grenzen:**
+
+- **Wer wissen will, was GRAFIK bei einem Lauf getan hat,** nimmt `--DEBUGLOG`; **wer die Takte der virtuellen Trommelzeit braucht,** `--taktprotokoll`; **wer eine Bedienung wiederholen will,** `--AUFZEICHNUNG` und `--WIEDERGABE`. Die Ebene des Ergebnisses (Trockenlauf oder echter Lauf) gehört in jeden Bericht (§2).
+- **Offen:** Die Zeilen „Vorschlag“ (H-5, H-6, H-8, H-9) nennen nur den Schalter, der für die jeweilige Handprüfung passt; sie sind nicht erprobt und ändern kein Prüfverfahren.
+- Bei Läufen **ohne** Pult-Fenster wirken `--AUFZEICHNUNG` und `--WIEDERGABE` nicht (GRAFIK meldet das auf stderr).
 
 ## 4 Gleichwertigkeit TEST/GRAFIK
 
@@ -311,7 +392,7 @@ Regeln:
 |---|---|
 | Testformat des TEST-Interpreters (Trommeldatei, Tastenfolge, `#TROMMEL=LEER`, `Prüfungen:`) | `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitte 2g, 3, 3a |
 | Tasten, Wippen, Halter, Rollensperre des Pultes | `C8205-Interpreter-Bedienpult_mit_Schaltern.md`; Soll in der Beschreibung §3 |
-| Klickspur, Debug-Log, Wiedergabe | Kopf von `grafik_debuglog.py`; Schalter `--DEBUGLOG`, `--AUFZEICHNUNG`, `--WIEDERGABE` von `c8205_grafik.py` (`-h`) |
+| Klickspur, Debug-Log, Wiedergabe | §3.4 (Schalter, Dateien, Log-Kategorien, Aufnahme und Wiedergabe); Kopf von `grafik_debuglog.py`; `c8205_grafik.py -h` |
 | Verzeichnisse und Skripte | `C8205-Projektstruktur.md` |
 
 *(Die alte Verweistabelle nannte außerdem Dok. 01 §1.7, §1.8, §3.5, Dok. 06 und Dok. 08/`CHECKPOINT_Stufe2.md`; diese Anforderungsdokumente fallen mit Stufe 6 weg, ihr Inhalt steht in der Beschreibung.)*
@@ -338,6 +419,8 @@ sh testscripte/r300_eingabe_lauf_und_auswertung.sh [F]    echter Lauf mit Tkinte
 sh testscripte/r300_eingabe_grafik.sh [F]                 nur der Lauf
 python3 testscripte/r300_eingabe_log_auswerten.py [LOG [TROMMEL_NACH_LAUF [BERICHT]]]
 ```
+
+Der GRAFIK-Aufruf hinter `r300_eingabe_grafik.sh` steht in §3.5 (Zeile „R300-Eingabe, echter Lauf“); das Debug-Log `r300_eingabe_debug.log` ist die Datei von `--DEBUGLOG` (§3.4).
 
 Der echte Lauf legt die Trommel in eine **Kopie** (`r300_eingabe_trommel_nach_lauf.txt`); `Trommel/trommel.txt` bleibt unberührt. Ergebnisdateien: `r300_eingabe_debug.log`, `r300_eingabe_trommel_nach_lauf.txt`, `r300_eingabe_bericht.txt`. **Das Fenster während des Laufs nicht anfassen.**
 
@@ -455,7 +538,7 @@ Die Trommel wird in den Blöcken 15 (`test_c8205_trommel`, 11 Tests) und 16 (`ma
 
 **Zusätzliche Werkzeuge (Linux, einmalig gelaufen, nicht Teil des Sammellaufs):** AddressSanitizer und UndefinedBehaviorSanitizer ohne Meldung; ThreadSanitizer nach der Behebung eines Datenwettlaufs (`req_wartet`) ohne Warnung. Die Beobachtungsvariable `trommel_aktuelle_sektornummer` ist absichtlich lockfrei lesbar (bestätigt 16.10.2026) und für ThreadSanitizer ein formaler Wettlauf; die Tests nutzen `trommel_aktueller_sektor()`.
 
-**Python-Seite (Block 15):** Lesen mit Wartezeit 0 bis 31, Schreiben und Rücklesen mit Begrenzung auf 33 Bit, Bahnsperre, Fehler und `TrommelAbbruch`, Abbruch-Flag, Sektor und Statistik, Abweisung einer Datei im alten Format, Pfad mit Umlaut, Strg+C (Rückkehrcode 8, `ausschalten()` im `finally`, Trommeldatei danach mit 4096 gültigen Zeilen), Lader (nicht ladbar: Meldung und Code 16).
+**Python-Seite (Block 17):** Lesen mit Wartezeit 0 bis 31, Schreiben und Rücklesen mit Begrenzung auf 33 Bit, Bahnsperre, Fehler und `TrommelAbbruch`, Abbruch-Flag, Sektor und Statistik, Abweisung einer Datei im alten Format, Pfad mit Umlaut, Strg+C (Rückkehrcode 8, `ausschalten()` im `finally`, Trommeldatei danach mit 4096 gültigen Zeilen), Lader (nicht ladbar: Meldung und Code 16).
 
 **Nicht belegt:** Die alten Testrahmen `testframe.c` und `testframe_trommel.c` kompilieren, wurden mit der neuen Fassung aber nicht ausgeführt. Der Strg+C-Test wird unter Windows übersprungen. Unter Windows besteht `test_c8205_trommel.py` (26.10.2026, §9); das übrige ist ungeprüft (W-7).
 
@@ -519,6 +602,23 @@ Schluss: Die Lampenabtastung stört die Befehlsausführung nicht messbar; Pult-T
 ### 7.8 Einlesezeit des KEP und Trommelzeit
 
 Das Einlesen des früheren `pj2-bis_minimalprogramm.kep` (7542 Zeilen; die Messung stammt von der alten Fassung, ersetzt durch `pj2-bis_minimalprogramm_v6.kep`) über das KEP dauert 54 s, über 90 % davon im Warten der Trommel. Die virtuelle Trommelzeit (`--trommelzeit alt|echt|schnell`, Standard `alt`; Beschreibung: GRAFIK_Beschreibung §7.8) zählt 521 241 Wortzeiten = 54,2 s, das ist dieselbe Zeit wie das C-Modul nach der Wanduhr. Der Interpreter hält also mit der Trommel Schritt; die Vermutung, das KEP verpasse wegen eines zu langsamen Interpreters seinen Sektor, ist nicht belegt. Die Schleife des KEP (Zellen 0020, 0030, 0031/0021) wartet je Durchlauf feste 22, 24 und 11 bzw. 6 Wortzeiten, zusammen etwa 70 Wortzeiten = 7,2 ms je Zeichen, fast genau ein Zeichen je 1/130 s (7,7 ms): Das KEP ist auf das Lesetempo des Lesers abgestimmt, nicht auf die kürzeste Zeit je Zeichen. Folgerung: Bei 130 Zeichen/s dauern 7542 Zeichen mindestens 58 s und die 12 139 Zeichen von `namen_raten.kep` mindestens 93 s, auch am echten Gerät. Gemessene 101 s im Fenster (statt 92 s vor dem Zeitmodell) sind nicht aufgeklärt; der Projektinhaber verfolgt das nicht weiter.
+
+### 7.9 Taktmessung: Takte einer Programmschleife (Taktprotokoll)
+
+**Frage:** Wie viele Takte (Wortzeiten zu 104 µs) braucht eine Programmschleife, etwa die Ziffern-Eingabeschleife des BIS-Minimalprogramms, einschließlich der Wartezeit auf die Trommel? Die Messung ist in GRAFIK **abschaltbar**; ohne den Schalter ändert sich nichts (Beschreibung §7.11).
+
+**Verfahren (zwei Schritte, Quelle: GRAFIK_Beschreibung §7.11):**
+
+1. Lauf mit Mitschrift: `python3 c8205_grafik.py --ohne-fenster --STUMM --trommelzeit schnell --trommel EIGENE_TROMMEL.txt --entwickler-tasten "H G R" --taktprotokoll takt.tsv` (`--trommelzeit echt` oder `schnell`, mit `alt` Rückkehrcode 16; die Mitschrift endet bei Überschreiten von `--takt-max` mit `# ABGEBROCHEN`). Auf einer Kopie der Trommel arbeiten, nicht auf `Trommel/trommel.txt`.
+2. Auswertung: `python3 testscripte/grafik_takt_schleife.py takt.tsv --liste` (Anker finden), dann `--befehl <Adresse> --takte` (Schleife um den Befehl und Takte je Zyklus und Variante), mit `--tsv DATEI` je Befehl eine Zeile.
+
+**Festlegung des Inhabers (08.11.2026):** Ein Befehl umfasst die Zeit vom Beginn seiner Phase III bis zum Beginn der Phase III des Folgebefehls, die Wartezeit auf den Folgebefehl eingeschlossen. Die Wartezeit auf ein Zeichen im Eingabe-Halt ist nicht enthalten (`vt` steht dort still).
+
+**Erwartung (Prüfung der Prüfmittel):** Block 15 (`grafik_takt_tests.py`, 16 Prüfungen: die Mitschrift verändert `vt`, Wartezeitsumme, Zugriffe, BZ und AC nicht; Stetigkeit; Summen gegen die Trommelstatistik) und Block 16 (`grafik_takt_schleife_tests.py`, 36 Prüfungen) laufen im Sammellauf und bestehen mit Rückgabewert 0.
+
+**Messwert (Beschreibung §7.11, Lauf der Eingabeschleife, `--trommelzeit schnell`, Lochbandleser FS751, Anker 0064):** Die Ziffernvariante V1 (11 Befehle, 0064 bis 0076) braucht in allen 2391 Zyklen genau 352 Takte (36,608 ms), davon 276 Takte Wartezeit (`C8205-Schleifenoptimierung_Eingabeschleife.md`); die Zeichenende-Varianten über 0333 brauchen 1216 bis 2816 Takte, das Mittel über alle 2703 Zyklen ist 489,649 Takte. Varianten mit demselben Weg schwanken um bis zu 64 Takte (vermutlich wechselnde Operandadressen), das ist nicht untersucht.
+
+**Grenzen:** Eingabe-Halt und Halt stehen nicht im Protokoll. Die Summe je Zeichen (Punkt, zehn Ziffern) und die Eintrittsadresse sind noch offen. Ein Anker, der nur einmal je äußerem Durchlauf läuft, liefert den ganzen äußeren Durchlauf; die innere Schleife wählt man mit ihrem eigenen Anker. Die gerechnete Verbesserung der Schleifenlage steht in `C8205-Schleifenoptimierung_Eingabeschleife.md`; sie ist noch nicht am umgebauten Programm gemessen. Windows ist nicht geprüft. Die erste Wartezeit hängt von der Startlage ab (Beschreibung §7.8).
 
 ## 8 Abnahmekriterien der Stufen 1 bis 5
 
@@ -614,7 +714,7 @@ Windows ist **eigene Abnahme** (O5-3, O6-5). Sie läuft gegen dieses Verfahren, 
 | W-2 | **C-Testrahmen:** Trommel, Koinzidenz und `tonmisch` laufen unter Windows grün (Wege: `make test-alle` mit MinGW-w64 oder `build_msvc.bat` für den Koinzidenz-Rahmen; welcher Weg gilt, ist zu bestimmen) | B-2 | Tester |
 | W-3 | **Start GRAFIK:** `c8205_grafik.bat` öffnet Pult- und SW-Fenster; Rückgabewert 0 bei normalem Ende (Netz aus), 8 bei Strg+C, 16 bei fehlendem Modul oder Python | S5-12, A5-8 | Tester |
 | W-4 | **Start TEST:** `c8205_interpreter.bat Tests\0015-030.txt` meldet „Test wahr“, Code 0 (wie A5-2, A5-4) | A5-4, A5-8 | Tester |
-| W-5 | **Logiktests unter Windows:** die Skripte der Blöcke 1 bis 16 (§3.2) laufen mit `python -I` einzeln grün; wie der Sammellauf unter Windows gestartet wird, ist offen (`grafik_alle_tests.sh` ist ein Bash-Skript) | A5-1 | Tester |
+| W-5 | **Logiktests unter Windows:** die Skripte der Blöcke 1 bis 18 (§3.2) laufen mit `python -I` einzeln grün; wie der Sammellauf unter Windows gestartet wird, ist offen (`grafik_alle_tests.sh` ist ein Bash-Skript) | A5-1 | Tester |
 | W-6 | **Ton:** Rechnertöne (`winsound`) hörbar; Hinweis beim Start, wenn der Mischer fehlt; mit gebautem Mischer Hörprüfung nach §7.3 (B-6) | O4-18, S4-15, B-6 | Tester, Projektinhaber |
 | W-7 | **Trommel:** der Lauf mit echter Wartezeit belastet den Rechner nicht durch aktives Warten (CPU-Last während eines Dauerlaufs beobachten; Blöcke 1, 3, 14 grün) | OP-04 | Tester |
 | W-8 | **Tk-Verhalten:** Pult (1148 × 860) und SW-Fenster auf 1920 × 1080 mit Windows-Skalierung; Zwischenablage; Strg+C und X beenden sauber; `grafik_pult_tk_test.py` (ohne `--xvfb`) und `grafik_sw_tk_test.py` laufen (AltGr und Großbuchstaben setzt `zustand_x11()` dort **nicht**: erwartete Abweichungen sind zu klären) | OP-05, A-3 | Tester |
@@ -684,9 +784,9 @@ Zur Probe des Verfahrens wurde der Sammellauf in einer **Kopie** des Archivs aus
 
 | Lauf | Ergebnis |
 |---|---|
-| `bash testscripte/grafik_alle_tests.sh --schnell` | **16 Blöcke bestanden, 0 fehlgeschlagen** (je Block nach der Reihenfolge in §3.2; die längsten: Stresstest 18 s, Tk-Trockenlauf 13 s, Ende-zu-Ende 11 s) |
+| `bash testscripte/grafik_alle_tests.sh --schnell` | **16 Blöcke bestanden, 0 fehlgeschlagen** (Stand 19.10.2026: damals 16 Blöcke ohne die Gleichwertigkeitsläufe, noch ohne Trommelwächter und Takt-Blöcke; je Block nach der damaligen Reihenfolge in §3.2; die längsten: Stresstest 18 s, Tk-Trockenlauf 13 s, Ende-zu-Ende 11 s) |
 | `python3 -I testscripte/r300_eingabe_trockenlauf.py` | **10 OK, 0 FEHLER** |
-| Gleichwertigkeit `--alle`, `--neue-geraete` | **nicht gelaufen** (Block 17 und 18) |
+| Gleichwertigkeit `--alle`, `--neue-geraete` | **nicht gelaufen** (Block 19 und 20 nach der heutigen Nummerierung) |
 | Tk-Tests am echten Fenster (§5, `grafik_sw_tk_test.py`), `r300_eingabe_lauf_und_auswertung.sh`, Hörprüfung | **nicht gelaufen**, hier nicht möglich (kein Tkinter, kein Ton) |
 
 Das Archiv selbst blieb unverändert; gearbeitet wurde in der Kopie. Dieses Ergebnis ersetzt keine Abnahme.
@@ -698,5 +798,5 @@ Das Archiv selbst blieb unverändert; gearbeitet wurde in der Kopie. Dieses Erge
 | B-1 bis B-8 (in diesem Dokument) | Befunde dieses Prüfverfahrens; **nicht** zu verwechseln mit B-1 bis B-8 der Abnahme von Stufe 4 und B-1 bis B-6 der Befunde aus Dok. 09 (die stehen im Text mit „Dok. 09/10“ oder in Anhang B der Beschreibung) |
 | H-1 bis H-11 | Handprüfungen (§7.1) |
 | W-1 bis W-9 | Windows-Kriterien (§9.2), Vorschlag |
-| PTK-001, SWTK-004, RE-001, RLA-002, VM-003 | Versionen von Prüfskripten |
+| PTK-001, SWTK-004, RE-001, RLA-002, VM-003, ZM-001, SP-003, TT-001, TY-002, TS-002 | Versionen von Prüfskripten |
 | OP-01 bis OP-24 | offene Punkte der Beschreibung §10 |

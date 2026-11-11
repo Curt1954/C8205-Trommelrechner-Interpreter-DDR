@@ -1,6 +1,6 @@
 # C 8205 – Simulation of a 1968 East German Small Computer
 
-Version: 0.95-008
+Version: 0.95-009
 
 [Deutsch](README.md) | **English**
 
@@ -43,13 +43,14 @@ as regression tests.
 | Path | Contents |
 |---|---|
 | `c8205_interp.py` | Python interpreter |
-| `CLAUDE.md`, `C8205-Programmierhandbuch_fuer_Claude.md` | entry point for AI sessions (in German): one-page card and handbook for assembly programming |
-| `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik_*.py` | GRAFIK mode: panel window, typewriter window, sounds (mixer, typewriter, reader, punch, computer) |
+| `CLAUDE.md`, `C8205-Programmierhandbuch_fuer_Claude.md` | entry point for AI sessions (in German): card (short, read first; with script list) and handbook for assembly programming |
+| `c8205_grafik.py`, `c8205_grafik.sh`/`.bat`, `grafik-interpreter-module/grafik_*.py` | GRAFIK mode: panel window, typewriter window, sounds (mixer, typewriter, reader, punch, computer) |
 | `c-module/` | C modules: drum, track lock, interrupt, sound mixer `tonmisch`; extension module in `c-module/python/` |
+| `C8205Z/` | **Experimental prototype** of the four additional drums of the C 8205Z (the only additional path): timing model `zt/`, C module `zt_modul/`, tests `Tests_Z/`, panel drawing `pult_z/`; only active with the switch `--C8205Z` |
 | `ton/` | sounds (`sw_toene/`, `toene_rechner_stanzer/`, `pult_toene/` key sounds of the panel, power sounds), test harness `sw_ton.py`, `SW_Ton_Beschreibung.md` |
 | `testscripte/` | checks and test scripts, e.g. `grafik_alle_tests.sh`, `grafik_stufe4_tests.py` |
 | `Hilfsprogramme/` | helper programs: `c8205_lochstreifen_anzeige.py` (shows a virtual punched tape as plain text in a window), `c8205_lochstreifen_eingabe.py` (creates a virtual punched tape from keyboard input), `c8205_lochstreifen_umwandlung.py` (converts a text file to a binary-coded R300 punched tape and back) |
-| `testscripte/` | test scripts; each one changes to the project directory itself and can be started from anywhere: `compute_all_tests.sh` (all test definitions in `Tests/`), `c8205_bis_test.sh` (BIS tests: first loads the minimal program `Tests/pj2-bis_minimalprogramm.test`, then the given test file), `test_bis.sh`, `test2_bis.sh`, `test3_bis.sh` (BIS tests one after another: empty drum, minimal program, then the `pj2-bis_*` tests; each a larger set), `test.sh` (older version of `test_bis.sh`), `erzeuge_leere_trommel.py` (creates the empty drum file `Trommel/trommel.txt`, also resets a used drum) |
+| `testscripte/` | test scripts; each one changes to the project directory itself and can be started from anywhere: `compute_all_tests.sh` (all test definitions in `Tests/`), `c8205_bis_test.sh` (tests of future BIS building blocks: first loads the minimal program `Tests/pj2-bis_minimalprogramm_v6.test` with `--LOADONLY`, then the given test file; the tests of the minimal program itself, `Tests/pj2-bis_v6_*.test`, carry its image and run through `compute_all_tests.sh`), `c8205_befehlssweep.py` (completeness test over all 512 operation codes; call from the project folder with `--interp c8205_interp.py`, or from `testscripte/` with `--interp ../c8205_interp.py`), `erzeuge_leere_trommel.py` (creates the empty drum file `Trommel/trommel.txt`, also resets a used drum) |
 | `pult/` | images and manifest of the control-panel window (GRAFIK mode) |
 | `make_pdf.sh`, `make_all_pdf.sh` | helpers for generating the PDFs (scripts in the `pdf-layout-scripte/` folders) |
 | `markdown-dateien/` | Rule set and project description (.md); the interpreter reads the node graph from here |
@@ -78,8 +79,9 @@ C8205/
 ├── Hilfsprogramme/                 punched-tape helper programs
 ├── testscripte/                    Test scripts (compute_all_tests.sh, BIS tests, GRAFIK checks,
 │                                   erzeuge_leere_trommel.py)
-├── c8205_zip_packen.sh             Pack the total zip "C8205 Simulator V.M.P.zip" (with the sub-zips Test-Protokolle.zip and Regressionstest.zip); with `--claude` the slim variant without PDFs, sounds and panel images
 ├── make_pdf.sh, make_all_pdf.sh    PDF generation
+├── c8205_zip_packen.sh             Pack the total zip "C8205 Simulator V.M.P.zip" (with the sub-zips Test-Protokolle.zip and Regressionstest.zip); with `--claude` the slim variant without PDFs, sounds and panel images
+├── lieferung_packen.sh             Pack a delivery (checkpoint) as a zip with project paths (for AI sessions)
 ├── markdown-dateien/               Rule set and project description (.md)
 ├── PDF/                            Readable versions (A4)
 ├── Tests/                          Test orders (.txt or .test)
@@ -103,13 +105,14 @@ C8205/
 └── Assembler/
     ├── c82ass.sh                   Run the assembler
     ├── asm_alle.sh                 assemble all .asm files under a folder (reports errors only)
+    ├── asm_und_test.sh             assemble, add the check to the .test and test it in the interpreter (one call)
     ├── asm_aufraeumen.sh           delete unneeded files (.log, .mqo, .obj, .sym)
     ├── make_c82ass.sh / .bat       Build the assembler (Linux / Windows)
     ├── Sourcecode/                 C source code and macro file
     ├── _Linux/                     Binary (Windows: `_Windows/c82ass.exe` is included, or build it with `make_c82ass.bat`)
-    ├── Dokumentation/              .odt (authoritative), .md, .pdf
+    ├── Dokumentation/              .md (authoritative), .pdf
     ├── Regressionstest/            checks of the assembler; in the total zip only as Regressionstest.zip (unpack in the project root; paths inside: Assembler/Regressionstest/...)
-    ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Project folders (any number, any name)
+    ├── Projekt_1/, Projekt_2/, Proj_FeldSortieren/, Claude/   Project folders (any number, any name); Claude/mini/ is the smallest tested example
     └── Claude_bsp_reassemblierung/ Project folders: among others the source code of the tests in Tests/
 ```
 
@@ -165,6 +168,21 @@ python3 c8205_grafik.py --leser1 Test-virtuelleGeraete/Leser1_02/lb_kopie_quelle
 Copy-tape example: `Assembler/Projekt_1/sw_eingabe/k1_leser_stanzer.asm` reads from reader 1 (`ANWAHL LSL1`) and punches to punch 1
 (`ANWAHL LSS1`); `:` in KB (code 15) ends the input and is not punched. Batch test: `python3 c8205_interp.py --MODUS=TEST Tests/k1_leser_stanzer.test`.
 
+## Additional drums (experimental prototype C8205Z)
+
+The **experimental prototype C8205Z** (folder `C8205Z/`) adds four additional drums ZT1 to ZT4 to the simulator. It only takes effect with the switch `--C8205Z[=DIR]`; without the switch everything is unchanged.
+
+```
+python3 c8205_interp.py --MODUS=TEST --C8205Z C8205Z/Tests_Z/zt-001_hin_zurueck.test   # batch mode, time 0
+./c8205_grafik.sh --C8205Z                      # GRAFIK, instruction 601/661 takes about 81 to 86 ms
+./c8205_grafik.sh --HWCHECK --C8205Z            # together with the HW-check window
+```
+
+- Instructions: `5k00 030` selects additional drum k (1 to 4; 5100 = drum 0 to 5400 = drum 3), `zzz0 bbbb 601` outputs a main-drum track to the additional drum, `zzz0 bbbb 661` reads it back (one whole track, 32 words). The drums are stored as `zt1.txt` to `zt4.txt` in `Trommel/ZT/`.
+- For GRAFIK, build the extension module once: `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace` (the C module itself is checked by `cd C8205Z/zt_modul && make test`).
+- Tests: `bash C8205Z/Tests_Z/zt_tests.sh` and `bash C8205Z/Tests_Z/zt_grafik_tests.sh` (TEST against GRAFIK).
+- Details (German): `C8205Z/zt/Zusatztrommel_Zeitmodell.md`, `markdown-dateien/C8205-Interpreter-GRAFIK_Beschreibung.md` §7.10.
+
 ## Quick start: Claude interpreter (without Python)
 
 A test can also be run without Python: an AI works through the node graph by hand. To do so, upload the rule set
@@ -196,11 +214,11 @@ To build it from the source code: `Assembler/make_c82ass.sh` (Linux) or `Assembl
 Among other files, the assembler produces the object code (`.obj`, a binary-coded R300 punched tape that can be put straight into the tape reader), a memory listing (`.dmp`) and a `.test` file.
 The latter contains the drum file in the interpreter's test format and, once the test markers and the key
 sequence have been added, can be used as a test order in `Tests/`. Language, directives and macros are described
-in `Assembler/Dokumentation/` (the `.odt` is authoritative; German).
+in `Assembler/Dokumentation/` (the `.md` is authoritative; German).
 
 ## Where to start reading
 
-**AI session (Claude) or a quick start into programming?** Read `CLAUDE.md` in the root (one page, in German: quick start, pitfalls, which file for what), then `C8205-Programmierhandbuch_fuer_Claude.md` selectively.
+**AI session (Claude) or a quick start into programming?** Read `CLAUDE.md` in the root (short, in German: quick start, pitfalls, scripts, which file for what), then `C8205-Programmierhandbuch_fuer_Claude.md` selectively.
 
 **First time here?** Start with `markdown-dateien/C8205-Einstieg_fuer_Neueinsteiger.md` (in German): it explains what
 the project contains (interpreter, assembler, BIS), in which order to read the documents, and what can be skipped at

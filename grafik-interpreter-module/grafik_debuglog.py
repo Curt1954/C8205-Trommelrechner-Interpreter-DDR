@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 grafik_debuglog.py - Fehlersuch-Protokoll des Modus GRAFIK (Schalter --DEBUGLOG [DATEI]). Nur Standardbibliothek.
-Version: DL-003
 Schreibt zeitgestempelt (Sekunden seit Start, Threadname) in eine Textdatei, jede Zeile sofort geschrieben (auch bei Absturz lesbar):
   MAUS/TASTE/FOKUS  rohe Ereignisse des Fensters (Position, Umschalt, welches Element hat den Fokus, welches Ziel getroffen wurde)
   KLICK/TOKEN       Entscheidung der Pult-Steuerung und was an den Rechner weitergegeben wird
@@ -31,7 +30,7 @@ import threading
 import time
 from datetime import datetime
 
-VERSION_DEBUGLOG = 'DL-003'
+VERSION_DEBUGLOG = 'DL-004'
 FORMAT_KLICKSPUR = 'C8205-Klickspur 1'
 _L = None
 

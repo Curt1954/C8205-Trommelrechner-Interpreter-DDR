@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 grafik_sw_fenster.py - Tk-Schicht des SW-Fensters im Modus GRAFIK (Stufe 3). Nur Standardbibliothek (Tkinter).
-Version: G4-010
 
 Ein Tk-Prozess, zwei Fenster (GRAFIK_Beschreibung §11 (alt: Dok. 04 Punkt 16)): das SW-Fenster ist ein Toplevel des Pult-Fensters.
 Aussehen wie das bisherige Fenster "SW Ausgabe": 130 x 36 Zeichen, Markieren und Kopieren. Jedes angenommene Zeichen der Eingabe wird
@@ -27,7 +26,7 @@ from grafik_debuglog import log
 import grafik_fensterlage as lage
 import grafik_tastatur as TAST
 
-VERSION_SW_FENSTER = 'G4-010'
+VERSION_SW_FENSTER = 'G4-011'
 TITEL = 'C 8205 SW-Fenster'
 TAKT_MS = 10        # G4-007: der Takt gibt auch die Eingaben aus dem Puffer an den Rechner weiter (je 011 eine); 10 ms halten die Verzoegerung klein
 

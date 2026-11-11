@@ -1,5 +1,7 @@
 # CHECKPOINT 25.10.2026 - Pult C8205Z und Zusatztrommeln
 
+Version: 0.01-001
+
 ## Kurzstand (hier anfangen)
 1. Pult-Zeichnung (Z-Ausführung, 30+4 Lampen) ruht: SVG/PNG und nummerierte Fassung (158 Elemente, elemente.csv) liegen bei; Beschriftungen ab Lampe L18, Ziffernblock und Zusatztasten sind Platzhalter bzw. geraten. Warten auf Fotos aus der Technischen Sammlung Dresden (Hinweise zum Fotografieren im Verlauf gegeben).
 2. Das Zip-Pult des Simulators (pult/, 1148x860) ist das Standardpult; die Z-Zeichnung ist davon unabhängig. Assembler und Simulatorcode wurden NICHT geändert.

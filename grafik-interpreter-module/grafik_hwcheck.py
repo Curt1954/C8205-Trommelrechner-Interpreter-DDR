@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_hwcheck.py - Hardware-Check-Fenster des Modus GRAFIK (Schalter --HWCHECK). Nur Standardbibliothek (Tkinter).
-Version: HW-006 (28.10.2026: Beschriftung der Zusatztrommeln ZT0 bis ZT3 statt ZT1 bis ZT4, passend zur Anwahl 5100 030 bis 5400 030; HW-005: Zusatztrommeln)
+Aenderungen (28.10.2026: Beschriftung der Zusatztrommeln ZT0 bis ZT3 statt ZT1 bis ZT4, passend zur Anwahl 5100 030 bis 5400 030; HW-005: Zusatztrommeln)
 
 Ein zweites, nur so grosses wie noetig, verschiebbares Fenster mit sechs Zeilen untereinander (alles oktal, ausser der letzten):
     BZ         4 Stellen
@@ -20,7 +20,7 @@ Das Fenster bleibt aufgeblendet, solange der Grafik-Interpreter laeuft: es laess
 Pult-Fenster. Es veraendert nichts: der Speicherinhalt wird ohne Koinzidenz direkt gelesen (keine Wartezeit, keine Statistik).
 Vierergruppen werden von LINKS gebildet (11 Stellen = 4 + 4 + 3; HW-003, Auftraggeber 17.10.2026; vorher von rechts). Die Formatierung (hwcheck_zeilen) braucht kein Tkinter und ist pruefbar.
 """
-VERSION_HWCHECK = 'HW-006'
+VERSION_HWCHECK = 'HW-007'
 MASK12, MASK33 = 0o7777, (1 << 33) - 1
 from grafik_haltzeit import zeile as haltzeit_zeile
 

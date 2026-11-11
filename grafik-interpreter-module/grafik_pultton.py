@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_pultton.py - Tastengeraeusche des Bedienpults fuer GRAFIK (Stufe 4, GRAFIK_Beschreibung §6.7).
-Version: G4-003.  Nur Standardbibliothek.
+Nur Standardbibliothek.
 
 Drei Klaenge fuer die drei mechanischen Tastentypen (Tastentypen: aufgabe 27.10.2026; Klaenge in ton/pult_toene/, Hoerpruefung des
 Projektinhabers 27.10.2026: "die 3 sind gut"):
@@ -22,7 +22,7 @@ import os
 
 import grafik_tonmisch as TM
 
-VERSION_PULTTON = 'G4-003'
+VERSION_PULTTON = 'G4-004'
 KLICK_PEGEL = 1.76
 IMPULS_FAKTOR = 1.4                                 # G4-003: Impulstasten (G, Ue, ST, E, M, Eingabetasten) 1,4-fach (+2,9 dB): der Tick ist nur 9 ms lang, Energie wie einrast; Hoerprobe 27.10.2026 'zu leise'
 KANAL = 'rechner'                                   # Gruppe Pult des Mischers

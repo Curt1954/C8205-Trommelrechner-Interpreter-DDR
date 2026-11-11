@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_sw.py - Logik des SW-Fensters im Modus GRAFIK (Stufe 3), ohne Tkinter.
-Version: G4-011  (G4-011, 30.10.2026: im H-Zustand ohne aktiven 011 werden Tasten nicht mehr vorgemerkt (klingen nur) und vorgemerkte verfallen; G4-010, 29.10.2026: Vorzustand des SW nach dem Einschalten ist KB, nicht mehr unbestimmt; Festlegung des Projektinhabers)
+Aenderungen (G4-011, 30.10.2026: im H-Zustand ohne aktiven 011 werden Tasten nicht mehr vorgemerkt (klingen nur) und vorgemerkte verfallen; G4-010, 29.10.2026: Vorzustand des SW nach dem Einschalten ist KB, nicht mehr unbestimmt; Festlegung des Projektinhabers)
 
 Zwei Teile:
   SwAnzeige  - Darstellung der Schreibwerk-Ausgabe mit Schreibposition (Spalte 0 bis 130), Tabulatorstopp alle 12 Spalten,
@@ -39,7 +39,7 @@ import time
 
 import c8205_interp as I
 
-VERSION_SW = 'G4-011'
+VERSION_SW = 'G4-012'
 BREITE = 130          # rechter Anschlag
 TAB_ABSTAND = 12      # Tabulatorstopp alle 12 Zeichen
 _ECHO = {'WRZL': '\n', 'TAB': '\t', 'ZR': ' '}      # K0-Zeichen -> Text fuer die Anzeige der Eingabe (alle anderen Zeichen: sie selbst)

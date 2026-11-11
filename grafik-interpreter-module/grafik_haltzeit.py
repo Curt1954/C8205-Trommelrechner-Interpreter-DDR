@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_haltzeit.py - Zeitmessung Start -> Halt und Halt -> Halt fuer die Zeile "Haltzeit" des HW-Check-Fensters (--HWCHECK). Kein Tkinter.
-Version: HZ-005 (22.10.2026: Intervall min bis max der letzten INTERVALL_N Halts, HZ-004: 20.10.2026; HZ-001 Wunsch des Projektinhabers; HZ-003: Anzeige zeigt nur die reine Rechnerzeit, ohne Wartezeit im Halt; HZ-004: auch der Einzelschritt (E) wird gemessen)
+Aenderungen (22.10.2026: Intervall min bis max der letzten INTERVALL_N Halts, HZ-004: 20.10.2026; HZ-001 Wunsch des Projektinhabers; HZ-003: Anzeige zeigt nur die reine Rechnerzeit, ohne Wartezeit im Halt; HZ-004: auch der Einzelschritt (E) wird gemessen)
 
 Gemessen wird die Zeit in Millisekunden
   * zwischen dem Start (Taste R wirkt) und dem folgenden Halt, und
@@ -24,7 +24,7 @@ import time
 
 from grafik_debuglog import log
 
-VERSION_HALTZEIT = 'HZ-005'
+VERSION_HALTZEIT = 'HZ-006'
 INTERVALL_N = 10       # HZ-005: Zahl der letzten Halts mit Zeitwert fuer das Intervall (min bis max) der Anzeige
 NUR_LAUF = True        # HZ-003 (Projektinhaber 19.10.2026): die Anzeige nennt nur die reine Rechnerzeit seit Start bzw. Fortsetzung; False: Zeit zwischen den Halts mit Wartezeit (HZ-001)
 STOPP, FEHLER, EA = 'Stopp', 'Fehler', 'E/A-Halt'

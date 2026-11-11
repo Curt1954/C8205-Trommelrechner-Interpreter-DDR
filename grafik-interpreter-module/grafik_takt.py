@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_takt.py - Taktprotokoll: schreibt die virtuelle Trommelzeit (Wortzeiten) des Modus GRAFIK mit. Kein Tkinter, kein C-Modul noetig.
-Version: TP-001 (08.11.2026, Auftrag des Inhabers: Taktmessung der Eingabeschleife, abschaltbar)
+Aenderungen (08.11.2026, Auftrag des Inhabers: Taktmessung der Eingabeschleife, abschaltbar)
 
 Zweck: Die virtuelle Zeit vt (GRAFIK_Beschreibung §7.8) ist deterministisch (nur Programm und Startlage). Dieses Modul haengt sich an die
 Stellen, an denen vt fortgeschrieben wird, und schreibt je Ereignis eine Zeile. Ausgewertet (Fenster, Schleife, Summen) wird danach mit
@@ -29,7 +29,7 @@ Am Ende steht eine Zeile '# Ende ...' (bei Ueberschreiten von --takt-max: '# ABG
 """
 import os
 
-VERSION_TAKT = 'TP-001'
+VERSION_TAKT = 'TP-002'
 STANDARD_MAX = 5_000_000          # Zeilen; 0 = unbegrenzt
 
 

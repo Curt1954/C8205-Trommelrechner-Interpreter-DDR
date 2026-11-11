@@ -379,7 +379,7 @@ unsigned int evaluateAddress(char *operand, char *line, int *errorFlag, int *raA
 // Prueft den <adressausdruck> von da (und von @-Literalen, die als da-Zeile erzeugt werden) gemaess
 // Doku 3.2 (<adressausdruck>): kein Vorzeichen (negative Adressen gibt es nicht), keine fehlenden
 // Operanden (z. B. "5-" oder "x+*2"). Die Zahl der Symbole ist nicht begrenzt (die Doku nennt seit der
-// erneuerten .odt keine Obergrenze mehr, vgl. 3.3.9: Ausdruck mit abs-Symbol). Der Wertebereich
+// erneuerten Fassung keine Obergrenze mehr, vgl. 3.3.9: Ausdruck mit abs-Symbol). Der Wertebereich
 // 00000 bis 07777 wird nach der Auswertung geprueft. Eine Sternadresse (*) wird von sternadresseBearbeiten geprueft.
 // Rueckgabe 1 = in Ordnung, 0 = Fehler (Text in meldung).
 int pruefeAdressausdruck(const char *operand, char *meldung, size_t groesse) {

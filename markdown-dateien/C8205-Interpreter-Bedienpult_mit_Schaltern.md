@@ -1,6 +1,6 @@
 ** Bedienpult mit Schaltern **
 
-Version: 0.95-003
+Version: 0.95-004
 
 Im physischen Bedienpult des Rechners C8205 sind sowohl Schalter, Eingabetasten und Lampen,
 die die Flag-Zustände anzeigen, lokalisiert.
@@ -187,7 +187,7 @@ Besonderheit K0: Diese Taste hat kein eigenes Flag, sondern die zwei Subflags "T
 Flag T. Anstelle der Tasten kann die Kanalanwahl auch per Befehl erfolgen; er berücksichtigt den
 Schalterstatus SW analog.
 
-**Ab Interpreter 0.03-016 (18.10.2026):** Der Anwahlbefehl für K0 liest die **dauerhafte Schalterstellung SW** (gedrückt = Schreibwerkeingabe, sonst Tastatur) im Moment der Anwahl, nicht mehr das Flag SW. Dadurch bleibt die Eingabe vom Schreibwerk auch dann erreichbar, wenn zwischendurch ein anderer Kanal (z. B. K2 für eine Ausgabe) angewählt war und das Flag zurückgesetzt wurde. Beschreibung und Messung: `C8205-Versionierung.md` (Abschnitt 10.2).
+**Ab Interpreter 0.03-016 (18.10.2026):** Der Anwahlbefehl für K0 liest die **dauerhafte Schalterstellung SW** (gedrückt = Schreibwerkeingabe, sonst Tastatur) im Moment der Anwahl, nicht mehr das Flag SW. Dadurch bleibt die Eingabe vom Schreibwerk auch dann erreichbar, wenn zwischendurch ein anderer Kanal (z. B. K2 für eine Ausgabe) angewählt war und das Flag zurückgesetzt wurde.
 
 | Taste | Anwahlverschlüsselung (programmiert) | Gerät |
 |-------|---------------------------------------|-------|

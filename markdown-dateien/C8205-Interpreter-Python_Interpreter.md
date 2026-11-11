@@ -1,8 +1,8 @@
 # Python-Interpreter für den C 8205 (`c8205_interp.py`)
 
-Version: 0.95-013
+Version: 0.95-015
 
-Stand: 30.10.2026 (Anwahl `5k00 030` mit k = 1 bis 4 (5100 = ZT0 bis 5400 = ZT3) korrigiert, Interpreter 0.95-017; Testmarke `#ZTROMMEL` und ZT-Zellen-Prüfung für `--C8205Z`, Durchführung_eines_Tests.md 2g.1 und 3a.6; zuvor 21.10.2026: Schalter `--LOADONLY`: Programm nur auf die Trommel laden, Rückkehrcode 0; zuvor 14.10.2026: Sollwerte der Referenzläufe in 13.5 auf den aktuellen Stand gebracht; Aufrufparameter `--BASP` für die Bahnsperrenschalter, nur der Parameter; zuvor 13.10.2026: Testmarke `#TROMMEL=LEER` / `#TROMMEL=MP`; zuvor 10.10.2026: Fenster „SW Ausgabe“ bleibt immer offen, Kopieren mit der Maus, Schalter `--zwischenablage`; zuvor 09.10.2026: Versionsnummer, Schalter `--version`; zuvor 08.10.2026: Trommel als persistente Datei, Schalter `--trommel`; zuvor 04.10.2026: Geräte-Zeilen in der Testdatei auch für Leser und Stanzer). Diese Datei beschreibt den Python-Interpreter, seine Bedienung und alles, was zur Erzeugung
+Stand: 11.11.2026 (Abgleich mit Interpreter 0.95-019: Testmarken `#TROMMEL=KEEP` und `#ZTROMMEL` sowie ZT-Zellen-Prüfung in Abschnitt 6, Wrapper-Beschreibung 5.2 an `c8205_interpreter.sh` angepasst, Abschnitt 11 um die neueren Schalter und Marken ergänzt; zuvor 30.10.2026: Anwahl `5k00 030` mit k = 1 bis 4 (5100 = ZT0 bis 5400 = ZT3) korrigiert, Interpreter 0.95-017; Testmarke `#ZTROMMEL` und ZT-Zellen-Prüfung für `--C8205Z`, Durchführung_eines_Tests.md 2g.1 und 3a.6; zuvor 21.10.2026: Schalter `--LOADONLY`: Programm nur auf die Trommel laden, Rückkehrcode 0; zuvor 14.10.2026: Sollwerte der Referenzläufe in 13.5 auf den aktuellen Stand gebracht; Aufrufparameter `--BASP` für die Bahnsperrenschalter, nur der Parameter; zuvor 13.10.2026: Testmarke `#TROMMEL=LEER` / `#TROMMEL=MP`; zuvor 10.10.2026: Fenster „SW Ausgabe“ bleibt immer offen, Kopieren mit der Maus, Schalter `--zwischenablage`; zuvor 09.10.2026: Versionsnummer, Schalter `--version`; zuvor 08.10.2026: Trommel als persistente Datei, Schalter `--trommel`; zuvor 04.10.2026: Geräte-Zeilen in der Testdatei auch für Leser und Stanzer). Diese Datei beschreibt den Python-Interpreter, seine Bedienung und alles, was zur Erzeugung
 einer menschenzentrierten Bedienungsanleitung (PDF) erforderlich ist. Die Regeln des Rechners selbst stehen
 **nicht** hier, sondern in den übrigen Regelwerk-Dateien; hier wird nur auf sie verwiesen (Abschnitt 12).
 
@@ -140,7 +140,7 @@ python3 c8205_interp.py --version
 | `--C8205Z[=VERZ]` (auch `--c8205z`) | Schaltet die vier Zusatztrommeln des C 8205Z ein (Modul `c8205_zt.py`, Zeitmodell und Modulspezifikation: `C8205Z/zt/Zusatztrommel_Zeitmodell.md`). Nur mit dem Schalter wirken drei Befehle: `5k00 030` (k = 1 bis 4: 5100 = ZT0 bis 5400 = ZT3; ZT0 liegt in `zt1.txt`, ZT3 in `zt4.txt`; so seit 0.95-017, vorher irrtümlich 5000 bis 5300) wählt die Zusatztrommel und gilt bis zur nächsten Anwahl; `zzz0 bbbb 601` gibt die Haupttrommelspur bbbb auf die gewählte Zusatztrommel aus (Spur zzz0); `zzz0 bbbb 661` liest die Spur zzz0 der gewählten Zusatztrommel in die Haupttrommelspur bbbb. `zzz0` sind die oberen vier Oktalziffern des Befehlswortes (sonst ohne Bedeutung); wirksam ist nur die Spur `(zzz0 >> 5) & 0x7F`, die letzte Ziffer und der Sektor sind ohne Bedeutung. Jeder Befehl überträgt eine ganze Spur (32 Worte, Sektor i auf Sektor i). Ohne Anwahl: Halt mit Flag A (601) bzw. E (661), im Modus TEST als Stub gemeldet. Die Trommeln liegen als `zt1.txt` bis `zt4.txt` (Format wie `Trommel/trommel.txt`) in `VERZ` (Vorgabe `Trommel/ZT/`, fehlende Dateien werden leer angelegt); Ihren Anfangszustand legt nur die Testmarke `#ZTROMMEL=LEER|KEEP` fest (Standard KEEP; `#TROMMEL=LEER` und Trommelvorlagen leeren sie nicht mehr mit); der Abschnitt `Prüfungen:` einer Testdatei darf einen Unterabschnitt `ZT-Zellen-Pruefung:` mit Zeilen `o-aaaa: ttttttttttt` enthalten (Zellen der Zusatztrommel o = 0 bis 3, alles oktal). Ohne den Schalter werden Marke und Unterabschnitt kommentarlos ignoriert. Im Modus TEST sind die Zeiten wie überall 0. Ohne den Schalter bleibt alles wie bisher (`5k00 030`: Stub, 601/661: Leer-Operation mit Löschen). Im Modus GRAFIK (`c8205_grafik.py --C8205Z[=VERZ]`, `grafik-interpreter-module/grafik_zt.py`) rechnet das C-Modul `C8205Z/zt_modul` mit dem Zeitmodell (ein Befehl 601/661 rund 81 bis 86 ms; Erweiterungsmodul `c8205_ztmodul` baut der Inhaber: `cd C8205Z/zt_modul/python && python3 setup.py build_ext --inplace`). Tests: `C8205Z/Tests_Z/` (`zt_tests.sh`; `zt_grafik_tests.sh` vergleicht TEST und GRAFIK). | aus (false) |
 | `--LS-LESER-TYP=303\|FS751` (auch `--ls-leser-typ`) | Typ des Lochbandlesers für beide Leser K1 und K2 (Standard 303: Metallbürsten, 130 Zeichen/s; FS751: optoelektronisch, 750 Zeichen/s; `FS715` wird als FS751 angenommen). Wirkt nur im Modus GRAFIK (Lesetempo); im Modus TEST erlaubt und ohne Wirkung, weil alle Zeiten 0 sind. Anderer Wert: Aufruffehler (Rückkehrcode 2). Siehe `C8205-Interpreter-Lochstreifenleser.md` A3 |
 | `--NO-TERMOUT` | Unterdrückt alle Ausgaben des Interpreters selbst am Terminal (Kopfzeile, Diagnose, Knotenzeilen, Endzeile, sonstige Meldungen); Ausnahmen: die vom C8205-Programm selbst über Ein-/Ausgabebefehle erzeugten Zeichen (z. B. SW-Ausgabe ohne `--sw-ausgabe`) sowie Meldungen bei fehlgeschlagener Vorab-Prüfung (Abschnitt 5 der Datei `C8205-Interpreter-Durchführung_eines_Tests.md`) bleiben sichtbar, da der Test dann ohnehin abbricht; dasselbe gilt für die Meldung zu einer fehlenden oder fehlerhaften Trommeldatei (Abschnitt 8.5). | aus (false) |
-| `--version` | Gibt die Versionsnummer des Interpreters (Form `y.xx-zzz`, Regeln: `C8205-Versionierung.md`) aus und beendet das Programm mit Rückkehrcode 0, ohne einen Test auszuführen; eine Testdatei ist dazu nicht anzugeben. Zur Abfrage direkt `python3` aufrufen; die Wrapper (Abschnitt 5.2) sind für Testläufe gedacht | – |
+| `--version` | Gibt die Versionsnummer des Interpreters (Form `y.xx-zzz`) aus und beendet das Programm mit Rückkehrcode 0, ohne einen Test auszuführen; eine Testdatei ist dazu nicht anzugeben. Zur Abfrage direkt `python3` aufrufen; die Wrapper (Abschnitt 5.2) sind für Testläufe gedacht | – |
 
 > **Hinweis – Fenster „SW Ausgabe“ (`--SW-TERMINAL`):** Das Fenster bleibt **immer offen**, auch nach dem Ende des Tests und unabhängig von der Mausposition, bis Sie es mit Klick auf X schließen. Es läuft als eigener Prozess; jeder Aufruf öffnet ein neues Fenster. Text im Fenster lässt sich mit der Maus markieren und kopieren: sofort beim Loslassen der Maustaste, mit Strg+C oder Strg+Einfg oder über das Kontextmenü (rechte Maustaste). Das gilt unter Linux und unter Windows (Abschnitt 8.1).
 
@@ -170,23 +170,18 @@ direkt mit `python3` abgefragt. Die Nummer ist fassungsabhängig und kein fester
 c8205_interpreter.bat  TESTDATEI [SCHALTER ...]          # Windows
 ```
 
-Kern des Linux-Wrappers:
+Kern des Linux-Wrappers (gekürzt; `.sh` und `.bat` trennen die erste Testdatei von den Schaltern und erkennt Schalter mit eigenem Wertargument, Näheres unten):
 
 ```sh
-file="$1"
-if [ -z "$file" ]; then
-    echo "Test-Datei fehlt."
-    exit 1
-fi
-shift
+# file = erstes Argument ohne führendes "-", das nicht Wert eines Schalters ist; rest = alle übrigen Argumente
 # Dateiname ohne Pfad, Endung durch .log ersetzen
 prot_file="$(basename "$file")"
 prot_file="${prot_file%.*}.log"
-python3 c8205_interp.py --MODUS=TEST --mdverz ./markdown-dateien --out "Test-Protokolle/$prot_file" "$file" "$@"
+python3 c8205_interp.py --MODUS=TEST --mdverz ./markdown-dateien --out "Test-Protokolle/$prot_file" "$file" "${rest[@]}"
 ```
 
-Der Wrapper nimmt als **erstes Argument die Testdatei**, legt das Protokoll nach `Test-Protokolle/<Testname>.log`
-und reicht **alle weiteren Argumente unverändert an den Interpreter weiter**. Damit sind alle Schalter aus
+Der Wrapper nimmt als **Testdatei das erste Argument ohne führendes `-`, das nicht Wert eines Schalters ist**, legt das Protokoll nach `Test-Protokolle/<Testname>.log`
+und reicht **alle weiteren Argumente unverändert an den Interpreter weiter** (weitere Testdateien ebenfalls; das Protokoll heißt nach der ersten). Damit sind alle Schalter aus
 Abschnitt 5.1 über den Wrapper verfügbar, z. B.:
 
 ```
@@ -196,19 +191,18 @@ Abschnitt 5.1 über den Wrapper verfügbar, z. B.:
 
 Regeln:
 
-- Die Testdatei steht **immer an erster Stelle**, die Schalter folgen danach. Ohne Testdatei meldet der Wrapper
+- Die Testdatei steht **üblicherweise an erster Stelle**, darf in beiden Wrappern aber an beliebiger Stelle stehen, sofern alle Schalter davor mit eigenem Wertargument vom Wrapper erkannt werden (nächster Punkt). Ohne Testdatei meldet der Wrapper
   „Test-Datei fehlt.“ und endet mit Code 1.
 - Die Vorgaben des Wrappers (`--mdverz ./markdown-dateien`, `--out Test-Protokolle/<Testname>.log`) stehen vor den
   weitergereichten Schaltern. Wird ein Schalter doppelt angegeben, gilt der zuletzt genannte; ein eigenes `--out`
   oder `--mdverz` überschreibt also die Vorgabe des Wrappers.
 - Der Rückkehrcode des Interpreters wird vom Wrapper unverändert weitergegeben.
-- Schalter mit eigenem Wertargument (`--out`, `--stanzer1`, `--sw-ausgabe`, `--pruefe-stanzer1`, `--pruefe-sw-ausgabe` u. a.) erkennt der
-  Linux-Wrapper; der Wert gilt nie als Testdatei. Beispiel:
+- Schalter mit eigenem Wertargument erkennen beide Wrapper (`.sh` und `.bat`) nur aus dieser Liste: `--mdverz`, `--leser1`/`--lochbandleser1`, `--leser2`/`--lochbandleser2`, `--stanzer1`/`--lochbandstanzer1`, `--sw-ausgabe`, `--k0`, `--out`, `--pruefe-stanzer1`, `--pruefe-sw-ausgabe`, `--zwischenablage`; deren Wert gilt nie als Testdatei. **Nicht in der Liste** stehen `--trommel`, `--max-knoten`, `--BASP`, `--LS-LESER-TYP` und `--C8205Z[=VERZ]`: Diese Schalter immer **hinter** die Testdatei setzen, sonst gilt ihr Wert als Testdatei (Stand 11.11.2026; die Windows-Fassung `.bat` hat dieselbe Liste und dieselbe Regel). Beispiel:
   `./c8205_interpreter.sh --NO-TERMOUT --stanzer1 Test-virtuelleGeraete/Stanzer1/ x.test --pruefe-stanzer1 x-stanzer-ausgabe.txt`
 - **Windows (`.bat`):** Werte mit Gleichheitszeichen müssen in Anführungszeichen stehen, weil die Eingabeaufforderung
   `=` als Trennzeichen behandelt: `c8205_interpreter.bat Tests\x.txt --k0 "datei=band\k0"`. Pfade mit Leerzeichen
   ebenfalls in Anführungszeichen setzen.
-- Es wird weiterhin **eine** Testdatei je Aufruf verarbeitet (das Protokoll heißt nach dieser Datei).
+- Das Protokoll heißt nach der ersten Testdatei; für Sammelläufe über mehrere Tests dient `testscripte/compute_all_tests.sh`.
 - **Trommel:** Der Wrapper übergibt `--trommel` nicht; es gilt die Vorgabe `Trommel/trommel.txt` neben dem Skript
   (unabhängig vom aktuellen Ordner). Eine andere Trommeldatei steht wie jeder weitere Schalter hinter der Testdatei:
   `./c8205_interpreter.sh Tests/x.txt --trommel andere/trommel.txt`. Der Wrapper setzt die Trommel **nicht** zurück; jeder Aufruf
@@ -244,7 +238,8 @@ Ein Wert besteht aus 4 Oktalstellen „beliebig“ und 7 Stellen Befehl (4 Adres
 | `#AC=ooooooooooo` | Anfangswert des Akkumulators, 11 Oktalziffern (Ergänzung 08.10.2026; höchstens einmal). Wird vor der Tastenfolge gesetzt. Fehlt die Marke, startet der AC mit 0. |
 | `#BZ=oooo` | Anfangswert des Befehlszählers, 4 Oktalziffern (Ergänzung 08.10.2026; höchstens einmal). Wird vor der ersten Taste und vor jedem Befehl gesetzt (Anfangszustand); eine danach abgearbeitete Taste `G` setzt BZ nicht (sie stellt BR auf 0000 000); BZ := 0 entsteht erst durch die Ausführung dieses Sprungs (`R` oder `E` ohne `M`). Fehlt die Marke, startet BZ mit 0. |
 | `#INTERRUPT H <Tasten>` | Unterbricht den sequentiellen Programmlauf (BZ := BZ+1) nach dem Befehl der davorstehenden Zeile und bedient die angegebene Tastenfolge (Ergänzung 08.10.2026; nur ZWISCHEN zwei Befehlszeilen, höchstens einmal je Befehlszeile, mehrfach in der Datei zulässig). Erste Taste `H`; endet die Folge mit `R` oder `ST`, läuft das Programm weiter, sonst endet der Test im Halt. Einzelheiten: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2d. |
-| `#TROMMEL=LEER` / `#TROMMEL=MP` | Setzt die Trommel VOR dem Test neu (Ergänzung 13.10.2026): `LEER` = alle 4096 Zellen 0; `MP` = Abbild des Minimalprogramms aus `Trommel/Trommelvorlagen/MP.txt` (Format wie die Trommeldatei; fehlt die Vorlage, startet der Test nicht, Rückkehrcode 16). Danach überlagern die Zeilen von `Trommeldatei:`. Höchstens einmal; nicht im Abschnitt `Prüfungen:`; ohne die Marke bleibt die Trommel unverändert. Steht sie im ersten Test des Aufrufs und fehlt die Trommeldatei oder ist sie fehlerhaft, wird diese neu angelegt (Abschnitt 8.5; Durchführung, Abschnitt 2g). |
+| `#TROMMEL=LEER` / `#TROMMEL=KEEP` / `#TROMMEL=MP` | Setzt die Trommel VOR dem Test neu (Ergänzung 13.10.2026, `KEEP` 24.10.2026): `KEEP` = Trommel unverändert (Stand des vorigen Laufs; dasselbe wie ohne Marke, aber ausdrücklich); `LEER` = alle 4096 Zellen 0; `MP` = Abbild des Minimalprogramms aus `Trommel/Trommelvorlagen/MP.txt` (Format wie die Trommeldatei; fehlt die Vorlage, startet der Test nicht, Rückkehrcode 16). Danach überlagern die Zeilen von `Trommeldatei:`. Höchstens einmal; nicht im Abschnitt `Prüfungen:`; ohne die Marke gilt `KEEP` (die Trommel bleibt unverändert). Steht sie im ersten Test des Aufrufs und fehlt die Trommeldatei oder ist sie fehlerhaft, wird diese neu angelegt (Abschnitt 8.5; Durchführung, Abschnitt 2g). |
+| `#ZTROMMEL=LEER` / `#ZTROMMEL=KEEP` | Nur mit `--C8205Z` wirksam (Ergänzung 30.10.2026): `LEER` leert vor dem Test alle vier Zusatztrommeln, `KEEP` (Standard) lässt sie unverändert. Die Zusatztrommeln folgen nur dieser Marke; `#TROMMEL=LEER` und Trommelvorlagen leeren sie nicht mit. Im Abschnitt `Trommeldatei:`, höchstens einmal, nicht im Abschnitt `Prüfungen:`; ein anderer Wert oder eine doppelte Marke ist ein Fehler der formalen Prüfung (Rückkehrcode 16). Ohne `--C8205Z` wird die Marke kommentarlos ignoriert. Einzelheiten: `Durchführung_eines_Tests.md`, Abschnitt 2g.1. |
 | `#STARTE n` | Makro für die Tastenfolge `H G M+ E … E M- R` (n Anschläge `E`, Ansprung des Speicherplatzes n; Ergänzung 09.10.2026). `n`: Oktalzahl mit 1 bis 4 Ziffern, nicht leer; höchstens einmal; ersetzt die Tastenfolge (daneben keine Tasten). Einzelheiten: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2e. |
 
 Beide Marken `#AC=` und `#BZ=` stehen im Abschnitt `Trommeldatei:` (vor der Tastenfolge), sind voneinander unabhängig und einzeln oder zusammen zulässig. Ein ungültiger Wert (falsche Stellenzahl, Ziffer 8 oder 9, leerer Wert) oder eine doppelte Marke ist ein Fehler der formalen Prüfung (Rückkehrcode 16, der Test startet nicht). Einzelheiten und Beispiel: `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 2.
@@ -278,6 +273,7 @@ Maßgeblich ist Abschnitt 3a der Datei `C8205-Interpreter-Durchführung_eines_Te
   `AC=` 11 Oktalstellen, ein Flag genau eine Stelle `0` oder `1`.
 - **Beliebig viele Speicherprüfzeilen** `aaaa: wwwwwwwwwww` (4 + 11 Oktalstellen), danach, je Zeile eine Trommeladresse mit ihrem Sollwert; dieselbe Adresse nicht mit widersprüchlichem Wert.
 - **Dateiprüfungen** (Abschnitt 3b der Testbeschreibung): Zeilen `--pruefe-stanzer1 DATEI` und `--pruefe-sw-ausgabe DATEI`, je höchstens einmal, an beliebiger Stelle des Abschnitts. `DATEI` ist die Soll-Datei (ohne Ordnerangabe: neben der Testdatei); sie wird mit der über `--stanzer1` bzw. `--sw-ausgabe` erzeugten Datei verglichen. Fehlt eine Datei oder ist der Inhalt verschieden, ist die Prüfung falsch. Setzt den jeweiligen Geräteschalter voraus.
+- **ZT-Zellen-Prüfung** (nur mit `--C8205Z`, Ergänzung 30.10.2026): Unterabschnitt `ZT-Zellen-Pruefung:` mit beliebig vielen Zeilen `o-aaaa: ttttttttttt` (Zusatztrommel 0 bis 3, Zellenadresse, Sollwert, alles oktal). Nach dem Lauf werden die ZT-Zellen mit den Sollwerten verglichen, Soll und Ist stehen im Protokoll. Ohne `--C8205Z` wird der Unterabschnitt samt formaler Prüfung kommentarlos ignoriert (`Durchführung_eines_Tests.md`, Abschnitt 3a.6).
 - **Test wahr** nur, wenn alle angegebenen Einzelprüfungen übereinstimmen; sonst **Test falsch**. Ein leerer Abschnitt gilt als fehlender Abschnitt.
 - Endet der Test nicht ordnungsgemäß (Stub, Laufzeitfehler), entfällt die Prüfung (Vermerk „nicht durchgeführt“) und der Test gilt nicht automatisch als falsch.
 - Die Ausgabe steht immer auf dem Bildschirm, unabhängig von `#PROT STUFE` (Abschnitt 9); der Rückkehrcode folgt dem Ergebnis (Abschnitt 9).
@@ -322,7 +318,7 @@ die Umsetzung im Interpreter wieder.
 | `Ü` (`UE`) | nur bei H: AR := 7777, OR := OR ODER 240 (BR aufgestellt); ohne H keine Wirkung |
 | `SW=1`, `SW+`, `SW-drücken` | Schalter SW gedrückt: Flag SW := 1, T := 0 |
 | `SW=0`, `SW-`, `SW-loslassen` | Schalter SW gelöst: Flag SW := 0, T := 1 |
-| `K0`, `K1`, `K2`, `K3` | Kanalauswahltaste (rastend): Flag des gewählten Kanals := 1, Flags der anderen drei := 0 (bei `K0` zusätzlich T oder SW je nach Schalter SW, analog zu `G`); seit Interpreter 0.03-016 gilt auch für den Anwahlbefehl K0 die dauerhafte Schalterstellung SW (`m.sw_schalter`) im Moment der Anwahl, siehe `C8205-Versionierung.md` (Abschnitt 10.2); ein im Testprogramm nachfolgend ausgeführter Anwahlbefehl übersteuert diese Einstellung zur Laufzeit (s. Datei `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 6.0) |
+| `K0`, `K1`, `K2`, `K3` | Kanalauswahltaste (rastend): Flag des gewählten Kanals := 1, Flags der anderen drei := 0 (bei `K0` zusätzlich T oder SW je nach Schalter SW, analog zu `G`); seit Interpreter 0.03-016 gilt auch für den Anwahlbefehl K0 die dauerhafte Schalterstellung SW (`m.sw_schalter`) im Moment der Anwahl; ein im Testprogramm nachfolgend ausgeführter Anwahlbefehl übersteuert diese Einstellung zur Laufzeit (s. Datei `C8205-Interpreter-Durchführung_eines_Tests.md`, Abschnitt 6.0) |
 | `R` | Schalter H-R auf „R“: Flag H := 0, US := 0; Interpretation beginnt bei Konnektor B (bei aufgestelltem BR bei Knoten 19, nach `M` mit Sprung mit Rückkehrabsicht bei Knoten 54) |
 
 `SW` muss **vor** `G` gesetzt werden, weil `G` daraus T oder SW für K0 ableitet.
@@ -613,6 +609,10 @@ Fehler zu Geräten erscheinen **in Rot** auf dem Terminal (Standardfehlerausgabe
 - Schalter `--knotentest` (Ergänzung 29.09.2026): Knotenzeilen im Protokoll nur auf Wunsch; Vorgabe aus. Der Wrapper
   `c8205_interpreter.sh`/`.bat` ruft ohne diesen Schalter auf; für Knotenzeilen in der `.log`-Datei wird er beim Aufruf
   angehängt: `./c8205_interpreter.sh Tests/x.txt --knotentest`.
+
+- Testmarke `#TROMMEL=KEEP` (Ergänzung 24.10.2026) und Schalter `--max-knoten N` (26.10.2026, Obergrenze der Knoten je Testlauf im Modus TEST).
+- Schalter `--LOADONLY` (21.10.2026): nur laden, Rückkehrcode 0; `--BASP` (14.10.2026, Wirkung offen, siehe unten); `--LS-LESER-TYP` (Lesetempo im Modus GRAFIK); `--zwischenablage` (10.10.2026); `--version` (09.10.2026).
+- Zusatztrommeln des C 8205Z (Ergänzung 28. bis 30.10.2026): Schalter `--C8205Z[=VERZ]`, Testmarke `#ZTROMMEL=LEER|KEEP` und Unterabschnitt `ZT-Zellen-Pruefung:` (Abschnitt 6; `Durchführung_eines_Tests.md`, 2g.1 und 3a.6).
 
 **Auslegung, wo das Regelwerk offen lässt:**
 - `B` und `D` (Pult-Tasten) haben keinen Code und sind an T nicht eingebbar.

@@ -1,6 +1,6 @@
 ** Durchführung eines Tests **
 
-Version: 0.95-019
+Version: 0.95-021
 
 ## 1. Einordnung und Testvoraussetzungen
 
@@ -119,9 +119,34 @@ Neues fest, sondern verweist auf die Abschnitte, in denen die Einzelheiten stehe
 
 4. **Ergebnis lesen**: Endzeile (`Ende: …`), Ergebnisprüfung (*Test wahr* oder *Test falsch*) und Rückkehrcode
    (0 wahr, 4 ohne Prüfung, 6 falsch, 8 Laufzeitfehler, 16 Vorab-Prüfung negativ oder Trommeldatei fehlerhaft, 2 ungültiger Aufruf;
-   Code 6 bei einem Test mit `Prüfungen: False` werten die Skripte als wahr, Abschnitt 3a.5). Knotenzeilen
+   Code 6 bei einem Test mit `Prüfungen: False` werten die Skripte als wahr, Abschnitt 3a.5; Übersicht in 1b.3). Knotenzeilen
    erscheinen im Protokoll mit `--knotentest` und `#PROT STUFE=2` (Abschnitt 8). Alle Schalter, Geräte und
    Fehlermeldungen: `C8205-Interpreter-Python_Interpreter.md`.
+
+### 1b.3 Rückkehrcodes des Python-Interpreters (Ergänzung 11.11.2026)
+
+| Code | Bedeutung |
+|---|---|
+| 0 | Test wahr (Prüfung definiert und erfüllt); ebenso `--version` und `--LOADONLY` |
+| 2 | ungültiger Aufruf (unbekannter oder falsch angegebener Schalter, z. B. ungültiger Wert bei `--BASP` oder `--LS-LESER-TYP`; fehlende Regelwerk-Dateien; `--out` mit Dateiendung bei mehreren Tests); es startet kein Test |
+| 4 | Test ohne Prüfung (weder `Prüfungen:` noch `--pruefe-…`) |
+| 6 | Test falsch (Prüfung definiert, Ergebnis nicht erfüllt; auch fehlende oder abweichende Soll-/Ist-Datei) |
+| 8 | Laufzeitfehler (z. B. Gerät nicht nutzbar, Abbruch mit Strg+C) |
+| 16 | Vorab-Prüfung negativ (ungültige Tastenfolge, Testmarke oder `Prüfungen:`-Abschnitt, fehlender Geräte-Pfad, Testdatei nicht gefunden) oder Trommeldatei fehlt bzw. formal fehlerhaft; dann startet im ganzen Aufruf kein Test |
+
+Die ausführliche Tabelle mit allen Einzelfällen steht in `C8205-Interpreter-Python_Interpreter.md`, Abschnitt 9 (Rückkehrcodes). Der Code bezieht sich immer auf genau einen Test; bei mehreren Testdateien in einem Aufruf zählt der zuletzt bearbeitete. Die Assembler-Rückgabecodes (0 fehlerfrei, 16 Fehler) sind davon unabhängig.
+
+### 1b.4 Weitere Aufrufschalter des Python-Interpreters (Ergänzung 11.11.2026)
+
+Diese Schalter gehören nicht zur Testdatei, sondern stehen auf der Kommandozeile; die vollständige Schalterübersicht ist `C8205-Interpreter-Python_Interpreter.md`, Abschnitt 5.1.
+
+| Schalter | Wirkung im Zusammenhang mit einem Test |
+|---|---|
+| `--version` | Gibt die Versionsnummer des Interpreters (Form `y.xx-zzz`) aus, endet mit Rückkehrcode 0 und führt keinen Test aus; keine Testdatei angeben. Dafür `python3 c8205_interp.py --version` direkt aufrufen, nicht über die Wrapper. |
+| `--out DATEI.log` / `--out VERZ` | Ablageort der Protokolldatei (Abschnitt 8.3): mit Dateiendung genau diese Datei (Ordner werden angelegt; nur mit **einem** Test, sonst Rückkehrcode 2), ohne Endung ein Ordner mit `VERZ/<Testname>/protokoll.txt`. Ohne `--out` gilt `Test-Protokolle/` im Ordner des Skripts; der Wrapper `c8205_interpreter.sh` schreibt nach `Test-Protokolle/<Testname>.log`. Ohne Protokolldatei (STUFE=0 oder 1) hat `--out` keine Wirkung und es erscheint ein Hinweis. |
+| `--BASP abcdef` (auch `--BASP=abcdef`) | Bahnsperrenschalter der Magnettrommel: sechs Ziffern `0`/`1` (1 = EIN), Vorgabe `000000`. Jeder andere Wert wird mit Fehlermeldung und Rückkehrcode 2 abgelehnt. Bei einem Wert ungleich `000000` steht der Parameter auf dem Bildschirm und im Protokollkopf. **Die Schreibsperre selbst ist noch nicht umgesetzt**: ein Test kann den Parameter angeben, aber nicht auf gesperrte Bahnen prüfen. Nur auf der Kommandozeile, nicht als Zeile in der Testdatei. |
+| `--LS-LESER-TYP 303\|FS751` | Typ des Lochbandlesers für K1 und K2 (Vorgabe 303: 130 Zeichen/s; FS751: 750 Zeichen/s). Wirkt nur im Modus GRAFIK (Lesetempo); im Modus TEST erlaubt, aber ohne Wirkung, weil alle Zeiten 0 sind. Anderer Wert: Rückkehrcode 2. |
+| `--zwischenablage auto\|tk\|system` | Kopierverfahren des Fensters „SW Ausgabe“; nur mit `--SW-TERMINAL` wirksam (Interpreter-Beschreibung, Abschnitt 8.1), für Tests ohne dieses Fenster ohne Belang. Vorgabe `auto`. |
 
 **GRAFIK:** Tests dieses Dokuments laufen im Modus TEST (`--MODUS=TEST`). Die Prüfung des Modus GRAFIK (Logiktests, Tk-Tests, Handläufe, Hörprüfung) steht in `C8205-Interpreter-GRAFIK_Pruefverfahren.md`.
 
@@ -964,7 +989,7 @@ $ ./c8205_grafik.sh --HWCHECK
 
 ## 2k. Lademethoden und ihr Angang am Assemblerquelltext (Ergänzung 24.10.2026)
 
-Ein Programm kommt auf vier Wegen auf die Trommel. Jeder Weg verlangt etwas anderes vom Quelltext und vom Assembleraufruf; wer den falschen Quelltext mit dem falschen Weg paart, bekommt falsche Adressen oder ein Programm, das nicht anspringt. Die Beispiele 1 bis 3 (2h bis 2j) zeigen je einen Weg im Einzelnen; dieser Abschnitt stellt alle nebeneinander. Die Einzelheiten der Schalter stehen in der Assemblerdokumentation (`.odt` maßgeblich), Abschnitt 3.1a (`--ABSPR`) und 3.1b (Testmarken im Quelltext).
+Ein Programm kommt auf vier Wegen auf die Trommel. Jeder Weg verlangt etwas anderes vom Quelltext und vom Assembleraufruf; wer den falschen Quelltext mit dem falschen Weg paart, bekommt falsche Adressen oder ein Programm, das nicht anspringt. Die Beispiele 1 bis 3 (2h bis 2j) zeigen je einen Weg im Einzelnen; dieser Abschnitt stellt alle nebeneinander. Die Einzelheiten der Schalter stehen in der Assemblerdokumentation, Abschnitt 3.1a (`--ABSPR`) und 3.1b (Testmarken im Quelltext).
 
 ### 2k.1 Übersicht
 
@@ -1918,11 +1943,14 @@ sie erscheinen stufenunabhängig immer auf dem Bildschirm.
 ### 8.3 Bereitstellung am Testende
 
 Die Protokolldatei wird, sofern sie angelegt wurde (STUFE=2, s. o.), am Ende des Tests zum Download
-bereitgestellt.
+bereitgestellt. Ihren Ablageort bestimmt der Aufrufschalter `--out` (Abschnitt 1b.4): `--out DATEI.log` legt sie
+genau dort ab (nur mit einem Test), `--out VERZ` unter `VERZ/<Testname>/protokoll.txt`; ohne `--out` liegt sie
+unter `Test-Protokolle/` im Ordner des Skripts, beim Wrapper `c8205_interpreter.sh` als `Test-Protokolle/<Testname>.log`.
+In einer Claude-Sitzung kommt sie wie jede andere Datei nur dann zum Nutzer, wenn sie nach `/mnt/user-data/outputs/` gelegt oder in die Lieferung gepackt wird.
 
 ## 9. Ausblick
 
-Dieses Dokument beschreibt die Durchführung eines Tests: den Aufbau der Testdatei (Abschnitt 2 bis 2g), drei durchgeführte Beispiele (2h bis 2j) und die Übersicht der Lademethoden mit ihrem Angang am Assemblerquelltext (2k), die Tastenfolge
+Dieses Dokument beschreibt die Durchführung eines Tests: die zwei Ausführenden und den Start (Abschnitte 1a und 1b, mit Rückkehrcodes 1b.3 und Aufrufschaltern 1b.4), den Aufbau der Testdatei (Abschnitt 2 bis 2g), drei durchgeführte Beispiele (2h bis 2j) und die Übersicht der Lademethoden mit ihrem Angang am Assemblerquelltext (2k), die Tastenfolge
 zum Aufstellen des Ausgangszustands (Abschnitt 3), die Ergebnisprüfung (3a) und die Dateiprüfungen (3b), weitere
 Tastensequenzen (Abschnitt 4), die formale Gültigkeitsprüfung (Abschnitt 5), die Zeichenein- und -ausgabe (Abschnitt 6),
 die Diagnoseausgabe (Abschnitt 7) und die Protokolldatei (Abschnitt 8). Der eigentliche Durchlauf durch den Knotengraphen ab

@@ -1,6 +1,6 @@
 # c82gen – Messung und Regeln für den Einsatz
 
-Version: 0.01-002
+Version: 0.01-003
 
 Zweck: belegt, was die Bibliothek `c82gen.py` (0.01-004) gegenüber 0.01-002 und gegenüber von Hand geschriebenen `.asm` spart, und sagt, wann sie sich lohnt. Gemessen am 30.10.2026 im Zip 0.95.7-061 mit `asm_und_test.sh` und dem Abnahmetest des Archivprogramms; alle Zahlen stammen aus Läufen, nicht aus Schätzungen. Einzelheiten zum Archivprogramm (Namen, Ursachenreihe) stehen in `gen_lib_messung_archiv.txt` (keine `.md`).
 
@@ -62,7 +62,7 @@ Die Testlaufzeit bestimmt der Interpreter, nicht die Bibliothek. Eine Verkürzun
 
 ## Nicht geprüft
 
-- Das Archivprogramm ist mit der alten Schnittstelle (`ztd_py_gen.py`) unverändert geblieben; es nutzt Literale und `begin/bend` nicht (Archivmodus). Eine Umstellung auf die Kurzidiome ist nicht gemessen.
+- Das Archivprogramm ist mit der alten Schnittstelle unverändert geblieben; es nutzt Literale und `begin/bend` nicht (Archivmodus). Eine Umstellung auf die Kurzidiome ist nicht gemessen.
 - Parameterzellen im UP (Festlegung 30.10.2026, Handbuch 5.5) kennt die Bibliothek noch nicht; sie entstehen mit `op`.
 
 ## Wann lohnt sich der Generator

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 grafik_pult_fenster.py - Tk-Schicht des Bedienpult-Fensters im Modus GRAFIK (Stufe 2). Nur Standardbibliothek (Tkinter).
-Version: G4-011
 
 Die gesamte Logik steckt in grafik_pult.PultSteuerung; hier nur Zeichnen (Canvas, Foto + Teilgrafiken), Maus, Computertastatur, Fenster schliessen.
 ACHTUNG: In der Entwicklungsumgebung gab es kein Tkinter; dieses Fenster wurde dort NICHT gestartet (nur mit einem Ersatzmodul
@@ -19,7 +18,7 @@ import sys
 from grafik_pult import LAMPENTAKT_S, ENDE
 from grafik_debuglog import log
 
-VERSION_FENSTER = 'G4-011'
+VERSION_FENSTER = 'G4-012'
 
 
 class PultFenster:

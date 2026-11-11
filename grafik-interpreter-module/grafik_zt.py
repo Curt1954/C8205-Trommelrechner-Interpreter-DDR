@@ -3,7 +3,7 @@
 grafik_zt.py - Zusatztrommeln des C 8205Z im Modus GRAFIK (Schalter --C8205Z): Anbindung des C-Moduls zt_modul (Projekt C8205Z) ueber das
 Erweiterungsmodul c8205_ztmodul. Gleiche Schnittstelle wie c8205_zt.Zusatztrommeln (anwahl, ausgabe, eingabe, leeren, schliessen), die der
 Interpreter in a005/a028 benutzt (m.zt); der Python-Interpreter (TEST) rechnet dagegen weiter mit Zeit 0 (c8205_zt.py).
-Version: G5-002  (G5-001 neu mit c8205_grafik.py G4-013; G5-002: ansicht() fuer den HW-Check)
+Aenderungen (G5-001 neu mit c8205_grafik.py G4-013; G5-002: ansicht() fuer den HW-Check)
 
 Zeit (Zeitmodell der Zusatztrommeln, Zusatztrommel_Zeitmodell.md): ein Befehl 601/661 dauert rund 81 bis 86 ms.
   --trommelzeit alt   Haupttrommel nach der Wanduhr: das C-Modul wartet in Echtzeit (Modus ECHT, Phasen aus Uhr und aktuellem Sektor);
@@ -13,6 +13,8 @@ Zeit (Zeitmodell der Zusatztrommeln, Zusatztrommel_Zeitmodell.md): ein Befehl 60
 Die Haupttrommel wird ueber ihre Direktzugriffe (c8205_trommel.lesen/schreiben, ohne Koinzidenz) angekoppelt; die Zeit rechnet das Modul.
 Strg+C / X im Fenster: abbrechen() beendet einen laufenden Befehl (GrafikAbbruch).
 """
+VERSION_ZT = 'G5-003'      # Kennung dieses Moduls (G5-003); frueher in der Kopfzeile
+
 import os
 import random
 import sys

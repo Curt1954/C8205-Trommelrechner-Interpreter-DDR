@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 grafik_geraeteton.py - Toene von Lochstreifenleser und Lochbandstanzer fuer GRAFIK (Stufe 4, GRAFIK_Beschreibung §6 (alt: Dok. 10) S4-09, S4-10).
-Version: G4-007.  Nur Standardbibliothek.
+Nur Standardbibliothek.
 
 Beides sind Zustandsautomaten mit ersetzbarer Uhr (`uhr`) und ersetzbarem Warten (`schlafe`), damit die Pruefungen ohne Audiogeraet
 und ohne Echtzeit laufen.  Zeitgeber: tick() wird vom Mischer nach jedem Block (alle 10 ms) aufgerufen (mischer.takt_haken).
@@ -23,7 +23,7 @@ import time
 
 import grafik_tonmisch as TM
 
-VERSION_GERAETETON = 'G4-007'
+VERSION_GERAETETON = 'G4-008'
 LS_PAUSE_S = 0.100          # (bis G4-004: Schwelle des Lesers; ab G4-005 ersetzt durch EINZEL_FREIGABE_S und LS_AUS_S)
 EINZEL_FREIGABE_S = 0.100   # G4-005: Befehlsschleife nach dem Einzelton-Beginn nach 1/10 s wieder frei
 LS_EINZEL_S = 0.148         # Laenge von ls_einzel.wav, wenn der Klang nicht bekannt ist
